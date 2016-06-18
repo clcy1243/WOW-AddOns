@@ -5,3 +5,6 @@ Quartz
 Shadowed Unit Frames
 TidyPlates
 TipTac
+Recount
+MogIt
+HandNotes

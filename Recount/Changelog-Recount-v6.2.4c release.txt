@@ -1,0 +1,14 @@
+------------------------------------------------------------------------
+r1368 | resike | 2016-05-28 20:33:49 +0000 (Sat, 28 May 2016) | 1 line
+Changed paths:
+   A /tags/v6.2.4c release (from /trunk:1367)
+
+Tagging as v6.2.4c release
+------------------------------------------------------------------------
+r1367 | Resike | 2016-05-28 20:31:51 +0000 (Sat, 28 May 2016) | 1 line
+Changed paths:
+   M /trunk/Recount.lua
+   M /trunk/Tracker.lua
+
+- Fixed an issue which could potentially show disabled unit data types.
+------------------------------------------------------------------------
