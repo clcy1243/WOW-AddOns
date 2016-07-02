@@ -6,7 +6,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 local BC = {} -- = LibStub("LibBabble-Class-3.0"):GetLookupTable()
 
-local revision = tonumber(string.sub("$Revision: 1365 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1369 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -1489,7 +1489,7 @@ function me:SetupMiscOptions(parent)
 	local i = 0
 	for _, k in pairs(ZoneOrder) do
 		theFrame[k] = me:CreateSavedCheckbox(ZoneLabels[k], theFrame, "Data", k)
-		theFrame[k]:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 10, -59 - i * 16)
+		theFrame[k]:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 6, -59 - i * 16)
 		theFrame[k]:SetScript("OnClick", function(this)
 			if this:GetChecked() then
 				this:SetChecked(true)
@@ -1505,12 +1505,12 @@ function me:SetupMiscOptions(parent)
 				Recount:RefreshMainWindow()
 			end
 		end)
-		i = i+1
+		i = i + 1
 	end
 
 	for k, v in ipairs(GroupLabels) do
 		theFrame[k] = me:CreateSavedCheckbox(v, theFrame, "Data", k)
-		theFrame[k]:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 10, -59 - i * 16)
+		theFrame[k]:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 6, -59 - i * 16)
 		theFrame[k]:SetScript("OnClick", function(this)
 			if this:GetChecked() then
 				this:SetChecked(true)
@@ -1524,20 +1524,20 @@ function me:SetupMiscOptions(parent)
 				Recount:RefreshMainWindow()
 			end
 		end)
-		i = i+1
+		i = i + 1
 	end
 
 
 	theFrame.GlobalData = me:CreateSavedCheckbox(L["Global Data Collection"], theFrame, "Data", "GlobalData")
-	theFrame.GlobalData:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 10, -59 - i * 16 - 3)
+	theFrame.GlobalData:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 6, -59 - i * 16 - 6)
 	theFrame.GlobalData:SetScript("OnClick", function(this)
 		Recount:SetGlobalDataCollect(this:GetChecked())
 	end)
 
-	i = i+1
+	i = i + 1
 
 	theFrame.HideCollect = me:CreateSavedCheckbox(L["Hide When Not Collecting"], theFrame, "Data", "HideCollect")
-	theFrame.HideCollect:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 10, -59 - i * 16 - 6)
+	theFrame.HideCollect:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 6, -59 - i * 16 - 6)
 	theFrame.HideCollect:SetScript("OnClick", function(this)
 		if this:GetChecked() then
 			this:SetChecked(true)
