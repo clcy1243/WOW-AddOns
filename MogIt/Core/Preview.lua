@@ -3,6 +3,8 @@ local L = mog.L;
 
 local LBI = LibStub("LibBabble-Inventory-3.0"):GetUnstrictLookupTable();
 
+local TITANS_GRIP_SPELLID = 46917
+
 
 mog.view = CreateFrame("Frame","MogItPreview",UIParent);
 mog.view:SetAllPoints();
@@ -247,8 +249,20 @@ local previewMenu = {
 			for k, v in pairs(currentPreview.slots) do
 				mog.view.DelItem(k, currentPreview);
 				local slotID = GetInventorySlotInfo(k);
-				local item = mog.mogSlots[slotID] and select(6, GetTransmogrifySlotInfo(slotID)) or GetInventoryItemID("player", slotID)
-				if (k ~= "HeadSlot" or ShowingHelm()) and (k ~= "BackSlot" or ShowingCloak()) then
+				local item = GetInventoryItemLink("player", slotID);
+				if item then
+					local isTransmogrified, _, _, _, _, _, isHideVisual, texture = C_Transmog.GetSlotInfo(slotID, LE_TRANSMOG_TYPE_APPEARANCE);
+					local baseSourceID, baseVisualID, appliedSourceID, appliedVisualID = C_Transmog.GetSlotVisualInfo(slotID, LE_TRANSMOG_TYPE_APPEARANCE);
+					if isTransmogrified then
+						if isHideVisual then
+							item = nil
+						else
+							local categoryID, appearanceVisualID, canEnchant, icon, isCollected, link = C_TransmogCollection.GetAppearanceSourceInfo(appliedSourceID)
+							item = link;
+						end
+					end
+				end
+				if item then
 					mog.view.AddItem(item, currentPreview);
 				end
 			end
@@ -392,7 +406,7 @@ end;
 
 --// Toolbar
 local function helpOnEnter(self)
-	self.nt:SetTexture(1,0.82,0,1);
+	self.nt:SetColorTexture(1,0.82,0,1);
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT");
 	GameTooltip:AddLine(L["How to use"]);
 	GameTooltip:AddLine(" ");
@@ -414,7 +428,7 @@ end
 
 local function helpOnLeave(self)
 	GameTooltip:Hide();
-	self.nt:SetTexture(0,0,0,0);
+	self.nt:SetColorTexture(0,0,0,0);
 end
 
 local function createMenuBar(parent)
@@ -694,7 +708,7 @@ function mog.view.AddItem(item, preview, forceSlot, setItem)
 	if slot then
 		if slot == "MainHandSlot" or slot == "SecondaryHandSlot" then
 			if invType == "INVTYPE_2HWEAPON" then
-				if playerClass == "WARRIOR" and IsSpellKnown(23588) then
+				if playerClass == "WARRIOR" and IsSpellKnown(TITANS_GRIP_SPELLID) then
 					-- Titan's Grip exists in the spellbook, so we can treat this weapon as one handed
 					invType = "INVTYPE_WEAPON";
 				end

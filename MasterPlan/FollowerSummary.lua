@@ -320,7 +320,7 @@ local stats = CreateFrame("Frame", nil, summaryTab) do
 		t:SetPoint("BOTTOMRIGHT", -6, 0)
 		if i > 1 then
 			b:SetNormalTexture("Interface\\Icons\\Temp")
-			b:GetNormalTexture():SetTexture(0,0,0,0)
+			b:GetNormalTexture():SetColorTexture(0,0,0,0)
 			b:SetPushedTexture("Interface/Buttons/UI-QuickSlot-Depress")
 			b:GetPushedTexture():SetAllPoints(b.Icon)
 			b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")

@@ -4,7 +4,7 @@ local Graph = LibStub:GetLibrary("LibGraph-2.0")
 local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 
-local revision = tonumber(string.sub("$Revision: 1363 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1373 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -737,11 +737,11 @@ function me:CreateSummaryColumn(Title, Color)
 
 	theFrame.Background = theFrame:CreateTexture(nil, "BACKGROUND")
 	theFrame.Background:SetAllPoints(theFrame)
-	theFrame.Background:SetTexture(Color[1], Color[2], Color[3], 0.1)
+	theFrame.Background:SetColorTexture(Color[1], Color[2], Color[3], 0.1)
 
 	theFrame.Selected = theFrame:CreateTexture(nil,"BACKGROUND")
 	theFrame.Selected:SetAllPoints(theFrame)
-	theFrame.Selected:SetTexture(Color[1], Color[2], Color[3], 0.3)
+	theFrame.Selected:SetColorTexture(Color[1], Color[2], Color[3], 0.3)
 	theFrame.Selected:Hide()
 
 	theFrame.Title = theFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -1254,7 +1254,7 @@ function me:CreateSummaryMode()
 	theFrame.Damage:SetScript("OnMouseDown", theFrame.Damage.SelectMe)
 
 	theFrame.Damage.Selected = theFrame.Damage:CreateTexture(nil, "BACKGROUND")
-	theFrame.Damage.Selected:SetTexture(1.0, 0.0, 0, 0.1)
+	theFrame.Damage.Selected:SetColorTexture(1.0, 0.0, 0, 0.1)
 	theFrame.Damage.Selected:SetAllPoints(theFrame.Damage)
 	theFrame.Damage.Selected:Hide()
 
@@ -1292,7 +1292,7 @@ function me:CreateSummaryMode()
 	end)
 
 	theFrame.Pet.Selected = theFrame.Damage:CreateTexture(nil, "BACKGROUND")
-	theFrame.Pet.Selected:SetTexture(1.0, 0.0, 0, 0.1)
+	theFrame.Pet.Selected:SetColorTexture(1.0, 0.0, 0, 0.1)
 	--Recount.Colors:RegisterTexture("Window", "Title", theFrame.Pet.Selected)
 	theFrame.Pet.Selected:SetAllPoints(theFrame.Pet)
 	theFrame.Pet.Selected:Hide()
@@ -1329,7 +1329,7 @@ function me:CreateSummaryMode()
 	theFrame.Healing:SetScript("OnMouseDown", theFrame.Healing.SelectMe)
 
 	theFrame.Healing.Selected = theFrame.Damage:CreateTexture(nil, "BACKGROUND")
-	theFrame.Healing.Selected:SetTexture(1.0, 0.0, 0, 0.1)
+	theFrame.Healing.Selected:SetColorTexture(1.0, 0.0, 0, 0.1)
 	theFrame.Healing.Selected:SetAllPoints(theFrame.Healing)
 	theFrame.Healing.Selected:Hide()
 
@@ -1363,7 +1363,7 @@ function me:CreateSummaryMode()
 
 	AttackSummary.Background = AttackSummary:CreateTexture(nil, "BACKGROUND")
 	AttackSummary.Background:SetAllPoints(AttackSummary)
-	AttackSummary.Background:SetTexture(0, 0, 0, 0.3)
+	AttackSummary.Background:SetColorTexture(0, 0, 0, 0.3)
 
 	AttackSummary.Text = AttackSummary:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	AttackSummary.Text:SetText(L["Attack Summary Outgoing (Click for Incoming)"])
@@ -1958,12 +1958,12 @@ function Recount:CreateDetailWindow()
 
 		Row.Selected = Row:CreateTexture(nil, "BACKGROUND")
 		Row.Selected:SetAllPoints(Row)
-		Row.Selected:SetTexture(1, 1, 0, 0.3)
+		Row.Selected:SetColorTexture(1, 1, 0, 0.3)
 		Row.Selected:Hide()
 
 		Row.Highlighted = Row:CreateTexture(nil, "BACKGROUND")
 		Row.Highlighted:SetAllPoints(Row)
-		Row.Highlighted:SetTexture(1, 0, 0, 0.3)
+		Row.Highlighted:SetColorTexture(1, 0, 0, 0.3)
 		Row.Highlighted:Hide()
 
 		Row.Time = Row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -2018,7 +2018,7 @@ function Recount:CreateDetailWindow()
 
 		Row.Background = Row:CreateTexture(nil, "BACKGROUND")
 		Row.Background:SetAllPoints(Row)
-		Row.Background:SetTexture(1, 1, 1, 0.25)
+		Row.Background:SetColorTexture(1, 1, 1, 0.25)
 		Row.Background:Show()
 
 		Row.Time = Row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")

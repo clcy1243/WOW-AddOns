@@ -32,7 +32,6 @@ local moiContainer, core, loader = CreateFrame("Frame", "MPShipMoI", GarrisonShi
 	loader = api.CreateLoader(moiContainer, 20, 30, 20)
 	loader:SetPoint("CENTER")
 	local fadeIn = moiContainer.List:CreateAnimationGroup() do
-		fadeIn:SetIgnoreFramerateThrottle(true)
 		local a = fadeIn:CreateAnimation("Alpha")
 		a:SetFromAlpha(0)
 		a:SetToAlpha(1)

@@ -1,0 +1,34 @@
+------------------------------------------------------------------------
+r1376 | resike | 2016-07-28 18:58:46 +0000 (Thu, 28 Jul 2016) | 1 line
+Changed paths:
+   A /tags/v7.0.3c release (from /trunk:1375)
+
+Tagging as v7.0.3c release
+------------------------------------------------------------------------
+r1375 | Resike | 2016-07-28 18:56:49 +0000 (Thu, 28 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/Tracker.lua
+
+- Damage to Soul Effigy is now ignored.
+------------------------------------------------------------------------
+r1373 | Resike | 2016-07-21 15:45:01 +0000 (Thu, 21 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/GUI_Config.lua
+   M /trunk/GUI_Detail.lua
+   M /trunk/GUI_Graph.lua
+
+- GUI and texture fixes.
+------------------------------------------------------------------------
+r1371 | Resike | 2016-07-20 10:45:29 +0000 (Wed, 20 Jul 2016) | 2 lines
+Changed paths:
+   M /trunk/Recount.toc
+
+- Updated to 7.0.3.
+- Toc bump.
+------------------------------------------------------------------------
+r1369 | Resike | 2016-07-01 22:32:50 +0000 (Fri, 01 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/GUI_Config.lua
+
+- Checkbox placement fixes.
+------------------------------------------------------------------------

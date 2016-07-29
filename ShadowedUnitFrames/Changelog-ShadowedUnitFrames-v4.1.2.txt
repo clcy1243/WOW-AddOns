@@ -1,0 +1,18 @@
+tag v4.1.2
+bdd296fd19c1badb6ec385df6672a139f324198c
+Hendrik Leppkes <h.leppkes@gmail.com>
+2016-07-22 00:29:35 +0200
+
+Tag as v4.1.2
+
+
+--------------------
+
+Hendrik Leppkes:
+	- Report proper maximum power values for all power types
+	- Set a proper default for new powers
+	- Disable Mage Arcane Charges Aura Points mode, its handled as a full power now
+	- Remove Anticipation from Aura Points
+	The spell was changed and no longer does what it once did.
+	- Fix curable debuff types for Monks and Paladins
+	- Bail out early with zero combo points

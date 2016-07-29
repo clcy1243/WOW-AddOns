@@ -909,11 +909,6 @@ Tags.defaultTags = {
 		
 		return string.format("%s/%s", ShadowUF:FormatLargeNumber(power), ShadowUF:FormatLargeNumber(maxPower))
 	end]],
-	["druid:eclipse"] = [[function(unit, unitOwner)
-		if( GetSpecialization() ~= 1 ) then return nil end
-
-		return UnitPower(unitOwner, SPELL_POWER_ECLIPSE)
-	end]],
 	["druid:absolutepp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		if( GetSpecialization() ~= SPEC_MONK_MISTWEAVER ) then return nil end
@@ -1061,7 +1056,6 @@ Tags.defaultEvents = {
 	["curmaxpp"]				= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["absolutepp"]				= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["smart:curmaxpp"]			= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
-	["druid:eclipse"]			= "SUF_POWERTYPE:ECLIPSE UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["druid:curpp"]  	    	= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["druid:abscurpp"]      	= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["druid:curmaxpp"]			= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
@@ -1089,7 +1083,7 @@ Tags.defaultEvents = {
 	["perpp"]               	= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION",
 	["status"]              	= "UNIT_HEALTH UNIT_HEALTH_FREQUENT PLAYER_UPDATE_RESTING UNIT_CONNECTION",
 	["smartlevel"]          	= "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
-	["cpoints"]             	= "UNIT_COMBO_POINTS PLAYER_TARGET_CHANGED",
+	["cpoints"]             	= "UNIT_POWER_FREQUENT PLAYER_TARGET_CHANGED",
 	["rare"]                	= "UNIT_CLASSIFICATION_CHANGED",
 	["classification"]      	= "UNIT_CLASSIFICATION_CHANGED",
 	["shortclassification"] 	= "UNIT_CLASSIFICATION_CHANGED",
@@ -1289,7 +1283,6 @@ Tags.defaultHelp = {
 	["abbrev:name"]				= L["Abbreviates unit names above 10 characters, \"Dark Rune Champion\" becomes \"D.R.Champion\" and \"Dark Rune Commoner\" becomes \"D.R.Commoner\"."],
 	["group"]					= L["Shows current group number of the unit."],
 	["close"]					= L["Closes a color code, prevents colors from showing up on text that you do not want it to."],
-	["druid:eclipse"]			= L["Current Eclipse, <0 is Lunar Energy and >0 is Solar Energy."],
 	["druid:curpp"]         	= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "currpp"),
 	["druid:abscurpp"]      	= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "abscurpp"),
 	["druid:curmaxpp"]			= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "curmaxpp"),
@@ -1388,7 +1381,6 @@ Tags.defaultNames = {
 	["dechp"]					= L["Decimal percent HP"],
 	["group"]					= L["Group number"],
 	["close"]					= L["Close color"],
-	["druid:eclipse"]			= L["Eclipse (Druid)"],
 	["druid:curpp"]         	= L["Current power (Druid)"],
 	["druid:abscurpp"]      	= L["Current power (Druid/Absolute)"],
 	["druid:curmaxpp"]			= L["Cur/Max power (Druid)"],
@@ -1490,7 +1482,7 @@ local function loadAPIEvents()
 		["GetRuneCooldown"]			= "RUNE_POWER_UPDATE",
 		["GetRuneType"]				= "RUNE_TYPE_UPDATE",
 		["GetRaidTargetIndex"]		= "RAID_TARGET_UPDATE",
-		["GetComboPoints"]			= "UNIT_COMBO_POINTS",
+		["GetComboPoints"]			= "UNIT_POWER_FREQUENT",
 		["GetNumSubgroupMembers"]	= "GROUP_ROSTER_UPDATE",
 		["GetNumGroupMembers"]		= "GROUP_ROSTER_UPDATE",
 		["GetRaidRosterInfo"]		= "GROUP_ROSTER_UPDATE",

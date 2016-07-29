@@ -63,6 +63,7 @@ function Indicators:OnLayoutApplied(frame)
 			indicator.cooldown = CreateFrame("Cooldown", nil, indicator, "CooldownFrameTemplate")
 			indicator.cooldown:SetReverse(true)
 			indicator.cooldown:SetPoint("CENTER", 0, -1)
+			indicator.cooldown:SetHideCountdownNumbers(true)
 
 			indicator.stack = indicator:CreateFontString(nil, "OVERLAY")
 			indicator.stack:SetFont("Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", 12, "OUTLINE")
@@ -100,7 +101,7 @@ local filterMap = {}
 local canCure = ShadowUF.Units.canCure
 for _, key in pairs(Indicators.auraFilters) do filterMap[key] = "filter-" .. key end
 
-local function checkFilterAura(frame, type, isFriendly, name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
+local function checkFilterAura(frame, type, isFriendly, name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff)
 	local category
 	if( isFriendly and canCure[auraType] and type == "debuffs" ) then
 		category = "curable"
@@ -135,7 +136,7 @@ local function checkFilterAura(frame, type, isFriendly, name, rank, texture, cou
 	return applied
 end
 
-local function checkSpecificAura(frame, type, name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
+local function checkSpecificAura(frame, type, name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff)
 	-- Not relevant
 	if( not ShadowUF.db.profile.auraIndicators.auras[name] and not ShadowUF.db.profile.auraIndicators.auras[tostring(spellID)] ) then return end
 
@@ -190,12 +191,12 @@ local function scanAuras(frame, filter, type)
 	local index = 0
 	while( true ) do
 		index = index + 1
-		local name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, shouldConsolidate, spellID, canApplyAura, isBossDebuff = UnitAura(frame.unit, index, filter)
+		local name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff = UnitAura(frame.unit, index, filter)
 		if( not name ) then return end
 
-		local result = checkFilterAura(frame, type, isFriendly, name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
+		local result = checkFilterAura(frame, type, isFriendly, name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff)
 		if( not result ) then
-			checkSpecificAura(frame, type, name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
+			checkSpecificAura(frame, type, name, rank, texture, count, auraType, duration, endTime, caster, isRemovable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff)
 		end
 
 		auraList[name] = true
@@ -218,7 +219,7 @@ function Indicators:UpdateIndicators(frame)
 				indicator.texture:SetTexture(indicator.spellIcon)
 				indicator:SetBackdropColor(0, 0, 0, 0)
 			else
-				indicator.texture:SetTexture(indicator.colorR, indicator.colorG, indicator.colorB)
+				indicator.texture:SetColorTexture(indicator.colorR, indicator.colorG, indicator.colorB)
 				indicator:SetBackdropColor(0, 0, 0, 1)
 			end
 			

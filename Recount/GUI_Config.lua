@@ -6,7 +6,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 local BC = {} -- = LibStub("LibBabble-Class-3.0"):GetLookupTable()
 
-local revision = tonumber(string.sub("$Revision: 1369 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1373 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -166,14 +166,14 @@ function me:CreateColorRow(parent, frame)
 
 	theFrame.Background = theFrame:CreateTexture(nil, "BACKGROUND")
 	theFrame.Background:SetAllPoints(theFrame)
-	theFrame.Background:SetTexture(1, 1, 1, 0.3)
+	theFrame.Background:SetColorTexture(1, 1, 1, 0.3)
 	theFrame.Background:Hide()
 
 	theFrame.Key = theFrame:CreateTexture(nil, "OVERLAY")
 	theFrame.Key:SetHeight(13)
 	theFrame.Key:SetWidth(13)
 	theFrame.Key:SetPoint("LEFT", theFrame, "LEFT", 0, 0)
-	theFrame.Key:SetTexture(1, 1, 1)
+	theFrame.Key:SetColorTexture(1, 1, 1)
 
 	theFrame.Text = theFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	theFrame.Text:SetPoint("LEFT", theFrame, "LEFT", 16, 0)
@@ -814,7 +814,7 @@ function me:CreateBarSelection(parent)
 
 	--[[theFrame.Background = theFrame:CreateTexture(nil, "BACKGROUND")
 	theFrame.Background:SetAllPoints(theFrame)
-	theFrame.Background:SetTexture(0, 0, 0, 0.3)]]
+	theFrame.Background:SetColorTexture(0, 0, 0, 0.3)]]
 
 	theFrame.Title = theFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	theFrame.Title:SetText(L["Bar Text Options"])
@@ -984,7 +984,7 @@ function me:CreateTextureSelection(parent)
 
 	--[[theFrame.Background = theFrame:CreateTexture(nil, "BACKGROUND")
 	theFrame.Background:SetAllPoints(theFrame)
-	theFrame.Background:SetTexture(0, 0, 0, 0.3)]]
+	theFrame.Background:SetColorTexture(0, 0, 0, 0.3)]]
 
 	theFrame.Title = theFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	theFrame.Title:SetText(L["Bar Selection"])
@@ -1048,7 +1048,7 @@ function me:CreateSelectFont(parent)
 	frame.Text:SetPoint("CENTER", frame, "CENTER")
 	frame.Texture = frame:CreateTexture(nil, "BACKGROUND")
 	frame.Texture:SetAllPoints(frame)
-	frame.Texture:SetTexture(1, 1, 1, 0.5)
+	frame.Texture:SetColorTexture(1, 1, 1, 0.5)
 	frame.SetFont = me.SetSelectFont
 	frame:EnableMouse(true)
 	frame:SetScript("OnMouseDown", function(this)
@@ -1907,7 +1907,7 @@ function me:CreateDataOptions(parent)
 	Tab.Text:SetPoint("CENTER", Tab, "CENTER")
 	Tab.Text:SetText(L["Data"])
 	Tab.Background = Tab:CreateTexture(nil, "BACKGROUND")
-	Tab.Background:SetTexture(1, 1, 1, 0.3)
+	Tab.Background:SetColorTexture(1, 1, 1, 0.3)
 	Tab.Background:SetVertexColor(0.2, 1.0, 0.2)
 	Tab.Background:SetAllPoints(Tab)
 
@@ -1941,7 +1941,7 @@ function me:CreateAppearanceOptions(parent)
 	Tab.Text:SetPoint("CENTER", Tab, "CENTER")
 	Tab.Text:SetText(L["Appearance"])
 	Tab.Background = Tab:CreateTexture(nil, "BACKGROUND")
-	Tab.Background:SetTexture(1, 1, 1, 0.3)
+	Tab.Background:SetColorTexture(1, 1, 1, 0.3)
 	Tab.Background:SetVertexColor(1.0, 0.2, 0.2)
 	Tab.Background:SetAllPoints(Tab)
 
@@ -1975,7 +1975,7 @@ function me:CreateColorOptions(parent)
 	Tab.Text:SetPoint("CENTER", Tab, "CENTER")
 	Tab.Text:SetText(L["Color"])
 	Tab.Background = Tab:CreateTexture(nil, "BACKGROUND")
-	Tab.Background:SetTexture(1, 1, 1, 0.3)
+	Tab.Background:SetColorTexture(1, 1, 1, 0.3)
 	Tab.Background:SetVertexColor(1.0, 0.2, 0.2)
 	Tab.Background:SetAllPoints(Tab)
 
@@ -2008,7 +2008,7 @@ function me:CreateModuleOptions(parent)
 	Tab.Text:SetPoint("CENTER", Tab, "CENTER")
 	Tab.Text:SetText("Modules")
 	Tab.Background = Tab:CreateTexture(nil, "BACKGROUND")
-	Tab.Background:SetTexture(1, 1, 1, 0.3)
+	Tab.Background:SetColorTexture(1, 1, 1, 0.3)
 	Tab.Background:SetVertexColor(1.0, 0.2, 0.2)
 	Tab.Background:SetAllPoints(Tab)
 
@@ -2036,7 +2036,7 @@ function me:CreateWindowOptions(parent)
 	Tab.Text:SetPoint("CENTER", Tab, "CENTER")
 	Tab.Text:SetText(L["Window"])
 	Tab.Background = Tab:CreateTexture(nil, "BACKGROUND")
-	Tab.Background:SetTexture(1, 1, 1, 0.3)
+	Tab.Background:SetColorTexture(1, 1, 1, 0.3)
 	Tab.Background:SetVertexColor(1.0, 0.2, 0.2)
 	Tab.Background:SetAllPoints(Tab)
 

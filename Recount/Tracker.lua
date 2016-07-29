@@ -4,7 +4,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 local BossIDs = LibStub("LibBossIDs-1.0")
 
-local revision = tonumber(string.sub("$Revision: 1367 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1375 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -523,6 +523,10 @@ end
 function Recount:SpellDamage(timestamp, eventtype, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, spellId, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand, multistrike)
 	-- Prismatic Crystal
 	if string_match(dstGUID, "^Creature%-0%-%d+%-%d+%-%d+%-76933%-%w+$") then
+		return
+	end
+	-- Soul Effigy
+	if string_match(dstGUID, "^Creature%-0%-%d+%-%d+%-%d+%-103679%-%w+$") then
 		return
 	end
 

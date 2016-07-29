@@ -1,6 +1,6 @@
 --[[
 Name: LibBabble-Inventory-3.0
-Revision: $Rev: 193 $
+Revision: $Rev: 195 $
 Maintainers: ckknight, nevcairiel, Ackis
 Website: http://www.wowace.com/projects/libbabble-inventory-3-0/
 Dependencies: None
@@ -8,7 +8,7 @@ License: MIT
 ]]
 
 local MAJOR_VERSION = "LibBabble-Inventory-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 193 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 195 $"):match("%d+"))
 
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib = LibStub("LibBabble-3.0"):New(MAJOR_VERSION, MINOR_VERSION)
@@ -127,6 +127,7 @@ lib:SetBaseTranslations {
 	Monk = "Monk",
 	Mount = "Mount",
 	Mounts = "Mounts",
+	["Naval Equipment"] = "Naval Equipment",
 	Neck = "Neck",
 	["Off Hand"] = "Off Hand",
 	["One-Hand"] = "One-Hand",
@@ -309,6 +310,7 @@ elseif GAME_LOCALE == "deDE" then
 	Monk = "Mönch",
 	Mount = "Reittier",
 	Mounts = "Reittiere",
+	["Naval Equipment"] = "Marineausstattung", -- Needs review
 	Neck = "Hals",
 	["Off Hand"] = "Schildhand",
 	["One-Hand"] = "Einhändig",
@@ -487,6 +489,7 @@ elseif GAME_LOCALE == "frFR" then
 	Monk = "Moine", -- Needs review
 	Mount = "Monture",
 	Mounts = "Montures",
+	["Naval Equipment"] = "Équipement naval", -- Needs review
 	Neck = "Cou",
 	["Off Hand"] = "Main gauche",
 	["One-Hand"] = "A une main",
@@ -665,6 +668,7 @@ elseif GAME_LOCALE == "koKR" then
 	Monk = "수도사",
 	Mount = "탈것",
 	Mounts = "탈것",
+	["Naval Equipment"] = "해상 장비", -- Needs review
 	Neck = "목",
 	["Off Hand"] = "보조장비",
 	["One-Hand"] = "한손",
@@ -844,6 +848,7 @@ elseif GAME_LOCALE == "esES" then
 	Monk = "Monje",
 	Mount = "Montura",
 	Mounts = "Monturas",
+	["Naval Equipment"] = "Equipo naval", -- Needs review
 	Neck = "Cuello",
 	["Off Hand"] = "Mano Izquierda",
 	["One-Hand"] = "Una Mano",
@@ -1022,6 +1027,7 @@ elseif GAME_LOCALE == "esMX" then
 	Monk = "Monje", -- Needs review
 	Mount = "Montura",
 	Mounts = "Mounts", -- Needs review
+	["Naval Equipment"] = "Equipamiento naval", -- Needs review
 	Neck = "Cuello",
 	["Off Hand"] = "Mano Izquierda",
 	["One-Hand"] = "Una Mano",
@@ -1200,6 +1206,7 @@ elseif GAME_LOCALE == "ptBR" then
 	Monk = "Monge", -- Needs review
 	Mount = "Montaria",
 	Mounts = "Montarias",
+	-- ["Naval Equipment"] = "",
 	Neck = "Pescoço",
 	["Off Hand"] = "Mão Secundária",
 	["One-Hand"] = "Uma Mão",
@@ -1378,6 +1385,7 @@ elseif GAME_LOCALE == "itIT" then
 	Monk = "Monaco",
 	Mount = "Cavalcatura",
 	Mounts = "Cavalcature",
+	-- ["Naval Equipment"] = "",
 	Neck = "Collo",
 	["Off Hand"] = "Mano Secondaria",
 	["One-Hand"] = "Ad Una Mano",
@@ -1556,6 +1564,7 @@ elseif GAME_LOCALE == "ruRU" then
 	Monk = "Монах",
 	Mount = "Верховые животные",
 	Mounts = "Верховые животные",
+	["Naval Equipment"] = "Корабельное оборудование", -- Needs review
 	Neck = "Шея",
 	["Off Hand"] = "Левая рука",
 	["One-Hand"] = "Одноручное",
@@ -1734,6 +1743,7 @@ elseif GAME_LOCALE == "zhCN" then
 	Monk = "武僧",
 	Mount = "坐骑",
 	Mounts = "坐骑",
+	["Naval Equipment"] = "海军装备", -- Needs review
 	Neck = "颈部",
 	["Off Hand"] = "副手",
 	["One-Hand"] = "单手",
@@ -1912,6 +1922,7 @@ elseif GAME_LOCALE == "zhTW" then
 	Monk = "武僧",
 	Mount = "座騎",
 	Mounts = "座騎",
+	["Naval Equipment"] = "船艦設備", -- Needs review
 	Neck = "頸部",
 	["Off Hand"] = "副手",
 	["One-Hand"] = "單手",

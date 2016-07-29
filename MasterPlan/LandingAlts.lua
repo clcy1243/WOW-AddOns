@@ -26,18 +26,20 @@ local ui, core, handle = CreateFrame("Frame", "MPLandingPageAlts", GarrisonLandi
 
 	local _GarrisonLandingPageTab_SetTab = GarrisonLandingPageTab_SetTab
 	function GarrisonLandingPageTab_SetTab(...)
-		_GarrisonLandingPageTab_SetTab(...)
 		if ... == ui.Tab then
-			GarrisonLandingPage.ShipFollowerList:Hide();
-			GarrisonLandingPage.ShipFollowerTab:Hide();
+			_GarrisonLandingPageTab_SetTab(GarrisonLandingPageTab1)
+			GarrisonLandingPageReport:Hide()
 			ui:Show()
+			GarrisonLandingPage.selectedTab = 4
 			PanelTemplates_SelectTab(ui.Tab)
+			PanelTemplates_DeselectTab(GarrisonLandingPageTab1)
 		else
+			_GarrisonLandingPageTab_SetTab(...)
 			ui:Hide()
 			PanelTemplates_DeselectTab(ui.Tab)
 		end
 	end
-	hooksecurefunc("GarrisonLandingPage_UpdateTabs", function(self)
+	hooksecurefunc(GarrisonLandingPage, "UpdateTabs", function(self)
 		ui.Tab:SetPoint("LEFT", self.FleetTab:IsShown() and GarrisonLandingPageTab3 or GarrisonLandingPageTab2, "RIGHT", -5, 0)
 	end)
 	
@@ -161,7 +163,7 @@ local ui, core, handle = CreateFrame("Frame", "MPLandingPageAlts", GarrisonLandi
 		t:SetPoint("BOTTOMRIGHT", 6, -4)
 		t:SetTexCoord(1,0, 1,0)
 		t = b:CreateTexture(nil, "BACKGROUND", nil, 6)
-		t:SetTexture(0,0,0,0.25)
+		t:SetColorTexture(0,0,0,0.25)
 		t:SetPoint("TOPLEFT", 2, -2)
 		t:SetPoint("BOTTOMRIGHT", -2, 2)
 
@@ -314,7 +316,7 @@ local ui, core, handle = CreateFrame("Frame", "MPLandingPageAlts", GarrisonLandi
 	end
 end
 
-local lastIP, lastAvail = C_Garrison.GetInProgressMissions(), {}
+local lastIP, lastAvail = G.MergeFollowersAndShipyard(C_Garrison.GetInProgressMissions), {}
 function E:PLAYER_LOGOUT()
 	local t, now = {}, GetServerTime()
 	MasterPlanA.data.summary = t
@@ -336,9 +338,11 @@ function E:PLAYER_LOGOUT()
 			end
 		end
 	end
-	local r, ip = {}, lastIP or C_Garrison.GetInProgressMissions()
-	for k,v in pairs(ip) do
-		r[v.missionID] = v.missionEndTime
+	local r, ip = {}, lastIP or G.MergeFollowersAndShipyard(C_Garrison.GetInProgressMissions)
+	if ip then
+		for k,v in pairs(ip) do
+			r[v.missionID] = v.missionEndTime
+		end
 	end
 	if next(r) then
 		if r[745] then
@@ -355,7 +359,7 @@ function E:PLAYER_LOGOUT()
 	end
 end
 local function storeIP()
-	lastIP = C_Garrison.GetInProgressMissions()
+	lastIP = G.MergeFollowersAndShipyard(C_Garrison.GetInProgressMissions)
 end
 local function queueStoreIP()
 	if lastIP then
@@ -364,13 +368,17 @@ local function queueStoreIP()
 	end
 end
 local function syncAvailable()
-	local mt = C_Garrison.GetAvailableMissions()
-	G.ObserveMissions(mt, "*")
-	queueStoreIP()
 	wipe(lastAvail)
-	for i=1,#mt do
-		local m = mt[i]
-		lastAvail[m.missionID] = m
+	queueStoreIP()
+	for i=1,2 do
+		local mt = C_Garrison.GetAvailableMissions(i)
+		if mt then
+			G.ObserveMissions(mt, i)
+			for i=1,#mt do
+				local m = mt[i]
+				lastAvail[m.missionID] = m
+			end
+		end
 	end
 end
 E.GARRISON_MISSION_COMPLETE_RESPONSE, E.GARRISON_MISSION_BONUS_ROLL_COMPLETE = queueStoreIP, queueStoreIP

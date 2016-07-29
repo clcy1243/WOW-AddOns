@@ -5,7 +5,7 @@
 ShadowUF = select(2, ...)
 
 local L = ShadowUF.L
-ShadowUF.dbRevision = 55
+ShadowUF.dbRevision = 57
 ShadowUF.playerUnit = "player"
 ShadowUF.enabledUnits = {}
 ShadowUF.modules = {}
@@ -51,8 +51,8 @@ function ShadowUF:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileCopied", "ProfilesChanged")
 	self.db.RegisterCallback(self, "OnProfileReset", "ProfileReset")
 
-	local LibDualSpec = LibStub("LibDualSpec-1.0")
-	LibDualSpec:EnhanceDatabase(self.db, "ShadowedUnitFrames")
+	local LibDualSpec = LibStub("LibDualSpec-1.0", true)
+	if LibDualSpec then LibDualSpec:EnhanceDatabase(self.db, "ShadowedUnitFrames") end
 
 	-- Setup tag cache
 	self.tagFunc = setmetatable({}, {
@@ -99,6 +99,32 @@ end
 
 function ShadowUF:CheckUpgrade()
 	local revision = self.db.profile.revision or self.dbRevision
+	if( revision <= 56 ) then
+		-- new classes
+		self.db.profile.classColors.DEMONHUNTER = {r = 0.64, g = 0.19, b = 0.79}
+
+		-- new power types
+		self.db.profile.powerColors.INSANITY = {r = 0.40, g = 0, b = 0.80}
+		self.db.profile.powerColors.MAELSTROM = {r = 0.00, g = 0.50, b = 1.00}
+		self.db.profile.powerColors.FURY = {r = 0.788, g = 0.259, b = 0.992}
+		self.db.profile.powerColors.PAIN = {r = 1, g = 0, b = 0}
+		self.db.profile.powerColors.LUNAR_POWER = {r = 0.30, g = 0.52, b = 0.90}
+		self.db.profile.powerColors.ARCANECHARGES = {r = 0.1, g = 0.1, b = 0.98}
+
+		-- new bars
+		local config = self.db.profile.units
+		config.player.priestBar = {enabled = true, background = true, height = 0.40, order = 70}
+		config.player.shamanBar = {enabled = true, background = true, height = 0.40, order = 70}
+		config.player.arcaneCharges = {enabled = true, anchorTo = "$parent", order = 60, height = 0.40, anchorPoint = "BR", x = -8, y = 6, size = 12, spacing = -2, growth = "LEFT", isBar = true, showAlways = true}
+
+		-- clean out old bars
+		config.player.demonicFuryBar = nil
+		config.player.burningEmbersBar = nil
+		config.player.shadowOrbs = nil
+		config.player.eclipseBar = nil
+		config.player.monkBar = nil
+	end
+
 	if( revision <= 53 ) then
 		for i=1, #(self.db.profile.units.player.text) do
 			if( self.db.profile.units.player.text[i].anchorTo == "$eclipseBar" ) then
@@ -138,7 +164,6 @@ function ShadowUF:CheckUpgrade()
 					aura.show.player = true
 					aura.show.boss = true
 					aura.show.raid = true
-					aura.show.consolidated = true
 					aura.show.misc = true
 				end
 			end
@@ -211,8 +236,8 @@ function ShadowUF:LoadUnitDefaults()
 			highlight = {},
 			auraIndicators = {enabled = false},
 			auras = {
-				buffs = {enabled = false, perRow = 10, maxRows = 4, selfScale = 1.30, prioritize = true, show = {player = true, boss = true, raid = true, consolidated = true, misc = true}, enlarge = {}, timers = {ALL = true}},
-				debuffs = {enabled = false, perRow = 10, maxRows = 4, selfScale = 1.30, show = {player = true, boss = true, raid = true, consolidated = true, misc = true}, enlarge = {SELF = true}, timers = {ALL = true}},
+				buffs = {enabled = false, perRow = 10, maxRows = 4, selfScale = 1.30, prioritize = true, show = {player = true, boss = true, raid = true, misc = true}, enlarge = {}, timers = {ALL = true}},
+				debuffs = {enabled = false, perRow = 10, maxRows = 4, selfScale = 1.30, show = {player = true, boss = true, raid = true, misc = true}, enlarge = {SELF = true}, timers = {ALL = true}},
 			},
 		}
 		
@@ -262,17 +287,15 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.player.runeBar = {enabled = false}
 	self.defaults.profile.units.player.totemBar = {enabled = false}
 	self.defaults.profile.units.player.druidBar = {enabled = false}
-	self.defaults.profile.units.player.monkBar = {enabled = false}
+	self.defaults.profile.units.player.priestBar = {enabled = true}
+	self.defaults.profile.units.player.shamanBar = {enabled = true}
 	self.defaults.profile.units.player.xpBar = {enabled = false}
 	self.defaults.profile.units.player.fader = {enabled = false}
 	self.defaults.profile.units.player.soulShards = {enabled = true, isBar = true}
+	self.defaults.profile.units.player.arcaneCharges = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.staggerBar = {enabled = true}
-	self.defaults.profile.units.player.demonicFuryBar = {enabled = true}
 	self.defaults.profile.units.player.comboPoints = {enabled = true, isBar = true}
-	self.defaults.profile.units.player.burningEmbersBar = {enabled = true}
-	self.defaults.profile.units.player.eclipseBar = {enabled = true}
 	self.defaults.profile.units.player.holyPower = {enabled = true, isBar = true}
-	self.defaults.profile.units.player.shadowOrbs = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.chi = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.indicators.lfdRole = {enabled = true, size = 0, x = 0, y = 0}
 	self.defaults.profile.units.player.auraPoints = {enabled = false, isBar = true}
@@ -391,11 +414,7 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.auraIndicators = {
 		disabled = {},
 		missing = {},
-		linked = {
-			[GetSpellInfo(61316)] = GetSpellInfo(1459), -- Dalarn Brilliance -> AB
-			[GetSpellInfo(109773)] = GetSpellInfo(1459), -- Dark Intent -> AB
-			[GetSpellInfo(126309)] = GetSpellInfo(1459) -- Waterstrider -> AB
-		},
+		linked = {},
 		indicators = {
 			["tl"] = {name = L["Top Left"], anchorPoint = "TLI", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 4, y = -4, friendly = true, hostile = true},
 			["tr"] = {name = L["Top Right"], anchorPoint = "TRI", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -3, y = -3, friendly = true, hostile = true},
@@ -412,27 +431,19 @@ function ShadowUF:LoadUnitDefaults()
 		},
 		auras = {
 			["20707"] = [[{indicator = '', group = "Warlock", priority = 10, r = 0.42, g = 0.21, b = 0.65}]],
-			["1459"] = [[{indicator = '', group = "Mage", priority = 10, r = 0.10, g = 0.68, b = 0.88}]],
 			["116849"] = [[{r=0.19607843137255, group="Monk", indicator="c", g=1, player=false, duration=true, b=0.3843137254902, alpha=1, priority=0, icon=true, iconTexture="Interface\\Icons\\ability_monk_chicocoon"}]],
-			["1126"] = [[{r=0.47450980392157, group="Druid", indicator="", g=0.2156862745098, player=true, duration=true, missing=true, b=0.81960784313725, priority=0, alpha=1, iconTexture="Interface\\Icons\\Spell_Nature_Regeneration"}]],
 			["155777"] = [[{r=0.57647058823529, group="Druid", indicator="tr", g=0.28235294117647, player=true, duration=true, b=0.6156862745098, priority=100, alpha=1, iconTexture="Interface\\Icons\\Spell_Nature_Rejuvenation"}]],
 			["121176"] = [[{alpha=1, b=0, priority=0, r=0.062745098039216, group="PvP Flags", indicator="bl", g=1, iconTexture="Interface\\Icons\\INV_BannerPVP_03"}]],
 			["19705"] = [[{r=0.80392156862745, group="Food", indicator="", g=0.76470588235294, missing=true, duration=true, priority=0, alpha=1, b=0.24313725490196}]],
-			["19740"] = [[{r=0.93333333333333, group="Paladin", indicator="", g=0.84705882352941, selfColor={alpha=1, b=0.18823529411765, g=0.89411764705882, r=0.9843137254902, }, player=false, missing=true, duration=true, alpha=1, priority=0, b=0.15294117647059, iconTexture="Interface\\Icons\\Spell_Holy_GreaterBlessingofKings"}]],
 			["53563"] = [[{r=0.64313725490196, group="Paladin", indicator="tr", g=0.24705882352941, player=true, alpha=1, b=0.73333333333333, priority=100, duration=false, iconTexture="Interface\\Icons\\Ability_Paladin_BeaconofLight"}]],
-			["47753"] = [[{b=0, group="Priest", indicator="br", alpha=1, player=true, duration=true, r=0.8078431372549, priority=0, g=0.76862745098039, iconTexture="Interface\\Icons\\Spell_Holy_DevineAegis"}]],
 			["774"] = [[{r=0.57647058823529, group="Druid", indicator="tr", g=0.28235294117647, player=true, duration=true, b=0.6156862745098, priority=100, alpha=1, iconTexture="Interface\\Icons\\Spell_Nature_Rejuvenation"}]],
 			["33206"] = [[{r=0, group="Priest", indicator="c", g=0, b=0, duration=true, priority=0, icon=true, iconTexture="Interface\\Icons\\Spell_Holy_PainSupression"}]],
-			["974"] = [[{r=1, group="Shaman", indicator="tr", g=0.65882352941176, player=true, alpha=1, priority=10, b=0.27843137254902, iconTexture="Interface\\Icons\\Spell_Nature_SkinofEarth"}]],
 			["6788"] = [[{b=0.29019607843137, group="Priest", indicator="tl", alpha=1, player=false, g=0.56862745098039, duration=true, r=0.83921568627451, priority=20, icon=false, iconTexture="Interface\\Icons\\Spell_Holy_AshesToAshes"}]],
 			["33763"] = [[{r=0.23137254901961, group="Druid", indicator="tl", g=1, player=true, duration=true, alpha=1, priority=0, b=0.2, iconTexture="Interface\\Icons\\INV_Misc_Herb_Felblossom"}]],
-			["61316"] = [[{alpha=1, b=1, priority=0, r=0, group="Mage", indicator="", g=0.96078431372549, iconTexture="Interface\\Icons\\Achievement_Dungeon_TheVioletHold_Heroic"}]],
 			["139"] = [[{r=0.23921568627451, group="Priest", indicator="tr", g=1, player=true, alpha=1, duration=true, b=0.39607843137255, priority=10, icon=false, iconTexture="Interface\\Icons\\Spell_Holy_Renew"}]],
 			["41635"] = [[{r=1, group="Priest", indicator="br", g=0.90196078431373, missing=false, player=true, duration=false, alpha=1, b=0, priority=50, icon=false, iconTexture="Interface\\Icons\\Spell_Holy_PrayerOfMendingtga"}]],
-			["20217"] = [[{r=1, group="Paladin", indicator="", g=0.30196078431373, selfColor={alpha=1, b=0.91764705882353, g=0.058823529411765, r=1, }, player=false, duration=true, missing=true, alpha=1, priority=90, b=0.94117647058824, iconTexture="Interface\\Icons\\Spell_Magic_GreaterBlessingofKings"}]],
 			["47788"] = [[{r=0, group="Priest", indicator="c", g=0, b=0, duration=true, priority=0, icon=true, iconTexture="Interface\\Icons\\Spell_Holy_GuardianSpirit"}]],
 			["61295"] = [[{r=0.17647058823529, group="Shaman", indicator="tl", g=0.4, player=true, alpha=1, duration=true, b=1, priority=0, icon=false, iconTexture="Interface\\Icons\\spell_nature_riptide"}]],
-			["109773"] = [[{r=0.52941176470588, group="Warlock", indicator="", g=0.12941176470588, alpha=1, b=0.71372549019608, priority=0, missing=true, iconTexture="INTERFACE\\ICONS\\spell_warlock_focusshadow"}]],
 			["17"] = [[{r=1, group="Priest", indicator="tl", g=0.41960784313725, player=true, alpha=1, duration=true, b=0.5843137254902, priority=0, icon=false, iconTexture="Interface\\Icons\\Spell_Holy_PowerWordShield"}]],
 			["152118"] = [[{r=1, group="Priest", indicator="tl", g=0.41960784313725, player=true, alpha=1, duration=true, b=0.5843137254902, priority=0, icon=false, iconTexture="Interface\\Icons\\Ability_Priest_ClarityOfWill"}]],
 			["23335"] = [[{r=0, group="PvP Flags", indicator="bl", g=0, duration=false, b=0, priority=0, icon=true, iconTexture="Interface\\Icons\\INV_BannerPVP_02"}]],
@@ -441,19 +452,15 @@ function ShadowUF:LoadUnitDefaults()
 			["586"] = [[{r=0, group="Priest", indicator="", g=0.85882352941176, selfColor={alpha=1, b=1, g=0.93725490196078, r=0, }, alpha=1, priority=0, b=1, iconTexture="Interface\\Icons\\Spell_Magic_LesserInvisibilty"}]],
 			["23333"] = [[{icon=true, b=0, priority=0, r=0, group="PvP Flags", indicator="bl", g=0, iconTexture="Interface\\Icons\\INV_BannerPVP_01"}]],
 			["119611"] = [[{r=0.26274509803922, group="Monk", indicator="tl", g=0.76078431372549, player=true, duration=true, alpha=1, b=0.53725490196078, priority=0, icon=false, iconTexture="Interface\\Icons\\ability_monk_renewingmists"}]],
-			["20925"] = [[{r=1, group="Paladin", indicator="tl", g=0.98823529411765, selfColor={b=0.56078431372549, alpha=1, g=0.93725490196078, r=1, }, player=true, duration=true, alpha=1, priority=100, b=0.47450980392157, iconTexture="Interface\\Icons\\Ability_Paladin_BlessedMending"}]],
 			["8936"] = [[{r=0.12156862745098, group="Druid", indicator="br", g=0.45882352941176, player=true, duration=true, b=0.12156862745098, priority=100, alpha=1, iconTexture="Interface\\Icons\\Spell_Nature_ResistNature"}]],
-			["86273"] = [[{b=0, group="Paladin", indicator="br", g=0.45882352941176, player=true, duration=true, r=1, priority=100, alpha=1, iconTexture="Interface\\Icons\\Spell_Holy_Absolution"}]],
 			["34976"] = [[{r=0, group="PvP Flags", indicator="bl", g=0, player=false, b=0, priority=0, icon=true, iconTexture="Interface\\Icons\\INV_BannerPVP_03"}]],
 			["121164"] = [[{alpha=1, b=1, priority=0, r=0, group="PvP Flags", indicator="bl", g=0.003921568627451, iconTexture="Interface\\Icons\\INV_BannerPVP_03"}]],
 			["48438"] = [[{r=0.55294117647059, group="Druid", indicator="31685", g=1, player=true, duration=true, b=0.3921568627451, priority=100, alpha=1, iconTexture="Interface\\Icons\\Ability_Druid_Flourish"}]],
 			["1022"] = [[{r=0, group="Paladin", indicator="c", g=0, player=false, duration=true, b=0, priority=0, icon=true, iconTexture="Interface\\Icons\\Spell_Holy_SealOfProtection"}]],
-			["132120"] = [[{b=0.25098039215686, group="Monk", indicator="tr", g=1, player=true, duration=true, r=0.83137254901961, priority=100, alpha=1, iconTexture="Interface\\Icons\\spell_monk_envelopingmist"}]],
 			["121175"] = [[{r=1, group="PvP Flags", indicator="bl", g=0.24705882352941, b=0.90196078431373, alpha=1, priority=0, icon=false, iconTexture="Interface\\Icons\\INV_BannerPVP_03"}]],
 			["64844"] = [[{r=0.67843137254902, group="Priest", indicator="31685", g=0.30588235294118, player=true, alpha=1, priority=0, b=0.14117647058824, iconTexture="Interface\\Icons\\Spell_Holy_DivineProvidence"}]],
 			["124081"] = [[{r=0.51372549019608, group="Monk", indicator="br", g=1, player=true, duration=true, b=0.90588235294118, alpha=1, priority=100, icon=false, iconTexture="Interface\\Icons\\ability_monk_forcesphere"}]],
-			["21562"] = [[{r=1, group="Priest", indicator="", g=1, alpha=1, missing=true, priority=0, b=1, iconTexture="Interface\\Icons\\Spell_Holy_WordFortitude"}]],
-			["115921"] = [[{r=0.30980392156863, group="Monk", indicator="", g=0.69411764705882, selfColor={alpha=1, b=0.36078431372549, g=0.71764705882353, r=0.29803921568627, }, missing=true, alpha=1, duration=true, priority=0, b=0.019607843137255, iconTexture="Interface\\Icons\\ability_monk_legacyoftheemperor"}]],
+			["29166"] = [[{r=0, group="Druid", indicator="c", g=0, b=0, duration=true, priority=0, icon=true, iconTexture="Interface\\Icons\\Spell_Nature_Lightning"}]],
 			["189895"] = "{b=0;g=0;priority=0;r=0;group=\"Hellfire Citadel\";indicator=\"c\";icon=true;iconTexture=\"Interface\\\\Icons\\\\INV_Enchant_VoidSphere\";}",
 			["189627"] = "{b=0;g=0;priority=0;r=0;group=\"Hellfire Citadel\";indicator=\"c\";icon=true;iconTexture=\"Interface\\\\Icons\\\\achievement_zone_cataclysmgreen\";}",
 			["181306"] = "{b=0;g=0;priority=0;r=0;group=\"Hellfire Citadel\";indicator=\"c\";icon=true;iconTexture=\"Interface\\\\Icons\\\\Ability_Mage_LivingBomb\";}",
@@ -669,7 +676,7 @@ function ShadowUF:HideBlizzardFrames()
 	end
 
 	if( self.db.profile.hidden.buffs and not active_hiddens.buffs ) then
-		hideBlizzardFrames(false, BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs)
+		hideBlizzardFrames(false, BuffFrame, TemporaryEnchantFrame)
 	end
 	
 	if( self.db.profile.hidden.player and not active_hiddens.player ) then
@@ -687,7 +694,7 @@ function ShadowUF:HideBlizzardFrames()
 	end
 
 	if( self.db.profile.hidden.playerPower and not active_hiddens.playerPower ) then
-		basicHideBlizzardFrames(PriestBarFrame, PaladinPowerBar, EclipseBarFrame, ShardBarFrame, RuneFrame, MonkHarmonyBar, WarlockPowerFrame)
+		basicHideBlizzardFrames(PriestBarFrame, RuneFrame, WarlockPowerFrame, MonkHarmonyBarFrame, PaladinPowerBarFrame, MageArcaneChargesFrame)
 	end
 
 	if( self.db.profile.hidden.pet and not active_hiddens.pet ) then

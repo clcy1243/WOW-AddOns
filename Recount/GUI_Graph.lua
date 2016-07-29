@@ -4,7 +4,7 @@ local Graph = LibStub:GetLibrary("LibGraph-2.0")
 local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 
-local revision = tonumber(string.sub("$Revision: 1361 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1373 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -637,9 +637,9 @@ function me:RefreshGraph()
 			T = Background:FindTexture()
 			T:Show()
 			if Recount.GraphWindow.LastTimeOver ~= k then
-				T:SetTexture(1, 0, 0, 0.1)
+				T:SetColorTexture(1, 0, 0, 0.1)
 			else
-				T:SetTexture(1, 1, 0, 0.1)
+				T:SetColorTexture(1, 1, 0, 0.1)
 			end
 			T:SetPoint("TOPLEFT", Background, "TOPLEFT", (v[1] - XMin) * Width, 0)
 			if v[2] > XMax then
@@ -653,9 +653,9 @@ function me:RefreshGraph()
 			T = Background:FindTexture()
 			T:Show()
 			if Recount.GraphWindow.LastTimeOver ~= k then
-				T:SetTexture(1, 0, 0, 0.1)
+				T:SetColorTexture(1, 0, 0, 0.1)
 			else
-				T:SetTexture(1, 1, 0, 0.1)
+				T:SetColorTexture(1, 1, 0, 0.1)
 			end
 			T:SetPoint("TOPLEFT", Background, "TOPLEFT", (CurPos - XMin) * Width, 0)
 			if v[2] > XMax then
@@ -733,9 +733,9 @@ function me:HighlightCombatTime(time)
 	if TimeOver ~= Recount.GraphWindow.LastTimeOver then
 		for _, v in pairs(Recount.GraphWindow.GraphBackground.Textures) do
 			if v.id == TimeOver then
-				v:SetTexture(1, 1, 0, 0.1)
+				v:SetColorTexture(1, 1, 0, 0.1)
 			elseif v.id == Recount.GraphWindow.LastTimeOver then
-				v:SetTexture(1, 0, 0, 0.1)
+				v:SetColorTexture(1, 0, 0, 0.1)
 			end
 		end
 
@@ -957,7 +957,7 @@ function Recount:CreateGraphWindow()
 	theFrame.GraphBackground:EnableMouse(true)
 
 	theFrame.GraphBackground.TimeSelect = theFrame.GraphBackground:CreateTexture(nil, "BACKGROUND")
-	theFrame.GraphBackground.TimeSelect:SetTexture(0, 1, 0, 0.1)
+	theFrame.GraphBackground.TimeSelect:SetColorTexture(0, 1, 0, 0.1)
 	theFrame.GraphBackground.TimeSelect:Hide()
 
 
@@ -1212,12 +1212,12 @@ function Recount:CreateGraphWindow()
 
 		Row.Background = Row:CreateTexture(nil, "BACKGROUND")
 		Row.Background:SetAllPoints(Row)
-		Row.Background:SetTexture(1.0, 1.0, 0.0, 0.3)
+		Row.Background:SetColorTexture(1.0, 1.0, 0.0, 0.3)
 		Row.Background:Hide()
 
 		Row.Highlighted = Row:CreateTexture(nil, "BACKGROUND")
 		Row.Highlighted:SetAllPoints(Row)
-		Row.Highlighted:SetTexture(1.0, 0.0, 0.0, 0.3)
+		Row.Highlighted:SetColorTexture(1.0, 0.0, 0.0, 0.3)
 		Row.Highlighted:Hide()
 
 		Row.Who = Row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")

@@ -14,7 +14,10 @@ end
 
 do -- Feed FrameXML updates to Evie
 	local function FollowerList_OnUpdateData(self)
-		EV("FXUI_GARRISON_FOLLOWER_LIST_UPDATE", self:GetParent())
+		local p = self:GetParent()
+		if not (p == GarrisonLandingPage and C_Garrison.GetLandingPageGarrisonType() == 3) then
+			EV("FXUI_GARRISON_FOLLOWER_LIST_UPDATE", p)
+		end
 	end
 	hooksecurefunc(GarrisonMissionFrame.FollowerList, "UpdateData", FollowerList_OnUpdateData)
 	hooksecurefunc(GarrisonLandingPage.FollowerList, "UpdateData", FollowerList_OnUpdateData)
@@ -95,7 +98,7 @@ do -- GarrisonFollowerList_SortFollowers
 	function EV:MP_SETTINGS_CHANGED(s)
 		if (s == nil or s == "sortFollowers") then
 			if GarrisonMissionFrame:IsVisible() then
-				GarrisonFollowerList_UpdateFollowers(GarrisonMissionFrame.FollowerList)
+				GarrisonMissionFrame.FollowerList:UpdateFollowers()
 			end
 			toggle:SetChecked(MasterPlan:GetSortFollowers())
 		end
@@ -167,7 +170,7 @@ local GarrisonFollower_OnDoubleClick do -- Adding followers to missions
 	end
 	local function AddShipToMission(_, fid)
 		AddToMission(C_Garrison.GetFollowerInfo(fid))
-		GarrisonFollowerList_UpdateFollowers(GarrisonShipyardFrame.FollowerList)
+		GarrisonShipyardFrame.FollowerList:UpdateFollowers()
 	end
 	local origShipMenu = GarrisonShipyardFollowerOptionDropDown.initialize
 	function GarrisonShipyardFollowerOptionDropDown.initialize(self, ...)
@@ -188,8 +191,10 @@ function EV:FXUI_GARRISON_FOLLOWER_LIST_UPDATE(frame)
 	local mlvl = mi and G.GetFMLevel(mi)
 	for i=1, #buttons do
 		local btn = buttons[i]
-		if btn:IsShown() then
-			local follower, st = btn.info, btn.XPBar.statusText
+		if btn.Follower then btn = btn.Follower end
+		local follower = btn.info
+		if btn:IsShown() and follower then
+			local st = btn.XPBar.statusText
 			if not st then
 				st = btn:CreateFontString(nil, "ARTWORK", "TextStatusBarText")
 				st:SetTextColor(0.7, 0.6, 0.85)
@@ -256,7 +261,9 @@ do -- Follower counter button tooltips
 	end
 	hooksecurefunc("GarrisonFollowerButton_UpdateCounters", function(_, self)
 		if old and (fake.info ~= old.info or not (old:IsShown() and old:IsMouseOver())) then
-			GarrisonMissionMechanicFollowerCounter_OnLeave(fake)
+			if false then --FIXME
+				GarrisonMissionMechanicFollowerCounter_OnLeave(fake)
+			end
 			old, fake.info = nil
 		end
 		for i=1,#self.Counters do
@@ -336,10 +343,11 @@ function EV:FXUI_GARRISON_FOLLOWER_LIST_UPDATE(frame)
 	local mid = mi and mi.missionID
 	local upW, upA = G.GetUpgradeRange()
 	for i=1, #buttons do
-		local fi = fl[buttons[i].id]
-		if fi then
+		local b = buttons[i].Follower
+		local fi = fl[b and b.id]
+		if fi and b and b:IsShown() then
 			local tmid = G.GetFollowerTentativeMission(fi.followerID)
-			local status, ns = buttons[i].info.status or ""
+			local status, ns = b.info.status or ""
 			if tmid then
 				ns = tmid == mid and GARRISON_FOLLOWER_IN_PARTY or L"In Tentative Party"
 			elseif T.config.ignore[fi.followerID] then
@@ -350,7 +358,7 @@ function EV:FXUI_GARRISON_FOLLOWER_LIST_UPDATE(frame)
 				end
 			end
 			if ns then
-				buttons[i].Status:SetText(ns)
+				b.Status:SetText(ns)
 			end
 			if fi.level == 100 then
 				local _weaponItemID, weaponItemLevel, _armorItemID, armorItemLevel = C_Garrison.GetFollowerItems(fi.followerID)
@@ -361,11 +369,11 @@ function EV:FXUI_GARRISON_FOLLOWER_LIST_UPDATE(frame)
 				if (ns or status) == "" and weaponItemLevel ~= armorItemLevel then
 					itext = itext .. " (" .. weaponItemLevel .. "/" .. armorItemLevel .. ")"
 				end
-				buttons[i].ILevel:SetText(itext)
+				b.ILevel:SetText(itext)
 			end
 			if frame == GarrisonMissionFrame then
-				buttons[i]:SetScript("OnEnter", FollowerButton_OnEnter)
-				buttons[i]:SetScript("OnLeave", FollowerButton_OnLeave)
+				b:SetScript("OnEnter", FollowerButton_OnEnter)
+				b:SetScript("OnLeave", FollowerButton_OnLeave)
 			end
 		end
 	end
@@ -393,7 +401,7 @@ end
 local function Mechanic_OnEnter(self)
 	local mi = MISSION_PAGE_FRAME.missionInfo
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	G.SetThreatTooltip(GameTooltip, self.info.icon:lower(), nil, G.GetFMLevel(mi))
+	G.SetThreatTooltip(GameTooltip, tostring(self.info.icon), nil, G.GetFMLevel(mi))
 	GameTooltip:Show()
 end
 hooksecurefunc(GarrisonMissionFrame, "SetEnemies", function(_, f, enemies)
@@ -591,13 +599,13 @@ do -- GarrisonFollowerTooltip xp textures
 	local tf, tf2 = GarrisonFollowerTooltip, GarrisonShipyardFollowerTooltip
 	repeat
 		tf.XPGained = tf:CreateTexture(nil, "ARTWORK", nil, 2)
-		tf.XPGained:SetTexture(1, 0.8, 0.2)
+		tf.XPGained:SetColorTexture(1, 0.8, 0.2)
 		tf.XPRewardBase = tf:CreateTexture(nil, "ARTWORK", nil, 2)
-		tf.XPRewardBase:SetTexture(0.6, 1, 0)
+		tf.XPRewardBase:SetColorTexture(0.6, 1, 0)
 		tf.XPRewardBase:SetPoint("TOPLEFT", tf.XPBar, "TOPRIGHT")
 		tf.XPRewardBase:SetPoint("BOTTOMLEFT", tf.XPBar, "BOTTOMRIGHT")
 		tf.XPRewardBonus = tf:CreateTexture(nil, "ARTWORK", nil, 2)
-		tf.XPRewardBonus:SetTexture(0, 0.75, 1)
+		tf.XPRewardBonus:SetColorTexture(0, 0.75, 1)
 		tf.XPRewardBonus:SetPoint("TOPLEFT", tf.XPRewardBase, "TOPRIGHT")
 		tf.XPRewardBonus:SetPoint("BOTTOMLEFT", tf.XPRewardBase, "BOTTOMRIGHT")
 		tf, tf2 = tf2
@@ -667,20 +675,24 @@ do -- Counter-follower lists
 		end
 	end
 	
-	hooksecurefunc("GarrisonFollowerTooltipTemplate_SetGarrisonFollower", function(self, _info)
-		for i=1,#self.Abilities do
-			local ci = self.Abilities[i].CounterIcon
-			if ci:IsShown() then
-				ci:SetMask("")
-				ci:SetTexCoord(4/64,60/64,4/64,60/64)
+	if false then --FIXME
+		hooksecurefunc("GarrisonFollowerTooltipTemplate_SetGarrisonFollower", function(self, _info)
+			for i=1,#self.Abilities do
+				local ci = self.Abilities[i].CounterIcon
+				if ci:IsShown() then
+					ci:SetMask("")
+					ci:SetTexCoord(4/64,60/64,4/64,60/64)
+				end
 			end
-		end
-	end)
+		end)
+	end
 	
 	hooksecurefunc("GarrisonFollowerAbilityTooltipTemplate_SetAbility", function(self, aid)
-		self.CounterIcon:SetMask("")
-		self.CounterIcon:SetTexCoord(4/64,60/64,4/64,60/64)
-		if not aid then
+		if false then --FIXME
+			self.CounterIcon:SetMask("")
+			self.CounterIcon:SetTexCoord(4/64,60/64,4/64,60/64)
+		end
+		if not aid or not self.Details then
 			return
 		elseif self.Details:IsShown() then
 			itip:ActivateFor(self, "TOPLEFT", self.CounterIcon, "BOTTOMLEFT", -14, 16)
@@ -696,7 +708,7 @@ do -- Counter-follower lists
 		itip:Show()
 	end)
 	GarrisonMissionMechanicFollowerCounterTooltip:HookScript("OnShow", function(self)
-		local mech = G.GetMechanicInfo((self.Icon:GetTexture() or ""):lower())
+		local mech = G.GetMechanicInfo(tostring(self.Icon:GetTexture()))
 		if mech then
 			if self.CounterName:IsShown() then
 				itip:ActivateFor(self, "TOPLEFT", self.CounterIcon, "BOTTOMLEFT", -10, 16)
@@ -708,7 +720,7 @@ do -- Counter-follower lists
 		end
 	end)
 	GarrisonMissionMechanicTooltip:HookScript("OnShow", function(self)
-		local mech = self:GetParent().CloseMission and G.GetMechanicInfo((self.Icon:GetTexture() or ""):lower())
+		local mech = self:GetParent().CloseMission and G.GetMechanicInfo(self.Icon:GetTexture() or "")
 		if mech then
 			itip:ActivateFor(self, "TOPLEFT", self.Description, "BOTTOMLEFT", -10, 16)
 			G.SetThreatTooltip(itip, mech, nil, self.missionLevel, nil, true)
@@ -759,7 +771,7 @@ end
 local function SetFollowerIgnore(_, fid, val)
 	MasterPlan:SetFollowerIgnored(fid, val)
 	GarrisonMissionFrame.FollowerList.dirtyList = true
-	GarrisonFollowerList_UpdateFollowers(GarrisonMissionFrame.FollowerList)
+	GarrisonMissionFrame.FollowerList:UpdateFollowers()
 end
 hooksecurefunc(GarrisonFollowerOptionDropDown, "initialize", function(self)
 	local fi = self.followerID and C_Garrison.GetFollowerInfo(self.followerID)
@@ -810,7 +822,7 @@ do -- Follower headcounts
 	end
 	local function sync()
 		ni, nw, nx, nm = 0, 0, 0, 0
-		for k, v in pairs(G.GetFollowerInfo()) do
+		for k, v in pairs(G.GetFollowerInfo(1)) do
 			if not v.isCollected or T.config.ignore[k] or v.followerTypeID ~= 1 then
 			elseif v.status == GARRISON_FOLLOWER_WORKING then
 				nw = nw + 1
@@ -986,7 +998,7 @@ do -- Ship re-fitting
 				b.icon = ico
 				ico:SetTexture("Interface/Icons/Temp")
 				b:SetNormalTexture("Interface/Icons/Temp")
-				b:GetNormalTexture():SetTexture(0,0,0,0)
+				b:GetNormalTexture():SetColorTexture(0,0,0,0)
 				b:SetPushedTexture("Interface/Buttons/UI-QuickSlot-Depress")
 				b:SetHighlightTexture("Interface/Buttons/ButtonHilight-Square")
 				b:SetCheckedTexture("Interface/Buttons/CheckButtonHilight")
@@ -1007,7 +1019,7 @@ do -- Ship re-fitting
 				border:SetAllPoints()
 				ico:SetTexture("Interface/Icons/Temp")
 				b:SetNormalTexture("Interface/Icons/Temp")
-				b:GetNormalTexture():SetTexture(0,0,0,0)
+				b:GetNormalTexture():SetColorTexture(0,0,0,0)
 				b:SetPushedTexture("Interface/Buttons/UI-QuickSlot-Depress")
 				b:SetHighlightTexture("Interface/Buttons/ButtonHilight-Square")
 				b:SetPoint("LEFT", i*34-34 + math.floor(i/2-0.5)*12, 0)
