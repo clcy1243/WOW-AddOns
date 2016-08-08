@@ -1,9 +1,9 @@
 ------------------------------------------------------------------------
-r1376 | resike | 2016-07-28 18:58:46 +0000 (Thu, 28 Jul 2016) | 1 line
+r1377 | resike | 2016-08-05 13:12:37 +0000 (Fri, 05 Aug 2016) | 1 line
 Changed paths:
-   A /tags/v7.0.3c release (from /trunk:1375)
+   A /tags/v7.0.3d release (from /trunk:1376)
 
-Tagging as v7.0.3c release
+Tagging as v7.0.3d release
 ------------------------------------------------------------------------
 r1375 | Resike | 2016-07-28 18:56:49 +0000 (Thu, 28 Jul 2016) | 1 line
 Changed paths:
@@ -25,10 +25,4 @@ Changed paths:
 
 - Updated to 7.0.3.
 - Toc bump.
-------------------------------------------------------------------------
-r1369 | Resike | 2016-07-01 22:32:50 +0000 (Fri, 01 Jul 2016) | 1 line
-Changed paths:
-   M /trunk/GUI_Config.lua
-
-- Checkbox placement fixes.
 ------------------------------------------------------------------------
