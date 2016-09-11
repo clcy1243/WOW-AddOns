@@ -11,18 +11,24 @@ local LocalVars = TidyPlatesHubDefaults
 local RaidClassColors = RAID_CLASS_COLORS
 
 local GetAggroCondition = TidyPlatesWidgets.GetThreatCondition
+
 local IsFriend = TidyPlatesUtility.IsFriend
 local IsGuildmate = TidyPlatesUtility.IsGuildmate
-local IsTankedByAnotherTank = function() return false end
-local IsTankingAuraActive = function() return false end
+
+local IsOffTanked = TidyPlatesHubFunctions.IsOffTanked
+local IsTankingAuraActive = TidyPlatesWidgets.IsPlayerTank
 local InCombatLockdown = InCombatLockdown
 local GetFriendlyClass = HubData.Functions.GetFriendlyClass
 local GetEnemyClass = HubData.Functions.GetEnemyClass
 local StyleDelegate = TidyPlatesHubFunctions.SetStyleNamed
 local ColorFunctionByHealth = HubData.Functions.ColorFunctionByHealth
 local CachedUnitDescription = TidyPlatesUtility.CachedUnitDescription
-local CachedUnitGuild = TidyPlatesUtility.CachedUnitGuild
-local CachedUnitClass = TidyPlatesUtility.CachedUnitClass
+
+local GetUnitSubtitle = TidyPlatesUtility.GetUnitSubtitle
+local GetUnitQuestInfo = TidyPlatesUtility.GetUnitQuestInfo
+
+--local CachedUnitGuild = TidyPlatesUtility.CachedUnitGuild
+--local CachedUnitClass = TidyPlatesUtility.CachedUnitClass
 
 local AddHubFunction = TidyPlatesHubHelpers.AddHubFunction
 
@@ -65,9 +71,9 @@ local function ShortenNumber(number)
 	if not number then return "" end
 
 	if number > 1000000 then
-		return (ceil((number/1000000))).." M"
+		return (ceil((number/100000))/10).." M"
 	elseif number > 1000 then
-		return (ceil((number/10))/100).." k"
+		return (ceil((number/100))/10).." K"
 	else
 		return number
 	end
@@ -75,7 +81,7 @@ end
 
 local function SepThousands(number)
 	if not number then return "" end
-	local n = tonumber(number) 
+	local n = tonumber(number)
 
 	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)')
 	return left..(num:reverse():gsub('(%d%d%d)', '%1,'):reverse())..right
@@ -97,13 +103,13 @@ local function TextFunctionMana(unit)
 end
 
 local function GetHealth(unit)
-	--if unit.healthmaxCached then 
+	--if unit.healthmaxCached then
 		return unit.health
 	--else return nil end
 end
 
 local function GetHealthMax(unit)
-	--if unit.healthmaxCached then 
+	--if unit.healthmaxCached then
 		return unit.healthmax
 	--else return nil end
 end
@@ -150,7 +156,7 @@ local function HealthFunctionTotal(unit)
 end
 -- TargetOf
 local function HealthFunctionTargetOf(unit)
-	if unit.reaction ~= "FRIENDLY" and unit.isInCombat then 
+	if unit.reaction ~= "FRIENDLY" and unit.isInCombat then
 		return UnitName(unitid.."target")
 	end
 	--[[
@@ -350,7 +356,7 @@ end
 ------------------------------------------------------------------------------------
 local function RoleOrGuildText(unit)
 	if unit.type == "NPC" then
-		return (CachedUnitDescription(unit.name) or GetLevelDescription(unit) or "") , 1, 1, 1, .70
+		return (GetUnitSubtitle(unit) or GetLevelDescription(unit) or "") , 1, 1, 1, .70
 	end
 end
 
@@ -360,7 +366,7 @@ local function TextRoleGuildLevel(unit)
 	local r, g, b = 1,1,1
 
 	if unit.type == "NPC" then
-		description = CachedUnitDescription(unit.name)
+		description = GetUnitSubtitle(unit)
 
 		if not description then --  and unit.reaction ~= "FRIENDLY" then
 			description =  GetLevelDescription(unit)
@@ -376,13 +382,14 @@ local function TextRoleGuildLevel(unit)
 	return description, r, g, b, .70
 end
 
--- Role or Guild
+
+
 local function TextRoleGuild(unit)
 	local description
 	local r, g, b = 1,1,1
 
 	if unit.type == "NPC" then
-		description = CachedUnitDescription(unit.name)
+		description = GetUnitSubtitle(unit)
 
 	elseif unit.type == "PLAYER" then
 		description = GetGuildInfo(unit.unitid)
@@ -398,7 +405,7 @@ local function TextRoleClass(unit)
 	local r, g, b = 1,1,1
 
 	if unit.type == "NPC" then
-		description = CachedUnitDescription(unit.name)
+		description = GetUnitSubtitle(unit)
 		if not description then
 			faction, description = UnitFactionGroup(unit.unitid)
 		end
@@ -416,9 +423,30 @@ end
 -- NPC Role
 local function TextNPCRole(unit)
 	if unit.type == "NPC" then
-		return CachedUnitDescription(unit.name)
+		-- Prototype for displaying quest information on Nameplates
+		--local questName, questObjective = GetUnitQuestInfo(unit)
+		--return questObjective
+
+		return GetUnitSubtitle(unit)
 	end
 end
+
+
+local function TextQuest(unit)
+	if unit.type == "NPC" then
+
+		-- Prototype for displaying quest information on Nameplates
+		local questName, questObjective = GetUnitQuestInfo(unit)
+		return questObjective
+	end
+end
+
+-- Role or Guild
+local function TextRoleGuildQuest(unit)
+	local r, g, b = 1, .9, .7
+	return TextQuest(unit) or TextRoleGuild(unit), r, g, b, .70
+end
+
 
 -- Level
 local function TextLevelColored(unit)
@@ -434,7 +462,7 @@ function TextAll(unit)
 		return ceil(100*(unit.health/unit.healthmax)).."%", color.r, color.g, color.b, .7
 	else
 		--return GetLevelDescription(unit) , unit.levelcolorRed, unit.levelcolorGreen, unit.levelcolorBlue, .7
-		return TextRoleGuildLevel(unit)
+		return TextQuest(unit) or TextRoleGuildLevel(unit)
 	end
 end
 
@@ -445,12 +473,14 @@ TidyPlatesHubDefaults.HeadlineEnemySubtext = "RoleGuildLevel"
 TidyPlatesHubDefaults.HeadlineFriendlySubtext = "RoleGuildLevel"
 AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, DummyFunction, "None", "None")
 AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextHealthPercentColored, "Percent Health", "PercentHealth")
-AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextRoleGuildLevel, "Role, Guild or Level", "RoleGuildLevel")
-AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextRoleGuild, "Role or Guild", "RoleGuild")
+AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextRoleGuildLevel, "NPC Role, Guild, or Level", "RoleGuildLevel")
+AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextRoleGuildQuest, "NPC Role, Guild, or Quest", "RoleGuildQuest")
+AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextRoleGuild, "NPC Role, Guild", "RoleGuild")
 --AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextRoleClass, "Role or Class", "RoleClass")
 AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextNPCRole, "NPC Role", "Role")
 AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextLevelColored, "Level", "Level")
-AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextAll, "Role, Guild, Level or Health Percent", "RoleGuildLevelHealth")
+AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextQuest, "Quest", "Quest")
+AddHubFunction(EnemyNameSubtextFunctions, TidyPlatesHubMenus.EnemyNameSubtextModes, TextAll, "Everything", "RoleGuildLevelHealth")
 
 --[[
 local FriendlyNameSubtextFunctions = {}

@@ -11,7 +11,7 @@ local FilterSize	= 20
 local RampUp		= 5
 local RampDown		= 10
 
-Recount.Version = tonumber(string.sub("$Revision: 1367 $", 12, -3))
+Recount.Version = tonumber(string.sub("$Revision: 1383 $", 12, -3))
 
 local _G = _G
 local abs = abs
@@ -1133,8 +1133,8 @@ function Recount:AddPetCombatant(nameGUID, petName, nameFlags, ownerGUID, owner,
 		lastSummonOwnerName = owner
 		lastSummonOwnerGUID = ownerGUID
 	end
-	local name = petName.." <"..owner..">"
-	local combatant = dbCombatants[name] or { }
+	--local name = petName.." <"..owner..">"
+	--local combatant = dbCombatants[name] or { }
 	--[[if bit_band(ownerFlags, COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID+COMBATLOG_OBJECT_REACTION_FRIENDLY) == 0 then
 		--return -- Elsia: We only keep affiliated or friendly pets. These flags can be horribly wrong unfortunately
 	end
@@ -1146,6 +1146,8 @@ function Recount:AddPetCombatant(nameGUID, petName, nameFlags, ownerGUID, owner,
 	if inheritowner then -- This should only happen for pets of pets such as greater elementals
 		owner = inheritowner 
 	end
+	local name = petName.." <"..owner..">"
+	local combatant = dbCombatants[name] or { }
 	--local elementschool = petName:match("(.*) Elemental Totem")
 	--Recount:Print(petName.." "..(elementschool or "nil").." "..nameGUID:sub(3,-1)) -- This line needs adjusted to 6.0.2 GUID system to ever function
 	--if bit_band(nameFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) then

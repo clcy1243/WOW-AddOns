@@ -8,7 +8,7 @@ local LocalVars = TidyPlatesHubDefaults
 ------------------------------------------------------------------------------
 local InCombatLockdown = InCombatLockdown
 local GetAggroCondition = TidyPlatesWidgets.GetThreatCondition
-local IsTankedByAnotherTank = TidyPlatesWidgets.IsTankedByAnotherTank
+local IsOffTanked = TidyPlatesHubFunctions.IsOffTanked
 local IsTankingAuraActive = TidyPlatesWidgets.IsPlayerTank
 local IsHealer = function() return false end
 local IsAuraShown = function() return false end
@@ -36,7 +36,7 @@ end
 -- Tank Mode
 local function AlphaFunctionByThreatLow (unit)
 	if InCombatLockdown() and unit.reaction ~= "FRIENDLY" then
-		if IsTankedByAnotherTank(unit) then return end
+		if IsOffTanked(unit) then return end
 		if unit.threatValue < 2 and unit.health > 0 then return LocalVars.OpacitySpotlight end
 	elseif LocalVars.ColorShowPartyAggro and unit.reaction == "FRIENDLY" then
 		if GetAggroCondition(unit.rawName) then return LocalVars.OpacitySpotlight end
@@ -147,13 +147,15 @@ local function AlphaDelegate(...)
 	end
 
 	if unit.isTarget then return Diminish(LocalVars.OpacityTarget)
-	elseif unit.isCasting and unit.reaction == "HOSTILE" and LocalVars.OpacitySpotlightSpell then alpha = LocalVars.OpacitySpotlight
+	--elseif unit.isCasting and unit.reaction == "HOSTILE" and LocalVars.OpacitySpotlightSpell then alpha = LocalVars.OpacitySpotlight
+	elseif unit.isCasting and LocalVars.OpacitySpotlightSpell then alpha = LocalVars.OpacitySpotlight
 	elseif unit.isMouseover and LocalVars.OpacitySpotlightMouseover then alpha = LocalVars.OpacitySpotlight
 	elseif unit.isMarked and LocalVars.OpacitySpotlightRaidMarked then alpha = LocalVars.OpacitySpotlight
 
 	else
 		-- Filter
-		if UnitFilter(unit) then alpha = LocalVars.OpacityFiltered
+		if UnitFilter(unit) then
+			alpha = LocalVars.OpacityFiltered
 		-- Spotlight
 		else
 			local func = DummyFunction
@@ -168,12 +170,11 @@ local function AlphaDelegate(...)
 		end
 	end
 
+	if not (alpha or UnitExists("target") ) and LocalVars.OpacityFullNoTarget then return Diminish(LocalVars.OpacityTarget) end
 
+	--print("Alpha", alpha)
 	if alpha then return Diminish(alpha)
-	else
-		if (not UnitExists("target")) and LocalVars.OpacityFullNoTarget then return Diminish(LocalVars.OpacityTarget)
-		else return Diminish(LocalVars.OpacityNonTarget) end
-	end
+	else return Diminish(LocalVars.OpacityNonTarget) end
 end
 
 ------------------------------------------------------------------------------

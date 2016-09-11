@@ -295,7 +295,7 @@ local function updateGroup(self, type, config, reverseConfig)
 	group.type = type
 	group.parent = self
 	group.anchorTo = self
-	group:SetFrameLevel(5)
+	group:SetFrameLevel(self.highFrame:GetFrameLevel() + 1)
 	group:Show()
 
 	-- If debuffs are anchored to buffs, debuffs need to grow however buffs do
@@ -524,7 +524,7 @@ local function renderAura(parent, frame, type, config, displayConfig, index, fil
 
 	-- Now do our type filter
 	local category = categorizeAura(type, curable, auraType, caster, isRemovable, canApplyAura, isBossDebuff)
-	if( not config.show[category] ) then return end
+	if( not config.show[category] and (not config.show.relevant or (type == "debuffs") ~= isFriendly) ) then return end
 
 	-- Create any buttons we need
 	frame.totalAuras = frame.totalAuras + 1

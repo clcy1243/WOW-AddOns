@@ -12,7 +12,7 @@ TidyPlatesHubDefaults = {
 	-- Style
 	---------------------------------------
 	StyleHeadlineOutOfCombat = false,
-	StyleHeadlineNeutral = false,
+
 
 	StyleFriendlyBarsOnActive = true,
 	StyleFriendlyBarsOnElite = false,
@@ -28,6 +28,9 @@ TidyPlatesHubDefaults = {
 
 	StyleForceBarsOnTargets = false,
 
+	StyleHeadlineNeutral = false,
+	StyleHeadlineMiniMobs = false,
+
 	ColorEnemyBarMode =  1,
 	ColorEnemyNameMode = 1,
 	ColorEnemyStatusTextMode = 1,
@@ -39,6 +42,8 @@ TidyPlatesHubDefaults = {
 	TextShowOnlyOnActive = false,
 
 
+
+
 	-- Headline
 	---------------------------------------
 	StyleEnemyMode = 1,
@@ -47,6 +52,7 @@ TidyPlatesHubDefaults = {
 	HeadlineEnemyColor = 4,
 	HeadlineFriendlyColor = 4,
 	HeadlineEnemySubtext = 3,
+
 
 	-- Opacity
 	---------------------------------------
@@ -87,11 +93,14 @@ TidyPlatesHubDefaults = {
 
 	OpacityFilterNeutralUnits = false,		-- OpacityHideNeutral = false,
 	OpacityFilterNonElite = false,			-- OpacityHideNonElites = false,
-	OpacityFilterNPC = false,
+	OpacityFilterEnemyNPC = false,
 	OpacityFilterPlayers = false,
 	OpacityFilterFriendlyNPC = false,
 	OpacityFilterInactive = false,
 	OpacityFilterMini = false,
+
+	OpacityFilterUntitledFriendlyNPC = true,
+
 	OpacityFilterList = "Fanged Pit Viper\nLiberated Karabor Prisoner",
 	OpacityFilterLookup = {},
 
@@ -105,7 +114,7 @@ TidyPlatesHubDefaults = {
 	ScaleIgnoreInactive = false,
 	ScaleCastingSpotlight = false,
 	ScaleTargetSpotlight = false,
-	ScaleMiniMobs = true,
+	--ScaleMiniMobs = true,
 	ScaleMouseoverSpotlight = false,
 
 	-- Text

@@ -5,7 +5,7 @@
 ShadowUF = select(2, ...)
 
 local L = ShadowUF.L
-ShadowUF.dbRevision = 57
+ShadowUF.dbRevision = 59
 ShadowUF.playerUnit = "player"
 ShadowUF.enabledUnits = {}
 ShadowUF.modules = {}
@@ -99,6 +99,46 @@ end
 
 function ShadowUF:CheckUpgrade()
 	local revision = self.db.profile.revision or self.dbRevision
+	if( revision <= 58 ) then
+		for unit, config in pairs(self.db.profile.units) do
+			if config.text then
+				local i = 1
+				while i <= #config.text do
+					local text
+					if rawget(config.text, i) or i <= #(self.defaults.profile.units[unit].text) then
+						text = config.text[i]
+					end
+
+					if not text then
+						table.remove(config.text, i)
+					elseif text.anchorTo == "$demonicFuryBar" or text.anchorTo == "$eclipseBar" or text.anchorTo == "$burningEmbersBar" or text.anchorTo == "$monkBar" then
+						table.remove(config.text, i)
+					elseif i > 6 and text.default and text.anchorTo == "$emptyBar" then
+						table.remove(config.text, i)
+					else
+						if text.anchorTo == "$emptyBar" and text.name == L["Left text"] then
+							text.width = 0.50
+						end
+
+						i = i + 1
+					end
+				end
+
+				if not config.text[6] or config.text[6].anchorTo ~= "$emptyBar" then
+					table.insert(config.text, 6, {enabled = true, width = 0.60, name = L["Right text"], text = "", anchorTo = "$emptyBar", anchorPoint = "CRI", size = 0, x = -3, y = 0, default = true})
+				else
+					config.text[6].width = 0.60
+					config.text[6].name = L["Right text"]
+					config.text[6].anchorPoint = "CRI"
+					config.text[6].size = 0
+					config.text[6].x = -3
+					config.text[6].y = 0
+					config.text[6].default = true
+				end
+			end
+		end
+	end
+
 	if( revision <= 56 ) then
 		-- new classes
 		self.db.profile.classColors.DEMONHUNTER = {r = 0.64, g = 0.19, b = 0.79}
@@ -123,15 +163,6 @@ function ShadowUF:CheckUpgrade()
 		config.player.shadowOrbs = nil
 		config.player.eclipseBar = nil
 		config.player.monkBar = nil
-	end
-
-	if( revision <= 53 ) then
-		for i=1, #(self.db.profile.units.player.text) do
-			if( self.db.profile.units.player.text[i].anchorTo == "$eclipseBar" ) then
-				table.remove(self.db.profile.units.player.text, i)
-				break
-			end
-		end
 	end
 
 	if( revision <= 49 ) then
@@ -226,11 +257,13 @@ function ShadowUF:LoadUnitDefaults()
 			portrait = {enabled = false},
 			castBar = {enabled = false, name = {}, time = {}},
 			text = {
-				{enabled = true, name = L["Left text"], text = "[name]", anchorPoint = "C", anchorTo = "$healthBar", size = 0},
-				{enabled = true, name = L["Right text"], text = "[curmaxhp]", anchorPoint = "C", anchorTo = "$healthBar", size = 0},
-				{enabled = true, name = L["Left text"], text = "[level] [race]", anchorPoint = "C", anchorTo = "$powerBar", size = 0},
-				{enabled = true, name = L["Right text"], text = "[curmaxpp]", anchorPoint = "C", anchorTo = "$powerBar", size = 0},
-				{enabled = true, name = L["Text"], text = "", anchorTo = "$emptyBar", anchorPoint = "C", size = 0, x = 0, y = 0}
+				{enabled = true, name = L["Left text"], text = "[name]", anchorPoint = "CLI", anchorTo = "$healthBar", width = 0.50, size = 0, x = 3, y = 0, default = true},
+				{enabled = true, name = L["Right text"], text = "[curmaxhp]", anchorPoint = "CRI", anchorTo = "$healthBar", width = 0.60, size = 0, x = -3, y = 0, default = true},
+				{enabled = true, name = L["Left text"], text = "[level] [race]", anchorPoint = "CLI", anchorTo = "$powerBar", width = 0.50, size = 0, x = 3, y = 0, default = true},
+				{enabled = true, name = L["Right text"], text = "[curmaxpp]", anchorPoint = "CRI", anchorTo = "$powerBar", width = 0.60, size = 0, x = -3, y = 0, default = true},
+				{enabled = true, name = L["Left text"], text = "", anchorTo = "$emptyBar", anchorPoint = "CLI", width = 0.50, size = 0, x = 3, y = 0, default = true},
+				{enabled = true, name = L["Right text"], text = "", anchorTo = "$emptyBar", anchorPoint = "CRI", width = 0.60, size = 0, x = -3, y = 0, default = true},
+				['*'] = {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0},
 			},
 			indicators = {raidTarget = {enabled = true, size = 0}}, 
 			highlight = {},
@@ -299,8 +332,6 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.player.chi = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.indicators.lfdRole = {enabled = true, size = 0, x = 0, y = 0}
 	self.defaults.profile.units.player.auraPoints = {enabled = false, isBar = true}
-	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
-	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})

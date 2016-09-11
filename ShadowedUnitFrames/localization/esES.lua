@@ -149,7 +149,6 @@ L["Cur/Max HP (Short)"] = "Actual/Máximo HP (Corto)" -- Needs review
 L["Cur/Max power (Druid)"] = "Actual/Máximo Mana (Druida)" -- Needs review
 L["Cur/Max Power (Short)"] = "Actual/Máximo Mana (Corto)" -- Needs review
 L["Current and maximum power, formatted as [curpp]/[maxpp]."] = "Actual y Máximo Mana, tienen el formato [curpp]/[maxpp]" -- Needs review
-L["Current health (Druid/Absolute)"] = "Actual Salud (Druida/Absoluto)" -- Needs review
 L["Current HP (Absolute)"] = "Actual HP (Absoluto)" -- Needs review
 L["Current HP (Short)"] = "Actual HP (Corto)" -- Needs review
 L["Currently modifying"] = "Actualmente modificando"

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1667, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15045 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15144 $"):sub(12, -3))
 mod:SetCreatureID(100497)
 mod:SetEncounterID(1841)
 mod:SetZone()
@@ -21,6 +21,7 @@ mod:RegisterEventsInCombat(
 )
 
 --TODO, find a good voice for roaring. Maybe watch step? move away?
+--TODO, multiple auto assignments. Assign by group regardless of debuff status. Assign by smart mode (current default). Maybe other options?
 local warnFocusedGaze				= mod:NewTargetCountAnnounce(198006, 3)
 local warnBloodFrenzy				= mod:NewSpellAnnounce(198388, 4)
 
@@ -118,6 +119,7 @@ function mod:OnCombatStart(delay)
 	countdownRendFlesh:Start(13-delay)
 	timerFocusedGazeCD:Start(19-delay, 1)
 	countdownFocusedGazeCD:Start(19-delay)
+	timerRoaringCacophonyCD:Start(37-delay)
 	berserkTimer:Start(-delay)
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:SetHeader(GetSpellInfo(198108))
@@ -148,8 +150,8 @@ function mod:SPELL_CAST_START(args)
 		self.vb.roarCount = self.vb.roarCount + 1
 		specWarnRoaringCacophony:Show(self.vb.roarCount)
 		voiceRoaringCacophony:Play("aesoon")
-		if self:IsFaceroll() then
-			--No echos, just every 40 seconds from boss only
+		if self:IsLFR() then
+			--No echos, just every 40 seconds
 			timerRoaringCacophonyCD:Start(40, self.vb.roarCount + 1)
 		else
 			if self.vb.roarCount % 2 == 0 then

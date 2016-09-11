@@ -68,6 +68,15 @@ function Tags:RegisterEvents(parent, fontString, tags)
 				else
 					parent:RegisterNormalEvent(event, fontString, "UpdateTags")
 				end
+
+				-- register UNIT_MANA event since its the only event that fires after repopping at a spirit healer
+				if event == "UNIT_POWER" or event == "UNIT_POWER_FREQUENT" then
+					parent:RegisterUnitEvent("UNIT_MANA", fontString, "UpdateTags")
+
+					if ( parent.unit == "player" ) then
+						parent:RegisterNormalEvent("PLAYER_UNGHOST", fontString, "UpdateTags")
+					end
+				end
 			end
 		end
 	end
@@ -778,51 +787,21 @@ Tags.defaultTags = {
 		local points = UnitPower(ShadowUF.playerUnit, SPELL_POWER_HOLY_POWER)
 		return points and points > 0 and points
 	end]],
-	["priest:shadoworbs"] = [[function(unit, unitOwner)
-		local points = UnitPower(ShadowUF.playerUnit, SPELL_POWER_SHADOW_ORBS)
-		return points and points > 0 and points
-	end]],
 	["monk:chipoints"] = [[function(unit, unitOwner)
 		local points = UnitPower(ShadowUF.playerUnit, SPELL_POWER_CHI)
 		return points and points > 0 and points
 	end]],
-	["warlock:demonic:perpp"] = [[function(unit, unitOwner)
-		local maxPower = UnitPowerMax(unit, SPELL_POWER_DEMONIC_FURY)
-		if( maxPower <= 0 ) then
-			return nil
-		elseif( UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) ) then
-			return "0%"
-		end
-		
-		return string.format("%d%%", math.floor(UnitPower(unit, SPELL_POWER_DEMONIC_FURY) / maxPower * 100 + 0.5))
-	end]],
-	["warlock:demonic:maxpp"] = [[function(unit, unitOwner)
-		local power = UnitPowerMax(unit, SPELL_POWER_DEMONIC_FURY)
-		if( power <= 0 ) then
-			return nil
-		elseif( UnitIsDeadOrGhost(unit) ) then
-			return 0
-		end
-		
-		return ShadowUF:FormatLargeNumber(power)
-	end]],
-	["warlock:demonic:curpp"] = [[function(unit, unitOwner)
-		local power = UnitPower(unit, SPELL_POWER_DEMONIC_FURY)
-		if( power <= 0 ) then
-			return nil
-		elseif( UnitIsDeadOrGhost(unit) ) then
-			return 0
-		end
-		
-		return ShadowUF:FormatLargeNumber(power)
-	end]],
 	["cpoints"] = [[function(unit, unitOwner)
-		local points = GetComboPoints(ShadowUF.playerUnit)
-		if( points == 0 ) then
-			points = GetComboPoints(ShadowUF.playerUnit, ShadowUF.playerUnit)
+		if( UnitHasVehicleUI("player") and UnitHasVehiclePlayerFrameUI("player") ) then
+			local points = GetComboPoints("vehicle")
+			if( points == 0 ) then
+				points = GetComboPoints("vehicle", "vehicle")
+			end
+
+			return points
+		else
+			return UnitPower("player", SPELL_POWER_COMBO_POINTS)
 		end
-		
-		return points > 0 and points
 	end]],
 	["smartlevel"] = [[function(unit, unitOwner)
 		local classif = UnitClassification(unit)
@@ -885,19 +864,19 @@ Tags.defaultTags = {
 	["druid:curpp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		local powerType = UnitPowerType(unit)
-		if( powerType ~= 1 and powerType ~= 3 ) then return nil end
+		if( powerType ~= SPELL_POWER_RAGE and powerType ~= SPELL_POWER_ENERGY and powerType ~= SPELL_POWER_LUNAR_POWER ) then return nil end
 		return ShadowUF:FormatLargeNumber(UnitPower(unit, SPELL_POWER_MANA))
 	end]],
 	["druid:abscurpp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		local powerType = UnitPowerType(unit)
-		if( powerType ~= 1 and powerType ~= 3 ) then return nil end
+		if( powerType ~= SPELL_POWER_RAGE and powerType ~= SPELL_POWER_ENERGY and powerType ~= SPELL_POWER_LUNAR_POWER ) then return nil end
 		return UnitPower(unit, SPELL_POWER_MANA)
 	end]],
 	["druid:curmaxpp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		local powerType = UnitPowerType(unit)
-		if( powerType ~= 1 and powerType ~= 3 ) then return nil end
+		if( powerType ~= SPELL_POWER_RAGE and powerType ~= SPELL_POWER_ENERGY and powerType ~= SPELL_POWER_LUNAR_POWER ) then return nil end
 		
 		local maxPower = UnitPowerMax(unit, SPELL_POWER_MANA)
 		local power = UnitPower(unit, SPELL_POWER_MANA)
@@ -911,26 +890,52 @@ Tags.defaultTags = {
 	end]],
 	["druid:absolutepp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
-		if( GetSpecialization() ~= SPEC_MONK_MISTWEAVER ) then return nil end
+		local powerType = UnitPowerType(unit)
+		if( powerType ~= SPELL_POWER_RAGE and powerType ~= SPELL_POWER_ENERGY and powerType ~= SPELL_POWER_LUNAR_POWER ) then return nil end
 
 		return UnitPower(unit, SPELL_POWER_MANA)
 	end]],
-	["monk:curpp"] = [[function(unit, unitOwner)
-		if( select(2, UnitClass(unit)) ~= "MONK" ) then return nil end
-		if( GetSpecialization() ~= SPEC_MONK_MISTWEAVER ) then return nil end
-
+	["sec:curpp"] = [[function(unit, unitOwner)
+		local class = select(2, UnitClass(unit))
+		local powerType = UnitPowerType(unit)
+		if( class == "DRUID" ) then
+			if( powerType ~= SPELL_POWER_RAGE and powerType ~= SPELL_POWER_ENERGY and powerType ~= SPELL_POWER_LUNAR_POWER ) then return nil end
+		elseif( class == "PRIEST" ) then
+			if( powerType ~= SPELL_POWER_INSANITY ) then return nil end
+		elseif( class == "SHAMAN" ) then
+			if( powerType ~= SPELL_POWER_MAELSTROM ) then return nil end
+		else
+			return nil
+		end
 		return ShadowUF:FormatLargeNumber(UnitPower(unit, SPELL_POWER_MANA))
 	end]],
-	["monk:abscurpp"] = [[function(unit, unitOwner)
-		if( select(2, UnitClass(unit)) ~= "MONK" ) then return nil end
-		if( GetSpecialization() ~= SPEC_MONK_MISTWEAVER ) then return nil end
-
+	["sec:abscurpp"] = [[function(unit, unitOwner)
+		local class = select(2, UnitClass(unit))
+		local powerType = UnitPowerType(unit)
+		if( class == "DRUID" ) then
+			if( powerType ~= SPELL_POWER_RAGE and powerType ~= SPELL_POWER_ENERGY and powerType ~= SPELL_POWER_LUNAR_POWER ) then return nil end
+		elseif( class == "PRIEST" ) then
+			if( powerType ~= SPELL_POWER_INSANITY ) then return nil end
+		elseif( class == "SHAMAN" ) then
+			if( powerType ~= SPELL_POWER_MAELSTROM ) then return nil end
+		else
+			return nil
+		end
 		return UnitPower(unit, SPELL_POWER_MANA)
 	end]],
-	["monk:curmaxpp"] = [[function(unit, unitOwner)
-		if( select(2, UnitClass(unit)) ~= "MONK" ) then return nil end
-		if( GetSpecialization() ~= SPEC_MONK_MISTWEAVER ) then return nil end
-		
+	["sec:curmaxpp"] = [[function(unit, unitOwner)
+		local class = select(2, UnitClass(unit))
+		local powerType = UnitPowerType(unit)
+		if( class == "DRUID" ) then
+			if( powerType ~= SPELL_POWER_RAGE and powerType ~= SPELL_POWER_ENERGY and powerType ~= SPELL_POWER_LUNAR_POWER ) then return nil end
+		elseif( class == "PRIEST" ) then
+			if( powerType ~= SPELL_POWER_INSANITY ) then return nil end
+		elseif( class == "SHAMAN" ) then
+			if( powerType ~= SPELL_POWER_MAELSTROM ) then return nil end
+		else
+			return nil
+		end
+
 		local maxPower = UnitPowerMax(unit, SPELL_POWER_MANA)
 		local power = UnitPower(unit, SPELL_POWER_MANA)
 		if( UnitIsDeadOrGhost(unit) ) then
@@ -938,19 +943,28 @@ Tags.defaultTags = {
 		elseif( maxPower == 0 and power == 0 ) then
 			return nil
 		end
-		
+
 		return string.format("%s/%s", ShadowUF:FormatLargeNumber(power), ShadowUF:FormatLargeNumber(maxPower))
 	end]],
-	["monk:absolutepp"] = [[function(unit, unitOwner)
-		if( select(2, UnitClass(unit)) ~= "MONK" ) then return nil end
-		if( GetSpecialization() ~= SPEC_MONK_MISTWEAVER ) then return nil end
+	["sec:absolutepp"] = [[function(unit, unitOwner)
+		local class = select(2, UnitClass(unit))
+		local powerType = UnitPowerType(unit)
+		if( class == "DRUID" ) then
+			if( powerType ~= SPELL_POWER_RAGE and powerType ~= SPELL_POWER_ENERGY and powerType ~= SPELL_POWER_LUNAR_POWER ) then return nil end
+		elseif( class == "PRIEST" ) then
+			if( powerType ~= SPELL_POWER_INSANITY ) then return nil end
+		elseif( class == "SHAMAN" ) then
+			if( powerType ~= SPELL_POWER_MAELSTROM ) then return nil end
+		else
+			return nil
+		end
 
 		return UnitPower(unit, SPELL_POWER_MANA)
 	end]],
 	["per:incheal"] = [[function(unit, unitOwner, fontString)
 		local heal = UnitGetIncomingHeals(unit)
 		local maxHealth = UnitHealthMax(unit)
-		return heal and heal > 0 and maxHealth > 0 and string.format("%d%%", (heal / maxHealth))
+		return heal and heal > 0 and maxHealth > 0 and string.format("%d%%", (heal / maxHealth) * 100)
 	end]],
 	["abs:incheal"] = [[function(unit, unitOwner, fontString)
 	    local heal = UnitGetIncomingHeals(unit) 
@@ -1060,10 +1074,10 @@ Tags.defaultEvents = {
 	["druid:abscurpp"]      	= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["druid:curmaxpp"]			= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
 	["druid:absolutepp"]		= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
-	["monk:curpp"]  	    	= "SUF_POWERTYPE:LIGHT_FORCE UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
-	["monk:abscurpp"]      		= "SUF_POWERTYPE:LIGHT_FORCE UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
-	["monk:curmaxpp"]			= "SUF_POWERTYPE:LIGHT_FORCE UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
-	["monk:absolutepp"]			= "SUF_POWERTYPE:LIGHT_FORCE UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
+	["sec:curpp"]  	    		= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
+	["sec:abscurpp"]      		= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
+	["sec:curmaxpp"]			= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
+	["sec:absolutepp"]			= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
 	["sshards"]					= "SUF_POWERTYPE:SOUL_SHARDS UNIT_POWER_FREQUENT",
 	["hpower"]					= "SUF_POWERTYPE:HOLY_POWER UNIT_POWER_FREQUENT",
 	["level"]               	= "UNIT_LEVEL UNIT_FACTION PLAYER_LEVEL_UP",
@@ -1099,11 +1113,7 @@ Tags.defaultEvents = {
 	["unit:scaled:threat"]		= "UNIT_THREAT_SITUATION_UPDATE",
 	["unit:color:sit"]			= "UNIT_THREAT_SITUATION_UPDATE",
 	["unit:situation"]			= "UNIT_THREAT_SITUATION_UPDATE",
-	["warlock:demonic:curpp"]	= "SUF_POWERTYPE:DEMONIC_FURY UNIT_POWER_FREQUENT",
-	["warlock:demonic:maxpp"] 	= "SUF_POWERTYPE:DEMONIC_FURY UNIT_MAXPOWER",
-	["warlock:demonic:perpp"] 	= "SUF_POWERTYPE:DEMONIC_FURY UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["monk:chipoints"]			= "SUF_POWERTYPE:LIGHT_FORCE UNIT_POWER_FREQUENT",
-	["priest:shadoworbs"]		= "SUF_POWERTYPE:SHADOW_ORBS UNIT_POWER_FREQUENT",
 }
 	
 -- Default update frequencies for tag updating, used if it's needed to override the update speed
@@ -1188,11 +1198,10 @@ Tags.defaultCategories = {
 	["druid:abscurpp"]  	    = "classspec",
 	["druid:curmaxpp"]			= "classspec",
 	["druid:absolutepp"]		= "classspec",
-	["druid:eclipse"]			= "classspec",
-	["monk:curpp"]     	   		= "classspec",
-	["monk:abscurpp"]  	  	 	= "classspec",
-	["monk:curmaxpp"]			= "classspec",
-	["monk:absolutepp"]			= "classspec",
+	["sec:curpp"]     	    	= "classspec",
+	["sec:abscurpp"]  	    	= "classspec",
+	["sec:curmaxpp"]			= "classspec",
+	["sec:absolutepp"]			= "classspec",
 	["sshards"]					= "classspec",
 	["hpower"]					= "classspec",
 	["situation"]				= "playerthreat",
@@ -1207,11 +1216,7 @@ Tags.defaultCategories = {
 	["unit:color:aggro"]		= "threat",
 	["unit:raid:assist"]		= "raid",
 	["unit:raid:targeting"] 	= "raid",
-	["warlock:demonic:curpp"]	= "classspec",
-	["warlock:demonic:maxpp"] 	= "classspec",
-	["warlock:demonic:perpp"] 	= "classspec",
 	["monk:chipoints"]			= "classspec",
-	["priest:shadoworbs"]		= "classspec",
 	["monk:stagger"]			= "classspec",
 	["monk:abs:stagger"]		= "classspec"
 }
@@ -1287,10 +1292,10 @@ Tags.defaultHelp = {
 	["druid:abscurpp"]      	= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "abscurpp"),
 	["druid:curmaxpp"]			= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "curmaxpp"),
 	["druid:absolutepp"]		= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "absolutepp"),
-	["monk:curpp"]         		= string.format(L["Works the same as [%s], but this is only shown if you are a Mistweaver Monk."], "currpp"),
-	["monk:abscurpp"]      		= string.format(L["Works the same as [%s], but this is only shown if you are a Mistweaver Monk."], "abscurpp"),
-	["monk:curmaxpp"]			= string.format(L["Works the same as [%s], but this is only shown if you are a Mistweaver Monk."], "curmaxpp"),
-	["monk:absolutepp"]			= string.format(L["Works the same as [%s], but this is only shown if you are a Mistweaver Monk."], "absolutepp"),
+	["sec:curpp"]         		= string.format(L["Works the same as [%s], but always shows mana and is only shown if mana is a secondary power."], "curpp"),
+	["sec:abscurpp"]      		= string.format(L["Works the same as [%s], but always shows mana and is only shown if mana is a secondary power."], "abscurpp"),
+	["sec:curmaxpp"]			= string.format(L["Works the same as [%s], but always shows mana and is only shown if mana is a secondary power."], "curmaxpp"),
+	["sec:absolutepp"]			= string.format(L["Works the same as [%s], but always shows mana and is only shown if mana is a secondary power."], "absolutepp"),
 	["situation"]				= L["Returns text based on your threat situation with your target: Aggro for Aggro, High for being close to taking aggro, and Medium as a general warning to be wary."],
 	["color:sit"]				= L["Returns a color code of the threat situation with your target: Red for Aggro, Orange for High threat and Yellow to be careful."],
 	["scaled:threat"]			= L["Returns a scaled threat percent of your aggro on your current target, always 0 - 100%."],
@@ -1303,11 +1308,7 @@ Tags.defaultHelp = {
 	["color:aggro"]				= L["Same as [color:sit] except it only returns red if you have aggro, rather than transiting from yellow -> orange -> red."],
 	["unit:raid:targeting"]		= L["How many people in your raid are targeting the unit, for example if you put this on yourself it will show how many people are targeting you. This includes you in the count!"],
 	["unit:raid:assist"]		= L["How many people are assisting the unit, for example if you put this on yourself it will show how many people are targeting your target. This includes you in the count!"],
-	["warlock:demonic:curpp"]	= string.format(L["Works the same as [%s], but this is usedd to show Demonic Fury power for Demonology Warlocks."], "curpp"),
-	["warlock:demonic:maxpp"] 	= string.format(L["Works the same as [%s], but this is usedd to show Demonic Fury power for Demonology Warlocks."], "maxpp"),
-	["warlock:demonic:perpp"] 	= string.format(L["Works the same as [%s], but this is usedd to show Demonic Fury power for Demonology Warlocks."], "perpp"),
 	["monk:chipoints"]			= L["How many Chi points you currently have."],
-	["priest:shadoworbs"]		= L["How many Shadow Orbs you have if you're Shadow"],
 	["monk:stagger"]			= L["Shows the current staggered damage, if 12,000 damage is staggered, shows 12k."],
 	["monk:abs:stagger"]		= L["Shows the absolute staggered damage, if 16,000 damage is staggered, shows 16,000."]
 }
@@ -1384,11 +1385,11 @@ Tags.defaultNames = {
 	["druid:curpp"]         	= L["Current power (Druid)"],
 	["druid:abscurpp"]      	= L["Current power (Druid/Absolute)"],
 	["druid:curmaxpp"]			= L["Cur/Max power (Druid)"],
-	["druid:absolutepp"]		= L["Current health (Druid/Absolute)"],
-	["monk:curpp"]        	 	= L["Current power (Monk)"],
-	["monk:abscurpp"]   	   	= L["Current power (Monk/Absolute)"],
-	["monk:curmaxpp"]			= L["Cur/Max power (Monk)"],
-	["monk:absolutepp"]			= L["Current health (Monk/Absolute)"],
+	["druid:absolutepp"]		= L["Cur/Max power (Druid/Absolute)"],
+	["sec:curpp"]         		= L["Current power (Secondary)"],
+	["sec:abscurpp"]      		= L["Current power (Secondary/Absolute)"],
+	["sec:curmaxpp"]			= L["Cur/Max power (Secondary)"],
+	["sec:absolutepp"]			= L["Cur/Max power (Secondary/Absolute)"],
 	["situation"]				= L["Threat situation"],
 	["color:sit"]				= L["Color code for situation"],
 	["scaled:threat"]			= L["Scaled threat percent"],
@@ -1398,11 +1399,7 @@ Tags.defaultNames = {
 	["unit:color:aggro"]		= L["Unit color code on aggro"],
 	["unit:raid:targeting"]		= L["Raid targeting unit"],
 	["unit:raid:assist"]		= L["Raid assisting unit"],
-	["warlock:demonic:curpp"]	= L["Current Demonic Fury (Short)"],
-	["warlock:demonic:maxpp"] 	= L["Max Demonic Fury (Short)"],
-	["warlock:demonic:perpp"] 	= L["Percent Demonic Fury"],
 	["monk:chipoints"]			= L["Chi Points"],
-	["priest:shadoworbs"]		= L["Shadow Orbs"],
 	["monk:stagger"]			= L["Stagger (Monk)"],
 	["monk:abs:stagger"]		= L["Stagger (Monk/Absolute)"]
 }

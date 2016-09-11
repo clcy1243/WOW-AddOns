@@ -1,5 +1,6 @@
 local Health = {}
 ShadowUF:RegisterModule(Health, "healthBar", ShadowUF.L["Health bar"], true)
+local canCure = ShadowUF.Units.canCure
 
 local function getGradientColor(unit)
 	local maxHealth = UnitHealthMax(unit)
@@ -41,13 +42,40 @@ function Health:OnEnable(frame)
 	if( frame.unit == "pet" ) then
 		frame:RegisterUnitEvent("UNIT_POWER", self, "UpdateColor")
 	end
-	
+
+	if ( ShadowUF.db.profile.units[frame.unitType].healthBar.colorDispel ) then
+		frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAura")
+		frame:RegisterUpdateFunc(self, "UpdateAura")
+	end
+
 	frame:RegisterUpdateFunc(self, "UpdateColor")
 	frame:RegisterUpdateFunc(self, "Update")
 end
 
 function Health:OnDisable(frame)
 	frame:UnregisterAll(self)
+end
+
+function Health:UpdateAura(frame)
+	local hadDebuff = frame.healthBar.hasDebuff
+	frame.healthBar.hasDebuff = nil
+	if( UnitIsFriend(frame.unit, "player") ) then
+		local id = 0
+		while( true ) do
+			id = id + 1
+			local name, _, _, _, auraType = UnitDebuff(frame.unit, id)
+			if( not name ) then break end
+
+			if( canCure[auraType] ) then
+				frame.healthBar.hasDebuff = auraType
+				break
+			end
+		end
+	end
+
+	if hadDebuff ~= frame.healthBar.hasDebuff then
+		self:UpdateColor(frame)
+	end
 end
 
 function Health:UpdateColor(frame)
@@ -62,6 +90,8 @@ function Health:UpdateColor(frame)
 		frame.healthBar.wasOffline = true
 		frame:SetBarColor("healthBar", ShadowUF.db.profile.healthColors.offline.r, ShadowUF.db.profile.healthColors.offline.g, ShadowUF.db.profile.healthColors.offline.b)
 		return
+	elseif( ShadowUF.db.profile.units[frame.unitType].healthBar.colorDispel and frame.healthBar.hasDebuff ) then
+		color = DebuffTypeColor[frame.healthBar.hasDebuff]
 	elseif( ShadowUF.db.profile.units[frame.unitType].healthBar.colorAggro and UnitThreatSituation(frame.unit) == 3 ) then
 		frame:SetBarColor("healthBar", ShadowUF.db.profile.healthColors.aggro.r, ShadowUF.db.profile.healthColors.aggro.g, ShadowUF.db.profile.healthColors.aggro.b)
 		return
@@ -86,9 +116,26 @@ function Health:UpdateColor(frame)
 				color = ShadowUF.db.profile.healthColors.hostile
 			end
 		end
-	elseif( ShadowUF.db.profile.units[frame.unitType].healthBar.colorType == "class" and ( UnitIsPlayer(unit) or UnitCreatureFamily(unit) ) ) then
-		local class = UnitCreatureFamily(frame.unit) or frame:UnitClassToken()
+	elseif( ShadowUF.db.profile.units[frame.unitType].healthBar.colorType == "class" and (UnitIsPlayer(unit) or unit == "pet") ) then
+		local class = (unit == "pet") and "PET" or frame:UnitClassToken()
 		color = class and ShadowUF.db.profile.classColors[class]
+	elseif( ShadowUF.db.profile.units[frame.unitType].healthBar.colorType == "playerclass" and unit == "pet") then
+		local class = select(2, UnitClass("player"))
+		color = class and ShadowUF.db.profile.classColors[class]
+	elseif( ShadowUF.db.profile.units[frame.unitType].healthBar.colorType == "playerclass" and (frame.unitType == "partypet" or frame.unitType == "raidpet" or frame.unitType == "arenapet") and (frame.parent or frame.unitType == "raidpet") ) then
+		local unit
+		if frame.unitType == "raidpet" then
+			local id = string.match(frame.unit, "raidpet(%d+)")
+			if id then
+				unit = "raid" .. id
+			end
+		elseif frame.parent then
+			unit = frame.parent.unit
+		end
+		if unit then
+			local class = select(2, UnitClass(unit))
+			color = class and ShadowUF.db.profile.classColors[class]
+		end
 	elseif( ShadowUF.db.profile.units[frame.unitType].healthBar.colorType == "static" ) then
 		color = ShadowUF.db.profile.healthColors.static
 	end

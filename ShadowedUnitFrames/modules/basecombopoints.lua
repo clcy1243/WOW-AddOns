@@ -56,6 +56,20 @@ local function createBlocks(config, pointsFrame)
 		texture:SetWidth(blockWidth)
 		texture:ClearAllPoints()
 		
+		if not texture.background and config.background then
+			texture.background = pointsFrame:CreateTexture(nil, "BORDER")
+			texture.background:SetHeight(1)
+			texture.background:SetWidth(1)
+			texture.background:SetAllPoints(texture)
+			texture.background:SetHorizTile(false)
+			texture.background:SetVertexColor(color.r, color.g, color.b, ShadowUF.db.profile.bars.backgroundAlpha)
+			texture.background:SetTexture(ShadowUF.Layout.mediaPath.statusbar)
+		end
+
+		if texture.background then
+			texture.background:SetShown(config.background)
+		end
+
 		if( config.growth == "LEFT" ) then
 			if( id > 1 ) then
 				texture:SetPoint("TOPRIGHT", pointsFrame.blocks[id - 1], "TOPLEFT", -1, 0)
@@ -147,7 +161,7 @@ function Combo:UpdateBarBlocks(frame, event, unit, powerType)
 		pointsFrame.blocks[id]:Show()
 	end
 
-	for id=max+1, max do
+	for id=max+1, #pointsFrame.blocks do
 		pointsFrame.blocks[id]:Hide()
 	end
 
@@ -171,5 +185,15 @@ function Combo:Update(frame, event, unit, powerType)
 		else
 			pointTexture:Hide()
 		end
+	end
+end
+
+function Combo:OnLayoutWidgets(frame)
+	local key = self:GetComboPointType()
+	if( not frame.visibility[key] or not ShadowUF.db.profile.units[frame.unitType][key].isBar or not frame[key].blocks) then return end
+
+	local height = frame[key]:GetHeight()
+	for _, block in pairs(frame[key].blocks) do
+		block:SetHeight(height)
 	end
 end

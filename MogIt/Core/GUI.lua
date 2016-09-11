@@ -269,6 +269,9 @@ local tryOnSlots = {
 }
 
 function ModelFramePrototype:TryOn(item, slot, itemAppearanceModID)
+	if type(item) == "number" then
+		item = "item:"..item
+	end
 	self.model:TryOn(item, tryOnSlots[slot], itemAppearanceModID);
 end
 
@@ -301,6 +304,7 @@ function ModelFramePrototype:ResetModel()
 	else
 		model:SetCustomRace(info.displayRace, info.displayGender);
 	end
+	model:SetAnimation(0, 0)
 	self:PositionModel();
 end
 

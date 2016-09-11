@@ -9,7 +9,7 @@ local LocalVars = TidyPlatesHubDefaults
 ------------------------------------------------------------------------------
 local InCombatLockdown = InCombatLockdown
 local GetAggroCondition = TidyPlatesWidgets.GetThreatCondition
-local IsTankedByAnotherTank = TidyPlatesWidgets.IsTankedByAnotherTank
+local IsOffTanked = TidyPlatesHubFunctions.IsOffTanked
 local IsTankingAuraActive = TidyPlatesWidgets.IsPlayerTank
 local IsHealer = TidyPlatesUtility.IsHealer
 local UnitFilter = TidyPlatesHubFunctions.UnitFilter
@@ -49,7 +49,7 @@ end
 -- By Threat (Low) Tank Mode
 local function ScaleFunctionByThreatLow(unit)
 	if InCombatLockdown() and unit.reaction ~= "FRIENDLY" then
-		if IsTankedByAnotherTank(unit) then return end
+		if IsOffTanked(unit) then return end
 		if unit.type == "NPC" and unit.health > 2 and unit.threatValue < 2 then return LocalVars.ScaleSpotlight end
 	elseif LocalVars.ColorShowPartyAggro and unit.reaction == "FRIENDLY" then
 		if GetAggroCondition(unit.rawName) then return LocalVars.ScaleSpotlight end
@@ -145,8 +145,8 @@ local function ScaleDelegate(...)
 	elseif LocalVars.ScaleIgnoreNeutralUnits and unit.reaction == "NEUTRAL" then
 	elseif LocalVars.ScaleIgnoreInactive and not ( (unit.health < unit.healthmax) or (unit.isInCombat or unit.threatValue > 0) or (unit.isCasting == true) ) then
 	elseif LocalVars.ScaleCastingSpotlight and unit.reaction == "HOSTILE" and unit.isCasting then scale = LocalVars.ScaleSpotlight
-	elseif LocalVars.ScaleMiniMobs and unit.isMini then
-		scale = MiniMobScale
+	--elseif LocalVars.ScaleMiniMobs and unit.isMini then
+	--	scale = MiniMobScale
 	else
 		-- Filter
 		if (LocalVars.FilterScaleLock or (not unit.isTarget)) and UnitFilter(unit) then scale = LocalVars.ScaleFiltered

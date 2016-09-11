@@ -6,7 +6,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 local BC = {} -- = LibStub("LibBabble-Class-3.0"):GetLookupTable()
 
-local revision = tonumber(string.sub("$Revision: 1373 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1378 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -60,6 +60,7 @@ local EditableColors = {
 	},
 	["Class"] = {
 		"Deathknight",
+		"Demonhunter",
 		"Druid",
 		"Hunter",
 		"Mage",
@@ -78,6 +79,7 @@ local EditableColors = {
 
 local ClassStrings = {
 	["DEATHKNIGHT"] = true,
+	["DEMONHUNTER"] = true,
 	["DRUID"] = true,
 	["HUNTER"] = true,
 	["MAGE"] = true,
@@ -218,9 +220,9 @@ function me:CreateWindowColorSelection(parent)
 		theFrame.Rows[i]:SetRow("Window", v)
 		theFrame.Rows[i]:SetPoint("TOP", theFrame, "TOP", 4, -2 - i * 14)
 		i = i + 1
-		if i > 16 then
+		--[[if i > 16 then
 			return
-		end
+		end]]
 	end
 	theFrame.DetailWindowTitle = theFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	theFrame.DetailWindowTitle:SetPoint("TOP", theFrame, "TOP", 0, -4 - i * 14)
@@ -231,16 +233,16 @@ function me:CreateWindowColorSelection(parent)
 		theFrame.Rows[i]:SetRow("Other Windows", v)
 		theFrame.Rows[i]:SetPoint("TOP", theFrame, "TOP", 4, -4 - i * 14)
 		i = i + 1
-		if i > 16 then
+		--[[if i > 16 then
 			return
-		end
+		end]]
 	end
 
 	theFrame.ResetColButton = CreateFrame("Button", nil, theFrame, "OptionsButtonTemplate")
 	theFrame.ResetColButton:SetWidth(120)
 	theFrame.ResetColButton:SetHeight(18)
 	--theFrame.ResetColButton:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 40, -210)
-	theFrame.ResetColButton:SetPoint("BOTTOMLEFT", theFrame, "BOTTOMLEFT", 40, 12)
+	theFrame.ResetColButton:SetPoint("BOTTOMLEFT", theFrame, "BOTTOMLEFT", 40, 4)
 	theFrame.ResetColButton:SetScript("OnClick", function()
 		Recount:ResetDefaultWindowColors()
 	end)
@@ -373,9 +375,9 @@ function me:CreateClassColorSelection(parent)
 		theFrame.Rows[i]:SetRow("Bar", v)
 		theFrame.Rows[i]:SetPoint("TOP", theFrame, "TOP", 4, -2 - i * 14)
 		i = i + 1
-		if i > 16 then
+		--[[if i > 16 then
 			return
-		end
+		end]]
 	end
 
 	--theFrame.ClassTitle = theFrame:CreateFontString(nil, "OVERLAY",  "GameFontNormal")
@@ -387,9 +389,9 @@ function me:CreateClassColorSelection(parent)
 		theFrame.Rows[i]:SetRow("Class", v)
 		theFrame.Rows[i]:SetPoint("TOP", theFrame, "TOP", 4, -2 - i * 14)
 		i = i + 1
-		if i > 16 then
+		--[[if i > 16 then
 			return
-		end
+		end]]
 	end
 
 	i = i + 1
@@ -397,7 +399,7 @@ function me:CreateClassColorSelection(parent)
 	theFrame.ResetColButton:SetWidth(120)
 	theFrame.ResetColButton:SetHeight(18)
 	--theFrame.ResetColButton:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 40, -210)
-	theFrame.ResetColButton:SetPoint("BOTTOMLEFT", theFrame, "BOTTOMLEFT", 40, 12)
+	theFrame.ResetColButton:SetPoint("BOTTOMLEFT", theFrame, "BOTTOMLEFT", 40, 4)
 	theFrame.ResetColButton:SetScript("OnClick", function()
 		Recount:ResetDefaultClassColors()
 	end)

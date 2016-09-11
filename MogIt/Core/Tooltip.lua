@@ -70,6 +70,13 @@ function mog.tooltip:ShowItem(itemLink)
 	if not itemID then return end
 	local self = GameTooltip;
 	
+	for i = 1, GameTooltip:NumLines() do
+		local line = _G["GameTooltipTextLeft"..i]
+		if line:GetText() == TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN then
+			line:SetTextColor(136 / 255, 1, 170 / 255)
+		end
+	end
+	
 	local db = mog.db.profile;
 	local tooltip = mog.tooltip;
 	if db.tooltip and (not tooltip.mod[db.tooltipMod] or tooltip.mod[db.tooltipMod]()) then
@@ -242,10 +249,10 @@ hooksecurefunc(GameTooltip, "SetQuestLogItem", function(self, itemType, index)
 	GameTooltip:Show();
 end);
 
-hooksecurefunc(GameTooltip, "SetRecipeResultItem", function(self, recipeID)
-	mog.tooltip:ShowItem(C_TradeSkillUI.GetRecipeItemLink(recipeID));
-	GameTooltip:Show();
-end);
+-- hooksecurefunc(GameTooltip, "SetRecipeResultItem", function(self, recipeID)
+	-- mog.tooltip:ShowItem(C_TradeSkillUI.GetRecipeItemLink(recipeID));
+	-- GameTooltip:Show();
+-- end);
 
 hooksecurefunc(GameTooltip, "SetRecipeReagentItem", function(self, recipeID, reagentIndex)
 	mog.tooltip:ShowItem(C_TradeSkillUI.GetRecipeReagentItemLink(recipeID, reagentIndex));
