@@ -1,6 +1,6 @@
 --[[
 	PanelScroller
-	Version: 7.1.5675 (TasmanianThylacine)
+	Version: 7.2.5688 (TasmanianThylacine)
 	Revision: $Id: PanelScroller.lua 312 2011-06-14 07:33:25Z brykrys $
 	URL: http://auctioneeraddon.com/dl/
 

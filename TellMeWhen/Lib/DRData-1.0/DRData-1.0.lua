@@ -1,5 +1,5 @@
 local major = "DRData-1.0"
-local minor = 1046
+local minor = 1047
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local Data = LibStub:NewLibrary(major, minor)
@@ -307,6 +307,7 @@ local spellsAndProvidersByCategory = {
 
 		-- Monk
 		[120086] =   true, -- Fists of Fury (with Heavy-Handed Strikes, pvp talent)
+		[232055] =   true, -- Fists of Fury (new ID in 7.1)
 		[119381] =   true, -- Leg Sweep
 		-- Paladin
 		[   853] = true, -- Hammer of Justice

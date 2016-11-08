@@ -1164,7 +1164,7 @@ L["SOUND_EVENT_ONALPHAINC_DESC"] = [=[Este evento se activa cuando la opacidad d
 NOTA: Este evento no se activará al aumentar desde 0% Opacidad (Al Mostrar)]=]
 L["SOUND_EVENT_ONCLEU"] = "En Evento de Combate"
 L["SOUND_EVENT_ONCLEU_DESC"] = "Este evento se activa cuando sucede un evento de combate que debería ser procesado por el icono." -- Needs review
-L["SOUND_EVENT_ONCONDITION"] = "Al cumplirse conjunto de condiciones"
+L["SOUND_EVENT_ONCONDITION"] = "Justo al cumplirse el conjunto de condiciones"
 L["SOUND_EVENT_ONCONDITION_DESC"] = "Este evento se activa cuando un conjunto de condiciones que puede configurar para este evento se empiezan a cumplir. "
 L["SOUND_EVENT_ONDURATION"] = "Al Cambiar Duración"
 L["SOUND_EVENT_ONDURATION_DESC"] = [=[Este evento se activa cuando la duración del temporizador del icono cambia. 
@@ -1198,6 +1198,7 @@ L["SOUND_EVENT_ONSTART"] = "Al Empezar"
 L["SOUND_EVENT_ONSTART_DESC"] = "Ese evento se activa cuando el tiempo de reutilización se vuelve inutilizable, se aplica la ventaja/desventaja, etc."
 L["SOUND_EVENT_ONUNIT"] = "Al Cambiar Unidad"
 L["SOUND_EVENT_ONUNIT_DESC"] = "Este evento se activa cuando la unidad para la que el icono está mostrando información ha cambiado."
+L["SOUND_EVENT_WHILECONDITION"] = "Mientras se cumple el conjunto de condiciones"
 L["SOUND_SOUNDTOPLAY"] = "Sonido a Reproducir"
 L["SOUND_TAB"] = "Sonido"
 L["SPEED"] = "Velocidad de la Unidad"

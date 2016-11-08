@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Standard Deviation Statistics module
-	Version: 7.1.5675 (TasmanianThylacine)
+	Version: 7.2.5688 (TasmanianThylacine)
 	Revision: $Id: StatStdDev.lua 5552 2015-03-28 18:04:32Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -594,4 +594,4 @@ function lib.ChangeServerKey(oldKey, newKey)
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Stat-StdDev/StatStdDev.lua $", "$Rev: 5552 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Stat-StdDev/StatStdDev.lua $", "$Rev: 5552 $")

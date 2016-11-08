@@ -1,7 +1,7 @@
 --[[
 	Swatter - An AddOn debugging aid for World of Warcraft.
-	Version: 7.1.5675 (TasmanianThylacine)
-	Revision: $Id: Swatter.lua 378 2014-12-12 15:18:11Z brykrys $
+	Version: 7.2.5688 (TasmanianThylacine)
+	Revision: $Id: Swatter.lua 418 2016-10-26 18:26:17Z brykrys $
 	URL: http://auctioneeraddon.com/dl/Swatter/
 	Copyright (C) 2006 Norganna
 
@@ -45,7 +45,7 @@ Swatter = {
 	HISTORY_SIZE = 100,
 }
 
-Swatter.Version="7.1.5675"
+Swatter.Version="7.2.5688"
 if (Swatter.Version == "<%".."version%>") then
 	Swatter.Version = "6.0.DEV"
 end
@@ -79,7 +79,7 @@ hooksecurefunc("SetAddOnDetail", addOnDetail)
 
 -- End SetAddOnDetail function hook.
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 378 $","6.0.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 418 $","6.0.DEV.", 'auctioneer', 'libs')
 
 local function toggle()
 	if Swatter.Error:IsVisible() then
@@ -636,16 +636,19 @@ Swatter.Error.Done = CreateFrame("Button", "", Swatter.Error, "OptionsButtonTemp
 Swatter.Error.Done:SetText("Close")
 Swatter.Error.Done:SetPoint("BOTTOMRIGHT", Swatter.Error, "BOTTOMRIGHT", -10, 10)
 Swatter.Error.Done:SetScript("OnClick", Swatter.ErrorDone)
+Swatter.Error.Done:SetFrameLevel(5)
 
 Swatter.Error.Next = CreateFrame("Button", "", Swatter.Error, "OptionsButtonTemplate")
 Swatter.Error.Next:SetText("Next >")
 Swatter.Error.Next:SetPoint("BOTTOMRIGHT", Swatter.Error.Done, "BOTTOMLEFT", -5, 0)
 Swatter.Error.Next:SetScript("OnClick", Swatter.ErrorNext)
+Swatter.Error.Next:SetFrameLevel(5)
 
 Swatter.Error.Prev = CreateFrame("Button", "", Swatter.Error, "OptionsButtonTemplate")
 Swatter.Error.Prev:SetText("< Prev")
 Swatter.Error.Prev:SetPoint("BOTTOMRIGHT", Swatter.Error.Next, "BOTTOMLEFT", -5, 0)
 Swatter.Error.Prev:SetScript("OnClick", Swatter.ErrorPrev)
+Swatter.Error.Prev:SetFrameLevel(5)
 
 Swatter.Error.Mesg = Swatter.Error:CreateFontString("", "OVERLAY", "GameFontNormalSmall")
 Swatter.Error.Mesg:SetJustifyH("LEFT")
@@ -670,6 +673,7 @@ Swatter.Error.Box:SetScript("OnTextChanged", Swatter.ErrorUpdate)
 Swatter.Error.Box:SetScript("OnEditFocusGained", Swatter.ErrorClicked)
 
 Swatter.Error.Scroll:SetScrollChild(Swatter.Error.Box)
+Swatter.Error.Scroll:SetClipsChildren(true)
 
 Swatter.Frame = CreateFrame("Frame")
 Swatter.Frame:Show()

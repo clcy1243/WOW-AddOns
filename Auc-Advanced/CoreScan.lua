@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 7.1.5675 (TasmanianThylacine)
-	Revision: $Id: CoreScan.lua 5668 2016-09-03 11:41:19Z brykrys $
+	Version: 7.2.5688 (TasmanianThylacine)
+	Revision: $Id: CoreScan.lua 5682 2016-10-27 19:05:14Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -429,7 +429,7 @@ function lib.StartScan(name, minUseLevel, maxUseLevel, isUsable, qualityIndex, G
 
 			AucAdvanced.API.BlockUpdate(true, false)
 			BrowseSearchButton:Hide()
-			lib.ProgressBars("GetAllProgressBar", 0, true, "Auctioneer: Scanning")
+			lib.ProgressBars("GetAllProgressBar", 0, true, "Auctioneer: Scan waiting for Server")
 			private.isGetAll = true -- indicates that certain functions must take special action, and that the above changes need to be undone
 
 			private.LastGetAll = now
@@ -487,7 +487,7 @@ function lib.StartScan(name, minUseLevel, maxUseLevel, isUsable, qualityIndex, G
 end
 
 function lib.IsScanning()
-	return private.isScanning or (private.queueScan ~= nil)
+	return (private.isScanning or private.queueScan ~= nil), private.isGetAll
 end
 
 function lib.IsPaused()
@@ -978,17 +978,6 @@ local Commitfunction = function()
 	if TempcurQuery.isUsable then
 		wasIncomplete = true -- always treat as incomplete
 	end
-	-- ### Legion : filters including inventoryType require a lookup in a hard-coded table in CoreConst
-	-- ### for now, any query where the filterData includes an inventoryType shall be treated as incomplete
-	-- ### until we are certain we've coded the lookup table correctly
-	if TempcurQuery.filterData and not wasIncomplete then
-		for _, filter in ipairs(TempcurQuery.filterData) do
-			if filter.inventoryType then
-				wasIncomplete = true
-				break
-			end
-		end
-	end
 
 	local serverKey = Resources.ServerKey
 	local scandata = private.GetScanData(serverKey)
@@ -1018,16 +1007,16 @@ local Commitfunction = function()
 		local stage1throttle = get("core.scan.stage1throttle")
 		if stage1throttle >= Const.ALEVEL_HI then
 			breakinterval, timeadjust = 500, 0.1
-			itemcachedelay = 16 -- ### Legion item cache patch
+			itemcachedelay = 4 -- ### Legion item cache patch
 		elseif stage1throttle >= Const.ALEVEL_MED then
 			breakinterval, timeadjust = 2000, 0.4
-			itemcachedelay = 8 -- ### Legion item cache patch
+			itemcachedelay = 3 -- ### Legion item cache patch
 		elseif stage1throttle >= Const.ALEVEL_LOW then
 			breakinterval, timeadjust = 5000, 1
-			itemcachedelay = 4 -- ### Legion item cache patch
+			itemcachedelay = 2 -- ### Legion item cache patch
 		else -- OFF
 			breakinterval, timeadjust = nil, 1
-			itemcachedelay = 2 -- ### Legion item cache patch
+			itemcachedelay = 1 -- ### Legion item cache patch
 		end
 		local breakcount = 0
 		local doYield = false
@@ -2100,6 +2089,7 @@ local StorePageFunction = function()
 	end
 
 	if private.isGetAll then
+		lib.ProgressBars("GetAllProgressBar", 0, true, "Auctioneer: Scan Received")
 		--[[
 			pre-store delay before starting to store a getall query to give the client a bit of time to sort itself out
 			we want to call it before GetNumAuctionItems, so we must use private.isGetAll for detection
@@ -2182,7 +2172,7 @@ local StorePageFunction = function()
 		for i = 1, numBatchAuctions do
 			if isGetAll then -- only yield for GetAll scans
 				if debugprofilestop() > nextPause or i % breakcount == 0 then
-					lib.ProgressBars("GetAllProgressBar", 100*storecount/numBatchAuctions, true)
+					lib.ProgressBars("GetAllProgressBar", 100*storecount/numBatchAuctions, true, "Auctioneer: Scanning")
 					coroutine.yield()
 					if private.breakStorePage then
 						break
@@ -2242,7 +2232,7 @@ local StorePageFunction = function()
 			for pos, i in ipairs(retries) do
 				if isGetAll then
 					if debugprofilestop() > nextPause or pos % breakcount == 0 then
-						lib.ProgressBars("GetAllProgressBar", 100*storecount/numBatchAuctions, true)
+						lib.ProgressBars("GetAllProgressBar", 100*storecount/numBatchAuctions, true, "Auctioneer: Scanning Retries")
 						coroutine.yield()
 						if private.breakStorePage then break end
 						nextPause = debugprofilestop() + processingTime
@@ -2318,7 +2308,7 @@ local StorePageFunction = function()
 		for _, i in ipairs(retries) do
 			if isGetAll then
 				if debugprofilestop() > nextPause then
-					lib.ProgressBars("GetAllProgressBar", 100*storecount/numBatchAuctions, true)
+					lib.ProgressBars("GetAllProgressBar", 100*storecount/numBatchAuctions, true, "Auctioneer: Scanning Cleanup")
 					coroutine.yield()
 					if private.breakStorePage then break end
 					nextPause = debugprofilestop() + processingTime
@@ -2524,6 +2514,37 @@ function lib.CreateFilterSig(filterData)
 	end
 	return sig
 end
+function private.CompareFilterData(data1, data2)
+	if data1 == data2 then
+		return true -- same table
+	elseif not data1 then
+		if not data2 then
+			return true -- both nil or false
+		else
+			return false -- one nil, one table
+		end
+	elseif not data2 then
+		return false -- one table, one nil
+	end
+	-- assume both are tables at this point, as we should have pre-checked this
+	local count = #data1
+	if #data2 ~= count then
+		-- different number of entries
+		return false
+	end
+	for index = 1, count do
+		local filter1, filter2 = data1[index], data2[index]
+		-- each should be table containing entries classID [, subClassID [, inventoryType]]
+		if filter1.classID ~= filter2.classID or filter1.subClassID ~= filter2.subClassID then
+			return false
+		end
+		if filter1.subClassID and filter1.inventoryType ~= filter2.inventoryType then
+			-- only check inventoryType if we have subClassID
+			return false
+		end
+	end
+	return true
+end
 
 --[[ AucAdvanced.Scan.QuerySafeName(name)
 	Library function to convert a name to the 'normalized' form used by scan querys
@@ -2552,7 +2573,7 @@ function lib.CreateQuerySig(...)
 	return private.CreateQuerySig(private.QueryScrubParameters(...))
 end
 
-function private.QueryScrubParameters(name, minLevel, maxLevel, isUsable, qualityIndex, exactMatch, filterData) -- ### Legion todo: handle filterData
+function private.QueryScrubParameters(name, minLevel, maxLevel, isUsable, qualityIndex, exactMatch, filterData)
 	-- Converts the parameters that we will store in our scanQuery table into a consistent format:
 	-- converts each parameter to correct type;
 	-- converts all strings to lowercase;
@@ -2563,16 +2584,6 @@ function private.QueryScrubParameters(name, minLevel, maxLevel, isUsable, qualit
 	if minLevel and minLevel < 1 then minLevel = nil end
 	maxLevel = tonumber(maxLevel)
 	if maxLevel and maxLevel < 1 then maxLevel = nil end
-	-- classIndex = tonumber(classIndex)
-	-- if classIndex and classIndex < 1 then classIndex = nil end
-	-- if classIndex then
-		-- subclassIndex = tonumber(subclassIndex)
-		-- if subclassIndex and subclassIndex < 1 then subclassIndex = nil end
-	-- else
-		-- subclassIndex = nil -- subclassIndex is only valid if we have a classIndex
-	-- end
-	-- invTypeIndex = tonumber(invTypeIndex) or Const.EquipLocToInvIndex[invTypeIndex] -- accepts "INVTYPE_*" strings
-	-- if invTypeIndex and invTypeIndex < 1 then invTypeIndex = nil end
 	if isUsable and isUsable ~= 0 then
 		isUsable = true
 	else
@@ -2586,7 +2597,7 @@ function private.QueryScrubParameters(name, minLevel, maxLevel, isUsable, qualit
 	qualityIndex = tonumber(qualityIndex)
 	if qualityIndex and qualityIndex < 1 then qualityIndex = nil end
 
-	-- ### todo: more filterData checks?
+	-- ### todo: more robust filterData checks?
 	if type(filterData) ~= "table" then filterData = nil end
 
 	return name, minLevel, maxLevel, isUsable, qualityIndex, exactMatch, filterData
@@ -2604,7 +2615,7 @@ function private.CreateQuerySig(name, minLevel, maxLevel, isUsable, qualityIndex
 	) -- can use strsplit("#", sig) to extract params
 end
 
-function private.QueryCompareParameters(query, name, minLevel, maxLevel, isUsable, qualityIndex, exactMatch, filterData) -- ### Legion todo: handle filterData
+function private.QueryCompareParameters(query, name, minLevel, maxLevel, isUsable, qualityIndex, exactMatch, filterData)
 	-- Returns true if the parameters are identical to the values stored in the specified scanQuery table
 	-- Use this function to avoid creating a duplicate scanQuery table
 	-- Parameters must have been scrubbed first
@@ -2612,13 +2623,10 @@ function private.QueryCompareParameters(query, name, minLevel, maxLevel, isUsabl
 	if query.name == name -- note: both already converted to lowercase when scrubbed
 	and query.minUseLevel == minLevel
 	and query.maxUseLevel == maxLevel
-	-- and query.classIndex == classIndex
-	-- and query.subclassIndex == subclassIndex
 	and query.quality == qualityIndex
-	-- and query.invType == invTypeIndex
 	and query.isUsable == isUsable
 	and query.exactMatch == exactMatch
-	and query.filterData == filterData -- ### temp solution: just check table reference. todo: check if the table contents are the same
+	and private.CompareFilterData(query.filterData, filterData)
 	then
 		return true
 	end
@@ -2626,7 +2634,7 @@ end
 
 private.querycount = 0
 
-function private.NewQueryTable(name, minLevel, maxLevel, isUsable, qualityIndex, exactMatch, filterData) -- ### Legion todo: handle filterData
+function private.NewQueryTable(name, minLevel, maxLevel, isUsable, qualityIndex, exactMatch, filterData)
 	-- Assumes the parameters have already been scrubbed
 	local class, subclass
 	local query, qryinfo = {}, {}
@@ -2636,17 +2644,6 @@ function private.NewQueryTable(name, minLevel, maxLevel, isUsable, qualityIndex,
 	query.name = name
 	query.minUseLevel = minLevel
 	query.maxUseLevel = maxLevel
-	-- query.invType = invTypeIndex
-	-- if classIndex then
-		-- class = Const.CLASSES[classIndex]
-		-- query.class = class
-		-- query.classIndex = classIndex
-	-- end
-	-- if subclassIndex then
-		-- subclass = Const.SUBCLASSES[classIndex][subclassIndex]
-		-- query.subclass = subclass
-		-- query.subclassIndex = subclassIndex
-	-- end
 	query.isUsable = isUsable
 	query.quality = qualityIndex
 	query.exactMatch = exactMatch
@@ -2890,7 +2887,7 @@ function lib.SetPaused(pause)
 end
 
 private.unexpectedClose = false
-local timeoutCanSend = 0 -- part of fix for Blizzard bug {ADV-595}
+local timeoutSentQuery = 0
 
 function private.OnUpdate(me, dur)
 	if CoCommit then
@@ -2939,18 +2936,29 @@ function private.OnUpdate(me, dur)
 			return
 		end
 
-		if private.sentQuery and private.auctionItemListUpdated then
-			if CanSendAuctionQuery() then
-				timeoutCanSend = 0
+		if private.sentQuery then
+			local itemlistUpdated = private.auctionItemListUpdated
+			local canSend = CanSendAuctionQuery()
+			if itemlistUpdated and canSend then
+				timeoutSentQuery = 0
 				lib.StorePage()
-			elseif timeoutCanSend > 25 then
-				-- Fix for Blizzard Auctionhouse bug {ADV-595}
-				-- CanSendAuctionQuery continues to return nil indefinitely. We use a timeout
-				timeoutCanSend = 0
+			elseif itemlistUpdated and timeoutSentQuery > 30 then
+				-- Fix in case CanSendAuctionQuery continues to return nil indefinitely. We use a timeout {ADV-595}
+				timeoutSentQuery = 0
 				lib.StorePage()
+			elseif canSend and timeoutSentQuery > 75 then
+				-- Fix for AUCTION_ITEM_LIST_UPDATE sometimes not being sent by server after Legion
+				-- In this case Serve has updated CanSendAuctionQuery, it may have sent info, so we'll try to store page
+				-- Note longer timeout: AUCTION_ITEM_LIST_UPDATE is the important event, CanSendAuctionQuery is a backup
+				timeoutSentQuery = 0
+				lib.StorePage()
+			elseif timeoutSentQuery > 180 then
+				-- Neither CanSendAuctionQuery nor AUCTION_ITEM_LIST_UPDATE have occurred and we have waited a long time
+				timeoutSentQuery = 0
+				private.ResetAll()
+				message("Auctioneer: Scan failed, Server is not responding")
 			else
-				-- part of fix for Blizzard bug {ADV-595}
-				timeoutCanSend = timeoutCanSend + dur
+				timeoutSentQuery = timeoutSentQuery + dur
 			end
  		end
 	elseif private.curQuery then
@@ -3256,5 +3264,5 @@ function internal.Scan.NotifyOwnedListUpdated()
 --	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CoreScan.lua $", "$Rev: 5668 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Advanced/CoreScan.lua $", "$Rev: 5682 $")
 AucAdvanced.CoreFileCheckOut("CoreScan")

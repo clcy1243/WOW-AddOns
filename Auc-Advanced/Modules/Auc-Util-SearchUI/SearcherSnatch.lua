@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Snatch
-	Version: 7.1.5675 (TasmanianThylacine)
+	Version: 7.2.5688 (TasmanianThylacine)
 	Revision: $Id: SearcherSnatch.lua 5636 2016-08-02 20:17:12Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -620,4 +620,4 @@ function private.refreshDisplay()
 	frame.pctBox.help:SetText(format("Buy as percent of %s value", get("snatch.price.model") or "market") )
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-SearchUI/SearcherSnatch.lua $", "$Rev: 5636 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-SearchUI/SearcherSnatch.lua $", "$Rev: 5636 $")

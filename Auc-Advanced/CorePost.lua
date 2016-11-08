@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 7.1.5675 (TasmanianThylacine)
-	Revision: $Id: CorePost.lua 5670 2016-09-03 11:59:41Z brykrys $
+	Version: 7.2.5688 (TasmanianThylacine)
+	Revision: $Id: CorePost.lua 5679 2016-10-26 18:40:52Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -76,6 +76,7 @@ local ScanTip4 = _G["AppraiserTipTextLeft4"]
 local ScanTip5 = _G["AppraiserTipTextLeft5"]
 local ScanTip6 = _G["AppraiserTipTextLeft6"]
 local ScanTip7 = _G["AppraiserTipTextLeft7"]
+local ScanTip8 = _G["AppraiserTipTextLeft8"]
 
 -- control constants used in the posting mechanism
 local LAG_ADJUST = (4 / 1000)
@@ -538,7 +539,7 @@ function lib.IsAuctionable(bag, slot)
 	ScanTip:ClearLines()
 	ScanTip:SetBagItem(bag, slot)
 	local test = BindTypes[ScanTip2:GetText()] or BindTypes[ScanTip3:GetText()]	or BindTypes[ScanTip4:GetText()]
-		or BindTypes[ScanTip5:GetText()] or BindTypes[ScanTip6:GetText()] or BindTypes[ScanTip7:GetText()]
+		or BindTypes[ScanTip5:GetText()] or BindTypes[ScanTip6:GetText()] or BindTypes[ScanTip7:GetText()] or BindTypes[ScanTip8:GetText()]
 	ScanTip:Hide()
 	if test then
 		return false, test
@@ -1388,5 +1389,5 @@ private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CorePost.lua $", "$Rev: 5670 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Advanced/CorePost.lua $", "$Rev: 5679 $")
 AucAdvanced.CoreFileCheckOut("CorePost")

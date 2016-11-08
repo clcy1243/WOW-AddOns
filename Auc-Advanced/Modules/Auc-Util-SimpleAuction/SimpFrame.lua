@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Simplified Auction Posting
-	Version: 7.1.5675 (TasmanianThylacine)
+	Version: 7.2.5688 (TasmanianThylacine)
 	Revision: $Id: SimpFrame.lua 5654 2016-08-09 17:49:16Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -1360,4 +1360,4 @@ function private.CreateFrames()
 	frame:RegisterEvent("BAG_UPDATE")
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-SimpleAuction/SimpFrame.lua $", "$Rev: 5654 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-SimpleAuction/SimpFrame.lua $", "$Rev: 5654 $")

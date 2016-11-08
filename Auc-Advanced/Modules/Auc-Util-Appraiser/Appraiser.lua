@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 7.1.5675 (TasmanianThylacine)
+	Version: 7.2.5688 (TasmanianThylacine)
 	Revision: $Id: Appraiser.lua 5665 2016-09-01 16:11:08Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -471,4 +471,4 @@ Stubby.RegisterEventHook("AUCTION_OWNED_LIST_UPDATE", "Auc-Util-Appraiser", lib.
 lib.Private_AprFrame = private
 lib.Private_AprSettings = private
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-Appraiser/Appraiser.lua $", "$Rev: 5665 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-Appraiser/Appraiser.lua $", "$Rev: 5665 $")

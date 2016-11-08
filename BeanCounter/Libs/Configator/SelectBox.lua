@@ -1,6 +1,6 @@
 --[[
 	SelectBox
-	Version: 7.1.5675 (TasmanianThylacine)
+	Version: 7.2.5688 (TasmanianThylacine)
 	Revision: $Id: SelectBox.lua 396 2015-10-01 16:35:24Z brykrys $
 	URL: http://auctioneeraddon.com/dl/
 

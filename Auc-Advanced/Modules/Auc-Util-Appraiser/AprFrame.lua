@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 7.1.5675 (TasmanianThylacine)
+	Version: 7.2.5688 (TasmanianThylacine)
 	Revision: $Id: AprFrame.lua 5666 2016-09-02 09:48:49Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -2979,4 +2979,4 @@ function private.CreateFrames()
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5666 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5666 $")

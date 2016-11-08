@@ -3,6 +3,23 @@ if not TMW then return end
 TMW.CHANGELOG_LASTVER="6.2.6"
 
 TMW.CHANGELOG = [==[
+===v8.2.3===
+* Improved behavior of exporting to other players.
+
+===v8.2.2===
+* Packaging latest version of LibDogTag-Unit-3.0.
+
+===v8.2.1===
+* You can now change bar textures on a per-group basis.
+* Added some missing currency definitions.
+
+====Bug Fixes====
+* Fixed updating of class-specific resource conditions for non-player units.
+* On Start and On Finish notification triggers should no longer spaz out and trigger excessively.
+* Meta icons should now always use the correct unit when evaluating the DogTags used in their text displays.
+* Fixed meta icon rearranging.
+* Fixed tooltip number conditions for locales that use commas as their decimal separator.
+
 ===v8.2.0===
 * New Icon Type: Guardians. Currently only implemented for Warlocks to track their Wild Imps/Dreadstalkers/etc.
 * Support for Patch 7.1.

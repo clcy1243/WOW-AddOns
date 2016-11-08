@@ -1,0 +1,10 @@
+## Interface: 62000
+
+## Title: AdiBags - Filter for BoE/BoA
+## Notes: Adds BoE/BoA filters to AdiBags.
+## Author: Outroot, Spanky
+## Version: v1.5
+
+## Dependencies: AdiBags
+
+AdiBags_BoE_BoA.lua

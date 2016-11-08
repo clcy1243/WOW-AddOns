@@ -1,0 +1,12 @@
+tag v1.5
+955faeaea6c2c1459f20a514e8cb142338037d27
+Adirelle <adirelle@gmail.com>
+2014-12-19 11:06:06 +0100
+
+Updated for AdiBags 1.8.
+
+
+--------------------
+
+Adirelle:
+	- Fixed https://github.com/Adirelle/AdiBags/issues/14.

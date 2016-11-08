@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Searcher Converter
-	Version: 7.1.5675 (TasmanianThylacine)
+	Version: 7.2.5688 (TasmanianThylacine)
 	Revision: $Id: SearcherConverter.lua 5606 2016-06-13 16:33:33Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -324,4 +324,4 @@ function lib.Search (item)
 	return false, "Not enough profit"
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-SearchUI/SearcherConverter.lua $", "$Rev: 5606 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-SearchUI/SearcherConverter.lua $", "$Rev: 5606 $")
