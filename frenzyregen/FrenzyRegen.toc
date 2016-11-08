@@ -1,0 +1,11 @@
+## Interface: 70000
+## Title: FrenzyRegen
+## Author: Ogion
+## Version: 1.0
+## Notes: A simple addon for displaying expected healing from Frenzied regeneration 
+## SavedVariablesPerCharacter: settingsFR
+## X-Curse-Packaged-Version: v0.9.5
+## X-Curse-Project-Name: FrenzyRegen
+## X-Curse-Project-ID: frenzyregen
+## X-Curse-Repository-ID: wow/frenzyregen/mainline
+FrenzyRegen.lua

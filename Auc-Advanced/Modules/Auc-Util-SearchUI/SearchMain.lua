@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: SearchMain.lua 5657 2016-08-09 22:12:08Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -2199,4 +2199,4 @@ end
 private.updater = CreateFrame("Frame", nil, UIParent)
 private.updater:SetScript("OnUpdate", private.OnUpdate)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Util-SearchUI/SearchMain.lua $", "$Rev: 5657 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-SearchUI/SearchMain.lua $", "$Rev: 5657 $")

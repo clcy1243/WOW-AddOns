@@ -2,6 +2,8 @@
 	LibResInfo-1.0
 	Library to provide information about resurrections in your group.
 	https://github.com/Phanx/LibResInfo
+	https://wow.curseforge.com/addons/libresinfo
+	http://www.wowinterface.com/downloads/info21467
 
 	Copyright (c) 2012-2016 Phanx. All rights reserved.
 	Redistribution as an unmodified embedded library is permitted.
@@ -25,57 +27,56 @@ if not lib then return end
 
 ------------------------------------------------------------------------
 
-local callbacks     = lib.callbacks     or LibStub("CallbackHandler-1.0"):New(lib)
-local eventFrame    = lib.eventFrame    or CreateFrame("Frame")
+local callbacks        = lib.callbacks        or LibStub("CallbackHandler-1.0"):New(lib)
+local eventFrame       = lib.eventFrame       or CreateFrame("Frame")
 
-local guidFromUnit  = lib.guidFromUnit  or {} -- t[unit] = guid -- table lookup is faster than calling UnitGUID
-local nameFromGUID  = lib.nameFromGUID  or {} -- t[guid] = name
-local unitFromGUID  = lib.unitFromGUID  or {} -- t[guid] = unit
+local guidFromUnit     = lib.guidFromUnit     or {} -- t[unit] = guid -- table lookup is faster than calling UnitGUID
+local nameFromGUID     = lib.nameFromGUID     or {} -- t[guid] = name
+local unitFromGUID     = lib.unitFromGUID     or {} -- t[guid] = unit
 
-local castingSingle = lib.castingSingle or {} -- t[casterGUID] = { startTime = <number>, endTime = <number>, target = <guid> }
-local castingMass   = lib.castingMass   or {} -- t[casterGUID] = endTime
-local hasPending    = lib.hasPending    or {} -- t[targetGUID] = endTime
+local castingSingle    = lib.castingSingle    or {} -- t[casterGUID] = { startTime = <number>, endTime = <number>, target = <guid> }
+local castingMass      = lib.castingMass      or {} -- t[casterGUID] = endTime
+local hasPending       = lib.hasPending       or {} -- t[targetGUID] = endTime
 
-local hasSoulstone  = lib.hasSoulstone  or {} -- t[targetGUID] = <boolean>
-local isDead        = lib.isDead        or {} -- t[targetGUID] = <boolean>
-local isGhost       = lib.isGhost       or {} -- t[targetGUID] = <boolean>
+local hasSoulstone     = lib.hasSoulstone     or {} -- t[targetGUID] = <boolean>
+local hasReincarnation = lib.hasReincarnation or {} -- t[targetGUID] = <boolean>
+local isDead           = lib.isDead           or {} -- t[targetGUID] = <boolean>
+local isGhost          = lib.isGhost          or {} -- t[targetGUID] = <boolean>
 
 ------------------------------------------------------------------------
 
-lib.callbacks       = callbacks
-lib.eventFrame      = eventFrame
+lib.callbacks          = callbacks
+lib.eventFrame         = eventFrame
 
-lib.guidFromUnit    = guidFromUnit
-lib.nameFromGUID    = nameFromGUID
-lib.unitFromGUID    = unitFromGUID
+lib.guidFromUnit       = guidFromUnit
+lib.nameFromGUID       = nameFromGUID
+lib.unitFromGUID       = unitFromGUID
 
-lib.castingSingle   = castingSingle
-lib.castingMass     = castingMass
-lib.hasPending      = hasPending
+lib.castingSingle      = castingSingle
+lib.castingMass        = castingMass
+lib.hasPending         = hasPending
 
-lib.hasSoulstone    = hasSoulstone
-lib.isDead          = isDead
-lib.isGhost         = isGhost
+lib.hasSoulstone       = hasSoulstone
+lib.hasReincarnation   = hasReincarnation
+lib.isDead             = isDead
+lib.isGhost            = isGhost
 
 ------------------------------------------------------------------------
 
 local RESURRECT_PENDING_TIME = 60
 local RELEASE_PENDING_TIME = 360
 local SOULSTONE = GetSpellInfo(20707)
+local REINCARNATION = GetSpellInfo(225080)
+local RESURRECTING = GetSpellInfo(160029)
 
 local singleSpells = {
 	-- Class Abilities
 	[2008]   = GetSpellInfo(2008),   -- Ancestral Spirit (Shaman)
-	[61999]  = GetSpellInfo(61999),  -- Raise Ally (Death Knight)
-	[20484]  = GetSpellInfo(20484),  -- Rebirth (Druid)
 	[7328]   = GetSpellInfo(7328),   -- Redemption (Paladin)
 	[2006]   = GetSpellInfo(2006),   -- Resurrection (Priest)
 	[115178] = GetSpellInfo(115178), -- Resuscitate (Monk)
 	[50769]  = GetSpellInfo(50769),  -- Revive (Druid)
 	[982]    = GetSpellInfo(982),    -- Revive Pet (Hunter)
-	[20707]  = GetSpellInfo(20707),  -- Soulstone (Warlock)
-	-- Hunter Pet Abilities
-	[126393] = GetSpellInfo(126393), -- Eternal Guardian (Quilien)
 	-- Items
 	[8342]   = GetSpellInfo(8342),   -- Defibrillate (Goblin Jumper Cables)
 	[22999]  = GetSpellInfo(22999),  -- Defibrillate (Goblin Jumper Cables XL)
@@ -153,6 +154,7 @@ function callbacks:OnUsed(lib, callback)
 		eventFrame:RegisterEvent("UNIT_AURA")
 		eventFrame:RegisterEvent("UNIT_CONNECTION")
 		eventFrame:RegisterEvent("UNIT_FLAGS")
+		eventFrame:RegisterEvent("RESURRECT_REQUEST")
 		eventFrame:GROUP_ROSTER_UPDATE("OnUsed")
 	end
 	lib.callbacksInUse[callback] = true
@@ -173,6 +175,7 @@ function callbacks:OnUnused(lib, callback)
 		wipe(castingMass)
 		wipe(hasPending)
 		wipe(hasSoulstone)
+		wipe(hasReincarnation)
 		wipe(isDead)
 		wipe(isGhost)
 	end
@@ -205,7 +208,7 @@ end
 --	* resType is one of:
 --   - SELFRES if the unit has a Soulstone or other self-res ability available,
 --   - PENDING if the unit already has a res available to accept, or
---	  - CASTING if a res is being cast on the unit.
+--   - CASTING if a res is being cast on the unit.
 --	* caster and casterGUID are nil if the unit is being mass-ressed.
 ------------------------------------------------------------------------
 
@@ -223,7 +226,7 @@ function lib:UnitHasIncomingRes(unit)
 		return
 	end
 	if hasPending[guid] then
-		local state = hasSoulstone[guid] and "SELFRES" or "PENDING"
+		local state = (hasSoulstone[guid] or hasReincarnation[guid]) and "SELFRES" or "PENDING"
 		debug(2, "UnitHasIncomingRes", nameFromGUID[guid], state)
 		return state, hasPending[guid]
 	end
@@ -564,6 +567,38 @@ function eventFrame:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, combatEvent, h
 	end
 end
 
+function eventFrame:RESURRECT_REQUEST(event, casterName)
+	local caster = UnitGUID(casterName)
+	if castingMass[caster] then
+		castingMass[caster] = nil
+		debug(1, ">> MassResFinished", nameFromGUID[caster])
+		callbacks:Fire("LibResInfo_MassResFinished", unitFromGUID[caster], caster)
+	end
+
+	local target = guidFromUnit.player
+	local endTime = GetTime() + RESURRECT_PENDING_TIME
+	hasPending[target] = endTime
+
+	self:Show()
+
+	debug(1, ">> ResPending", "on", nameFromGUID[target], "by", nameFromGUID[caster])
+	callbacks:Fire("LibResInfo_ResPending", "player", target, endTime)
+
+	-- UNIT_FLAGS doesn't fire for the player after he accepts a resurrect after releasing
+	self:RegisterEvent('UNIT_HEALTH')
+end
+
+function eventFrame:UNIT_HEALTH(event, unit)
+	local guid = guidFromUnit[unit]
+	if hasPending[guid] and not UnitIsDeadOrGhost(unit) then
+		hasPending[guid] = nil
+		debug(1, ">> ResUsed", nameFromGUID[guid])
+		callbacks:Fire("LibResInfo_ResUsed", unit, guid)
+
+		self:UnregisterEvent(event)
+	end
+end
+
 ------------------------------------------------------------------------
 
 function eventFrame:UNIT_AURA(event, unit)
@@ -578,6 +613,23 @@ function eventFrame:UNIT_AURA(event, unit)
 			end
 			hasSoulstone[guid] = stoned
 			debug(2, nameFromGUID[guid], stoned and "gained" or "lost", SOULSTONE)
+		end
+	else
+		local reincarnation = UnitAura(unit, REINCARNATION, nil, "HARMFUL")
+		if reincarnation ~= hasReincarnation[guid] then
+			local endTime = GetTime() + RELEASE_PENDING_TIME
+			hasReincarnation[guid] = reincarnation
+			hasPending[guid] = endTime
+			debug(1, ">> ResPending", nameFromGUID[guid], REINCARNATION)
+			callbacks:Fire("LibResInfo_ResPending", unit, guid, endTime, true)
+		else
+			-- Rebirth, Raise Dead, Soulstone and Eternal Guardian leaves a debuff on the resurrected target
+			local resurrecting, _, _, _, _, _, expires = UnitAura(unit, RESURRECTING, nil, "HARMFUL")
+			if resurrecting ~= hasPending[guid] then
+				hasPending[guid] = resurrecting
+				debug(1, ">> ResPending", nameFromGUID[guid], RESURRECTING)
+				callbacks:Fire("LibResInfo_ResPending", unit, guid, expires)
+			end
 		end
 	end
 end
@@ -624,6 +676,12 @@ function eventFrame:UNIT_FLAGS(event, unit)
 				debug(1, ">> UnitUpdate", nameFromGUID[guid], "(alive)")
 				callbacks:Fire("LibResInfo_UnitUpdate", unit, guid)
 			end
+		elseif hasPending[guid] or hasReincarnation[guid] then
+			hasPending[guid] = nil
+			hasReincarnation[guid] = nil
+
+			debug(1, ">> UnitUpdate", nameFromGUID[guid], "(alive)")
+			callbacks:Fire("LibResInfo_UnitUpdate", unit, guid)
 		end
 	elseif not isDead[guid] then
 		debug(2, nameFromGUID[guid], "is now dead")

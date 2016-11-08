@@ -1,4 +1,4 @@
-﻿## Interface: 70000
+﻿## Interface: 70100
 ## X-Min-Interface: 50001
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Party-WotLK|r
 ## Title-frFR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Groupe-WotLK|r
@@ -68,10 +68,10 @@ Gundrak\Moorabi.lua
 Gundrak\BloodstoneAnnihilator.lua
 Gundrak\Galdarah.lua
 Gundrak\Eck.lua
-HallsOfLightning\Gjarngrin.lua
+HallsOfLightning\Bjarngrin.lua
 HallsOfLightning\Volkhan.lua
 HallsOfLightning\Ionar.lua
-HallsOfLightning\Kronus.lua
+HallsOfLightning\Loken.lua
 HallsOfReflection\WaveTimers.lua
 HallsOfReflection\Falric.lua
 HallsOfReflection\Marwyn.lua

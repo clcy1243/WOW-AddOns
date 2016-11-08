@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 7.0.5664 (TasmanianThylacine)
-	Revision: $Id: CoreUtil.lua 5609 2016-06-14 17:29:30Z brykrys $
+	Version: 7.1.5675 (TasmanianThylacine)
+	Revision: $Id: CoreUtil.lua 5670 2016-09-03 11:59:41Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -33,6 +33,8 @@
 ]]
 
 local lib = AucAdvanced
+if not lib then return end
+lib.CoreFileCheckIn("CoreUtil")
 local private, internalUtil = {}, {}
 local tooltip = lib.Libraries.TipHelper
 local Const = lib.Const
@@ -130,10 +132,10 @@ end
 --This function will retrieve the index we've got stored for the user
 function lib.getFrameIndex()
 	--Check to make sure AucAdvanced.Settings exists, if not initialize it
-	if (not AucAdvanced.Settings) then
-		AucAdvanced.Settings = {}
+	if (not lib.Settings) then
+		lib.Settings = {}
 	end
-	local get = AucAdvanced.Settings.GetSetting
+	local get = lib.Settings.GetSetting
 	--Get the value of AucAdvanced.Settings["printwindow"]
 	local value = get("printwindow")
 	--If that value doesn't exist, we return a default of 0
@@ -146,7 +148,7 @@ end
 
 --This function is used to store the user's preferred chatframe
 function lib.setFrame(frame)
-	local set = AucAdvanced.Settings.SetSetting
+	local set = lib.Settings.SetSetting
 	--If called with no argument
 	if (not frame) then
 		frame = 0
@@ -165,8 +167,8 @@ end
 --This is the printing function.  If the user has selected a preferred chatframe, we'll use it.  If not, we'll default to the first one.
 function lib.Print(...)
 	local output, part, frameIndex
-	local frame = AucAdvanced.getFrameIndex()
-	local allFrames = AucAdvanced.getFrameNames()
+	local frame = lib.getFrameIndex()
+	local allFrames = lib.getFrameNames()
 	if (type(frame) == "string") then
 		if (allFrames[frame]) then
 			frameIndex = allFrames[frame]
@@ -223,7 +225,7 @@ do
 			-- delay creating table until function is first called, to give all modules a chance to load first
 			pricemodels = {}
 			tinsert(pricemodels,{"market", lib.localizations("ADV_Interface_MarketPrice")})--Market Price
-			local algoList, algoNames = AucAdvanced.API.GetAlgorithms()
+			local algoList, algoNames = lib.API.GetAlgorithms()
 			for pos, name in ipairs(algoList) do
 				tinsert(pricemodels,{name, format(lib.localizations("ADV_Interface_Algorithm_Price"), algoNames[pos])})--%s Price
 			end
@@ -947,4 +949,5 @@ function lib.CreateMoney(height)
 	return (tooltip:CreateMoney(height))
 end
 
-lib.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Advanced/CoreUtil.lua $", "$Rev: 5609 $")
+lib.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CoreUtil.lua $", "$Rev: 5670 $")
+lib.CoreFileCheckOut("CoreUtil")

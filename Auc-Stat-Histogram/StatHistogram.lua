@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Histogram Statistics module
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: StatHistogram.lua 5633 2016-07-31 14:25:49Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -968,4 +968,4 @@ function lib.ChangeServerKey(oldKey, newKey)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Stat-Histogram/StatHistogram.lua $", "$Rev: 5633 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Stat-Histogram/StatHistogram.lua $", "$Rev: 5633 $")

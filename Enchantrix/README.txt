@@ -1,4 +1,4 @@
-Enchantrix v7.0.5664
+Enchantrix v7.1.5675
 -------------------------------
 FROM: http://enchantrix.org
 

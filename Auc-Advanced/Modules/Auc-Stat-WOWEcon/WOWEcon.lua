@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - WoWEcon price statistics module
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: WOWEcon.lua 5613 2016-07-21 20:59:41Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -62,7 +62,7 @@ function lib.OnLoad(addon)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Stat-WOWEcon/WOWEcon.lua $", "$Rev: 5613 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Stat-WOWEcon/WOWEcon.lua $", "$Rev: 5613 $")
 
 --[[ The following localizer keys are now obsolete too:
 		'WECN_Help_WhatGlobalPrices'

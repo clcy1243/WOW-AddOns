@@ -1,0 +1,15 @@
+------------------------------------------------------------------------
+r38 | thaoky | 2016-10-26 17:53:54 +0000 (Wed, 26 Oct 2016) | 2 lines
+Changed paths:
+   M /trunk/DataStore_Reputations.lua
+   M /trunk/DataStore_Reputations.toc
+
+TOC Update
+Added a few missing factions
+------------------------------------------------------------------------
+r37 | thaoky | 2016-07-18 16:11:02 +0000 (Mon, 18 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Reputations.toc
+
+7.0 Compatibility Release
+------------------------------------------------------------------------

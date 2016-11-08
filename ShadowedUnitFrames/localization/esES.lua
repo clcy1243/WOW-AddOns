@@ -51,7 +51,6 @@ L["Aura groups"] = "Grupos de aura" -- Needs review
 L["Aura Groups"] = "Grupos de Auras" -- Needs review
 L["Aura indicators"] = "Indicadores de Auras" -- Needs review
 L["Aura Indicators"] = "Indicadores de Auras" -- Needs review
-L["Aura name"] = "Nombre del Aura"
 L["Auras"] = "Auras"
 L["Aura types to filter"] = "Filtro de tipo de Auras"
 L["Automatic Auras"] = "Auras automaticas  " -- Needs review

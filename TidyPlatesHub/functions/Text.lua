@@ -3,14 +3,12 @@ local AddonName, HubData = ...;
 local LocalVars = TidyPlatesHubDefaults
 
 
--- CachedUnitDescription, CachedUnitGuild, GetLevelDescription
-
 ------------------------------------------------------------------
 -- References
 ------------------------------------------------------------------
 local RaidClassColors = RAID_CLASS_COLORS
 
-local GetAggroCondition = TidyPlatesWidgets.GetThreatCondition
+local GetFriendlyThreat = TidyPlatesUtility.GetFriendlyThreat
 
 local IsFriend = TidyPlatesUtility.IsFriend
 local IsGuildmate = TidyPlatesUtility.IsGuildmate
@@ -27,8 +25,6 @@ local CachedUnitDescription = TidyPlatesUtility.CachedUnitDescription
 local GetUnitSubtitle = TidyPlatesUtility.GetUnitSubtitle
 local GetUnitQuestInfo = TidyPlatesUtility.GetUnitQuestInfo
 
---local CachedUnitGuild = TidyPlatesUtility.CachedUnitGuild
---local CachedUnitClass = TidyPlatesUtility.CachedUnitClass
 
 local AddHubFunction = TidyPlatesHubHelpers.AddHubFunction
 
@@ -89,7 +85,7 @@ end
 
 
 local function TextFunctionMana(unit)
-	if unit.isTarget then
+	if (unit.isTarget or (LocalVars.FocusAsTarget and unit.isFocus)) then
 		local power = ceil((UnitPower("target") / UnitPowerMax("target"))*100)
 		--local r, g, b = UnitPowerType("target")
 		--local powername = getglobal(select(2, UnitPowerType("target")))
@@ -160,7 +156,7 @@ local function HealthFunctionTargetOf(unit)
 		return UnitName(unitid.."target")
 	end
 	--[[
-	if unit.isTarget then return UnitName("targettarget")
+	if (unit.isTarget or (LocalVars.FocusAsTarget and unit.isFocus)) then return UnitName("targettarget")
 	elseif unit.isMouseover then return UnitName("mouseovertarget")
 	else return "" end
 	--]]
@@ -197,7 +193,7 @@ local function HealthFunctionArenaID(unit)
 		end
 
 
-		if unit.isTarget then localid = "target"
+		if (unit.isTarget or (LocalVars.FocusAsTarget and unit.isFocus)) then localid = "target"
 		elseif unit.isMouseover then localid = "mouseover"
 		end
 
@@ -339,7 +335,7 @@ local function HealthTextDelegate(unit)
 	func = HealthTextModeFunctions[mode] or DummyFunction
 
 	if LocalVars.TextShowOnlyOnTargets then
-		if (unit.isTarget or unit.isMouseover or unit.isMarked) then showText = true end
+		if ((unit.isTarget or (LocalVars.FocusAsTarget and unit.isFocus)) or unit.isMouseover or unit.isMarked) then showText = true end
 	end
 
 	if LocalVars.TextShowOnlyOnActive then

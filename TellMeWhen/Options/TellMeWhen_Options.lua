@@ -13,6 +13,8 @@
 
 if not TMW then return end
 
+local clientVersion = select(4, GetBuildInfo())
+local wow_701 = clientVersion >= 70100 or GetBuildInfo() == "7.1.0" -- they haven't updated the interface number yet.
 
 ---------- Libraries ----------
 local LSM = LibStub("LibSharedMedia-3.0")
@@ -1281,6 +1283,13 @@ TMW:NewClass("Config_Frame", "Frame", "CScriptProvider"){
 		self.text:SetMaxLines(3)
 	end,
 
+	-- Wow 7.1 wow_701 shim. Delete when the patch is live.
+	DoesClipChildren = not wow_701 and function() return false end or nil,
+	SetClipsChildren = not wow_701 and TMW.NULLFUNC or nil,
+
+	SetAnimateHeightAdjustments = function(self, animateHeightAdjusts)
+		self.animateHeightAdjusts = animateHeightAdjusts
+	end,
 
 	SetMinAdjustHeight = function(self, minAdjustHeight)
 		self.minAdjustHeight = minAdjustHeight
@@ -1392,7 +1401,15 @@ TMW:NewClass("Config_Frame", "Frame", "CScriptProvider"){
 		return max(self.minAdjustHeight or 1, height)
 	end,
 
-	AdjustHeight = function(self, bottomPadding)
+	AdjustHeight = function(self, bottomPadding, duration)
+		if self.animateHeightAdjusts then
+			self:AdjustHeightAnimated(bottomPadding, duration)
+		else
+			self:AdjustHeightUnanimated(bottomPadding)
+		end
+	end,
+
+	AdjustHeightUnanimated = function(self, bottomPadding)
 		local height = self:CalculateAutoHeight(bottomPadding)
 
 		if height == -1 then return end
@@ -2114,6 +2131,9 @@ TMW:NewClass("Config_TimeEditBox", "Config_EditBox"){
 	end,
 
 	ModifyValueForLoad = function(self, value)
+		if value < 0 then
+			return value
+		end
 		return TMW.C.Formatter.TIME_COLONS_FORCEMINS:Format(value)
 	end,
 }
@@ -3857,14 +3877,14 @@ end
 ---------- Dropdown ----------
 TMW:RegisterCallback("TMW_CONFIG_REQUEST_AVAILABLE_IMPORT_EXPORT_TYPES", function(event, editbox, import, export)
 	if editbox == TMW.IE.ExportBox then
-		if IE.CurrentTabGroup.identifier == "ICON" then
+		if IE.CurrentTabGroup.identifier == "ICON" and CI.icon then
 			import.icon = CI.icon
 			export.icon = CI.icon
 
 			import.group_overwrite = CI.icon.group
 			export.group = CI.icon.group
 
-		elseif IE.CurrentTabGroup.identifier == "GROUP" then	
+		elseif IE.CurrentTabGroup.identifier == "GROUP" and CI.group then	
 			import.group_overwrite = CI.group
 			export.group = CI.group
 		end

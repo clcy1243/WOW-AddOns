@@ -27,7 +27,7 @@ local NameReactionColors = HubData.Colors.NameReactionColors
 ------------------------------------------------------------------
 -- References
 ------------------------------------------------------------------
-local GetAggroCondition = TidyPlatesWidgets.GetThreatCondition
+local GetFriendlyThreat = TidyPlatesUtility.GetFriendlyThreat
 local IsFriend = TidyPlatesUtility.IsFriend
 local IsHealer = TidyPlatesUtility.IsHealer
 local IsGuildmate = TidyPlatesUtility.IsGuildmate
@@ -198,10 +198,10 @@ local function HealthColorDelegate(unit)
 	-- Group Member Aggro Coloring
 	if unit.reaction == "FRIENDLY"  then
 		if LocalVars.ColorShowPartyAggro and LocalVars.ColorPartyAggroBar then
-			--if GetAggroCondition(unit.rawName) then color = LocalVars.ColorPartyAggro end
+			--if GetFriendlyThreat(unit.unitid) then color = LocalVars.ColorPartyAggro end
 		end
 	-- Tapped Color Priority
-	elseif unit.reaction == "TAPPED" then
+	elseif unit.isTapped then
 		color = LocalVars.ColorTapped
 	end
 
@@ -325,7 +325,7 @@ local function ThreatColorDelegate(unit)
 
 	-- Friendly Unit Aggro
 	if LocalVars.ColorShowPartyAggro and LocalVars.ColorPartyAggroGlow and unit.reaction == "FRIENDLY" then
-		if GetAggroCondition(unit.rawName) then color = LocalVars.ColorPartyAggro end
+		if GetFriendlyThreat(unit.unitid) then color = LocalVars.ColorPartyAggro end
 
 	-- Enemy Units
 	else
@@ -369,7 +369,7 @@ end
 local function NameColorBySignificance(unit)
 	-- [[
 	if unit.reaction ~= "FRIENDLY" then
-		if unit.isTarget then return White
+		if (unit.isTarget or (LocalVars.FocusAsTarget and unit.isFocus)) then return White
 		elseif unit.isBoss or unit.isMarked then return BossGrey
 		elseif unit.isElite or (unit.levelcolorRed > .9 and unit.levelcolorGreen < .9) then return EliteGrey
 		else return NormalGrey end
@@ -497,7 +497,7 @@ local function SetNameColorDelegate(unit)
 
 	-- Party Aggro Coloring, if enabled
 	if isFriendly and LocalVars.ColorShowPartyAggro and LocalVars.ColorPartyAggroText then
-		if GetAggroCondition(unit.rawName) then return LocalVars.ColorPartyAggro end
+		if GetFriendlyThreat(unit.unitid) then return LocalVars.ColorPartyAggro end
 	end
 
 	-- Headline Mode
@@ -524,7 +524,13 @@ local function SetNameColorDelegate(unit)
 		func = EnemyNameColorFunctions[colorMode or 1] or NameColorDefault
 	end
 
-	color = func(unit)
+		-- Tapped Color Priority
+	--if unit.isTapped then
+	--	color = LocalVars.ColorTapped
+	--else
+		color = func(unit)
+	--end
+
 
 	if color then
 		return color.r, color.g, color.b , ((color.a or 1) * alphaFade)

@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 7.0.5664 (TasmanianThylacine)
-	Revision: $Id: CoreBuy.lua 5660 2016-08-14 10:55:05Z brykrys $
+	Version: 7.1.5675 (TasmanianThylacine)
+	Revision: $Id: CoreBuy.lua 5667 2016-09-03 11:29:50Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -191,7 +191,7 @@ end
 	If item cannot be found on Auctionhouse, will output a warning message to chat
 ]]
 local function QueueBuyErrorHelper(link, reason)
-	aucPrint(format("%sAuctioner: Unable to buy |r%s%s: %s", highlight, link, highlight, ErrorText[reason] or "Unknown")) -- need to highlight before and after the link
+	aucPrint(format("%sAuctioneer: Unable to buy |r%s%s: %s", highlight, link, highlight, ErrorText[reason] or "Unknown")) -- need to highlight before and after the link
 	return false, reason
 end
 function lib.QueueBuy(link, seller, count, minbid, buyout, price, reason, nosearch)
@@ -272,6 +272,7 @@ function private.SetRequestSearchParams(request)
 					return QueueBuyErrorHelper(link, "NoItem")
 				else
 					request.retrycount = retrycount
+					request.retrytime = GetTime() + ITEMRETRYDELAY -- waiting period bewteen retries
 					return -2
 				end
 			else
@@ -665,15 +666,6 @@ local function OnEvent(frame, event, message, ...)
 		end
 
 		lib.ScanPage()
-	elseif event == "AUCTION_HOUSE_SHOW" then
-		private.ActivateEvents()
-	elseif event == "AUCTION_HOUSE_CLOSED" then
-		local request = private.CurRequest
-		if request then -- prompt is open: cancel prompt and requeue auction
-			private.HidePrompt(true) -- silent
-			private.QueueInsert(request, 1)
-		end
-		private.DeactivateEvents()
 	elseif event == "CHAT_MSG_SYSTEM" then
 		if message == ERR_AUCTION_BID_PLACED then
 		 	private.onBidAccepted()
@@ -692,8 +684,6 @@ local function OnEvent(frame, event, message, ...)
 end
 
 private.updateFrame = CreateFrame("Frame")
-private.updateFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
-private.updateFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
 private.updateFrame:SetScript("OnUpdate", OnUpdate)
 private.updateFrame:SetScript("OnEvent", OnEvent)
 private.updateFrame:Hide()
@@ -701,6 +691,19 @@ private.updateFrame:Hide()
 coremodule.Processors = {
 	scanfinish = function(event, scansize, querysig, queryinfo, complete, query, scanstats)
 		private.FinishedSearch(complete, querysig, query)
+	end,
+
+	auctionopen = function()
+		private.ActivateEvents()
+	end,
+
+	auctionclose = function()
+		local request = private.CurRequest
+		if request then -- prompt is open: cancel prompt and requeue auction
+			private.HidePrompt(true) -- silent
+			private.QueueInsert(request, 1)
+		end
+		private.DeactivateEvents()
 	end,
 }
 
@@ -822,5 +825,5 @@ private.Prompt.DragBottom:SetHighlightTexture("Interface\\FriendsFrame\\UI-Frien
 private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Advanced/CoreBuy.lua $", "$Rev: 5660 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CoreBuy.lua $", "$Rev: 5667 $")
 AucAdvanced.CoreFileCheckOut("CoreBuy")

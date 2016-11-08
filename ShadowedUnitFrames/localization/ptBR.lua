@@ -41,7 +41,6 @@ L["Are you sure you want to delete this text? All settings for it will be delete
 L["Ascending"] = "Ascendente" -- Needs review
 L["Aura border style"] = "Estilo da aura da aresta" -- Needs review
 L["Aura filters"] = "Filtros de aura" -- Needs review
-L["Aura name"] = "Nome da aura" -- Needs review
 L["Auras"] = "Auras" -- Needs review
 L["Aura types to filter"] = "Tipos de filtros de aura" -- Needs review
 L["B"] = "B" -- Needs review

@@ -3,13 +3,68 @@ Exclusion List: 	*.svn*   *.DS_Store*   exclude.lst   *.db   *.png   *.gif   *.j
 
 
 ---------------------------
+6.18.10
+---------------------------
+* Core: RAID_TARGET_UPDATE, Full update
+* Core: Reverted unit.reaction gather function to using UnitSelectionColor.
+* Aura Widget: Removed the wonky Hide call.
+
+---------------------------
+6.18.9
+---------------------------
+* Utility: Replaced GetAggroCondition()
+* Core: Added RAID_TARGET_UPDATE event to core
+* Aura Widget: Added some missing ClearAllPoints()
+* Core: Updated unit.reaction function.  Now uses UnitReaction().  What a concept!
+* Threat Line Widget: Fixed anchor point..  the widget itself needs some work, though.
+
+---------------------------
+6.18.7
+---------------------------
+* Utility: Replaced GetAggroCondition()
+
+---------------------------
+6.18.7
+---------------------------
+* Core: Restored the WidgetReset function; Not quite ready to take that plunge.
+* Aura Widget: Some fixes and tweaks
+* Cure: Added, TidyPlates:GetThemeName()
+
+
+---------------------------
+6.18.4
+---------------------------
+* Major Internal Changes Warning!
+
+* Core/Utility: Totally and utterly removed all the caching that we used to do to store Guild names, Titles, Classes, etc.
+	IsGuildMate and IsFriend have been bypassed, so those functions don't do anything. Consquently,
+	the associated features are temporarily disabled.
+
+* Core: The Widget Reset function has been removed, which will possibly cause some problems with Non-Hub themes, but will help
+	to fix some memory leakage.  I want to avoid repetitively destroying/creating frames, so now the Hub functions will attempt
+	to call widget:UpdateConfig() and recycle/reconfig the old frames instead of nil-ing the old ones and creating new ones.
+
+* Combo Points: Now displays a 6th when you're using Deeper Strategem.  Anticipation will still use the 5+Overlap method to display.
+* Combo Points: Chi does not show up on Brewmaster Monks
+
+* Hub: Tapped Color on Healthbars is now working again
+* Themes: Fixed some elite/level display problems
+* Hub: Active/Damaged Units: On NPCs, if the unit has a target, it's considered active.
+
+* Hub: Guildmate and Friend colors are temporarily disabled.
+
+
+---------------------------
 6.18.3
 ---------------------------
 * Mini Mob Headline is now Off by Default
 * Neutral Unit Headline is now Off by Default
 * Neon Level Text field width increased (to fix 100+ not being displayed correctly)
 * Fixed TotemIcon nil field error
-
+* Fixed Approximate Health
+* Fixed text shadow flag
+* Fixed friendly auras appearing when using "Show Dispellable.."
+* And more little fixes
 
 ---------------------------
 6.18.2 - Happy Legion Day!

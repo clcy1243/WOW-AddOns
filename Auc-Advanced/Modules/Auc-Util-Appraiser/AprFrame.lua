@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 7.0.5664 (TasmanianThylacine)
-	Revision: $Id: AprFrame.lua 5653 2016-08-08 17:25:07Z brykrys $
+	Version: 7.1.5675 (TasmanianThylacine)
+	Revision: $Id: AprFrame.lua 5666 2016-09-02 09:48:49Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -33,7 +33,9 @@ if not AucAdvanced then return end
 
 local lib = AucAdvanced.Modules.Util.Appraiser
 if not lib then return end
-local private = lib.Private
+local private = lib.Private_AprFrame
+if not private then return end
+lib.Private_AprFrame = nil
 local Const = AucAdvanced.Const
 local aucPrint,decode,_,_,replicate,empty,get,set,default,debugPrint,fill, _TRANS = AucAdvanced.GetModuleLocals()
 
@@ -414,6 +416,12 @@ function private.CreateFrames()
 	-- Multiple updates without changing the selected item are throttled to 3 seconds
 	-- Exception: CheckImageUpdate allows the throttle to be overridden if required
 	local query = {} -- query table used for QueryImage
+	local tleftlookup = {
+		"|cff000001|cffe5e5e530m", -- 30m
+		"|cff000002|cffe5e5e52h",  --2h
+		"|cff000003|cffe5e5e512h", --12h
+		"|cff000004|cffe5e5e548h"  --48h
+	}
 	function private.DelayedImageUpdate()
 		local sig = frame.salebox.sig
 		if not sig then -- sanity check
@@ -483,12 +491,7 @@ function private.CreateFrames()
 		local style = {}
 		for i = 1, #results do
 			local result = results[i]
-			local tLeft = result[Const.TLEFT]
-			if (tLeft == 1) then tLeft = "30m"
-			elseif (tLeft == 2) then tLeft = "2h"
-			elseif (tLeft == 3) then tLeft = "12h"
-			elseif (tLeft == 4) then tLeft = "48h"
-			end
+			local tLeft = tleftlookup[result[Const.TLEFT]] or ""
 			local count = result[Const.COUNT]
 			data[i] = {
 				--result[Const.NAME],
@@ -2976,4 +2979,4 @@ function private.CreateFrames()
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5653 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5666 $")

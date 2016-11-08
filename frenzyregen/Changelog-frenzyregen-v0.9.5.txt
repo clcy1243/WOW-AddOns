@@ -1,0 +1,8 @@
+2016-10-24  Ogion  <Ogion>
+
+[05547531955d] [v0.9.5]
+* FrenzyRegen.lua:
+
+Added the option to mouse clicks during combat.
+
+

@@ -1,0 +1,14 @@
+------------------------------------------------------------------------
+r27 | thaoky | 2016-10-26 17:54:42 +0000 (Wed, 26 Oct 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Stats.toc
+
+TOC Update
+------------------------------------------------------------------------
+r26 | thaoky | 2016-07-18 16:11:29 +0000 (Mon, 18 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Stats.lua
+   M /trunk/DataStore_Stats.toc
+
+7.0 Compatibility Release
+------------------------------------------------------------------------

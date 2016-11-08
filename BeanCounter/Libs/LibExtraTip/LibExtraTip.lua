@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 local LIBNAME = "LibExtraTip"
 local VERSION_MAJOR = 1
-local VERSION_MINOR = 335
+local VERSION_MINOR = 337
 -- Minor Version cannot be a SVN Revison in case this library is used in multiple repositories
 -- Should be updated manually with each (non-trivial) change
 
@@ -37,7 +37,7 @@ local LIBSTRING = LIBNAME.."_"..VERSION_MAJOR.."_"..VERSION_MINOR
 local lib = LibStub:NewLibrary(LIBNAME.."-"..VERSION_MAJOR, VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/LibExtraTip/LibExtraTip.lua $","$Rev: 409 $","5.15.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/LibExtraTip/LibExtraTip.lua $","$Rev: 412 $","5.15.DEV.", 'auctioneer', 'libs')
 
 -- Call function to deactivate any outdated version of the library.
 -- (calls the OLD version of this function, NOT the one defined in this
@@ -72,7 +72,8 @@ local defaultEnable = {
 	SetSendMailItem = true,
 	SetTradePlayerItem = true,
 	SetTradeTargetItem = true,
-	SetTradeSkillItem = true,
+	SetRecipeReagentItem = true,
+	SetRecipeResultItem = true,
 	SetHyperlink = true,
 	SetHyperlinkAndCount = true, -- Creating a tooltip via lib:SetHyperlinkAndCount()
 	SetBattlePet = true,
@@ -242,7 +243,7 @@ local function OnTooltipCleared(tooltip)
 	local self = lib
 	local reg = self.tooltipRegistry[tooltip]
 	if not reg then return end
-	
+
 	if reg.ignoreOnCleared then return end
 	tooltip:SetFrameLevel(1)
 
@@ -1213,26 +1214,32 @@ function lib:GenerateTooltipMethodTable() -- Sets up hooks to give the quantity 
 			reg.additional.eventIndex = index
 		end,
 
-		SetTradeSkillItem = function(self,index,reagentIndex)
+		SetRecipeReagentItem = function(self, recipeID, reagentIndex)
 			OnTooltipCleared(self)
 			local reg = tooltipRegistry[self]
 			reg.ignoreOnCleared = true
-			reg.additional.event = "SetTradeSkillItem"
-			reg.additional.eventIndex = index
-			reg.additional.eventReagentIndex = reagentIndex
-			if reagentIndex then
-				local _,_,q,rc = GetTradeSkillReagentInfo(index,reagentIndex)
-				reg.quantity = q
-				reg.additional.playerReagentCount = rc
-				reg.additional.link = GetTradeSkillReagentItemLink(index,reagentIndex) -- Workaround [LTT-56], Remove when fixed by Blizzard
-			else
-				local link = GetTradeSkillItemLink(index)
-				reg.additional.link = link
-				reg.quantity = GetTradeSkillNumMade(index)
-				if link and link:match("spell:%d") then
-					SetSpellDetail(reg, link)
-				end
-			end
+			reg.additional.event = "SetRecipeReagentItem"
+			reg.additional.eventIndex = recipeID
+			reg.additional.eventSubIndex = reagentIndex
+			local _,_,q,rc = C_TradeSkillUI.GetRecipeReagentInfo(recipeID, reagentIndex)
+			reg.quantity = q
+			reg.additional.playerReagentCount = rc
+			reg.additional.link = C_TradeSkillUI.GetRecipeReagentItemLink(recipeID, reagentIndex) -- Workaround [LTT-56], Remove when fixed by Blizzard
+		end,
+
+		SetRecipeResultItem = function(self, recipeID)
+			OnTooltipCleared(self)
+			local reg = tooltipRegistry[self]
+			reg.ignoreOnCleared = true
+			reg.additional.event = "SetRecipeResultItem"
+			reg.additional.eventIndex = recipeID
+			local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID) -- returns a table with a ton of info
+			reg.additional.recipeInfo = recipeInfo -- for now just attach whole table to reg.additional
+			local minMade, maxMade = C_TradeSkillUI.GetRecipeNumItemsProduced(recipeID)
+			reg.additional.minMade = minMade
+			reg.additional.maxMade = maxMade
+			reg.quantity = (minMade + maxMade) / 2 -- ### todo: may not be an integer, if this causes problems may need to math.floor it
+			reg.additional.link = C_TradeSkillUI.GetRecipeItemLink(recipeID) -- Workaround [LTT-56], Remove when fixed by Blizzard
 		end,
 
 		SetHyperlink = function(self,link)
@@ -1398,7 +1405,8 @@ function lib:GenerateTooltipMethodTable() -- Sets up hooks to give the quantity 
 		SetSendMailItem = posthookClearIgnore,
 		SetTradePlayerItem = posthookClearIgnore,
 		SetTradeTargetItem = posthookClearIgnore,
-		SetTradeSkillItem = posthookClearIgnore,
+		SetRecipeReagentItem = posthookClearIgnore,
+		SetRecipeResultItem = posthookClearIgnore,
 
 		SetHyperlink = function(self)
 			local reg = tooltipRegistry[self]
@@ -1508,7 +1516,7 @@ do -- ExtraTip "class" definition
 		self:NeedsRefresh(false)
 -- without this, making the game tip larger does not work.
 -- Legion - But this is causing flicker when we do make the game tip larger, because Blizz seems to resize it down again.
---		self:MatchSize()		 
+--		self:MatchSize()
 	end
 
 	function class:NeedsRefresh(flag)
@@ -1648,7 +1656,7 @@ end)
 -- Test Code ]]-----------------------------------------------------
 
 --[[ Debugging code
-local f = {"AddDoubleLine", "AddFontStrings", "AddLine", "AddTexture", "AppendText", "ClearLines", "FadeOut", "GetAnchorType", "GetItem", "GetSpell", "GetOwner", "GetUnit", "IsUnit", "NumLines", "SetAction", "SetAuctionCompareItem", "SetAuctionItem", "SetAuctionSellItem", "SetBagItem", "SetBuybackItem", "SetCraftItem", "SetCraftSpell", "SetCurrencyToken", "SetGuildBankItem", "SetHyperlink", "SetInboxItem", "SetInventoryItem", "SetLootItem", "SetLootRollItem", "SetMerchantCompareItem", "SetMerchantItem", "SetMinimumWidth", "SetOwner", "SetPadding", "SetPetAction", "SetPlayerBuff", "SetQuestItem", "SetQuestLogItem", "SetQuestLogRewardSpell", "SetQuestRewardSpell", "SetSendMailItem", "SetShapeshift", "SetSpell", "SetTalent", "SetText", "SetTracking", "SetTradePlayerItem", "SetTradeSkillItem", "SetTradeTargetItem", "SetTrainerService", "SetUnit", "SetUnitAura", "SetUnitBuff", "SetUnitDebuff"}
+local f = {"AddDoubleLine", "AddFontStrings", "AddLine", "AddTexture", "AppendText", "ClearLines", "FadeOut", "GetAnchorType", "GetItem", "GetSpell", "GetOwner", "GetUnit", "IsUnit", "NumLines", "SetAction", "SetAuctionCompareItem", "SetAuctionItem", "SetAuctionSellItem", "SetBagItem", "SetBuybackItem", "SetCraftItem", "SetCraftSpell", "SetCurrencyToken", "SetGuildBankItem", "SetHyperlink", "SetInboxItem", "SetInventoryItem", "SetLootItem", "SetLootRollItem", "SetMerchantCompareItem", "SetMerchantItem", "SetMinimumWidth", "SetOwner", "SetPadding", "SetPetAction", "SetPlayerBuff", "SetQuestItem", "SetQuestLogItem", "SetQuestLogRewardSpell", "SetQuestRewardSpell", "SetSendMailItem", "SetShapeshift", "SetSpell", "SetTalent", "SetText", "SetTracking", "SetTradePlayerItem", "SetTradeTargetItem", "SetTrainerService", "SetUnit", "SetUnitAura", "SetUnitBuff", "SetUnitDebuff"}
 
 for _,k in ipairs(f) do
 	print("Hooking ", k)

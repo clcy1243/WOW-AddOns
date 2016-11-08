@@ -3,6 +3,26 @@ if not TMW then return end
 TMW.CHANGELOG_LASTVER="6.2.6"
 
 TMW.CHANGELOG = [==[
+===v8.2.0===
+* New Icon Type: Guardians. Currently only implemented for Warlocks to track their Wild Imps/Dreadstalkers/etc.
+* Support for Patch 7.1.
+
+* New DogTag: MaxDuration
+* Controlled icons can now be selected as a target of Meta icons and Icon Shown conditions.
+* Cooldown sweeps that are displaying charges during a GCD when the GCD is allowed will now show the GCD.
+* You can now flip the origin of progress bars to the right side of the icon.
+* New Notification Triggers: On Charge Gained and On Charge Spent
+
+====Bug Fixes====
+* Fixed an issue that would cause unintentional renaming of text layouts. 
+* Fixed an issue with text colors after a chat link in Raid Warning (Fake) text notification handlers.
+* Fixed an issue with timer/status bars briefly showing their old value when they are first shown.
+* Fixed a few bugs relating to improper handling of the icon type name of some variants of the totem icon type.
+* Fixed an issue with Condition-triggered animations not being able to stop for non-icon-based animations.
+* Fel Rush and Infernal Strike should now work with the Last Ability Used condition.
+* On Show/On Hide notification triggers should now work on controlled icons.
+* All-Unit Buffs/Debuffs icons should now work correctly for infinite duration effects. They're also a bit better now at cleaning up things that expired.
+
 ===v8.1.2===
 * Restored the old Buff/Debuff duration percentage conditions, since they still have applications for variable-duration effects like Rogue DoTs.
 

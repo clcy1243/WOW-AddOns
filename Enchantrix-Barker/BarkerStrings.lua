@@ -5,7 +5,7 @@
 
 	AddOn: EnchantrixBarker
 	Revision: $Id: BarkerStrings.lua 5641 2016-08-04 02:23:06Z ccox $
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 
 	License:
 		This program is free software; you can redistribute it and/or

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: Mail-GUI.lua 5415 2013-06-11 15:18:58Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -556,4 +556,4 @@ end
 
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Util-AutoMagic/Mail-GUI.lua $", "$Rev: 5415 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-AutoMagic/Mail-GUI.lua $", "$Rev: 5415 $")

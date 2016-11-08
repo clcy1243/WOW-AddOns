@@ -198,6 +198,70 @@ ConditionCategory:RegisterCondition(2.6, "SPELLCHARGETIME", {
 
 ConditionCategory:RegisterSpacer(2.7)
 
+ConditionCategory:RegisterCondition(2.8, "LASTCAST", {
+	text = L["CONDITIONPANEL_LASTCAST"],
+	bool = true,
+	nooperator = true,
+	unit = PLAYER,
+	texttable = {
+		[0] = L["CONDITIONPANEL_LASTCAST_ISSPELL"],
+		[1] = L["CONDITIONPANEL_LASTCAST_ISNTSPELL"],
+	},
+	icon = "Interface\\Icons\\Temp",
+	tcoords = CNDT.COMMON.standardtcoords,
+	name = function(editbox)
+		editbox:SetTexts(L["SPELLTOCHECK"], L["CNDT_ONLYFIRST"])
+	end,
+	useSUG = true,
+	funcstr = function(c)
+		local module = CNDT:GetModule("LASTCAST", true)
+		if not module then
+			module = CNDT:NewModule("LASTCAST", "AceEvent-3.0")
+
+			local pGUID = UnitGUID("player")
+			assert(pGUID, "pGUID was null when func string was generated!")
+
+			module:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED",
+			function(_, _, e, _, sourceGuid, _, _, _, _, _, _, _, spellID, spellName)
+				if e == "SPELL_CAST_SUCCESS" and sourceGuid == pGUID then
+					Env.LastPlayerCastName = strlower(spellName)
+					Env.LastPlayerCastID = spellID
+					TMW:Fire("TMW_CNDT_LASTCAST_UPDATED")
+				end
+			end)
+
+			-- Spells that don't work with CLEU and must be tracked with USS.
+			local ussSpells = {
+				[189111] = true, -- Infernal Strike (DH)
+				[195072] = true, -- Fel Rush (DH)
+			}
+			module:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED",
+			function(_, unit, spellName, _, _, spellID)
+				if unit == "player" and ussSpells[spellID] then
+					Env.LastPlayerCastName = strlower(spellName)
+					Env.LastPlayerCastID = spellID
+					TMW:Fire("TMW_CNDT_LASTCAST_UPDATED")
+				end
+			end)
+		end
+
+		if c.Level == 1 then
+			return [[LastPlayerCastName ~= LOWER(c.NameFirst) and LastPlayerCastID ~= c.NameFirst]] 
+		end
+		return [[LastPlayerCastName == LOWER(c.NameFirst) or LastPlayerCastID == c.NameFirst]] 
+	end,
+	events = function(ConditionObject, c)
+		local pGUID = UnitGUID("player")
+		assert(pGUID, "pGUID was null when event string was generated!")
+		
+		return
+			ConditionObject:GetUnitChangedEventString(CNDT:GetUnit("player")),
+			ConditionObject:GenerateNormalEventString("TMW_CNDT_LASTCAST_UPDATED")
+	end,
+})
+
+ConditionCategory:RegisterSpacer(2.9)
+
 local IsUsableSpell = IsUsableSpell
 function Env.ReactiveHelper(NameFirst, Checked)
 	local usable, nomana = IsUsableSpell(NameFirst)

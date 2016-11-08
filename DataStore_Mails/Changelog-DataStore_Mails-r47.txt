@@ -1,0 +1,15 @@
+------------------------------------------------------------------------
+r47 | thaoky | 2016-10-26 17:52:28 +0000 (Wed, 26 Oct 2016) | 2 lines
+Changed paths:
+   M /trunk/DataStore_Mails.lua
+   M /trunk/DataStore_Mails.toc
+
+TOC Update
+Fixed an invalid attachment count
+------------------------------------------------------------------------
+r46 | thaoky | 2016-07-31 14:42:06 +0000 (Sun, 31 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Mails.lua
+
+Fixed cross-realm support
+------------------------------------------------------------------------

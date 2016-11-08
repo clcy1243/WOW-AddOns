@@ -98,8 +98,7 @@ TidyPlatesHubDefaults = {
 	OpacityFilterFriendlyNPC = false,
 	OpacityFilterInactive = false,
 	OpacityFilterMini = false,
-
-	OpacityFilterUntitledFriendlyNPC = true,
+	OpacityFilterUntitledFriendlyNPC = false,
 
 	OpacityFilterList = "Fanged Pit Viper\nLiberated Karabor Prisoner",
 	OpacityFilterLookup = {},
@@ -224,6 +223,7 @@ TidyPlatesHubDefaults = {
 	---------------------------------------
 	FrameVerticalPosition = .7,
 	AdvancedEnableUnitCache = true,
+	FocusAsTarget = false,
 	FrameBarWidth = 1,
 	--AdvancedHealthTextList = [[return unit.health]],
 }

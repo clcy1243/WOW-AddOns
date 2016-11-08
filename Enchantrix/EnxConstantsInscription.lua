@@ -1,6 +1,6 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: EnxConstants.lua 4632 2010-01-24 02:33:54Z ccox $
 	URL: http://enchantrix.org/
 
@@ -180,6 +180,7 @@ const.ReversePigmentList = {
 	[SALLOW_PIGMENT] = 1,
 	
 	[HERB_YSERALINESEEDS] = 1,
+	[HERB_NIGHTMARE_POD] = 1,
 
 }
 
@@ -337,7 +338,7 @@ const.MillableItems = {
 	[HERB_FOXFLOWER] = ROSEATE_PIGMENT_MEDIUM,
 	[HERB_FJARNSKAGGL] = ROSEATE_PIGMENT_MEDIUM,
 	[HERB_STARLIGHTROSE] = ROSEATE_PIGMENT_HIGH,
---	[HERB_FELWORT] = ROSEATE_PIGMENT_MEDIUM,	-- could not obtain any in beta, green quality
+	[HERB_FELWORT] = ROSEATE_PIGMENT_MEDIUM,	-- green quality, but is millable in beta
 
 }
 

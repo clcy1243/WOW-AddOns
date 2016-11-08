@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Scan Finish module
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: ScanFinish.lua 5588 2016-04-07 17:24:07Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -260,4 +260,4 @@ function private.ConfigChanged(fullsetting, value, setting, module, base)
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Util-ScanFinish/ScanFinish.lua $", "$Rev: 5588 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-ScanFinish/ScanFinish.lua $", "$Rev: 5588 $")

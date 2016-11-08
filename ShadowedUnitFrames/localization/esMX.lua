@@ -48,7 +48,6 @@ L["Assigned Role (DPS/Tank/etc)"] = "Rol Asignado (Dps/Tanque/Sanador)" -- Needs
 L["Aura borders"] = "Bordes de aura" -- Needs review
 L["Aura border style"] = "Estilo del borde de las auras."
 L["Aura filters"] = "Filtros de las auras."
-L["Aura name"] = "Nombre de la aura."
 L["Auras"] = "Auras."
 L["Aura types to filter"] = "Tipos de auras para filtrar."
 L["B"] = "B"

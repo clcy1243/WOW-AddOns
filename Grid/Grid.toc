@@ -1,5 +1,5 @@
-## Interface: 70000
-## Version: 7.0.3.3
+## Interface: 70100
+## Version: 7.1.0.0
 
 ## Title: Grid
 ## Notes: A compact grid of party/raid unit frames.

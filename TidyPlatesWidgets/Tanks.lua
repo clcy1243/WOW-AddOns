@@ -72,8 +72,6 @@ local function UpdatePlayerRole()
 
 	local activeTank = (playerTankRole or playerTankAura)
 
-	--print("Tank", playerTankRole , playerTankAura)
-
 	if TidyPlatesWidgets.IsTankingAuraActive ~= activeTank then
 		TidyPlatesWidgets.IsTankingAuraActive = activeTank
 		TidyPlates:RequestDelegateUpdate()

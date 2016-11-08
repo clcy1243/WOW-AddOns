@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: DataBonusIDs.lua 5642 2016-08-06 10:56:39Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -102,4 +102,4 @@ data.BonusTertiaryStatList = {
 	43, -- Indestructible
 }
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Advanced/DataBonusIDs.lua $", "$Rev: 5642 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/DataBonusIDs.lua $", "$Rev: 5642 $")

@@ -1,6 +1,6 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: EnxConstants.lua 4632 2010-01-24 02:33:54Z ccox $
 	URL: http://enchantrix.org/
 
@@ -468,24 +468,23 @@ const.ProspectableItems = {
 			[SUNSRADIANCE] = 0.10,
 			},
 
-	-- TODO - ccox - determine yields
-	-- TODO - ccox - colors may not have uniform yields!
+	-- TODO - ccox - colors may not have uniform yields! Need a LOT more data to confirm that!
 	[LAYSTONE_ORE] = {
 			[GENERICGEMCHIP] = 1.0,
 			
-			[SANGRITE] = 0.05,
-			[DEEPAMBER] = 0.05,
-			[AZSUNITE] = 0.05,
-			[CHAOTICSPINEL] = 0.05,
-			[SKYSTONE] = 0.05,
-			[QUEENSOPAL] = 0.05,
+			[SANGRITE] = 0.04,
+			[DEEPAMBER] = 0.04,
+			[AZSUNITE] = 0.04,
+			[CHAOTICSPINEL] = 0.04,
+			[SKYSTONE] = 0.04,
+			[QUEENSOPAL] = 0.04,
 			
-			[FURYSTONE] = 0.015,
-			[EYEOFPROPHECY] = 0.015,
-			[DAWNLIGHT] = 0.015,
-			[PANDEMONITE] = 0.015,
-			[MAELSTROMSAPPHIRE] = 0.015,
-			[SHADOWRUBY] = 0.015,
+			[FURYSTONE] = 0.011,
+			[EYEOFPROPHECY] = 0.011,
+			[DAWNLIGHT] = 0.011,
+			[PANDEMONITE] = 0.011,
+			[MAELSTROMSAPPHIRE] = 0.011,
+			[SHADOWRUBY] = 0.011,
 			},
 	
 	[FELSLATE_ORE] = {
@@ -498,12 +497,12 @@ const.ProspectableItems = {
 			[SKYSTONE] = 0.15,
 			[QUEENSOPAL] = 0.15,
 			
-			[FURYSTONE] = 0.06,
-			[EYEOFPROPHECY] = 0.06,
-			[DAWNLIGHT] = 0.06,
-			[PANDEMONITE] = 0.06,
-			[MAELSTROMSAPPHIRE] = 0.06,
-			[SHADOWRUBY] = 0.06,
+			[FURYSTONE] = 0.025,
+			[EYEOFPROPHECY] = 0.025,
+			[DAWNLIGHT] = 0.025,
+			[PANDEMONITE] = 0.025,
+			[MAELSTROMSAPPHIRE] = 0.025,
+			[SHADOWRUBY] = 0.025,
 			},
 	
 }

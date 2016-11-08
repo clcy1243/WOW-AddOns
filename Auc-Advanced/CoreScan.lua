@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 7.0.5664 (TasmanianThylacine)
-	Revision: $Id: CoreScan.lua 5660 2016-08-14 10:55:05Z brykrys $
+	Version: 7.1.5675 (TasmanianThylacine)
+	Revision: $Id: CoreScan.lua 5668 2016-09-03 11:41:19Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -1771,11 +1771,11 @@ do
 		if data then
 			return data
 		end
-		if scanthrottle and ItemTried[cachekey] then
+		if scanthrottle and ItemTried and ItemTried[cachekey] then
 			-- if GetItemInfo previously failed for a link with this cachekey in this processing pass (ItemTried is reset each pass)
 			return
 		end
-		local _,_,_,iLevel,uLevel,iType,iSubtype,_,equipLoc,_,_,classID,subClassID = GetItemInfo(link) -- ### Legion: replace iType with classID thoughout
+		local _,_,_,iLevel,uLevel,_,_,_,equipLoc,_,_,classID,subClassID = GetItemInfo(link)
 		if not classID then
 			if scanthrottle then
 				ItemTried[cachekey] = true
@@ -1791,7 +1791,7 @@ do
 	local function GetPetInfoCache(speciesID, scanthrottle) -- ### Legion : revised, check
 		local subtype = PetInfoCache[speciesID]
 		if not subtype then
-			if scanthrottle and PetTried[speciesID] then
+			if scanthrottle and PetTried and PetTried[speciesID] then
 				-- GetPetInfoBySpeciesID previously failed for this speciesID in this processing pass
 				return
 			end
@@ -2359,7 +2359,7 @@ local StorePageFunction = function()
 			qryinfo.unresolved = (qryinfo.unresolved or 0) + all_missed + links_missed + link_data_missed + ld_and_names_missed
 		end
 	end
-	private.ResetItemInfoCache() -- ### Legion item cache patch
+	--private.ResetItemInfoCache() -- ### Legion item cache patch
 
 	if EventFramesRegistered then
 		for _, frame in pairs(EventFramesRegistered) do
@@ -3256,5 +3256,5 @@ function internal.Scan.NotifyOwnedListUpdated()
 --	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Advanced/CoreScan.lua $", "$Rev: 5660 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CoreScan.lua $", "$Rev: 5668 $")
 AucAdvanced.CoreFileCheckOut("CoreScan")

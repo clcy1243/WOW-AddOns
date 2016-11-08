@@ -1,0 +1,17 @@
+------------------------------------------------------------------------
+r54 | thaoky | 2016-10-26 17:48:10 +0000 (Wed, 26 Oct 2016) | 2 lines
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/DataStore_Containers.lua
+   M /trunk/DataStore_Containers.toc
+   D /trunk/embeds.xml
+
+TOC Update
+Removed LibBabble-Inventory
+------------------------------------------------------------------------
+r53 | thaoky | 2016-07-31 14:43:37 +0000 (Sun, 31 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Containers.lua
+
+Fixed cross-realm support
+------------------------------------------------------------------------

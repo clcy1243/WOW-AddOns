@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer
-	Version: 7.0.5664 (TasmanianThylacine)
-	Revision: $Id: CoreSettings.lua 5605 2016-06-13 16:29:47Z brykrys $
+	Version: 7.1.5675 (TasmanianThylacine)
+	Revision: $Id: CoreSettings.lua 5670 2016-09-03 11:59:41Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	Settings GUI
@@ -75,6 +75,7 @@ Usage:
 
 ]]
 if not AucAdvanced then return end
+AucAdvanced.CoreFileCheckIn("CoreSettings")
 local coremodule, internal = AucAdvanced.GetCoreModule("CoreSettings")
 if not coremodule or not internal then return end -- Someone has explicitely broken us
 
@@ -795,4 +796,5 @@ function private.CheckObsolete()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Advanced/CoreSettings.lua $", "$Rev: 5605 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CoreSettings.lua $", "$Rev: 5670 $")
+AucAdvanced.CoreFileCheckOut("CoreSettings")

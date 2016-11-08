@@ -4,7 +4,7 @@ local Graph = LibStub:GetLibrary("LibGraph-2.0")
 local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 
-local revision = tonumber(string.sub("$Revision: 1373 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1392 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -700,9 +700,9 @@ function me:RefreshDeathLogDetails()
 end
 
 
-
 --Summary Report Functions
 local FontHeight = 14.5
+local RowSpacing = -13.0
 
 local SummaryDamageTypes = {
 	"Melee",
@@ -722,7 +722,6 @@ local SummaryHitTypes = {
 	"Hit",
 	"Crushing",
 	"Crit",
-	"Multistrike",
 	"Miss",
 	"Dodge",
 	"Parry",
@@ -748,8 +747,6 @@ function me:CreateSummaryColumn(Title, Color)
 	theFrame.Title:SetText(Title)
 	theFrame.Title:SetPoint("TOP", theFrame, "TOP", 0, -2)
 	Recount:AddFontString(theFrame.Title)
-
-	local RowSpacing = -12.0
 
 	theFrame.Damage = theFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	theFrame.Damage:SetTextColor(1, 1, 1)
@@ -935,8 +932,8 @@ function me:LoadSummaryData(damage, resisted, hitData, blocked, absorbed)
 			Previous = SummaryMode[v]
 			local i = 5
 			for _, k in pairs(SummaryHitTypes) do
-				SummaryMode[v][k]:SetPoint("TOP", SummaryMode[v], "TOP", -Width, -12.0 * i)
-				SummaryMode[v][k.."P"]:SetPoint("TOP", SummaryMode[v], "TOP", Width, -12.0 * i)
+				SummaryMode[v][k]:SetPoint("TOP", SummaryMode[v], "TOP", -Width, RowSpacing * i)
+				SummaryMode[v][k.."P"]:SetPoint("TOP", SummaryMode[v], "TOP", Width, RowSpacing * i)
 				i = i + 1
 			end
 		end
@@ -1177,7 +1174,6 @@ local SummaryLabels = {
 	L["Hit"],
 	L["Crushing"],
 	L["Crit"],
-	L["Multistrike"],
 	L["Miss"],
 	L["Dodge"],
 	L["Parry"],
@@ -1204,7 +1200,7 @@ function me:CreateSummaryMode()
 	local i = 1
 	for _, k in pairs(SummaryLabels) do
 		theFrame.AttackLabels[k] = theFrame.AttackLabels:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-		theFrame.AttackLabels[k]:SetPoint("TOPRIGHT", theFrame.AttackLabels, "TOPRIGHT", -2, -12.0 * i)
+		theFrame.AttackLabels[k]:SetPoint("TOPRIGHT", theFrame.AttackLabels, "TOPRIGHT", -2, RowSpacing * i)
 		theFrame.AttackLabels[k]:SetText(k..":")
 		Recount:AddFontString(theFrame.AttackLabels[k])
 		i = i + 1
@@ -1491,12 +1487,13 @@ function Recount:UpdateSummaryMode(name)
 	end
 
 	local healing = data2.Healing or 0
+	local absorbs = data2.Absorbs or 0
 	local overhealing = data2.Overhealing or 0
 	local healingtaken = data2.HealingTaken or 0
 	local timeheal = data2.TimeHeal or 0
 	local hot_time = data2.HOT_Time or 0
 
-	theFrame.Healing.Total:SetValue(healing.." ("..(math.floor(10 * healing / (activetime) + 0.5) / 10)..")")
+	theFrame.Healing.Total:SetValue((healing + absorbs).." ("..(math.floor(10 * (healing + absorbs) / (activetime) + 0.5) / 10)..")")
 	theFrame.Healing.Taken:SetValue(healingtaken)
 	theFrame.Healing.Overhealing:SetValue(overhealing.." ("..(math.floor(10 * overhealing / (activetime) + 0.5) / 10)..")".." ("..(math.floor(1000 * overhealing / (overhealing + healing + Epsilon) + 0.5) / 10).."%)")
 	theFrame.Healing.Time:SetValue(timeheal.."s ("..math.floor(100 * timeheal / (TotalTime + Epsilon) + 0.5).."%)")

@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - AutoMagic Utility module
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: Auc-Util-AutoMagic.lua 5587 2016-04-07 16:01:45Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -704,4 +704,4 @@ function lib.ClientItemCacheRefresh(link)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Util-AutoMagic/Auc-Util-AutoMagic.lua $", "$Rev: 5587 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-AutoMagic/Auc-Util-AutoMagic.lua $", "$Rev: 5587 $")

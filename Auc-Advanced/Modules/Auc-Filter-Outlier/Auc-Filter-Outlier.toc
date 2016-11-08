@@ -6,7 +6,7 @@
 ## Disabled: 0
 ## Dependencies: Auc-Advanced
 ##
-## Version: 7.0.5664 (TasmanianThylacine)
+## Version: 7.1.5675 (TasmanianThylacine)
 ## Revision: $Id: Auc-Filter-Outlier.toc 5647 2016-08-07 22:02:39Z ccox $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer

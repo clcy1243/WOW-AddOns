@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Search UI - Realtime module
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: SearchRealTime.lua 5623 2016-07-30 10:18:27Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -534,4 +534,4 @@ function private.HookAH()
 	BrowseRTSButton:SetPoint("TOPRIGHT", AuctionFrameBrowse, "TOPLEFT", 310, -15)
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5623 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Util-SearchUI/SearchRealTime.lua $", "$Rev: 5623 $")

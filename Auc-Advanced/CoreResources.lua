@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 7.0.5664 (TasmanianThylacine)
-	Revision: $Id: CoreResources.lua 5285 2012-04-17 15:45:55Z brykrys $
+	Version: 7.1.5675 (TasmanianThylacine)
+	Revision: $Id: CoreResources.lua 5670 2016-09-03 11:59:41Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -49,7 +49,7 @@
 
 local AucAdvanced = AucAdvanced
 if not AucAdvanced then return end
-
+AucAdvanced.CoreFileCheckIn("CoreResources")
 local coremodule, internal = AucAdvanced.GetCoreModule("CoreResources")
 if not (coremodule and internal) then return end
 local Const = AucAdvanced.Const
@@ -174,3 +174,6 @@ internal.Resources = {
 		lib[key] = value
 	end
 }
+
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CoreResources.lua $", "$Rev: 5670 $")
+AucAdvanced.CoreFileCheckOut("CoreResources")

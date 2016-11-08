@@ -16,6 +16,9 @@ elseif( playerClass == "MONK" ) then
 elseif( playerClass == "MAGE" ) then
 	MAX_TOTEMS = 1
 	ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Rune of Power bar"], true, "MAGE", {1, 2, 3}, 90)
+elseif( playerClass == "WARLOCK" ) then
+	MAX_TOTEMS = 1
+	ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Soul Effigy bar"], true, "WARLOCK", 1, 100)
 else
 	ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Totem bar"], true, "SHAMAN")
 end
@@ -33,7 +36,7 @@ function Totems:OnEnable(frame)
 		frame.totemBar.totems = {}
 		frame.totemBar.blocks = frame.totemBar.totems
 
-		local priorities = (select(2, UnitClass("player")) == "SHAMAN") and SHAMAN_TOTEM_PRIORITIES or STANDARD_TOTEM_PRIORITIES
+		local priorities = (playerClass == "SHAMAN") and SHAMAN_TOTEM_PRIORITIES or STANDARD_TOTEM_PRIORITIES
 		
 		for id=1, MAX_TOTEMS do
 			local totem = ShadowUF.Units:CreateBar(frame.totemBar)
@@ -53,7 +56,7 @@ function Totems:OnEnable(frame)
 
 		if( playerClass == "DRUID" ) then
 			totemColors[1] = ShadowUF.db.profile.powerColors.MUSHROOMS
-		elseif( playerClass == "DEATHKNIGHT" ) then
+		elseif( playerClass == "WARLOCK" ) then
 			totemColors[1] = ShadowUF.db.profile.classColors.PET
 		elseif( playerClass == "MONK" ) then
 			totemColors[1] = ShadowUF.db.profile.powerColors.STATUE
@@ -157,7 +160,16 @@ end
 function Totems:Update(frame)
 	local totalActive = 0
 	for _, indicator in pairs(frame.totemBar.totems) do
-		local have, name, start, duration, icon = GetTotemInfo(indicator.id)
+		local have, name, start, duration, icon
+		if MAX_TOTEMS == 1 and indicator.id == 1 then
+			local id = 1
+			while not have and id <= 4 do
+				have, name, start, duration, icon = GetTotemInfo(id)
+				id = id + 1
+			end
+		else
+			have, name, start, duration, icon = GetTotemInfo(indicator.id)
+		end
 		if( have and start > 0 ) then
 			if( ShadowUF.db.profile.units[frame.unitType].totemBar.icon ) then
 				indicator:SetStatusBarTexture(icon)

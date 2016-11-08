@@ -318,7 +318,7 @@ function CNDT.IconMenu_DropDown(dropdown)
 		local conditionSettings = dropdown:GetSettingTable()
 
 		for icon in TMW.DD.MENU_VALUE:InIcons() do
-			if icon:IsValid() and not icon:IsControlled() then
+			if icon:IsValid() then
 				local info = TMW.DD:CreateInfo()
 
 				local text, textshort, tooltip = icon:GetIconMenuText()
@@ -644,6 +644,9 @@ function CNDT:AddCondition(Conditions)
 end
 
 function CNDT:DeleteCondition(Conditions, n)
+	TMW.DD:CloseDropDownMenus()
+	TMW.IE:SaveSettings()
+
 	Conditions.n = Conditions.n - 1
 	
 	TMW:Fire("TMW_CNDT_CONDITION_DELETED", n)

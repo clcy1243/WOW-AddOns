@@ -1,6 +1,6 @@
 ﻿--[[
 	Auctioneer
-	Version: 7.0.5664 (TasmanianThylacine)
+	Version: 7.1.5675 (TasmanianThylacine)
 	Revision: $Id: CoreMain.lua 5634 2016-08-02 19:54:00Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -417,5 +417,5 @@ do -- ScheduleMessage handler
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Advanced/CoreMain.lua $", "$Rev: 5634 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CoreMain.lua $", "$Rev: 5634 $")
 AucAdvanced.CoreFileCheckOut("CoreMain")

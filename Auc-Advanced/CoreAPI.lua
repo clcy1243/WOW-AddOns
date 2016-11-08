@@ -1,7 +1,7 @@
 --[[
 	Auctioneer Advanced
-	Version: 7.0.5664 (TasmanianThylacine)
-	Revision: $Id: CoreAPI.lua 5610 2016-07-21 19:40:11Z brykrys $
+	Version: 7.1.5675 (TasmanianThylacine)
+	Revision: $Id: CoreAPI.lua 5670 2016-09-03 11:59:41Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -33,6 +33,7 @@
 ]]
 if not AucAdvanced then return end
 local AucAdvanced = AucAdvanced
+AucAdvanced.CoreFileCheckIn("CoreAPI")
 local coremodule, internal = AucAdvanced.GetCoreModule("CoreAPI")
 if not (coremodule and internal) then return end -- Someone has explicitely broken us
 
@@ -1566,4 +1567,5 @@ do
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Auc-Advanced/CoreAPI.lua $", "$Rev: 5610 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Auc-Advanced/CoreAPI.lua $", "$Rev: 5670 $")
+AucAdvanced.CoreFileCheckOut("CoreAPI")

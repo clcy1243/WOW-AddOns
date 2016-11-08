@@ -1,7 +1,7 @@
 --[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 7.0.5664 (TasmanianThylacine)
-	Revision: $Id: EnxConstants.lua 5655 2016-08-09 21:27:39Z ccox $
+	Version: 7.1.5675 (TasmanianThylacine)
+	Revision: $Id: EnxConstants.lua 5673 2016-09-12 01:47:15Z ccox $
 	URL: http://enchantrix.org/
 
 	Enchantrix Constants.
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.0/Enchantrix/EnxConstants.lua $", "$Rev: 5655 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.1/Enchantrix/EnxConstants.lua $", "$Rev: 5673 $")
 
 local const = Enchantrix.Constants
 
@@ -425,7 +425,7 @@ local SLUMINOUS = 115502
 local LUMINOUS = 111245
 local TEMPORAL = 113588
 local FRACTEMPORAL = 115504
---local AZURIAN = 113589		-- no longer used, may be taken out
+--local AZURIAN = 113589		-- no longer used
 --local BLACKFIRE = 111247		-- never used
 
 local ARKHANA	= 124440
@@ -459,7 +459,7 @@ const.DisenchantReagentList = {
 	11084, -- Large Glimmering Shard
 
 	SLUMINOUS,
---	AZURIAN, -- not used, appears to have been taken out
+--	AZURIAN, -- not used
 	SETHERAL,
 	52720, -- Small Heavenly Shard
 	34053, -- Small Dream Shard
@@ -469,7 +469,7 @@ const.DisenchantReagentList = {
 	11138, -- Small Glowing Shard
 	10978, -- Small Glimmering Shard
 
---	BLACKFIRE, -- not used, appears to have been taken out
+--	BLACKFIRE, -- not used
 --	GMYSTERIOUS, -- never used
 	52719, -- Greater Celestial Essence
 	34055, -- Greater Cosmic Essence
@@ -518,7 +518,7 @@ local EPIC = 4
 const.baseDisenchantTable = {
  [UNCOMMON] = {
   [const.WEAPON] = {
-   ["bounds"] = { 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 99, 120, 151, 200, 275, 290, 305, 315, 325, 350, 380, 390, 410, 482, 650, 900 },
+   ["bounds"] = { 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 99, 120, 151, 200, 275, 290, 305, 315, 325, 350, 380, 390, 410, 482, 645, 900 },
    [15]  = { { STRANGE , 0.20, 1.5 }, { LMAGIC  , 0.80, 1.5 }, },
    [20]  = { { STRANGE , 0.20, 2.5 }, { GMAGIC  , 0.75, 1.5 }, { SGLIMMERING, 0.05, 1.0 }, },
    [25]  = { { STRANGE , 0.15, 5.0 }, { LASTRAL , 0.75, 1.5 }, { SGLIMMERING, 0.10, 1.0 }, },
@@ -544,11 +544,10 @@ const.baseDisenchantTable = {
    [390] = { { SPIRIT, 0.85, 3.0 }, { MYSTERIOUS , 0.15, 1.0 }, },
    [410] = { { SPIRIT, 0.85, 3.5 }, { MYSTERIOUS , 0.15, 1.5 }, },
    [482] = { { SPIRIT, 0.85, 4.0 }, { MYSTERIOUS , 0.15, 2.0 }, },	-- highest level Panda green is 483, but it now gives draenic dust
-   [650] = { { DRAENIC, 1.0, 3.0 } },	-- highest WoD green weapon is 640, shard chance appears to have been taken out in patch, or reduced to less than 1%
+   [645] = { { DRAENIC, 1.0, 3.0 } },	-- highest WoD green weapon is 640, shard chance appears to have been taken out in patch, or reduced to less than 1%
 
 	-- TODO - determine item ranges
-	-- Legion -- TODO - determine yields
-	[900] =  { {ARKHANA, 1.0, 2.85 } },	-- first Legion green is 665, highest Legion green currently 740
+	[900] =  { {ARKHANA, 1.0, 2.90 } },	-- first Legion green is 665, highest Legion green currently 820
 	
    },
   [const.ARMOR] = {
@@ -581,8 +580,7 @@ const.baseDisenchantTable = {
    [645] = { { DRAENIC, 1.0, 3.0 } },	-- highest WoD green armor is 640, shard chance appears to have been taken out in patch
 
 	-- TODO - determine item ranges
-	-- Legion -- TODO - determine yields
-	[900] =  { {ARKHANA, 1.0, 2.85 } },	-- first Legion green is 670, highest Legion green currently 820
+	[900] =  { {ARKHANA, 1.0, 2.90 } },	-- first Legion green is 670, highest Legion green currently 820
    
   },
  },

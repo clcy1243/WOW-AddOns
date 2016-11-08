@@ -7,7 +7,7 @@ local LocalVars = TidyPlatesHubDefaults
 -- References
 ------------------------------------------------------------------------------
 local InCombatLockdown = InCombatLockdown
-local GetAggroCondition = TidyPlatesWidgets.GetThreatCondition
+local GetFriendlyThreat = TidyPlatesUtility.GetFriendlyThreat
 local IsOffTanked = TidyPlatesHubFunctions.IsOffTanked
 local IsTankingAuraActive = TidyPlatesWidgets.IsPlayerTank
 local IsHealer = function() return false end
@@ -29,7 +29,7 @@ local function AlphaFunctionByThreatHigh (unit)
 	if InCombatLockdown() and unit.reaction ~= "FRIENDLY" then
 		if unit.threatValue > 1 and unit.health > 0 then return LocalVars.OpacitySpotlight end
 	elseif LocalVars.ColorShowPartyAggro and unit.reaction == "FRIENDLY" then
-		if GetAggroCondition(unit.rawName) then return LocalVars.OpacitySpotlight end
+		if GetFriendlyThreat(unit.unitid) then return LocalVars.OpacitySpotlight end
 	end
 end
 
@@ -39,7 +39,7 @@ local function AlphaFunctionByThreatLow (unit)
 		if IsOffTanked(unit) then return end
 		if unit.threatValue < 2 and unit.health > 0 then return LocalVars.OpacitySpotlight end
 	elseif LocalVars.ColorShowPartyAggro and unit.reaction == "FRIENDLY" then
-		if GetAggroCondition(unit.rawName) then return LocalVars.OpacitySpotlight end
+		if GetFriendlyThreat(unit.unitid) then return LocalVars.OpacitySpotlight end
 	end
 end
 
@@ -61,6 +61,10 @@ end
 
 local function AlphaFunctionByActive(unit)
 	if (unit.health < unit.healthmax) or (unit.threatValue > 1) or unit.isInCombat or unit.isMarked then return LocalVars.OpacitySpotlight end
+end
+
+local function AlphaFunctionByDamaged(unit)
+	if (unit.health < unit.healthmax) or unit.isMarked then return LocalVars.OpacitySpotlight end
 end
 
 local function AlphaFunctionByActiveAuras(unit)
@@ -91,15 +95,14 @@ end
 
 
 local function AlphaFunctionGroupMembers(unit)
-	local class = TidyPlatesUtility.GroupMembers.Class[unit.name]
-	if class then return LocalVars.OpacitySpotlight end
+	local unitid = unit.unitid
+	if UnitInParty(unitid) then return LocalVars.OpacitySpotlight end
 end
 
 
 local function AlphaFunctionByPlayers(unit)
 	if unit.type == "PLAYER" then return LocalVars.OpacitySpotlight end
 end
-
 
 
 --  Hub functions
@@ -122,9 +125,9 @@ local AlphaFunctionsFriendly = {}
 TidyPlatesHubDefaults.FriendlyAlphaSpotlightMode = "None"			-- Sets the default function
 AddHubFunction(AlphaFunctionsFriendly, TidyPlatesHubMenus.FriendlyOpacityModes, DummyFunction, "None", "None")
 AddHubFunction(AlphaFunctionsFriendly, TidyPlatesHubMenus.FriendlyOpacityModes, AlphaFunctionByLowHealth, "On Low-Health Units", "OnLowHealth")
-AddHubFunction(AlphaFunctionsFriendly, TidyPlatesHubMenus.FriendlyOpacityModes, AlphaFunctionGroupMembers, "On Group Members", "OnGroupMembers")
-AddHubFunction(AlphaFunctionsFriendly, TidyPlatesHubMenus.FriendlyOpacityModes, AlphaFunctionByPlayers, "OnPlayers", "OnPlayers")
-AddHubFunction(AlphaFunctionsFriendly, TidyPlatesHubMenus.FriendlyOpacityModes, AlphaFunctionByActive, "On Active/Damaged Units", "OnActiveUnits")
+AddHubFunction(AlphaFunctionsFriendly, TidyPlatesHubMenus.FriendlyOpacityModes, AlphaFunctionGroupMembers, "On Party Members", "OnGroupMembers")
+AddHubFunction(AlphaFunctionsFriendly, TidyPlatesHubMenus.FriendlyOpacityModes, AlphaFunctionByPlayers, "On Players", "OnPlayers")
+AddHubFunction(AlphaFunctionsFriendly, TidyPlatesHubMenus.FriendlyOpacityModes, AlphaFunctionByDamaged, "On Damaged Units", "OnActiveUnits")
 
 
 
@@ -146,7 +149,7 @@ local function AlphaDelegate(...)
 		return LocalVars.UnitSpotlightOpacity
 	end
 
-	if unit.isTarget then return Diminish(LocalVars.OpacityTarget)
+	if (unit.isTarget or (LocalVars.FocusAsTarget and unit.isFocus)) then return Diminish(LocalVars.OpacityTarget)
 	--elseif unit.isCasting and unit.reaction == "HOSTILE" and LocalVars.OpacitySpotlightSpell then alpha = LocalVars.OpacitySpotlight
 	elseif unit.isCasting and LocalVars.OpacitySpotlightSpell then alpha = LocalVars.OpacitySpotlight
 	elseif unit.isMouseover and LocalVars.OpacitySpotlightMouseover then alpha = LocalVars.OpacitySpotlight

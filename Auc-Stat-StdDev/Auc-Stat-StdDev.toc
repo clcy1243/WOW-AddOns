@@ -7,7 +7,7 @@
 ## Dependencies: Auc-Advanced
 ## SavedVariables: AucAdvancedStatStdDevData
 ##
-## Version: 7.0.5664 (TasmanianThylacine)
+## Version: 7.1.5675 (TasmanianThylacine)
 ## Revision: $Id: Auc-Stat-StdDev.toc 5647 2016-08-07 22:02:39Z ccox $
 ## Author: Norganna's AddOns
 ## X-Part-Of: Auctioneer

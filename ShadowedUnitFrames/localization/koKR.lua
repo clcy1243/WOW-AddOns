@@ -40,7 +40,6 @@ L["Are you sure you want to delete this text? All settings for it will be delete
 L["Ascending"] = "순차적(차례대로)"
 L["Aura border style"] = "오라 외각선 스타일"
 L["Aura filters"] = "오라 필터"
-L["Aura name"] = "오라 이름"
 L["Auras"] = "오라"
 L["Aura types to filter"] = "필터할 오라 종류"
 L["B"] = "B"

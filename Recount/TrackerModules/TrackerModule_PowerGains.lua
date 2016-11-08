@@ -3,7 +3,7 @@ local Recount = _G.Recount
 local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale( "Recount" )
 
-local revision = tonumber(string.sub("$Revision: 1380 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1386 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -57,7 +57,7 @@ local PowerTypeName = { -- Elsia: Do NOT localize this, it breaks functionality!
 	[POWERTYPE_HAPPINESS] = "Happiness",
 	[POWERTYPE_RUNES] = "Runes",
 	[POWERTYPE_RUNIC_POWER] = "Runic Power",
-	[POWERTYPE_LUNAR_POWER] = "Lunar Power",
+	[POWERTYPE_LUNAR_POWER] = "Astral Power",
 	[POWERTYPE_MAELSTROM] = "Maelstorm",
 	[POWERTYPE_FURY] = "Fury",
 	[POWERTYPE_PAIN] = "Pain",
@@ -90,10 +90,10 @@ function Recount:AddGain(source, victim, ability, amount, attribute,srcGUID,srcF
 		DataAmount = "RunicPowerGain"
 		DataTable = "RunicPowerGained"
 		DataTable2 = "RunicPowerGainedFrom"
-	elseif attribute == "Lunar Power" then
-		DataAmount = "LunarPowerGain"
-		DataTable = "LunarPowerGained"
-		DataTable2 = "LunarPowerGainedFrom"
+	elseif attribute == "Astral Power" then
+		DataAmount = "AstralPowerGain"
+		DataTable = "AstralPowerGained"
+		DataTable2 = "AstralPowerGainedFrom"
 	elseif attribute == "Maelstorm" then
 		DataAmount = "MaelstormGain"
 		DataTable = "MaelstormGained"
@@ -173,17 +173,17 @@ function DataModes:RunicPowerGained(data, num)
 	if num == 1 then
 		return (data.Fights[Recount.db.profile.CurDataSet].RunicPowerGain or 0)
 	end
-	return (data.Fights[Recount.db.profile.CurDataSet].RunicPowerGain or 0), {{data.Fights[Recount.db.profile.CurDataSet].RunicPowerGained, L["'s RunicPower Gained"], DetailTitles.Gained}, {data.Fights[Recount.db.profile.CurDataSet].RunicPowerGainedFrom, L["'s RunicPower Gained From"], DetailTitles.GainedFrom}}
+	return (data.Fights[Recount.db.profile.CurDataSet].RunicPowerGain or 0), {{data.Fights[Recount.db.profile.CurDataSet].RunicPowerGained, L["'s Runic Power Gained"], DetailTitles.Gained}, {data.Fights[Recount.db.profile.CurDataSet].RunicPowerGainedFrom, L["'s Runic Power Gained From"], DetailTitles.GainedFrom}}
 end
 
-function DataModes:LunarPowerGained(data, num)
+function DataModes:AstralPowerGained(data, num)
 	if not data then
 		return 0
 	end
 	if num == 1 then
-		return (data.Fights[Recount.db.profile.CurDataSet].LunarPowerGain or 0)
+		return (data.Fights[Recount.db.profile.CurDataSet].AstralPowerGain or 0)
 	end
-	return (data.Fights[Recount.db.profile.CurDataSet].LunarPowerGain or 0), {{data.Fights[Recount.db.profile.CurDataSet].LunarPowerGained, L["'s LunarPower Gained"], DetailTitles.Gained}, {data.Fights[Recount.db.profile.CurDataSet].LunarPowerGainedFrom, L["'s LunarPower Gained From"], DetailTitles.GainedFrom}}
+	return (data.Fights[Recount.db.profile.CurDataSet].AstralPowerGain or 0), {{data.Fights[Recount.db.profile.CurDataSet].AstralPowerGained, L["'s Astral Power Gained"], DetailTitles.Gained}, {data.Fights[Recount.db.profile.CurDataSet].AstralPowerGainedFrom, L["'s Astral Power Gained From"], DetailTitles.GainedFrom}}
 end
 
 function DataModes:MaelstormGained(data, num)
@@ -249,17 +249,17 @@ function TooltipFuncs:RunicPowerGained(name, data)
 	--local SortedData, total
 	GameTooltip:ClearLines()
 	GameTooltip:AddLine(name)
-	Recount:AddSortedTooltipData(L["Top 3"].." "..L["RunicPower Abilities"], data and data.Fights[Recount.db.profile.CurDataSet] and data.Fights[Recount.db.profile.CurDataSet].RunicPowerGained, 3)
-	Recount:AddSortedTooltipData(L["Top 3"].." "..L["RunicPower Sources"], data and data.Fights[Recount.db.profile.CurDataSet] and data.Fights[Recount.db.profile.CurDataSet].RunicPowerGainedFrom, 3)
+	Recount:AddSortedTooltipData(L["Top 3"].." "..L["Runic Power Abilities"], data and data.Fights[Recount.db.profile.CurDataSet] and data.Fights[Recount.db.profile.CurDataSet].RunicPowerGained, 3)
+	Recount:AddSortedTooltipData(L["Top 3"].." "..L["Runic Power Sources"], data and data.Fights[Recount.db.profile.CurDataSet] and data.Fights[Recount.db.profile.CurDataSet].RunicPowerGainedFrom, 3)
 	GameTooltip:AddLine("<"..L["Click for more Details"]..">", 0, 0.9, 0)
 end
 
-function TooltipFuncs:LunarPowerGained(name, data)
+function TooltipFuncs:AstralPowerGained(name, data)
 	--local SortedData, total
 	GameTooltip:ClearLines()
 	GameTooltip:AddLine(name)
-	Recount:AddSortedTooltipData(L["Top 3"].." "..L["LunarPower Abilities"], data and data.Fights[Recount.db.profile.CurDataSet] and data.Fights[Recount.db.profile.CurDataSet].LunarPowerGained, 3)
-	Recount:AddSortedTooltipData(L["Top 3"].." "..L["LunarPower Sources"], data and data.Fights[Recount.db.profile.CurDataSet] and data.Fights[Recount.db.profile.CurDataSet].LunarPowerGainedFrom, 3)
+	Recount:AddSortedTooltipData(L["Top 3"].." "..L["Astral Power Abilities"], data and data.Fights[Recount.db.profile.CurDataSet] and data.Fights[Recount.db.profile.CurDataSet].AstralPowerGained, 3)
+	Recount:AddSortedTooltipData(L["Top 3"].." "..L["Astral Power Sources"], data and data.Fights[Recount.db.profile.CurDataSet] and data.Fights[Recount.db.profile.CurDataSet].AstralPowerGainedFrom, 3)
 	GameTooltip:AddLine("<"..L["Click for more Details"]..">", 0, 0.9, 0)
 end
 
@@ -294,7 +294,7 @@ Recount:AddModeTooltip(L["Mana Gained"], DataModes.ManaGained, TooltipFuncs.Mana
 Recount:AddModeTooltip(L["Energy Gained"], DataModes.EnergyGained, TooltipFuncs.EnergyGained)
 Recount:AddModeTooltip(L["Rage Gained"], DataModes.RageGained, TooltipFuncs.RageGained)
 Recount:AddModeTooltip(L["Runic Power Gained"], DataModes.RunicPowerGained, TooltipFuncs.RunicPowerGained)
-Recount:AddModeTooltip(L["Lunar Power Gained"], DataModes.LunarPowerGained, TooltipFuncs.LunarPowerGained)
+Recount:AddModeTooltip(L["Astral Power Gained"], DataModes.AstralPowerGained, TooltipFuncs.AstralPowerGained)
 Recount:AddModeTooltip(L["Maelstorm Gained"], DataModes.MaelstormGained, TooltipFuncs.MaelstormGained)
 Recount:AddModeTooltip(L["Fury Gained"], DataModes.FuryGained, TooltipFuncs.FuryGained)
 Recount:AddModeTooltip(L["Pain Gained"], DataModes.PainGained, TooltipFuncs.PainGained)
