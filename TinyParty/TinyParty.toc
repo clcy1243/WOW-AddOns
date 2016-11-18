@@ -1,0 +1,9 @@
+## Interface: 70100
+## Title: TinyParty
+## Notes: Party
+## Author: M
+## Version: 7.0.0
+
+Party.lua
+PartyTargetBliz.lua
+PartyTarget.lua

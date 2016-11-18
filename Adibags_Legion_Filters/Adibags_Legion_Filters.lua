@@ -1,5 +1,6 @@
 local AddonName, AddonTable = ...
 local L = AddonTable.L
+local DEBUG = false
 --[===[@debug@
 local DEBUG = true
 --@end-debug@]===]

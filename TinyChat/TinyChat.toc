@@ -1,0 +1,18 @@
+## Interface: 70100
+## Title: TinyChat
+## Notes: TinyChat
+## Author: M
+## Version: 7.0.0
+## SavedVariables: TinyChatDB, TinyChatLevelDB
+
+ChatAtFriends.lua
+ChatCopy.lua
+ChatEmote.lua
+ChatLevel.lua
+ChatLinkIcon.lua
+ChatLinkLevel.lua
+ChatShortChannel.lua
+ChatSimplify.lua
+ChatSwitch.lua
+ChatTabSwitch.lua
+util.lua

@@ -1,0 +1,21 @@
+------------------------------------------------------------------------
+r18 | thaoky | 2016-11-09 12:59:42 +0000 (Wed, 09 Nov 2016) | 2 lines
+Changed paths:
+   M /trunk/DataStore_Garrisons.lua
+
+Added support for Artifact Research Notes
+
+------------------------------------------------------------------------
+r17 | thaoky | 2016-10-26 17:51:25 +0000 (Wed, 26 Oct 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Garrisons.lua
+   M /trunk/DataStore_Garrisons.toc
+
+TOC Update
+------------------------------------------------------------------------
+r16 | thaoky | 2016-07-20 19:49:34 +0000 (Wed, 20 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Garrisons.lua
+
+Fixed a few calls where LE_FOLLOWER_TYPE_GARRISON_6_0 was missing
+------------------------------------------------------------------------

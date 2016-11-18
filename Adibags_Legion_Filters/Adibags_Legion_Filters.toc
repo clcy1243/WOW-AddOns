@@ -2,9 +2,9 @@
 ## Title: AdiBags Legion Filters
 ## Notes: Adds filters for Legion items to AdiBags
 ## Author: Selvanis@Uldum
-## Version: v1.2
+## Version: v1.3.1
 ## Dependencies: AdiBags
-## X-Curse-Packaged-Version: v1.2
+## X-Curse-Packaged-Version: v1.3.1
 ## X-Curse-Project-Name: Adibags Legion Filters
 ## X-Curse-Project-ID: adibags-legion-filters
 ## X-Curse-Repository-ID: wow/adibags-legion-filters/mainline
@@ -12,3 +12,4 @@ Localization.lua
 ItemTables.lua
 Adibags_Legion_Filters.lua
 Artifact_Power_Plugin.lua
+Artifact_Power_Currency.lua

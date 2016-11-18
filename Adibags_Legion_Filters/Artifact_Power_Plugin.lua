@@ -1,5 +1,14 @@
 local AddonName, AddonTable = ...
 local L = AddonTable.L
+local DEBUG = false
+--[===[@debug@
+local DEBUG = true
+--@end-debug@]===]
+local function DebugPrint(errorMessage)
+   if DEBUG then
+      print(RED_FONT_COLOR_CODE..AddonName..":"..errorMessage)
+   end
+end
 
 local AdiBags = LibStub("AceAddon-3.0"):GetAddon("AdiBags")
 --AdiBags plugin for showing values on Artifact Power Token Icons
@@ -7,7 +16,7 @@ local mod = AdiBags:NewModule(L["Artifact Power Values"], 'ABEvent-1.0')
 local texts = {}
 local function CreateText(button)
    local text = button:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
-   text:SetPoint("TOPLEFT", button, 3, -1)
+   text:SetPoint("TOPLEFT", button, 2, -2)
    text:Hide()
    texts[button] = text
    return text
@@ -20,6 +29,33 @@ function mod:OnDisable()
    for _, text in pairs(texts) do
       text:Hide()
    end
+end
+
+--Rounds the number display to 4 characters (excluding decimal separator, including unit multiplier)
+--Can be further generalized to include localizations that don't use thousands and millions
+local function RoundNumber(number)
+   if type(number) ~= "number" then return number end
+   local digits = string.len(number)
+   if digits > 4 then
+      local trimDigits = digits-3
+      --remove trimmed digits, by rounding up or down
+      local mod = number % 10^trimDigits
+      if mod < 10^trimDigits/2 then
+         number = number - mod
+      else
+         number = number + (10^trimDigits-mod)
+      end
+      local factor = 1000
+      local unit = L["k"]
+      if number > 999999 then
+         factor = 1000000
+         unit = L["m"]
+      end
+      --finally divide by the dividing factor (thousand or million)
+      local rounded = number/factor
+      return rounded..unit  
+   end
+   return number   
 end
 
 function mod:UpdateButton(event, button)
@@ -40,13 +76,13 @@ function mod:UpdateButton(event, button)
          return text:Show()
       end
       level = math.min(level,25) --TODO: Change Artifact Knowledge cap to a constant
-      if not AddonTable.ItemTables.ArtifactItems[itemId] then print(itemLink,itemId,level) return end
+      if not AddonTable.ItemTables.ArtifactItems[itemId] then DebugPrint(itemLink,itemId,level) return end
       local value = AddonTable.ItemTables.ArtifactItems[itemId][level]
       if not value then --data table is missing a value
          DebugPrint("Unable to find Artifact Power for :"..itemLink:gsub("\124", "\124\124").." level:"..level)
          value = "???"
       end
-      text:SetText(value)
+      text:SetText(RoundNumber(value))
       return text:Show()
    elseif AddonTable.ItemTables.AncientManaItems[itemId] then
       text = text or CreateText(button)

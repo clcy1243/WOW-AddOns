@@ -1,0 +1,12 @@
+tag v1.3.1
+48b738c4aaf6fac2056ac9b1e752e64dc47b4ea2
+legowxelab2z8 <legowxelab2z8@Gmail.com>
+2016-11-16 06:36:36 -0700
+
+Artifact Power Currency
+
+--------------------
+
+legowxelab2z8:
+	- Artifact Power Currency Display
+	Added initial code for adding total Artifact Power in bags to the currency display.

@@ -1,0 +1,21 @@
+------------------------------------------------------------------------
+r56 | thaoky | 2016-11-09 12:58:56 +0000 (Wed, 09 Nov 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Talents.lua
+
+Added support for Artifact Weapons
+------------------------------------------------------------------------
+r55 | thaoky | 2016-10-26 17:55:13 +0000 (Wed, 26 Oct 2016) | 2 lines
+Changed paths:
+   M /trunk/DataStore_Talents.lua
+   M /trunk/DataStore_Talents.toc
+
+TOC Update
+major overhaul to support the new panel. Old functions have obviously been deprecated.
+------------------------------------------------------------------------
+r54 | thaoky | 2016-07-31 14:41:45 +0000 (Sun, 31 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Talents.lua
+
+Fixed GetThisGuild()
+------------------------------------------------------------------------

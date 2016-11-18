@@ -1,0 +1,3 @@
+## Interface: 70100
+## Title: MyConsoleVariables
+code.lua

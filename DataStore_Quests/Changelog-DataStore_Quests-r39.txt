@@ -1,0 +1,30 @@
+------------------------------------------------------------------------
+r39 | thaoky | 2016-10-30 10:02:47 +0000 (Sun, 30 Oct 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Quests.lua
+
+Fixed the tainting issue that prevented from queuing into battlegrounds.
+------------------------------------------------------------------------
+r38 | thaoky | 2016-10-26 19:02:41 +0000 (Wed, 26 Oct 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Quests.lua
+
+Fixed scanning the quest links.
+------------------------------------------------------------------------
+r37 | thaoky | 2016-10-26 17:53:11 +0000 (Wed, 26 Oct 2016) | 2 lines
+Changed paths:
+   M /trunk/DataStore_Quests.lua
+   M /trunk/DataStore_Quests.toc
+   M /trunk/Locales/repoenUS.lua
+   M /trunk/Options.xml
+
+TOC Update
+added an option to select the hour at which daily quests are reset.
+------------------------------------------------------------------------
+r36 | thaoky | 2016-07-18 16:10:19 +0000 (Mon, 18 Jul 2016) | 1 line
+Changed paths:
+   M /trunk/DataStore_Quests.lua
+   M /trunk/DataStore_Quests.toc
+
+7.0 Compatibility Release
+------------------------------------------------------------------------

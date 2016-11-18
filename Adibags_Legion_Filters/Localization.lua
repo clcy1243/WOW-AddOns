@@ -28,6 +28,10 @@ L["Merge Bait and Fish"] = true
 L['Put Fish Bait and Rare Fish in one section.'] = true
 --Artifact Power Plugin
 L["Artifact Power Values"] = true
+L["k"] = true --means thousands used for number rounding
+L["m"] = true --means millions used for number rounding
+--Artifact Power Currency
+L["Artifact Power Currency"] = true
 
 -- Replace remaining true values by their key
 for k,v in pairs(L) do if v == true then L[k] = k end end

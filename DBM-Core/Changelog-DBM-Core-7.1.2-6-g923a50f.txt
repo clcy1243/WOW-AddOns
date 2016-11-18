@@ -1,0 +1,7 @@
+subversion:
+	- Omega via svn r15461: Timer option default tweaks, to reduce number of active timers
+	- Omega via svn r15460: minor tweak
+	- Omega via svn r15459: another fix
+	- Omega via svn r15458: minor fixes
+	- Omega via svn r15457: never announce tank as target on humongris. if can?\226?\128?\153t find real target, don?\226?\128?\153t announce at all
+	- tandanu via svn r15456: increment alpha version

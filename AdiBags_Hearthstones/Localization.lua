@@ -54,15 +54,15 @@ elseif locale == "itIT" then
 
 
 elseif locale == "frFR" then
--- L["Flight Master's Whistle"] = ""
--- L["FMW isn't a Hearthstone, but helps you get around faster."] = ""
-L["Items that hearth you to various places."] = "Objets qui vous téléportent à divers endroits." -- Needs review
-L["Jewelry"] = "Bijoux" -- Needs review
+L["Flight Master's Whistle"] = "Sifflet de maître de vol"
+L["FMW isn't a Hearthstone, but helps you get around faster."] = "SMV n'est pas une Pierre de foyer mais aide à se déplacer."
+L["Items that hearth you to various places."] = "Objets qui vous téléportent à divers endroits."
+L["Jewelry"] = "Bijoux"
 L["Show items like Innkeeper's Daughter in this group."] = "Montrer les objets du type La fille de l'aubergiste dans ce groupe."
-L["Show items like Ruby Slippers in this group."] = "Montrer les objets du type Souliers de rubis dans ce groupe." -- Needs review
-L["Show items like the Kirin Tor rings in this group."] = "Montrer les objets du type Anneau du Kirin Tor dans ce groupe." -- Needs review
-L["Show quest items that portal in this group."] = "Montrer les objets de quête de type portail dans ce groupe." -- Needs review
-L["ToC/Notes"] = "Ajoute différents objets de type Pierre de foyer aux groupes virtuels d'AdiBags" -- Needs review
+L["Show items like Ruby Slippers in this group."] = "Montrer les objets du type Souliers de rubis dans ce groupe."
+L["Show items like the Kirin Tor rings in this group."] = "Montrer les objets du type Anneau du Kirin Tor dans ce groupe."
+L["Show quest items that portal in this group."] = "Montrer les objets de quête de type portail dans ce groupe."
+L["ToC/Notes"] = "Ajoute différents objets de type Pierre de foyer aux groupes virtuels d'AdiBags"
 
 
 elseif locale == "koKR" then

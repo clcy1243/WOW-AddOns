@@ -1,0 +1,6 @@
+## Interface: 70100
+## Version: 1.5.1
+## Title: BeQuiet
+## Notes: Suppresses talking chat head frame and audio
+
+BeQuiet.lua
