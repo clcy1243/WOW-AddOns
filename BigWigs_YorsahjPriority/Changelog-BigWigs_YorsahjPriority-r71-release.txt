@@ -1,0 +1,24 @@
+------------------------------------------------------------------------
+r71 | funkydude | 2016-10-25 22:45:38 +0000 (Tue, 25 Oct 2016) | 1 line
+Changed paths:
+   A /tags/r71-release (from /trunk:70)
+
+Tagging as r71-release
+------------------------------------------------------------------------
+r70 | funkydude | 2016-10-25 22:44:30 +0000 (Tue, 25 Oct 2016) | 1 line
+Changed paths:
+   M /trunk/BigWigs_YorsahjPriority.toc
+
+bump toc
+------------------------------------------------------------------------
+r69 | funkydude | 2016-10-22 14:41:09 +0000 (Sat, 22 Oct 2016) | 1 line
+Changed paths:
+   M /trunk/BigWigs_YorsahjPriority.toc
+   M /trunk/Core.lua
+   M /trunk/Locales/esES.lua
+   M /trunk/Locales/esMX.lua
+   M /trunk/Locales/itIT.lua
+   M /trunk/Locales/ruRU.lua
+
+Update comm method
+------------------------------------------------------------------------

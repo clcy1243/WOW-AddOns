@@ -1,0 +1,13 @@
+Ethan Centaurai:
+	- Add support for Polymorph: Rabbit and Polymorph: Black Cat.
+	- Upvalue our database.
+	- Simplify combat event handler.
+	- Bump Interface number for Patch 5.4.
+	- Kill off dead code.
+	- Simplify the code, making it less messy and far easier to maintain.
+	- Functional and working! Sort of. Currently only works with Mage Polymorph spells, more will be added over time.
+	- Comment out the combat listener for now since it only throws up errors at the moment.
+	- Update to latest COMBAT_LOG_EVENT_UNFILTERED arguments.
+	- Remove deprecated addon metadata.
+	- Convert the addon into a Plugin instead of a Module.
+	- Fix line endings.

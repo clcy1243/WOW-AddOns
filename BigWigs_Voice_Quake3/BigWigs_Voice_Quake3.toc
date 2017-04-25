@@ -1,0 +1,7 @@
+## Interface: 70100
+## Title: BigWigs |cffff7f3f+|r|cffffffffVoice: Quake 3|r
+## Version: 3
+## Dependencies: BigWigs
+
+
+Core.lua

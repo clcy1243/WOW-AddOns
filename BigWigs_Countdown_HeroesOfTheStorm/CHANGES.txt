@@ -1,0 +1,170 @@
+commit 5aa497d579315507c7017095de80a5b0dde0763d
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Jan 22 22:33:52 2017 -0600
+
+    Play nice for people that get stuck with both installed
+
+commit 15fdc4bf5e0e7f7be8b94b8c2feb75f62f916c06
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Jan 22 22:36:53 2017 -0600
+
+    Update the license to show the code is free to copy
+
+commit 6b39a4b23b63514829ff14ec1a94bfcbc0404a21
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Jan 22 22:28:03 2017 -0600
+
+    Rename to BigWigs_Coundown_HeroesOfTheStorm
+
+commit b68dad41710fde4a481856f5e8861d4bc50759e3
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Mon Nov 14 03:56:45 2016 +0000
+
+    This still needs to be LOD
+
+commit 7fcbc66dd8b8a520d00dcfe4321769314e3e8af3
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sat Nov 12 02:48:49 2016 +0000
+
+    Use BigWigsAPI for registering countdowns
+
+commit accb7ee0c078a7d9f91954796814fdf5262baba3
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Nov 6 03:40:43 2016 +0000
+
+    Add esMX (like CN/TW, ES/MX are a bit different)
+
+commit 12e05d9afe5d254a50dfa1a7877e99e010ced216
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Nov 6 03:37:00 2016 +0000
+
+    Add Spider Queen, Marine, and Arena countdown voices
+
+commit 74b218e7bcc743af18fa01e9207bad6e9b46369d
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Nov 6 03:28:53 2016 +0000
+
+    Fix changing the language
+
+commit f0dfbc09bc5aa33f087ee3b81c8e6a73f1b3f5c2
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Nov 6 02:34:06 2016 +0000
+
+    Drop AceLocale-3.0 since BigWigs doesn't provide it now
+
+commit 6fda37d7267a1775970ee7c529ad11e01d5e0d82
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Nov 6 02:30:56 2016 +0000
+
+    Update TOC for 7.1
+
+commit 3fd3bf323d34d4fcb80112a7909b7db156d89ce6
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Mon Oct 24 11:08:49 2016 -0500
+
+    Create README.md
+
+commit 066d21c13ca7a6b70b956e21750fc372fb504c81
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Aug 11 00:56:39 2016 +0000
+
+    Big Wigs -> BigWigs
+
+commit b4fd86925d8ce7d1c688728971393a5f16507dc3
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Tue Jul 19 18:28:55 2016 +0000
+
+    TOC Bump for 7.0
+
+commit 5aaaf33ff11a23eefabed89c409adabd23995f10
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun May 22 10:43:43 2016 +0000
+
+    add Spanish Angel and Demon
+
+commit 207cd4079113175c150dae3b74fefd763a9624bb
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun May 22 03:18:56 2016 +0000
+
+    add Angel and Demon
+
+commit b9854b5bbc87ae0c2666e89ccb1b080724a67c93
+Author: funkydude <funkydude@users.noreply.github.com>
+Date:   Wed Jun 24 01:11:05 2015 +0000
+
+    bump toc
+
+commit 8022dba35480ec28f5e62a0a8327763f2fcc0a18
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Mar 19 03:46:16 2015 +0000
+
+    tweaks
+
+commit 2a9635e3830df7146b4fa53f300a399892790801
+Author: funkydude <funkydude@users.noreply.github.com>
+Date:   Fri Mar 13 16:33:26 2015 +0000
+
+    Use CoreEnabled.
+    Remove LoadsWith to support SVN users.
+    Register voices OnRegister, not OnEnable.
+
+commit b4bf90fa572c553b5e9ac3e5002567a58d8620ed
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Wed Feb 25 03:29:52 2015 +0000
+
+    only register a language once
+
+commit 3998335b72109a8f2738781189542c04c6a20e8a
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Wed Feb 25 02:37:47 2015 +0000
+
+    translate esMX to esES and bump toc
+
+commit cc7d9cda91af890e4ff6efc0c3e3752226585937
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sat Feb 21 16:35:13 2015 +0000
+
+    voices -> voice
+
+commit 9f1701cde6c3daf1a04bcaefbf77bae4fd3dfbed
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sat Feb 21 16:22:40 2015 +0000
+
+    name tweak
+
+commit 6ded39097a2d453144c18a48a6e34dcac8d0a473
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sat Feb 21 15:58:06 2015 +0000
+
+    add sounds for all locales and a bw option to set which language you want to use
+
+commit 1f8453e2dd29f0eb997f7e6739aa6ea7bea65b00
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Fri Feb 20 14:11:00 2015 +0000
+
+    tweaks
+
+commit 7a4ccae7735fe037b06a9951d2cc31ea95955251
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Fri Feb 20 04:32:29 2015 +0000
+
+    handle lod
+
+commit 5b587e2f723db8913a49720d0fec875d850e91a8
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Fri Feb 20 03:52:13 2015 +0000
+
+    don't need the default voice
+
+commit e41872ceee78413badf6b29cd9215672752d9cba
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Fri Feb 20 03:50:32 2015 +0000
+
+    inital
+
+commit 1880cb51c195616efd1ba9c5ca3086b6090e0738
+Author: svn <svn@users.noreply.wowace.com>
+Date:   Fri Feb 20 03:40:19 2015 +0000
+
+    bigwigs_voice_heroesofthestorm/mainline: Initial Import
+

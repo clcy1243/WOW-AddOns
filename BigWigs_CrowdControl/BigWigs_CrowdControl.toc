@@ -1,0 +1,15 @@
+## Interface: 50400
+## Title: Big Wigs |cffff0000+|r|cffffffffCrowd Control|r
+## Notes: Creates timer bars for Polymorphs/Shackles/Banishes etc.
+## Author: Ethan Centaurai
+## Version: 1.0
+## LoadOnDemand: 1
+## Dependencies: BigWigs
+## X-Category: Raid
+## X-BigWigs-LoadOn-CoreLoaded: 1
+## X-Curse-Packaged-Version: v1.0-beta-12-g3761f14
+## X-Curse-Project-Name: BigWigs_CrowdControl
+## X-Curse-Project-ID: bigwigs_crowdcontrol
+## X-Curse-Repository-ID: wow/bigwigs_crowdcontrol/mainline
+
+Core.lua

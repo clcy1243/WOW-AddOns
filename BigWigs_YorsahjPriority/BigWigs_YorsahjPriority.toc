@@ -1,0 +1,29 @@
+## Interface: 70100
+## X-Curse-Packaged-Version: r71-release
+## X-Curse-Project-Name: BigWigs_YorsahjPriority
+## X-Curse-Project-ID: bigwigs_yorsahjpriority
+## X-Curse-Repository-ID: wow/bigwigs_yorsahjpriority/mainline
+
+## Title: BigWigs |cffff0000+|r|cffffffffYor'sahj Priority|r
+## Title-ruRU: BigWigs |cffff0000+|r|cffffffffПриоритет на Йор'садже|r
+## Title-frFR: BigWigs |cffff0000+|r|cffffffffPriorité Yor'sahj|r
+## Title-zhCN: BigWigs |cffff0000+|r|cffffffff约萨希优先级|r
+## Title-zhTW: BigWigs |cffff0000+|r|cffffffff尤沙吉血珠優先級|r
+## Title-itIT: BigWigs |cffff0000+|r|cffffffffYor'sahj Priorità|r
+## Notes: Tells you which blob to kill at the Yor'sahj encounter in Dragon Soul.
+## Notes-ruRU: Позволяет узнать, какие капли убивать при битве с Йор'саджем в Душе Дракона.
+## Notes-frFR: Indique quel globule tuer lors de la rencontre face à Yor'sahj dans l'Âme des dragons.
+## Notes-zhCN: 在巨龙之魂不眠的约萨希战斗中提示血球击杀。
+## Notes-zhTW: 在巨龍之魂尤沙吉的戰鬥中提示血珠擊殺.
+## Notes-itIT: Indica quale Globlulo uccidere durante lo scontro con Yor'sahj nell'Anima del Drago.
+## Author: Funkydude
+
+## LoadOnDemand: 1
+## Dependencies: BigWigs
+
+## X-Category: Raid
+## X-BigWigs-LoadOn-ZoneId: 824
+
+Core.lua
+locales.xml
+

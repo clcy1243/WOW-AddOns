@@ -1,0 +1,18 @@
+tag a0e1648e2f74af227265c8355f8a2f598c02b078 1.0.10
+Author:	Kyle Buller <bullerk@gmail.com>
+Date:	Sun Apr 16 05:12:02 2017 -0500
+
+Tagging as 1.0.10
+
+commit d40ed4387984c1ca6e63ffaedafaf4816d550106
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Apr 16 05:11:19 2017 -0500
+
+    Add Orisa
+
+commit 93136523c7ac3b74dca063cb5b0b9eb90421b658
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Fri Apr 14 02:09:00 2017 -0500
+
+    Update TOC for 7.2
+
