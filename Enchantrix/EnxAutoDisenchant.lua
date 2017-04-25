@@ -1,6 +1,6 @@
 ﻿--[[
 	Enchantrix Addon for World of Warcraft(tm).
-	Version: 7.2.5688 (TasmanianThylacine)
+	Version: 7.4.5714 (TasmanianThylacine)
 	Revision: $Id: EnxAutoDisenchant.lua 5683 2016-10-28 17:39:01Z brykrys $
 	URL: http://enchantrix.org/
 
@@ -28,7 +28,7 @@
 		since that is its designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5683 $")
+Enchantrix_RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Enchantrix/EnxAutoDisenchant.lua $", "$Rev: 5683 $")
 
 local auto_de_session_ignore_list = {}
 local auto_de_frame

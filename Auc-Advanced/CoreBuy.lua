@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 7.2.5688 (TasmanianThylacine)
+	Version: 7.4.5714 (TasmanianThylacine)
 	Revision: $Id: CoreBuy.lua 5685 2016-10-31 17:11:06Z Prowell $
 	URL: http://auctioneeraddon.com/
 
@@ -828,5 +828,5 @@ private.Prompt.DragBottom:SetHighlightTexture("Interface\\FriendsFrame\\UI-Frien
 private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Advanced/CoreBuy.lua $", "$Rev: 5685 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Advanced/CoreBuy.lua $", "$Rev: 5685 $")
 AucAdvanced.CoreFileCheckOut("CoreBuy")

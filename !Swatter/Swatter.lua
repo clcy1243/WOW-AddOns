@@ -1,7 +1,7 @@
 --[[
 	Swatter - An AddOn debugging aid for World of Warcraft.
-	Version: 7.2.5688 (TasmanianThylacine)
-	Revision: $Id: Swatter.lua 418 2016-10-26 18:26:17Z brykrys $
+	Version: 7.4.5714 (TasmanianThylacine)
+	Revision: $Id: Swatter.lua 424 2016-11-26 17:06:54Z brykrys $
 	URL: http://auctioneeraddon.com/dl/Swatter/
 	Copyright (C) 2006 Norganna
 
@@ -45,7 +45,7 @@ Swatter = {
 	HISTORY_SIZE = 100,
 }
 
-Swatter.Version="7.2.5688"
+Swatter.Version="7.4.5714"
 if (Swatter.Version == "<%".."version%>") then
 	Swatter.Version = "6.0.DEV"
 end
@@ -79,7 +79,7 @@ hooksecurefunc("SetAddOnDetail", addOnDetail)
 
 -- End SetAddOnDetail function hook.
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 418 $","6.0.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/!Swatter/Swatter.lua $","$Rev: 424 $","6.0.DEV.", 'auctioneer', 'libs')
 
 local function toggle()
 	if Swatter.Error:IsVisible() then
@@ -240,6 +240,7 @@ end
 
 -- Wrappers around OnError to control which parameters get passed through
 local origHandler = geterrorhandler()
+-- We shall set this as the error handler in the *last line* of the file
 local function OnErrorHandler(msg)
 	if not SwatterData.enabled then
 		return origHandler(msg) -- tailcall here, to remove this stub from the stack
@@ -255,7 +256,6 @@ local function OnErrorHandler(msg)
 		OnError(msg)
 	end
 end
-seterrorhandler(OnErrorHandler)
 function Swatter.OnError(msg, frame, stack)
 	OnError(msg, frame, stack)
 end
@@ -582,6 +582,7 @@ Swatter.Error:SetBackdropColor(0,0,0, 1)
 Swatter.Error:SetScript("OnShow", Swatter.ErrorShow)
 Swatter.Error:SetMovable(true)
 Swatter.Error:SetClampedToScreen(true)
+Swatter.Error:SetToplevel(true)
 Swatter.Error.RealShow = Swatter.Error.Show
 Swatter.Error.RealHide = Swatter.Error.Hide
 function Swatter.Error:Show(...)
@@ -673,7 +674,6 @@ Swatter.Error.Box:SetScript("OnTextChanged", Swatter.ErrorUpdate)
 Swatter.Error.Box:SetScript("OnEditFocusGained", Swatter.ErrorClicked)
 
 Swatter.Error.Scroll:SetScrollChild(Swatter.Error.Box)
-Swatter.Error.Scroll:SetClipsChildren(true)
 
 Swatter.Frame = CreateFrame("Frame")
 Swatter.Frame:Show()
@@ -755,3 +755,7 @@ SlashCmdList["SWATTER"] = function(msg)
 		chat("Swatter errors have been cleared")
 	end
 end
+
+-- Set Swatter as the error handler. Do this as the last thing in the file, in case the file itself generates errors
+seterrorhandler(OnErrorHandler)
+

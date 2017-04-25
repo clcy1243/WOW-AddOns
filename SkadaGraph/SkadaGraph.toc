@@ -1,0 +1,22 @@
+## Interface: 70000
+## Author: Zarnivoop, Luckycire(maintainer)
+## Title: Skada |r[|caaedc99fGraph Display|r]
+## Notes: Adds a couple of graph displays to Skada.
+## URL: http://www.curse.com/addons/wow/skada-graphs
+## SavedVariables: SkadaGraphsDB
+## Dependencies: Skada
+## OptionalDeps: Ace3, LibSharedMedia-3.0, LibWindow-1.1, Skada, LibGraph-2.0
+## X-Part-Of: Skada
+## X-Category: Combat
+## X-Curse-Packaged-Version: r58
+## X-Curse-Project-Name: Skada Graphs
+## X-Curse-Project-ID: skada-graphs
+## X-Curse-Repository-ID: wow/skada-graphs/mainline
+
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+
+Shared.lua
+HistoricLine.lua
+PieChart.lua

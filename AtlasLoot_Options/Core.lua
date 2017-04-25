@@ -22,6 +22,12 @@ local function atlasloot(gui, content)
 	last = gui:Add("CheckBox")
 		:Point("TOP", last, "BOTTOM")
 		:Size("full")
+		:Text(AL["Auto select current instance's loot tables."])
+		:DB(db.GUI, "autoselect")
+		
+	last = gui:Add("CheckBox")
+		:Point("TOP", last, "BOTTOM")
+		:Size("full")
 		:Text(AL["Always show quick preview."])
 		:DB(db.Button.Item, "alwaysShowPreviewTT")
 		
@@ -31,6 +37,20 @@ local function atlasloot(gui, content)
 		:Text(AL["Use GameTooltip"])
 		:Tooltip("text", AL["Use the standard GameTooltip instead of the custom AtlasLoot tooltip"])
 		:DB(db.Tooltip, "useGameTooltip", AtlasLoot.Tooltip.Refresh)
+
+	last = gui:Add("CheckBox")
+		:Point("TOP", last, "BOTTOM")
+		:Size("full")
+		:Text(AL["Show AtlasLoot button on WorldMap."])
+		:DB(db.WorldMap, "showbutton", AtlasLoot.WorldMap.ToggleButtonOnChange)
+
+	last = gui:Add("CheckBox")
+		:Point("TOP", last, "BOTTOM", 15, 0)
+		:Size("full")
+		:Text(AL["Show AtlasLoot button on WorldMap's title bar."])
+		:DB(db.WorldMap, "buttonOnTitleBar", AtlasLoot.WorldMap.ButtonStyleOnChange)
+
+		
 end
 
 -- windows
@@ -408,19 +428,19 @@ local function minimapbutton(gui, content)
 		:Point("TOP", 0, -5)
 		:Size("full")
 		:Text(AL["Show minimap button."])
-		:DB(db.MiniMapButton, "shown", AtlasLoot.MiniMapButton.Options_Toggle)
-		
+		:DB(db.minimap, "shown", AtlasLoot.MiniMapButton.Options_Toggle)
+--[[
 	last = gui:Add("CheckBox")
 		:Point("TOP", last, "BOTTOM")
 		:Size("full")
 		:Text(AL["Lock minimap button around minimap."])
 		:DB(db.MiniMapButton, "lockedAroundMiniMap")			
-		
+]]
 	last = gui:Add("CheckBox")
 		:Point("TOP", last, "BOTTOM")
 		:Size("full")
 		:Text(AL["Lock minimap button."])
-		:DB(db.MiniMapButton, "locked")	
+		:DB(db.minimap, "locked", AtlasLoot.MiniMapButton.Lock_Toggle)	
 		
 	last = gui:Add("Button")
 		:Point("BOTTOMRIGHT", nil, "BOTTOMRIGHT", -2, 2)

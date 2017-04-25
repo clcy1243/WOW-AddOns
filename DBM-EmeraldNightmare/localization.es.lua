@@ -29,6 +29,10 @@ L:SetOptionLocalization({
 	Adds				= "Cantidad de esbirros de cada tipo"
 })
 
+L:SetMiscLocalization({
+	AddSpawnNotice		= "Como los jugadores tienen un nivel de equipo cada vez mayor y por tanto avanzan más rápido en el combate, el juego ajusta automáticamente la frecuencia con que aparecen los esbirros. Es posible que los temporizadores de aparición de esbirros de este jefe no reflejen el tiempo exacto."
+})
+
 -----------------------
 -- Elerethe Renferal --
 -----------------------
@@ -37,18 +41,6 @@ L= DBM:GetModLocalization(1744)
 L:SetWarningLocalization({
 	warnWebOfPain		= ">%s< vinculado a >%s<",
 	specWarnWebofPain	= "Estás vinculado a >%s<"
-})
-
-L:SetOptionLocalization({
-	WebConfiguration	= "Opciones del indicador en pantalla y flecha de Telaraña de dolor",
-	Disabled			= "Deshabilitar",
-	Arrow				= "Mostrar solo flecha tradicional si estás afectado",
-	HudSelf				= "Mostrar línea indicadora solo si estás afectado",
-	HudAll				= "Mostrar líneas indicadoras de todos los objetivos afectados"
-})
-
-L:SetMiscLocalization({
-	MapMessage			= "Atención: este módulo hace uso de flechas e indicadores en pantalla, características que desaparecerán en el parche 7.1."
 })
 
 -----------

@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "zhTW" then return end
+if GetLocale() ~= "zhTW" then return end
 if not DBM_GUI_Translations then DBM_GUI_Translations = {} end
 local L = DBM_GUI_Translations
 
@@ -216,7 +216,6 @@ L.CountdownVoice2			= "設置次要倒數計時語音"
 L.CountdownVoice3			= "設置第三倒數計時語音"
 L.VoicePackChoice			= "設置語音警告的語音包"
 L.Area_CountdownOptions		= "倒數選項"
-L.ShowCountdownText			= "主要語音倒數時顯示倒數文字"
 L.Area_VoicePackOptions		= "語音包選項(協力語音包)"
 L.SpecWarn_NoSoundsWVoice	= "設置何時撥放特別警告音效也使用語音警告..."
 L.SWFNever					= "絕不"
@@ -244,6 +243,7 @@ L.SpamBlockNoSetIcon		= "不設置標記在目標上"
 L.SpamBlockNoRangeFrame		= "不顯示距離框架"
 L.SpamBlockNoInfoFrame		= "不顯示訊息框架"
 L.SpamBlockNoHudMap			= "不要顯示HudMap"
+L.SpamBlockNoNameplate		= "不要顯示名條光環"
 L.SpamBlockNoHealthFrame	= "不顯示血量框架"
 L.SpamBlockNoCountdowns		= "不播放倒數音效"
 L.SpamBlockNoYells			= "不送出大喊至頻道"

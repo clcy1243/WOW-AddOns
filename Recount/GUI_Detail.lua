@@ -4,7 +4,7 @@ local Graph = LibStub:GetLibrary("LibGraph-2.0")
 local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 
-local revision = tonumber(string.sub("$Revision: 1392 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1419 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -239,7 +239,7 @@ function me:RefreshUpperDetails()
 			row.Count:SetText(i + offset)
 			row.Name:SetText(entry[1])
 			row.ACount:SetText(entry[6])
-			row.Amount:SetText(entry[2])
+			row.Amount:SetText(Recount:FormatLongNums(entry[2]))
 			row.Percent:SetText(string.format("%.1f", entry[4]).."%")
 			row.Data = entry[3]
 			row:Show()
@@ -338,23 +338,28 @@ function Recount:FillLowerDetailTable(Data)
 			row.Key:SetVertexColor(entry[7][1], entry[7][2], entry[7][3],1.0)
 			row.Background:SetVertexColor((entry[7][1] + 0.5) / 2, (entry[7][2] + 0.5) / 2, (entry[7][3] + 0.5) / 2, 0.3)
 			row.Name:SetText(entry[1])
-			row.Count:SetText(entry[2])
+			local countLabel = Recount.DetailWindow.PieMode.BotRowLabels.Count:GetText()
+			if countLabel == L["Damage"] or countLabel == L["Healed"] then
+				row.Count:SetText(Recount:FormatLongNums(entry[2]))
+			else
+				row.Count:SetText(entry[2])
+			end
 			if entry[3] then
-				row.Min:SetText(entry[3])
+				row.Min:SetText(Recount:FormatLongNums(entry[3]))
 				row.Min:Show()
 			else
 				row.Min:Hide()
 			end
 
 			if entry[4] then
-				row.Avg:SetText(entry[4])
+				row.Avg:SetText(Recount:FormatLongNums(entry[4]))
 				row.Avg:Show()
 			else
 				row.Avg:Hide()
 			end
 
 			if entry[5] then
-				row.Max:SetText(entry[5])
+				row.Max:SetText(Recount:FormatLongNums(entry[5]))
 				row.Max:Show()
 			else
 				row.Max:Hide()
@@ -509,9 +514,7 @@ function me:FilterDeathData(filterType, filterIncoming)
 	local FilterData = Recount.DetailWindow.DeathMode.FilteredData
 
 	for _, v in pairs(FilterData) do
-		for k in pairs(v) do
-			v[k] = nil
-		end
+		wipe(v)
 	end
 
 	if Data==nil then
@@ -524,8 +527,12 @@ function me:FilterDeathData(filterType, filterIncoming)
 			table.insert(FilterData.MessageType, Data.MessageType[i])
 			table.insert(FilterData.MessageIncoming, Data.MessageIncoming[i])
 			table.insert(FilterData.MessageTimes, Data.MessageTimes[i])
-			table.insert(FilterData.Health, Data.Health[i])
-			table.insert(FilterData.HealthNum, Data.HealthNum[i])
+			local health, health_max = Data.Health[i], Data.HealthMax[i]
+			if health and health_max then
+				table.insert(FilterData.Health, string.format("%d (%d%%)", health, health / health_max * 100))
+			else
+				table.insert(FilterData.Health, "???")
+			end
 		end
 	end
 end
@@ -538,7 +545,7 @@ function me:ShowDeathGraph()
 
 	if Data then
 		for k, time in pairs(Data.MessageTimes) do
-			Health[#Health + 1] = {time, Data.HealthNum[k]}
+			Health[#Health + 1] = {time, Data.Health[k] / Data.HealthMax[k] * 100}
 
 			if Data.EventNum[k] then
 				if Data.MessageType[k] == "HEAL" then
@@ -657,15 +664,16 @@ function me:RefreshDeathLogDetails()
 			end
 
 			Row = Recount.DetailWindow.DeathMode.DeathLog[i + RowOffset]
-			if Data.Messages[i + offset] then
-				if Data.MessageTimes[i + offset] < 0 then
-					Row.Time:SetText(string.format("%.2f", Data.MessageTimes[i + offset]))
+			local mess_idx = i + offset
+			if Data.Messages[mess_idx] then
+				if Data.MessageTimes[mess_idx] < 0 then
+					Row.Time:SetFormattedText("%.2f", Data.MessageTimes[mess_idx])
 				else
-					Row.Time:SetText(string.format("+%.2f", Data.MessageTimes[i + offset]))
+					Row.Time:SetFormattedText("+%.2f", Data.MessageTimes[mess_idx])
 				end
-				Row.Msg:SetText("("..L["Health"]..": "..Data.Health[i + offset]..") "..Data.Messages[i + offset])
+				Row.Msg:SetFormattedText("(%s: %s) %s", L["Health"], Data.Health[mess_idx], Data.Messages[mess_idx])
 
-				local Color = DeathLogColors[Data.MessageType[i + offset]]
+				local Color = DeathLogColors[Data.MessageType[mess_idx]]
 				Row.Background:SetVertexColor(Color[1], Color[2], Color[3])
 				Row:Show()
 
@@ -1434,7 +1442,9 @@ function Recount:UpdateSummaryMode(name)
 
 	--Set Pet Data
 	if data.Pet and #data.Pet > 0 then
-		if Recount.DetailWindow.SummaryMode.CurrentPet > #data.Pet then Recount.DetailWindow.SummaryMode.CurrentPet = 1 end
+		if Recount.DetailWindow.SummaryMode.CurrentPet > #data.Pet then
+			Recount.DetailWindow.SummaryMode.CurrentPet = 1
+		end
 		--if not Recount.db2.combatants[data.Pet[Recount.DetailWindow.SummaryMode.CurrentPet] ] then
 		--	Recount:Print("uninitialized Pet: "..data.Pet[Recount.DetailWindow.SummaryMode.CurrentPet].." "..#data.Pet.." please report")
 		--end
@@ -2115,7 +2125,6 @@ function Recount:CreateDetailWindow()
 		MessageType = {},
 		MessageIncoming = {},
 		Health = {},
-		HealthNum = {}
 	}
 
 	theFrame:Hide()

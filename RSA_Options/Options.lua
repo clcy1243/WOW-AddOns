@@ -12035,7 +12035,7 @@ local Hunter = {
 		},
 		Deterrence = {
 			type = "group",
-			name = GetSpellInfo(19263),
+			name = GetSpellInfo(186265),
 			order = 25,
 			args = {
 				Title = {

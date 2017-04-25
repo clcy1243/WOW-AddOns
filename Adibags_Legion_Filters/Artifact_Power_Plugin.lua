@@ -10,17 +10,29 @@ local function DebugPrint(errorMessage)
    end
 end
 
+--Load localization number scaling factors and sort descending
+local scaleFactors = {}
+for k,v in pairs(L["NumberScaleFactors"]) do
+   table.insert(scaleFactors,{factor=v[1],symbol=v[2]})
+end
+table.sort(scaleFactors, function(a,b) return a.factor>b.factor end)
+
 local AdiBags = LibStub("AceAddon-3.0"):GetAddon("AdiBags")
 --AdiBags plugin for showing values on Artifact Power Token Icons
 local mod = AdiBags:NewModule(L["Artifact Power Values"], 'ABEvent-1.0')
 local texts = {}
 local function CreateText(button)
    local text = button:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
-   text:SetPoint("TOPLEFT", button, 2, -2)
+   local fontName, height, flags = text:GetFont()
+   if fontName == "Fonts\\2002.TTF" then
+      text:SetFont(fontName,12,flags) --use a smaller size for larger fonts
+   end
+   text:SetPoint("TOP", button, 0, -2)
    text:Hide()
    texts[button] = text
    return text
 end
+
 function mod:OnEnable()
    self:RegisterMessage('AdiBags_UpdateButton', 'UpdateButton')
    self:SendMessage('AdiBags_UpdateAllButtons')
@@ -31,8 +43,17 @@ function mod:OnDisable()
    end
 end
 
---Rounds the number display to 4 characters (excluding decimal separator, including unit multiplier)
---Can be further generalized to include localizations that don't use thousands and millions
+--Returns the value to devide by and the symbol to append
+local function GetScaleFactor(number)
+   if type(number) ~= "number" then return end
+   for _,numberScale in pairs(scaleFactors) do
+      if number >= numberScale.factor then
+         return numberScale.factor,numberScale.symbol
+      end
+   end
+end
+
+--Rounds the number display to 4 characters (excluding unit separator, including unit multiplier)
 local function RoundNumber(number)
    if type(number) ~= "number" then return number end
    local digits = string.len(number)
@@ -45,13 +66,8 @@ local function RoundNumber(number)
       else
          number = number + (10^trimDigits-mod)
       end
-      local factor = 1000
-      local unit = L["k"]
-      if number > 999999 then
-         factor = 1000000
-         unit = L["m"]
-      end
-      --finally divide by the dividing factor (thousand or million)
+      local factor, unit = GetScaleFactor(number)
+      if not (factor or unit) then DebugPrint("Error getting number scaling factors") return end
       local rounded = number/factor
       return rounded..unit  
    end
@@ -75,7 +91,6 @@ function mod:UpdateButton(event, button)
          text:SetText("?")
          return text:Show()
       end
-      level = math.min(level,25) --TODO: Change Artifact Knowledge cap to a constant
       if not AddonTable.ItemTables.ArtifactItems[itemId] then DebugPrint(itemLink,itemId,level) return end
       local value = AddonTable.ItemTables.ArtifactItems[itemId][level]
       if not value then --data table is missing a value
@@ -83,6 +98,7 @@ function mod:UpdateButton(event, button)
          value = "???"
       end
       text:SetText(RoundNumber(value))
+      text:SetPoint("TOP", button, 0, -2)
       return text:Show()
    elseif AddonTable.ItemTables.AncientManaItems[itemId] then
       text = text or CreateText(button)
@@ -94,6 +110,7 @@ function mod:UpdateButton(event, button)
          value = "???"
       end
       text:SetText(value)
+      text:SetPoint("TOPLEFT", button, 2, -2)
       return text:Show()
    else
       if text then

@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "koKR" then return end
+if GetLocale() ~= "koKR" then return end
 local L
 
 ---------------
@@ -24,10 +24,14 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(1738)
 
 L:SetOptionLocalization({
-	SetIconOnlyOnce		= "수액을 감지해 한마리씩 전술 목표 아이콘을 지정 후 끄기 (실험중)",
+	SetIconOnlyOnce2	= "수액을 감지해 한마리씩 전술 목표 아이콘을 지정 후 끄기 (실험중)",
 	InfoFrameBehavior	= "전투시 정보 창에 표시할 정보 설정",
 	Fixates				= "시선 집중에 걸린 플레이어 표시",
 	Adds				= "쫄 종류별로 마릿수 표시"
+})
+
+L:SetMiscLocalization({
+	AddSpawnNotice		= "공대원 스펙이 올라갈수록 블리자드의 자동 속도 조절 코드로 인해 쫄 생성 속도가 점차 빨라집니다. 공대가 오버스펙이라면 쫄 생성 타이머를 그대로 믿지 마세요."
 })
 
 ---------------------------
@@ -38,18 +42,6 @@ L= DBM:GetModLocalization(1744)
 L:SetWarningLocalization({
 	warnWebOfPain		= ">%s<하고 >%s< 연결",--Only this needs localizing
 	specWarnWebofPain	= "당신은 >%s<하고 연결됐습니다"--Only this needs localizing
-})
-
-L:SetOptionLocalization({
-	WebConfiguration	= "고통의 거미줄 HUD/화살표 설정",
-	Disabled			= "사용 안함",
-	Arrow				= "걸렸을 때 기존 방식의 화살표만 표시",
-	HudSelf				= "자신이 걸렸을 때만 HUD 연결 경로 표시",
-	HudAll				= "걸려있는 모든 대상에게 HUD 연결 경로 표시"
-})
-
-L:SetMiscLocalization({
-	MapMessage			= "알림: 본 모드는 GUI에서 설정하는 화살표/HUD 기능을 사용하고 있습니다. 이 옵션들 역시 7.1에서 사용할 수 없게됩니다"
 })
 
 ---------------------------

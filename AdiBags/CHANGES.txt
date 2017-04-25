@@ -1,0 +1,8 @@
+Changes since tag v1.9.6
+
+commit aef22016efe92b7fac06155d799bf89a8593fe42
+Author: Guillaume Perréal <gperreal@free.fr>
+Date:   Sun Apr 2 01:18:49 2017 +0200
+
+    Let CurseForge packages AdiBags directly from Github.
+

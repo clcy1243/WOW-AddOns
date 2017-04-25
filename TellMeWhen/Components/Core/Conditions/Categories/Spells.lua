@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -296,6 +296,49 @@ ConditionCategory:RegisterCondition(3,	 "REACTIVE", {
 			ConditionObject:GenerateNormalEventString("SPELL_UPDATE_USABLE")
 	end,
 })
+
+
+ConditionCategory:RegisterCondition(3.5,  "OVERLAYED", {
+	text = L["CONDITIONPANEL_OVERLAYED"],
+	tooltip = L["CONDITIONPANEL_OVERLAYED_DESC"],
+
+	bool = true,
+	
+	name = function(editbox)
+		editbox:SetTexts(L["CONDITIONPANEL_OVERLAYED"], L["CNDT_ONLYFIRST"])
+		editbox:SetLabel(L["SPELLTOCHECK"])
+	end,
+	useSUG = true,
+	unit = false,
+	icon = "Interface\\Icons\\inv_shield_05",
+	tcoords = CNDT.COMMON.standardtcoords,
+	Env = {
+		IsSpellOverlayed = IsSpellOverlayed,
+		OverlayedNameMap = {}
+	},
+	funcstr = function(c)
+		local module = CNDT:GetModule("OVERLAYED", true)
+		if not module then
+			module = CNDT:NewModule("OVERLAYED", "AceEvent-3.0")
+
+			local function handleEvent(event, arg1)
+				Env.OverlayedNameMap[strlowerCache[GetSpellInfo(arg1)]] = arg1
+			end
+
+			module:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW", handleEvent)
+			module:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE", handleEvent)
+		end
+
+		return [[BOOLCHECK( IsSpellOverlayed(OverlayedNameMap[c.NameFirst] or (isNumber[c.NameFirst] and c.NameFirst) or 0) )]]
+	end,
+	events = function(ConditionObject, c)
+		return
+			ConditionObject:GenerateNormalEventString("SPELL_UPDATE_USABLE"),
+			ConditionObject:GenerateNormalEventString("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW"),
+			ConditionObject:GenerateNormalEventString("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+	end,
+})
+
 ConditionCategory:RegisterCondition(4,	 "MANAUSABLE", {
 	text = L["CONDITIONPANEL_MANAUSABLE"],
 	tooltip = L["CONDITIONPANEL_MANAUSABLE_DESC"],
@@ -319,6 +362,30 @@ ConditionCategory:RegisterCondition(4,	 "MANAUSABLE", {
 		return
 			ConditionObject:GenerateNormalEventString("SPELL_UPDATE_USABLE"),
 			ConditionObject:GenerateNormalEventString("UNIT_POWER_FREQUENT", "player")
+	end,
+})
+ConditionCategory:RegisterCondition(4.5, "SPELLCOST", {
+	text = L["CONDITIONPANEL_SPELLCOST"],
+	tooltip = L["CONDITIONPANEL_SPELLCOST_DESC"],
+
+	min = 0,
+	range = 200,
+	
+	name = function(editbox)
+		editbox:SetTexts(L["CONDITIONPANEL_SPELLCOST"], L["CNDT_ONLYFIRST"])
+		editbox:SetLabel(L["SPELLTOCHECK"])
+	end,
+	useSUG = true,
+	unit = false,
+	icon = "Interface\\Icons\\inv_potion_125",
+	tcoords = CNDT.COMMON.standardtcoords,
+	funcstr = [[(GetSpellCost(c.NameFirst) or 0) c.Operator c.Level]],
+	Env = {
+		GetSpellCost = TMW.GetSpellCost
+	},
+	events = function(ConditionObject, c)
+		return
+			ConditionObject:GenerateNormalEventString("SPELL_UPDATE_USABLE")
 	end,
 })
 ConditionCategory:RegisterCondition(5,	 "SPELLRANGE", {
@@ -734,8 +801,6 @@ function Env.UnitCastCount(...)
 	return Env.UnitCastCount(...)
 end
 ConditionCategory:RegisterCondition(32,	 "CASTCOUNT", {
-	old = true,
-	
 	text = L["CONDITIONPANEL_CASTCOUNT"],
 	tooltip = L["CONDITIONPANEL_CASTCOUNT_DESC"],
 	range = 10,

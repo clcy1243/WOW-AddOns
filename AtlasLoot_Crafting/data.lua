@@ -5,14 +5,15 @@ local data = AtlasLoot.ItemDB:Add(addonname)
 local AL = AtlasLoot.Locales
 local ALIL = AtlasLoot.IngameLocales
 
-local LEGION_DIFF = data:AddDifficulty(AL["Legion"])
-local WOD_DIFF = data:AddDifficulty(AL["Warlords of Draenor"])
-local MOP_DIFF = data:AddDifficulty(AL["Mists of Pandaria"])
-local CATA_DIFF = data:AddDifficulty(AL["Cataclysm"])
-local WOTLK_DIFF = data:AddDifficulty(AL["Wrath of the Lich King"])
-local BC_DIFF = data:AddDifficulty(AL["Burning Crusade"])
-local CLASSIC_DIFF = data:AddDifficulty(AL["Classic"])
+local LEGION_DIFF = data:AddDifficulty(EXPANSION_NAME6)
+local WOD_DIFF = data:AddDifficulty(EXPANSION_NAME5)
+local MOP_DIFF = data:AddDifficulty(EXPANSION_NAME4)
+local CATA_DIFF = data:AddDifficulty(EXPANSION_NAME3)
+local WOTLK_DIFF = data:AddDifficulty(EXPANSION_NAME2)
+local BC_DIFF = data:AddDifficulty(EXPANSION_NAME1)
+local CLASSIC_DIFF = data:AddDifficulty(EXPANSION_NAME0)
 local NORMAL_DIFF = data:AddDifficulty(AL["Normal"])
+local OLD_REMEDIES = data:AddDifficulty(AL["Old Remedies"])
 
 local NORMAL_ITTYPE = data:AddItemTableType("Item", "Item")
 local CRAFTING_ITTYPE = data:AddItemTableType("Item", "Profession")
@@ -2839,7 +2840,7 @@ data["Inscription"] = {
 	TableType = CRAFTING_ITTYPE,
 	items = {
 		{	--InscriptionDeathKnight
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"],
+			name = AL["Glyphs"].." - "..ALIL["DEATHKNIGHT"],
 			[NORMAL_DIFF] = {
 				{ 1, 43535, 57209 }, -- Glyph of the Geist
 				{ 2, 43551, 57224 }, -- Glyph of Foul Menagerie
@@ -2853,7 +2854,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionDemonHunter
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["DEMONHUNTER"],
+			name = AL["Glyphs"].." - "..ALIL["DEMONHUNTER"],
 			[NORMAL_DIFF] = {
 				{ 1, 133796 }, -- Glyph of Fearsome Metamorphosis
 				{ 2, 139362, 225529 }, -- Glyph of Mana Touched Souls
@@ -2865,7 +2866,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionDruid
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = AL["Glyphs"].." - "..ALIL["DRUID"],
 			[NORMAL_DIFF] = {
 				{ 1, 40919, 56948 }, -- Glyph of the Orca
 				{ 2, 43334, 58287 }, -- Glyph of the Ursol Chameleon
@@ -2879,7 +2880,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionHunter
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = AL["Glyphs"].." - "..ALIL["HUNTER"],
 			[NORMAL_DIFF] = {
 				{ 1, 43350, 58301 }, -- Glyph of Lesser Proportion
 				{ 2, 137194, 225537 }, -- Glyph of the Bullseye
@@ -2895,7 +2896,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionMage
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = AL["Glyphs"].." - "..ALIL["MAGE"],
 			[NORMAL_DIFF] = {
 				{ 1, 42751, 56986 }, -- Glyph of Crittermorph
 				{ 2, 104104, 148270 }, -- Glyph of the Unbound Elemental
@@ -2906,7 +2907,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionMonk
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["MONK"],
+			name = AL["Glyphs"].." - "..ALIL["MONK"],
 			[NORMAL_DIFF] = {
 				{ 1, 87881, 112462 }, -- Glyph of Crackling Tiger Lightning
 				{ 2, 87883, 112464 }, -- Glyph of Honor
@@ -2917,7 +2918,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionPaladin
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = AL["Glyphs"].." - "..ALIL["PALADIN"],
 			[NORMAL_DIFF] = {
 				{ 1, 41100, 57032 }, -- Glyph of the Luminous Charger
 				{ 2, 43366, 58312 }, -- Glyph of Winged Vengeance
@@ -2927,7 +2928,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionPriest
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = AL["Glyphs"].." - "..ALIL["PRIEST"],
 			[NORMAL_DIFF] = {
 				{ 1, 43373, 58320 }, -- Glyph of Shackle Undead
 				{ 2, 79538, 124466 }, -- Glyph of the Heavens
@@ -2939,7 +2940,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionRogue
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = AL["Glyphs"].." - "..ALIL["ROGUE"],
 			[NORMAL_DIFF] = {
 				{ 1, 45768, 64260 }, -- Glyph of Disguise
 				{ 2, 129020, 225549 }, -- Glyph of Flash Bang
@@ -2948,7 +2949,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionShaman
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = AL["Glyphs"].." - "..ALIL["SHAMAN"],
 			[NORMAL_DIFF] = {
 				{ 1, 43386, 58332 }, -- Glyph of the Spectral Wolf
 				{ 2, 45775, 64261 }, -- Glyph of Deluge
@@ -2961,7 +2962,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionWarlock
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = AL["Glyphs"].." - "..ALIL["WARLOCK"],
 			[NORMAL_DIFF] = {
 				{ 1, 42459, 57263 }, -- Glyph of Felguard
 				{ 2, 43394, 58341 }, -- Glyph of Soulwell
@@ -2975,7 +2976,7 @@ data["Inscription"] = {
 			},
 		},
 		{	--InscriptionWarrior
-			name = AL["Glyphs"].." - "..LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = AL["Glyphs"].." - "..ALIL["WARRIOR"],
 			[NORMAL_DIFF] = {
 				{ 1, 43398, 58345 }, -- Glyph of Gushing Wound
 				{ 2, 43400, 58347 }, -- Glyph of Mighty Victory
@@ -4570,7 +4571,7 @@ data["Leatherworking"] = {
 	TableType = CRAFTING_ITTYPE,
 	items = {
 		{	--LeatherLeatherArmor
-			name = ALIL["Leather"].." "..AL["Armor"],
+			name = AL["Leather"].." "..AL["Armor"],
 			[LEGION_DIFF] ={
 				{ 1, 128891, 194719 }, -- Dreadleather Bindings
 				{ 2, 128891, 194727 }, -- Dreadleather Bindings
@@ -5132,7 +5133,7 @@ data["Leatherworking"] = {
 			},
 		},
 		{	--LeatherMailArmor
-			name = ALIL["Mail"].." "..AL["Armor"],
+			name = AL["Mail"].." "..AL["Armor"],
 			[LEGION_DIFF] = {
 				{ 1, 128907, 194759 }, -- Gravenscale Armbands
 				{ 2, 128907, 194767 }, -- Gravenscale Armbands
@@ -5720,7 +5721,7 @@ data["Leatherworking"] = {
 			},
 		},
 		{	--LeatherLeather
-			name = ALIL["Leather"],
+			name = AL["Leather"],
 			[NORMAL_DIFF] = {
 				{ 1, 110611, 171391, [ATLASLOOT_IT_AMOUNT1] = "8+" },	-- Burnished Leather (Learnt by item 115358)
 				{ 2, 110611, 182121, [PRICE_EXTRA_ITTYPE] = "110609:60" },	-- Burnished Leather (Sold, Garrison)
@@ -6541,7 +6542,7 @@ data["Tailoring"] = {
 			},
 		},
 		{	--TailoringCloth
-			name = ALIL["Cloth"],
+			name = AL["Cloth"],
 			[LEGION_DIFF] = {
 				{ 1, 127004, 185962 }, -- Imbued Silkweave
 			},
@@ -6988,8 +6989,37 @@ data["Cooking"] = {
 	ContentType = SECPROFESSION_CONTENT,
 	TableType = CRAFTING_ITTYPE,
 	items = {
+		{	-- Legion all
+			name = EXPANSION_NAME6,
+			[LEGION_DIFF] = {
+				{ 1, 133557, 201413, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Salt and Pepper Shank
+				{ 2, 133561, 201496, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Deep-Fried Mossgill
+				{ 3, 133562, 201497, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Pickled Stormray
+				{ 4, 133563, 201498, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Faronaar Fizz
+				{ 5, 133564, 201499, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Spiced Rib Roast
+				{ 6, 133565, 201500, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Leybeque Ribs
+				{ 7, 133566, 201501, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Suramar Surf and Turf
+				{ 8, 133567, 201502, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Barracuda Mrglgagh
+				{ 9, 133568, 201503, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Koi-Scented Stormray
+				{ 10, 133569, 201504, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Drogbar-Style Salmon
+				{ 11, 133570, 201505, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- The Hungry Magister
+				{ 12, 133571, 201506, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Azshari Salad
+				{ 13, 133572, 201507, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Nightborne Delicacy Platter
+				{ 14, 133573, 201508, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Seed-Battered Fish Plate
+				{ 15, 133574, 201511, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Fishbrul Special
+				{ 16, 133575, 201512, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Dried Mackerel Strips
+				{ 17, 133576, 201513, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Bear Tartare
+				{ 18, 133577, 201514, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Fighter Chow
+				{ 19, 133578, 201515 }, -- Hearty Feast
+				{ 20, 133579, 201516 }, -- Lavish Suramar Feast
+				{ 21, 133681, 201683, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Crispy Bacon
+				{ 22, 142334, 230046 }, -- Spiced Wildfowl Omelet
+			},
+		},
 		{	--CookingAttributes
 			name = AL["Attributes"],
+		--	[LEGION_DIFF] = {
+		--	},
 			[WOD_DIFF] = {
 				{ 1, 122347, 180760 }, -- Whiptail Fillet (Sold, Garrison)
 				{ 2, 111447, 160984, [ATLASLOOT_IT_AMOUNT1] = "4+" },	-- Talador Surf and Turf (Learnt by tasting or cooking)
@@ -7059,6 +7089,24 @@ data["Cooking"] = {
 		},
 		{	--CookingRatings
 			name = AL["Ratings"],
+			[LEGION_DIFF] = {
+				-- Critical Strike
+				{ 1, 133557, 201413, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Salt and Pepper Shank
+				{ 2, 133565, 201500, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Leybeque Ribs
+				{ 3, 133570, 201505, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- The Hungry Magister
+				-- Haste
+				{ 5, 133561, 201496, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Deep-Fried Mossgill
+				{ 6, 133566, 201501, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Suramar Surf and Turf
+				{ 7, 133571, 201506, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Azshari Salad
+				-- Mastery
+				{ 9, 133562, 201497, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Pickled Stormray
+				{ 10, 133567, 201502, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Barracuda Mrglgagh
+				{ 11, 133572, 201507, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Nightborne Delicacy Platter
+				-- Versatility
+				{ 13, 133563, 201498, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Faronaar Fizz
+				{ 14, 133568, 201503, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Koi-Scented Stormray
+				{ 15, 133573, 201508, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Seed-Battered Fish Plate
+			},
 			[WOD_DIFF] = {
 				{ 1, 122345, 180758 },	-- Pickled Eel (Sold, Garrison)
 				{ 2, 111449, 160986, [ATLASLOOT_IT_AMOUNT1] = "4+" },	-- Blackrock Barbecue (Learnt by tasting or cooking)
@@ -7225,6 +7273,9 @@ data["Cooking"] = {
 		},
 		{	--CookingAPSP
 			name = AL["Attack/Spell Power"],
+			[LEGION_DIFF] = {
+				{ 1, 142334, 230046 }, -- Spiced Wildfowl Omelet
+			},
 			[NORMAL_DIFF] = {
 				{ 1, 43015, 57423 },	-- Fish Feast : =ds=#sr# 450 : =ds=AtlasLoot["Vendor"]: AtlasLoot_IngameLocales["Dalaran"]
 				{ 2, 34754, 45555 },	-- Mega Mammoth Meal : =ds=#sr# 400 : =ds=AtlasLoot["Vendor"]: AtlasLoot_IngameLocales["Dalaran"]
@@ -7253,6 +7304,16 @@ data["Cooking"] = {
 		},
 		{	--CookingSpecial
 			name = AL["Special"],
+			[LEGION_DIFF] = {
+				{ 1, 133564, 201499, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Spiced Rib Roast
+				{ 2, 133569, 201504, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Drogbar-Style Salmon
+				{ 3, 133574, 201511, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Fishbrul Special
+				{ 4, 133576, 201513, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Bear Tartare
+				{ 5, 133577, 201514, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Fighter Chow
+				{ 6, 133578, 201515 }, -- Hearty Feast
+				{ 7, 133579, 201516 }, -- Lavish Suramar Feast
+				{ 8, 133681, 201683, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Crispy Bacon
+			},
 			[NORMAL_DIFF] = {
 				{ 1, 62790, 88015, [ATLASLOOT_IT_AMOUNT1] = 4 },	-- Darkbrew Lager : =ds=#sr# 415 : =ds=AtlasLoot["Trainer"]
 				{ 2, 62674, 88022 },	-- Highland Spirits : =ds=#sr# 450 : =ds=AtlasLoot["Cooking Daily"]
@@ -7292,6 +7353,9 @@ data["Cooking"] = {
 		},
 		{	--CookingStandard
 			name = AL["Food without Buffs"],
+			[LEGION_DIFF] = {
+				{ 1, 133575, 201512, [ATLASLOOT_IT_AMOUNT1] = "5+" }, -- Dried Mackerel Strips
+			},
 			[WOD_DIFF] = {
 				{ 1, 111456, 161002, [ATLASLOOT_IT_AMOUNT1] = "4+" },	-- Grilled Saberfish (Learnt by item 111387)
 				{ 3, 111455, 161001, [ATLASLOOT_IT_AMOUNT1] = "4+" },	-- Saberfish Broth (Learnt by item 111387)
@@ -7362,35 +7426,50 @@ data["FirstAid"] = {
 	items = {
 		{	--FirstAid
 			name = GetSpellInfo(3273),
-			[NORMAL_DIFF] = {
+			[LEGION_DIFF] = {
+				{ 1, 133940, 202853 }, -- Silkweave Bandage
+				{ 2, 136653, 221690 }, -- Silvery Salve
+				{ 3, 133942, 202854 }, -- Silkweave Splint
+
+				{ 5, 142332, 230047, [PRICE_EXTRA_ITTYPE] = "142335:10" }, -- Feathered Luffa
+				--[[ comment out until resolve the issue for now actual item exist, but only the spell
+				{ 6, 211353, 211353, [PRICE_EXTRA_ITTYPE] = "136654:3" }, -- Treat Fever
+				{ 7, 212067, 212067, [PRICE_EXTRA_ITTYPE] = "136653:3:136654:1" }, -- Treat Burns
+				{ 8, 211696, 211696, [PRICE_EXTRA_ITTYPE] = "133940:3:136654:1" }, -- Stabilize
+				{ 9, 211926, 211926, [PRICE_EXTRA_ITTYPE] = "133942:2:136654:1" }, -- Set Bone
+				]]
+			},
+			[WOD_DIFF] = {
 				{ 1, 111603, 172539, [ATLASLOOT_IT_AMOUNT1] = "4+" },	-- Antiseptic Bandage (Learnt by item 111364)
 				{ 2, 116979, 172541, [ATLASLOOT_IT_AMOUNT1] = "4+" },	-- Blackwater Anti-Venom (Learnt by item 111364)
 				{ 3, 116981, 172542, [ATLASLOOT_IT_AMOUNT1] = "4+" },	-- Fire Ammonite Oil (Learnt by item 111364)
 				{ 4, 109223, 172540, [ATLASLOOT_IT_AMOUNT1] = "4+" },	-- Healing Tonic (Learnt by item 111364)
-				{ 6, 72986, 102699 },	-- Heavy Windwool Bandage : =ds=#sr# 600 : =ds=AtlasLoot["Trainer"]
-				{ 7, 72986, 102698 },	-- Heavy Windwool Bandage : =ds=#sr# 550 : =ds=AtlasLoot["Trainer"]
-				{ 8, 72985, 102697 },	-- Windwool Bandage : =ds=#sr# 500 : =ds=AtlasLoot["Trainer"]
-				{ 9, 53051, 88893 },	-- Dense Embersilk Bandage : =ds=#sr# 525 : =ds=AtlasLoot["Trainer"]
-				{ 10, 53051, 74558 },	-- Dense Embersilk Bandage : =ds=#sr# 525 : =ds=AtlasLoot["Trainer"]
-				{ 11, 53050, 74557 },	-- Heavy Embersilk Bandage : =ds=#sr# 475 : =ds=AtlasLoot["Trainer"]
-				{ 12, 53049, 74556 },	-- Embersilk Bandage : =ds=#sr# 425 : =ds=AtlasLoot["Trainer"]
-				{ 13, 34722, 45546 },	-- Heavy Frostweave Bandage : =ds=#sr# 400 : =ds=AtlasLoot["Trainer"]
-				{ 14, 34721, 45545 },	-- Frostweave Bandage : =ds=#sr# 350 : =ds=AtlasLoot["Trainer"]
-				{ 15, 21991, 27033 },	-- Heavy Netherweave Bandage : =ds=#sr# 330 : =ds=AtlasLoot["Trainer"]
-				{ 16, 21990, 27032 },	-- Netherweave Bandage : =ds=#sr# 300 : =ds=AtlasLoot["Trainer"]
-				{ 17, 14530, 18630 },	-- Heavy Runecloth Bandage : =ds=#sr# 290 : =ds=AtlasLoot["Trainer"]
-				{ 18, 14529, 18629 },	-- Runecloth Bandage : =ds=#sr# 260 : =ds=AtlasLoot["Trainer"]
-				{ 19, 8545, 10841 },	-- Heavy Mageweave Bandage : =ds=#sr# 240 : =ds=AtlasLoot["Trainer"]
-				{ 20, 8544, 10840 },	-- Mageweave Bandage : =ds=#sr# 210 : =ds=AtlasLoot["Trainer"]
-				{ 21, 6451, 7929 },	-- Heavy Silk Bandage : =ds=#sr# 180 : =ds=AtlasLoot["Trainer"]
-				{ 22, 6450, 7928 },	-- Silk Bandage : =ds=#sr# 150 : =ds=AtlasLoot["Trainer"]
-				{ 23, 3531, 3278 },	-- Heavy Wool Bandage : =ds=#sr# 115 : =ds=AtlasLoot["Trainer"]
-				{ 24, 3530, 3277 },	-- Wool Bandage : =ds=#sr# 80 : =ds=AtlasLoot["Trainer"]
-				{ 25, 2581, 3276 },	-- Heavy Linen Bandage : =ds=#sr# 40 : =ds=AtlasLoot["Trainer"]
-				{ 26, 1251, 3275 },	-- Linen Bandage : =ds=#sr# 1 : =ds=AtlasLoot["Trainer"]
-				{ 28, 19440, 23787 },	-- Powerful Anti-Venom : =ds=#sr# 300 : =ds=AtlasLoot["Vendor"]
-				{ 29, 6453, 7935, [ATLASLOOT_IT_AMOUNT1] = 3 },	-- Strong Anti-Venom : =ds=#sr# 130 : =ds=AtlasLoot["Drop"]
-				{ 30, 6452, 7934, [ATLASLOOT_IT_AMOUNT1] = 3 },	-- Anti-Venom : =ds=#sr# 80 : =ds=AtlasLoot["Trainer"]
+			},
+			[OLD_REMEDIES] = {
+				{ 1, 72986, 102699 },	-- Heavy Windwool Bandage : =ds=#sr# 600 : =ds=AtlasLoot["Trainer"]
+				{ 2, 72986, 102698 },	-- Heavy Windwool Bandage : =ds=#sr# 550 : =ds=AtlasLoot["Trainer"]
+				{ 3, 72985, 102697 },	-- Windwool Bandage : =ds=#sr# 500 : =ds=AtlasLoot["Trainer"]
+				{ 4, 53051, 88893 },	-- Dense Embersilk Bandage : =ds=#sr# 525 : =ds=AtlasLoot["Trainer"]
+				{ 5, 53051, 74558 },	-- Dense Embersilk Bandage : =ds=#sr# 525 : =ds=AtlasLoot["Trainer"]
+				{ 6, 53050, 74557 },	-- Heavy Embersilk Bandage : =ds=#sr# 475 : =ds=AtlasLoot["Trainer"]
+				{ 7, 53049, 74556 },	-- Embersilk Bandage : =ds=#sr# 425 : =ds=AtlasLoot["Trainer"]
+				{ 8, 34722, 45546 },	-- Heavy Frostweave Bandage : =ds=#sr# 400 : =ds=AtlasLoot["Trainer"]
+				{ 9, 34721, 45545 },	-- Frostweave Bandage : =ds=#sr# 350 : =ds=AtlasLoot["Trainer"]
+				{ 10, 21991, 27033 },	-- Heavy Netherweave Bandage : =ds=#sr# 330 : =ds=AtlasLoot["Trainer"]
+				{ 11, 21990, 27032 },	-- Netherweave Bandage : =ds=#sr# 300 : =ds=AtlasLoot["Trainer"]
+				{ 12, 14530, 18630 },	-- Heavy Runecloth Bandage : =ds=#sr# 290 : =ds=AtlasLoot["Trainer"]
+				{ 13, 14529, 18629 },	-- Runecloth Bandage : =ds=#sr# 260 : =ds=AtlasLoot["Trainer"]
+				{ 14, 8545, 10841 },	-- Heavy Mageweave Bandage : =ds=#sr# 240 : =ds=AtlasLoot["Trainer"]
+				{ 15, 8544, 10840 },	-- Mageweave Bandage : =ds=#sr# 210 : =ds=AtlasLoot["Trainer"]
+				{ 16, 6451, 7929 },	-- Heavy Silk Bandage : =ds=#sr# 180 : =ds=AtlasLoot["Trainer"]
+				{ 17, 6450, 7928 },	-- Silk Bandage : =ds=#sr# 150 : =ds=AtlasLoot["Trainer"]
+				{ 18, 3531, 3278 },	-- Heavy Wool Bandage : =ds=#sr# 115 : =ds=AtlasLoot["Trainer"]
+				{ 19, 3530, 3277 },	-- Wool Bandage : =ds=#sr# 80 : =ds=AtlasLoot["Trainer"]
+				{ 20, 2581, 3276 },	-- Heavy Linen Bandage : =ds=#sr# 40 : =ds=AtlasLoot["Trainer"]
+				{ 21, 1251, 3275 },	-- Linen Bandage : =ds=#sr# 1 : =ds=AtlasLoot["Trainer"]
+				{ 22, 19440, 23787 },	-- Powerful Anti-Venom : =ds=#sr# 300 : =ds=AtlasLoot["Vendor"]
+				{ 23, 6453, 7935, [ATLASLOOT_IT_AMOUNT1] = 3 },	-- Strong Anti-Venom : =ds=#sr# 130 : =ds=AtlasLoot["Drop"]
+				{ 24, 6452, 7934, [ATLASLOOT_IT_AMOUNT1] = 3 },	-- Anti-Venom : =ds=#sr# 80 : =ds=AtlasLoot["Trainer"]
 			},
 		},
 	}

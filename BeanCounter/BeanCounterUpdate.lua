@@ -1,6 +1,6 @@
 --[[
 	Auctioneer Addon for World of Warcraft(tm).
-	Version: 7.2.5688 (TasmanianThylacine)
+	Version: 7.4.5714 (TasmanianThylacine)
 	Revision: $Id: BeanCounterUpdate.lua 5652 2016-08-08 08:10:24Z ccox $
 	URL: http://auctioneeraddon.com/
 
@@ -28,7 +28,7 @@
 		since that is it's designated purpose as per:
 		http://www.fsf.org/licensing/licenses/gpl-faq.html#InterpreterIncompat
 ]]
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/7.2/BeanCounter/BeanCounterUpdate.lua $","$Rev: 5652 $","5.1.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/auctioneer/branches/7.4/BeanCounter/BeanCounterUpdate.lua $","$Rev: 5652 $","5.1.DEV.", 'auctioneer', 'libs')
 
 local libName = "BeanCounter"
 local libType = "Util"

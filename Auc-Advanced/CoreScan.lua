@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 7.2.5688 (TasmanianThylacine)
-	Revision: $Id: CoreScan.lua 5682 2016-10-27 19:05:14Z brykrys $
+	Version: 7.4.5714 (TasmanianThylacine)
+	Revision: $Id: CoreScan.lua 5709 2017-02-16 16:40:23Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -1007,22 +1007,22 @@ local Commitfunction = function()
 		local stage1throttle = get("core.scan.stage1throttle")
 		if stage1throttle >= Const.ALEVEL_HI then
 			breakinterval, timeadjust = 500, 0.1
-			itemcachedelay = 4 -- ### Legion item cache patch
+			itemcachedelay = 5 -- ### Legion item cache patch
 		elseif stage1throttle >= Const.ALEVEL_MED then
 			breakinterval, timeadjust = 2000, 0.4
-			itemcachedelay = 3 -- ### Legion item cache patch
+			itemcachedelay = 4 -- ### Legion item cache patch
 		elseif stage1throttle >= Const.ALEVEL_LOW then
 			breakinterval, timeadjust = 5000, 1
-			itemcachedelay = 2 -- ### Legion item cache patch
+			itemcachedelay = 3 -- ### Legion item cache patch
 		else -- OFF
 			breakinterval, timeadjust = nil, 1
-			itemcachedelay = 1 -- ### Legion item cache patch
+			itemcachedelay = 2 -- ### Legion item cache patch
 		end
 		local breakcount = 0
 		local doYield = false
-		local doDelay = false -- ### Legion item cache patch
 		local battlepetYield = true
 		local firstfailureYield = true
+		local retries = {}
 		nextPause = debugprofilestop() + processingTime * timeadjust
 		-- Stage 1 First Pass
 		private.InitItemInfoCache()
@@ -1041,34 +1041,65 @@ local Commitfunction = function()
 			end
 			local success, reason, linkType = private.GetAuctionItemFillIn(TempcurScan[pos], true)
 			progresscounter = progresscounter + 1
-			if breakinterval then
-				if linkType == "battlepet" and battlepetYield then
-					-- experimental: yield on finding first battlepet
-					-- first time battlepet API is used, it appears to trigger a small amount of lag
+			if linkType == "battlepet" and battlepetYield then
+				-- experimental: yield on finding first battlepet
+				-- first time battlepet API is used, it appears to trigger a small amount of lag
+				doYield = true
+				battlepetYield = false
+			elseif not success then
+				if firstfailureYield then
+					-- experimental: yield after first failure detected
+					-- todo: fiddle with this, perhaps yielding every X failures, see if it appears to help
 					doYield = true
-					battlepetYield = false
-				elseif not success then
-					if firstfailureYield then
-						-- experimental: yield after first failure detected
-						-- todo: fiddle with this, perhaps yielding every X failures, see if it appears to help
-						doYield = true
-						firstfailureYield = false
-					end
-					if reason == "Retry" then doDelay = true end -- ### Legion item cache patch
+					firstfailureYield = false
+				end
+				if reason == "Retry" then
+					progresscounter = progresscounter - 1 -- undo progress counter for this item ### todo: find a better way?
+					tinsert(retries, pos)
 				end
 			end
 		end
+		local numretries = #retries
 
-		-- ### Legion item cache patch: delay between passes to give server more time to return GetItemInfo data
-		-- must use GetTime to time this pause, as debugprofilestop is unsafe across yields
-		if doDelay then
+		-- Stage 1 Retry passes - only checks entries in 'retries' table
+		local retrypass = 0
+		while numretries > 0 and retrypass < 10 do
 			local nextWait = GetTime() + itemcachedelay -- delay time depends on stage1throttle
 			while GetTime() < nextWait do
 				coroutine.yield()
 			end
-		end -- ###
 
-		-- Stage 1 Second Pass
+			private.InitItemInfoCache()
+			local newretries = {}
+			retrypass = retrypass + 1
+			for i = #retries, 1, -1 do
+				local pos = retries[i]
+				if breakinterval then
+					breakcount = (breakcount + 1) % breakinterval
+					if breakcount == 0 then
+						doYield = true
+					end
+				end
+				if doYield or debugprofilestop() > nextPause then
+					lib.ProgressBars("CommitProgressBar", 100*progresscounter/progresstotal, true, "Auctioneer: Processing Stage 1."..retrypass)
+					coroutine.yield()
+					nextPause = debugprofilestop() + processingTime * timeadjust
+					doYield = false
+				end
+				local success, reason, linkType = private.GetAuctionItemFillIn(TempcurScan[pos], true)
+
+				if not success and reason == "Retry" then
+					tinsert(newretries, pos)
+				else
+					progresscounter = progresscounter + 1
+				end
+
+			end
+			retries = newretries
+			numretries = #retries
+		end
+
+		-- Stage 1 Final Pass
 		breakcount = 0
 		doYield = false
 		private.InitItemInfoCache()
@@ -1088,7 +1119,7 @@ local Commitfunction = function()
 
 			local entryUnusable = false
 			local data = TempcurScan[pos]
-			local success, reason, linkType = private.GetAuctionItemFillIn(data, true)
+			local success, reason, linkType = private.GetAuctionItemFillIn(data)
 			progresscounter = progresscounter + 1
 
 			if not success then
@@ -1128,7 +1159,6 @@ local Commitfunction = function()
 				progresscounter = progresscounter + 5 -- We just wiped the entry from the db, so other steps won't see it.
 			end
 		end
-		private.ResetItemInfoCache() -- free up cache memory
 		local tolerance = 0
 		if scanCount > TOLERANCE_LOWERLIMIT then -- don't use tolerance for tiny scans
 			tolerance = get("core.scan.unresolvedtolerance")
@@ -1140,7 +1170,6 @@ local Commitfunction = function()
 			hadGetError = true
 			wasIncomplete = true
 		end
-
 	end --[[ of Stage 1 ]]--
 
 	--[[ *** Stage 2 : Pre-process image table : Mark all matching auctions as DIRTY, and build a LookUpTable *** ]]--
@@ -1740,44 +1769,45 @@ end
 
 -- Mechanism to limit repeated calls to GetItemInfo and C_PetJournal.GetPetInfoBySpeciesID during processing
 do
-	local ItemInfoCache, PetInfoCache = {}, {}
-	local ItemTried, PetTried
+	local ItemInfoCache, PetInfoCache, ItemTried, PetTried = {}, {}, {}, {}
 	local lookupPetType2SubClassID = Const.AC_PetType2SubClassID
 	local GetPetInfoBySpeciesID = C_PetJournal.GetPetInfoBySpeciesID
 
 	function private.ResetItemInfoCache()
-		wipe(ItemInfoCache)
-		wipe(PetInfoCache)
-		ItemTried, PetTried = nil, nil
+		ItemInfoCache, PetInfoCache, ItemTried, PetTried = {}, {}, {}, {}
 	end
 	function private.InitItemInfoCache()
-		ItemTried, PetTried = {}, {}
+		wipe(ItemTried)
+		wipe(PetTried)
 	end
-	local function GetItemInfoCache(link, itemID, bonuses, scanthrottle) -- ### Legion : revised, check
-		local cachekey = itemID
-		if bonuses and bonuses ~= "" then cachekey = cachekey .. ":" .. bonuses end
-		local data = ItemInfoCache[cachekey]
-		if data then
-			return data
+	local function GetItemInfoCache(link, itemID, bonuses, scanthrottle)
+		if bonuses and bonuses ~= "" then
+			-- for now we won't try to cache items with bonusIDs
+			local _,_,_,iLevel,uLevel,_,_,_,equipLoc,_,_,classID,subClassID = GetItemInfo(link)
+			return classID, subClassID, Const.EquipEncode[equipLoc], iLevel, uLevel or 0
 		end
-		if scanthrottle and ItemTried and ItemTried[cachekey] then
+		local data = ItemInfoCache[itemID]
+		if data then
+			return unpack(data, 1, 5)
+		end
+		if scanthrottle and ItemTried and ItemTried[itemID] then
 			-- if GetItemInfo previously failed for a link with this cachekey in this processing pass (ItemTried is reset each pass)
 			return
 		end
 		local _,_,_,iLevel,uLevel,_,_,_,equipLoc,_,_,classID,subClassID = GetItemInfo(link)
 		if not classID then
 			if scanthrottle then
-				ItemTried[cachekey] = true
+				ItemTried[itemID] = true
 			end
 			return
 		end
 		-- not all values are used; only store the ones we want
 		data = {classID, subClassID, Const.EquipEncode[equipLoc], iLevel, uLevel or 0}
-		ItemInfoCache[cachekey] = data
-		return data
+		ItemInfoCache[itemID] = data
+		return unpack(data, 1, 5)
 	end
 
-	local function GetPetInfoCache(speciesID, scanthrottle) -- ### Legion : revised, check
+	local function GetPetInfoCache(speciesID, scanthrottle)
 		local subtype = PetInfoCache[speciesID]
 		if not subtype then
 			if scanthrottle and PetTried and PetTried[speciesID] then
@@ -1860,15 +1890,14 @@ do
 				end
 			end
 			if not itemData[Const.CLASSID] then
-				local itemInfo = GetItemInfoCache(itemLink, itemID, itemData[Const.BONUSES], scanthrottle) -- {iType, iSubtype, Const.EquipEncode[equipLoc], iLevel, uLevel}
-				if itemInfo then
-					itemData[Const.CLASSID] = itemInfo[1]
-					itemData[Const.SUBCLASSID] = itemInfo[2]
-					itemData[Const.IEQUIP] = itemInfo[3]
+				local classID, subClassID, equipCode, iLevel, uLevel = GetItemInfoCache(itemLink, itemID, itemData[Const.BONUSES], scanthrottle) -- {iType, iSubtype, Const.EquipEncode[equipLoc], iLevel, uLevel}
+				if classID then
+					itemData[Const.CLASSID] = classID
+					itemData[Const.SUBCLASSID] = subClassID
+					itemData[Const.IEQUIP] = equipCode
 					-- Prefer iLevel and/or uLevel values provided by GetAuctionItemInfo over those from GetItemInfo
-					-- (because we used itemID, it is possible for values from GetItemInfo to be incorrect)
-					itemData[Const.ILEVEL] = itemData[Const.ILEVEL] or itemInfo[4]
-					itemData[Const.ULEVEL] = itemData[Const.ULEVEL] or itemInfo[5]
+					itemData[Const.ILEVEL] = itemData[Const.ILEVEL] or iLevel
+					itemData[Const.ULEVEL] = itemData[Const.ULEVEL] or uLevel
 				end
 			end
 		end
@@ -2139,6 +2168,7 @@ local StorePageFunction = function()
 	local processingTime = 800 / get("scancommit.targetFPS")
 	local debugprofilestop = debugprofilestop
 	local nextPause = debugprofilestop() + processingTime
+	local fillduringscan = get("core.scan.fillduringscan")
 
 	local breakcount = 10000 -- additional limiter: yield every breakcount auctions scanned
 	local scannerthrottle = get("core.scan.scannerthrottle")
@@ -2165,10 +2195,11 @@ local StorePageFunction = function()
 		remissedCounts[i] = 0
 	end
 
+
 	if not private.breakStorePage and (page > qryinfo.page) then
 		-- First pass
 		local retries = { }
-		private.InitItemInfoCache() -- ### Legion item cache patch
+		private.InitItemInfoCache()
 		for i = 1, numBatchAuctions do
 			if isGetAll then -- only yield for GetAll scans
 				if debugprofilestop() > nextPause or i % breakcount == 0 then
@@ -2186,7 +2217,9 @@ local StorePageFunction = function()
 			if (itemData) then
 				local isComplete, completeMinusSeller = private.isComplete(itemData)
 				if (isComplete) then
-					private.GetAuctionItemFillIn(itemData, true) -- ### Legion item cache patch
+					if fillduringscan then
+						private.GetAuctionItemFillIn(itemData, true)
+					end
 					tinsert(curScan, itemData)
 					storecount = storecount + 1
 				else
@@ -2219,7 +2252,7 @@ local StorePageFunction = function()
 			needsRetries = false
 			sellerOnly = true
 			tryCount = tryCount + 1
-			private.InitItemInfoCache() -- ### Legion item cache patch
+			private.InitItemInfoCache()
 			-- must use GetTime to time this pause, as debugprofilestop is unsafe across yields
 			local nextWait = GetTime() + 1
 			while GetTime() < nextWait do
@@ -2246,7 +2279,9 @@ local StorePageFunction = function()
 				if (itemData) then
 					local isComplete, completeMinusSeller = private.isComplete(itemData)
 					if (isComplete) then
-						private.GetAuctionItemFillIn(itemData, true) -- ### Legion item cache patch
+						if fillduringscan then
+							private.GetAuctionItemFillIn(itemData, true)
+						end
 						tinsert(curScan, itemData)
 						storecount = storecount + 1
 					else
@@ -2349,7 +2384,6 @@ local StorePageFunction = function()
 			qryinfo.unresolved = (qryinfo.unresolved or 0) + all_missed + links_missed + link_data_missed + ld_and_names_missed
 		end
 	end
-	--private.ResetItemInfoCache() -- ### Legion item cache patch
 
 	if EventFramesRegistered then
 		for _, frame in pairs(EventFramesRegistered) do
@@ -3237,7 +3271,9 @@ end
 
 function coremodule.Processors.auctionclose(event)
 	-- clearup memory usage when AH closed
-	private.ResetItemInfoCache()
+	if not get("core.scan.keepinfocacheonclose") then
+		private.ResetItemInfoCache()
+	end
 	private.clearImageCaches(event)
 	lib.Interrupt()
 end
@@ -3264,5 +3300,5 @@ function internal.Scan.NotifyOwnedListUpdated()
 --	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Advanced/CoreScan.lua $", "$Rev: 5682 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Advanced/CoreScan.lua $", "$Rev: 5709 $")
 AucAdvanced.CoreFileCheckOut("CoreScan")

@@ -1,0 +1,7 @@
+## Interface: 70000
+## Version: 1.2
+## Title: CritVsMastery
+## Notes: CvsM
+## Author: @hjg719-NGA
+
+CritVsMastery.lua

@@ -1,0 +1,38 @@
+Changes since tag 7.2.4
+
+commit 5fb8620fe96f4f8a5cb29cf2d819cb1aa0dbe0c4
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Apr 24 08:42:46 2017 +0200
+
+    Omega via svn r16186:
+    Fix timerDemonicUpheavalCD
+    and change couple timers to regular, they shouldn?\226?\128?\153t have still been AI
+
+commit 3d6a65d153ea09d6f0a91481c290a77be003b0c9
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sun Apr 23 17:23:20 2017 +0200
+
+    Omega via svn r16185:
+    Fix withered jim CID
+
+commit b53dc1aa8d6703bbebebc4f551dc7272421f8112
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sat Apr 22 21:24:09 2017 +0200
+
+    Omega via svn r16184:
+    Spanish update
+
+commit 4a2675dc10f4770acc118014ad6ac4cd962c9356
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sat Apr 22 21:12:12 2017 +0200
+
+    Omega via svn r16183:
+    Fix boss health reporting for wipes during Demon Within Phase, remove temp CID that was being used for holding combat
+
+commit d9572d149c843e40fdeea09e552046b8e6c08b98
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sat Apr 22 20:10:49 2017 +0200
+
+    tandanu via svn r16182:
+    increment alpha version
+

@@ -14,20 +14,34 @@ end -- End OnInitialize
 local spellinfo,spelllinkinfo,extraspellinfo,extraspellinfolink,missinfo,GSTarget
 
 
+
+
 function RSA_Priest:OnEnable()
 	RSA.db.profile.Modules.Priest = true -- Set state to loaded, to know if we should announce when a spell is refreshed.
+	local Config_MC = { -- Mind Control and Dominant Mind shadow talent
+		profile = 'MindControl',
+		replacements = { TARGET = 1 }
+	}
+	local Config_MC_End = { -- Mind Control and Dominant Mind shadow talent
+		profile = 'MindControl',
+		section = 'End',
+		targetNotMe = 1,
+		replacements = { TARGET = 1 }
+	}
 	local pName = UnitName("player")
 	local MonitorConfig_Priest = {
 		player_profile = RSA.db.profile.Priest,
 		SPELL_AURA_APPLIED = {
+			[605] = Config_MC, -- Mind Control
+			[205364] = Config_MC, -- Mind Control
 			[9484] = { -- SHACKLE UNDEAD
 				profile = 'ShackleUndead',
 				replacements = { TARGET = 1 }
 			},
-			[605] = { -- MIND CONTROL
+			--[[[605] = { -- MIND CONTROL
 				profile = 'MindControl',
 				replacements = { TARGET = 1 }
-			},
+			},]]--
 			[15286] = { -- VAMPIRIC EMBRACE
 				profile = 'VampiricEmbrace',
 				replacements = { TARGET = 1 }
@@ -105,6 +119,8 @@ function RSA_Priest:OnEnable()
 			},
 		},
 		SPELL_AURA_REMOVED = {
+			[605] = Config_MC_End, -- Mind Control
+			[205364] = Config_MC_End, -- Mind Control
 			[15286] = { -- VAMPIRIC EMBRACE
 				profile = 'VampiricEmbrace',
 				section = 'End'
@@ -155,12 +171,12 @@ function RSA_Priest:OnEnable()
 				section = 'End',
 				replacements = { TARGET = 1 }
 			},]]--
-			[605] = { -- MIND CONTROL
+			--[[[605] = { -- MIND CONTROL
 				profile = 'MindControl',
 				section = 'End',
 				targetNotMe = 1,
 				replacements = { TARGET = 1 }
-			},
+			},]]--
 			[64901] = { -- SYMBOL OF HOPE
 				profile = 'SymbolOfHope',
 				section = 'End',

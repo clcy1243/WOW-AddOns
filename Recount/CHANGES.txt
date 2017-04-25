@@ -1,0 +1,8 @@
+------------------------------------------------------------------------
+r1423 | Resike | 2017-04-18 09:09:31 -0500 (Tue, 18 Apr 2017) | 1 line
+Changed paths:
+   M /trunk/GUI_Main.lua
+
+- Holding the Alt key while reseting the data will override the reset confirmation.
+------------------------------------------------------------------------
+

@@ -55,6 +55,10 @@ function RSA_DemonHunter:OnEnable()
 				profile = 'MetamorphosisDD',
 				linkID = 191427
 			},
+			[187827] = { -- METAMORPHOSIS VENGEANCE TANK
+				profile = 'MetamorphosisTank', 
+				tracker = 2
+			},
 			[207744] = { -- FIERY BRAND
 				profile = 'FieryBrand',
 				replacements = { TARGET = 1 }

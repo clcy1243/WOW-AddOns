@@ -1,0 +1,16 @@
+tag ddf754327bfdcac033eaf647ef0ec3000bf5220a 7.1.0.5
+Author:	James D. Callahan III <jcallahan@curse.com>
+Date:	Mon Dec 12 23:38:38 2016 -0600
+
+commit 24b17fb51ce7d373a892a0f6a577d7f86432e3d2
+Author: James D. Callahan III <jcallahan@curse.com>
+Date:   Sun Dec 11 23:06:33 2016 -0600
+
+    Flag Apothecary Falthis as aligned with the Horde.
+
+commit 9deca3a865c7522c9effc0daa559a4b74d357879
+Author: James D. Callahan III <jcallahan@curse.com>
+Date:   Sun Dec 11 20:06:48 2016 -0600
+
+    Flag Darkslayer Mordenthal as aligned with the Horde.
+

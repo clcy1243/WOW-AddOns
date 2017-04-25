@@ -1,0 +1,18 @@
+tag 2b3e00c33cbdeb2e86b40622fb8f9ffef7375c7e v7.2.0-1
+Author:	elvador <reysptools@googlemail.com>
+Date:	Mon Apr 10 18:19:30 2017 +0200
+
+Tagging as v7.2.0-1
+
+commit 9327eff86612b19a6b4d612b3ca1df7f322e31b9
+Author: elvador <reysptools@googlemail.com>
+Date:   Mon Apr 10 18:19:02 2017 +0200
+
+    update toc
+
+commit c1ace8da3336c7d86a5f3bd8439da42efe1d0656
+Author: WetU <yuk6196@gmail.com>
+Date:   Fri Mar 24 08:37:41 2017 +0900
+
+    Add koKR translation & Fix typo in addon name
+

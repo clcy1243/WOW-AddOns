@@ -6,10 +6,11 @@ local str_format = string.format
 local StaticPopupDialogs = StaticPopupDialogs
 local EMPTY_FUNCTION = function() end
 
+--[[ -- doesn't looks to be called anywhere
 -- Popup Box for first time users
 StaticPopupDialogs["ATLASLOOT_SETUP"] = {
 	preferredIndex = 3,
-	text = AL["Welcome to Atlasloot Enhanced.  Please take a moment to set your preferences."],
+	text = AL["Welcome to Atlasloot Enhanced. Please take a moment to set your preferences."],
 	button1 = AL["Setup"],
 	OnAccept = function()
 		AtlasLoot:OptionsToggle()
@@ -22,7 +23,7 @@ StaticPopupDialogs["ATLASLOOT_SETUP"] = {
 --Popup Box for an old version of Atlas
 StaticPopupDialogs["ATLASLOOT_OLD_ATLAS"] = {
 	preferredIndex = 3,
-	text = str_format(AL["It has been detected that your version of Atlas does not match the version that Atlasloot is tuned for (%s/%s).  Depending on changes, there may be the occasional error, so please visit http://www.atlasmod.com as soon as possible to update."], "InstalAtlas", "CompAtlas"),
+	text = str_format(AL["It has been detected that your version of Atlas does not match the version that Atlasloot is tuned for (%s/%s). Depending on changes, there may be the occasional error, so please visit http://www.atlasmod.com as soon as possible to update."], "InstalAtlas", "CompAtlas"),
 	button1 = AL["OK"],
 	OnAccept = function()
 		AtlasLoot:Print(AL["Incompatible Atlas Detected"])
@@ -36,9 +37,9 @@ StaticPopupDialogs["ATLASLOOT_OLD_ATLAS"] = {
 StaticPopupDialogs["ATLASLOOT_COPY_BOX"] = {
 	preferredIndex = 3,
 	text = "%s",
-    button2 = _G.TEXT(_G.ACCEPT),
-    hasEditBox = 1,
-    hasWideEditBox = 1,
+	button2 = ACCEPT,
+	hasEditBox = 1,
+	hasWideEditBox = 1,
 	editBoxWidth = 350,
 	OnShow = function(self, data)
 		local editBox = self.editBox
@@ -61,3 +62,4 @@ StaticPopupDialogs["ATLASLOOT_COPY_BOX"] = {
 	whileDead = 1,
 	hideOnEscape = 1
 }
+]]

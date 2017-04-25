@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - VendMarkup
-	Version: 7.2.5688 (TasmanianThylacine)
+	Version: 7.4.5714 (TasmanianThylacine)
 	Revision: $Id: vendMarkup.lua 4828 2010-07-21 22:20:18Z Prowell $
 	URL: http://auctioneeraddon.com/
 
@@ -97,4 +97,4 @@ function private.SetupConfigGui(gui)
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-VendMarkup/vendMarkup.lua $", "$Rev: 4828 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Util-VendMarkup/vendMarkup.lua $", "$Rev: 4828 $")

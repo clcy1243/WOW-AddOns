@@ -1,13 +1,9 @@
-﻿## Interface: 70100
+## Interface: 70200
 ## Title: RSA [|c51cfff00Demon Hunter|r]
 ## Notes: RSA Demon Hunter Module. This is needed to announce Demon Hunter Spells.
 ## Author: Raeli
 ## Dependencies: RSA
 ## LoadOnDemand: 1
-## X-Curse-Packaged-Version: r384-Release
-## X-Curse-Project-Name: RSA - Raeli's Spell Announcer
-## X-Curse-Project-ID: rsa
-## X-Curse-Repository-ID: wow/rsa/mainline
 
 
 

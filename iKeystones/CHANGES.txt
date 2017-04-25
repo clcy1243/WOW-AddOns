@@ -1,0 +1,12 @@
+tag b87c73d3d34d624ba75251b4e01c1cbc890d4f5a v1.36
+Author:	Ironi <jessemanelius@gmail.com>
+Date:	Wed Mar 29 20:44:30 2017 +0300
+
+tagging as v1.36
+
+commit d36a712595cd9989441390178b15532a190028d4
+Author: Ironi <jessemanelius@gmail.com>
+Date:   Wed Mar 29 20:44:09 2017 +0300
+
+    update for 7.2, everything SHOULD work again
+

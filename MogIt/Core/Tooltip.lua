@@ -49,6 +49,8 @@ mog.tooltip:RegisterEvent("PLAYER_REGEN_ENABLED");
 mog.tooltip.model = CreateFrame("DressUpModel",nil,mog.tooltip);
 mog.tooltip.model:SetPoint("TOPLEFT",mog.tooltip,"TOPLEFT",5,-5);
 mog.tooltip.model:SetPoint("BOTTOMRIGHT",mog.tooltip,"BOTTOMRIGHT",-5,5);
+mog.tooltip.model:SetAnimation(0, 0);
+mog.tooltip.model:SetLight(true, false, 0, 0.8, -1, 1, 1, 1, 1, 0.3, 1, 1, 1);
 mog.tooltip.model.ResetModel = function(self)
 	local db = mog.db.profile
 	if db.tooltipCustomModel then
@@ -65,17 +67,17 @@ mog.tooltip.model:SetScript("OnShow",mog.tooltip.model.ResetModel);
 
 
 function mog.tooltip:ShowItem(itemLink)
-	if not itemLink then return end
-	local itemID, _, _, slot = GetItemInfoInstant(itemLink);
-	if not itemID then return end
-	local self = GameTooltip;
-	
 	for i = 1, GameTooltip:NumLines() do
 		local line = _G["GameTooltipTextLeft"..i]
 		if line:GetText() == TRANSMOGRIFY_TOOLTIP_ITEM_UNKNOWN_APPEARANCE_KNOWN then
 			line:SetTextColor(136 / 255, 1, 170 / 255)
 		end
 	end
+	
+	if not itemLink then return end
+	local itemID, _, _, slot = GetItemInfoInstant(itemLink);
+	if not itemID then return end
+	local self = GameTooltip;
 	
 	local db = mog.db.profile;
 	local tooltip = mog.tooltip;
@@ -118,25 +120,19 @@ function mog.tooltip:ShowItem(itemLink)
 	
 	local addOwnedItem = mog.db.profile.tooltipAlwaysShowOwned and mog.slotsType[slot];
 	if mog.db.profile.tooltipAlwaysShowOwned and mog.slotsType[slot] then
-		local addedCharacters = {}
-		local hasItem, characters = mog:HasItem(itemID, true);
+		local sourceID = mog:GetSourceFromItem(itemLink);
+		local hasItem = sourceID and mog:HasItem(sourceID, true);
 		addOwnedItem = hasItem;
 		if hasItem then
 			self:AddLine(" ");
 			self:AddLine("|TInterface\\RaidFrame\\ReadyCheck-Ready:0|t "..L["You have this item."], 1, 1, 1);
-			if mog.db.profile.tooltipOwnedDetail and characters then
-				for i, character in ipairs(characters) do
-					self:AddLine("|T:0|t "..character);
-					addedCharacters[character] = true;
-				end
-			end
 		end
 	end
 	
 	-- add wishlist info about this item
 	if not self[mog] then
 		local addedCharacters = {}
-		local found, characters = mog.wishlist:IsItemInWishlist(itemID);
+		local found, characters = mog.wishlist:IsItemInWishlist(itemLink);
 		if found then
 			if not addOwnedItem then
 				self:AddLine(" ");
@@ -149,10 +145,12 @@ function mog.tooltip:ShowItem(itemLink)
 				end
 			end
 		end
-		local itemIDs = mog:GetData("display", mog:GetData("item", mog:NormaliseItemString(itemLink), "display"), "items");
+		local visualID = C_TransmogCollection.GetItemInfo(itemLink);
+		if not visualID then return end
+		local itemIDs = C_TransmogCollection.GetAllAppearanceSources(visualID);
 		if itemIDs then
 			for i, item in ipairs(itemIDs) do
-				local foundAlternate, profiles = mog.wishlist:IsItemInWishlist(item);
+				local foundAlternate, profiles = mog.wishlist:IsItemInWishlist((select(6, C_TransmogCollection.GetAppearanceSourceInfo(item))));
 				if foundAlternate then
 					if not found then
 						self:AddLine(" ");

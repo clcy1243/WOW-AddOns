@@ -1,7 +1,7 @@
 ﻿--[[
 	Auctioneer - Price Level Utility module
-	Version: 7.2.5688 (TasmanianThylacine)
-	Revision: $Id: CompactUI.lua 5629 2016-07-31 13:17:00Z brykrys $
+	Version: 7.4.5714 (TasmanianThylacine)
+	Revision: $Id: CompactUI.lua 5694 2016-12-23 15:15:14Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds a price level indicator
@@ -320,8 +320,8 @@ function private.HookAH()
 					local pos = private.headers.pos
 					if pos == 1 then col = "minbidbuyout" -- Buy
 					elseif pos == 2 then col = "bid" -- Bid
-					--elseif pos == 3 then <?> -- BuyEach
-					--elseif pos == 4 then <?> -- BidEach
+					elseif pos == 3 then col = "unitprice" -- BuyEach
+					elseif pos == 4 then col = "unitprice" -- BidEach -- there is no BidEach server sort command, so we just use "unitprice" here
 					end
 				--elseif sort == 8 then <?> -- PriceLevel
 				end
@@ -911,4 +911,4 @@ function lib.GetButtons()
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5629 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Util-CompactUI/CompactUI.lua $", "$Rev: 5694 $")

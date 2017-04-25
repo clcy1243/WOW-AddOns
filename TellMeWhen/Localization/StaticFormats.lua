@@ -1,4 +1,4 @@
-﻿local L = LibStub("AceLocale-3.0"):GetLocale("TellMeWhen", true)
+local L = LibStub("AceLocale-3.0"):GetLocale("TellMeWhen", true)
 
 local pname = UnitName("player")
 local locale = GetLocale()

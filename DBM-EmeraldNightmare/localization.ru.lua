@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "ruRU" then return end
+if GetLocale() ~= "ruRU" then return end
 local L
 
 ---------------
@@ -24,7 +24,7 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(1738)
 
 L:SetOptionLocalization({
-	SetIconOnlyOnce		= "Set icon only once per ooze scan then disable until at least one blows up (experimental)",
+	SetIconOnlyOnce2	= "Set icon only once per ooze scan then disable until at least one blows up (experimental)",
 	InfoFrameBehavior	= "Информация, отображаемая в информационном окне во время боя",
 	Fixates				= "Показывать игроков с Сосредоточением внимания",
 	Adds				= "Показывать количество для всех типов аддов"
@@ -38,18 +38,6 @@ L= DBM:GetModLocalization(1744)
 L:SetWarningLocalization({
 	warnWebOfPain		= ">%s< связан с >%s<",--Only this needs localizing
 	specWarnWebofPain	= "Вы связаны с >%s<"--Only this needs localizing
-})
-
-L:SetOptionLocalization({
-	WebConfiguration	= "Set HUD/Arrow options for Web of Pain",
-	Disabled			= "Отключено",
-	Arrow				= "Show only traditional Arrow if you're affected",
-	HudSelf				= "Show HUD line only if you're affected",
-	HudAll				= "Show HUD line for all affected targets"
-})
-
-L:SetMiscLocalization({
-	MapMessage			= "Note: This mod uses arrow/HUD options that can be configured in GUI. These options will also break in 7.1"
 })
 
 ---------------------------

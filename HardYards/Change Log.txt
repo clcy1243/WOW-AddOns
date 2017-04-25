@@ -1,0 +1,93 @@
+== v2.09 - 29th March 2017
+* Patch 7.2 Update
+
+== v2.08 - 11th January 2017
+* Code standardisation commenced to align with my other AddOns
+* To do: Slash and translations
+
+== v2.07 - 25th October 2016
+* More of the same
+
+== v2.06 - 25th October 2016
+* Retested / fixed / added more items / improved everything
+* Width extended a little
+
+== v2.05 - 23rd October 2016
+* Version update to support Patch 7.1 "Return to Karahzan"
+
+== v2.04 - 25th September 2016
+* Return values for other AddOns only if actually targeting and not mouse over
+* Use a different highlight colour in the TOC file
+
+== v2.03 - 9th September 2016
+* On / Off switch removed
+* Added a Show / Hide switch
+* Supports requests from other AddOns now via two globals
+
+== v2.02 - 30th August 2016
+* Fix for switching "off" - actually disappears now
+
+== v2.01 - 23rd July 2016
+* Interface Version now 70000
+
+== v2.00 - 27th May 2016
+* Rewritten. Cleaner and obvious taint sources removed.
+* Some new ranges for increased precision added.
+* Distance now appears on all tooltips
+
+== v1.12
+* Patch 6.2 'toc' file update to keep Hard Yards up to date.
+
+== v1.11
+* Fix to fun chat command '/wdw sal'
+* Patch 6.1 'toc' file update to keep Cool Aid up to date.
+
+== v1.10
+* Fixed some dodgy Interface frame headers
+* Removal of an unused assigned local variable
+
+== v1.09
+* Corrected code for the (fun) hourly easter egg salute
+* Interface set/save/default/ etc option mechanics bug
+* Some Interface text here and there I suppose
+
+== v1.08
+* Forgot to manually add Specialization support due to API changes by Blizzard
+
+== v1.07
+* Help text improvements, copyright notice, contact details etc.
+* Versioning numbers now correct
+
+== v1.06
+* Typo in interface text
+* Determining Specialization changed due to API changes by Blizzard
+* New logic for distance for Warlords of Draenor v6.0.2
+
+== v1.05
+* Version bump for Patch 6.0.3
+
+== v1.04
+* Version bump for Patch 5.4
+
+== v1.03
+* When not shown, was still triggering the 'move' script
+* Moved some local lists as causing memory usage to rapidly climb. Gets caught in garbage collection but would be a worry for players micro-managing computer performance.
+* Localised almost everything. Achieved a large cpu performance boost.
+* Fixed bug with moving Hard Yards too far from the centre of the screen
+* Changing Talents now no longer gets positions, colours etc muddled
+
+== v1.02
+* Sometimes during a first time use of Hard Yards there is a long delay before the WoW server recognises we are trying to move the Hard Yards frame. Mysterious. Suspect that it is because the frame hot spot is right on top of our toon. Default position is now offset right and down a bit, clear of our toon. Seems to help.
+* Sometimes Hard Yards seemed to forget the last place to which it was moved. Mysterious. To work around this I (1) removed some dead code left over from a copy/paste from one of my other AddOns, (2) explicitly (rather than assuming the default) link the relative position of the Hard Yards frame to the main game window, (3) the previous fix now forces an explicit default location rather than assuming 0,0.
+* A better calculation of the 'hot' region dimensions for enabling moving. Benefits really small text sizes.
+* Corrected the Class Specialization English language lookup table
+* Now handles players with no specialisation (i.e. sub level 10 and any player who has unlearnt or not yet learnt one)
+* We Dont Wipe AddOn support
+* Show/Hide & on/off options properly differentiated and fixed
+* Small change to help/about panels
+
+== v1.01
+* Sloppy naming of a variable borrowed from another of my AddOns caused fatal runtime error
+
+== v1.00
+* Initial release

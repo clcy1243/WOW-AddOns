@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Price Level Utility module
-	Version: 7.2.5688 (TasmanianThylacine)
+	Version: 7.4.5714 (TasmanianThylacine)
 	Revision: $Id: ScanProgress.lua 4979 2010-10-31 10:59:55Z Prowell $
 	URL: http://auctioneeraddon.com/
 
@@ -241,4 +241,4 @@ function private.ConfigChanged()
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-ScanProgress/ScanProgress.lua $", "$Rev: 4979 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Util-ScanProgress/ScanProgress.lua $", "$Rev: 4979 $")

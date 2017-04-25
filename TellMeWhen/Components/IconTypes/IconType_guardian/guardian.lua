@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -255,7 +255,7 @@ function Type:COMBAT_LOG_EVENT_UNFILTERED(e, _, event, _, sourceGUID, sourceName
 		if existingGuardian then
 			existingGuardian:Empower()
 		end
-	elseif event == "UNIT_DIED" then
+	elseif event == "UNIT_DIED" or event == "SPELL_INSTAKILL" then
 		Guardians[destGUID] = nil
 	else
 		-- Sometimes on the first summon after logging in, the name of a guardian will be "Unknown" in the log.
@@ -283,7 +283,7 @@ local function OnUpdate(icon, time)
 
 
 	local count = nil
-	if not icon:IsControlled() then
+	if not icon:IsGroupController() then
 		local NameHash = icon.NPCs.Hash
 		count = 0
 		-- Non-controlled icons should show the number of active ones right on the icon.

@@ -1,0 +1,12 @@
+tag f7eadc3999db78e46f3a12286ac620b1d72a756f v1.7.5
+Author:	Devin <me@imdevinc.com>
+Date:	Fri Apr 14 16:41:52 2017 -0700
+
+Version 1.7.5 Release
+
+commit 79d47d3affdb0040a0633108664689c0bfc990fe
+Author: Devin <me@imdevinc.com>
+Date:   Fri Apr 14 16:41:38 2017 -0700
+
+    Added reset time for CN/TW servers
+

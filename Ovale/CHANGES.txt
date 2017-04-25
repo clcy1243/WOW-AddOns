@@ -1,0 +1,54 @@
+tag 5f3e1712b994cdf83f42d42eff015bd25c8e3382 7.2.0.0
+Author:	Sidoine De Wispelaere <sidoine@sidoine.net>
+Date:	Wed Mar 29 20:45:55 2017 +0200
+
+Update to 7.2
+
+commit 2ad37bc0481812f0bd8ada463f1787a83419d259
+Author: Sidoine De Wispelaere <sidoine@sidoine.net>
+Date:   Wed Mar 29 20:39:00 2017 +0200
+
+    Upgrade version
+
+commit 05e5305d5fd7b7580b28d1c6db74b4255c80a4f2
+Author: Kevin De Smet <kevin.de.smet@outlook.be>
+Date:   Mon Mar 27 16:11:02 2017 +0200
+
+    remove buff_cdr
+
+commit 05e5305d5fd7b7580b28d1c6db74b4255c80a4f2
+Author: Kevin De Smet <kevin.de.smet@outlook.be>
+Date:   Mon Mar 27 16:11:02 2017 +0200
+
+    remove buff_cdr
+
+commit a50db31da529d64859720d62606f36df8aaf2cb6
+Author: Kevin De Smet <kevin.de.smet@outlook.be>
+Date:   Mon Mar 27 16:07:13 2017 +0200
+
+    lower zenmed in prio, it really is that low
+
+commit 8c057a6c9db2c50f0206f652306e1c3f286c871e
+Author: Kevin De Smet <kevin.de.smet@outlook.be>
+Date:   Mon Mar 27 16:06:55 2017 +0200
+
+    firestone walkers
+
+commit fd1b3aeca3373994ef4de01893d57168dbece9d8
+Author: Sidoine De Wispelaere <sidoine@sidoine.net>
+Date:   Wed Mar 22 17:50:59 2017 +0100
+
+    Update README.md
+
+commit fd1b3aeca3373994ef4de01893d57168dbece9d8
+Author: Sidoine De Wispelaere <sidoine@sidoine.net>
+Date:   Wed Mar 22 17:50:59 2017 +0100
+
+    Update README.md
+
+commit e9bc42794a846521870d32506c1ad875851c432b
+Author: Sidoine De Wispelaere <sidoine@sidoine.net>
+Date:   Wed Mar 22 17:50:35 2017 +0100
+
+    Update README.md
+

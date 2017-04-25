@@ -1,7 +1,7 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 7.2.5688 (TasmanianThylacine)
-	Revision: $Id: AprFrame.lua 5666 2016-09-02 09:48:49Z brykrys $
+	Version: 7.4.5714 (TasmanianThylacine)
+	Revision: $Id: AprFrame.lua 5704 2017-02-07 10:30:31Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds an appraisals tab to the AH for
@@ -80,10 +80,7 @@ function private.CreateFrames()
 			for slot=1,GetContainerNumSlots(bag) do
 				local link = GetContainerItemLink(bag,slot)
 				if link then
-					local isDirect = false
-					if frame.direct and frame.direct == link then
-						isDirect = true
-					end
+					local isDirect = frame.direct == link
 
 					if AucAdvanced.Post.IsAuctionable(bag, slot) or isDirect then
 						local sig, linkType = SigFromLink(link)
@@ -108,6 +105,9 @@ function private.CreateFrames()
 									if linkType == "item" then
 										local na, _,ra,_,_,_,_, st = GetItemInfo(link)
 										name, rarity, stack = na, ra, st
+										if not name then
+											private.needListRefresh = true
+										end
 									elseif linkType == "battlepet" then
 										local _, id, _, qu = strsplit(":", link)
 										id = tonumber(id)
@@ -152,8 +152,12 @@ function private.CreateFrames()
 
 					if not found then
 						local _,_,_,_,_,_,_,stack = GetItemInfo(itemId)
+						if not stack then
+							private.needListRefresh = true
+							stack = 1
+						end
 						local item = {
-							sig, name, texture, quality, stack or 1, count, link,
+							sig, name, texture, quality, stack, count, link,
 							auction=true
 						}
 						if get('util.appraiser.item.'..sig..".ignore") then
@@ -1334,7 +1338,7 @@ function private.CreateFrames()
 	end
 
 	function frame.RefreshView(background, link)
-		local itemName, itemMinLevel, itemRarity, filterData
+		local itemName, filterData
 		if not link then
 			link = frame.salebox.link
 			if not link then
@@ -1345,17 +1349,15 @@ function private.CreateFrames()
 			end
 		end
 
-		local lType, itemID, _, petQuality = strsplit(":", link)
+		local lType, itemID = strsplit(":", link)
 		itemID = tonumber(itemID)
 		lType = lType:sub(-4)
 		if not itemID then
 			-- do nothing - itemName is not set so we will display an error message and reset at the end of the function
 		elseif lType == "item" then
-			local name, _, quality, _, minlevel, _, _, _, _, _, _, classID, subClassID = GetItemInfo(link)
+			local name, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(link)
 			if name then
 				itemName = name
-				if minlevel and minlevel > 0 then itemMinLevel = minlevel end
-				if quality and quality > 0 then itemRarity = quality end
 				filterData = AucAdvanced.Scan.QueryFilterFromID(classID, subClassID)
 			end
 		elseif lType == "epet" then -- last 4 letters of "battlepet"
@@ -1363,8 +1365,6 @@ function private.CreateFrames()
 			local petName, _, petType = C_PetJournal.GetPetInfoBySpeciesID(itemID)
 			if petName then
 				itemName = petName
-				petQuality = tonumber(petQuality)
-				if petQuality and petQuality > 0 then itemRarity = petQuality end
 				filterData = AucAdvanced.Scan.QueryFilterFromID(LE_ITEM_CLASS_BATTLEPET, Const.AC_PetType2SubClassID[petType])
 			end
 		-- else do nothing - itemName will not be set
@@ -1381,11 +1381,11 @@ function private.CreateFrames()
 			aucPrint(_TRANS('APPR_Interface_RefreshingView') :format(itemName))--Refreshing view of {{%s}}
 			if background == true then
 				-- Usage: StartPushedScan(name, minLevel, maxLevel, isUsable, qualityIndex, exactMatch, filterData, options)
-				AucAdvanced.Scan.StartPushedScan(itemName, itemMinLevel, itemMinLevel, nil, itemRarity, exact, filterData)
+				AucAdvanced.Scan.StartPushedScan(itemName, nil, nil, nil, nil, exact, filterData)
 			else
 				AucAdvanced.Scan.PushScan()
 				--Usage: StartScan(name, minUseLevel, maxUseLevel, isUsable, qualityIndex, GetAll, exactMatch, filterData, options)
-				AucAdvanced.Scan.StartScan(itemName, itemMinLevel, itemMinLevel, nil, itemRarity, nil, exact, filterData)
+				AucAdvanced.Scan.StartScan(itemName, nil, nil, nil, nil, nil, exact, filterData)
 			end
 		end
 	end
@@ -2979,4 +2979,4 @@ function private.CreateFrames()
 
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5666 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Util-Appraiser/AprFrame.lua $", "$Rev: 5704 $")

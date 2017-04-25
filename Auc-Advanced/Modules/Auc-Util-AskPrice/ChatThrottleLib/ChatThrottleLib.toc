@@ -1,4 +1,4 @@
-## Interface: 70100
+## Interface: 70200
 ## Title: Lib: ChatThrottleLib
 ## Notes: Embeddable chat throttling library with traffic shaping and priorities
 ## Author: Mikk
@@ -7,8 +7,8 @@
 ### DISABLED FOR 3.0.2 LoadOnDemand: 1
 ## X-Category: Library
 ## X-Website: http://www.wowwiki.com/ChatThrottleLib
-## X-Build: $Revision: 5681 $
-## X-ReleaseDate: "$Date: 2016-10-27 11:39:11 +0000 (Thu, 27 Oct 2016) $"
+## X-Build: $Revision: 5712 $
+## X-ReleaseDate: "$Date: 2017-04-06 15:44:11 +0000 (Thu, 06 Apr 2017) $"
 ## SavedVariables: 
 ## SavedVariablesPerCharacter: 
 

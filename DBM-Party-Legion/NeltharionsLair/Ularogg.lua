@@ -1,19 +1,18 @@
 local mod	= DBM:NewMod(1665, "DBM-Party-Legion", 5, 767)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15186 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 16139 $"):sub(12, -3))
 mod:SetCreatureID(91004)
 mod:SetEncounterID(1791)
 mod:SetZone()
 mod:SetHotfixNoticeRev(15186)
+mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 198496 216290 193375",
 	"SPELL_CAST_SUCCESS 216290",
---	"SPELL_DAMAGE 193273",
---	"SPELL_MISSED 193273",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
@@ -63,15 +62,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 	end
 end
-
---[[
-function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 193273 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
-
-	end
-end
-mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
---]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)

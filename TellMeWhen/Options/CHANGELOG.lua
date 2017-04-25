@@ -3,6 +3,45 @@ if not TMW then return end
 TMW.CHANGELOG_LASTVER="6.2.6"
 
 TMW.CHANGELOG = [==[
+===v8.3.3===
+====Bug Fixes====
+* Fixed the Equipment set equipped condtion.
+
+===v8.3.2===
+* Version bump for Patch 7.2.
+
+===v8.3.1===
+* Added a Spell Activation Overlay condition.
+
+====Bug Fixes====
+* Lua conditions should once again properly resolve members defined in TMW.CNDT.Env.
+
+===v8.3.0===
+* New setting for Reactive Ability icons: Require activation border. 
+** For all you prot warriors who like your Revenge procs.
+* New Condition: Spell Cost.
+* Updated the class spell list
+* Demon Hunter resource condition slider limits are now flexible.
+
+===v8.2.6===
+====Bug Fixes====
+* Increased Combo Points condition max to 10.
+* Guardian icons should now detect deaths from Implosion.
+* Fixed duration sorting on buff/debuff icons.
+
+===v8.2.5===
+* Updates for patch 7.1.5, including:
+** Fixed role detection bug caused by GetSpecializationInfo losing a parameter.
+** Fixed invalid equivalency spell warnings from breaking all equivalencies.
+** Removed some invalid spells from equivalencies.
+
+===v8.2.4===
+* Changed behavior of the On Combat Event notification trigger slightly to avoid occasional undesired timing issues (Ticket 1352).
+* Added conditions for Monks to check their stagger under the Resources condition category.
+
+====Bug Fixes====
+* Fixed BigWigs conditions for the latest BigWigs update.
+
 ===v8.2.3===
 * Improved behavior of exporting to other players.
 

@@ -1,40 +1,50 @@
-﻿## Interface: 70100
-## Author: Hegarol
-## Version: v8.01.06
+## Interface: 70200
+## Author: Lag, Proteyer, Arith
+## Version: r4629
 ## SavedVariables: AtlasLootDB
 ## SavedVariablesPerCharacter: AtlasLootCharDB
-## OptionalDeps: Ace3, LibStub, LibBabble-Boss-3.0, CallbackHandler-1.0, LibDataBroker-1.1
-## X-Curse-Packaged-Version: v8.01.06
-## X-Curse-Project-Name: AtlasLoot Enhanced
-## X-Curse-Project-ID: atlasloot-enhanced
-## X-Curse-Repository-ID: wow/atlasloot-enhanced/mainline
+## OptionalDeps: 
 
-## Title: AtlasLoot
-## Title-deDE: AtlasLoot Enhanced
-## Title-frFR: AtlasLoot Enhanced
-## Title-esES: AtlasLoot Enhanced
-## Title-koKR: AtlasLoot Enhanced
-## Title-zhCN: AtlasLoot Enhanced
-## Title-zhTW: AtlasLoot Enhanced |cFF0099FF[主程式]|r
-## RealTitle-zhCN: [地图]副本掉落物品查询
-## RealTitle-zhTW: [地圖]AtlasLoot 物品掉落[主程式]
-
+#@non-debug@
+## Title: AtlasLoot |cFF22B14C[Core]|r
+## Title-deDE: AtlasLoot |cFF22B14C[Kern]|r
+## Title-koKR: AtlasLoot |cFF22B14C[코어]|r
+## Title-zhCN: AtlasLoot |cFF22B14C[主程序]|r
+## Title-zhTW: AtlasLoot |cFF22B14C[主程式]|r
 ## Notes: Shows the possible loot from the bosses
 ## Notes-deDE: Zeigt mögliche Beute von Bossen
-## Notes-frFR: Montre le butin possible des boss
 ## Notes-esES: Muestra el posible botin de los jefes finales
-## Notes-koKR: Shows the possible loot from the bosses
+## Notes-frFR: Montre le butin possible des boss
+## Notes-koKR: 우두머리에게서 획득 가능한 전리품을 보여줍니다
+## Notes-ruRU: Отображает весю возможную добычу с боссов
 ## Notes-zhCN: 显示副本中的首领与小怪可能掉落的物品
 ## Notes-zhTW: 顯示首領與小怪可能掉落的物品，並可查詢各陣營與戰場的獎勵物品、套裝物品等
-## Notes-ruRU: Отображает весю возможную добычу с боссов
+#@end-non-debug@
+#@debug@
+# ## Title: AtlasLoot |cFF22B14C[Core]|r
+# ## Title-deDE: AtlasLoot |cFF22B14C[Kern]|r
+# ## Title-koKR: AtlasLoot |cFF22B14C[코어]|r
+# ## Title-zhCN: AtlasLoot |cFF22B14C[主程序]|r
+# ## Title-zhTW: AtlasLoot |cFF22B14C[主程式]|r
+# 
+# ## Notes: Shows the possible loot from the bosses
+# ## Notes-deDE: Zeigt mögliche Beute von Bossen
+# ## Notes-esES: Muestra el posible botin de los jefes finales
+# ## Notes-frFR: Montre le butin possible des boss
+# ## Notes-koKR: 우두머리에게서 획득 가능한 전리품을 보여줍니다
+# ## Notes-ruRU: Отображает весю возможную добычу с боссов
+# ## Notes-zhCN: 显示副本中的首领与小怪可能掉落的物品
+# ## Notes-zhTW: 顯示首領與小怪可能掉落的物品，並可查詢各陣營與戰場的獎勵物品、套裝物品等
+# ## Notes-ruRU: Отображает весю возможную добычу с боссов
+#@end-debug@
 
 ## X-eMail: manager@atlasloot.net
 ## X-Credits: Daviesh, Lag, Cellelach, Asurn, Pernicus, Dynaletik and many others
 ## X-Category: Map
 ## X-License: GPL v2
 ## X-Website: http://www.atlasloot.net
-## X-Embeds: LibStub, LibBabble-Boss-3.0, CallbackHandler-1.0, LibDataBroker-1.1
-## X-Localizations: enUS, deDE, frFR, esES, koKR, zhCN, zhTW, esMX, ptBR, ruRU
+## X-Embeds: LibStub, LibBabble-Boss-3.0, CallbackHandler-1.0, LibDataBroker-1.1, LibSharedMedia-3.0, LibDBIcon-1.0
+## X-Localizations: enUS, deDE, frFR, esES, koKR, zhCN, zhTW, esMX, ptBR, ruRU, itIT
 
 embeds.xml
 
@@ -48,6 +58,7 @@ Locales\constants.cn.lua
 Locales\constants.de.lua
 Locales\constants.es.lua
 Locales\constants.fr.lua
+Locales\constants.it.lua
 Locales\constants.kr.lua
 Locales\constants.mx.lua
 Locales\constants.pt.lua
@@ -68,8 +79,11 @@ Core\ItemInfo.lua
 Core\TooltipScan.lua
 Core\EncounterJournal.lua
 Core\ItemQuery.lua
+Data\BonusID_re.lua
 Core\ItemString.lua
 Core\MapPOI.lua
+Core\AtlasIntegration.lua
+Core\WorldMapIntegration.xml
 
 MiniMapButton.lua
 

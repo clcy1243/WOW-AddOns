@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - ScanData
-	Version: 7.2.5688 (TasmanianThylacine)
+	Version: 7.4.5714 (TasmanianThylacine)
 	Revision: $Id: ScanData.lua 5603 2016-06-01 15:58:21Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -678,4 +678,4 @@ function ChangeServerKey(oldKey, newKey)
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-ScanData/ScanData.lua $", "$Rev: 5603 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-ScanData/ScanData.lua $", "$Rev: 5603 $")

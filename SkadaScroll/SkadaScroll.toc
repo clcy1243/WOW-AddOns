@@ -1,0 +1,21 @@
+## Interface: 70000
+## Title: Skada |r[|caaedc99fScroll|r]
+## Notes: SkadaScroll is a plug-in for Skada Damage Meter that provides additional options for scrolling the bar displays. It requires Skada to operate.
+## Notes-esES: SkadaScroll es un plug-in para el medidor de daño Skada que ofrece opciones adicionales para el desplazamiento de las barras mostradas. Se requiere Skada para operar.
+## Author: oscarucb
+## Dependencies: Skada
+## X-Part-Of: Skada
+## Version: 1.5.3
+## X-Build: 46
+## X-ReleaseDate: 2016-07-31T05:12:06Z
+## X-Revision: $Revision: 46 $
+## X-Curse-Packaged-Version: 1.5.3
+## X-Curse-Project-Name: SkadaScroll
+## X-Curse-Project-ID: skadascroll
+## X-Curse-Repository-ID: wow/skadascroll/mainline
+
+locale.lua
+
+Scroll.lua
+
+Bindings.xml

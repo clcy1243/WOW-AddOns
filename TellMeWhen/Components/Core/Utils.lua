@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -1456,7 +1456,7 @@ function TMW.GetCurrentSpecializationRole()
 		return nil
 	end
 
-	local _, _, _, _, _, role = GetSpecializationInfo(currentSpec)
+	local _, _, _, _, role = GetSpecializationInfo(currentSpec)
 	return role
 end
 

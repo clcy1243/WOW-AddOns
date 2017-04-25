@@ -1,0 +1,15 @@
+tag 25ca99f647ac713664285b24952cb244dec1b60e 1.5.4
+Author:	legowxelab2z8 <legowxelab2z8@Gmail.com>
+Date:	Tue Apr 11 11:47:08 2017 -0700
+
+Localization fixes
+
+commit 94fb769e0068ce40065204282dbe45cccdf9e19d
+Author: legowxelab2z8 <legowxelab2z8@Gmail.com>
+Date:   Tue Apr 11 11:46:22 2017 -0700
+
+    Artifact Power Text Changes
+    
+    Changes Artifact Power text to be centered for artifact power.  Ancient Mana items are still left aligned.
+    2002 Font used by some languages that require unicode is now scaled down so that text fits without overlapping.
+

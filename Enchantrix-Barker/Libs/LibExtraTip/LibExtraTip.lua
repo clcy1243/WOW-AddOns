@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 local LIBNAME = "LibExtraTip"
 local VERSION_MAJOR = 1
-local VERSION_MINOR = 340
+local VERSION_MINOR = 342
 -- Minor Version cannot be a SVN Revison in case this library is used in multiple repositories
 -- Should be updated manually with each (non-trivial) change
 
@@ -37,7 +37,7 @@ local LIBSTRING = LIBNAME.."_"..VERSION_MAJOR.."_"..VERSION_MINOR
 local lib = LibStub:NewLibrary(LIBNAME.."-"..VERSION_MAJOR, VERSION_MINOR)
 if not lib then return end
 
-LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/LibExtraTip/LibExtraTip.lua $","$Rev: 416 $","5.15.DEV.", 'auctioneer', 'libs')
+LibStub("LibRevision"):Set("$URL: http://svn.norganna.org/libs/trunk/LibExtraTip/LibExtraTip.lua $","$Rev: 423 $","5.15.DEV.", 'auctioneer', 'libs')
 
 -- Call function to deactivate any outdated version of the library.
 -- (calls the OLD version of this function, NOT the one defined in this
@@ -1178,11 +1178,11 @@ function lib:GenerateTooltipMethodTable() -- Sets up hooks to give the quantity 
 			reg.additional.link = GetQuestLogItemLink(type,index) -- Workaround [LTT-56], Remove when fixed by Blizzard
 		end,
 
-		SetSendMailItem = function(self,index)
+		SetSendMailItem = function(self, index)
 			OnTooltipCleared(self)
 			local reg = tooltipRegistry[self]
 			reg.ignoreOnCleared = true
-			local name,texture,quantity = GetSendMailItem(index)
+			local name, itemID, texture, quantity = GetSendMailItem(index)
 			reg.quantity = quantity
 			reg.additional.event = "SetSendMailItem"
 			reg.additional.eventIndex = index
@@ -1490,6 +1490,7 @@ do -- ExtraTip "class" definition
 		if self.parent then self:SetParentClamp(0) end
 		self.parent = nil
 		self:SetParent(nil)
+		self.inMatchSize = nil
 	end
 
 	function class:InitLines()
@@ -1555,14 +1556,7 @@ do -- ExtraTip "class" definition
 			tooltip.LibExtraTipRight = rights -- use key containing lib name, to try to ensure it doesn't clash with anything
 		end
 
-		local padding = 0
-		if tooltip:GetPadding() > 0 then
-			-- hack because GetPadding does not return the actual value set by SetPadding
-			-- however GetPadding does return a non-zero value if SetPadding was set to a non-zero value, so we can use it to fake something useable
-			-- for ItemRefTooltip, and other tooltips based on it, padding is usually 16
-			padding = 16
-		end
-		local xofs = width - padding - 20.5 -- constant value obtained by analysing default tooltip layout
+		local xofs = width - tooltip:GetPadding() - 20.5 -- constant value obtained by analysing default tooltip layout
 
 		for line = 1, tooltip:NumLines() do
 			local left, right = lefts[line], rights[line]
@@ -1576,6 +1570,8 @@ do -- ExtraTip "class" definition
 	function class:MatchSize()
 		local p = self.parent
 		if not p then return end
+		if self.inMatchSize then return end
+		self.inMatchSize = true
 		local pw = p:GetWidth()
 		local w = self:GetWidth()
 		local d = pw - w
@@ -1588,8 +1584,10 @@ do -- ExtraTip "class" definition
 			if not reg.NoColumns then
 				p:SetWidth(w)	-- the parent is smaller than the child tip, make the parent wider
 				fixRight(p, w)	-- fix right aligned items in the game tooltip, not working currently as it shifts by the wrong amount
+				p:GetWidth()	-- in certain rare cases, inspecting the width here is necessary to force the tooltip to resize properly
 			end
 		end
+		self.inMatchSize = nil
 	end
 
 	function class:Show()

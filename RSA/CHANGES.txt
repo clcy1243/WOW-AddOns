@@ -1,0 +1,22 @@
+------------------------------------------------------------------------
+r396 | raeli87 | 2017-04-16 09:06:11 -0500 (Sun, 16 Apr 2017) | 1 line
+Changed paths:
+   M /trunk/DeathKnight/RSA_DeathKnight.toc
+   M /trunk/DemonHunter/RSA_DemonHunter.toc
+   M /trunk/Druid/RSA_Druid.toc
+   M /trunk/Hunter/RSA_Hunter.toc
+   M /trunk/Mage/RSA_Mage.toc
+   M /trunk/Monk/RSA_Monk.toc
+   M /trunk/Options/RSA_Options.toc
+   M /trunk/Paladin/RSA_Paladin.toc
+   M /trunk/Priest/RSA_Priest.toc
+   M /trunk/RSA.toc
+   M /trunk/Reminders/RSA_Reminders.toc
+   M /trunk/Rogue/RSA_Rogue.toc
+   M /trunk/Shaman/RSA_Shaman.toc
+   M /trunk/Warlock/RSA_Warlock.toc
+   M /trunk/Warrior/RSA_Warrior.toc
+
+r396 Release
+------------------------------------------------------------------------
+

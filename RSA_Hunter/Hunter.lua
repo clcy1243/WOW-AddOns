@@ -78,7 +78,7 @@ function RSA_Hunter:OnEnable()
 				section = 'End',
 				replacements = { TARGET = 1 }
 			},
-			[19263] = { -- DETERRENCE
+			[186265] = { -- Aspect of the Turtle
 				profile = 'Deterrence',
 				section = 'End'
 			},
@@ -116,7 +116,7 @@ function RSA_Hunter:OnEnable()
 				profile = 'ConcussiveShot',
 				replacements = { TARGET = 1 }
 			},
-			[19263] = { -- DETERRENCE
+			[186265] = { -- Aspect of the Turtle
 				profile = 'Deterrence'
 			},
 			[109248] = { -- Binding Shot

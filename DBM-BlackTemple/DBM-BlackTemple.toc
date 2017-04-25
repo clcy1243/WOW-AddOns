@@ -1,4 +1,4 @@
-## Interface: 70100
+## Interface: 70200
 ## X-Min-Interface: 50001
 ## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Black Temple|r
 ## Title-koKR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0검은 사원|r
@@ -13,6 +13,7 @@
 ## X-DBM-Mod-Type: RAID
 ## X-DBM-Mod-Category: BC
 ## X-DBM-Mod-Has-Single-Format: 1
+## X-DBM-Mod-Has-TimeWalker: 1
 ## X-DBM-Mod-MapID: 564
 ## X-DBM-Mod-Sort: 501
 ## X-DBM-Mod-MinCoreRevision: 12473

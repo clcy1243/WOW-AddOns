@@ -1,9 +1,24 @@
+-- ----------------------------------------------------------------------------
+-- Localized Lua globals.
+-- ----------------------------------------------------------------------------
+-- Functions
+local _G = getfenv(0)
+
+-- Libraries
+local assert, type = assert, type
+local next = next
+local wipe = wipe
+-- ----------------------------------------------------------------------------
+-- AddOn namespace.
+-- ----------------------------------------------------------------------------
 local AtlasLoot = _G.AtlasLoot
 local AL = AtlasLoot.Locales
 
+local LibStub = _G.LibStub
+local LibDialog = LibStub("LibDialog-1.0")
+local ALDB = LibStub("ALDB-1.0")
+
 -- lua
-local assert, type = assert, type
-local next = next
 
 -- WoW
 -- DisableAddOn
@@ -40,13 +55,8 @@ function AtlasLoot:OnInitialize()
 		wipe(AtlasLootCharDB)
 		AtlasLootCharDB.__addonrevision = AtlasLoot.__addonrevision
 	end
-	--[[
-	self.db = LibStub("AceDB-3.0"):New("AtlasLootDB")
-	self.db:RegisterDefaults(AtlasLoot.AtlasLootDBDefaults)
-	self.chardb = LibStub("AceDB-3.0"):New("AtlasLootCharDB")
-	self.chardb:RegisterDefaults(AtlasLoot.AtlasLootDBDefaults)
-	]]--
-	self.db = LibStub("ALDB-1.0"):Register(AtlasLootCharDB, AtlasLootDB, AtlasLoot.AtlasLootDBDefaults)
+
+	self.db = ALDB:Register(AtlasLootCharDB, AtlasLootDB, AtlasLoot.AtlasLootDBDefaults)
 	
 	
 	-- bindings
@@ -57,18 +67,26 @@ function AtlasLoot:OnInitialize()
 	local _, _, _, _, reason = GetAddOnInfo("AtlasLoot_Loader")
 	if reason ~=  "MISSING" then 
 		DisableAddOn("AtlasLoot_Loader") 
-		StaticPopupDialogs["ATLASLOOT_LOADER_ADDON_ERROR"] = {
-			text = AL["AtlasLoot_Loader is no longer in use.\nDelete it from your AddOns folder"],
-			button1 = OKAY,
-			timeout = 0,
-			exclusive = 1,
-			whileDead = 1,
-		}
-		StaticPopup_Show("ATLASLOOT_LOADER_ADDON_ERROR")
+
+		LibDialog:Register("ATLASLOOT_LOADER_ADDON_ERROR", {
+			text = AL["AtlasLoot_Loader_is_no_longer_in_use"],
+			buttons = {
+				{
+					text = OKAY,
+				},
+			},
+			width = 500,
+			is_exclusive = true,
+			show_while_dead = true,
+			hide_on_escape = true,
+		});
+		LibDialog:Spawn("ATLASLOOT_LOADER_ADDON_ERROR");
+
 	end
 
 	
-	--[[ scan for pet IDs
+--scan for pet IDs
+--[[
 	self.db.PETINFO = {}
 	local petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName
 	local numPets = C_PetJournal.GetNumPets()
@@ -79,26 +97,20 @@ function AtlasLoot:OnInitialize()
 			self.db.PETINFO[speciesName] = speciesID
 		end
 	end
-	]]--
-	
+]]	
+--[[
+	self.db.MOUNTINFO = {}
+	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected, mountID
+	local numMounts = C_MountJournal.GetNumMounts()
 
-	--self.db.MOUNTINFO = {}
-	--local numMounts = C_MountJournal.GetNumMounts()
-	
-	--for i=1,numMounts do
-		--print(C_MountJournal.GetMountInfo(i))
-		
-		
-	
-		--petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName = C_PetJournal.GetPetInfoByIndex(i)
-		--if speciesName and speciesID then
-		--	self.db.PETINFO[speciesName] = speciesID
-		--end
-	--end
-
-	
-	
-	
+	for i=1,numMounts do
+	--print(C_MountJournal.GetMountInfoByID(i))
+		creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(i)
+		if creatureName and mountID then
+			self.db.MOUNTINFO[creatureName] = mountID
+		end
+	end
+]]
 end
 
 function AtlasLoot:AddInitFunc(func, module)
@@ -111,6 +123,85 @@ function AtlasLoot:AddInitFunc(func, module)
 	AtlasLoot.Init[module][#AtlasLoot.Init[module]+1] = func
 end
 
+-- Only instance related module will be handled
+local ATLASLOOT_INSTANCE_MODULE_LIST = {
+	"AtlasLoot_Legion",
+	"AtlasLoot_WarlordsofDraenor",
+	"AtlasLoot_MistsofPandaria",
+	"AtlasLoot_Cataclysm",
+	"AtlasLoot_WrathoftheLichKing",
+	"AtlasLoot_BurningCrusade",
+	"AtlasLoot_Classic",
+}
+
+-- if auto-select is enabled, pre-load all instance modules to save the first-time AL frame's loading time
+function AtlasLoot:PreLoadModules()
+	local db = AtlasLoot.db.GUI;
+
+	local o_moduleName = db.selected[1] or "AtlasLoot_Legion";
+	local o_dataID = db.selected[2] or 1;
+	local o_bossID = db.selected[3] or 1;
+	local o_diffID = db.selected[4] or 1;
+	local o_page = db.selected[5] or 0;
+	local moduleName, dataID;
+
+	for i = 1, #ATLASLOOT_INSTANCE_MODULE_LIST do
+		local enabled = GetAddOnEnableState(UnitName("player"), ATLASLOOT_INSTANCE_MODULE_LIST[i]);
+		if (enabled > 0) then
+			AtlasLoot.GUI.frame.moduleSelect:SetSelected(ATLASLOOT_INSTANCE_MODULE_LIST[i]);
+			AtlasLoot.GUI.ItemFrame:Refresh(true);
+		end
+	end
+
+	db.selected[1] = o_moduleName;
+	db.selected[2] = o_dataID;
+	db.selected[3] = o_bossID;
+	db.selected[4] = o_diffID;
+	db.selected[5] = o_page;
+end
+
+function AtlasLoot:AutoSelect()
+	local db = AtlasLoot.db.GUI;
+
+	SetMapToCurrentZone();
+	local wowMapID, _ = GetCurrentMapAreaID();
+	local o_moduleName = db.selected[1];
+	local o_dataID = db.selected[2];
+	local o_bossID = db.selected[3];
+	local o_diffID = db.selected[4];
+	local o_page = db.selected[5];
+	local moduleName, dataID;
+	local refresh = false;
+
+	for i = 1, #ATLASLOOT_INSTANCE_MODULE_LIST do
+		local enabled = GetAddOnEnableState(UnitName("player"), ATLASLOOT_INSTANCE_MODULE_LIST[i]);
+		if (enabled > 0) then
+			AtlasLoot.GUI.frame.moduleSelect:SetSelected(ATLASLOOT_INSTANCE_MODULE_LIST[i]);
+			local moduleData = AtlasLoot.ItemDB:Get(ATLASLOOT_INSTANCE_MODULE_LIST[i]);
+			for ka, va in pairs(moduleData) do
+				if (type(va) == "table" and moduleData[ka].MapID and moduleData[ka].MapID == wowMapID) then
+					moduleName = ATLASLOOT_INSTANCE_MODULE_LIST[i];
+					dataID = ka;
+					refresh = true;
+					break;
+				end
+			end
+		end
+		if (dataID) then break; end
+	end
+	
+	if (refresh and (o_moduleName ~= moduleName or o_dataID ~= dataID)) then
+		AtlasLoot.GUI.frame.moduleSelect:SetSelected(moduleName);
+		AtlasLoot.GUI.frame.subCatSelect:SetSelected(dataID);
+		AtlasLoot.GUI.ItemFrame:Refresh(true);
+	else
+		AtlasLoot.GUI.frame.moduleSelect:SetSelected(o_moduleName);
+		AtlasLoot.GUI.frame.subCatSelect:SetSelected(o_dataID);
+		AtlasLoot.GUI.frame.boss:SetSelected(o_bossID);
+		AtlasLoot.GUI.frame.difficulty:SetSelected(o_diffID)
+		AtlasLoot.GUI.ItemFrame:Refresh(true);
+	end
+end
 
 AtlasLoot.DEV = {}
 local EJ_DIFFICULTIES =  
@@ -156,7 +247,7 @@ function AtlasLoot:DEV_ScanEJ(givenTierId)
 			local instanceID, name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link
 			while true do
 				loopKill = loopKill + 1
-				if loopKill > 300 then print"ouch loop break" break end
+				if loopKill > 500 then print"ouch loop break" break end
 				instanceID, name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = EJ_GetInstanceByIndex(index, showRaid)
 				if not instanceID and showRaid then	
 					break
@@ -278,8 +369,8 @@ local GUIDS = {
 	["Player-612-05667280"] = "author",		-- Dynarix@nerathor-eu
 	["Player-612-0566725A"] = "author",		-- Dynalowtik@nerathor-eu
 }
-local AUTHOR_STRING = "AtlasLoot Author |T"..AtlasLoot.IMAGE_PATH.."gold:0|t"
-local FRIEND_STRING = "AtlasLoot Friend |T"..AtlasLoot.IMAGE_PATH.."silver:0|t"
+local AUTHOR_STRING = "AtlasLoot Author |TInterface\\MoneyFrame\\UI-GoldIcon:0|t"
+local FRIEND_STRING = "AtlasLoot Friend |TInterface\\MoneyFrame\\UI-SilverIcon:0|t"
 function hookUnitTarget(self)
 	local name, unit = self:GetUnit()
 	if name and unit then

@@ -6,6 +6,7 @@ local playerGUID
 local timeElapsed = 0
 local damageTP5S = 0
 local idFR = 22842
+local anouncedHealing = 0
 
 local lowTransparency = 0.7
 local mediumTransparency = 0.5
@@ -13,7 +14,7 @@ local highTransparency = 0.3
 
 settingsFR = {}
 
-local frenzyRegenFrame = CreateFrame("Frame", "renzyRegenFrame", UIParent)
+local frenzyRegenFrame = CreateFrame("Frame", "frenzyRegenFrame", UIParent)
 frenzyRegenFrame:SetSize(100, 26)
 frenzyRegenFrame:ClearAllPoints()
 frenzyRegenFrame:SetPoint("CENTER", UIParent)
@@ -31,7 +32,9 @@ frenzyRegenFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 frenzyRegenFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 frenzyRegenFrame:RegisterEvent("PLAYER_REGEN_DISABLED");
 frenzyRegenFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-frenzyRegenFrame:RegisterEvent("ARTIFACT_UPDATE") 
+frenzyRegenFrame:RegisterEvent("ARTIFACT_UPDATE")
+frenzyRegenFrame:RegisterEvent("PET_BATTLE_CLOSE")
+frenzyRegenFrame:RegisterEvent("PET_BATTLE_OPENING_START") 
 
 frenzyRegenFrame:EnableMouse(true)
 frenzyRegenFrame:SetMovable(true)
@@ -84,7 +87,7 @@ end
 
 function frenzyRegenFrame:countHealing()
   maxHP = UnitHealthMax("player")
-  
+
   versatilityBonus = GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE) + GetVersatilityBonus(CR_VERSATILITY_DAMAGE_DONE)
   expectedHealing =  math.max(maxHP*0.05,damageTP5S*0.5)*(1+versatilityBonus/100)
   legendaryHealing = 0
@@ -131,10 +134,19 @@ function frenzyRegenFrame:countHealing()
     expectedHealing = expectedHealing*(1+settingsFR.artifactBonus)
   end
 
-  ratioHP = (expectedHealing+legendaryHealing)/maxHP*100  
+  ratioHP = (expectedHealing+legendaryHealing)/maxHP*100
+  anouncedHealing = format("Self healing %d%% over 3 sec", ratioHP)
+  
+  charges = GetSpellCharges(idFR)
+  if settingsFR.statusTypeFlag == 1 then  
+  frenzyRegenFrame.damageTakenBar:SetValue(charges*50)
+  else
   frenzyRegenFrame.damageTakenBar:SetValue(ratioHP)
+  end
+  
   if settingsFR.displayFlag == 0 then
     frenzyRegenFrame.damageTakenBar.value:SetText(self:getShortNumber(expectedHealing+legendaryHealing))
+    anouncedHealing = format("Self healing %s over 3 sec", self:getShortNumber(expectedHealing+legendaryHealing))
   elseif settingsFR.displayFlag == 1 then
     frenzyRegenFrame.damageTakenBar.value:SetText(self:getShortNumber(expectedHealing/6))
   else if settingsFR.displayFlag == 2 then  
@@ -142,14 +154,27 @@ function frenzyRegenFrame:countHealing()
   end
   end  
 
+ 
+  if settingsFR.showValueOnlyFlag then
+      transparency = 0
+      frenzyRegenFrame:SetBackdropColor(0, 0, 0, 0)
+      frenzyRegenFrame:SetBackdropBorderColor(0, 0, 0, 0)
+  else
+      transparency = settingsFR.transparencyFlag
+      frenzyRegenFrame:SetBackdropColor(0, 0, 0, 0.4)
+      frenzyRegenFrame:SetBackdropBorderColor(0, 0, 0, 1)
+  end
   start = GetSpellCooldown(idFR)
   if start ~= 0 and settingsFR.greyOutFlag then
-    frenzyRegenFrame.damageTakenBar:SetStatusBarColor(0.212,0.212,0.212,settingsFR.transparencyFlag)
-    frenzyRegenFrame.damageTakenBar.bg:SetVertexColor(0.1,0.1,0.1,settingsFR.transparencyFlag)
+    frenzyRegenFrame.damageTakenBar:SetStatusBarColor(0.212,0.212,0.212,transparency)
+    frenzyRegenFrame.damageTakenBar.bg:SetVertexColor(0.1,0.1,0.1,transparency)
     frenzyRegenFrame.damageTakenBar.value:SetTextColor(0.5, 0.5, 0.5,settingsFR.transparencyFlag)
   else
-    frenzyRegenFrame.damageTakenBar:SetStatusBarColor(0, 0.65, 0,settingsFR.transparencyFlag)
-    frenzyRegenFrame.damageTakenBar.bg:SetVertexColor(0, 0.35, 0,settingsFR.transparencyFlag)
+    frenzyRegenFrame.damageTakenBar:SetStatusBarColor(0, 0.65, 0,transparency/1.5)
+    if charges == 1 and settingsFR.statusTypeFlag == 1 then
+    frenzyRegenFrame.damageTakenBar:SetStatusBarColor(0.6, 0.65, 0,transparency/1.5)
+    end
+    frenzyRegenFrame.damageTakenBar.bg:SetVertexColor(0, 0.35, 0,transparency)
     frenzyRegenFrame.damageTakenBar.value:SetTextColor(0, 1, 0,settingsFR.transparencyFlag)
   end  
 end
@@ -160,6 +185,12 @@ function frenzyRegenFrame:updateVisibility()
   else
     self:Hide()
     return
+  end
+  if C_PetBattles.IsInBattle() then
+    self:Hide()
+    return
+  else
+    self:Show()    
   end  
   if settingsFR.hideOutOfBearFlag then
     if GetShapeshiftFormID() == 5 then
@@ -194,7 +225,7 @@ function frenzyRegenFrame:initFlags()
     settingsFR.movableFlag = true;
   end
   if settingsFR.shortNumFlag == nil then
-    settingsFR.shortNumFlag = false;
+    settingsFR.shortNumFlag = true;
   end
   if settingsFR.masteryFlag == nil then
     settingsFR.masteryFlag = false;
@@ -216,16 +247,30 @@ function frenzyRegenFrame:initFlags()
   end
   if settingsFR.ignoreMouseFlag == nil then
     settingsFR.ignoreMouseFlag = false;
-  end  
+  end
+  if settingsFR.announceFlag == nil then
+    settingsFR.announceFlag = false;
+  end
+  if settingsFR.announceChannel == nil then
+    settingsFR.announceChannel = "SAY";
+  end
+  if settingsFR.statusTypeFlag == nil then
+    settingsFR.statusTypeFlag = 0;
+  end
+  if settingsFR.showValueOnlyFlag == nil then
+    settingsFR.showValueOnlyFlag = false;
+  end
 end
 
 function frenzyRegenFrame:updateArtifactBonus() 
   if IsEquippedItem(128821) then
     local powers = C_ArtifactUI.GetPowers()
-    for i = 1, #powers do
-      local id, _, rank = C_ArtifactUI.GetPowerInfo(powers[i])
-      if id == 200400 then -- Wildflesh id
-        settingsFR.artifactBonus = rank*0.05
+    if powers ~= nil then
+      for i = 1, #powers do
+        local id, _, rank = C_ArtifactUI.GetPowerInfo(powers[i])
+        if id == 200400 then -- Wildflesh id
+          settingsFR.artifactBonus = rank*0.05
+        end
       end
     end
 end
@@ -245,7 +290,14 @@ frenzyRegenFrame:SetScript("OnEvent",
     end
     frenzyRegenFrame:updateVisibility()
   elseif self:IsShown() and event == "COMBAT_LOG_EVENT_UNFILTERED" then	
-		local _, eventType, _, sourceGUID, _, _, _, destGUID = ...   
+
+    local _, eventType, _, sourceGUID, _, _, _, destGUID = ...
+    if settingsFR.announceFlag and sourceGUID == playerGUID and eventType == "SPELL_CAST_SUCCESS" then
+    local spellId = select(12,...)
+      if spellId == idFR then -- Frenzied Regeneration
+        SendChatMessage(anouncedHealing, settingsFR.announceChannel, "Common")
+      end
+    end
     if destGUID == playerGUID then
       eventIndex = eventIndex + 1  
       if eventType == "SWING_DAMAGE" then
@@ -260,9 +312,10 @@ frenzyRegenFrame:SetScript("OnEvent",
           absorbed = 0;
         end
         damageTable[eventIndex] = {time(), amount+absorbed}
-        end
+       end
       end 
-  elseif event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
+  elseif event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" or  
+         event == "PET_BATTLE_CLOSE" or event == "PET_BATTLE_OPENING_START" then
     frenzyRegenFrame:updateVisibility()
   elseif event == "ARTIFACT_UPDATE" then
     frenzyRegenFrame:updateArtifactBonus() 
@@ -297,6 +350,12 @@ UIDropDownMenu_Initialize(dropDown, function(self, level, menuList)
   UIDropDownMenu_AddButton(info)
   info.text = " Transparency"
   info.value = "position_submenu2"
+  UIDropDownMenu_AddButton(info)
+  info.text = " Status bar shows..."
+  info.value = "position_submenu3"
+  UIDropDownMenu_AddButton(info)
+  info.text = " Announce healing..."
+  info.value = "position_submenu4"
   UIDropDownMenu_AddButton(info)
   info.hasArrow = false  
   info.isTitle = true  
@@ -364,6 +423,21 @@ UIDropDownMenu_Initialize(dropDown, function(self, level, menuList)
     UIDropDownMenu_AddButton(info, level)
   end
   if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+    info.hasArrow = false  
+    info.isTitle = true
+    info.notCheckable = true
+    info.icon = "Interface\\Common\\UI-TooltipDivider-Transparent"
+    info.tSizeX = 0
+    info.tSizeY = 8
+    info.text = ""
+    info.iconOnly = true
+    info.iconInfo = {tFitDropDownSizeX = true}
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
+    info = UIDropDownMenu_CreateInfo()
+    info.notCheckable = false
+    info.isNotRadio = true
     info.text = "Include mastery bonus"
     info.func = function() settingsFR.masteryFlag = not settingsFR.masteryFlag end
     info.checked = function() return settingsFR.masteryFlag end
@@ -403,7 +477,28 @@ UIDropDownMenu_Initialize(dropDown, function(self, level, menuList)
     UIDropDownMenu_AddButton(info, level)
   end
   if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+    info.text = "Show value only"
+    info.func = function() settingsFR.showValueOnlyFlag = not settingsFR.showValueOnlyFlag end
+    info.checked = function() return settingsFR.showValueOnlyFlag end
+    info.isNotRadio = true
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+    info.hasArrow = false  
+    info.isTitle = true
+    info.notCheckable = true
+    info.icon = "Interface\\Common\\UI-TooltipDivider-Transparent"
+    info.tSizeX = 0
+    info.tSizeY = 8
+    info.text = ""
+    info.iconOnly = true
+    info.iconInfo = {tFitDropDownSizeX = true}
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu2" then
+    info = UIDropDownMenu_CreateInfo()
     info.text = "OFF"
+    info.notCheckable = false
     info.func = function() settingsFR.transparencyFlag = 1 end
     info.checked = function() return settingsFR.transparencyFlag == 1 end
     info.isNotRadio = false
@@ -425,6 +520,48 @@ UIDropDownMenu_Initialize(dropDown, function(self, level, menuList)
     info.text = "High"
     info.func = function() settingsFR.transparencyFlag = highTransparency end
     info.checked = function() return settingsFR.transparencyFlag == highTransparency end
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu3" then
+    info.text = "% of HP"
+    info.func = function() settingsFR.statusTypeFlag = 0 end
+    info.checked = function() return settingsFR.statusTypeFlag == 0 end
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu3" then
+    info.text = "Number of charges"
+    info.func = function() settingsFR.statusTypeFlag = 1 end
+    info.checked = function() return settingsFR.statusTypeFlag == 1  end
+    UIDropDownMenu_AddButton(info, level)
+  end
+    if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+    info.text = "OFF"
+    info.func = function() settingsFR.announceFlag = false end
+    info.checked = function() return not settingsFR.announceFlag end
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+    info.text = "/Say"
+    info.func = function() settingsFR.announceChannel = "SAY" settingsFR.announceFlag = true end
+    info.checked = function() return settingsFR.announceFlag and settingsFR.announceChannel == "SAY" end
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+    info.text = "/Yell"
+    info.func = function() settingsFR.announceChannel = "YELL" settingsFR.announceFlag = true end
+    info.checked = function() return settingsFR.announceFlag and settingsFR.announceChannel == "YELL" end
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+    info.text = "/Party"
+    info.func = function() settingsFR.announceChannel = "PARTY" settingsFR.announceFlag = true end
+    info.checked = function() return settingsFR.announceFlag and settingsFR.announceChannel == "PARTY" end
+    UIDropDownMenu_AddButton(info, level)
+  end
+  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu4" then
+    info.text = "/Raid"
+    info.func = function() settingsFR.announceChannel = "RAID" settingsFR.announceFlag = true end
+    info.checked = function() return settingsFR.announceFlag and settingsFR.announceChannel == "RAID" end
     UIDropDownMenu_AddButton(info, level)
   end
  end

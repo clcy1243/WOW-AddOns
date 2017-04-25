@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1395, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 13 $"):sub(12, -3))
 mod:SetCreatureID(91349)--91305 Fel Iron Summoner
 mod:SetEncounterID(1795)
 mod:SetZone()
@@ -206,16 +206,9 @@ local function updateRangeFrame(self)
 	end
 end
 
-local updateInfoFrame, sortInfoFrame
+local updateInfoFrame
 do
 	local lines = {}
-	sortInfoFrame = function(a, b)
-		local a = lines[a]
-		local b = lines[b]
-		if not tonumber(a) then a = -1 end
-		if not tonumber(b) then b = -1 end
-		if a < b then return true else return false end
-	end
 	updateInfoFrame = function()
 		table.wipe(lines)
 		local total, total2 = 0, 0
@@ -261,7 +254,7 @@ local function warnGazeTargts(self)
 	end
 	if self.Options.InfoFrame and not DBM.InfoFrame:IsShown() then
 		DBM.InfoFrame:SetHeader(gaze1)
-		DBM.InfoFrame:Show(8, "function", updateInfoFrame, sortInfoFrame, true)
+		DBM.InfoFrame:Show(8, "function", updateInfoFrame, false, true)
 	end
 end
 
@@ -620,7 +613,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(args.spellName)--Always set header to wrath if wrath is present
 			if not DBM.InfoFrame:IsShown() then
-				DBM.InfoFrame:Show(8, "function", updateInfoFrame, sortInfoFrame, true)
+				DBM.InfoFrame:Show(8, "function", updateInfoFrame, false, true)
 			end
 		end
 		if self.vb.wrathIcon then

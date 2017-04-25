@@ -12,12 +12,14 @@ end
 
 --Lookup table to convert internal item tables to a visible section name
 local tableToContainer = {
-	["ArtifactItems"] = L["Artifact Power"],
-	["AncientManaItems"] = L["Ancient Mana"],
-	["ChampionUpgradeTokens"] = L["Champion Upgrades"],
-	["ChampionEquipment"] = L["Champion Equipment"],
+   ["ArtifactItems"] = L["Artifact Power"],
+   ["AncientManaItems"] = L["Ancient Mana"],
+   ["ChampionUpgradeTokens"] = L["Champion Upgrades"],
+   ["ChampionEquipment"] = L["Champion Equipment"],
    ["Bait"] = L["Bait"],
    ["RareFish"] = L["Rare Fish"],
+   ["Reputation"] = L["Reputation"],
+   ["BrokenShore"] = L["Broken Shore"],
 }
 
 --AdiBags filters 
@@ -41,6 +43,12 @@ function legionFilter:Filter(slotData)
          return itemSubType
       end
    end
+   --7.2 Workaround
+   if legionFilter.db.profile["ArtifactItems"] then
+      if IsArtifactPowerItem(slotData.itemId) then
+         return L["Artifact Power"]
+      end
+   end
 end
 
 function legionFilter:OnInitialize()
@@ -54,6 +62,8 @@ function legionFilter:OnInitialize()
       Bait = true,
       RareFish = true,
       MergeFishBait = true,
+      Reputation = true,
+      BrokenShore = true,
       }})
    if self.db.profile.MergeChampionItems then
       tableToContainer["ChampionEquipment"] = L["Champion Upgrades"] --Remap to champion upgrade section
@@ -148,6 +158,17 @@ function legionFilter:GetOptions()
          order = 52,
          disabled = function() return self.db.profile.MergeFishBait end,
       },
-
+      Reputation = {
+         name = L["Reputation"],
+         desc = L['Create a section for Reputation items.'],
+         type = 'toggle',
+         order = 60,
+      },
+      BrokenShore = {
+         name = L["Broken Shore"],
+         desc = L['Create a section for Broken Shore items.'],
+         type = 'toggle',
+         order = 70,
+      },
    }, AdiBags:GetOptionHandler(self, true)
 end

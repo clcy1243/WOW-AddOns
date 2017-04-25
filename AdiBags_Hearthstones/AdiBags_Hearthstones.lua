@@ -1,6 +1,6 @@
 --[[
 AdiBags_Hearths - Adds various hearthing items to AdiBags virtual groups
-© 2016 Paul "Myrroddin" Vandersypen, All Rights Reserved
+© 2016 - 2017 Paul "Myrroddin" Vandersypen, All Rights Reserved
 ]]--
 
 local addonName, addon = ...
@@ -28,6 +28,8 @@ local hearthstones = {
 	118663,		-- Relic of Karabor
 	29796,		-- Socrethar's Teleportation Stone
 	64457,		-- The Last Relic of Argus
+	118662,		-- Bladespire Relic
+	132517,		-- Intra-Dalaran Wormhole Generator
 }
 
 local armour = {
@@ -49,6 +51,7 @@ local armour = {
 }
 
 local jewelry = {
+	40586,		-- Band of the Kirin Tor
 	32757,		-- Blessed Medallion of Karabor
 	139599,		-- Empowered Ring of the Kirin Tor
 	48956,		-- Etched Ring of the Kirin Tor
@@ -98,6 +101,7 @@ local scrolls = {
 	141017,		-- Scroll of Town Portal: Lian'tril
 	141016,		-- Scroll of Town Portal: Faronaar
 	141013,		-- Scroll of Town Portal: Shala'nir
+	142543,		-- Scroll of Town Portal (Diablo 3 event)
 	
 }
 
@@ -115,6 +119,7 @@ local toys = {
 	112059,		-- Wormhole Centrifuge
 	48933,		-- Wormhole Generator: Northrend
 	87215,		-- Wormhole Generator: Pandaria
+	142542,		-- Tome of Town Portal (Diablo 3 event)
 }
 
 local whistle = {

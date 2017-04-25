@@ -5,7 +5,7 @@
 
 	AddOn: Auctioneer
 	Revision: $Id: CoreStrings.lua 5684 2016-10-28 18:21:28Z brykrys $
-	Version: 7.2.5688 (TasmanianThylacine)
+	Version: 7.4.5714 (TasmanianThylacine)
 
 	License:
 		This program is free software; you can redistribute it and/or

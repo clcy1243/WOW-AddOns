@@ -1,0 +1,51 @@
+## Interface: 70200
+## Title: Console Port
+## Notes: Game controller addon
+## Version: 1.4.7
+## SavedVariables: ConsolePortSettings, ConsolePortCharacterSettings, ConsolePortUIFrames
+## SavedVariablesPerCharacter: ConsolePortBindingSet, ConsolePortMouse, ConsolePortUtility
+
+Locale\Locale.xml
+Controllers\Controllers.xml
+
+Init\Init.lua
+Init\Table.lua
+Init\Animation.lua
+Init\Theme.lua
+Init\Hooks.lua
+
+Frames\Atlas.lua
+Frames\Config.lua
+
+Config\Lookup.lua
+Config\Splash.lua
+Config\Binds.lua
+Config\Controls.lua
+Config\UICtrl.lua
+Config\Hotkey.lua
+Config\Secure.lua
+
+Core\Callback.lua
+
+Drivers\Pager.lua
+Drivers\EasyMotion.lua
+
+Core\Camera.lua
+Core\Mouse.lua
+Core\Cvar.lua
+Core\Events.lua
+Core\UICore.lua
+Core\UITracker.lua
+
+Cursors\Interface.lua
+Cursors\UnitFrames.lua
+
+Frames\Hints.lua
+Frames\Popup.lua
+Frames\Map.lua
+Frames\Stack.lua
+Frames\Utility.lua
+Frames\Flyout.lua
+Frames\Helper.lua
+
+Plugins\Plugins.xml

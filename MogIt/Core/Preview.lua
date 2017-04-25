@@ -97,7 +97,7 @@ end
 
 local function slotOnEnter(self)
 	if self.item then
-		mog.ShowItemTooltip(self, self.item, mog:GetData("display", mog:GetData("item", self.item, "display"), "items"));
+		mog.ShowItemTooltip(self, self.item, self.item);
 	else
 		GameTooltip:SetOwner(self,"ANCHOR_RIGHT");
 		GameTooltip:SetText(_G[strupper(self.slot)]);
@@ -213,6 +213,18 @@ local previewMenu = {
 		value = "weaponEnchant",
 		notCheckable = true,
 		hasArrow = true,
+	},
+	{
+		text = L["Sheathe weapons"],
+		isNotRadio = true,
+		checked = function(self)
+			return currentPreview.data.sheathe
+		end,
+		func = function(self, arg1, arg2, checked)
+			checked = not checked
+			currentPreview.data.sheathe = checked
+			currentPreview.model.model:SetSheathed(checked)
+		end,
 	},
 	{
 		text = L["Add Item"],
@@ -717,11 +729,7 @@ local playerClass = select(2, UnitClass("player"));
 function mog.view.AddItem(item, preview, forceSlot, setItem)
 	if not (item and preview) then return end;
 	
-	local itemID, bonusID = item
-	if type(item) == "string" then
-		itemID, bonusID = mog:ToNumberItem(item);
-	end
-	item = mog:ToStringItem(itemID, bonusID);
+	item = mog:NormaliseItemString(item);
 	
 	local itemInfo = mog:GetItemInfo(item, "PreviewAddItem");
 	if not itemInfo then
@@ -981,10 +989,20 @@ else
 				end
 			end
 		end
+		if addon == "Blizzard_EncounterJournal" then
+			for i, button in ipairs(EncounterJournal.encounter.info.lootScroll.buttons) do
+				button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+			end
+			local LegendariesFrame = EncounterJournal.LootJournal.LegendariesFrame
+			for i, button in ipairs(LegendariesFrame.buttons) do
+				button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				LegendariesFrame.rightSideButtons[i]:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+			end
+		end
 		if addon == "Blizzard_InspectUI" then
 			hookInspectUI();
 		end
-		if IsAddOnLoaded("Blizzard_AuctionUI") and IsAddOnLoaded("Blizzard_InspectUI") then
+		if IsAddOnLoaded("Blizzard_AuctionUI") and IsAddOnLoaded("Blizzard_InspectUI") and IsAddOnLoaded("Blizzard_EncounterJournal") then
 			self:UnregisterEvent(event);
 			self:SetScript("OnEvent", nil);
 		end

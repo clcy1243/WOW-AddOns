@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - Appraisals and Auction Posting
-	Version: 7.2.5688 (TasmanianThylacine)
+	Version: 7.4.5714 (TasmanianThylacine)
 	Revision: $Id: AprSettings.lua 5665 2016-09-01 16:11:08Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -563,4 +563,4 @@ function private.SetupConfigGui(gui)
 	private.guiId = id
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.2/Auc-Util-Appraiser/AprSettings.lua $", "$Rev: 5665 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Util-Appraiser/AprSettings.lua $", "$Rev: 5665 $")

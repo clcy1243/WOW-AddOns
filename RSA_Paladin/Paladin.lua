@@ -77,6 +77,16 @@ function RSA_Paladin:OnEnable()
 		profile = 'Cleanse',
 		replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
 	}
+	local Config_BoS = { -- Blessing of Sacrifice & Ultimate Sacrifice honour talent
+		profile = 'HandOfSacrifice',
+		replacements = { TARGET = 1 }
+	}
+	local Config_BoS_End = { -- Blessing of Sacrifice & Ultimate Sacrifice honour talent
+		profile = 'HandOfSacrifice',
+		targetNotMe = 1,
+		section = 'End',
+		replacements = { TARGET = 1 }
+	}
 	MonitorConfig_Paladin = {
 		player_profile = RSA.db.profile.Paladin,
 		SPELL_DISPEL = {
@@ -111,7 +121,9 @@ function RSA_Paladin:OnEnable()
 			[31842] = Config_AvengingWrath, -- AVENGING WRATH
 			[31884] = Config_AvengingWrath, -- AVENGING WRATH
 			[224668] = Config_AvengingWrath, -- CRUSADE
-			[216331] = Config_AvengingWrath, -- Avenging Crusader - Holy PvP Talent			
+			[216331] = Config_AvengingWrath, -- Avenging Crusader - Holy PvP Talent		
+			[6940] = Config_BoS, -- Blessing of Sacrifice
+			[199448] = Config_BoS, -- Ultimate Sacrifice honour talent		
 			[212056] = { -- ABSOLUTION
 				profile = 'Absolution',
 				section = 'End'
@@ -133,10 +145,6 @@ function RSA_Paladin:OnEnable()
 			},
 			[210256] = { -- Blessing of Sanctuary
 				profile = 'BlessingOfSanctuary',
-				replacements = { TARGET = 1 }
-			},
-			[6940] = { -- HAND OF SACRIFICE
-				profile = 'HandOfSacrifice',
 				replacements = { TARGET = 1 }
 			},
 		},
@@ -205,6 +213,8 @@ function RSA_Paladin:OnEnable()
 			[642] = Config_DivineShield_End, -- DIVINE SHIELD
 			[86659] = Config_GoAK_End, -- GUARDIAN OF ANCEINT KINGS
 			[212641] = Config_GoAK_End,   -- GUARDIAN OF ANCEINT KINGS
+			[6940] = Config_BoS_End, -- Blessing of Sacrifice
+			[199448] = Config_BoS_End, -- Ultimate Sacrifice honour talent	
 			[853] = { -- HAMMER OF JUSTICE
 				profile = 'HammerOfJustice',
 				section = 'End',
@@ -247,12 +257,6 @@ function RSA_Paladin:OnEnable()
 			[210256] = { -- Blessing of Sanctuary
 				profile = 'BlessingOfSanctuary',
 				section = 'End',
-				replacements = { TARGET = 1 }
-			},
-			[6940] = { -- HAND OF SACRIFICE
-				profile = 'HandOfSacrifice',
-				section = 'End',
-				targetNotMe = 1,
 				replacements = { TARGET = 1 }
 			},
 			[105809] = { -- HOLY AVENGER

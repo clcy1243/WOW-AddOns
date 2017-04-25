@@ -1,13 +1,10 @@
-## Interface: 70000
+## Interface: 70200
 ## Author: Aelobin (The Maelstrom EU) & Lombra (Defias Brotherhood EU)
-## Version: 3.6.5
+## Version: 3.8.1
+## SavedVariables: MogIt_LeatherDB
 ## LoadOnDemand: 1
 ## RequiredDeps: MogIt
 ## X-MogItModuleVersion: 3
-## X-Curse-Packaged-Version: 3.6.5
-## X-Curse-Project-Name: MogIt
-## X-Curse-Project-ID: mogit
-## X-Curse-Repository-ID: wow/mogit/mainline
 
 ## Title: MogIt: Leather
 ## Title-frFR: MogIt: Cuir
@@ -32,15 +29,3 @@
 ## Notes-zhTW: MogIt 的數據
 ## Notes-ptBR: MogIt Dados
 ## Notes-itIT: MogIt Dati
-
-Bosses.lua
-Colours.lua
-
-Head.lua
-Shoulders.lua
-Chest.lua
-Wrists.lua
-Hands.lua
-Waist.lua
-Legs.lua
-Feet.lua

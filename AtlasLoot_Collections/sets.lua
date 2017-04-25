@@ -13,6 +13,7 @@ local HEROIC_DIFF = Set:AddDifficulty(AL["Heroic"], "h")
 local P25_DIFF = Set:AddDifficulty(AL["25 Player"], "p25")
 local P25H_DIFF = Set:AddDifficulty(AL["25 Player Heroic"], "p25h")
 local MYTHIC_DIFF = Set:AddDifficulty(AL["Mythic"], "m")
+--local RF_PRE_DIFF = Set:AddDifficulty(AL["Raid Finder"], "rfB1", {"LegionLFR", "LegionLFRTitanforged"})
 local HEROIC_PRE_DIFF = Set:AddDifficulty(AL["Heroic"], "hB1", { "HeroicRaid", "HeroicRaidWarforged" })
 local MYTHIC_PRE_DIFF = Set:AddDifficulty(AL["Mythic"], "mB1", { "MythicRaid", "MythicRaidWarforged" })
 
@@ -38,7 +39,7 @@ local SetTable = {
 			ALIL["Ahn'Qiraj"],	-- Feet
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -51,7 +52,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -64,7 +65,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -77,7 +78,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -90,7 +91,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -103,7 +104,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -116,7 +117,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -129,7 +130,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -142,7 +143,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -164,7 +165,7 @@ local SetTable = {
 			ALIL["Ruins of Ahn'Qiraj"],	-- Main Hand
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -175,7 +176,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -186,7 +187,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -197,7 +198,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -208,7 +209,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -219,7 +220,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -230,7 +231,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -241,7 +242,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -252,7 +253,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -267,7 +268,7 @@ local SetTable = {
 	["ClassicMisc"] = {	-- Miscellaneous Classic Sets
 		name = AL["Miscellaneous"].." "..AL["Sets"],
 		{	-- Ironweave Battlesuit
-			name = BIS["Ironweave Battlesuit"].." ("..ALIL["Cloth"]..")",
+			name = BIS["Ironweave Battlesuit"].." ("..AL["Cloth"]..")",
 			subSetName = "ironweavebattlesuit",
 			icon = "mage",
 			[NORMAL_DIFF] = {
@@ -282,7 +283,7 @@ local SetTable = {
 			},
 		},
 		{	-- The Gladiator
-			name = BIS["The Gladiator"].." ("..ALIL["Mail"]..")",
+			name = BIS["The Gladiator"].." ("..AL["Mail"]..")",
 			subSetName = "thegladiator",
 			icon = "hunter",
 			[NORMAL_DIFF] = {
@@ -294,7 +295,7 @@ local SetTable = {
 			},
 		},
 		{	-- The Postmaster
-			name = BIS["The Postmaster"].." ("..ALIL["Cloth"]..")",
+			name = BIS["The Postmaster"].." ("..AL["Cloth"]..")",
 			subSetName = "thepostmaster",
 			icon = "mage",
 			[NORMAL_DIFF] = {
@@ -306,7 +307,7 @@ local SetTable = {
 			},
 		},
 		{	-- Chain of the Scarlet Crusade
-			name = BIS["Chain of the Scarlet Crusade"].." ("..ALIL["Mail"]..")",
+			name = BIS["Chain of the Scarlet Crusade"].." ("..AL["Mail"]..")",
 			subSetName = "chainofthescarletcrusade",
 			icon = "warri",
 			[NORMAL_DIFF] = {
@@ -319,7 +320,7 @@ local SetTable = {
 			},
 		},
 		{	-- Embrace of the Viper
-			name = BIS["Embrace of the Viper"].." ("..ALIL["Leather"]..")",
+			name = BIS["Embrace of the Viper"].." ("..AL["Leather"]..")",
 			subSetName = "embraceoftheviper",
 			icon = "rogue",
 			[NORMAL_DIFF] = {
@@ -331,7 +332,7 @@ local SetTable = {
 			},
 		},
 		{	-- Defias Leather
-			name = BIS["Defias Leather"].." ("..ALIL["Leather"]..")",
+			name = BIS["Defias Leather"].." ("..AL["Leather"]..")",
 			subSetName = "defiasleather",
 			icon = "rogue",
 			[NORMAL_DIFF] = {
@@ -357,7 +358,7 @@ local SetTable = {
 			AL["No longer available"],	-- Feet
 		},
 		{	-- Deathknight
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"],
+			name = ALIL["DEATHKNIGHT"],
 			subSetName = "dk",
 			icon = "dk",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -373,7 +374,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -389,7 +390,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -405,7 +406,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -421,7 +422,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"],
+			name = ALIL["MONK"],
 			subSetName = "monk",
 			icon = "monk",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -437,7 +438,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -453,7 +454,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -469,7 +470,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -485,7 +486,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -501,7 +502,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -517,7 +518,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -537,7 +538,7 @@ local SetTable = {
 	["Dungeon3"] = {	-- Dungeon 3 Sets
 		name = format(AL["Dungeon %d Sets"], 3),
 		{	-- Moonglade Raiment
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..BIS["Moonglade Raiment"]..")",
+			name = ALIL["DRUID"].." ("..BIS["Moonglade Raiment"]..")",
 			subSetName = "moongladeraiment",
 			icon = "druid",
 			[NORMAL_DIFF] = {
@@ -549,7 +550,7 @@ local SetTable = {
 			},
 		},
 		{	-- Beast Lord Armor
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"].." ("..BIS["Beast Lord Armor"]..")",
+			name = ALIL["HUNTER"].." ("..BIS["Beast Lord Armor"]..")",
 			subSetName = "beastlordarmor",
 			icon = "hunter",
 			[NORMAL_DIFF] = {
@@ -561,7 +562,7 @@ local SetTable = {
 			},
 		},
 		{	-- Incanter's Regalia
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"].." ("..BIS["Incanter's Regalia"]..")",
+			name = ALIL["MAGE"].." ("..BIS["Incanter's Regalia"]..")",
 			subSetName = "incantersregalia",
 			icon = "mage",
 			[NORMAL_DIFF] = {
@@ -573,7 +574,7 @@ local SetTable = {
 			},
 		},
 		{	-- Righteous Armor
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..BIS["Righteous Armor"]..")",
+			name = ALIL["PALADIN"].." ("..BIS["Righteous Armor"]..")",
 			subSetName = "righteousarmor",
 			icon = "pala",
 			[NORMAL_DIFF] = {
@@ -585,7 +586,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hallowed Raiment
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..BIS["Hallowed Raiment"]..")",
+			name = ALIL["PRIEST"].." ("..BIS["Hallowed Raiment"]..")",
 			subSetName = "hallowedraiment",
 			icon = "priest",
 			[NORMAL_DIFF] = {
@@ -597,7 +598,7 @@ local SetTable = {
 			},
 		},
 		{	-- Assassination Armor
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"].." ("..BIS["Assassination Armor"]..")",
+			name = ALIL["ROGUE"].." ("..BIS["Assassination Armor"]..")",
 			subSetName = "assassinationarmor",
 			icon = "rogue",
 			[NORMAL_DIFF] = {
@@ -609,7 +610,7 @@ local SetTable = {
 			},
 		},
 		{	-- Tidefury Raiment
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..BIS["Tidefury Raiment"]..")",
+			name = ALIL["SHAMAN"].." ("..BIS["Tidefury Raiment"]..")",
 			subSetName = "tidefuryraiment",
 			icon = "shaman",
 			[NORMAL_DIFF] = {
@@ -621,7 +622,7 @@ local SetTable = {
 			},
 		},
 		{	-- Oblivion Raiment
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"].." ("..BIS["Oblivion Raiment"]..")",
+			name = ALIL["WARLOCK"].." ("..BIS["Oblivion Raiment"]..")",
 			subSetName = "oblivionraiment",
 			icon = "warlock",
 			[NORMAL_DIFF] = {
@@ -633,7 +634,7 @@ local SetTable = {
 			},
 		},
 		{	-- Bold Armor
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..BIS["Bold Armor"]..")",
+			name = ALIL["WARRIOR"].." ("..BIS["Bold Armor"]..")",
 			subSetName = "boldarmor",
 			icon = "warri",
 			[NORMAL_DIFF] = {
@@ -645,7 +646,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mana-Etched Regalia
-			name = ALIL["Cloth"].." ("..BIS["Mana-Etched Regalia"]..")",
+			name = AL["Cloth"].." ("..BIS["Mana-Etched Regalia"]..")",
 			subSetName = "manaechedregalia",
 			icon = "Interface\\Icons\\inv_chest_cloth_42",
 			[NORMAL_DIFF] = {
@@ -657,7 +658,7 @@ local SetTable = {
 			},
 		},
 		{	-- Wastewalker Armor
-			name = ALIL["Leather"].." ("..BIS["Wastewalker Armor"]..")",
+			name = AL["Leather"].." ("..BIS["Wastewalker Armor"]..")",
 			subSetName = "wastewalkerarmor",
 			icon = "Interface\\Icons\\inv_chest_chain_17",
 			[NORMAL_DIFF] = {
@@ -669,7 +670,7 @@ local SetTable = {
 			},
 		},
 		{	-- Desolation Battlegear
-			name = ALIL["Mail"].." ("..BIS["Desolation Battlegear"]..")",
+			name = AL["Mail"].." ("..BIS["Desolation Battlegear"]..")",
 			subSetName = "desolationbattlegear",
 			icon = "Interface\\Icons\\inv_chest_chain_03",
 			[NORMAL_DIFF] = {
@@ -681,7 +682,7 @@ local SetTable = {
 			},
 		},
 		{	-- Doomplate Battlegear
-			name = ALIL["Plate"].." ("..BIS["Doomplate Battlegear"]..")",
+			name = AL["Plate"].." ("..BIS["Doomplate Battlegear"]..")",
 			subSetName = "doomplatebattlegear",
 			icon = "Interface\\Icons\\inv_chest_chain_15",
 			[NORMAL_DIFF] = {
@@ -707,7 +708,7 @@ local SetTable = {
 			AL["Replica available at Darkmoon Faire"],	-- Feet 55
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -723,7 +724,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -739,7 +740,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -755,7 +756,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -771,7 +772,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -787,7 +788,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -803,7 +804,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -819,7 +820,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -835,7 +836,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -865,7 +866,7 @@ local SetTable = {
 			AL["Replica available at Darkmoon Faire"],	-- Feet 55
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -881,7 +882,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -897,7 +898,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -913,7 +914,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -929,7 +930,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -945,7 +946,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -961,7 +962,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -977,7 +978,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -993,7 +994,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1053,7 +1054,7 @@ local SetTable = {
 			},
 		},
 		{	-- Cloth Set
-			name = ALIL["Cloth"].." "..AL["Set"],
+			name = AL["Cloth"].." "..AL["Set"],
 			subSetName = "clothset",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1068,7 +1069,7 @@ local SetTable = {
 			},
 		},
 		{	-- Leather Set
-			name = ALIL["Leather"].." "..AL["Set"],
+			name = AL["Leather"].." "..AL["Set"],
 			subSetName = "leatherset",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1083,7 +1084,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mail Set
-			name = ALIL["Mail"].." "..AL["Set"],
+			name = AL["Mail"].." "..AL["Set"],
 			subSetName = "mailset",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1098,7 +1099,7 @@ local SetTable = {
 			},
 		},
 		{	-- Plate Set
-			name = ALIL["Plate"].." "..AL["Set"],
+			name = AL["Plate"].." "..AL["Set"],
 			subSetName = "plateset",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1124,7 +1125,7 @@ local SetTable = {
 			AL["No longer available"],
 		},
 		{	-- Scholomance Cloth
-			name = BIS["Necropile Raiment"].." ("..ALIL["Cloth"]..")",
+			name = BIS["Necropile Raiment"].." ("..AL["Cloth"]..")",
 			subSetName = "scholocloth",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1137,7 +1138,7 @@ local SetTable = {
 			},
 		},
 		{	-- Scholomance Leather
-			name = BIS["Cadaverous Garb"].." ("..ALIL["Leather"]..")",
+			name = BIS["Cadaverous Garb"].." ("..AL["Leather"]..")",
 			subSetName = "schololeather",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1150,7 +1151,7 @@ local SetTable = {
 			},
 		},
 		{	-- Scholomance Mail
-			name = BIS["Bloodmail Regalia"].." ("..ALIL["Mail"]..")",
+			name = BIS["Bloodmail Regalia"].." ("..AL["Mail"]..")",
 			subSetName = "scholomail",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1163,7 +1164,7 @@ local SetTable = {
 			},
 		},
 		{	-- Scholomance Plate
-			name = BIS["Deathbone Guardian"].." ("..ALIL["Plate"]..")",
+			name = BIS["Deathbone Guardian"].." ("..AL["Plate"]..")",
 			subSetName = "scholoplate",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1176,6 +1177,451 @@ local SetTable = {
 			},
 		},
 	},
+
+	["Tier20"] = {	-- T20 Sets
+		name = format(AL["Tier %d Sets"], 20),
+		-- Chest - Kil'jaeden, instanceID = 875, encounterID = 1898
+		-- Back - The Desolate Host, instanceID = 875, encounterID = 1896
+		-- Hands - Harjatan, instanceID = 875, encounterID = 1856
+		-- Head - Demonic Inquisition, instanceID = 875, encounterID = 1867
+		-- Legs - Mistress Sassz'ine, instanceID = 875, encounterID = 1861
+		-- Shoulder - Fallen Avatar, instanceID = 875, encounterID = 1873
+		sourceTemplate = {
+			EJ_GetInstanceInfo(875).." - "..EJ_GetEncounterInfo(1898),	-- Chest
+			EJ_GetInstanceInfo(875).." - "..EJ_GetEncounterInfo(1896),	-- Back
+			EJ_GetInstanceInfo(875).." - "..EJ_GetEncounterInfo(1856),	-- Hands
+			EJ_GetInstanceInfo(875).." - "..EJ_GetEncounterInfo(1867),	-- Head
+			EJ_GetInstanceInfo(875).." - "..EJ_GetEncounterInfo(1861),	-- Legs
+			EJ_GetInstanceInfo(875).." - "..EJ_GetEncounterInfo(1873),	-- Shoulder
+		},
+		{	-- Deathknight, Gravewarden Armaments
+			name = ALIL["DEATHKNIGHT"],
+			subSetName = "dk",
+			icon = "dk",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147121, -- Gravewarden Chestplate
+				147122, -- Gravewarden Cloak
+				147123, -- Gravewarden Handguards
+				147124, -- Gravewarden Visage
+				147125, -- Gravewarden Legplates
+				147126, -- Gravewarden Pauldrons
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Demon Hunter, Demonbane Armor
+			name = ALIL["DEMONHUNTER"],
+			subSetName = "demonhunter",
+			icon = "dh",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147127, -- Demonbane Harness     
+				147128, -- Demonbane Shroud      
+				147129, -- Demonbane Gauntlets   
+				147130, -- Demonbane Faceguard   
+				147131, -- Demonbane Leggings    
+				147132, -- Demonbane Shoulderpads
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Druid, Stormheart Raiment
+			name = ALIL["DRUID"],
+			subSetName = "druid",
+			icon = "druid",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147133, -- Stormheart Tunic    
+				147134, -- Stormheart Drape    
+				147135, -- Stormheart Gloves   
+				147136, -- Stormheart Headdress
+				147137, -- Stormheart Legguards
+				147138, -- Stormheart Mantle   
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Hunter, Wildstalker Armor
+			name = ALIL["HUNTER"],
+			subSetName = "hunter",
+			icon = "hunter",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147139, -- Wildstalker Chestguard
+				147140, -- Wildstalker Cape      
+				147141, -- Wildstalker Gauntlets 
+				147142, -- Wildstalker Helmet    
+				147143, -- Wildstalker Leggings  
+				147144, -- Wildstalker Spaulders 
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Mage, Regalia of the Arcane Tempest
+			name = ALIL["MAGE"],
+			subSetName = "mage",
+			icon = "mage",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147145, -- Drape of the Arcane Tempest   
+				147146, -- Gloves of the Arcane Tempest  
+				147147, -- Crown of the Arcane Tempest   
+				147148, -- Leggings of the Arcane Tempest
+				147149, -- Robes of the Arcane Tempest   
+				147150, -- Mantle of the Arcane Tempest  
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Monk, Xuen's Battlegear
+			name = ALIL["MONK"],
+			subSetName = "monk",
+			icon = "monk",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147151, -- Xuen's Tunic         
+				147152, -- Xuen's Cloak         
+				147153, -- Xuen's Gauntlets     
+				147154, -- Xuen's Helm          
+				147155, -- Xuens' Legguards     
+				147156, -- Xuen's Shoulderguards
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Paladin, Radiant Lightbringer Armor
+			name = ALIL["PALADIN"],
+			subSetName = "paladin",
+			icon = "pala",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147157, -- Radiant Lightbringer Breastplate   
+				147158, -- Radiant Lightbringer Cape          
+				147159, -- Radiant Lightbringer Gauntlets     
+				147160, -- Radiant Lightbringer Crown         
+				147161, -- Radiant Lightbringer Greaves       
+				147162, -- Radiant Lightbringer Shoulderguards
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Priest, Vestments of Blind Absolution
+			name = ALIL["PRIEST"],
+			subSetName = "priest",
+			icon = "priest",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147163, -- Shawl of Blind Absolution   
+				147164, -- Gloves of Blind Absolution  
+				147165, -- Hood of Blind Absolution    
+				147166, -- Leggings of Blind Absolution
+				147167, -- Robes of Blind Absolution   
+				147168, -- Mantle of Blind Absolution  
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Rogue, Fanged Slayer's Armor
+			name = ALIL["ROGUE"],
+			subSetName = "rogue",
+			icon = "rogue",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147169, -- Fanged Slayer's Chestguard  
+				147170, -- Fanged Slayer's Shroud      
+				147171, -- Fanged Slayer's Handguards  
+				147172, -- Fanged Slayer's Helm        
+				147173, -- Fanged Slayer's Legguards   
+				147174, -- Fanged Slayer's Shoulderpads
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Shaman, Regalia of the Skybreaker
+			name = ALIL["SHAMAN"],
+			subSetName = "shaman",
+			icon = "shaman",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147175, -- Harness of the Skybreaker  
+				147176, -- Drape of the Skybreaker    
+				147177, -- Grips of the Skybreaker    
+				147178, -- Helmet of the Skybreaker   
+				147179, -- Legguards of the Skybreaker
+				147180, -- Pauldrons of the Skybreaker
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Warlock, Diabolic Raiment
+			name = ALIL["WARLOCK"],
+			subSetName = "warlock",
+			icon = "warlock",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147181, -- Diabolic Shroud  
+				147182, -- Diabolic Gloves  
+				147183, -- Diabolic Helm    
+				147184, -- Diabolic Leggings
+				147185, -- Diabolic Robe    
+				147186, -- Diabolic Mantle  
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Warrior, Titanic Onslaught Armor
+			name = ALIL["WARRIOR"],
+			subSetName = "warrior",
+			icon = "warri",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				147187, -- Titanic Onslaught Breastplate
+				147188, -- Titanic Onslaught Cloak      
+				147189, -- Titanic Onslaught Handguards 
+				147190, -- Titanic Onslaught Greathelm  
+				147191, -- Titanic Onslaught Greaves    
+				147192, -- Titanic Onslaught Pauldrons  
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+	},
+
+	["Tier19"] = {	-- T19 Sets
+		name = format(AL["Tier %d Sets"], 19),
+		-- Head - Elisande, instanceID = 786, encounterID = 1743
+		-- Shoulder - Tichondrius, instanceID = 786, encounterID = 1762
+		-- Chest - Krosus, instanceID = 786, encounterID = 1713
+		-- Hands - Star Augur Etraeus, instanceID = 786, encounterID = 1732
+		-- Legs - Gul'dan, instanceID = 786, encounterID = 1737
+		-- Back - Trilliax, Nighthold, instanceID = 786, encounterID = 1731
+		sourceTemplate = {
+			EJ_GetInstanceInfo(786).." - "..EJ_GetEncounterInfo(1743),	-- Head (Elisande)
+			EJ_GetInstanceInfo(786).." - "..EJ_GetEncounterInfo(1762),	-- Shoulder (Tichondrius)
+			EJ_GetInstanceInfo(786).." - "..EJ_GetEncounterInfo(1713),	-- Chest (Krosus)
+			EJ_GetInstanceInfo(786).." - "..EJ_GetEncounterInfo(1732),	-- Hands (Star Augur Etraeus)
+			EJ_GetInstanceInfo(786).." - "..EJ_GetEncounterInfo(1737),	-- Legs (Gul'dan)
+			EJ_GetInstanceInfo(786).." - "..EJ_GetEncounterInfo(1731),	-- Back (Trilliax)
+		},
+		{	-- Deathknight, Dreadwyrm Battleplate
+			name = ALIL["DEATHKNIGHT"],
+			subSetName = "dk",
+			icon = "dk",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138355,	-- Dreadwyrm Crown
+				138361,	-- Dreadwyrm Shoulderguards
+				138349,	-- Dreadwyrm Breastplate
+				138352,	-- Dreadwyrm Gauntlets
+				138358,	-- Dreadwyrm Legplates
+				138364,	-- Dreadwyrm Greatcloak
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Demon Hunter, Vestment of Second Sight
+			name = ALIL["DEMONHUNTER"],
+			subSetName = "demonhunter",
+			icon = "dh",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138378,	-- Mask of Second Sight
+				138380,	-- Shoulderguards of Second Sight
+				138376,	-- Tunic of Second Sight
+				138377,	-- Gloves of Second Sight
+				138379,	-- Legwraps of Second Sight
+				138375,	-- Cape of Second Sight
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Druid, Garb of the Astral Warden
+			name = ALIL["DRUID"],
+			subSetName = "druid",
+			icon = "druid",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138330,	-- Hood of the Astral Warden
+				138336,	-- Mantle of the Astral Warden
+				138324,	-- Robe of the Astral Warden
+				138327,	-- Gloves of the Astral Warden
+				138333,	-- Leggings of the Astral Warden
+				138366,	-- Cloak of the Astral Warden
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Hunter, Eagletalon Battlegear
+			name = ALIL["HUNTER"],
+			subSetName = "hunter",
+			icon = "hunter",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138342,	-- Eagletalon Cowl
+				138347,	-- Eagletalon Spaulders
+				138339,	-- Eagletalon Tunic
+				138340,	-- Eagletalon Gauntlets
+				138344,	-- Eagletalon Legchains
+				138368,	-- Eagletalon Cloak
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Mage, Regalia of Everburning Knowledge
+			name = ALIL["MAGE"],
+			subSetName = "mage",
+			icon = "mage",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138312,	-- Hood of Everburning Knowledge
+				138321,	-- Mantle of Everburning Knowledge
+				138318,	-- Robe of Everburning Knowledge
+				138309,	-- Gloves of Everburning Knowledge
+				138315,	-- Leggings of Everburning Knowledge
+				138365,	-- Cloak of Everburning Knowledge
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Monk, Vestments of Enveloped Dissonance
+			name = ALIL["MONK"],
+			subSetName = "monk",
+			icon = "monk",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138331,	-- Hood of Enveloped Dissonance
+				138337,	-- Pauldrons of Enveloped Dissonance
+				138325,	-- Tunic of Enveloped Dissonance
+				138328,	-- Gloves of Enveloped Dissonance
+				138334,	-- Leggings of Enveloped Dissonance
+				138367,	-- Cloak of Enveloped Dissonance
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Paladin, Battleplate of the Highlord
+			name = ALIL["PALADIN"],
+			subSetName = "paladin",
+			icon = "pala",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138356,	-- Helmet of the Highlord
+				138362,	-- Pauldrons of the Highlord
+				138350,	-- Breastplate of the Highlord
+				138353,	-- Gauntlets of the Highlord
+				138359,	-- Legplates of the Highlord
+				138369,	-- Greatmantle of the Highlord
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Priest, Vestments of the Purifier
+			name = ALIL["PRIEST"],
+			subSetName = "priest",
+			icon = "priest",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138313,	-- Purifier's Gorget
+				138322,	-- Purifier's Mantle
+				138319,	-- Purifier's Cassock
+				138310,	-- Purifier's Gloves
+				138316,	-- Purifier's Leggings
+				138370,	-- Purifier's Drape
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Rogue, Doomblade Battlegear
+			name = ALIL["ROGUE"],
+			subSetName = "rogue",
+			icon = "rogue",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138322,	-- Doomblade Cowl
+				138338,	-- Doomblade Spaulders
+				138326,	-- Doomblade Tunic
+				138329,	-- Doomblade Gauntlets
+				138335,	-- Doomblade Pants
+				138371,	-- Doomblade Shadowwrap
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Shaman, Regalia of Bound Elements
+			name = ALIL["SHAMAN"],
+			subSetName = "shaman",
+			icon = "shaman",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138343,	-- Helm of Shackled Elements
+				138348,	-- Pauldrons of Shackled Elements
+				138346,	-- Raiment of Shackled Elements
+				138341,	-- Gauntlets of Shackled Elements
+				138345,	-- Leggings of Shackled Elements
+				138372,	-- Cloak of Shackled Elements
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Warlock, Legacy of Azj'Aqir
+			name = ALIL["WARLOCK"],
+			subSetName = "warlock",
+			icon = "warlock",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138314,	-- Eyes of Azj'Aqir
+				138323,	-- Pauldrons of Azj'Aqir
+				138320,	-- Finery of Azj'Aqir
+				138311,	-- Clutch of Azj'Aqir
+				138317,	-- Leggings of Azj'Aqir
+				138373,	-- Cloak of Azj'Aqir
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+		{	-- Warrior, Cloak of Azj'Aqir
+			name = ALIL["WARRIOR"],
+			subSetName = "warrior",
+			icon = "warri",
+			[SOURCE_INFO] = "sourceTemplate",
+			[RF_DIFF] = NORMAL_DIFF,
+			[NORMAL_DIFF] = {
+				138357,	-- Warhelm of the Obsidian Aspect
+				138363,	-- Shoulderplates of the Obsidian Aspect
+				138351,	-- Chestplate of the Obsidian Aspect
+				138354,	-- Gauntlets of the Obsidian Aspect
+				138360,	-- Legplates of the Obsidian Aspect
+				138374,	-- Greatcloak of the Obsidian Aspect
+			},
+			[HEROIC_PRE_DIFF] = NORMAL_DIFF,
+			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
+		},
+	},
+
 	["Tier18"] = {	-- T18 Sets
 		name = format(AL["Tier %d Sets"], 18),
 		sourceTemplate = {
@@ -1194,7 +1640,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(669).." - "..EJ_GetEncounterInfo(1447),	-- Feet (Xhul'horac)
 		},
 		{	-- Deathknight
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"],
+			name = ALIL["DEATHKNIGHT"],
 			subSetName = "dk",
 			icon = "dk",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1209,7 +1655,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1224,7 +1670,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1239,7 +1685,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1254,7 +1700,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Monk
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"],
+			name = ALIL["MONK"],
 			subSetName = "monk",
 			icon = "monk",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1269,7 +1715,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1284,7 +1730,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1299,7 +1745,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1314,7 +1760,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1329,7 +1775,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1344,7 +1790,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1359,7 +1805,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- LFR Cloth
-			name = ALIL["Cloth"].." "..AL["Armor"],
+			name = AL["Cloth"].." "..AL["Armor"],
 			subSetName = "rfcloth",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplateLFR",
@@ -1373,7 +1819,7 @@ local SetTable = {
 			},
 		},
 		{	-- LFR Leather
-			name = ALIL["Leather"].." "..AL["Armor"],
+			name = AL["Leather"].." "..AL["Armor"],
 			subSetName = "rfleather",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplateLFR",
@@ -1387,7 +1833,7 @@ local SetTable = {
 			},
 		},
 		{	-- LFR Mail
-			name = ALIL["Mail"].." "..AL["Armor"],
+			name = AL["Mail"].." "..AL["Armor"],
 			subSetName = "rfmail",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplateLFR",
@@ -1401,7 +1847,7 @@ local SetTable = {
 			},
 		},
 		{	-- LFR Plate
-			name = ALIL["Plate"].." "..AL["Armor"],
+			name = AL["Plate"].." "..AL["Armor"],
 			subSetName = "rfplate",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplateLFR",
@@ -1426,7 +1872,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(457).." - "..EJ_GetEncounterInfo(1154),	-- Legs (Furnance)
 		},
 		sourceTemplateLFR = {
-			EJ_GetInstanceInfo(457).." - "..EJ_GetEncounterInfo(959),	-- Head 
+			EJ_GetInstanceInfo(457).." - "..EJ_GetEncounterInfo(959),	-- Head
 			EJ_GetInstanceInfo(457).." - "..EJ_GetEncounterInfo(1147),	-- Shoulder
 			EJ_GetInstanceInfo(457).." - "..EJ_GetEncounterInfo(1123),	-- Chest
 			EJ_GetInstanceInfo(457).." - "..EJ_GetEncounterInfo(1203),	-- Hands
@@ -1434,7 +1880,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(457).." - "..EJ_GetEncounterInfo(1162),	-- Feed
 		},
 		{	-- Deathknight
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"],
+			name = ALIL["DEATHKNIGHT"],
 			subSetName = "dk",
 			icon = "dk",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1449,7 +1895,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1464,7 +1910,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1479,7 +1925,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1494,7 +1940,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Monk
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"],
+			name = ALIL["MONK"],
 			subSetName = "monk",
 			icon = "monk",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1509,7 +1955,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1524,7 +1970,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1539,7 +1985,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1554,7 +2000,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1569,7 +2015,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1584,7 +2030,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1599,7 +2045,7 @@ local SetTable = {
 			[MYTHIC_PRE_DIFF] = NORMAL_DIFF,
 		},
 		{	-- LFR Cloth
-			name = ALIL["Cloth"].." "..AL["Armor"],
+			name = AL["Cloth"].." "..AL["Armor"],
 			subSetName = "rfcloth",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplateLFR",
@@ -1613,7 +2059,7 @@ local SetTable = {
 			},
 		},
 		{	-- LFR Leather
-			name = ALIL["Leather"].." "..AL["Armor"],
+			name = AL["Leather"].." "..AL["Armor"],
 			subSetName = "rfleather",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplateLFR",
@@ -1627,7 +2073,7 @@ local SetTable = {
 			},
 		},
 		{	-- LFR Mail
-			name = ALIL["Mail"].." "..AL["Armor"],
+			name = AL["Mail"].." "..AL["Armor"],
 			subSetName = "rfmail",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplateLFR",
@@ -1641,7 +2087,7 @@ local SetTable = {
 			},
 		},
 		{	-- LFR Plate
-			name = ALIL["Plate"].." "..AL["Armor"],
+			name = AL["Plate"].." "..AL["Armor"],
 			subSetName = "rfplate",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplateLFR",
@@ -1666,7 +2112,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(369).." - "..EJ_GetEncounterInfo(853),	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1700,7 +2146,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1734,7 +2180,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1768,7 +2214,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1802,7 +2248,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Guardian
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Guardian"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Guardian"]..")",
 			subSetName = "druidguardian",
 			icon = "druidTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1836,7 +2282,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1870,7 +2316,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1904,7 +2350,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1938,7 +2384,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Brewmaster
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Brewmaster"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Brewmaster"]..")",
 			subSetName = "monkbrewmaster",
 			icon = "monkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -1972,7 +2418,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Mistweaver
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Mistweaver"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Mistweaver"]..")",
 			subSetName = "monkmistweaver",
 			icon = "monkHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2006,7 +2452,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Windwalker
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Windwalker"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Windwalker"]..")",
 			subSetName = "monkwindwalker",
 			icon = "monkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2040,7 +2486,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2074,7 +2520,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2108,7 +2554,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2142,7 +2588,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2176,7 +2622,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2210,7 +2656,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2244,7 +2690,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2278,7 +2724,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2312,7 +2758,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2346,7 +2792,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2380,7 +2826,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2414,7 +2860,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2459,7 +2905,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(362).." - "..EJ_GetEncounterInfo(828),	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2486,7 +2932,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2513,7 +2959,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2540,7 +2986,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2567,7 +3013,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Guardian
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Guardian"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Guardian"]..")",
 			subSetName = "druidguardian",
 			icon = "druidTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2594,7 +3040,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2621,7 +3067,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2648,7 +3094,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2675,7 +3121,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Brewmaster
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Brewmaster"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Brewmaster"]..")",
 			subSetName = "monkbrewmaster",
 			icon = "monkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2702,7 +3148,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Mistweaver
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Mistweaver"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Mistweaver"]..")",
 			subSetName = "monkmistweaver",
 			icon = "monkHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2729,7 +3175,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Windwalker
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Windwalker"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Windwalker"]..")",
 			subSetName = "monkwindwalker",
 			icon = "monkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2756,7 +3202,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2783,7 +3229,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2810,7 +3256,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2837,7 +3283,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2864,7 +3310,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2891,7 +3337,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2918,7 +3364,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2945,7 +3391,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2972,7 +3418,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -2999,7 +3445,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3026,7 +3472,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3053,7 +3499,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3091,7 +3537,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(330).." - "..EJ_GetEncounterInfo(737),	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3118,7 +3564,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3145,7 +3591,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3172,7 +3618,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3199,7 +3645,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Guardian
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Guardian"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Guardian"]..")",
 			subSetName = "druidguardian",
 			icon = "druidTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3226,7 +3672,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3253,7 +3699,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3280,7 +3726,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3307,7 +3753,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Brewmaster
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Brewmaster"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Brewmaster"]..")",
 			subSetName = "monkbrewmaster",
 			icon = "monkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3334,7 +3780,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Mistweaver
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Mistweaver"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Mistweaver"]..")",
 			subSetName = "monkmistweaver",
 			icon = "monkHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3361,7 +3807,7 @@ local SetTable = {
 			},
 		},
 		{	-- Monk - Windwalker
-			name = LOCALIZED_CLASS_NAMES_MALE["MONK"].." ("..ALIL["Windwalker"]..")",
+			name = ALIL["MONK"].." ("..ALIL["Windwalker"]..")",
 			subSetName = "monkwindwalker",
 			icon = "monkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3388,7 +3834,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3415,7 +3861,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3442,7 +3888,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3469,7 +3915,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3496,7 +3942,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3523,7 +3969,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3550,7 +3996,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3577,7 +4023,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3604,7 +4050,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3631,7 +4077,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3658,7 +4104,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3685,7 +4131,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3723,7 +4169,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(187).." - "..EJ_GetEncounterInfo(325),	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3750,7 +4196,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3777,7 +4223,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3804,7 +4250,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3831,7 +4277,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3858,7 +4304,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3885,7 +4331,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3912,7 +4358,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3939,7 +4385,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3966,7 +4412,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -3993,7 +4439,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4020,7 +4466,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4047,7 +4493,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4074,7 +4520,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4101,7 +4547,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4128,7 +4574,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4155,7 +4601,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4182,7 +4628,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4209,7 +4655,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4247,7 +4693,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(78).." - "..EJ_GetEncounterInfo(195),	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4267,7 +4713,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4287,7 +4733,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4307,7 +4753,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4327,7 +4773,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4347,7 +4793,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4367,7 +4813,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4387,7 +4833,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4407,7 +4853,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4427,7 +4873,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4447,7 +4893,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4467,7 +4913,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4487,7 +4933,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4507,7 +4953,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4527,7 +4973,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4547,7 +4993,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4567,7 +5013,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4587,7 +5033,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4607,7 +5053,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4638,7 +5084,7 @@ local SetTable = {
 			EJ_GetInstanceInfo(73).." - "..EJ_GetEncounterInfo(173),	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4658,7 +5104,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4678,7 +5124,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4698,7 +5144,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4718,7 +5164,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4738,7 +5184,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4758,7 +5204,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4778,7 +5224,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4798,7 +5244,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4818,7 +5264,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4838,7 +5284,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4858,7 +5304,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4878,7 +5324,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4898,7 +5344,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4918,7 +5364,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4938,7 +5384,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4958,7 +5404,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4978,7 +5424,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -4998,7 +5444,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5029,7 +5475,7 @@ local SetTable = {
 			ALIL["Icecrown Citadel"],	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5056,7 +5502,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5083,7 +5529,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5110,7 +5556,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5137,7 +5583,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5164,7 +5610,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5191,7 +5637,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5218,7 +5664,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5245,7 +5691,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5272,7 +5718,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5299,7 +5745,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5326,7 +5772,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5353,7 +5799,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5380,7 +5826,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5407,7 +5853,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5434,7 +5880,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5461,7 +5907,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5488,7 +5934,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5515,7 +5961,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -5560,7 +6006,7 @@ local SetTable = {
 			AL["No longer available"],	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[NORMAL_DIFF] = {
@@ -5588,7 +6034,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[NORMAL_DIFF] = {
@@ -5616,7 +6062,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[NORMAL_DIFF] = {
@@ -5644,7 +6090,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[NORMAL_DIFF] = {
@@ -5672,7 +6118,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[NORMAL_DIFF] = {
@@ -5700,7 +6146,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[NORMAL_DIFF] = {
@@ -5728,7 +6174,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[NORMAL_DIFF] = {
@@ -5756,7 +6202,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[NORMAL_DIFF] = {
@@ -5784,7 +6230,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[NORMAL_DIFF] = {
@@ -5812,7 +6258,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[NORMAL_DIFF] = {
@@ -5840,7 +6286,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[NORMAL_DIFF] = {
@@ -5868,7 +6314,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[NORMAL_DIFF] = {
@@ -5896,7 +6342,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[NORMAL_DIFF] = {
@@ -5924,7 +6370,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[NORMAL_DIFF] = {
@@ -5952,7 +6398,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[NORMAL_DIFF] = {
@@ -5980,7 +6426,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[NORMAL_DIFF] = {
@@ -6008,7 +6454,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[NORMAL_DIFF] = {
@@ -6036,7 +6482,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[NORMAL_DIFF] = {
@@ -6064,7 +6510,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[NORMAL_DIFF] = {
@@ -6110,7 +6556,7 @@ local SetTable = {
 			AL["No longer available"],	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[NORMAL_DIFF] = {
@@ -6138,7 +6584,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[NORMAL_DIFF] = {
@@ -6166,7 +6612,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[NORMAL_DIFF] = {
@@ -6194,7 +6640,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[NORMAL_DIFF] = {
@@ -6222,7 +6668,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[NORMAL_DIFF] = {
@@ -6250,7 +6696,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[NORMAL_DIFF] = {
@@ -6278,7 +6724,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[NORMAL_DIFF] = {
@@ -6306,7 +6752,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[NORMAL_DIFF] = {
@@ -6334,7 +6780,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[NORMAL_DIFF] = {
@@ -6362,7 +6808,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[NORMAL_DIFF] = {
@@ -6390,7 +6836,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[NORMAL_DIFF] = {
@@ -6418,7 +6864,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[NORMAL_DIFF] = {
@@ -6446,7 +6892,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[NORMAL_DIFF] = {
@@ -6474,7 +6920,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[NORMAL_DIFF] = {
@@ -6502,7 +6948,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[NORMAL_DIFF] = {
@@ -6530,7 +6976,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[NORMAL_DIFF] = {
@@ -6558,7 +7004,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[NORMAL_DIFF] = {
@@ -6586,7 +7032,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[NORMAL_DIFF] = {
@@ -6614,7 +7060,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[NORMAL_DIFF] = {
@@ -6660,7 +7106,7 @@ local SetTable = {
 			ALIL["Ulduar"].." - "..BB["Freya"],	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[NORMAL_DIFF] = {
@@ -6681,7 +7127,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[NORMAL_DIFF] = {
@@ -6702,7 +7148,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[NORMAL_DIFF] = {
@@ -6723,7 +7169,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[NORMAL_DIFF] = {
@@ -6744,7 +7190,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[NORMAL_DIFF] = {
@@ -6765,7 +7211,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[NORMAL_DIFF] = {
@@ -6786,7 +7232,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[NORMAL_DIFF] = {
@@ -6807,7 +7253,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[NORMAL_DIFF] = {
@@ -6828,7 +7274,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[NORMAL_DIFF] = {
@@ -6849,7 +7295,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[NORMAL_DIFF] = {
@@ -6870,7 +7316,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[NORMAL_DIFF] = {
@@ -6891,7 +7337,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[NORMAL_DIFF] = {
@@ -6912,7 +7358,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[NORMAL_DIFF] = {
@@ -6933,7 +7379,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[NORMAL_DIFF] = {
@@ -6954,7 +7400,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[NORMAL_DIFF] = {
@@ -6975,7 +7421,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[NORMAL_DIFF] = {
@@ -6996,7 +7442,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[NORMAL_DIFF] = {
@@ -7017,7 +7463,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[NORMAL_DIFF] = {
@@ -7038,7 +7484,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[NORMAL_DIFF] = {
@@ -7070,7 +7516,7 @@ local SetTable = {
 			ALIL["Naxxramas"].." - "..BB["Thaddius"],	-- Legs
 		},
 		{	-- Deathknight - Blood
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Blood"]..")",
 			subSetName = "deathknightblood",
 			icon = "dkTank",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7090,7 +7536,7 @@ local SetTable = {
 			},
 		},
 		{	-- Deathknight - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
+			name = ALIL["DEATHKNIGHT"].." ("..ALIL["Frost"].." / "..ALIL["Unholy"]..")",
 			subSetName = "deathknightdps",
 			icon = "dkDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7110,7 +7556,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7130,7 +7576,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7150,7 +7596,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7170,7 +7616,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7190,7 +7636,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7210,7 +7656,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7230,7 +7676,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7250,7 +7696,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7270,7 +7716,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7290,7 +7736,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7310,7 +7756,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7330,7 +7776,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7350,7 +7796,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7370,7 +7816,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7390,7 +7836,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7410,7 +7856,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7430,7 +7876,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7464,7 +7910,7 @@ local SetTable = {
 			ALIL["Sunwell Plateau"].." - "..BB["Felmyst"],	-- Feet
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7480,7 +7926,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7496,7 +7942,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7512,7 +7958,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7528,7 +7974,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7544,7 +7990,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7560,7 +8006,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7576,7 +8022,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7592,7 +8038,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7608,7 +8054,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7624,7 +8070,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7640,7 +8086,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7656,7 +8102,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7672,7 +8118,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7688,7 +8134,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7704,7 +8150,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7720,7 +8166,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7747,7 +8193,7 @@ local SetTable = {
 			ALIL["Serpentshrine Cavern"].." - "..BB["Fathom-Lord Karathress"],	-- Legs
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7760,7 +8206,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7773,7 +8219,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7786,7 +8232,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7799,7 +8245,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7812,7 +8258,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7825,7 +8271,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7838,7 +8284,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7851,7 +8297,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7864,7 +8310,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7877,7 +8323,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7890,7 +8336,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7903,7 +8349,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7916,7 +8362,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7929,7 +8375,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7942,7 +8388,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7955,7 +8401,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7979,7 +8425,7 @@ local SetTable = {
 			ALIL["Gruul's Lair"].." - "..BB["Gruul the Dragonkiller"],	-- Legs
 		},
 		{	-- Druid - Balance
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Balance"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Balance"]..")",
 			subSetName = "druidbalance",
 			icon = "druidBalance",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -7992,7 +8438,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Feral
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Feral"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Feral"]..")",
 			subSetName = "druidferal",
 			icon = "druidDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8005,7 +8451,7 @@ local SetTable = {
 			},
 		},
 		{	-- Druid - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["DRUID"].." ("..ALIL["Restoration"]..")",
 			subSetName = "druidrestoration",
 			icon = "druidResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8018,7 +8464,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8031,7 +8477,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8044,7 +8490,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Holy
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Holy"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Holy"]..")",
 			subSetName = "paladinholy",
 			icon = "palaHoly",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8057,7 +8503,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Protection"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Protection"]..")",
 			subSetName = "paladinprotection",
 			icon = "palaProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8070,7 +8516,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin - Retribution
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"].." ("..ALIL["Retribution"]..")",
+			name = ALIL["PALADIN"].." ("..ALIL["Retribution"]..")",
 			subSetName = "paladinretribution",
 			icon = "palaRetri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8083,7 +8529,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Heal
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Discipline"].." / "..ALIL["Holy"]..")",
 			subSetName = "priestheal",
 			icon = "priestHeal",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8096,7 +8542,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest - Shadow
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"].." ("..ALIL["Shadow"]..")",
+			name = ALIL["PRIEST"].." ("..ALIL["Shadow"]..")",
 			subSetName = "priestshadow",
 			icon = "priestShadow",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8109,7 +8555,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8122,7 +8568,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Elemental
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Elemental"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Elemental"]..")",
 			subSetName = "shamanelemental",
 			icon = "shamanEle",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8135,7 +8581,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Enhancement
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Enhancement"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Enhancement"]..")",
 			subSetName = "shamanenhancement",
 			icon = "shamanEnhanc",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8148,7 +8594,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman - Restoration
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"].." ("..ALIL["Restoration"]..")",
+			name = ALIL["SHAMAN"].." ("..ALIL["Restoration"]..")",
 			subSetName = "shamanrestoration",
 			icon = "shamanResto",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8161,7 +8607,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8174,7 +8620,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - DPS
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Arms"].." / "..ALIL["Fury"]..")",
 			subSetName = "warriordps",
 			icon = "warriDPS",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8187,7 +8633,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior - Protection
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"].." ("..ALIL["Protection"]..")",
+			name = ALIL["WARRIOR"].." ("..ALIL["Protection"]..")",
 			subSetName = "warriorprotection",
 			icon = "warriProt",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8215,7 +8661,7 @@ local SetTable = {
 			AL["No longer available"],	-- Finger
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8232,7 +8678,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8249,7 +8695,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8266,7 +8712,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8283,7 +8729,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8300,7 +8746,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8317,7 +8763,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8334,7 +8780,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8351,7 +8797,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8382,7 +8828,7 @@ local SetTable = {
 			ALIL["Blackwing Lair"].." - "..BB["Broodlord Lashlayer"],	-- Feet
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8398,7 +8844,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8414,7 +8860,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8430,7 +8876,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8446,7 +8892,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8462,7 +8908,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8478,7 +8924,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8494,7 +8940,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8510,7 +8956,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8540,7 +8986,7 @@ local SetTable = {
 			nil,	-- Feet
 		},
 		{	-- Druid
-			name = LOCALIZED_CLASS_NAMES_MALE["DRUID"],
+			name = ALIL["DRUID"],
 			subSetName = "druid",
 			icon = "druid",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8556,7 +9002,7 @@ local SetTable = {
 			},
 		},
 		{	-- Hunter
-			name = LOCALIZED_CLASS_NAMES_MALE["HUNTER"],
+			name = ALIL["HUNTER"],
 			subSetName = "hunter",
 			icon = "hunter",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8572,7 +9018,7 @@ local SetTable = {
 			},
 		},
 		{	-- Mage
-			name = LOCALIZED_CLASS_NAMES_MALE["MAGE"],
+			name = ALIL["MAGE"],
 			subSetName = "mage",
 			icon = "mage",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8588,7 +9034,7 @@ local SetTable = {
 			},
 		},
 		{	-- Paladin
-			name = LOCALIZED_CLASS_NAMES_MALE["PALADIN"],
+			name = ALIL["PALADIN"],
 			subSetName = "paladin",
 			icon = "pala",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8604,7 +9050,7 @@ local SetTable = {
 			},
 		},
 		{	-- Priest
-			name = LOCALIZED_CLASS_NAMES_MALE["PRIEST"],
+			name = ALIL["PRIEST"],
 			subSetName = "priest",
 			icon = "priest",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8620,7 +9066,7 @@ local SetTable = {
 			},
 		},
 		{	-- Rogue
-			name = LOCALIZED_CLASS_NAMES_MALE["ROGUE"],
+			name = ALIL["ROGUE"],
 			subSetName = "rogue",
 			icon = "rogue",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8636,7 +9082,7 @@ local SetTable = {
 			},
 		},
 		{	-- Shaman
-			name = LOCALIZED_CLASS_NAMES_MALE["SHAMAN"],
+			name = ALIL["SHAMAN"],
 			subSetName = "shaman",
 			icon = "shaman",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8652,7 +9098,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warlock
-			name = LOCALIZED_CLASS_NAMES_MALE["WARLOCK"],
+			name = ALIL["WARLOCK"],
 			subSetName = "warlock",
 			icon = "warlock",
 			[SOURCE_INFO] = "sourceTemplate",
@@ -8668,7 +9114,7 @@ local SetTable = {
 			},
 		},
 		{	-- Warrior
-			name = LOCALIZED_CLASS_NAMES_MALE["WARRIOR"],
+			name = ALIL["WARRIOR"],
 			subSetName = "warrior",
 			icon = "warri",
 			[SOURCE_INFO] = "sourceTemplate",

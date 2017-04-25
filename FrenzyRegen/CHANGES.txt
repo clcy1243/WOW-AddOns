@@ -1,0 +1,19 @@
+changeset:   41:1f402bf786ee
+tag:         v1.0
+user:        Ogion
+date:        Sat Jan 28 01:56:50 2017 +0200
+summary:     Added the option to show only healing value (without frame)
+
+
+changeset:   40:dcf58fa49cdf
+user:        Ogion
+date:        Sun Jan 22 23:17:36 2017 +0200
+summary:     Hide the frame when pet battle starts
+
+
+changeset:   39:95867a55ec82
+user:        Ogion
+date:        Mon Jan 16 23:40:30 2017 +0200
+summary:     Tagging as v0.9.9
+
+

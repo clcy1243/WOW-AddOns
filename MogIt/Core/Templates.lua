@@ -19,18 +19,26 @@ function mog:GetItemLabel(itemID, callback, includeIcon, iconSize)
 end
 
 local function addItemTooltipLine(itemID, slot, selected, wishlist, isSetItem)
-	local texture = format("|T%s:0|t ", (selected and [[Interface\ChatFrame\ChatFrameExpandArrow]]) or (wishlist and [[Interface\TargetingFrame\UI-RaidTargetingIcon_1]]) or (mog:HasItem(itemID, isSetItem) and TEXTURE) or "")
+	local texture = format("|T%s:0|t ", (selected and [[Interface\ChatFrame\ChatFrameExpandArrow]]) or (mog:HasItem(mog:GetSourceFromItem(itemID), isSetItem) and TEXTURE) or (wishlist and [[Interface\TargetingFrame\UI-RaidTargetingIcon_1]]) or "")
 	GameTooltip:AddDoubleLine(texture..(type(slot) == "string" and _G[strupper(slot)]..": " or "")..mog:GetItemLabel(itemID, "ModelOnEnter"), mog.GetItemSourceShort(itemID), nil, nil, nil, 1, 1, 1)
 end
 
 function mog.GetItemSourceInfo(itemID)
-	local source, info;
+	local appearanceID, sourceID = C_TransmogCollection.GetItemInfo(itemID)
+	itemID = sourceID
+	local source, info, zone;
 	local sourceType = mog:GetData("item", itemID, "source");
 	local sourceID = mog:GetData("item", itemID, "sourceid");
 	local sourceInfo = mog:GetData("item", itemID, "sourceinfo");
 
-	if sourceType == 1 and sourceID then -- Drop
-		source = mog:GetData("npc", sourceID, "name");
+	if sourceType == 1 and sourceInfo and #sourceInfo > 0 then -- Drop
+		local drop = sourceInfo[1]
+		source = drop.encounter
+		zone = drop.instance
+		local diff = drop.difficulties[1]
+		if diff then
+			zone = format("%s (%s)", zone, diff);
+		end
 	elseif sourceType == 3 and sourceID then -- Quest
 		info = IsQuestFlaggedCompleted(sourceID) or false;
 	elseif sourceType == 5 and sourceInfo then -- Crafted
@@ -41,16 +49,16 @@ function mog.GetItemSourceInfo(itemID)
 		info = complete;
 	end
 
-	local zone = mog:GetData("item", itemID, "zone");
-	if zone then
-		zone = GetMapNameByID(zone);
-		if zone then
-			local diff = L.diffs[sourceInfo];
-			if sourceType == 1 and diff then
-				zone = format("%s (%s)", zone, diff);
-			end
-		end
-	end
+	-- local zone = mog:GetData("item", itemID, "zone");
+	-- if zone then
+		-- zone = GetMapNameByID(zone);
+		-- if zone then
+			-- local diff = L.diffs[sourceInfo];
+			-- if sourceType == 1 and diff then
+				-- zone = format("%s (%s)", zone, diff);
+			-- end
+		-- end
+	-- end
 
 	return L.source[sourceType], source, zone, info;
 end
@@ -221,12 +229,6 @@ local function showMenu(menu, data, isSaved, isPreview)
 end
 
 do	-- item functions
-	local slots = {
-		[1] = "MainHandSlot",
-		-- [2] = "mainhand",
-		-- [3] = "offhand",
-	}
-
 	local sourceLabels = {
 		[L.source[1]] = BOSS,
 	}
@@ -245,9 +247,18 @@ do	-- item functions
 	function mog.Item_FrameUpdate(self, data)
 		local item = data.item
 		self:ApplyDress()
-		self:TryOn(format(gsub(item, "item:(%d+):0", "item:%1:%%d"), mog.weaponEnchant), slots[mog:GetData("item", item, "slot")])
+		local _, _, _, slot = GetItemInfoInstant(item)
+		local tryonSlot
+		if slot == "INVTYPE_WEAPON" then
+			tryonSlot = "MAINHANDSLOT"
+		end
+		if data.sourceID then
+			self.model:TryOn(data.sourceID, tryonSlot)
+		else
+			self:TryOn(format(gsub(item, "item:(%d+):0", "item:%1:%%d"), mog.weaponEnchant), tryonSlot)
+		end
 		if not mog:GetItemInfo(item) then
-			mog.doModelUpdate = true;
+			mog.doModelUpdate = true
 		end
 	end
 
@@ -313,8 +324,8 @@ do	-- item functions
 			GameTooltip:AddLine(L.bind[bindType], 1.0, 1.0, 1.0)
 		end
 		local requiredLevel = mog:GetData("item", item, "level")
-		if requiredLevel then
-			GameTooltip:AddLine(L["Required Level"]..": |cffffffff"..requiredLevel)
+		if itemInfo and itemInfo.reqLevel and itemInfo.reqLevel > 0 then
+			GameTooltip:AddLine(L["Required Level"]..": |cffffffff"..itemInfo.reqLevel)
 		end
 		GameTooltip:AddLine(STAT_AVERAGE_ITEM_LEVEL..": |cffffffff"..(itemLevel or "??"))
 		local faction = mog:GetData("item", item, "faction")
@@ -345,16 +356,12 @@ do	-- item functions
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(L["Item ID"]..": |cffffffff"..mog:ToNumberItem(item))
 		end
-
-		local hasItem, characters = mog:HasItem(item)
+		
+		-- source sometimes can't be determined if item is not cached
+		local hasItem = itemInfo and mog:HasItem(mog:GetSourceFromItem(item))
 		if hasItem then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(format("|T%s:0|t ", TEXTURE)..L["You have this item."], 1, 1, 1)
-			if mog.db.profile.tooltipOwnedDetail and characters then
-				for i, character in ipairs(characters) do
-					GameTooltip:AddLine("|T:0|t "..character)
-				end
-			end
 		end
 
 		local found, profiles = mog.wishlist:IsItemInWishlist(item)
@@ -370,11 +377,23 @@ do	-- item functions
 			end
 		end
 
-		if items and #items > 1 then
-			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(L["Items using this appearance:"])
-			for i, v in ipairs(items) do
-				addItemTooltipLine(v, nil, v == item, (mog.wishlist:IsItemInWishlist(v)))
+		if items then
+			if type(items) == "string" then
+				local visualID = C_TransmogCollection.GetItemInfo(items)
+				if visualID then
+					local sources = C_TransmogCollection.GetAllAppearanceSources(visualID)
+					items = {}
+					for i, source in ipairs(sources) do
+						items[i] = mog:NormaliseItemString(select(6, C_TransmogCollection.GetAppearanceSourceInfo(source)))
+					end
+				end
+			end
+			if type(items) == "table" and #items > 1 then
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine(L["Items using this appearance:"])
+				for i, v in ipairs(items) do
+					addItemTooltipLine(v, nil, v == item, (mog.wishlist:IsItemInWishlist(v)))
+				end
 			end
 		end
 
@@ -408,7 +427,7 @@ do	-- set functions
 		local hasSet = next(data.items)
 		for slot, item in pairs(data.items) do
 			self:TryOn(item, slot == "SecondaryHandSlot" and slot)
-			if not mog:HasItem(item, true) then
+			if not mog:HasItem(mog:GetSourceFromItem(item), true) then
 				hasSet = false
 			end
 			if not mog:GetItemInfo(item) then

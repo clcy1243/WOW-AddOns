@@ -1,7 +1,8 @@
-﻿local AL = _G.AtlasLoot.GetLocales("ptBR")
+local AL = _G.AtlasLoot.GetLocales("ptBR")
 
 if not AL then return end
 
--- These localization strings are translated on WoWAce: http://www.wowace.com/addons/atlasloot-enhanced/localization
+-- These localization strings are translated on WoWAce: https://www.wowace.com/projects/atlasloot-enhanced/localization
+
 
 

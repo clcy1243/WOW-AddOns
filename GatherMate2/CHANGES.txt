@@ -1,0 +1,36 @@
+tag 8e92826dc985cf86bd312161f23c01e85b6569a4 1.40
+Author:	Hendrik Leppkes <h.leppkes@gmail.com>
+Date:	Tue Mar 28 19:17:11 2017 +0200
+
+Tag as 1.40
+
+commit 23f9b06114bf937c563633fc944a08b4a2453585
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Tue Mar 28 19:16:57 2017 +0200
+
+    Update TOC for 7.2
+
+commit 026c675beabb24a713acf24aa29087388d83d5b1
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Tue Mar 28 09:39:00 2017 +0200
+
+    Add a new icon for Fel-encrusted Herb (Cluster)
+
+commit 26ba8b3a1681378f689c6dc83fd3703da4af424c
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Thu Mar 23 11:27:54 2017 +0100
+
+    Add Fel-encrusted Herb Cluster node from 7.2 Broken Shore
+
+commit 3ae15e9785c2eb45d4a92c255252639692105695
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Sun Mar 12 18:14:47 2017 +0100
+
+    Add Fel-encrusted Herb from the 7.2 Broken Shore zone
+
+commit 118835549241eed50b5c14be8d72f388f7f28aab
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Sun Feb 19 07:52:36 2017 +0100
+
+    Support 7.2 landmark API for digsites
+

@@ -1,0 +1,287 @@
+tag f364f3cb5605682f2886b700bd612e2b9fd3c274 2.4.0
+Author:	Benjamin Staneck <staneck@gmail.com>
+Date:	Sun Apr 23 23:48:34 2017 +0200
+
+commit 3945102df674cbe0692727113f12df28578195c1
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Sun Apr 23 23:47:56 2017 +0200
+
+    pull in latest translations from WowAce
+    
+    If you want help translate WeakAuras to your language, checkout the translation tool located here: https://www.wowace.com/projects/weakauras-2/localization
+
+commit 4bd60b5983e5959a43c5dffc5249f075bc02896e
+Author: Infus <infus@squorn.de>
+Date:   Sun Apr 23 02:04:51 2017 +0200
+
+    Fix cooldown still showing on icons after closing options window
+    
+    Restore previous behaviour for icons. A zero duration hides any
+    cooldown.
+
+commit 6f6d3e695677b352f4c9f06b5b75997d0243f782
+Author: Infus <infus@squorn.de>
+Date:   Sun Apr 23 01:50:25 2017 +0200
+
+    Fix SetDurationInfo with a 0 duration
+    
+    The old code was a bit confussing. It first called SetValue(1),
+    but overrode this immediately by a call to SetValue(0).
+    
+    Ticket-Nr: 932
+
+commit cd02429a79f773dbdba58c7604a7c22211522798
+Author: Infus <infus@squorn.de>
+Date:   Fri Apr 21 10:52:42 2017 +0200
+
+    Fix Text Size properties on Icons
+
+commit 26b21d1f696b186bf182037e76c369a2bbd978d6
+Author: Infus <infus@squorn.de>
+Date:   Fri Apr 21 10:20:08 2017 +0200
+
+    Fix nil error in Spell Activation Overlay Glow trigger
+
+commit 8016a82b1d54a2aef4252ee2e4d8464b7bd1c185
+Author: Infus <infus@squorn.de>
+Date:   Fri Apr 21 00:02:13 2017 +0200
+
+    Fix typo in "Personal Resource Display"
+
+commit 092853e01a04fdd37d3f970f60f61151e20e1625
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Thu Apr 20 20:12:43 2017 +0200
+
+    Revert: "enable Lua errors for all alpha/git users"
+
+commit 1df3ef61b4e8cc15c2210b7397ce182d554f56ac
+Author: Infus <infus@squorn.de>
+Date:   Tue Apr 18 17:36:36 2017 +0200
+
+    Rewrite circular progress using the new SetVertexOffset api in wow 7.2
+    
+    This allows for arbitary start/end angles and should fix occasional
+    gaps being visible for circular progress.
+    
+    Ticket-Nr: 897
+
+commit 40568a9c6ce6e9c099993101480c6de9227132ee
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 17 19:15:58 2017 +0200
+
+    Add "Hide Cooldown Text" option
+    
+    Which hides the blizzard text on cooldowns. (Which is enabled
+    via "Show Numbers for Cooldowns".
+    
+    If the user has OmniCC installed, don't show the option. As
+    the option would not hide OmniCC's text.
+    
+    But call SetHideCountdownNumbers(true) if omnicc is installed,
+    as that prevents double text from appearing.
+    
+    Technically, users could disable OmniCC's text and enable the
+    Blizzard text, but that seems a remote use case.
+    
+    Ticket-Nr: 915
+
+commit 39b1f3ef2ad6f67da4c99507cb70d84acb5855ee
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 17 18:14:50 2017 +0200
+
+    Add Spell Known Trigger
+    
+    Supports both player and pert spells. This is useful to e.g.
+    create triggers for the cooldowns of pet spells.
+    
+    Ticket-Nr: 917
+
+commit a2000002d852129546d3e5d710b955e26ada6290
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 17 17:44:51 2017 +0200
+
+    Add a Spell Activation Overlay Glow Trigger
+    
+    Useful for e.g. Blunderbuss.
+    
+    Ticket-Nr: 917
+
+commit 8c839d40540420fc47a4b440925bd8f787d940c8
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 17 16:12:46 2017 +0200
+
+    Add 2. Text to Icon
+    
+    Ticket-Nr: 921
+
+commit 8da419fea9be17ed60ba3451ba6e80b91b3cf876
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Mon Apr 17 15:00:02 2017 +0200
+
+    we can't have a space here
+
+commit 374dd316ae85a80fee6dab390cd0e4b91b5e47d7
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 17 14:24:23 2017 +0200
+
+    Add Watter Jet to Frost Mage's templates
+
+commit 5831051c5ae49fd0f8b5ab9ded0f81da3b3054f7
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 17 13:58:01 2017 +0200
+
+    Fix formatting of progress and total values for Text auras
+    
+    The icon/aurabar and text auras have almost indentical code to handle
+    SetDurationInfo. Except that the text aura was missing some code
+    to handle some formats missing.
+    
+    Remove all that code duplication.
+    
+    If auras provide SetValue,SetTime and TimerTick they get a generic
+    SetDurationInfo that handles 90% of the work.
+    
+    With this it's also much easier to add text support to more region
+    types.
+    
+    Ticket-Nr: 923
+
+commit d0a4f661089a1bb98f6b17b2c57165a42903ee1f
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 17 11:15:26 2017 +0200
+
+    Add a Cooldown Ready (Equipment Slot)
+    
+    Ticket-Nr: 928
+
+commit 073bac988b1f21e1f607a5ddbda753b5f71d7274
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 17 11:05:24 2017 +0200
+
+    Work around Blizzard's bug with pet spell abilities
+    
+    Ticket-Nr: 926
+
+commit f2ef3691d9f6cde8bcd3f42caceb3fc1c026b067
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Sun Apr 16 18:53:20 2017 +0200
+
+    run luaformatter on all files
+
+commit 4095e9726cd15827373e60d793862985dc7372fc
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Sun Apr 16 17:13:36 2017 +0200
+
+    switch equipment set API to 7.2 versions
+    
+    GetNumEquipmentSets is deprecated (since 7.2.0): Use C_EquipmentSet.GetNumEquipmentSets() instead.
+    GetEquipmentSetInfo is deprecated (since 7.2.0): Use C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID) instead.
+
+commit 1f612d3d462e611407550d003d4a878cc8f01c55
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Sat Apr 15 18:26:58 2017 +0200
+
+    fix the mysterious hover texture
+
+commit 72558d126194500ddbd5451256a396d742192712
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Sat Apr 15 17:24:22 2017 +0200
+
+    I hate the CurseForge packager
+
+commit e347e33e106f750572ad847e7bf6c4024aa6fe37
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Sat Apr 15 14:42:22 2017 +0200
+
+    pass id into OnInit's LoadFunction as well
+
+commit 743968bd9de5704ec59cd82286dfe8e317550151
+Author: Infus <infus@squorn.de>
+Date:   Sat Apr 15 13:26:12 2017 +0200
+
+    Treat hidden states the same as empty states
+    
+    Even if there are values in that state, if the trigger is inactive
+    we don't want to use them.
+
+commit c095fd04f67ec0d05f7fc44832e2d9dbe60e42a2
+Author: Infus <infus@squorn.de>
+Date:   Fri Apr 14 15:21:17 2017 +0200
+
+    Conditions: Fix check for active == false
+    
+    Two separate bugs actually:
+    1) All checks started by checking for state and state.variable.
+    But that doesn't work if state.variable is false, thus change that
+    to state.variable ~= nil. And while doing that, remove the code
+    duplication for that.
+    
+    2) If state doesn't exist, the code so far made the condition always
+    return false. But, that's incorrect for show. Make those conditions
+    that provide their own test also check for state. Add a new
+    condition test to the active condition.
+
+commit 90b1d1e206fdd16984c1ff0ffc24958ce0e267ff
+Author: Benjamin Staneck <Stanzilla@users.noreply.github.com>
+Date:   Thu Apr 13 22:15:55 2017 +0200
+
+    Add comments to error messages (#182)
+    
+    make LoadFunction() accept two additional parameters that can be added to the error message to better identify the auras that are causing errors. For now we only pass in the id to LoadFunction in every custom function so we get the name up in there.
+
+commit de6d759d8c9a6ab46187786c792dadc451c6a682
+Author: Infus <infus@squorn.de>
+Date:   Thu Apr 13 22:14:20 2017 +0200
+
+    Change numeric properties to sliders
+
+commit 707b13f0d12e2971005204d95996e93405487286
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Tue Apr 11 09:08:54 2017 +0200
+
+    spelling changes
+
+commit a42a4f9cb9601908e00c4a99183ce166ff206b25
+Author: Benjamin Staneck <Stanzilla@users.noreply.github.com>
+Date:   Tue Apr 11 09:03:37 2017 +0200
+
+    Update README.md
+
+commit b20ca0c293f3ec0dced7f96979dfcfce5a69203c
+Author: Benjamin Staneck <Stanzilla@users.noreply.github.com>
+Date:   Tue Apr 11 08:44:47 2017 +0200
+
+    Update README.md
+
+commit 2c743dcd2d3da20ff4bf75c18040776e1a54bce8
+Author: Benjamin Staneck <Stanzilla@users.noreply.github.com>
+Date:   Tue Apr 11 08:36:52 2017 +0200
+
+    Update README.md
+
+commit 00dad470c7a878d9fbb9f6a78eae888ea75034f2
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 10 18:44:48 2017 +0200
+
+    Add a "on Cooldown" condition check for Cooldowns
+
+commit 6d8444a6894c56297e70b23848e2e70c55b14183
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 10 18:04:12 2017 +0200
+
+    Conditions: In Property drop down show only properties not selected
+
+commit 828495c77bc714e84409eae9d863d2dcefb35c07
+Author: Infus <infus@squorn.de>
+Date:   Mon Apr 10 00:27:51 2017 +0200
+
+    Add a second "Talent" selected load condition
+    
+    Only visible if the first one is selected
+
+commit 7f23fd86c5a540bc8ba2f8307bcd3f98a2d56979
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Fri Apr 7 02:19:08 2017 +0200
+
+    enable Lua errors for all alpha/git users
+

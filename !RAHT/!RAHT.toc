@@ -1,0 +1,10 @@
+## Interface: 70200
+## Title: Raka's |cff00ff00Artifact Hidden color Tracker|r
+## Notes: Use command "/ht" to track artifact hidden skin color unlocking progress.
+## Notes-zhCN: 使用“/ht”命令追踪神器隐藏皮肤配色解锁进度
+## Author: Raka
+## Version: 2.0.4
+## X-Website: https://lotc.cc/
+## URL: https://lotc.cc/
+
+core.lua
