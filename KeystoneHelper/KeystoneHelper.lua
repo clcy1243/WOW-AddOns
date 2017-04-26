@@ -2,6 +2,8 @@
 -- |cffa335ee|Hitem:138019::::::::110:252:5111808:::207:5:6:1:::|h[Mythic Keystone]|h|r
 -- |cffa335ee|Hkeystone:209:7:1:6:3:0|h[Keystone: The Arcway]|h|r
 -- |cffa335ee|Hitem:138019::::::::110:577:6160384:::209:7:6:3:1:::|h[Mythic Keystone]|h|r
+-- |Hkeystone:197:12:1:8:3:10|h[Keystone:Eye of Azshara]|h
+
 local function GetModifiers(linkType, ...)
 	if type(linkType) ~= 'string' then return end
 	local modifierOffset = 4
@@ -19,9 +21,12 @@ local function GetModifiers(linkType, ...)
 
 	local modifiers = {}
 	for i = modifierOffset, select('#', ...) do
-		local modifierID = tonumber((select(i, ...)))
-		--if not modifierID then break end
-		tinsert(modifiers, modifierID)
+		local num = strmatch(select(i, ...) or '', '^(%d+)')
+		if num then
+			local modifierID = tonumber(num)
+			--if not modifierID then break end
+			tinsert(modifiers, modifierID)
+		end
 	end
 	local numModifiers = #modifiers
 	if modifiers[numModifiers] and modifiers[numModifiers] < 2 then

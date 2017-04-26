@@ -1,4 +1,4 @@
--- update at http://www.wowace.com/projects/bigwigs_countdown_heroesofthestorm/localization/
+-- Update at http://www.wowace.com/projects/bigwigs_countdown_heroesofthestorm/localization/
 
 local _, ns = ...
 local L = ns.L
@@ -21,8 +21,9 @@ elseif locale == "itIT" then
 L["Countdown: Heroes of the Storm"] = "Voce: Heroes of the Storm"
 L["Language"] = "Lingua"
 elseif locale == "koKR" then
-L["Countdown: Heroes of the Storm"] = "음성 : 히어로즈 오브 더 스톰"
+L["Countdown: Heroes of the Storm"] = "초읽기 : 히어로즈 오브 더 스톰"
 L["Language"] = "언어"
+L["You've changed your language! Normally only one set of voices is used, but each language you change to will remain listed until you reload your UI."] = "당신의 언어를 변경했습니다! 일반적으로 하나의 음성 세트만 사용하지만, 변경한 각 언어는 당신이 UI를 다시 불러오기 전까지 목록에 남아있습니다."
 elseif locale == "ptBR" then
 L["Countdown: Heroes of the Storm"] = "Voz: Heroes of the Storm"
 L["Language"] = "Idioma"

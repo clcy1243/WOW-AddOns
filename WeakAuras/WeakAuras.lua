@@ -1040,7 +1040,7 @@ end
 
 function WeakAuras.DestroyEncounterTable()
   if (WeakAuras.CurrentEncounter) then
-    wipe (WeakAuras.CurrentEncounter)
+    wipe(WeakAuras.CurrentEncounter)
   end
   WeakAuras.CurrentEncounter = nil
   db.CurrentEncounter = nil
@@ -1699,7 +1699,7 @@ function WeakAuras.ResolveCollisions(onFinished)
           if(data) then
             WeakAuras.Rename(data, newId);
           else
-            print("Data not found");
+            print("|cFF8800FFWeakAuras|r: Data not found");
           end
         end
 
@@ -1839,7 +1839,7 @@ function WeakAuras.Modernize(data)
     if (data.cooldownTextEnabled == nil) then
       data.cooldownTextEnabled = true;
     end
-    if (data.text1Enabled == nil) then
+    if (data.displayStacks) then
       data.text1Enabled = true;
       data.text1 = data.displayStacks;
       data.displayStacks = nil;
