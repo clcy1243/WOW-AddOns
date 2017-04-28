@@ -240,6 +240,7 @@ local raidQuests = {
 }
 
 local WorldBosses = {
+	[46945] = true, -- Si'vash
 	[47061] = true, -- Apocron
 	[46948] = true, -- Malificus
 	[42270] = true, -- Scourge of the Skies
@@ -449,7 +450,7 @@ function RegisteredEvents:LFG_LIST_APPLICATION_STATUS_UPDATED(event, application
 		end
 		if (status == "invitedeclined") then
 			blacklistedLeaders[author] = true
-			WorldQuestGroupFinder.prefixedPrint(string.format(L["WQGF_WQ_GROUP_APPLY_CANCELLED"], author, WorldQuestGroupFinder.GetQuestInfo(pendingApplications[applicationID])), true)
+			--WorldQuestGroupFinder.prefixedPrint(string.format(L["WQGF_WQ_GROUP_APPLY_CANCELLED"], author, WorldQuestGroupFinder.GetQuestInfo(pendingApplications[applicationID])), true)
 			table.remove(pendingApplications, applicationID)
 			if (C_LFGList.GetNumApplications() == 0) then
 				WorldQuestGroupFinder.StopTimeoutTimer()
@@ -1010,6 +1011,7 @@ function WorldQuestGroupFinder.HandleWorldQuestEnd(wqID, broadcast)
 	if (IsInGroup() and UnitIsGroupLeader("player") and broadcast) then
 		WorldQuestGroupFinder.BroadcastMessage("#WQE:"..wqID.."#")
 	end
+	blacklistedLeaders = {}
 	currentWQFrame:Hide()
 end
 

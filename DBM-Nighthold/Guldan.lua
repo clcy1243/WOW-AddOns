@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1737, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 16183 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 16188 $"):sub(12, -3))
 mod:SetCreatureID(104154)--The Demon Within (111022)
 mod:SetEncounterID(1866)
 mod:SetZone()
@@ -603,7 +603,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				timerFlamesofSargerasCD:Start(13.6, (self.vb.flamesSargCast).."-"..3)
 				timerFlamesofSargerasCD:Start(45, (self.vb.flamesSargCast+1).."-"..1)
 				if self.vb.flamesSargCast == 2 then
-					timerWindsCD:Start(31, 2)--FIXME later and start at correct flames cast
+					timerWindsCD:Start(31, 2)
 				end
 			elseif self:IsHeroic() then
 				timerFlamesofSargerasCD:Start(7.7, (self.vb.flamesSargCast).."-"..2)
@@ -658,6 +658,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		countdownEyeofGuldan:Cancel()
 		timerHandofGuldanCD:Stop()
 		countdownHandofGuldan:Cancel()
+		timerWindsCD:Start(12, 1)
 		timerWellOfSouls:Start(15)
 		self.vb.eyeCast = 0
 		if self:IsMythic() then
@@ -668,7 +669,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			countdownEyeofGuldan:Start(35)
 			timerBlackHarvestCD:Start(55.7, 1)
 			countdownBlackHarvest:Start(55.7)
-			timerWindsCD:Start(68, 1)
 			timerStormOfDestroyerCD:Start(72.6, 1)
 		else
 			self.vb.phase = 3
