@@ -1,4 +1,7 @@
-﻿0.22.6 (27/04/2017)
+﻿0.23 (28/04/2017)
+- Goodbye!
+
+0.22.6 (27/04/2017)
 - Leaders blacklist is now cleared after completing a world quest 
 - Updated WB list
 
