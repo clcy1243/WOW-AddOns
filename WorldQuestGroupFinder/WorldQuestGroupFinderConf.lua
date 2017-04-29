@@ -69,16 +69,8 @@ function WorldQuestGroupFinderConf.CreateConfigMenu()
 	local askZoning = WorldQuestGroupFinderConf.CreateCheckButton(L["WQGF_CONFIG_NEW_WQ_AREA_DETECTION_ENABLE"], configPanel, L["WQGF_CONFIG_NEW_WQ_AREA_DETECTION_HOVER"], "askZoning", 'InterfaceOptionsCheckButtonTemplate')
 	askZoning:SetPoint('TOPLEFT', askZoningDesc, 'BOTTOMLEFT', 0, -2)
 
-	local askZoningBusy = WorldQuestGroupFinderConf.CreateCheckButton(L["WQGF_CONFIG_NEW_WQ_AREA_DETECTION_SWITCH_ENABLE"], configPanel, L["WQGF_CONFIG_NEW_WQ_AREA_DETECTION_SWITCH_ENABLE"], "askZoningBusy", 'InterfaceOptionsCheckButtonTemplate')
-	askZoningBusy:SetPoint('TOPLEFT', askZoning, 'BOTTOMLEFT', 10, 2)
-	WorldQuestGroupFinderConf.AddDependentCheckbox(askZoning, askZoningBusy, false)
-
-	local askZoningAuto = WorldQuestGroupFinderConf.CreateCheckButton(L["WQGF_CONFIG_NEW_WQ_AREA_DETECTION_AUTO_ENABLE"], configPanel, L["WQGF_CONFIG_NEW_WQ_AREA_DETECTION_AUTO_HOVER"], "askZoningAuto", 'InterfaceOptionsCheckButtonTemplate')
-	askZoningAuto:SetPoint('TOPLEFT', askZoningBusy, 'BOTTOMLEFT', 0, 2)
-	WorldQuestGroupFinderConf.AddDependentCheckbox(askZoning, askZoningAuto, false)
-
 	local allLanguagesDesc = configPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
-	allLanguagesDesc:SetPoint('TOPLEFT', askZoningAuto, 'BOTTOMLEFT', 0, -6)
+	allLanguagesDesc:SetPoint('TOPLEFT', askZoningBusy, 'BOTTOMLEFT', 0, -6)
 	allLanguagesDesc:SetText(L["WQGF_CONFIG_LANGUAGE_FILTER_TITLE"])
 
 	local allLanguagesOpt = WorldQuestGroupFinderConf.CreateCheckButton(L["WQGF_CONFIG_LANGUAGE_FILTER_ENABLE"], configPanel, L["WQGF_CONFIG_LANGUAGE_FILTER_HOVER"], "allLanguages", 'InterfaceOptionsCheckButtonTemplate')
@@ -202,13 +194,12 @@ WorldQuestGroupFinderConf.DefaultConfig = {
 	askToLeave = true,
 	notifyParty = true,
 	askZoning = true,
-	askZoningBusy = true,
-	askZoningAuto = false,
 	hideLoginMessage = false,
 	autoAcceptInvites = false,
 	printDebug = false,
 	allLanguages = true,
 	avoidPVP = false,
 	autoLeaveGroup = false,
-	regularQuests = true
+	regularQuests = true,
+	frameUnlocked = true
 }

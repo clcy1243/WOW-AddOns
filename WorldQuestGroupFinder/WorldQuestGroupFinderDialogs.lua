@@ -69,7 +69,7 @@ StaticPopupDialogs["NEW_WORLD_QUEST_PROMPT"] = {
 	OnAccept = function(self, data)
 		LeaveParty()
 		C_Timer.After(1, function()
-			WorldQuestGroupFinder.HandleBlockClick(data)
+			WorldQuestGroupFinder.HandleBlockClick(data, true)
 		end)
 	end,
 	timeout = 0,
@@ -86,7 +86,7 @@ StaticPopupDialogs["NEW_QUEST_PROMPT"] = {
 	OnAccept = function(self, data)
 		LeaveParty()
 		C_Timer.After(1, function()
-			WorldQuestGroupFinder.HandleBlockClick(data)
+			WorldQuestGroupFinder.HandleBlockClick(data, true)
 		end)
 	end,
 	timeout = 0,
@@ -101,7 +101,7 @@ StaticPopupDialogs["WORLD_QUEST_ENTERED_PROMPT"] = {
 	button1 = L["WQGF_YES"],
 	button2 = L["WQGF_NO"],  
 	OnAccept = function(self, data)
-		WorldQuestGroupFinder.HandleBlockClick(data)
+		WorldQuestGroupFinder.HandleBlockClick(data, true)
 	end,
 	OnCancel = function()
 		WorldQuestGroupFinder.resetTmpWQ()
@@ -119,7 +119,7 @@ StaticPopupDialogs["WORLD_QUEST_ENTERED_SWITCH_PROMPT"] = {
 	OnAccept = function()
 		LeaveParty()
 		C_Timer.After(1, function(self, data)
-			WorldQuestGroupFinder.HandleBlockClick(data)
+			WorldQuestGroupFinder.HandleBlockClick(data, true)
 		end)
 	end,
 	OnCancel = function()

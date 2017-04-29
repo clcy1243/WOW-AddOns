@@ -1,4 +1,13 @@
-﻿0.24 (29/04/2017)
+﻿0.25 (29/04/2017)
+- The WQGF frame will now appear above other UI elements
+- The WQGF frame is now lockable, and its position is remembered between sessions
+- It is now possible to bind the WQGF button (Key Bindings > AddOns > WorldQuestGroupFinder). Submitted by vincentSDSH, thanks!
+- Raid world quests groups are now automatically converted to raids
+- Removed broken options
+- The world quest area detection option now shows the WQGF frame and no longer a prompt
+- Lots of bugfixes
+
+0.24 (29/04/2017)
 - Back in business.
 - Trying to comply with the new UI restrictions. Guaranteed with 99% less automation!
 - This is a very early prototype, expect bugs!

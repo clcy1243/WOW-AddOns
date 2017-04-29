@@ -4,71 +4,12 @@ local L = LibStub ("AceLocale-3.0"):GetLocale ("WorldQuestGroupFinder", true)
 
 WorldQuestGroupFinder = {}
 
+BINDING_HEADER_WQGF = ... -- text of addonname since no localized name seems to be available
+BINDING_NAME_WQGF_HARDWARE_EVENT = "WQGF Button Press"
+
 local RegisteredEvents = {}
 WorldQuestGroupFinderAddon:SetScript("OnEvent", function (self, event, ...) if (RegisteredEvents[event]) then return RegisteredEvents[event](self, event, ...) end end)
 
-local name = "WorldQuestGroupCurrentWQFrame"
-local currentWQFrame = CreateFrame("frame",name,UIParent)
-currentWQFrame.KickButton = CreateFrame("button", currentWQFrame:GetName().."KickButton", currentWQFrame)
-currentWQFrame.RefreshButton = CreateFrame("button", currentWQFrame:GetName().."RefreshButton", currentWQFrame)
-currentWQFrame.StopButton = CreateFrame("button", currentWQFrame:GetName().."StopButton", currentWQFrame)
-			
-local manualActionsFrame = CreateFrame("frame",name,UIParent)
-manualActionsFrame.NextButton = CreateFrame("button", manualActionsFrame:GetName().."NextButton", manualActionsFrame)
-manualActionsFrame.CloseButton = CreateFrame("button", manualActionsFrame:GetName().."CloseButton", manualActionsFrame)
-
-manualActionsFrame:SetFrameStrata("MEDIUM")
-manualActionsFrame:SetToplevel(false) 
-
-manualActionsFrame.currentText = manualActionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-manualActionsFrame.currentText:SetPoint("TOP", 0, -10)
-manualActionsFrame.currentText:SetText("Click the button to search for groups...")
-
-manualActionsFrame.secondLine = manualActionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-manualActionsFrame.secondLine:SetPoint("BOTTOM", 0, 10)
-manualActionsFrame.secondLine:SetText("")
-
-manualActionsFrame.NextButton:SetFlattensRenderLayers(true)
-manualActionsFrame.NextButton:SetPoint("BOTTOM", 0, 10)
-manualActionsFrame.NextButton:SetFrameLevel(10)
-manualActionsFrame.NextButton:RegisterForClicks("LeftButtonUp")
-manualActionsFrame.NextButton:SetSize(20, 20);
-manualActionsFrame.NextButton.Icon = manualActionsFrame.NextButton:CreateTexture(manualActionsFrame.NextButton:GetName().."Texture", "OVERLAY")
-manualActionsFrame.NextButton.Icon:SetSize(12, 12)
-manualActionsFrame.NextButton.Icon:SetPoint("CENTER", 0, 0)
-manualActionsFrame.NextButton.Icon:SetTexture([[Interface\AddOns\WorldQuestGroupFinder\img\autokick.blp]])
-				
-manualActionsFrame.CloseButton:SetFlattensRenderLayers(true)
-manualActionsFrame.CloseButton:SetPoint("TOPRIGHT", 0, 10)
-manualActionsFrame.CloseButton:SetFrameLevel(10)
-manualActionsFrame.CloseButton:RegisterForClicks("LeftButtonUp")
-manualActionsFrame.CloseButton:SetSize(20, 20);
-manualActionsFrame.CloseButton.Icon = manualActionsFrame.CloseButton:CreateTexture(manualActionsFrame.CloseButton:GetName().."Texture", "OVERLAY")
-manualActionsFrame.CloseButton.Icon:SetSize(18, 18)
-manualActionsFrame.CloseButton.Icon:SetPoint("CENTER", 0, 0)
-manualActionsFrame.CloseButton.Icon:SetTexture([[Interface\FriendsFrame\UI-Toast-CloseButton-Up.blp]])
-manualActionsFrame.CloseButton:SetScript("OnClick", function(self, button, down)
-	self:GetParent():Hide()
-end)
-			
-manualActionsFrame:SetMovable(true)
-manualActionsFrame:EnableMouse(true)
-manualActionsFrame:RegisterForDrag("LeftButton")
-manualActionsFrame:SetScript("OnDragStart", manualActionsFrame.StartMoving)
-manualActionsFrame:SetScript("OnDragStop", manualActionsFrame.StopMovingOrSizing)
-
-manualActionsFrame:SetPoint("CENTER"); manualActionsFrame:SetWidth(360); manualActionsFrame:SetHeight(55);
-	
-manualActionsFrame:SetFrameStrata("LOW")
-manualActionsFrame:SetFrameLevel(0)
-manualActionsFrame:SetBackdrop({
-  bgFile="Interface\\MINIMAP\\TooltipBackdrop-Background", 
-  edgeFile="Interface\\DialogFrame\\UI-DialogBox-Gold-Border", 
-  tile=false, edgeSize=16, --tileSize=16,
-  insets={left=5, right=5, top=5, bottom=5}
-})		
-	
-manualActionsFrame:Hide()	
 	
 local currentWQ = nil
 local tempWQ = nil
@@ -77,7 +18,8 @@ local recentlyTimedOut = false
 local recentlyInvited = false
 local upToDateGroupMembersCount = 0
 local currentlyApplying = false
-local INVITE_TIMEOUT_DELAY = 8
+local INVITE_TIMEOUT_DELAY = 6
+local NEW_AREA_TIMER_DELAY = 15
 local BROADCAST_PREFIX = "WQGF"
 local playerRealmType = "PVE"
 local pendingInvites = 0
@@ -85,6 +27,16 @@ local recentlyInvitedPlayers = false
 local autoInviteRunning = false
 local autoInviteQueued = false
 local currentApplyID = 0
+local pendingApplications = {}
+local blacklistedLeaders = {}
+local blacklistedRealmHoppers = {}
+local seenWorldQuests = {}
+local blacklistedQuests = {}
+local WorldBosses = {}
+local raidQuests = {}
+
+local manualActionsFrame = CreateFrame("frame", "WQGFManualActionsFrame", UIParent)
+local currentWQFrame = CreateFrame("frame", "WorldQuestGroupCurrentWQFrame", UIParent)
 
 local activityIDs = {
 	[1015] = 419,
@@ -95,230 +47,7 @@ local activityIDs = {
 	[1022] = 422, -- Create Helheim WQ in Stormheim
 	[1096] = 419 -- Create Eye of Azshara WQs in Aszuna
 }
-
-local blacklistedQuests = { 
-	[45379] = true, -- Treasure Master Iks'reeged  
-	[45988] = true, -- Ancient Bones  
-	[43943] = true, -- Withered Army Training
-	[42725] = true, -- Sharing the Wealth
-	[42880] = true, -- Meeting their Quota
-	[42178] = true, -- Shock Absorber
-	[42173] = true, -- Electrosnack  
-	[44011] = true, -- Lost Wisp
-	[43774] = true, -- Ley Race
-	[43764] = true, -- Ley Race
-	[43753] = true, -- Ley Race
-	[43325] = true, -- Ley Race
-	[43769] = true, -- Ley Race
-	[43772] = true, -- Enigmatic
-	[43767] = true, -- Enigmatic
-	[43756] = true, -- Enigmatic
-	[45032] = true, -- Like the Wind
-	[45046] = true, -- Like the Wind
-	[45047] = true, -- Like the Wind
-	[45048] = true, -- Like the Wind
-	[45049] = true, -- Like the Wind
-	[45068] = true, -- Barrels o' fun
-	[45069] = true, -- Barrels o' fun
-	[45070] = true, -- Barrels o' fun
-	[45071] = true, -- Barrels o' fun
-	[45072] = true, -- Barrels o' fun
-	[44786] = true, -- Midterm: Rune Aptitude
-	[41327] = true, -- Supplies Needed: Stormscales
-	[41345] = true, -- Supplies Needed: Stormscales
-	[41318] = true, -- Supplies Needed: Felslate
-	[41237] = true, -- Supplies Needed: Stonehide Leather
-	[41339] = true, -- Supplies Needed: Stonehide Leather
-	[41351] = true, -- Supplies Needed: Stonehide Leather
-	[41207] = true, -- Supplies Needed: Leystone
-	[41298] = true, -- Supplies Needed: Fjarnskaggl
-	[41315] = true, -- Supplies Needed: Leystone
-	[41316] = true, -- Supplies Needed: Leystone
-	[41317] = true, -- Supplies Needed: Leystone
-	[41303] = true, -- Supplies Needed: Starlight Roses
-	[41288] = true, -- Supplies Needed: Aethril
-	[44932] = true, -- The Nighthold: Ettin Your Foot In The Door
-	[44937] = true, -- The Nighthold: Focused Power
-	[44934] = true, -- The Nighthold: Creepy Crawlers
-	[44935] = true, -- The Nighthold: Gilded Guardian
-	[44938] = true, -- The Nighthold: Love Tap
-	[44939] = true, -- The Nighthold: Seeds of Destruction
-	[44936] = true, -- The Nighthold: Supply Routes
-	[44933] = true, -- The Nighthold: Wailing In The Night
-}
-
--- Quests you can complete while in a raid
-local raidQuests = { 
-	[42820] = true, -- DANGER: Aegir Wavecrusher
-	[41685] = true, -- DANGER: Ala'washte
-	[44113] = true, -- DANGER: Anachronos
-	[43091] = true, -- DANGER: Arcanor Prime
-	[44118] = true, -- DANGER: Auditor Esiel
-	[44121] = true, -- DANGER: Az'jatar
-	[44189] = true, -- DANGER: Bestrix
-	[42861] = true, -- DANGER: Boulderfall, the Eroded
-	[42864] = true, -- DANGER: Captain Dargun
-	[43121] = true, -- DANGER: Chief Treasurer Jabrill
-	[41697] = true, -- DANGER: Colerian, Alteria, and Selenyi
-	[43175] = true, -- DANGER: Deepclaw
-	[41695] = true, -- DANGER: Defilia
-	[42785] = true, -- DANGER: Den Mother Ylva
-	[41093] = true, -- DANGER: Durguth
-	[43346] = true, -- DANGER: Ealdis
-	[43059] = true, -- DANGER: Fjordun
-	[42806] = true, -- DANGER: Fjorlag, the Grave's Chill
-	[43345] = true, -- DANGER: Harbinger of Screams
-	[43079] = true, -- DANGER: Immolian
-	[44190] = true, -- DANGER: Jade Darkhaven
-	[44191] = true, -- DANGER: Karthax
-	[43798] = true, -- DANGER: Kosumoth the Hungering
-	[42964] = true, -- DANGER: Lagertha
-	[44192] = true, -- DANGER: Lysanis Shadesoul
-	[43152] = true, -- DANGER: Lytheron
-	[44114] = true, -- DANGER: Magistrix Vilessa
-	[42927] = true, -- DANGER: Malisandra
-	[43098] = true, -- DANGER: Marblub the Massive
-	[41696] = true, -- DANGER: Mawat'aki
-	[43027] = true, -- DANGER: Mortiferous
-	[43333] = true, -- DANGER: Nylaathria the Forgotten
-	[41703] = true, -- DANGER: Ormagrogg
-	[41816] = true, -- DANGER: Oubdob da Smasher
-	[43347] = true, -- DANGER: Rabxach
-	[42963] = true, -- DANGER: Rulf Bonesnapper
-	[42991] = true, -- DANGER: Runeseer Sigvid
-	[42797] = true, -- DANGER: Scythemaster Cil'raman
-	[44193] = true, -- DANGER: Sea King Tidross
-	[41700] = true, -- DANGER: Shalas'aman
-	[44122] = true, -- DANGER: Sorallus
-	[42953] = true, -- DANGER: Soulbinder Halldora
-	[43072] = true, -- DANGER: The Whisperer
-	[44194] = true, -- DANGER: Torrentius
-	[43040] = true, -- DANGER: Valakar the Thirsty
-	[44119] = true, -- DANGER: Volshax, Breaker of Will
-	[43101] = true, -- DANGER: Withdoctor Grgl-Brgl
-	[41779] = true, -- DANGER: Xavrix
-	[44017] = true, -- WANTED: Apothecary Faldren
-	[44032] = true, -- WANTED: Apothecary Faldren
-	[42636] = true, -- WANTED: Arcanist Shal'iman
-	[43605] = true, -- WANTED: Arcanist Shal'iman
-	[42620] = true, -- WANTED: Arcavellus
-	[43606] = true, -- WANTED: Arcavellus
-	[41824] = true, -- WANTED: Arru
-	[44289] = true, -- WANTED: Arru
-	[44301] = true, -- WANTED: Bahagar
-	[44305] = true, -- WANTED: Bahagar
-	[41836] = true, -- WANTED: Bodash the Hoarder
-	[43616] = true, -- WANTED: Bodash the Hoarder
-	[41828] = true, -- WANTED: Bristlemaul
-	[44290] = true, -- WANTED: Bristlemaul
-	[43426] = true, -- WANTED: Brogozog
-	[43607] = true, -- WANTED: Brogozog
-	[42796] = true, -- WANTED: Broodmother Shu'malis
-	[44016] = true, -- WANTED: Cadraeus
-	[44031] = true, -- WANTED: Cadraeus
-	[43430] = true, -- WANTED: Captain Volo'ren
-	[43608] = true, -- WANTED: Captain Volo'ren
-	[41826] = true, -- WANTED: Crawshuk the Hungry
-	[44291] = true, -- WANTED: Crawshuk the Hungry
-	[44299] = true, -- WANTED: Darkshade
-	[44304] = true, -- WANTED: Darkshade
-	[43455] = true, -- WANTED: Devouring Darkness
-	[43617] = true, -- WANTED: Devouring Darkness
-	[43428] = true, -- WANTED: Doomlord Kazrok
-	[43609] = true, -- WANTED: Doomlord Kazrok
-	[44298] = true, -- WANTED: Dreadbog
-	[44303] = true, -- WANTED: Dreadbog
-	[43454] = true, -- WANTED: Egyl the Enduring
-	[43620] = true, -- WANTED: Egyl the Enduring
-	[43434] = true, -- WANTED: Fathnyr
-	[43621] = true, -- WANTED: Fathnyr
-	[43436] = true, -- WANTED: Glimar Ironfist
-	[43622] = true, -- WANTED: Glimar Ironfist
-	[44030] = true, -- WANTED: Guardian Thor'el
-	[44013] = true, -- WANTED: Guardian Thor'el
-	[41819] = true, -- WANTED: Gurbog da Basher
-	[43618] = true, -- WANTED: Gurbog da Basher
-	[43453] = true, -- WANTED: Hannval the Butcher
-	[43623] = true, -- WANTED: Hannval the Butcher
-	[44021] = true, -- WANTED: Hertha Grimdottir
-	[44029] = true, -- WANTED: Hertha Grimdottir
-	[43427] = true, -- WANTED: Infernal Lord
-	[43610] = true, -- WANTED: Infernal Lord
-	[43611] = true, -- WANTED: Inquisitor Tivos
-	[42631] = true, -- WANTED: Inquisitor Tivos
-	[43452] = true, -- WANTED: Isel the Hammer
-	[43624] = true, -- WANTED: Isel the Hammer
-	[43460] = true, -- WANTED: Kiranys Duskwhisper
-	[43629] = true, -- WANTED: Kiranys Duskwhisper
-	[44028] = true, -- WANTED: Lieutenant Strathmar
-	[44019] = true, -- WANTED: Lieutenant Strathmar
-	[44018] = true, -- WANTED: Magister Phaedris
-	[44027] = true, -- WANTED: Magister Phaedris
-	[41818] = true, -- WANTED: Majestic Elderhorn
-	[44292] = true, -- WANTED: Majestic Elderhorn
-	[44015] = true, -- WANTED: Mal'Dreth the Corruptor
-	[44026] = true, -- WANTED: Mal'Dreth the Corruptor
-	[43438] = true, -- WANTED: Nameless King
-	[43625] = true, -- WANTED: Nameless King
-	[43432] = true, -- WANTED: Normantis the Deposed
-	[43612] = true, -- WANTED: Normantis the Deposed
-	[41686] = true, -- WANTED: Olokk the Shipbreaker
-	[44010] = true, -- WANTED: Oreth the Vile
-	[43458] = true, -- WANTED: Perrexx
-	[43630] = true, -- WANTED: Perrexx
-	[42795] = true, -- WANTED: Sanaar
-	[44300] = true, -- WANTED: Seersei
-	[44302] = true, -- WANTED: Seersei
-	[41844] = true, -- WANTED: Sekhan
-	[44294] = true, -- WANTED: Sekhan
-	[44022] = true, -- WANTED: Shal'an
-	[41821] = true, -- WANTED: Shara Felbreath
-	[43619] = true, -- WANTED: Shara Felbreath
-	[44012] = true, -- WANTED: Siegemaster Aedrin
-	[44023] = true, -- WANTED: Siegemaster Aedrin
-	[43456] = true, -- WANTED: Skul'vrax
-	[43631] = true, -- WANTED: Skul'vrax
-	[41838] = true, -- WANTED: Slumber
-	[44293] = true, -- WANTED: Slumber
-	[43429] = true, -- WANTED: Syphonus
-	[43613] = true, -- WANTED: Syphonus
-	[43437] = true, -- WANTED: Thane Irglov
-	[43626] = true, -- WANTED: Thane Irglov
-	[43457] = true, -- WANTED: Theryssia
-	[43632] = true, -- WANTED: Theryssia
-	[43459] = true, -- WANTED: Thondrax
-	[43633] = true, -- WANTED: Thondrax
-	[43450] = true, -- WANTED: Tiptog the Lost
-	[43627] = true, -- WANTED: Tiptog the Lost
-	[43451] = true, -- WANTED: Urgev the Flayer
-	[43628] = true, -- WANTED: Urgev the Flayer
-	[42633] = true, -- WANTED: Vorthax
-	[43614] = true, -- WANTED: Vorthax
-	[43431] = true, -- WANTED: Warbringer Mox'na
-}
-
-local WorldBosses = {
-	[46945] = true, -- Si'vash
-	[47061] = true, -- Apocron
-	[46948] = true, -- Malificus
-	[42270] = true, -- Scourge of the Skies
-	[44287] = true, -- DEADLY: Withered J'im
-	[43192] = true, -- Terror of the Deep
-	[43448] = true, -- The Frozen King
-	[43193] = true, -- Calamitous Intent
-	[42779] = true, -- The Sleeping Corruption
-	[42269] = true, -- The Soultakers
-	[42819] = true, -- Pocket Wizard
-	[42270] = true, -- Scourge of the Skies
-	[43512] = true, -- Ana-Mouz
-	[43985] = true -- A Dark Tide
-}
-
-local pendingApplications = {}
-local blacklistedLeaders = {}
-local blacklistedRealmHoppers = {}
-local seenWorldQuests = {}
-
+	
 local function chsize(char)
     if not char then
         return 0
@@ -341,6 +70,8 @@ function RegisteredEvents:ADDON_LOADED(event, addon, ...)
 			WorldQuestGroupFinder.handleCMD(msg, editbox)	
 		end
 		setmetatable(WorldQuestGroupFinderConfig, {__index = WorldQuestGroupFinderConf.DefaultConfig})
+		WorldQuestGroupFinder.InitBlacklists()
+		WorldQuestGroupFinder.InitFrames()
 	end
 end
 
@@ -486,10 +217,10 @@ function RegisteredEvents:LFG_LIST_APPLICATION_STATUS_UPDATED(event, application
 			if (author) then
 				blacklistedLeaders[author] = true
 			end
-			-- If all applications have been declined, restart process. A new group will be created if nothing else is found.
-			if ((C_LFGList.GetNumApplications() - 1 == 0) and not (recentlyInvited or currentWQ)) then
-				WorldQuestGroupFinder.InitSearchProcess(pendingApplications[applicationID], true)
-			end
+			---- If all applications have been declined, restart process. A new group will be created if nothing else is found.
+			--if ((C_LFGList.GetNumApplications() - 1 == 0) and not (recentlyInvited or currentWQ)) then
+			--	WorldQuestGroupFinder.InitSearchProcess(pendingApplications[applicationID], true)
+			--end
 			table.remove(pendingApplications, applicationID)
 		end
 		if (status == "failed" or status == "timedout") then
@@ -595,8 +326,6 @@ function CheckDistances()
 							C_Timer.After(1, CheckDistances)
 						end
 					end
-				else
-					WorldQuestGroupFinder.dprint(string.format("WARNING! Unit name of %s mismatch: %s != %s", GetUnitID(i), unitName, GetUnitName(GetUnitID(i), true)))
 				end						
 			end
 		end
@@ -624,6 +353,9 @@ function RegisteredEvents:GROUP_ROSTER_UPDATE(event)
 			if (IsInRaid() and GetNumGroupMembers() <= MAX_PARTY_MEMBERS+1 and not raidQuests[currentWQ]) then
 				ConvertToParty()
 			end			
+			if raidQuests[currentWQ] then
+				ConvertToRaid()
+			end
 			-- Avoid raid mode
 			recentlyInvitedPlayers = true
 		end
@@ -715,32 +447,22 @@ function WorldQuestGroupFinder.SetHooks()
 			if (not WorldQuestGroupFinder.IsAlreadyQueued(false) and not blacklistedQuests[popupWQ] and not WorldBosses[popupWQ]) then
 				-- Ignore pet battle and dungeon quests
 				if (worldQuestType ~= LE_QUEST_TAG_TYPE_PET_BATTLE and worldQuestType ~= LE_QUEST_TAG_TYPE_DUNGEON and worldQuestType ~= LE_QUEST_TAG_TYPE_PROFESSION) then
-					if (not IsInGroup() and WorldQuestGroupFinderConf.GetConfigValue("askZoningAuto")) then
+					if not currentlyApplying then
+						-- Check if the world quest zone has already been entered during this session
 						if not seenWorldQuests[questID] then
-							WorldQuestGroupFinder.InitSearchProcess(popupWQ)
-							seenWorldQuests[questID] = true
+							-- No current WQ. 
+							if (currentWQ == nil) then
+								seenWorldQuests[questID] = true
+								WorldQuestGroupFinder.InitSearchProcess(questID, false, false, true)
+								NEW_AREA_TIMER = C_Timer.NewTicker(NEW_AREA_TIMER_DELAY, function() 
+									manualActionsFrame:Hide()
+								end, 1)
+							end
+						else 
+							WorldQuestGroupFinder.dprint(string.format("World quest #%d zone has already been visited. Dialog will not be shown.", questID))
 						end
 					else
-						if not currentlyApplying then
-							-- Check if the world quest zone has already been entered during this session
-							if not seenWorldQuests[questID] then
-								-- No current WQ. 
-								if (currentWQ == nil) then
-									seenWorldQuests[questID] = true
-									WorldQuestGroupFinder.ShowDialog ("WORLD_QUEST_ENTERED_PROMPT", title)
-								-- Already doing another WQ
-								elseif (currentWQ ~= nil and popupWQ ~= currentWQ) then
-									if not WorldQuestGroupFinderConf.GetConfigValue("askZoningBusy") then
-										WorldQuestGroupFinder.FlagWQAsSeen(questID)
-										WorldQuestGroupFinder.ShowDialog ("WORLD_QUEST_ENTERED_SWITCH_PROMPT", title)
-									end
-								end
-							else 
-								WorldQuestGroupFinder.dprint(string.format("World quest #%d zone has already been visited. Dialog will not be shown.", questID))
-							end
-						else
-							WorldQuestGroupFinder.dprint(string.format("Already applying for WQ #%d. Not showing dialog", questID))
-						end
+						WorldQuestGroupFinder.dprint(string.format("Already applying for WQ #%d. Not showing dialog", questID))
 					end
 				else 
 					WorldQuestGroupFinder.dprint(string.format("World quest #%d zone entered. WQ type is not supported. Dialog will not be shown.", questID))
@@ -806,12 +528,14 @@ function WorldQuestGroupFinder.IsAlreadyQueued(verbose)
 	return false
 end
 
-function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate) 
-	manualActionsFrame:Show()
-	manualActionsFrame.NextButton:Show()
-	manualActionsFrame.currentText:SetText("Click the button to search for groups...")
-	manualActionsFrame.secondLine:SetText("")
-	WorldQuestGroupFinder.AssignButtonTextures(manualActionsFrame.NextButton)
+function WorldQuestGroupCurrentWQFrameNextButton__OnClick()
+	if manualActionsFrame:IsShown() then
+		local pf_NextButton_OnClick = manualActionsFrame.NextButton:GetScript("OnClick")
+		pf_NextButton_OnClick()
+	end
+end
+
+function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate, wait) 
 	WorldQuestGroupFinder.dprint(string.format("Looking for a group for a world quest. ID: %d", questID))
 	local title, tagID, tagName, worldQuestType, rarity, elite, tradeskillLineIndex, activityID, categoryID, filters
 	if (QuestUtils_IsQuestWorldQuest(questID)) then
@@ -828,6 +552,12 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate)
 		--	return false
 		--end
 	end
+	manualActionsFrame:Show()
+	manualActionsFrame.NextButton:Show()
+	manualActionsFrame.currentText:SetText("Click the button to search for groups...")
+	manualActionsFrame.secondLine:SetText("")
+	WorldQuestGroupFinder.AssignButtonTextures(manualActionsFrame.NextButton)
+	manualActionsFrame.questTitle:SetText(title)
 	
 	local foundZone = false
 	local foundGroup = false
@@ -882,20 +612,6 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate)
 			return true
 		else
 			tempWQ = questID
-			-- Clear existing applications
-			if (C_LFGList.GetNumApplications() > 0) then
-				for k,v in pairs( C_LFGList.GetApplications() ) do
-					-- If this is retry and some applications didnt get confirmed, put group in BL
-					if (retry) then
-						local _,_,_,_,_,_,_,_,_,_,_,_,groupAuthor,_ = C_LFGList.GetSearchResultInfo(v)
-						pendingApplications = {}
-						if (groupAuthor) then
-							blacklistedLeaders[groupAuthor] = true
-						end
-					end
-					C_LFGList.CancelApplication(v)
-				end
-			end
 			if (raidQuests[questID]) then
 				WorldQuestGroupFinder.dprint("This WQ can be completed in a raid")
 			end
@@ -907,7 +623,19 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate)
 			else
 				selectedLanguages = C_LFGList.GetLanguageSearchFilter()
 			end		
-			C_LFGList.Search(1, title, 0, 4, selectedLanguages)
+			if (wait) then
+				manualActionsFrame.currentText:SetText(L["WQGF_FRAME_INIT_SEARCH"])
+				manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
+					if (NEW_AREA_TIMER) then NEW_AREA_TIMER:Cancel() end
+					C_LFGList.Search(1, title, 0, 4, selectedLanguages)
+					WorldQuestGroupFinder.InitSearchProcess(questID, true)
+				end)
+				return true
+			end
+			
+			if (not retry) then
+				C_LFGList.Search(1, title, 0, 4, selectedLanguages)
+			end
 			
 			manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
 				local applicationsCount = 0
@@ -973,9 +701,9 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate)
 						end
 					end
 					if (arrayID == 0) then
-						manualActionsFrame.currentText:SetText("No groups found, click the button to create a new group.")
+						manualActionsFrame.currentText:SetText(L["WQGF_FRAME_NO_GROUPS"])
 					else
-						manualActionsFrame.currentText:SetText("Found " .. applicationsCount .. " group(s). Click the button to apply.")
+						manualActionsFrame.currentText:SetText(string.format(L["WQGF_FRAME_FOUND_GROUPS"], applicationsCount))
 					end
 					manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
 						if (arrayID == 0) then			
@@ -991,20 +719,21 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate)
 								C_LFGList.ApplyToGroup(groupIDs[currentApplyID], "WorldQuestGroupFinderUser-"..questID, canBeTank, canBeHealer, canBeDamager)
 								currentApplyID = currentApplyID + 1
 								if (currentApplyID < applicationsCount) then
-									manualActionsFrame.currentText:SetText(applicationsCount - currentApplyID .. " group(s) left, keep clicking!")
+									manualActionsFrame.currentText:SetText(string.format(L["WQGF_FRAME_GROUPS_LEFT"], applicationsCount - currentApplyID))
 								else
-									manualActionsFrame.currentText:SetText("You have applied to all the groups.")
-									manualActionsFrame.secondLine:SetText("You'll be able to create a new group if you get no replies.")
+									manualActionsFrame.currentText:SetText(L["WQGF_FRAME_APPLY_DONE"])
+									manualActionsFrame.secondLine:SetText(L["WQGF_FRAME_CREATE_WAIT"])
 									manualActionsFrame.NextButton:Hide()
 									manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
-										if (C_LFGList.GetNumApplications()) then 
-											C_LFGList.RemoveListing()
+										if (C_LFGList.GetNumApplications() > 0) then 
+											manualActionsFrame.currentText:SetText(string.format(L["WQGF_FRAME_CLICK_TWICE"], C_LFGList.GetNumApplications()+1))
+											WorldQuestGroupFinder.ClearOneApplication()
 										else 
 											WorldQuestGroupFinder.CreateGroup(questID, activityID, title)
 										end
 									end)
 									TIMEOUT_TIMER = C_Timer.NewTicker(INVITE_TIMEOUT_DELAY, function() 
-									manualActionsFrame.currentText:SetText("Click the button twice to create a new group.")
+										manualActionsFrame.currentText:SetText(string.format(L["WQGF_FRAME_CLICK_TWICE"], C_LFGList.GetNumApplications()+1))
 										manualActionsFrame.secondLine:SetText("")
 										manualActionsFrame.NextButton:Show()
 										WorldQuestGroupFinder.dprint(string.format("The timeout timer has ended (%d seconds)", INVITE_TIMEOUT_DELAY))
@@ -1034,6 +763,24 @@ function WorldQuestGroupFinder.CreateGroup(questID, activityID, title)
 		WorldQuestGroupFinder.dprint(string.format("Failed group data: activityID: %d", activityID))
 	end
 	manualActionsFrame:Hide()
+end
+
+function WorldQuestGroupFinder.ClearOneApplication()
+	if (C_LFGList.GetNumApplications() > 0) then
+		for k,v in pairs( C_LFGList.GetApplications() ) do
+			-- If this is retry and some applications didnt get confirmed, put group in BL
+			if (retry) then
+				local _,_,_,_,_,_,_,_,_,_,_,_,groupAuthor,_ = C_LFGList.GetSearchResultInfo(v)
+				pendingApplications = {}
+				if (groupAuthor) then
+					blacklistedLeaders[groupAuthor] = true
+				end
+			end
+			WorldQuestGroupFinder.dprint(string.format("Clearing application: %d", v))
+			C_LFGList.CancelApplication(v)
+			return true
+		end
+	end
 end
 
 function WorldQuestGroupFinder.HandleWorldQuestStart(questID)
@@ -1256,7 +1003,7 @@ function WorldQuestGroupFinder.HandleCustomAutoInvite()
 	end
 end	
 	
-function WorldQuestGroupFinder.HandleBlockClick(wqID, forceCreate)	
+function WorldQuestGroupFinder.HandleBlockClick(wqID, forceCreate, wait)	
 	if (tempWQ ~= wqID or (C_LFGList.GetNumApplications() == 0 and not C_LFGList.GetActiveEntryInfo())) then
 		if WorldBosses[wqID] then
 			WorldQuestGroupFinder.prefixedPrint(L["WQGF_DROPPED_WB_SUPPORT"])
@@ -1279,7 +1026,7 @@ function WorldQuestGroupFinder.HandleBlockClick(wqID, forceCreate)
 					-- Hide join WQ prompts
 					WorldQuestGroupFinder.HideDialog ("WORLD_QUEST_ENTERED_PROMPT")
 					WorldQuestGroupFinder.HideDialog ("WORLD_QUEST_ENTERED_SWITCH_PROMPT")
-					WorldQuestGroupFinder.InitSearchProcess(wqID, false, forceCreate)
+					WorldQuestGroupFinder.InitSearchProcess(wqID, false, forceCreate, wait)
 				else
 					WorldQuestGroupFinder.prefixedPrint(L["WQGF_ALREADY_IS_GROUP_FOR_WQ"])
 				end
@@ -1495,8 +1242,10 @@ function WorldQuestGroupFinder.RefreshButton_OnClick()
 	end
 	local currentWQtmp = currentWQ
 	LeaveParty()
-	tempWQ = currentWQ
-	WorldQuestGroupFinder.InitSearchProcess(currentWQtmp)
+	C_Timer.After(2, function()
+		tempWQ = currentWQ
+		WorldQuestGroupFinder.InitSearchProcess(currentWQtmp, false, false, true)
+	end)
 end
 
 function WorldQuestGroupFinder.StopButton_OnClick()
@@ -1661,4 +1410,333 @@ function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
   return count
+end
+
+function WorldQuestGroupFinder.ToggleFrameLock()
+	if (manualActionsFrame:IsMouseEnabled()) then
+		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Unlocked-Up")
+		manualActionsFrame:EnableMouse(false)
+		WorldQuestGroupFinderConf.SetConfigValue("frameUnlocked", false)
+	else
+		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Locked-Up")
+		manualActionsFrame:EnableMouse(true)
+		WorldQuestGroupFinderConf.SetConfigValue("frameUnlocked", true)
+	end
+end
+
+function WorldQuestGroupFinder.InitFrames()
+	currentWQFrame.KickButton = CreateFrame("button", currentWQFrame:GetName().."KickButton", currentWQFrame)
+	currentWQFrame.RefreshButton = CreateFrame("button", currentWQFrame:GetName().."RefreshButton", currentWQFrame)
+	currentWQFrame.StopButton = CreateFrame("button", currentWQFrame:GetName().."StopButton", currentWQFrame)
+				
+	manualActionsFrame.NextButton = CreateFrame("button", manualActionsFrame:GetName().."NextButton", manualActionsFrame)
+	manualActionsFrame.CloseButton = CreateFrame("button", manualActionsFrame:GetName().."CloseButton", manualActionsFrame)
+	manualActionsFrame.LockButton = CreateFrame("button", manualActionsFrame:GetName().."LockButton", manualActionsFrame)
+	manualActionsFrame.TitleFrame = CreateFrame("frame",  manualActionsFrame:GetName().."TitleFrame", manualActionsFrame)
+
+	manualActionsFrame:SetFrameStrata("DIALOG")
+	manualActionsFrame:SetToplevel(false) 
+	manualActionsFrame:SetClampedToScreen(true)
+	manualActionsFrame:RegisterForDrag("LeftButton")
+	manualActionsFrame:SetMovable(true)
+	manualActionsFrame:SetUserPlaced(true)
+	manualActionsFrame:EnableMouse(WorldQuestGroupFinderConf.GetConfigValue("frameUnlocked"))
+	manualActionsFrame:SetScript("OnDragStart", manualActionsFrame.StartMoving)
+	manualActionsFrame:SetScript("OnDragStop", manualActionsFrame.StopMovingOrSizing)
+	manualActionsFrame:SetPoint("CENTER", 0, 60); 
+	manualActionsFrame:SetWidth(370); 
+	manualActionsFrame:SetHeight(100);
+	manualActionsFrame:SetFrameLevel(0)
+	manualActionsFrame:SetBackdrop({
+	  bgFile="Interface\\MINIMAP\\TooltipBackdrop-Background", 
+	  edgeFile="Interface\\DialogFrame\\UI-DialogBox-Gold-Border", 
+	  tile=false, edgeSize=16, --tileSize=16,
+	  insets={left=5, right=5, top=5, bottom=5}
+	})		
+
+	manualActionsFrame.TitleFrame:SetPoint("TOP", 0, 0); 
+	manualActionsFrame.TitleFrame:SetWidth(370); 
+	manualActionsFrame.TitleFrame:SetHeight(30);
+	manualActionsFrame.TitleFrame:SetBackdrop({
+	  bgFile="Interface\\MINIMAP\\TooltipBackdrop-Background", 
+	  edgeFile="Interface\\DialogFrame\\UI-DialogBox-Gold-Border", 
+	  tile=false, edgeSize=16, --tileSize=16,
+	  insets={left=5, right=5, top=5, bottom=5}
+	})		
+
+	manualActionsFrame.TitleFrame.TitleText = manualActionsFrame.TitleFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	manualActionsFrame.TitleFrame.TitleText:SetPoint("CENTER", 0, 0)
+	manualActionsFrame.TitleFrame.TitleText:SetText("World Quest Group Finder v"..GetAddOnMetadata("WorldQuestGroupFinder", "Version"))
+
+	manualActionsFrame.questTitle = manualActionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	manualActionsFrame.questTitle:SetPoint("TOP", 0, -35)
+	manualActionsFrame.questTitle:SetText("")
+
+	manualActionsFrame.currentText = manualActionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	manualActionsFrame.currentText:SetPoint("TOP", 0, -53)
+	manualActionsFrame.currentText:SetText("Click the button to search for groups...")
+	manualActionsFrame.currentText:SetTextColor(0.85, 0.85, 0.85, 1)
+
+	manualActionsFrame.secondLine = manualActionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	manualActionsFrame.secondLine:SetPoint("BOTTOM", 0, 15)
+	manualActionsFrame.secondLine:SetText("")
+	manualActionsFrame.secondLine:SetTextColor(0.85, 0.85, 0.85, 1)
+
+	manualActionsFrame.NextButton:SetFlattensRenderLayers(true)
+	manualActionsFrame.NextButton:SetPoint("BOTTOM", 0, 10)
+	manualActionsFrame.NextButton:SetFrameLevel(10)
+	manualActionsFrame.NextButton:RegisterForClicks("LeftButtonUp")
+	manualActionsFrame.NextButton:SetSize(20, 20);
+	manualActionsFrame.NextButton.Icon = manualActionsFrame.NextButton:CreateTexture(manualActionsFrame.NextButton:GetName().."Texture", "OVERLAY")
+	manualActionsFrame.NextButton.Icon:SetSize(12, 12)
+	manualActionsFrame.NextButton.Icon:SetPoint("CENTER", 0, 0)
+	manualActionsFrame.NextButton.Icon:SetTexture([[Interface\AddOns\WorldQuestGroupFinder\img\autokick.blp]])
+			
+	manualActionsFrame.CloseButton:ClearAllPoints()
+	manualActionsFrame.CloseButton:SetPoint("TOPRIGHT", 0, 0)
+	manualActionsFrame.CloseButton:SetSize(24, 24)
+	manualActionsFrame.CloseButton:SetScale(1.25)
+	manualActionsFrame.CloseButton:SetNormalTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
+	manualActionsFrame.CloseButton:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
+	manualActionsFrame.CloseButton:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")			
+	manualActionsFrame.CloseButton:SetScript("OnClick", function(self, button, down)
+		self:GetParent():Hide()
+	end)
+		
+	manualActionsFrame.LockButton:ClearAllPoints()
+	manualActionsFrame.LockButton:SetPoint("TOPLEFT", 0, 0)
+	manualActionsFrame.LockButton:SetSize(24, 24)
+	manualActionsFrame.LockButton:SetScale(1.25)
+	manualActionsFrame.LockButton:SetPushedTexture("Interface\\Buttons\\LockButton-Unlocked-Down")
+	manualActionsFrame.LockButton:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")			
+	manualActionsFrame.LockButton:SetScript("OnClick", function(self, button, down)
+		WorldQuestGroupFinder.ToggleFrameLock()
+	end)
+	if (manualActionsFrame:IsMouseEnabled()) then
+		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Locked-Up")
+	else
+		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Unlocked-Up")
+	end
+		
+	manualActionsFrame:Hide()	
+end
+
+function WorldQuestGroupFinder.InitBlacklists()
+	blacklistedQuests = { 
+		[45379] = true, -- Treasure Master Iks'reeged  
+		[45988] = true, -- Ancient Bones  
+		[43943] = true, -- Withered Army Training
+		[42725] = true, -- Sharing the Wealth
+		[42880] = true, -- Meeting their Quota
+		[42178] = true, -- Shock Absorber
+		[42173] = true, -- Electrosnack  
+		[44011] = true, -- Lost Wisp
+		[43774] = true, -- Ley Race
+		[43764] = true, -- Ley Race
+		[43753] = true, -- Ley Race
+		[43325] = true, -- Ley Race
+		[43769] = true, -- Ley Race
+		[43772] = true, -- Enigmatic
+		[43767] = true, -- Enigmatic
+		[43756] = true, -- Enigmatic
+		[45032] = true, -- Like the Wind
+		[45046] = true, -- Like the Wind
+		[45047] = true, -- Like the Wind
+		[45048] = true, -- Like the Wind
+		[45049] = true, -- Like the Wind
+		[45068] = true, -- Barrels o' fun
+		[45069] = true, -- Barrels o' fun
+		[45070] = true, -- Barrels o' fun
+		[45071] = true, -- Barrels o' fun
+		[45072] = true, -- Barrels o' fun
+		[44786] = true, -- Midterm: Rune Aptitude
+		[41327] = true, -- Supplies Needed: Stormscales
+		[41345] = true, -- Supplies Needed: Stormscales
+		[41318] = true, -- Supplies Needed: Felslate
+		[41237] = true, -- Supplies Needed: Stonehide Leather
+		[41339] = true, -- Supplies Needed: Stonehide Leather
+		[41351] = true, -- Supplies Needed: Stonehide Leather
+		[41207] = true, -- Supplies Needed: Leystone
+		[41298] = true, -- Supplies Needed: Fjarnskaggl
+		[41315] = true, -- Supplies Needed: Leystone
+		[41316] = true, -- Supplies Needed: Leystone
+		[41317] = true, -- Supplies Needed: Leystone
+		[41303] = true, -- Supplies Needed: Starlight Roses
+		[41288] = true, -- Supplies Needed: Aethril
+		[44932] = true, -- The Nighthold: Ettin Your Foot In The Door
+		[44937] = true, -- The Nighthold: Focused Power
+		[44934] = true, -- The Nighthold: Creepy Crawlers
+		[44935] = true, -- The Nighthold: Gilded Guardian
+		[44938] = true, -- The Nighthold: Love Tap
+		[44939] = true, -- The Nighthold: Seeds of Destruction
+		[44936] = true, -- The Nighthold: Supply Routes
+		[44933] = true, -- The Nighthold: Wailing In The Night
+	}
+
+	-- Quests you can complete while in a raid
+	raidQuests = { 
+		[42820] = true, -- DANGER: Aegir Wavecrusher
+		[41685] = true, -- DANGER: Ala'washte
+		[44113] = true, -- DANGER: Anachronos
+		[43091] = true, -- DANGER: Arcanor Prime
+		[44118] = true, -- DANGER: Auditor Esiel
+		[44121] = true, -- DANGER: Az'jatar
+		[44189] = true, -- DANGER: Bestrix
+		[42861] = true, -- DANGER: Boulderfall, the Eroded
+		[42864] = true, -- DANGER: Captain Dargun
+		[43121] = true, -- DANGER: Chief Treasurer Jabrill
+		[41697] = true, -- DANGER: Colerian, Alteria, and Selenyi
+		[43175] = true, -- DANGER: Deepclaw
+		[41695] = true, -- DANGER: Defilia
+		[42785] = true, -- DANGER: Den Mother Ylva
+		[41093] = true, -- DANGER: Durguth
+		[43346] = true, -- DANGER: Ealdis
+		[43059] = true, -- DANGER: Fjordun
+		[42806] = true, -- DANGER: Fjorlag, the Grave's Chill
+		[43345] = true, -- DANGER: Harbinger of Screams
+		[43079] = true, -- DANGER: Immolian
+		[44190] = true, -- DANGER: Jade Darkhaven
+		[44191] = true, -- DANGER: Karthax
+		[43798] = true, -- DANGER: Kosumoth the Hungering
+		[42964] = true, -- DANGER: Lagertha
+		[44192] = true, -- DANGER: Lysanis Shadesoul
+		[43152] = true, -- DANGER: Lytheron
+		[44114] = true, -- DANGER: Magistrix Vilessa
+		[42927] = true, -- DANGER: Malisandra
+		[43098] = true, -- DANGER: Marblub the Massive
+		[41696] = true, -- DANGER: Mawat'aki
+		[43027] = true, -- DANGER: Mortiferous
+		[43333] = true, -- DANGER: Nylaathria the Forgotten
+		[41703] = true, -- DANGER: Ormagrogg
+		[41816] = true, -- DANGER: Oubdob da Smasher
+		[43347] = true, -- DANGER: Rabxach
+		[42963] = true, -- DANGER: Rulf Bonesnapper
+		[42991] = true, -- DANGER: Runeseer Sigvid
+		[42797] = true, -- DANGER: Scythemaster Cil'raman
+		[44193] = true, -- DANGER: Sea King Tidross
+		[41700] = true, -- DANGER: Shalas'aman
+		[44122] = true, -- DANGER: Sorallus
+		[42953] = true, -- DANGER: Soulbinder Halldora
+		[43072] = true, -- DANGER: The Whisperer
+		[44194] = true, -- DANGER: Torrentius
+		[43040] = true, -- DANGER: Valakar the Thirsty
+		[44119] = true, -- DANGER: Volshax, Breaker of Will
+		[43101] = true, -- DANGER: Withdoctor Grgl-Brgl
+		[41779] = true, -- DANGER: Xavrix
+		[44017] = true, -- WANTED: Apothecary Faldren
+		[44032] = true, -- WANTED: Apothecary Faldren
+		[42636] = true, -- WANTED: Arcanist Shal'iman
+		[43605] = true, -- WANTED: Arcanist Shal'iman
+		[42620] = true, -- WANTED: Arcavellus
+		[43606] = true, -- WANTED: Arcavellus
+		[41824] = true, -- WANTED: Arru
+		[44289] = true, -- WANTED: Arru
+		[44301] = true, -- WANTED: Bahagar
+		[44305] = true, -- WANTED: Bahagar
+		[41836] = true, -- WANTED: Bodash the Hoarder
+		[43616] = true, -- WANTED: Bodash the Hoarder
+		[41828] = true, -- WANTED: Bristlemaul
+		[44290] = true, -- WANTED: Bristlemaul
+		[43426] = true, -- WANTED: Brogozog
+		[43607] = true, -- WANTED: Brogozog
+		[42796] = true, -- WANTED: Broodmother Shu'malis
+		[44016] = true, -- WANTED: Cadraeus
+		[44031] = true, -- WANTED: Cadraeus
+		[43430] = true, -- WANTED: Captain Volo'ren
+		[43608] = true, -- WANTED: Captain Volo'ren
+		[41826] = true, -- WANTED: Crawshuk the Hungry
+		[44291] = true, -- WANTED: Crawshuk the Hungry
+		[44299] = true, -- WANTED: Darkshade
+		[44304] = true, -- WANTED: Darkshade
+		[43455] = true, -- WANTED: Devouring Darkness
+		[43617] = true, -- WANTED: Devouring Darkness
+		[43428] = true, -- WANTED: Doomlord Kazrok
+		[43609] = true, -- WANTED: Doomlord Kazrok
+		[44298] = true, -- WANTED: Dreadbog
+		[44303] = true, -- WANTED: Dreadbog
+		[43454] = true, -- WANTED: Egyl the Enduring
+		[43620] = true, -- WANTED: Egyl the Enduring
+		[43434] = true, -- WANTED: Fathnyr
+		[43621] = true, -- WANTED: Fathnyr
+		[43436] = true, -- WANTED: Glimar Ironfist
+		[43622] = true, -- WANTED: Glimar Ironfist
+		[44030] = true, -- WANTED: Guardian Thor'el
+		[44013] = true, -- WANTED: Guardian Thor'el
+		[41819] = true, -- WANTED: Gurbog da Basher
+		[43618] = true, -- WANTED: Gurbog da Basher
+		[43453] = true, -- WANTED: Hannval the Butcher
+		[43623] = true, -- WANTED: Hannval the Butcher
+		[44021] = true, -- WANTED: Hertha Grimdottir
+		[44029] = true, -- WANTED: Hertha Grimdottir
+		[43427] = true, -- WANTED: Infernal Lord
+		[43610] = true, -- WANTED: Infernal Lord
+		[43611] = true, -- WANTED: Inquisitor Tivos
+		[42631] = true, -- WANTED: Inquisitor Tivos
+		[43452] = true, -- WANTED: Isel the Hammer
+		[43624] = true, -- WANTED: Isel the Hammer
+		[43460] = true, -- WANTED: Kiranys Duskwhisper
+		[43629] = true, -- WANTED: Kiranys Duskwhisper
+		[44028] = true, -- WANTED: Lieutenant Strathmar
+		[44019] = true, -- WANTED: Lieutenant Strathmar
+		[44018] = true, -- WANTED: Magister Phaedris
+		[44027] = true, -- WANTED: Magister Phaedris
+		[41818] = true, -- WANTED: Majestic Elderhorn
+		[44292] = true, -- WANTED: Majestic Elderhorn
+		[44015] = true, -- WANTED: Mal'Dreth the Corruptor
+		[44026] = true, -- WANTED: Mal'Dreth the Corruptor
+		[43438] = true, -- WANTED: Nameless King
+		[43625] = true, -- WANTED: Nameless King
+		[43432] = true, -- WANTED: Normantis the Deposed
+		[43612] = true, -- WANTED: Normantis the Deposed
+		[41686] = true, -- WANTED: Olokk the Shipbreaker
+		[44010] = true, -- WANTED: Oreth the Vile
+		[43458] = true, -- WANTED: Perrexx
+		[43630] = true, -- WANTED: Perrexx
+		[42795] = true, -- WANTED: Sanaar
+		[44300] = true, -- WANTED: Seersei
+		[44302] = true, -- WANTED: Seersei
+		[41844] = true, -- WANTED: Sekhan
+		[44294] = true, -- WANTED: Sekhan
+		[44022] = true, -- WANTED: Shal'an
+		[41821] = true, -- WANTED: Shara Felbreath
+		[43619] = true, -- WANTED: Shara Felbreath
+		[44012] = true, -- WANTED: Siegemaster Aedrin
+		[44023] = true, -- WANTED: Siegemaster Aedrin
+		[43456] = true, -- WANTED: Skul'vrax
+		[43631] = true, -- WANTED: Skul'vrax
+		[41838] = true, -- WANTED: Slumber
+		[44293] = true, -- WANTED: Slumber
+		[43429] = true, -- WANTED: Syphonus
+		[43613] = true, -- WANTED: Syphonus
+		[43437] = true, -- WANTED: Thane Irglov
+		[43626] = true, -- WANTED: Thane Irglov
+		[43457] = true, -- WANTED: Theryssia
+		[43632] = true, -- WANTED: Theryssia
+		[43459] = true, -- WANTED: Thondrax
+		[43633] = true, -- WANTED: Thondrax
+		[43450] = true, -- WANTED: Tiptog the Lost
+		[43627] = true, -- WANTED: Tiptog the Lost
+		[43451] = true, -- WANTED: Urgev the Flayer
+		[43628] = true, -- WANTED: Urgev the Flayer
+		[42633] = true, -- WANTED: Vorthax
+		[43614] = true, -- WANTED: Vorthax
+		[43431] = true, -- WANTED: Warbringer Mox'na
+	}
+
+	WorldBosses = {
+		[46945] = true, -- Si'vash
+		[47061] = true, -- Apocron
+		[46948] = true, -- Malificus
+		[42270] = true, -- Scourge of the Skies
+		[44287] = true, -- DEADLY: Withered J'im
+		[43192] = true, -- Terror of the Deep
+		[43448] = true, -- The Frozen King
+		[43193] = true, -- Calamitous Intent
+		[42779] = true, -- The Sleeping Corruption
+		[42269] = true, -- The Soultakers
+		[42819] = true, -- Pocket Wizard
+		[42270] = true, -- Scourge of the Skies
+		[43512] = true, -- Ana-Mouz
+		[43985] = true -- A Dark Tide
+	}
 end
