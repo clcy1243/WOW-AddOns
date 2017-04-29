@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1737, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 16188 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 16190 $"):sub(12, -3))
 mod:SetCreatureID(104154)--The Demon Within (111022)
 mod:SetEncounterID(1866)
 mod:SetZone()
@@ -94,7 +94,7 @@ local specWarnWilloftheDemonWithin	= mod:NewSpecialWarningSpell(211439, nil, nil
 local specWarnParasiticWound		= mod:NewSpecialWarningMoveAway(206847, nil, nil, nil, 3, 2)
 local yellParasiticWound			= mod:NewYell(206847)
 local yellParasiticWoundFades		= mod:NewFadesYell(206847)
-local specWarnShearedSoul			= mod:NewSpecialWarningYou(206458, nil, nil, nil, 1, 2)
+local specWarnShearedSoul			= mod:NewSpecialWarningDefensive(206458, nil, nil, nil, 1, 2)
 local specWarnSoulsever				= mod:NewSpecialWarningCount(220957, nil, nil, nil, 3)--Needs voice, but what?
 local specWarnVisionsofDarkTitan	= mod:NewSpecialWarningMoveTo(227008, nil, nil, nil, 3, 7)
 local specWarnSummonNightorb		= mod:NewSpecialWarningSwitchCount(227283, "-Healer", nil, nil, 1, 2)
@@ -184,7 +184,7 @@ local voiceFlamesOfSargeras			= mod:NewVoice(221606)--runout
 --Mythic Only
 local voiceWilloftheDemonWithin		= mod:NewVoice(211439)--carefly
 local voiceParasiticWound			= mod:NewVoice(206847)--scatter
-local voiceShearedSoul				= mod:NewVoice(206458)--targetyou (don't know what to do for most of this stuff yet so generic voices)
+local voiceShearedSoul				= mod:NewVoice(206458)--defensive
 --local voiceSoulSever				= mod:NewVoice(220957)--??? (temp, no idea what you're supposed to for spell_
 local voiceVisionsOfDarkTitan		= mod:NewVoice(227008)--getstoptime
 local voiceSummonNightorb			= mod:NewVoice(227283, "-Healer")--killmob
@@ -665,8 +665,8 @@ function mod:SPELL_AURA_APPLIED(args)
 			self.vb.phase = 2
 			warnPhase2:Show()
 			timerFlamesofSargerasCD:Start(24.5, "1-1")
-			timerEyeofGuldanCD:Start(35.1, 1)
-			countdownEyeofGuldan:Start(35)
+			timerEyeofGuldanCD:Start(34.3, 1)
+			countdownEyeofGuldan:Start(34.3)
 			timerBlackHarvestCD:Start(55.7, 1)
 			countdownBlackHarvest:Start(55.7)
 			timerStormOfDestroyerCD:Start(72.6, 1)
@@ -704,7 +704,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 206458 then
 		if args:IsPlayer() then
 			specWarnShearedSoul:Show()
-			voiceShearedSoul:Play("targetyou")
+			voiceShearedSoul:Play("defensive")
 		end
 	elseif spellId == 227009 then
 		warnWounded:Show()

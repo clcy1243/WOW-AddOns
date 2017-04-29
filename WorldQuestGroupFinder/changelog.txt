@@ -1,4 +1,9 @@
-﻿0.23 (28/04/2017)
+﻿0.24 (29/04/2017)
+- Back in business.
+- Trying to comply with the new UI restrictions. Guaranteed with 99% less automation!
+- This is a very early prototype, expect bugs!
+
+0.23 (28/04/2017)
 - Goodbye!
 
 0.22.6 (27/04/2017)

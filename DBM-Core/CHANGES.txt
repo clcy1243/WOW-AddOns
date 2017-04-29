@@ -1,5 +1,28 @@
 Changes since tag 7.2.4
 
+commit c2517101140b38dc08630f3371499e0923d12555
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sat Apr 29 04:45:01 2017 +0200
+
+    Omega via svn r16191:
+    World boss adjustments
+
+commit e82f7128893f362f2e7c5e91cb78939b5aecfcee
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sat Apr 29 01:49:11 2017 +0200
+
+    Omega via svn r16190:
+    Timer tweak
+
+commit cadf5c92182dc75d347e6b677345f2595340c4b6
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sat Apr 29 00:19:09 2017 +0200
+
+    Omega via svn r16189:
+    Some countdown tweaks for star auger
+    finally fix bad spellId in Naltira for real this time
+    reset interrupt warnings on vandros to try and fix wrong roles getting them
+
 commit 96b475bb842e77d6dbba5d65fef70436fe4a1de5
 Author: subversion <svn@deadlybossmods.com>
 Date:   Thu Apr 27 06:14:11 2017 +0200

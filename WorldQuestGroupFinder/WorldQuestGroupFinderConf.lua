@@ -77,15 +77,8 @@ function WorldQuestGroupFinderConf.CreateConfigMenu()
 	askZoningAuto:SetPoint('TOPLEFT', askZoningBusy, 'BOTTOMLEFT', 0, 2)
 	WorldQuestGroupFinderConf.AddDependentCheckbox(askZoning, askZoningAuto, false)
 
-	local autoAcceptInviteDesc = configPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
-	autoAcceptInviteDesc:SetPoint('TOPLEFT', askZoningAuto, 'BOTTOMLEFT', -10, -6)
-	autoAcceptInviteDesc:SetText(L["WQGF_CONFIG_AUTO_ACCEPT_INVITES_TITLE"])
-
-	local autoAcceptInvite = WorldQuestGroupFinderConf.CreateCheckButton(L["WQGF_CONFIG_AUTO_ACCEPT_INVITES_ENABLE"], configPanel, L["WQGF_CONFIG_AUTO_ACCEPT_INVITES_HOVER"], "autoAcceptInvites", 'InterfaceOptionsCheckButtonTemplate')
-	autoAcceptInvite:SetPoint('TOPLEFT', autoAcceptInviteDesc, 'BOTTOMLEFT', 0, -2)
-
 	local allLanguagesDesc = configPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
-	allLanguagesDesc:SetPoint('TOPLEFT', autoAcceptInvite, 'BOTTOMLEFT', 0, -6)
+	allLanguagesDesc:SetPoint('TOPLEFT', askZoningAuto, 'BOTTOMLEFT', 0, -6)
 	allLanguagesDesc:SetText(L["WQGF_CONFIG_LANGUAGE_FILTER_TITLE"])
 
 	local allLanguagesOpt = WorldQuestGroupFinderConf.CreateCheckButton(L["WQGF_CONFIG_LANGUAGE_FILTER_ENABLE"], configPanel, L["WQGF_CONFIG_LANGUAGE_FILTER_HOVER"], "allLanguages", 'InterfaceOptionsCheckButtonTemplate')
