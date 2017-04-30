@@ -1,22 +1,34 @@
-tag 63300a3c38bd423464b814fbb222a27b52368d0e 2.4.1
-Author:	Benjamin Staneck <staneck@gmail.com>
-Date:	Tue Apr 25 22:02:28 2017 +0200
+Changes since tag 2.4.1
 
-commit 69766856d8162ee78188bce7a1d303e0f99a2255
+commit 62bea572807d1b46173dd96a4bfe3a73a49e5a77
 Author: Infus <infus@squorn.de>
-Date:   Tue Apr 25 21:44:28 2017 +0200
+Date:   Sat Apr 29 21:26:11 2017 +0200
 
-    Fix upgrade code for Icons
+    Make Condition on "On Cooldown" not be triggered by gcd
+    
+    This is much saner.
+    
+    Ticket-Nr: 940
 
-commit 6b6d641b69a77a1d908ebba81c70629cc7e81abf
+commit 84146554b905b518e4c3971b6a1ce5de407190d7
+Author: Infus <infus@squorn.de>
+Date:   Sat Apr 29 21:21:02 2017 +0200
+
+    ConstructTests: If the test is a static "true", do return nil
+    
+    As that's probably faster
+
+commit c82e4daaec2853b95cbb3a4ccd5725742326d883
+Author: Infus <infus@squorn.de>
+Date:   Sat Apr 29 20:53:34 2017 +0200
+
+    Fix Equipment Set Trigger
+    
+    Ticket-Nr: 941
+
+commit 2ade94d188c0c4615dd1ea4f2cfb0a193a5e1424
 Author: Benjamin Staneck <staneck@gmail.com>
-Date:   Mon Apr 24 02:30:49 2017 +0200
+Date:   Thu Apr 27 02:09:19 2017 +0200
 
-    prefix a few more prints with the addon name
-
-commit 79e666e770e7720b5259aa0e747583d3cd8f2a76
-Author: Benjamin Staneck <staneck@gmail.com>
-Date:   Mon Apr 24 01:51:02 2017 +0200
-
-    avoid the table access here, trips up the locale import on WowAce
+    fix a typo
 

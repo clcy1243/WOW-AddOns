@@ -1,4 +1,14 @@
-﻿0.25 (29/04/2017)
+﻿0.24.3 (30/04/2017)
+- Removed auto-invite options as the groups are now using the WoW auto-invite function
+- The lock/unlock icons have been reversed
+- The frame will no longer hide after cancelling all the group applications
+- Several bugfixes
+
+0.24.2 (29/04/2017)
+- Added a short delay before the button is first clickable to prevent a bug that was sometimes causing the search to return no results
+- Updated localizations. Thanks again to the translators!
+
+0.24.1 (29/04/2017)
 - The WQGF frame will now appear above other UI elements
 - The WQGF frame is now lockable, and its position is remembered between sessions
 - It is now possible to bind the WQGF button (Key Bindings > AddOns > WorldQuestGroupFinder). Submitted by vincentSDSH, thanks!

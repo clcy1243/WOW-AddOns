@@ -1233,7 +1233,7 @@ do
   end
 
   function WeakAuras.GetSpellCooldown(id, ignoreRuneCD, showgcd)
-    local startTime, duration;
+    local startTime, duration, gcdCooldown;
     if (ignoreRuneCD) then
       if (spellsRune[id] and spellCdExpsRune[id] and spellCdDursRune[id]) then
         startTime = spellCdExpsRune[id] - spellCdDursRune[id]
@@ -1256,10 +1256,11 @@ do
       if ((gcdStart or 0) + (gcdDuration or 0) > startTime + duration) then
         startTime = gcdStart;
         duration = gcdDuration;
+        gcdCooldown = true;
       end
     end
 
-    return startTime, duration;
+    return startTime, duration, gcdCooldown;
   end
 
   function WeakAuras.GetSpellCharges(id)
@@ -1817,7 +1818,7 @@ function WeakAuras.GetEquipmentSetInfo(itemSetName, partial)
   local bestMatchName = nil;
   local bestMatchIcon = nil;
 
-  for i = 1, C_EquipmentSet.GetNumEquipmentSets() do
+  for i = 0, C_EquipmentSet.GetNumEquipmentSets() do
     local name, icon, _, _, numItems, numEquipped = C_EquipmentSet.GetEquipmentSetInfo(i);
     if (itemSetName == nil or (name and itemSetName == name)) then
       local match = (not partial and numItems == numEquipped)

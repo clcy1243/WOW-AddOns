@@ -1,19 +1,13 @@
-changeset:   41:1f402bf786ee
-tag:         v1.0
+changeset:   43:499f8f04384b
+tag:         v1.0.1
 user:        Ogion
-date:        Sat Jan 28 01:56:50 2017 +0200
-summary:     Added the option to show only healing value (without frame)
+date:        Sun Apr 30 00:09:13 2017 +0300
+summary:     Updated option to show remaining charges on status bar with Fleshknitting trait.
 
 
-changeset:   40:dcf58fa49cdf
+changeset:   42:6d9566943b24
 user:        Ogion
-date:        Sun Jan 22 23:17:36 2017 +0200
-summary:     Hide the frame when pet battle starts
-
-
-changeset:   39:95867a55ec82
-user:        Ogion
-date:        Mon Jan 16 23:40:30 2017 +0200
-summary:     Tagging as v0.9.9
+date:        Sat Jan 28 01:57:50 2017 +0200
+summary:     Tagging as v1.0
 
 

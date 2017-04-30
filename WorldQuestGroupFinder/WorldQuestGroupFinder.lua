@@ -251,7 +251,6 @@ function RegisteredEvents:LFG_LIST_APPLICATION_STATUS_UPDATED(event, application
 				table.remove(pendingApplications, applicationID)
 				if (C_LFGList.GetNumApplications() == 0) then
 					WorldQuestGroupFinder.StopTimeoutTimer()
-					manualActionsFrame:Hide()
 				end
 			end
 			C_Timer.After(1, function()
@@ -552,10 +551,11 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate, wa
 		--	return false
 		--end
 	end
-	manualActionsFrame:Show()
+		manualActionsFrame:Show()
 	manualActionsFrame.NextButton:Show()
 	manualActionsFrame.currentText:SetText("Click the button to search for groups...")
 	manualActionsFrame.secondLine:SetText("")
+	manualActionsFrame.NextButton:Enable()
 	WorldQuestGroupFinder.AssignButtonTextures(manualActionsFrame.NextButton)
 	manualActionsFrame.questTitle:SetText(title)
 	
@@ -628,13 +628,20 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate, wa
 				manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
 					if (NEW_AREA_TIMER) then NEW_AREA_TIMER:Cancel() end
 					C_LFGList.Search(1, title, 0, 4, selectedLanguages)
-					WorldQuestGroupFinder.InitSearchProcess(questID, true)
+					manualActionsFrame.NextButton:Disable()
+					C_Timer.After(1.5, function()
+						WorldQuestGroupFinder.InitSearchProcess(questID, true)
+					end)
 				end)
 				return true
 			end
 			
 			if (not retry) then
 				C_LFGList.Search(1, title, 0, 4, selectedLanguages)
+				manualActionsFrame.NextButton:Disable()
+				C_Timer.After(1, function()
+					manualActionsFrame.NextButton:Enable()
+				end)
 			end
 			
 			manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
@@ -1026,6 +1033,7 @@ function WorldQuestGroupFinder.HandleBlockClick(wqID, forceCreate, wait)
 					-- Hide join WQ prompts
 					WorldQuestGroupFinder.HideDialog ("WORLD_QUEST_ENTERED_PROMPT")
 					WorldQuestGroupFinder.HideDialog ("WORLD_QUEST_ENTERED_SWITCH_PROMPT")
+					if (NEW_AREA_TIMER) then NEW_AREA_TIMER:Cancel() end
 					WorldQuestGroupFinder.InitSearchProcess(wqID, false, forceCreate, wait)
 				else
 					WorldQuestGroupFinder.prefixedPrint(L["WQGF_ALREADY_IS_GROUP_FOR_WQ"])
@@ -1414,12 +1422,12 @@ end
 
 function WorldQuestGroupFinder.ToggleFrameLock()
 	if (manualActionsFrame:IsMouseEnabled()) then
-		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Unlocked-Up")
+		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Locked-Up")
 		manualActionsFrame:EnableMouse(false)
 		WorldQuestGroupFinderConf.SetConfigValue("frameUnlocked", false)
 	else
-		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Locked-Up")
 		manualActionsFrame:EnableMouse(true)
+		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Unlocked-Up")
 		WorldQuestGroupFinderConf.SetConfigValue("frameUnlocked", true)
 	end
 end
@@ -1500,6 +1508,7 @@ function WorldQuestGroupFinder.InitFrames()
 	manualActionsFrame.CloseButton:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
 	manualActionsFrame.CloseButton:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")			
 	manualActionsFrame.CloseButton:SetScript("OnClick", function(self, button, down)
+		C_LFGList.ClearSearchResults()
 		self:GetParent():Hide()
 	end)
 		
@@ -1513,9 +1522,9 @@ function WorldQuestGroupFinder.InitFrames()
 		WorldQuestGroupFinder.ToggleFrameLock()
 	end)
 	if (manualActionsFrame:IsMouseEnabled()) then
-		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Locked-Up")
-	else
 		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Unlocked-Up")
+	else
+		manualActionsFrame.LockButton:SetNormalTexture("Interface\\Buttons\\LockButton-Locked-Up")
 	end
 		
 	manualActionsFrame:Hide()	

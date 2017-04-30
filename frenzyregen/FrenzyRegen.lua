@@ -137,9 +137,9 @@ function frenzyRegenFrame:countHealing()
   ratioHP = (expectedHealing+legendaryHealing)/maxHP*100
   anouncedHealing = format("Self healing %d%% over 3 sec", ratioHP)
   
-  charges = GetSpellCharges(idFR)
+  charges, maxcharges = GetSpellCharges(idFR)
   if settingsFR.statusTypeFlag == 1 then  
-  frenzyRegenFrame.damageTakenBar:SetValue(charges*50)
+  frenzyRegenFrame.damageTakenBar:SetValue(charges*100/maxcharges)
   else
   frenzyRegenFrame.damageTakenBar:SetValue(ratioHP)
   end
@@ -171,7 +171,7 @@ function frenzyRegenFrame:countHealing()
     frenzyRegenFrame.damageTakenBar.value:SetTextColor(0.5, 0.5, 0.5,settingsFR.transparencyFlag)
   else
     frenzyRegenFrame.damageTakenBar:SetStatusBarColor(0, 0.65, 0,transparency/1.5)
-    if charges == 1 and settingsFR.statusTypeFlag == 1 then
+    if charges < maxcharges and settingsFR.statusTypeFlag == 1 then
     frenzyRegenFrame.damageTakenBar:SetStatusBarColor(0.6, 0.65, 0,transparency/1.5)
     end
     frenzyRegenFrame.damageTakenBar.bg:SetVertexColor(0, 0.35, 0,transparency)
