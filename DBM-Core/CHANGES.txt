@@ -1,5 +1,34 @@
 Changes since tag 7.2.4
 
+commit 3f28095f0446d6c3b7abeabf49de9a47a83a421f
+Author: subversion <svn@deadlybossmods.com>
+Date:   Tue May 2 08:12:13 2017 +0200
+
+    Omega via svn r16195:
+    Add chosen fate, per user request
+
+commit 338ffed5379e666d0a17d0265802317d91f584e7
+Author: subversion <svn@deadlybossmods.com>
+Date:   Tue May 2 07:58:53 2017 +0200
+
+    Omega via svn r16194:
+    And bump revision
+
+commit ad8872c815c52a9251c38bdf961346a8110daa5d
+Author: subversion <svn@deadlybossmods.com>
+Date:   Tue May 2 07:58:23 2017 +0200
+
+    Omega via svn r16193:
+    Push updated elisande bubble timers. note they will be wrong for alpha users for a few hours but after realm restarts they?\226?\128?\153ll make more sense
+    cancel add timers on mythic guldan if you skip them
+
+commit 927c6a7229349006a49dfeb24133439e79ff732c
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sun Apr 30 19:35:38 2017 +0200
+
+    Omega via svn r16192:
+    Don?\226?\128?\153t show icon conflict message if you don?\226?\128?\153t have assist, but if you do have assist show it EVERY pull
+
 commit c2517101140b38dc08630f3371499e0923d12555
 Author: subversion <svn@deadlybossmods.com>
 Date:   Sat Apr 29 04:45:01 2017 +0200

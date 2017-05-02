@@ -1,5 +1,15 @@
 Changes since tag 2.4.1
 
+commit c3aa41da43450f8499a0aa292318f281d6742e02
+Author: Infus <infus@squorn.de>
+Date:   Mon May 1 13:25:59 2017 +0200
+
+    Add Orientation and Inverse property to Progress Texture/Aurabar
+    
+    Actually requires a new property type.
+    
+    Ticket-Nr: 939
+
 commit 62bea572807d1b46173dd96a4bfe3a73a49e5a77
 Author: Infus <infus@squorn.de>
 Date:   Sat Apr 29 21:26:11 2017 +0200

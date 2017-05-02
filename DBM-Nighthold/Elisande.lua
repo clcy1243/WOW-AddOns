@@ -1,12 +1,12 @@
 local mod	= DBM:NewMod(1743, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 16176 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 16194 $"):sub(12, -3))
 mod:SetCreatureID(106643)
 mod:SetEncounterID(1872)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)--During soft enrage will go over 8 debuffs, can't mark beyond that
-mod:SetHotfixNoticeRev(16158)
+mod:SetHotfixNoticeRev(16193)
 mod.respawnTime = 30
 
 mod:RegisterCombat("combat")
@@ -81,8 +81,8 @@ local specWarnAblativePulse			= mod:NewSpecialWarningInterrupt(209971, "Tank", n
 local timerRP						= mod:NewRPTimer(68)
 local timerLeaveNightwell			= mod:NewCastTimer(9.8, 208863, nil, nil, nil, 6)
 local timerTimeElementalsCD			= mod:NewNextSourceTimer(16, 208887, 141872, nil, nil, 1)--"Call Elemental" short text
-local timerFastTimeBubble			= mod:NewTimer(30, "timerFastTimeBubble", 209166, nil, nil, 5)
-local timerSlowTimeBubble			= mod:NewTimer(60, "timerSlowTimeBubble", 209165, nil, nil, 5)
+local timerFastTimeBubble			= mod:NewTimer(35, "timerFastTimeBubble", 209166, nil, nil, 5)
+local timerSlowTimeBubble			= mod:NewTimer(70, "timerSlowTimeBubble", 209165, nil, nil, 5)
 --209166
 --Time Layer 1
 mod:AddTimerLine(SCENARIO_STAGE:format(1))

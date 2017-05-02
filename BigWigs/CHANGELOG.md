@@ -1,8 +1,9 @@
 # BigWigs
 
-## [v52.1-5-ge4db4ac](https://github.com/BigWigsMods/BigWigs/tree/e4db4ac5b1a6bfc18f5bd964be86c8fc34559545) (2017-04-29) [](#top)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v52.1...e4db4ac5b1a6bfc18f5bd964be86c8fc34559545)
+## [v52.1-6-gc8e384b](https://github.com/BigWigsMods/BigWigs/tree/c8e384ba91e95e9f348d3351d6776f0a4ad3c784) (2017-04-30) [](#top)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v52.1...c8e384ba91e95e9f348d3351d6776f0a4ad3c784)
 
+- frFR Update (#255)  
 - zhCN/zhTW update. (#253)  
 - Update koKR.lua (#254)  
 - Nighthold/Trash: Add Will of the Legion warning.  

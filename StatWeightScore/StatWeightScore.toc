@@ -3,7 +3,7 @@
 ## Title:Stat Weight Score
 ## Notes:Calculates a score of an item based on stat weights and the item's stats
 ## Author: Necroskillz
-## Version: 7.5.3
+## Version: 7.6.0
 ## SavedVariables: StatWeightScoreDB
 ## LoadOnDemand: 0
 ## DefaultState: enabled
@@ -25,5 +25,7 @@ ImportExport.lua
 Options.lua
 ItemLink.lua
 Item.lua
+SimulationCraft.lua
 Character.lua
 Test.lua
+OutputWindow.lua
