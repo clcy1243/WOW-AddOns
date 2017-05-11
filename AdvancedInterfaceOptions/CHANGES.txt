@@ -1,4 +1,6 @@
-Changes since tag 1.1.3
+tag c92623eed949e253e12266abdfcab94415c03651 1.1.4
+Author:	Benjamin Staneck <staneck@gmail.com>
+Date:	Wed May 3 10:16:34 2017 +0200
 
 commit ca317740e6fa64b4b582b4784dc911bed6312689
 Author: semlar <teslagraafs@gmail.com>

@@ -1,5 +1,30 @@
 Changes since tag 2.4.1
 
+commit 8258d0dd97685f6da31f78e63198f219331849b6
+Author: Infus <infus@squorn.de>
+Date:   Sat May 6 21:26:32 2017 +0200
+
+    Fix Condition toggling inverse for Progress Bar breaking the display
+    
+    Apparently setting the bar to a zero width resets!! the width. The code
+    contains a work around for that ensuring that progress is at least
+    0.00001. Apply the same to when we inverse progress in SetInverse.
+    
+    Also rename region.inverse to region.inverseDirection, as SetDurationInfo
+    does already use region.inverse
+    
+    Ticket-Nr: 955
+
+commit 23e162d30a00ead20b8f1bc082814ce5b31ddfc2
+Author: Infus <infus@squorn.de>
+Date:   Sat May 6 20:09:19 2017 +0200
+
+    Fix aura_env being nil in the options dialog
+    
+    Broke in Oct 2015 with commit 78820c4a2a15f1e639e031e6b22a806550c79207
+    
+    Ticket-Nr: 938
+
 commit c3aa41da43450f8499a0aa292318f281d6742e02
 Author: Infus <infus@squorn.de>
 Date:   Mon May 1 13:25:59 2017 +0200

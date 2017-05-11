@@ -1,12 +1,12 @@
-tag f7eadc3999db78e46f3a12286ac620b1d72a756f v1.7.5
-Author:	Devin <me@imdevinc.com>
-Date:	Fri Apr 14 16:41:52 2017 -0700
+tag 067b337a7cc93d21b0592a8b61c3f4de7a917ecd v1.7.6
+Author:	Devin Collins <me@imdevinc.com>
+Date:	Thu May 4 19:51:03 2017 -0700
 
-Version 1.7.5 Release
+Added support for French language
 
-commit 79d47d3affdb0040a0633108664689c0bfc990fe
-Author: Devin <me@imdevinc.com>
-Date:   Fri Apr 14 16:41:38 2017 -0700
+commit 723729da7579a1f57da7bc5d9891aba33f36f263
+Author: Devin Collins <me@imdevinc.com>
+Date:   Thu May 4 19:49:00 2017 -0700
 
-    Added reset time for CN/TW servers
+    Added french language
 

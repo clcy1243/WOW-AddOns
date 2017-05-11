@@ -22,7 +22,7 @@ local function updateFlags()
 end
 
 local function disabled()
-	return lit.db.mode ~= 1
+	return lit.db.mode == 2
 end
 
 local acOptions = {
@@ -30,6 +30,9 @@ local acOptions = {
 	name = "LegionInvasionTimer",
 	get = function(info)
 		return lit.db[info[#info]]
+	end,
+	set = function(info, value)
+		lit.db[info[#info]] = value
 	end,
 	args = {
 		lock = {
@@ -185,7 +188,7 @@ local acOptions = {
 			step = 1,
 			set = function(info, value)
 				lit.db.spacing = value
-				lit.rearrangeBars()
+				lit.RearrangeBars()
 			end,
 			disabled = disabled,
 		},
@@ -259,13 +262,14 @@ local acOptions = {
 			order = 15,
 			set = function(info, value)
 				lit.db.growUp = value
-				lit.rearrangeBars()
+				lit.RearrangeBars()
 			end,
 			disabled = disabled,
 		},
 		colorText = {
 			name = L.textColor,
 			type = "color",
+			hasAlpha = true,
 			order = 16,
 			get = function()
 				return unpack(lit.db.colorText)
@@ -281,6 +285,7 @@ local acOptions = {
 		colorComplete = {
 			name = L.completedBar,
 			type = "color",
+			hasAlpha = true,
 			order = 17,
 			get = function()
 				return unpack(lit.db.colorComplete)
@@ -298,6 +303,7 @@ local acOptions = {
 		colorIncomplete = {
 			name = L.incompleteBar,
 			type = "color",
+			hasAlpha = true,
 			order = 18,
 			get = function()
 				return unpack(lit.db.colorIncomplete)
@@ -315,6 +321,7 @@ local acOptions = {
 		colorNext = {
 			name = L.nextBar,
 			type = "color",
+			hasAlpha = true,
 			order = 19,
 			get = function()
 				return unpack(lit.db.colorNext)
@@ -348,32 +355,60 @@ local acOptions = {
 			end,
 			disabled = disabled,
 		},
-		separator = {
+		tooltipHeader = {
+			type = "header",
+			name = L.tooltipHeader,
+			order = 21,
+		},
+		tooltip12hr = {
+			type = "toggle",
+			name = L.tooltip12hr,
+			order = 22,
+		},
+		tooltipHideAchiev = {
+			type = "toggle",
+			name = L.tooltipHideAchiev,
+			order = 23,
+		},
+		tooltipHideNethershard = {
+			type = "toggle",
+			name = L.hide:format((GetCurrencyInfo(1226))),
+			order = 24,
+		},
+		tooltipHideWarSupplies = {
+			type = "toggle",
+			name = L.hide:format((GetCurrencyInfo(1342))),
+			order = 25,
+		},
+		miscSeparator = {
 			type = "header",
 			name = "",
-			order = 21,
+			order = 26,
 		},
 		hideInRaid = {
 			type = "toggle",
 			name = L.hideInRaid,
-			order = 22,
-			set = function(info, value)
-				lit.db.hideInRaid = value
+			order = 27,
+			disabled = function() 
+				return lit.db.mode == 2 or lit.db.mode == 3
 			end,
-			disabled = disabled,
 		},
 		mode = {
 			type = "select",
 			name = L.mode,
-			order = 23,
+			order = 28,
 			values = {
 				[1] = L.modeBar,
 				[2] = L.modeBroker,
+				[3] = L.modeBarOnMap,
 			},
 			set = function(info, value)
 				lit.db.mode = value
-				if value ~= 1 then
+				if value == 2 then
 					lit.db.lock = true
+				end
+				if value == 3 then
+					lit.db.hideInRaid = nil
 				end
 				ReloadUI()
 			end,
@@ -382,5 +417,5 @@ local acOptions = {
 }
 
 acr:RegisterOptionsTable(acOptions.name, acOptions, true)
-acd:SetDefaultSize(acOptions.name, 400, 530)
+acd:SetDefaultSize(acOptions.name, 400, 600)
 

@@ -9,6 +9,7 @@ GUI = LibStub('NetEaseGUI-2.0')
 
 function Addon:OnInitialize()
     self:RawHook('LFGListUtil_OpenBestWindow', 'Toggle', true)
+    self:RawHook('SetItemRef', true)
 
     self:RegisterMessage('MEETINGSTONE_NEW_VERSION')
     self:RegisterMessage('MEETINGSTONE_FILTER_DATA_UPDATED')
@@ -28,6 +29,11 @@ function Addon:OnInitialize()
     self:RegisterEvent('COMPANION_LEARNED', function()
         wipe(self.mountCache)
     end)
+
+    local lfgTooManyDialog = _G.StaticPopupDialogs['LFG_LIST_ENTRY_EXPIRED_TOO_MANY_PLAYERS']
+    if lfgTooManyDialog and lfgTooManyDialog.text and strlenutf8(lfgTooManyDialog.text) == #lfgTooManyDialog.text then
+        lfgTooManyDialog.text = L['你的队伍成员已经达到当前活动的人数上限，活动已经自动解散。']
+    end
 end
 
 function Addon:OnEnable()
@@ -56,12 +62,19 @@ end
 
 function Addon:Toggle()
     if Logic:IsSupport() then
-        Addon:ToggleModule('MainPanel')
-
-        if C_LFGList.GetActiveEntryInfo() then
-            MainPanel:SelectPanel(ManagerPanel)
-        elseif DataCache:GetObject('ActivitiesData'):IsNew() then
-            MainPanel:SelectPanel(ActivitiesParent)
+        if MainPanel:IsShown() then
+            Addon:HideModule('MainPanel')
+        else
+            if ApplicantPanel:HasNewPending() then
+                MainPanel:SelectPanel(ManagerPanel)
+            elseif DataCache:GetObject('ActivitiesData'):IsNew() then
+                MainPanel:SelectPanel(ActivitiesParent)
+            elseif App:HasNewFollower() then
+                MainPanel:SelectPanel(AppParent)
+            elseif C_LFGList.GetActiveEntryInfo() then
+                MainPanel:SelectPanel(ManagerPanel)
+            end
+            Addon:ShowModule('MainPanel')
         end
     else
         self:ShowNewVersion(self.url, self.changeLog)
@@ -77,6 +90,9 @@ function Addon:ShowNewVersion(url, changeLog)
 end
 
 function Addon:FindMount(id)
+    if not id then
+        return
+    end
     return self.mountCache[id]
 end
 
@@ -88,4 +104,23 @@ end
 
 function Addon:GetFilterData()
     return self.filterPinyin, self.filterNormal
+end
+
+function Addon:SetItemRef(link, text, button, chatFrame)
+    local type, panel = strsplit(':', link)
+    if type == 'meetingstonepanel' then
+        panel = self:GetModule(panel, true)
+        if panel and MainPanel:GetPanelIndex(panel) then
+            Addon:ToggleModule('MainPanel')
+            MainPanel:SelectPanel(panel)
+        end
+        return
+    elseif type == 'meetingstonedialog' then
+        panel = _ENV[panel]
+        if panel then
+            ToggleFrame(panel)
+        end
+        return
+    end
+    return self.hooks.SetItemRef(link, text, button, chatFrame)
 end

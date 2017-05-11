@@ -42,9 +42,7 @@ function Activity:Update()
         numBNetFriends, numCharFriends, numGuildMates, isDelisted, leader, numMembers = C_LFGList.GetSearchResultInfo(self:GetID())
 
     if not activityId then
-        self:SetIsDelisted(true)
-        AceEvent:SendMessage('LFG_LIST_SEARCH_RESULT_REMOVED', self:GetID())
-        return
+        return false
     end
 
     local name, shortName, category, group, iLevel, filters, minLevel, maxPlayers, displayType = C_LFGList.GetActivityInfo(activityId)
@@ -75,7 +73,9 @@ function Activity:Update()
     self:SetApplicationDuration(appDuration)
     self:SetApplicationExpiration(GetTime() + appDuration)
 
-    self:UpdateCustomData(comment, title)
+    if not self:UpdateCustomData(comment, title) then
+        return false
+    end
 
     wipe(self.killedBosses)
     local customId = self:GetCustomID()
@@ -96,6 +96,8 @@ function Activity:Update()
     end
 
     self:UpdateSortValue()
+
+    return true
 end
 
 function Activity:BaseSortHandler()

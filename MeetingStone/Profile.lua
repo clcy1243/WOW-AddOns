@@ -3,6 +3,18 @@ BuildEnv(...)
 
 Profile = Addon:NewModule('Profile', 'AceEvent-3.0')
 
+local DEFAULT_CHATGROUP_LISTENING = {
+    APP_WHISPER = {
+        [1] = true,
+    }
+}
+
+local DEFAULT_CHATGROUP_COLOR = {
+    APP_WHISPER = {
+        r = 0.7, g = 1, b = 0,
+    }
+}
+
 function Profile:OnInitialize()
     local gdb = {
         global = {
@@ -32,18 +44,34 @@ function Profile:OnInitialize()
             minimap = {
                 minimapPos = 192.68,
             },
-            searchHistoryList = {},
-            createHistoryList = {},
+            searchHistoryList  = {},
+            createHistoryList  = {},
             searchInputHistory = {},
+            followMemberList   = {},
+            chatGroupListening = DEFAULT_CHATGROUP_LISTENING,
+            chatGroupColor     = DEFAULT_CHATGROUP_COLOR,
             recent = {},
         }
     }
 
+    self.chatGroupListeningTemp = { APP_WHISPER = {} }
     self.ignoreCache = {}
+
     self.gdb = LibStub('AceDB-3.0'):New('MEETINGSTONE_UI_DB', gdb, true)
     self.cdb = LibStub('AceDB-3.0'):New('MEETINGSTONE_CHARACTER_DB', cdb)
 
     self.cdb.profile.settings.onlyms = nil
+
+    for _, v in pairs(self.cdb.profile.followMemberList) do
+        if not v.status then
+            if v.bitfollow then
+                v.status = FOLLOW_STATUS_FRIEND
+            else
+                v.status = FOLLOW_STATUS_STARED
+            end
+	    v.bitfollow = nil
+        end
+    end
 
     self.cdb.RegisterCallback(self, 'OnDatabaseShutdown')
 end
@@ -344,12 +372,84 @@ function Profile:GetSearchProfile(name)
     return self.gdb.global.searchProfiles[name]
 end
 
-function Profile:NeedAdvShine()
-    return not self.cdb.profile.advShine or self.cdb.profile.advShine < '60200.09'
+function Profile:IsProfileKeyNew(key, version)
+    local value = self.cdb.profile[key]
+    return not value or (version and value < tostring(version))
 end
 
-function Profile:ClearAdvShine()
-    self.cdb.profile.advShine = ADDON_VERSION
+function Profile:ClearProfileKeyNew(key)
+    self.cdb.profile[key] = ADDON_VERSION
+end
+
+---- Follow
+
+function Profile:AddFollow(target, guid, status)
+    for i, v in ipairs(self.cdb.profile.followMemberList) do
+        if v.name == target then
+            v.guid = guid
+            v.status = status
+            self:SendMessage('MEETINGSTONE_FOLLOWMEMBERLIST_UPDATE')
+            return
+        end
+    end
+
+    tinsert(self.cdb.profile.followMemberList, 1, {
+        name = target,
+        guid = guid,
+        time = time(),
+        isNew = true,
+        status = status
+    })
+    self:SendMessage('MEETINGSTONE_FOLLOWMEMBERLIST_UPDATE')
+end
+
+function Profile:IsFollowed(target)
+    for i, v in ipairs(self.cdb.profile.followMemberList) do
+        if v.name == target then
+            return (v.status == FOLLOW_STATUS_STARED or v.status == FOLLOW_STATUS_FRIEND), i
+        end
+    end
+end
+
+function Profile:GetFollowGuid(target)
+    for i, v in ipairs(self.cdb.profile.followMemberList) do
+        if v.name == target then
+            return v.guid
+        end
+    end
+end
+
+function Profile:GetFollowList()
+    return self.cdb.profile.followMemberList
+end
+
+---- Whisper
+
+function Profile:GetChatGroupListeningDB(id, group)
+    return id > 10 and self.chatGroupListeningTemp[group] or self.cdb.profile.chatGroupListening[group]
+end
+
+function Profile:IsChatGroupListening(id, group)
+    return self:GetChatGroupListeningDB(id, group)[id]
+end
+
+function Profile:ToggleChatGroupListening(id, group, checked)
+    self:GetChatGroupListeningDB(id, group)[id] = not not checked
+end
+
+function Profile:SetChatGroupColor(group, r, g, b)
+    self.cdb.profile.chatGroupColor[group] = {r = r, g = g, b = b}
+end
+
+function Profile:GetChatGroupColor(group)
+    local color = self.cdb.profile.chatGroupColor[group]
+    return color.r, color.g, color.b
+end
+
+function Profile:ResetChatWindows()
+    self.chatGroupListeningTemp = {}
+    self.cdb.profile.chatGroupListening = CopyTable(DEFAULT_CHATGROUP_LISTENING)
+    self.cdb.profile.chatGroupColor = CopyTable(DEFAULT_CHATGROUP_COLOR)
 end
 
 function Profile:NeedWorldQuestHelp()

@@ -1,12 +1,12 @@
 local mod	= DBM:NewMod(1743, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 16194 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 16197 $"):sub(12, -3))
 mod:SetCreatureID(106643)
 mod:SetEncounterID(1872)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)--During soft enrage will go over 8 debuffs, can't mark beyond that
-mod:SetHotfixNoticeRev(16193)
+mod:SetHotfixNoticeRev(16196)
 mod.respawnTime = 30
 
 mod:RegisterCombat("combat")
@@ -668,9 +668,9 @@ function mod:OnSync(msg, targetname)
 		end
 	elseif msg == "SlowAddDied" then
 		self.vb.slowBubbleCount = self.vb.slowBubbleCount + 1
-		timerSlowTimeBubble:Start(60, self.vb.slowBubbleCount)
+		timerSlowTimeBubble:Start(70, self.vb.slowBubbleCount)
 	elseif msg == "FastAddDied" then
 		self.vb.fastBubbleCount = self.vb.fastBubbleCount + 1
-		timerFastTimeBubble:Start(30, self.vb.fastBubbleCount)
+		timerFastTimeBubble:Start(35, self.vb.fastBubbleCount)
 	end
 end

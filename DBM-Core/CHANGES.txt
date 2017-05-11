@@ -1,104 +1,139 @@
-Changes since tag 7.2.4
+Changes since tag 7.2.6
 
-commit 3f28095f0446d6c3b7abeabf49de9a47a83a421f
+commit c55f9413c1cf581a2a936d2f5a7424785391afe2
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue May 2 08:12:13 2017 +0200
+Date:   Thu May 11 07:11:23 2017 +0200
 
-    Omega via svn r16195:
-    Add chosen fate, per user request
+    Omega via svn r16221:
+    Some tweaks
 
-commit 338ffed5379e666d0a17d0265802317d91f584e7
+commit 351d66743cd4c3cafbe82a5d5c838de314c0fc6c
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue May 2 07:58:53 2017 +0200
+Date:   Wed May 10 06:29:14 2017 +0200
 
-    Omega via svn r16194:
-    And bump revision
+    Omega via svn r16220:
+    More tweaks for pre phase
 
-commit ad8872c815c52a9251c38bdf961346a8110daa5d
+commit be283622ef0712cd4014ff4f26ba3952d7075354
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue May 2 07:58:23 2017 +0200
+Date:   Wed May 10 06:22:05 2017 +0200
 
-    Omega via svn r16193:
-    Push updated elisande bubble timers. note they will be wrong for alpha users for a few hours but after realm restarts they?\226?\128?\153ll make more sense
-    cancel add timers on mythic guldan if you skip them
+    Omega via svn r16219:
+    Change all countdowns to start at 6 for that phase
 
-commit 927c6a7229349006a49dfeb24133439e79ff732c
+commit c1b4f5a237d275a1bca40f5dff66e90967abab64
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sun Apr 30 19:35:38 2017 +0200
+Date:   Wed May 10 06:15:02 2017 +0200
 
-    Omega via svn r16192:
-    Don?\226?\128?\153t show icon conflict message if you don?\226?\128?\153t have assist, but if you do have assist show it EVERY pull
+    Omega via svn r16218:
+    Some tweaks/fixes
 
-commit c2517101140b38dc08630f3371499e0923d12555
+commit 37dfa620790b783ca7ffe5bae76f6548356c093f
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Apr 29 04:45:01 2017 +0200
+Date:   Tue May 9 08:10:57 2017 +0200
 
-    Omega via svn r16191:
-    World boss adjustments
+    Omega via svn r16217:
+    change voice file
 
-commit e82f7128893f362f2e7c5e91cb78939b5aecfcee
+commit 0f32205123bc76c922047c4c3c4ec2674064de33
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Apr 29 01:49:11 2017 +0200
+Date:   Thu May 4 23:05:27 2017 +0200
 
-    Omega via svn r16190:
-    Timer tweak
+    Omega via svn r16216:
+    add more messages to block
 
-commit cadf5c92182dc75d347e6b677345f2595340c4b6
+commit 247a127c975293ea71eafb1c57f174179c3d6d72
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Apr 29 00:19:09 2017 +0200
+Date:   Thu May 4 10:03:16 2017 +0200
 
-    Omega via svn r16189:
-    Some countdown tweaks for star auger
-    finally fix bad spellId in Naltira for real this time
-    reset interrupt warnings on vandros to try and fix wrong roles getting them
+    Omega via svn r16215:
+    Include this too, since people hated that too
 
-commit 96b475bb842e77d6dbba5d65fef70436fe4a1de5
+commit 8f132b39f5af623bbabe6c5232581e2eca555f50
 Author: subversion <svn@deadlybossmods.com>
-Date:   Thu Apr 27 06:14:11 2017 +0200
+Date:   Thu May 4 09:44:16 2017 +0200
 
-    Omega via svn r16188:
-    Might as well enable that for all
+    Omega via svn r16214:
+    Fix case
 
-commit 3e65beefe42ce79d9d3e949742807777bf0d1e53
+commit efb96c57eba1ffc5b77f55093f8eecd41c25b129
 Author: subversion <svn@deadlybossmods.com>
-Date:   Thu Apr 27 06:10:38 2017 +0200
+Date:   Thu May 4 09:33:21 2017 +0200
 
-    Omega via svn r16187:
-    Fix stupid. might need more tweaking/videoing when hard drive replacement gets here.
+    Omega via svn r16213:
+    make it a toggle instead. and add more stuff to it. This is what the paying users want, this is what they get.
+    Remove some unused options.
 
-commit 5fb8620fe96f4f8a5cb29cf2d819cb1aa0dbe0c4
+commit a8febc68b0723f21d57b7983f03e8638c3952731
 Author: subversion <svn@deadlybossmods.com>
-Date:   Mon Apr 24 08:42:46 2017 +0200
+Date:   Thu May 4 08:54:42 2017 +0200
 
-    Omega via svn r16186:
-    Fix timerDemonicUpheavalCD
-    and change couple timers to regular, they shouldn?\226?\128?\153t have still been AI
+    Omega via svn r16212:
+    Disable all login messages, even for first time users. almost no one reads them and they seem to annoy most users.
 
-commit 3d6a65d153ea09d6f0a91481c290a77be003b0c9
+commit abd713ac1c53854d8417499fc15ffbfceab541fa
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sun Apr 23 17:23:20 2017 +0200
+Date:   Thu May 4 08:17:17 2017 +0200
 
-    Omega via svn r16185:
-    Fix withered jim CID
+    Omega via svn r16211:
+    Add 3 more trash warnings to CoEN (Issue 114). Drycodes and untested
 
-commit b53dc1aa8d6703bbebebc4f551dc7272421f8112
+commit aa264d8727a890f20dbea1c9a5f323db25082bb1
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Apr 22 21:24:09 2017 +0200
+Date:   Thu May 4 08:04:05 2017 +0200
 
-    Omega via svn r16184:
-    Spanish update
+    Omega via svn r16210:
+    Some antispam tweaks
 
-commit 4a2675dc10f4770acc118014ad6ac4cd962c9356
+commit d901e6ee1429fdf8a90e70302a48492e6673fc0f
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Apr 22 21:12:12 2017 +0200
+Date:   Thu May 4 06:18:24 2017 +0200
 
-    Omega via svn r16183:
-    Fix boss health reporting for wipes during Demon Within Phase, remove temp CID that was being used for holding combat
+    Omega via svn r16209:
+    Count add spawns in phase 3 mythic
+    countdown for visions
+    change countdown for crash to tank by default and change voice.
+    more attempts at fixing boss health reporting of phase 3 wipes
 
-commit d9572d149c843e40fdeea09e552046b8e6c08b98
+commit 3f8edf792ff88523b9dd6bf00ff4e68680255388
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Apr 22 20:10:49 2017 +0200
+Date:   Thu May 4 04:07:33 2017 +0200
 
-    tandanu via svn r16182:
+    Omega via svn r16208:
+    another fix
+
+commit 5c83a17bf72bf237948e5608fe3c1e8c4fb630a0
+Author: subversion <svn@deadlybossmods.com>
+Date:   Thu May 4 04:06:44 2017 +0200
+
+    Omega via svn r16207:
+    Fix more stupid
+
+commit 44cc6eb1685502e41ed2a930b58d527cf64bcfab
+Author: subversion <svn@deadlybossmods.com>
+Date:   Wed May 3 06:22:25 2017 +0200
+
+    Omega via svn r16206:
+    fix winds 3
+
+commit 0f7a760eb794132c7d08738e9481dd52877766ac
+Author: subversion <svn@deadlybossmods.com>
+Date:   Wed May 3 04:24:57 2017 +0200
+
+    Omega via svn r16205:
+    Do countdown too for first one
+
+commit 6f47ccc9a282ad3b923ac2cb79e1ce357cde34a9
+Author: subversion <svn@deadlybossmods.com>
+Date:   Wed May 3 04:05:52 2017 +0200
+
+    Omega via svn r16204:
+    apparently I forgot this. no idea how didn?\226?\128?\153t even notice.
+
+commit 5721bcda593b8eb5dc2cfc770e50b47221210b1a
+Author: subversion <svn@deadlybossmods.com>
+Date:   Tue May 2 19:26:27 2017 +0200
+
+    tandanu via svn r16203:
     increment alpha version
 

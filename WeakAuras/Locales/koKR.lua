@@ -4,6 +4,7 @@ end
 
 local L = WeakAuras.L
 
+-- WeakAuras
 L["!="] = "!="
 L["%s - %i. Trigger"] = "%s - %i. 활성 조건"
 L["%s - 1. Trigger"] = "%s - 1. 활성 조건"
@@ -463,8 +464,8 @@ L["Slide to Top"] = "위로 슬라이드"
 L["Slime"] = "독성"
 L["Sound by Kit ID"] = "Kit ID로 소리 재생"
 L["Sound Effects"] = "소리 효과"
-L["Source Name"] = "시전자 이름"
-L["Source Unit"] = "시전자 유닛"
+L["Source Name"] = "행위자 이름"
+L["Source Unit"] = "행위자 유닛"
 L["Spacing"] = "간격"
 L["Spark Color"] = "섬광 색상"
 L["Spark Height"] = "섬광 높이"
@@ -539,3 +540,4 @@ L["Yell"] = "외침"
 L["Zone"] = "지역"
 L["Zone ID"] = "지역 ID"
 L["Zone ID List"] = "지역 ID 목록"
+

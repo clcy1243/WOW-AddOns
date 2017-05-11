@@ -8,7 +8,7 @@ ADDON_LOGO          = [[Interface\AddOns\]] .. ADDON_NAME .. [[\Media\Logo]]
 ADDON_VERSION       = GetAddOnMetadata(ADDON_NAME, 'Version')
 ADDON_VERSION_SHORT = ADDON_VERSION:gsub('(%d)%d(%d)%d%d%.(%d%d)','%1%2%3')
 ADDON_REGIONSUPPORT = GetCurrentRegion() == 5
-ADDON_SERVER        = 'S1' .. UnitFactionGroup('player')
+ADDON_SERVER        = (NETEASE_SERVER_PREFIX or 'S1') .. UnitFactionGroup('player')
 SERVER_TIMEOUT      = 120
 
 _G.BINDING_NAME_MEETINGSTONE_TOGGLE = L['打开/关闭集合石']
@@ -20,25 +20,37 @@ SOLO_VISIBLE_CUSTOM_ID      = 998
 MAX_PLAYER_LEVEL            = MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]
 MAX_SEARCHBOX_HISTORY_LINES = 5
 
+-- App
+APP_WHISPER_DOT = '@'
+COMMIT_INTERVAL = 60
+APP_DOWNLOAD_URL = 'http://sh.hosapp.blz.netease.com/qrcode/download/wow'
+
 ACTIVITY_BG_COUNT = 3
 MAX_LOTTERY_COUNT = 8
 LOTTERY_ORDER     = [[10101010102102021031203210432034105340251062345601234567]]
 
 MAX_SUMMARY_LETTERS = 255
-MIN_PLAYER_LEVEL = 10
+MIN_PLAYER_LEVEL    = 10
 
 ACTIVITY_FILTER_BROWSE = 1
 ACTIVITY_FILTER_CREATE = 2
 ACTIVITY_FILTER_OTHER  = 3
 
+FOLLOW_STATUS_UNKNOWN   = 0
+FOLLOW_STATUS_STARED    = 1
+FOLLOW_STATUS_FOLLOWER  = 2
+FOLLOW_STATUS_FRIEND    = 3
+FOLLOW_STATUS_THROTTLED = 4
+FOLLOW_STATUS_MAX       = 5
+
 DEFAULT_LOOT_LIST = {
-    [4] = 4,
-    [7] = 4,
-    [8] = 4,
-    [9] = 4,
-    [10] = 4,
-    ['6-0-17-5'] = 4,
-    ['6-0-17-0'] = 4,
+    [4]              = 4,
+    [7]              = 4,
+    [8]              = 4,
+    [9]              = 4,
+    [10]             = 4,
+    ['6-0-17-5']     = 4,
+    ['6-0-17-0']     = 4,
     ['1-71-280-998'] = 3,
 }
 
@@ -53,11 +65,11 @@ DEFAULT_MODE_LIST = {
 }
 
 INVITE_STATUS_NAMES = {
-    failed = LFG_LIST_APP_CANCELLED,
-    cancelled = LFG_LIST_APP_CANCELLED,
-    declined = LFG_LIST_APP_DECLINED,
-    timedout = LFG_LIST_APP_TIMED_OUT,
-    invited = LFG_LIST_APP_INVITED,
+    failed         = LFG_LIST_APP_CANCELLED,
+    cancelled      = LFG_LIST_APP_CANCELLED,
+    declined       = LFG_LIST_APP_DECLINED,
+    timedout       = LFG_LIST_APP_TIMED_OUT,
+    invited        = LFG_LIST_APP_INVITED,
     inviteaccepted = LFG_LIST_APP_INVITE_ACCEPTED,
     invitedeclined = LFG_LIST_APP_INVITE_DECLINED,
 }
@@ -83,29 +95,29 @@ PROVING_GROUND_DATA = {
 CATEGORY = {
     [0] = {
         groups = {
-            [5] = true,
+            [5]  = true,
             [18] = true,
             [19] = true,
             [30] = true,
             [31] = true,
         },
         activities = {
-            [50] = true,
-            [52] = true,
-            [54] = true,
-            [55] = true,
-            [56] = true,
-            [57] = true,
-            [58] = true,
-            [59] = true,
-            [60] = true,
-            [61] = true,
-            [62] = true,
-            [63] = true,
-            [64] = true,
-            [65] = true,
-            [66] = true,
-            [9] = true,
+            [50]  = true,
+            [52]  = true,
+            [54]  = true,
+            [55]  = true,
+            [56]  = true,
+            [57]  = true,
+            [58]  = true,
+            [59]  = true,
+            [60]  = true,
+            [61]  = true,
+            [62]  = true,
+            [63]  = true,
+            [64]  = true,
+            [65]  = true,
+            [66]  = true,
+            [9]   = true,
             [293] = true,
             [294] = true,
             [295] = true,
@@ -131,7 +143,7 @@ CATEGORY = {
             [37] = true,
         },
         activities = {
-            [45] = true,
+            [45]  = true,
             [296] = true,
             [297] = true,
             [298] = true,
@@ -168,7 +180,7 @@ CATEGORY = {
     },
     [3] = {
         groups = {
-            [5] = true,
+            [5]  = true,
             [19] = true,
             [54] = true,
             [55] = true,
@@ -203,7 +215,7 @@ CATEGORY = {
             [65] = true,
             [66] = true,
             [84] = true,
-            [1] = true,
+            [1]  = true,
             [83] = true,
             [82] = true,
             [81] = true,
@@ -215,18 +227,18 @@ CATEGORY = {
     },
     [5] = {
         groups = {
-            [6] = true,
-            [7] = true,
-            [8] = true,
-            [9] = true,
-            [10] = true,
-            [11] = true,
-            [12] = true,
-            [13] = true,
+            [6]   = true,
+            [7]   = true,
+            [8]   = true,
+            [9]   = true,
+            [10]  = true,
+            [11]  = true,
+            [12]  = true,
+            [13]  = true,
             [109] = true,
-            [14] = true,
-            [15] = true,
-            [67] = true,
+            [14]  = true,
+            [15]  = true,
+            [67]  = true,
             [110] = true,
         },
         activities = {
@@ -251,6 +263,11 @@ CATEGORY = {
             [124] = true,
             [125] = true,
             [126] = true,
+            [127] = true,
+            [128] = true,
+            [129] = true,
+            [130] = true,
+            [131] = true,
         },
         activities = {
             [458] = true,
@@ -309,7 +326,6 @@ RAID_PROGRESSION_LIST = {
         { id = 10929, name = '梦魇之龙' },
         { id = 10933, name = '塞纳留斯' },
         { id = 10937, name = '萨维斯' },
-        -- { id = 10941, name = '斯考匹隆' },
     },  -- 翡翠梦魇（普通）
     [414] = {
         { id = 10913, name = '尼珊德拉' },
@@ -319,26 +335,27 @@ RAID_PROGRESSION_LIST = {
         { id = 10930, name = '梦魇之龙' },
         { id = 10934, name = '塞纳留斯' },
         { id = 10938, name = '萨维斯' },
-        -- { id = 10942, name = '斯考匹隆' },
     },  -- 翡翠梦魇（英雄）
     [415] = {
+        { id = 10941, name = '斯考匹隆' },
         { id = 10945, name = '时空畸体' },
         { id = 10949, name = '崔利艾克斯' },
         { id = 10953, name = '魔剑士奥鲁瑞尔' },
         { id = 10957, name = '占星师艾塔乌斯' },
         { id = 10962, name = '高级植物学家特尔安' },
-        { id = 10966, name = '克迪奥斯' },
+        { id = 10966, name = '提克迪奥斯' },
         { id = 10970, name = '克洛苏斯' },
         { id = 10974, name = '大魔导师艾利桑德' },
         { id = 10978, name = '古尔丹' },
     },  -- 暗夜要塞（普通）
     [416] = {
+        { id = 10942, name = '斯考匹隆' },
         { id = 10946, name = '时空畸体' },
         { id = 10950, name = '崔利艾克斯' },
         { id = 10954, name = '魔剑士奥鲁瑞尔' },
         { id = 10959, name = '占星师艾塔乌斯' },
         { id = 10963, name = '高级植物学家特尔安' },
-        { id = 10967, name = '克迪奥斯' },
+        { id = 10967, name = '提克迪奥斯' },
         { id = 10971, name = '克洛苏斯' },
         { id = 10975, name = '大魔导师艾利桑德' },
         { id = 10979, name = '古尔丹' },
@@ -650,13 +667,6 @@ RAID_PROGRESSION_LIST = {
     },  --  魔古山宝库（25人英雄）
 }
 
-SOURCE_ICONS = {
-    [0] = [[Interface\AddOns\MeetingStone\Media\Mark\0]],
-    [2] = [[Interface\AddOns\MeetingStone\Media\Mark\2]],
-    [3] = [[Interface\AddOns\MeetingStone\Media\Mark\3]],
-    [5] = [[Interface\AddOns\MeetingStone\Media\Mark\5]],
-}
-
 DEFAULT_SPAMWORD = [[
 !%d+元
 !tao.*bao
@@ -674,6 +684,7 @@ ZONE_ACTIVITY_MAP = {
     [1024] = '1-124-421-0',  -- 至高岭
     [1018] = '1-124-420-0',  -- 瓦尔莎拉
     [1015] = '1-124-419-0',  -- 阿苏纳
+    [1021] = '1-124-469-0',  -- 破碎海滩
 
     -- [1096] = true,  -- 艾萨拉之眼
 }

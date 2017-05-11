@@ -4,11 +4,9 @@ local L = mod.L
 local candy = LibStub("LibCandyBar-3.0")
 local media = LibStub("LibSharedMedia-3.0")
 local Timer = C_Timer.After
-mod.c = {r=1,g=1,b=1}
 local bars = {}
 
 local frame = CreateFrame("Frame", name, UIParent)
-mod.f = frame
 frame:SetPoint("CENTER", UIParent, "CENTER")
 frame:SetWidth(180)
 frame:SetHeight(15)
@@ -16,41 +14,67 @@ frame:SetMovable(true)
 frame:EnableMouse(true)
 frame:RegisterForDrag("LeftButton")
 frame:SetClampedToScreen(true)
-frame:Hide()
+frame:Show()
+frame:SetScript("OnDragStart", function(f) f:StartMoving() end)
+frame:SetScript("OnDragStop", function(f) f:StopMovingOrSizing() end)
+SlashCmdList[name] = function()
+	LoadAddOn("LegionInvasionTimer_Options")
+	LibStub("AceConfigDialog-3.0"):Open(name)
+end
+SLASH_LegionInvasionTimer1 = "/lit"
+SLASH_LegionInvasionTimer2 = "/legioninvasiontimer"
+frame:SetScript("OnMouseUp", function(f, btn)
+	if btn == "RightButton" then
+		SlashCmdList.LegionInvasionTimer()
+	end
+end)
 frame:RegisterEvent("PLAYER_LOGIN")
 frame.bars = bars
 
-local OnEnter, ShowTip
+local OnEnter, ShowTip, HideTip
 do
 	local id = 11544 -- Defender of the Broken Isles
-	local GameTooltip = GameTooltip
+	local GameTooltip, WorldMapTooltip = GameTooltip, WorldMapTooltip
 	local FormatShortDate = FormatShortDate
 	ShowTip = function(tip)
 		local _, name, _, _, month, day, year, description, _, _, _, _, wasEarnedByMe = GetAchievementInfo(id)
-		if wasEarnedByMe then
-			tip:AddDoubleLine(name, FormatShortDate(day, month, year), nil, nil, nil, .5, .5, .5)
-		else
-			tip:AddLine(name, nil, nil, nil, .5, .5, .5)
-		end
-		tip:AddLine(description, 1, 1, 1, true)
-		for i = 1, GetAchievementNumCriteria(id) do
-			local criteriaString, criteriaType, completed = GetAchievementCriteriaInfo(id, i)
-			if completed == false then
-				criteriaString = "|CFF808080 - " .. criteriaString .. "|r"
+		if not wasEarnedByMe or not legionTimerDB.tooltipHideAchiev then
+			if wasEarnedByMe then
+				tip:AddDoubleLine(name, FormatShortDate(day, month, year), nil, nil, nil, .5, .5, .5)
 			else
-				criteriaString = "|CFF00FF00 - " .. criteriaString .. "|r"
+				tip:AddLine(name, nil, nil, nil, .5, .5, .5)
 			end
-			tip:AddLine(criteriaString)
-		end
-		tip:AddLine(" ")
-
-		local nName, nAmount, nIcon = GetCurrencyInfo(1226) -- Nethershard
-		local sName, sAmount, sIcon = GetCurrencyInfo(1342) -- Legionfall War Supplies
-		tip:AddDoubleLine(nName, ("|T%s:15:15:0:0:64:64:4:60:4:60|t %d"):format(nIcon, nAmount), 1, 1, 1, 1, 1, 1)
-		tip:AddDoubleLine(sName, ("|T%s:15:15:0:0:64:64:4:60:4:60|t %d"):format(sIcon, sAmount), 1, 1, 1, 1, 1, 1)
-
-		if legionTimerDB.prev then -- Have we seen our first invasion?
+			tip:AddLine(description, 1, 1, 1, true)
+			for i = 1, GetAchievementNumCriteria(id) do
+				local criteriaString, criteriaType, completed = GetAchievementCriteriaInfo(id, i)
+				if completed == false then
+					criteriaString = "|CFF808080 - " .. criteriaString .. "|r"
+				else
+					criteriaString = "|CFF00FF00 - " .. criteriaString .. "|r"
+				end
+				tip:AddLine(criteriaString)
+			end
 			tip:AddLine(" ")
+		end
+
+		local splitLine = false
+		if not legionTimerDB.tooltipHideNethershard then
+			splitLine = true
+			local nName, nAmount, nIcon = GetCurrencyInfo(1226) -- Nethershard
+			tip:AddDoubleLine(nName, ("|T%s:15:15:0:0:64:64:4:60:4:60|t %d"):format(nIcon, nAmount), 1, 1, 1, 1, 1, 1)
+		end
+		if not legionTimerDB.tooltipHideWarSupplies then
+			splitLine = true
+			local sName, sAmount, sIcon = GetCurrencyInfo(1342) -- Legionfall War Supplies
+			tip:AddDoubleLine(sName, ("|T%s:15:15:0:0:64:64:4:60:4:60|t %d"):format(sIcon, sAmount), 1, 1, 1, 1, 1, 1)
+		end
+
+		if splitLine then
+			tip:AddLine(" ")
+		end
+
+		tip:AddLine(L.nextInvasions)
+		if legionTimerDB.prev then -- Have we seen our first invasion?
 			-- 18hrs * 60min = 1,080min = +30min = 1,110min = *60sec = 66,600sec
 			local elapsed = time() - legionTimerDB.prev
 			while elapsed > 66600 do
@@ -58,43 +82,58 @@ do
 			end
 			local t = 66600-elapsed
 			t = t+time()
-			tip:AddLine(L.nextInvasions)
 			local upper, date = string.upper, date
 			local check = date("%M", t)
 			if check == "29" or check == "59" then
 				t = t + 60 -- Round up to 00min/30min if we're at 29min/59min
 			end
-			tip:AddDoubleLine(
-				_G["WEEKDAY_"..upper(date("%A", t))].." "..date("%H:%M", t),
-				_G["WEEKDAY_"..upper(date("%A", t+66600))].." "..date("%H:%M", t+66600),
-				1, 1, 1, 1, 1, 1
-			)
-			for i = 1, 3 do
-				t = t + 66600 + 66600
-				tip:AddDoubleLine(
-					_G["WEEKDAY_"..upper(date("%A", t))].." "..date("%H:%M", t),
-					_G["WEEKDAY_"..upper(date("%A", t+66600))].." "..date("%H:%M", t+66600),
-					1, 1, 1, 1, 1, 1
-				)
+			if legionTimerDB.tooltip12hr then
+				for i = 1, 4 do
+					tip:AddDoubleLine(
+						_G["WEEKDAY_"..upper(date("%A", t))].." "..date("%I:%M", t) .. _G["TIMEMANAGER_"..upper(date("%p", t))],
+						_G["WEEKDAY_"..upper(date("%A", t+66600))].." "..date("%I:%M", t+66600) .. _G["TIMEMANAGER_"..upper(date("%p", t+66600))],
+						1, 1, 1, 1, 1, 1
+					)
+					t = t + 66600 + 66600
+				end
+			else
+				for i = 1, 4 do
+					tip:AddDoubleLine(
+						_G["WEEKDAY_"..upper(date("%A", t))].." "..date("%H:%M", t),
+						_G["WEEKDAY_"..upper(date("%A", t+66600))].." "..date("%H:%M", t+66600),
+						1, 1, 1, 1, 1, 1
+					)
+					t = t + 66600 + 66600
+				end
 			end
+		else
+			tip:AddLine(L.waiting, 1, 1, 1)
+		end
+	end
+	HideTip = function()
+		if legionTimerDB.mode == 3 then
+			WorldMapTooltip:Hide()
+		else
+			GameTooltip:Hide()
 		end
 	end
 	OnEnter = function(f)
-		GameTooltip:SetOwner(f, "ANCHOR_NONE")
-		GameTooltip:SetPoint("BOTTOM", f, "TOP")
-		ShowTip(GameTooltip)
-		GameTooltip:Show()
+		local tip = legionTimerDB.mode == 3 and WorldMapTooltip or GameTooltip
+		tip:SetOwner(f, "ANCHOR_NONE")
+		tip:SetPoint("BOTTOM", f, "TOP")
+		ShowTip(tip)
+		tip:Show()
 	end
 end
 
-local rearrangeBars
+local RearrangeBars
 do
 	-- Ripped from BigWigs bar sorter
 	local function barSorter(a, b)
 		return a.remaining < b.remaining and true or false
 	end
 	local tmp = {}
-	rearrangeBars = function()
+	RearrangeBars = function()
 		wipe(tmp)
 		for bar in next, bars do
 			tmp[#tmp + 1] = bar
@@ -124,19 +163,16 @@ do
 			end
 		end
 	end
-	frame.rearrangeBars = rearrangeBars
+	frame.RearrangeBars = RearrangeBars
 end
 
-local function stopBar(text, stopAll)
+local function StopBar(text)
 	for bar in next, bars do
-		if stopAll then
-			bar:Stop(true)
-		elseif bar:GetLabel() == text then
-			bar:Stop(true)
+		if bar:GetLabel() == text then
+			bar:Stop()
 		end
 	end
 end
-mod.stopBar = stopBar
 
 local ChangeBarColor
 do
@@ -161,16 +197,16 @@ do
 	end
 end
 
-local startBar, startBroker
+local StartBar
 local hiddenBars = false
 do
-	startBar = function(text, timeLeft, rewardQuestID, icon, paused)
-		stopBar(text)
+	StartBar = function(text, timeLeft, rewardQuestID, icon, paused)
+		StopBar(text)
 		local bar = candy:New(media:Fetch("statusbar", legionTimerDB.barTexture), legionTimerDB.width, legionTimerDB.height)
 		bars[bar] = true
 
 		bar:SetScript("OnEnter", OnEnter)
-		bar:SetScript("OnLeave", GameTooltip_Hide)
+		bar:SetScript("OnLeave", HideTip)
 		bar:SetParent(frame)
 		bar:SetLabel(text)
 		bar.candyBarLabel:SetJustifyH(legionTimerDB.alignZone)
@@ -213,14 +249,14 @@ do
 		else -- Next invasion bars
 			bar:Start()
 		end
-		rearrangeBars()
+		RearrangeBars()
 		if hiddenBars then
 			bar:Hide()
 		end
 	end
-	mod.startBar = startBar
 end
 
+local StartBroker
 do
 	local obj
 	local prevTime, label, repeater = 0, "", false
@@ -228,16 +264,17 @@ do
 		prevTime = prevTime - 60
 		obj.text = label..": ".. SecondsToTime(prevTime, true)
 	end
-	startBroker = function(text, timeLeft, icon)
+	StartBroker = function(text, timeLeft, icon)
 		if not obj then
-			local ls = LibStub("LibDataBroker-1.1", true)
-			if ls then
-				obj = ls:NewDataObject("LegionInvasionTimer", {type = "data source", icon = icon, text = text..": ".. SecondsToTime(timeLeft, true)})
-				function obj.OnTooltipShow(tooltip)
+			obj = LibStub("LibDataBroker-1.1"):NewDataObject("LegionInvasionTimer", {
+				type = "data source",
+				icon = icon,
+				text = text..": ".. SecondsToTime(timeLeft, true),
+				OnTooltipShow = function(tooltip)
 					if not tooltip or not tooltip.AddLine or not tooltip.AddDoubleLine then return end
 					ShowTip(tooltip)
 				end
-			end
+			})
 		end
 		if obj then
 			obj.icon = icon
@@ -250,95 +287,99 @@ do
 	end
 end
 
-local GetAreaPOITimeLeft = C_WorldMap.GetAreaPOITimeLeft
-local justLoggedIn, isWaiting = true, false
-local zonePOIIds = {5177, 5178, 5210, 5175}
-local zoneNames = {1024, 1017, 1018, 1015}
-local questIds = {45840, 45839, 45812, 45838}
--- 5177 Highmountain 1024 45840
--- 5178 Stormheim 1017 45839
--- 5210 Val'Sharah 1018 45812
--- 5175 Azsuna 1015 45838
-local function FindInvasion()
-	local mode = legionTimerDB.mode
-	local found = false
+local FindInvasion
+local justLoggedIn = true
+do
+	local GetAreaPOITimeLeft = C_WorldMap.GetAreaPOITimeLeft
+	local isWaiting = false
+	local zonePOIIds = {5177, 5178, 5210, 5175}
+	local zoneNames = {1024, 1017, 1018, 1015}
+	local questIds = {45840, 45839, 45812, 45838}
+	-- 5177 Highmountain 1024 45840
+	-- 5178 Stormheim 1017 45839
+	-- 5210 Val'Sharah 1018 45812
+	-- 5175 Azsuna 1015 45838
+	FindInvasion = function()
+		local mode = legionTimerDB.mode
+		local found = false
 
-	for i = 1, #zonePOIIds do
-		local timeLeftMinutes = GetAreaPOITimeLeft(zonePOIIds[i])
-		if timeLeftMinutes and timeLeftMinutes > 0 and timeLeftMinutes < 361 then -- On some realms timeLeftMinutes can return massive values during the initialization of a new event
-			stopBar(NEXT)
-			stopBar(L.waiting)
-			local t = timeLeftMinutes * 60
-			if mode == 1 then
-				startBar(GetMapNameByID(zoneNames[i]), t, questIds[i], 236292) -- 236292 = Interface\\Icons\\Ability_Warlock_DemonicEmpowerment
-				frame:RegisterEvent("QUEST_TURNED_IN")
-			else
-				startBroker(GetMapNameByID(zoneNames[i]), t, 236292) -- 236292 = Interface\\Icons\\Ability_Warlock_DemonicEmpowerment
-			end
-			Timer(t+60, FindInvasion)
-			found = true
-			if not IsEncounterInProgress() and not justLoggedIn and timeLeftMinutes > 110 then -- Not fighting a boss, didn't just log in, has just spawned (safety)
-				FlashClientIcon()
-				local text = "|T236292:15:15:0:0:64:64:4:60:4:60|t ".. ZONE_UNDER_ATTACK:format(GetMapNameByID(zoneNames[i]))
-				print("|cFF33FF99LegionInvasionTimer|r:", text)
-				RaidNotice_AddMessage(RaidBossEmoteFrame, text, mod.c)
-				PlaySoundFile("Sound\\Interface\\RaidWarning.ogg", "Master")
-			end
-			justLoggedIn = false
+		for i = 1, #zonePOIIds do
+			local timeLeftMinutes = GetAreaPOITimeLeft(zonePOIIds[i])
+			if timeLeftMinutes and timeLeftMinutes > 0 and timeLeftMinutes < 361 then -- On some realms timeLeftMinutes can return massive values during the initialization of a new event
+				StopBar(NEXT)
+				StopBar(L.waiting)
+				local t = timeLeftMinutes * 60
+				if mode == 2 then
+					StartBroker(GetMapNameByID(zoneNames[i]), t, 236292) -- 236292 = Interface\\Icons\\Ability_Warlock_DemonicEmpowerment
+				else
+					StartBar(GetMapNameByID(zoneNames[i]), t, questIds[i], 236292) -- 236292 = Interface\\Icons\\Ability_Warlock_DemonicEmpowerment
+					frame:RegisterEvent("QUEST_TURNED_IN")
+				end
+				Timer(t+60, FindInvasion)
+				found = true
+				if not IsEncounterInProgress() and not justLoggedIn and timeLeftMinutes > 350 then -- Not fighting a boss, didn't just log in, has just spawned (safety)
+					FlashClientIcon()
+					local text = "|T236292:15:15:0:0:64:64:4:60:4:60|t ".. ZONE_UNDER_ATTACK:format(GetMapNameByID(zoneNames[i]))
+					print("|cFF33FF99LegionInvasionTimer|r:", text)
+					RaidNotice_AddMessage(RaidBossEmoteFrame, text, {r=1, g=1, b=1})
+					PlaySoundFile("Sound\\Interface\\RaidWarning.ogg", "Master")
+				end
+				justLoggedIn = false
 
-			local t = time()
-			local elapsed = 360-timeLeftMinutes
-			t = t - (elapsed * 60)
-			legionTimerDB.prev = t
+				local t = time()
+				local elapsed = 360-timeLeftMinutes
+				t = t - (elapsed * 60)
+				legionTimerDB.prev = t
+			end
 		end
-	end
 
-	if not found then
-		if legionTimerDB.prev then
-			-- 18hrs * 60min = 1,080min = +30min = 1,110min = *60sec = 66,600sec
-			local elapsed = time() - legionTimerDB.prev
-			while elapsed > 66600 do
-				elapsed = elapsed - 66600
-			end
-			local t = 66600-elapsed
+		if not found then
+			if legionTimerDB.prev then
+				-- 18hrs * 60min = 1,080min = +30min = 1,110min = *60sec = 66,600sec
+				local elapsed = time() - legionTimerDB.prev
+				while elapsed > 66600 do
+					elapsed = elapsed - 66600
+				end
+				local t = 66600-elapsed
 
-			if t > 45000 then -- 12hrs * 60min = 720min = +30min = 750min = *60sec = 45,000sec
-				-- If it's longer than 45k then an invasion is currently active.
-				-- Loop every second until GetAreaPOITimeLeft responds with valid results.
-				Timer(1, FindInvasion)
+				if t > 45000 then -- 12hrs * 60min = 720min = +30min = 750min = *60sec = 45,000sec
+					-- If it's longer than 45k then an invasion is currently active.
+					-- Loop every second until GetAreaPOITimeLeft responds with valid results.
+					Timer(1, FindInvasion)
+					if not isWaiting then
+						isWaiting = true
+						if mode == 2 then
+							StartBroker(L.waiting, 0, 132177) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
+						else
+							StartBar(L.waiting, t, 0, 132177, true) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
+						end
+					end
+					return
+				end
+
+				if mode == 2 then
+					StartBroker(NEXT, t, 132177) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
+				else
+					StartBar(NEXT, t, 0, 132177) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
+				end
+
+				Timer(t + 5, FindInvasion)
+			else
+				Timer(60, FindInvasion)
 				if not isWaiting then
 					isWaiting = true
-					if mode == 1 then
-						startBar(L.waiting, t, 0, 132177, true) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
+					if mode == 2 then
+						StartBroker(L.waiting, 0, 132177) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
 					else
-						startBroker(L.waiting, 0, 132177) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
+						StartBar(L.waiting, 1000, 0, 132177, true) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
 					end
-				end
-				return
-			end
-
-			if mode == 1 then
-				startBar(NEXT, t, 0, 132177) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
-			else
-				startBroker(NEXT, t, 132177) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
-			end
-
-			Timer(t + 5, FindInvasion)
-		else
-			Timer(60, FindInvasion)
-			if not isWaiting then
-				isWaiting = true
-				if mode == 1 then
-					startBar(L.waiting, 1000, 0, 132177, true) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
-				else
-					startBroker(L.waiting, 0, 132177) -- 132177 = Interface\\Icons\\Ability_Hunter_MasterMarksman
 				end
 			end
 		end
-	end
 
-	if isWaiting then
-		isWaiting = false
+		if isWaiting then
+			isWaiting = false
+		end
 	end
 end
 
@@ -404,32 +445,27 @@ frame:SetScript("OnEvent", function(f)
 	end
 	if not legionTimerDB.mode then
 		legionTimerDB.mode = 1
+	elseif legionTimerDB.mode == 2 then
+		legionTimerDB.lock = true
+	elseif legionTimerDB.mode == 3 then
+		legionTimerDB.hideInRaid = nil
 	end
 	legionTimerDB.hideBossWarnings = nil
+	legionTimerDB.tooltipSupplies = nil
 	if not legionTimerDB.colorNext then
 		legionTimerDB.colorNext = {0.25,0.33,0.68,1}
 	end
 	-- END COMPAT --
 
-	f:Show()
-	f:SetScript("OnDragStart", function(f) f:StartMoving() end)
-	f:SetScript("OnDragStop", function(f) f:StopMovingOrSizing() end)
-	SlashCmdList[name] = function() LoadAddOn("LegionInvasionTimer_Options") LibStub("AceConfigDialog-3.0"):Open(name) end
-	SLASH_LegionInvasionTimer1 = "/lit"
-	SLASH_LegionInvasionTimer2 = "/legioninvasiontimer"
-	f:SetScript("OnMouseUp", function(f, btn)
-		if btn == "RightButton" then
-			SlashCmdList[name]()
-		end
-	end)
 	f:SetScript("OnEnter", function(f)
-		GameTooltip:SetOwner(f, "ANCHOR_NONE")
-		GameTooltip:SetPoint("BOTTOM", f, "TOP")
-		GameTooltip:AddLine(L.tooltipClick, 0.2, 1, 0.2, 1)
-		GameTooltip:AddLine(L.tooltipClickOptions, 0.2, 1, 0.2, 1)
-		GameTooltip:Show()
+		local tip = legionTimerDB.mode == 3 and WorldMapTooltip or GameTooltip
+		tip:SetOwner(f, "ANCHOR_NONE")
+		tip:SetPoint("BOTTOM", f, "TOP")
+		tip:AddLine(L.tooltipClick, 0.2, 1, 0.2, 1)
+		tip:AddLine(L.tooltipClickOptions, 0.2, 1, 0.2, 1)
+		tip:Show()
 	end)
-	f:SetScript("OnLeave", GameTooltip_Hide)
+	f:SetScript("OnLeave", HideTip)
 	local bg = f:CreateTexture(nil, "PARENT")
 	bg:SetAllPoints(f)
 	bg:SetColorTexture(0, 1, 0, 0.3)
@@ -446,20 +482,20 @@ frame:SetScript("OnEvent", function(f)
 		f.header:Hide()
 	end
 
+	if legionTimerDB.mode == 3 then
+		f:SetParent(WorldMapFrame)
+		f:SetFrameStrata("FULLSCREEN")
+		f:SetFrameLevel(10)
+	end
+
 	candy.RegisterCallback(name, "LibCandyBar_Stop", function(_, bar)
 		if bars[bar] then
 			bars[bar] = nil
-			rearrangeBars()
+			RearrangeBars()
 		end
 	end)
 
-	-- Force an update, needed for the very first login
-	local function update()
-		for i = 1, #zonePOIIds do
-			GetAreaPOITimeLeft(zonePOIIds[i])
-		end
-	end
-	Timer(1, FindInvasion)
+	FindInvasion()
 
 	Timer(15, function()
 		justLoggedIn = false
