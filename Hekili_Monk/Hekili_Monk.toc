@@ -1,0 +1,9 @@
+## Interface: 70200
+## Version: 7.2.0
+## Title: Hekili_Monk
+## Author: Hekili
+## Notes: Brewmaster and Windwalker Monk module for Hekili.  Packaged separately from core addon.
+## RequiredDeps: Hekili
+## OptionalDeps: Masque, SpellFlash, SpellFlashCore, WeakAuras
+
+Monk.lua
