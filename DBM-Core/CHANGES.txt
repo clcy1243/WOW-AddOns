@@ -1,5 +1,13 @@
 Changes since tag 7.2.6
 
+commit 1879b96538489cea17ced90100a2bb818b838fd7
+Author: subversion <svn@deadlybossmods.com>
+Date:   Fri May 12 06:56:35 2017 +0200
+
+    Omega via svn r16222:
+    Antispam purified essence warnings for when you blow up 3-4 at once
+    fix voice file name
+
 commit c55f9413c1cf581a2a936d2f5a7424785391afe2
 Author: subversion <svn@deadlybossmods.com>
 Date:   Thu May 11 07:11:23 2017 +0200

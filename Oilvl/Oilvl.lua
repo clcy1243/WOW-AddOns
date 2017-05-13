@@ -361,7 +361,62 @@ local OSTATTOV = {
 	}, -- [3]
 }
 
---local OSTATTOS = {}
+local OSTATTOS = {
+	{
+		11877, -- [1]
+		11878, -- [2]
+		11879, -- [3]
+		11880, -- [4]
+	}, -- [1]
+	{
+		11881, -- [1]
+		11882, -- [2]
+		11883, -- [3]
+		11884, -- [4]
+	}, -- [2]
+	{
+		11885, -- [1]
+		11886, -- [2]
+		11887, -- [3]
+		11888, -- [4]
+	}, -- [3]
+	{
+		11889, -- [1]
+		11890, -- [2]
+		11891, -- [3]
+		11892, -- [4]
+	}, -- [4]
+	{
+		11893, -- [1]
+		11894, -- [2]
+		11895, -- [3]
+		11896, -- [4]
+	}, -- [5]
+	{
+		11897, -- [1]
+		11898, -- [2]
+		11899, -- [3]
+		11900, -- [4]
+	}, -- [6]
+	{
+		11901, -- [1]
+		11902, -- [2]
+		11903, -- [3]
+		11904, -- [4]
+	}, -- [7]
+	{
+		11905, -- [1]
+		11906, -- [2]
+		11907, -- [3]
+		11908, -- [4]
+	}, -- [8]
+	{
+		11909, -- [1]
+		11910, -- [2]
+		11911, -- [3]
+		11912, -- [4]
+	}, -- [9]
+}
 
 local function round(number, digits)
     return tonumber(string.format("%." .. (digits or 0) .. "f", number))
@@ -3263,7 +3318,7 @@ function OGetRaidProgression2(RaidName, OSTAT, NumRaidBosses)
 	SaveAOTCCE(RaidAchiv[TNname],11195,11192) 
 	SaveAOTCCE(RaidAchiv[TENname],11194,11191) 
 	SaveAOTCCE(RaidAchiv[TOVname],11581,11580)
-	--SaveAOTCCE(RaidAchiv[TOSname],11581,11580) pls modify 11581 and 11580
+	--SaveAOTCCE(RaidAchiv[TOSname],11874,11875)
 	
 	local oilvltooltiptexts = {}
 	for i = 1, OilvlTooltip:NumLines() do
@@ -3711,7 +3766,7 @@ function OGetRaidProgression3(RaidName, OSTAT, NumRaidBosses)
 	SaveAOTCCE(RaidAchiv[TNname],11195,11192) 
 	SaveAOTCCE(RaidAchiv[TENname],11194,11191) 
 	SaveAOTCCE(RaidAchiv[TOVname],11581,11580)
-	--SaveAOTCCE(RaidAchiv[TOSname],11581,11580) pls modify 11581 and 11580
+	--SaveAOTCCE(RaidAchiv[TOSname],11874,11875)
 
 	local oilvltooltiptexts = {}
 	for i = 1, OilvlTooltip:NumLines() do
@@ -5479,7 +5534,6 @@ function events:PLAYER_LOGIN(...)
 	oilvlSetOSTATTN()
 	oilvlSetOSTATTOV()
 	--oilvlSetOSTATTOS()
-	--cfg["TOS"] = OSTATTOS
 	--[[Fix for Lua errors with Blizzard_AchievementUI below]]--
 	local unregistered,reregistered
 	local function reregisterBlizz()
