@@ -1,6 +1,5 @@
 local L = WeakAuras.L
 
--- WeakAuras
 L["!="] = "!="
 L["%s - %i. Trigger"] = "%s - %i. Trigger"
 L["%s - 1. Trigger"] = "%s - 1. Trigger"
@@ -516,7 +515,6 @@ L["Yell"] = "Yell"
 L["Zone"] = "Zone"
 L["Zone ID"] = "Zone ID"
 L["Zone ID List"] = "Zone ID List"
-
 
 -- Make missing translations available
 setmetatable(WeakAuras.L, {__index = function(self, key)

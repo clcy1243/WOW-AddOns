@@ -1,85 +1,3 @@
-commit c6ed58e902f92fe19f0c42531d962222cb7a2cb5
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Thu May 11 17:39:50 2017 -0400
-
-    Remove debug print from Empower Rune Weapon.
-
-commit 3a4400380a7954536aac6dc4d859a222169a5501
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Thu May 11 16:13:08 2017 -0400
-
-    Fixes.
-    
-    + Block bad regen values for resources that don't regen.
-    + Fix swing-based resource regen.
-    o WiP:  use_item support, not ready for primetime.
-    + For modifiers, if the value doesn't resolve to an actual value, the
-    value will be stored as a string.  So name=blah will first try to assign
-    the value of blah to args.name, but if that is nil, it will store the
-    strong "blah" in args.name.  Because.
-
-commit 5ff769d5e1235a1eda890eae504ea1c557ae35bb
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Mon May 8 12:01:27 2017 -0400
-
-    Add Blinding Sleet aura.  Flag Breath of Sindragosa as a friendly DoT.
-
-commit c8f5690dffe670b7aa610e53acdb7c307976bfc8
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sun May 7 23:49:46 2017 -0400
-
-    Commit new APLs for Ret from Solsacra.
-
-commit 9857b56dab4d3fa5f5ca58d90fb0b8d694c2d628
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sun May 7 23:01:05 2017 -0400
-
-    Resource Fixes
-    
-    + Fury, Pain, Holy Power, Maelstrom do not "regenerate" under the new
-    model.
-
-commit 353ceed8f7e7363195a9917ed432322fe138c3d4
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sun May 7 22:50:46 2017 -0400
-
-    Start of DK (Unholy, Frost) and Druid (Feral) support.
-    
-    + Fix for Survival Hunter
-    + Fixes for MP generation from weapon swings.
-    + Fix for Snapshots actually grabbing the right values for some
-    keywords.
-
-commit dcd66c464aa05d99aff878922383610dc0851ed4
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Thu Apr 27 22:47:38 2017 -0400
-
-    Quick fixes.
-    
-    + Allow action lists flagged as "Any" spec to work.
-    + Don't default spell duration to 0 if no other value is available.
-
-commit a18bd35960612a45417ead8427994c031a6b48e5
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Tue Apr 25 21:48:49 2017 -0400
-
-    Update Elemental APLs...
-    
-    + Used the tweaked importer to try SimC's Elemental APLs instead of my
-    handwritten versions from SEL.  Will see how that goes.
-    + Aura Info can actually be shown on displays now.  Added Buff/Debuff
-    Remaining Time as an option.
-    
-    o Tweaked the aura counting code to leave auras alone since debuffs
-    won't actually "tick" to keep themselves off the clock.  May be adverse
-    impacts...
-    + Added customization options for Show Aura Info consistent with the
-    other Extras.
-    + Quick and dirty fix for Snapshots doing duplicate string replacements
-    (i.e., 'buff.X.duration' and 'duration' in the same script).
-    + Buffs/debuffs will grab info from the class aura table if it exists,
-    so that we anticipate 'duration' information for auras we know about.
-
 commit 61b366ff9ae63de471b157c2e1043e757f8373c8
 Author: Hekili <Hekili@users.noreply.github.com>
 Date:   Mon Apr 24 23:27:03 2017 -0400
@@ -1357,4 +1275,10 @@ Author: Hekili <Hekili@users.noreply.github.com>
 Date:   Mon Nov 28 18:57:36 2016 -0500
 
     :space_invader: Added .gitattributes & .gitignore files
+
+commit cf46692a79904a78c9c597dfb65669605959dda6
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Mon Nov 28 18:56:24 2016 -0500
+
+    Initial commit
 

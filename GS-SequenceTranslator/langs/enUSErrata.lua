@@ -1,8 +1,7 @@
-local GSE = GSE
-local Statics = GSE.Static
+local GNOME, language = ...
 
 -- These are commonly mispelt spells
-GSE.TranslatorLanguageTables[Statics.TranslationHash]["enUS"] = {
+GSAvailableLanguages[GSTRStaticHash]["enUS"] = {
 	["Ice Flows"] = 108839,
 	["Lightning Bold"] = 8246,
 	["Eathern Shield Totem"] = 198838,

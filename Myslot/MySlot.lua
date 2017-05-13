@@ -11,8 +11,8 @@ local _MySlot = pblua.load_proto_ast(MySlot.ast)
 
 local MYSLOT_AUTHOR = "T.G. <farmer1992@gmail.com>"
 
-local MYSLOT_VER = 24
-local MYSLOT_ALLOW_VER = {MYSLOT_VER, 23, 22, 21, 20}
+local MYSLOT_VER = 23
+local MYSLOT_ALLOW_VER = {MYSLOT_VER, 22, 21, 20}
 
 -- local MYSLOT_IS_DEBUG = true
 local MYSLOT_LINE_SEP = IsWindowsClient() and "\r\n" or "\n"
@@ -164,6 +164,10 @@ local function KeyToByte(key , command)
         mod, key = _mod, _key
     end
 
+    if not MySlot.KEYS[key] then
+        MySlot:Print(L["[WARN] Ignore unsupported Key Binding [ %s ] , contact %s please"]:format(key, MYSLOT_AUTHOR))
+        return nil
+    end
     mod = mod or "NONE"
 
     if not MySlot.MOD_KEYS[mod] then
@@ -172,12 +176,7 @@ local function KeyToByte(key , command)
     end
 
     local msg = _MySlot.Key()
-    if MySlot.KEYS[key] then
-        msg.key = MySlot.KEYS[key]
-    else
-        msg.key = MySlot.KEYS["KEYCODE"]
-        msg.keycode = key
-    end
+    msg.key = MySlot.KEYS[key]
     msg.mod = MySlot.MOD_KEYS[mod]
 
     return msg
@@ -574,19 +573,13 @@ function MySlot:RecoverData(msg)
         end
 
         if b.key1 then
-            local mod, key = MySlot.R_MOD_KEYS[b.key1.mod], MySlot.R_KEYS[b.key1.key]
-            if key == "KEYCODE" then
-                key = b.key1.keycode
-            end
+            local mod, key = MySlot.R_MOD_KEYS[ b.key1.mod], MySlot.R_KEYS[ b.key1.key]
             local key = ( mod ~= "NONE" and (mod .. "-") or "" ) .. key
             SetBinding(key, command, 1)
         end
 
         if b.key2 then
-            local mod, key = MySlot.R_MOD_KEYS[b.key2.mod], MySlot.R_KEYS[b.key2.key]
-            if key == "KEYCODE" then
-                key = b.key2.keycode
-            end
+            local mod, key = MySlot.R_MOD_KEYS[ b.key2.mod], MySlot.R_KEYS[ b.key2.key]
             local key = ( mod ~= "NONE" and (mod .. "-") or "" ) .. key
             SetBinding(key, command, 1)
         end

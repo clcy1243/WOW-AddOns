@@ -1,7 +1,6 @@
-local GSE = GSE
-local Statics = GSE.Static
+local GNOME, language = ...
 
-GSE.TranslatorLanguageTables[Statics.TranslationShadow]["zhCN"] = {
+GSAvailableLanguages[GSTRStaticShadow]["zhCN"] = {
 	["传送门：暴风之盾PvP商人"] = 193807,
 	["寒冰风暴"] = 131559,
 	["震地图腾"] = 61882,
@@ -1803,4 +1802,4 @@ GSE.TranslatorLanguageTables[Statics.TranslationShadow]["zhCN"] = {
 	["潮汐奔涌"] = 68249,
 }
 
-GSE.TranslatorLanguageTables[Statics.TranslationShadow]["enCN"] = GSE.TranslatorLanguageTables[Statics.TranslationShadow]["zhCN"]
+GSAvailableLanguages[GSTRStaticShadow]["enCN"] = GSAvailableLanguages[GSTRStaticShadow]["zhCN"]

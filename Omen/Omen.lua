@@ -2011,7 +2011,11 @@ function Omen:UpdateBarsReal()
 		end
 		local t = db.Warnings
 		if lastWarn.mobGUID == mobGUID and myThreatPercent >= t.Threshold and t.Threshold > lastWarn.threatpercent then
-			if not t.DisableWhileTanking or not (GetSpecialization() and select(5, GetSpecializationInfo(GetSpecialization())) == "TANK") then
+			if not t.DisableWhileTanking or not (myClass == "WARRIOR" and GetShapeshiftFormID() == 18 or
+			  myClass == "DRUID" and GetShapeshiftFormID() == BEAR_FORM or
+			  myClass == "MONK" and GetShapeshiftFormID() == 23 or
+			  myClass == "PALADIN" and UnitAura("player", GetSpellInfo(25780)) or
+			  myClass == "DEATHKNIGHT" and UnitAura("player", GetSpellInfo(48263)) ) then
 				self:Warn(t.Sound, t.Flash, t.Shake, t.Message and L["Passed %s%% of %s's threat!"]:format(t.Threshold, guidNameLookup[lastWarn.tankGUID]))
 			end
 		end

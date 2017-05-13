@@ -1,7 +1,6 @@
-local GSE = GSE
-local Statics = GSE.Static
+local GNOME, language = ...
 
-GSE.TranslatorLanguageTables[Statics.TranslationKey]["zhCN"] = {
+GSAvailableLanguages[GSTRStaticKey]["zhCN"] = {
 	[220340] = "海浪冲击",
 	[1535] = "火焰新星",
 	[49360] = "传送门：塞拉摩",
@@ -1857,4 +1856,4 @@ GSE.TranslatorLanguageTables[Statics.TranslationKey]["zhCN"] = {
 	[217020] = "狂热",
 }
 
-GSE.TranslatorLanguageTables[Statics.TranslationKey]["enCN"] = GSE.TranslatorLanguageTables[Statics.TranslationKey]["zhCN"]
+GSAvailableLanguages[GSTRStaticKey]["enCN"] = GSAvailableLanguages[GSTRStaticKey]["zhCN"]

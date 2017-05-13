@@ -1,7 +1,6 @@
-local GSE = GSE
-local Statics = GSE.Static
+local GNOME, _ = ...
 
-GSE.TranslatorLanguageTables[Statics.TranslationShadow]["deDE"] = {
+GSAvailableLanguages[GSTRStaticShadow]["deDE"] = {
 	["machtwort: schild"] = 17,
 	["meucheln"] = 53,
 	["unsichtbarkeit"] = 66,

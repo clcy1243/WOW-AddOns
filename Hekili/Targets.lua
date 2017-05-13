@@ -158,20 +158,21 @@ ns.trackDebuff = function( spell, target, time )
   if not time then
     if debuffs[ spell ][ target ] then
       -- Remove it.
-      debuffs[ spell ][ target ] = nil
-      debuffCount[ spell ] = max( 0, debuffCount[ spell ] - 1 )
+      debuffs[ spell ][ target ]	= nil
+      debuffCount[ spell ] = max(0, debuffCount[ spell ] - 1)
     end
 
   else
     if not debuffs[ spell ][ target ] then
-      debuffs[ spell ][ target ] = {}
+      debuffs[ spell ][ target ]	= {}
       debuffCount[ spell ] = debuffCount[ spell ] + 1
     end
 
     local debuff = debuffs[ spell ][ target ]
-
     debuff.last_seen = time
-    debuff.applied = debuff.applied or time
+
+    if new then debuff.applied = time end
+
   end
 
 end
@@ -181,16 +182,14 @@ ns.numDebuffs = function( spell ) return debuffCount[ spell ] or 0 end
 ns.isWatchedDebuff = function( spell ) return debuffs[ spell ] ~= nil end
 
 
-ns.eliminateUnit = function( id, force )
+ns.eliminateUnit = function( id )
   ns.updateMinion( id )
   ns.updateTarget( id )
 
   ns.TTD[ id ] = nil
 
-  if force then
-      for k,v in pairs( debuffs ) do
-        ns.trackDebuff( k, id )
-      end
+  for k,v in pairs( debuffs ) do
+    ns.trackDebuff( k, id )
   end
 end
 
@@ -273,10 +272,9 @@ ns.Audit = function ()
   local grace = Hekili.DB.profile['Audit Targets']
 
   for aura, targets in pairs( debuffs ) do
-    for unit, entry in pairs( targets ) do
+    for unit, aura in pairs( targets ) do
       -- NYI: Check for dot vs. debuff, since debuffs won't 'tick'
-      local window = class.auras[ aura ] and class.auras[ aura ].duration or grace
-      if now - entry.last_seen > window then
+      if now - aura.last_seen > grace then
         ns.trackDebuff( aura, unit )
       end
     end

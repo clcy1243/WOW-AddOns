@@ -1,7 +1,6 @@
-local GSE = GSE
-local Statics = GSE.Static
+local GNOME, _ = ...
 
-GSE.TranslatorLanguageTables[Statics.TranslationKey]["koKR"] = {
+GSAvailableLanguages[GSTRStaticKey]["koKR"] = {
 	[17] = "신의 권능: 보호막",
 	[53] = "기습",
 	[66] = "투명화",

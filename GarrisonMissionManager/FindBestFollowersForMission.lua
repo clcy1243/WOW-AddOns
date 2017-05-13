@@ -47,43 +47,6 @@ local preserve_mission_page_followers = {}
 
 local FindBestFollowersForMission_compare
 
-local debug_follower
-local debug_follower_string
-local function debug_report_group(follower1, follower2, follower3, ...)
-   if not debug_follower then debug_follower = {} end
-   if not debug_follower_string then debug_follower_string = {} end
-
-   debug_follower[1] = follower1
-   debug_follower[2] = follower2
-   debug_follower[3] = follower3
-
-   for idx = 1, 3 do
-      if debug_follower[idx] then
-         local name = debug_follower[idx].name
-         local garrFollowerID = debug_follower[idx].garrFollowerID
-         
-         if false then
-         elseif garrFollowerID == 659 then name = "T.Appr.-FHuman"
-         elseif garrFollowerID == 716 then name = "Kalec"
-         elseif garrFollowerID == 717 then name = "Modera"
-         elseif garrFollowerID == 724 then name = "A.Destroyer"
-         elseif garrFollowerID == 726 then name = "Esara"
-         elseif garrFollowerID == 822 then name = "T.Appr.-MElf"
-         end
-
-         debug_follower_string[idx] = name .. "-" .. garrFollowerID
-      else
-         debug_follower_string[idx] = "."
-      end
-   end
-   print(debug_follower_string[1] .. " * " .. debug_follower_string[2] .. " * " .. debug_follower_string[3] .. " :: ", ...)
-end
-
--- dd7e31478690-alpha typo debug - c/p to: if xp_only_rewards then
--- if successChance_clamped >= 90 then
---    debug_report_group(follower1, follower2, follower3, follower_is_busy_for_mission, prev_successChance, prev_successChance_clamped, prev_top.followers_not_maxed, successChance, successChance_clamped, followers_not_maxed)
--- end
-
 local function FindBestFollowersForMission(mission, followers, mode)
    local compare_top_1
    if FindBestFollowersForMission_compare then
@@ -204,7 +167,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
       local follower1_busy = follower1.is_busy_for_mission and 1 or 0
       local follower1_is_troop = follower1.isTroop and 1 or 0
       local follower1_not_maxed = (follower1_is_troop == 0 and follower1_maxed == 0) and 1 or 0
-      local prev_follower2_troop_uniq
+      local prev_follower2_troop_spec
       for i2 = min[2] or (i1 + 1), max[2] do
          local follower2_maxed = 0
          local follower2 = followers[i2]
@@ -212,7 +175,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
          local follower2_level = 0
          local follower2_busy = 0
          local follower2_is_troop = 0
-         local follower2_troop_uniq
+         local follower2_troop_spec
          local follower2_not_maxed = 0
          if follower2 then
             follower2_id = follower2.followerID
@@ -222,7 +185,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
             if follower2.isTroop then
                follower2_is_troop = 1
                -- Only used to remove "duplicate" teams with different instance of same troop class
-               follower2_troop_uniq = follower2.troop_uniq .. (follower2_busy == 1 and 'b' or '')
+               follower2_troop_spec = follower2.classSpec * (follower2_busy == 1 and 1 or -1)
             end
             follower2_not_maxed = (follower2_is_troop == 0 and follower2_maxed == 0) and 1 or 0
          end
@@ -231,7 +194,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
          if type70 then
             if i2 == followers_count + 1 then i3_start = followers_count + 1 end
          end
-         local prev_follower3_troop_uniq
+         local prev_follower3_troop_spec
          for i3 = i3_start, max[3] do
             local follower3_maxed = 0
             local follower3 = followers[i3]
@@ -239,7 +202,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
             local follower3_level = 0
             local follower3_busy = 0
             local follower3_is_troop = 0
-            local follower3_troop_uniq
+            local follower3_troop_spec
             local follower3_not_maxed = 0
             if follower3 then
                follower3_id = follower3.followerID
@@ -249,7 +212,7 @@ local function FindBestFollowersForMission(mission, followers, mode)
                if follower3.isTroop then
                   follower3_is_troop = 1
                   -- Only used to remove "duplicate" teams with different instance of same troop class
-                  follower3_troop_uniq = follower3.troop_uniq .. (follower3_busy == 1 and 'b' or '')
+                  follower3_troop_spec = follower3.classSpec * (follower3_busy == 1 and 1 or -1)
                end
                follower3_not_maxed = (follower3_is_troop == 0 and follower3_maxed == 0) and 1 or 0
             end
@@ -278,11 +241,11 @@ local function FindBestFollowersForMission(mission, followers, mode)
                skip = true
             end
 
-            if not skip and (follower2_is_troop == 1 and follower2_troop_uniq == prev_follower2_troop_uniq) then
+            if not skip and (follower2_is_troop == 1 and follower2_troop_spec == prev_follower2_troop_spec) then
                skip = true
             end
 
-            if not skip and (follower3_is_troop == 1 and follower3_troop_uniq == prev_follower3_troop_uniq) then
+            if not skip and (follower3_is_troop == 1 and follower3_troop_spec == prev_follower3_troop_spec) then
                skip = true
             end
 
@@ -556,9 +519,9 @@ local function FindBestFollowersForMission(mission, followers, mode)
                   best_modes_count = saved_best_modes_count
                end
             end
-            prev_follower3_troop_uniq = follower3_troop_uniq
+            prev_follower3_troop_spec = follower3_troop_spec
          end -- for i3
-         prev_follower2_troop_uniq = follower2_troop_uniq
+         prev_follower2_troop_spec = follower2_troop_spec
       end -- for i2
    end -- for i1
 

@@ -233,9 +233,8 @@ local convertScript = function( node, hasModifiers )
 
     for m in pairs( specialModifiers ) do
         if node[ m ] then
-            local o = tostring( node[m] )
-            Output.SpecialMods = Output.SpecialMods .. " - " .. m .. " : " .. o
-            local sFunction, Error = loadstring( 'return ' .. o .. ' ~= nil and ' .. o .. ' or "' .. o .. '"'  )
+            Output.SpecialMods = Output.SpecialMods .. " - " .. m .. " : " .. tostring( node[m] )
+            local sFunction, Error = loadstring( 'return ' .. tostring( node[ m ] ) )
             if sFunction then
                 setfenv( sFunction, state )
                 Output.Modifiers[ m ] = sFunction
@@ -373,6 +372,7 @@ ns.importModifiers = function( list, entry )
     state.args[ k ] = nil
   end
 
+
   if not scripts['A'][list..':'..entry].Modifiers then return end
 
   for k,v in pairs( scripts['A'][list..':'..entry].Modifiers ) do
@@ -458,13 +458,11 @@ end
 
 local key_cache = setmetatable( {}, {
     __index = function( t, k )
-        t[k] = k:gsub( "(%S+)%[(%d+)]", "%1.%2" )
-        return t[k]
+        t.k = k:gsub( "(%S+)%[(%d+)]", "%1.%2" )
+        return t.k
     end
 })
 
-
-local checked = {}
 
 function ns.getConditionsAndValues( sType, sID )
 
@@ -475,22 +473,16 @@ function ns.getConditionsAndValues( sType, sID )
         local output = script.SimC
 
         if script.Elements then
-            table.wipe( checked )
             for k, v in pairs( script.Elements ) do
-                if not checked[ k ] then
-                    local key = key_cache[ k ]
-                    local success, value = pcall( v )
+                local key = key_cache[ k ]
+                local value, emsg = pcall( v )
 
-                    -- if emsg then value = emsg end
+                if emsg then value = emsg end
 
-                    if type(value) == 'number' then
-                        output = output:gsub( "([^.]"..key..")", format( "%%1[%.2f]", value ) )
-                        output = output:gsub( "^("..key..")", format( "%%1[%.2f]", value ) )
-                    else
-                        output = output:gsub( "([^.]"..key..")", format( "%%1[%s]", tostring( value ) ) )
-                        output = output:gsub( "^("..key..")", format( "%%1[%s]", tostring( value ) ) )
-                    end
-                    checked[ k ] = true
+                if type(value) == 'number' then
+                    output = output:gsub( key, format( key .. "[%.2f]", value ) )
+                else
+                    output = output:gsub( key, format( key .. "[%s]", tostring( value ) ) )
                 end
             end
         end
@@ -501,5 +493,3 @@ function ns.getConditionsAndValues( sType, sID )
     return "NONE"
 
 end
-
-Hekili.dumpKeyCache = key_cache

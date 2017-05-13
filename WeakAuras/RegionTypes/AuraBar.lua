@@ -157,17 +157,6 @@ local properties = {
     softMax = screenHeight,
     bigStep = 1
   },
-  orientation = {
-    display = L["Orientation"],
-    setter = "SetOrientation",
-    type = "list",
-    values = WeakAuras.orientation_types
-  },
-  inverse = {
-    display = L["Inverse"],
-    setter = "SetInverse",
-    type = "bool"
-  }
 };
 
 -- Returns tex Coord for 90° rotations + x or y flip
@@ -607,6 +596,7 @@ local function orientHorizontalInverse(region, data)
   end
 
   -- Save orientation
+  region.orientation = "HORIZONTAL_INVERSE";
   bar:SetOrientation(region.orientation);
 
   -- Temp variable
@@ -662,6 +652,7 @@ local function orientHorizontal(region, data)
   end
 
   -- Save orientation
+  region.orientation = "HORIZONTAL";
   bar:SetOrientation(region.orientation);
 
   -- Temp variable
@@ -716,6 +707,7 @@ local function orientVerticalInverse(region, data)
   end
 
   -- Save orientation
+  region.orientation = "VERTICAL_INVERSE";
   bar:SetOrientation("VERTICAL_INVERSE");
 
   -- Temp variable
@@ -761,6 +753,7 @@ local function orientVertical(region, data)
   end
 
   -- Save orientation
+  region.orientation = "VERTICAL";
   bar:SetOrientation("VERTICAL");
 
   -- Temp variable
@@ -780,16 +773,15 @@ local function orientVertical(region, data)
   text:SetWidth(0);
   text:SetJustifyH("CENTER");
 end
-local function orient(region, data, orientation)
+local function orient(region, data)
   -- Apply correct orientation
-  region.orientation = orientation;
-  if orientation == "HORIZONTAL_INVERSE" then
+  if data.orientation == "HORIZONTAL_INVERSE" then
     orientHorizontalInverse(region, data);
-  elseif orientation == "HORIZONTAL" then
+  elseif data.orientation == "HORIZONTAL" then
     orientHorizontal(region, data);
-  elseif orientation == "VERTICAL_INVERSE" then
+  elseif data.orientation == "VERTICAL_INVERSE" then
     orientVerticalInverse(region, data);
-  elseif orientation == "VERTICAL" then
+  elseif data.orientation == "VERTICAL" then
     orientVertical(region, data);
   end
 end
@@ -836,7 +828,7 @@ local function UpdateText(region, data)
 
   -- Re-orientate
   if shouldOrient then
-    orient(region, data, region.orientation);
+    orient(region, data);
   end
 end
 
@@ -1029,10 +1021,8 @@ local function modify(parent, region, data)
     icon:Hide();
   end
 
-  region.inverseDirection = data.inverse;
-
   -- Apply orientation alignment
-  orient(region, data, data.orientation);
+  orient(region, data);
 
   -- Update tooltip availability
   local tooltipType = WeakAuras.CanHaveTooltip(data);
@@ -1175,7 +1165,7 @@ local function modify(parent, region, data)
 
   function region:SetValue(value, total)
     local progress = (total > 0) and (value / total) or 0
-    if region.inverseDirection then
+    if data.inverse then
       progress = 1 - progress;
     end
     region.bar:SetValue(progress);
@@ -1187,8 +1177,8 @@ local function modify(parent, region, data)
     local progress = duration ~= 0 and remaining / duration or 0;
     -- Need to invert?
     if (
-      (region.inverseDirection and not inverse)
-      or (inverse and not region.inverseDirection)
+      (data.inverse and not inverse)
+      or (inverse and not data.inverse)
       )
     then
       progress = 1 - progress;
@@ -1257,16 +1247,6 @@ local function modify(parent, region, data)
   function region:SetRegionHeight(height)
     self.height = height;
     self:Scale(self.scalex, self.scaley);
-  end
-
-  function region:SetInverse(inverse)
-    region.inverseDirection = inverse;
-    region.bar:SetValue(1 - region.bar:GetValue());
-  end
-
-  function region:SetOrientation(orientation)
-    orient(region, data, orientation);
-    region.bar:SetValue(region.bar:GetValue());
   end
 
   -- Update internal bar alignment

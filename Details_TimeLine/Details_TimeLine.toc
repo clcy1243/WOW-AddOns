@@ -9,16 +9,6 @@
 embeds.xml
 #@end-no-lib-strip@
 
-locales\enUS.lua
-locales\deDE.lua
-locales\esES.lua
-locales\esMX.lua
-locales\frFR.lua
-locales\itIT.lua
-locales\koKR.lua
-locales\ptBR.lua
-locales\ruRU.lua
-locales\zhCN.lua
-locales\zhTW.lua
-
+enUS.lua
+ptBR.lua
 Details_TimeLine.lua

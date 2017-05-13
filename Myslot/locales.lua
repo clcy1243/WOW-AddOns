@@ -40,12 +40,12 @@ L["[WARN] Ignore unsupported Slot Type [ %s ] , contact %s please"] = true
 
 elseif locale == 'deDE' then
 -- L["All slots were restored"] = "All slots were restored"
-L["Are you SURE to import ?"] = "Bist du sicher, dass du importieren möchtest?" -- Needs review
+-- L["Are you SURE to import ?"] = "Are you SURE to import ?"
 -- L["Bad importing text [CRC32]"] = "Bad importing text [CRC32]"
 -- L["Bad importing text [TEXT]"] = "Bad importing text [TEXT]"
-L["Close"] = "Schließen"
+-- L["Close"] = "Close"
 -- L["Export"] = "Export"
-L["Feedback"] = "Rückmeldung"
+-- L["Feedback"] = "Feedback"
 -- L["Ignore unactived pet[id=%s], %s"] = "Ignore unactived pet[id=%s], %s"
 -- L["Ignore unlearned skill [id=%s], %s"] = "Ignore unlearned skill [id=%s], %s"
 -- L["Import"] = "Import"

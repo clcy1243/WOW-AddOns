@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 60200
 ## Title: MySlot
 ## Notes: Myslot is for transferring settings between accounts. Feedback farmer1992@gmail.com
 ## Notes-deDE: Myslot is for transferring settings between accounts. Feedback farmer1992@gmail.com
@@ -12,8 +12,8 @@
 ## Notes-zhCN: 保存你的技能按钮位置 farmer1992@gmail.com
 ## Notes-zhTW: Myslot可以跨帳號綁定技能與按鍵設置。反饋通道：farmer1992@gmail.com
 ## Author: tg123
-## Version: v5.2.4-2-g86aa3f5
-## X-Curse-Packaged-Version: v5.2.4-2-g86aa3f5
+## Version: v5.2.4
+## X-Curse-Packaged-Version: v5.2.4
 ## X-Curse-Project-Name: Myslot
 ## X-Curse-Project-ID: myslot
 ## X-Curse-Repository-ID: wow/myslot/mainline

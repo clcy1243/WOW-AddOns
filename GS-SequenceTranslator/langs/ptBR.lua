@@ -1,7 +1,6 @@
-local GSE = GSE
-local Statics = GSE.Static
+local GNOME, _ = ...
 
-GSE.TranslatorLanguageTables[Statics.TranslationKey]["ptBR"] = {
+GSAvailableLanguages[GSTRStaticKey]["ptBR"] = {
 	[17] = "Palavra de Poder: Escudo",
 	[53] = "Punhalada pelas Costas",
 	[66] = "Invisibilidade",

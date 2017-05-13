@@ -3,7 +3,7 @@
 ## Notes: Provides data about all artifacts in the player's possession.
 ## Author: Rainrider
 ## X-Category: Library
-## Version: c6ed58e
+## Version: 61b366f
 ## LoadOnDemand: 1
 ## OptionalDeps: AdiDebug
 

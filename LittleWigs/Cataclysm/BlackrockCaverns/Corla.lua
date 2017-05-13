@@ -15,7 +15,6 @@ mod.toggleOptions = {
 
 local L = mod:NewLocale("enUS", true)
 if L then
-
 L["evolution_stacks"] = "YOU have %s stacks of Evolution"
 end
 L = mod:GetLocale()

@@ -105,10 +105,8 @@ local t = {
 {
    {32},
    {33},
-   {34},
-   ["mod"]={33},
    ["key"]={32},
-   ["keycode"]={34},
+   ["mod"]={33},
 },
 -- Table: {14}
 {
@@ -186,7 +184,7 @@ local t = {
 {
    [".type"]="enum",
    ["name"]="SlotType",
-   ["values"]={35},
+   ["values"]={34},
 },
 -- Table: {24}
 {
@@ -269,14 +267,6 @@ local t = {
    ["tag"]=2,
 },
 -- Table: {34}
-{
-   ["ftype"]="string",
-   ["name"]="keycode",
-   [".type"]="field",
-   ["rule"]="optional",
-   ["tag"]=15,
-},
--- Table: {35}
 {
    "SPELL",
    "ITEM",
