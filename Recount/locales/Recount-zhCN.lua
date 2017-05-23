@@ -443,3 +443,4 @@ L["Window Scaling"] = "窗口缩放"
 L["X Gridlines Represent"] = "X 轴每格代表"
 L["Yes"] = "是"
 
+

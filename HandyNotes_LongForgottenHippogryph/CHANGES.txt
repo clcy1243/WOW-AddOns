@@ -1,0 +1,18 @@
+tag f47046c2e105c190863868661aa49fc6c7d7ed93 v2
+Author:	David Lynch <kemayo@gmail.com>
+Date:	Mon Nov 28 13:36:05 2016 -0600
+
+Tagging v2
+
+commit 629ab9521477c8134a49bc0d72066ab75b8a6827
+Author: David Lynch <kemayo@gmail.com>
+Date:   Sun Nov 27 15:29:07 2016 -0600
+
+    Clean out some clustered nodes
+
+commit 6d7cab52e372ab45a327587fcfb1c318b67f5b9f
+Author: David Lynch <dlynch@wmf1453.local>
+Date:   Sat Nov 26 23:43:31 2016 -0600
+
+    Expand from wowhead comments
+

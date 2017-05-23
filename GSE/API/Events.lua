@@ -119,7 +119,7 @@ function GSE:ADDON_LOADED(event, addon)
   GSEOptions.UnfoundSpells = {}
   GSEOptions.ErroneousSpellID = {}
   GSEOptions.UnfoundSpellIDs = {}
-  GSE.ReloadSequences()
+  GSE:ZONE_CHANGED_NEW_AREA()
   GSE:SendMessage(Statics.CoreLoadedMessage)
 
   -- Register the Sample Macros
@@ -213,6 +213,7 @@ local function PrintGnomeHelp()
   GSE.Print(L["To get started "] .. GSEOptions.CommandColour .. L["/gs|r will list any macros available to your spec.  This will also add any macros available for your current spec to the macro interface."], GNOME)
   GSE.Print(L["The command "] .. GSEOptions.CommandColour .. L["/gs showspec|r will show your current Specialisation and the SPECID needed to tag any existing macros."], GNOME)
   GSE.Print(L["The command "] .. GSEOptions.CommandColour .. L["/gs cleanorphans|r will loop through your macros and delete any left over GS-E macros that no longer have a sequence to match them."], GNOME)
+  GSE.Print(L["The command "] .. GSEOptions.CommandColour .. L["/gs checkmacrosforerrors|r will loop through your macros and check for corrupt macro versions.  This will then show how to correct these issues."], GNOME)
 end
 
 GSE:RegisterChatCommand("gsse", "GSSlash")
@@ -257,6 +258,8 @@ function GSE:GSSlash(input)
     GSE.UpdateMacroString()
   elseif string.lower(input) == "movelostmacros" then
     GSE.MoveMacroToClassFromGlobal()
+  elseif string.lower(input) == "checkmacrosforerrors" then
+    GSE.ScanMacrosForErrors()
   else
     GSE.GUIShowViewer()
   end

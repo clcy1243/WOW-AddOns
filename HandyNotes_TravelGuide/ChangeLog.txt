@@ -1,0 +1,27 @@
+Revision History:
+=================
+
+* v1.4 (May 22, 2017)
+-----------------------
+- added druid portals in Class Hall/ Val'sharah
+- added Dalaran portals to Broken Isles map for Alliance and Horde
+
+* v1.3 (May 18, 2017)
+-----------------------
+- adjusted locations for Isle of Thunder portals in Townlong Steppes
+- added portal from Isle of Thunder to Townlong Steppes
+
+* v1.2 (May 16, 2017)
+-----------------------
+- Fixed an issue when right clicking portals or boats displayed improper addon name
+
+* v1.1 (May 13, 2017)
+-----------------------
+- Added placeholders for Horde zeplins and portals
+
+* v1.0 (May 12, 2017)
+-----------------------
+- Added Alliance and neutral boat locations in Azeroth
+- Added portals in Stormwind, Ironforge, Darnassus, Exodar, Shattrath, Vale of Eternal Blossoms, Dalaran-Northrend, and Dalaran-Broken Isles 
+- Added portals in non major zones (Mount Hyjal, Deepholm, Tol Barad)
+- Created links for zeplins and faction air vehicles

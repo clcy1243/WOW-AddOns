@@ -8,7 +8,7 @@ L["WQGF_ALREADY_QUEUED_DF"] = "你正在随机地城（地城查找器）的队�
 L["WQGF_ALREADY_QUEUED_RF"] = "你正在随机团队（团队查找器）的队列中，请离开队列并重新试一次。"
 L["WQGF_APPLIED_TO_GROUPS"] = "你已经为世界任务 |c00bfffff%s|c00ffffff 申请了 |c00bfffff%d|c00ffffff 个队伍。"
 L["WQGF_APPLIED_TO_GROUPS_QUEST"] = "你已经为任务 |c00bfffff%s|c00ffffff 申请了 |c00bfffff%d|c00ffffff 个队伍。"
-L["WQGF_AUTO_LEAVING_DIALOG"] = [=[你已经完成这个世界任务并会在 %d 秒后离开队伍。
+L["WQGF_AUTO_LEAVING_DIALOG"] = [=[你已经完成这个世界任务并会在 %d 秒后自动离队。
 
 说声再见吧！]=]
 L["WQGF_AUTO_LEAVING_DIALOG_QUEST"] = [=[你已经完成了任务，将在 %d 秒后离队
@@ -25,6 +25,7 @@ L["WQGF_CONFIG_AUTOINVITE_EVERYONE"] = "自动邀请任何人"
 L["WQGF_CONFIG_AUTOINVITE_EVERYONE_HOVER"] = "所有申请人都会被自动邀请进队伍，达到5人上限。"
 L["WQGF_CONFIG_AUTOINVITE_WQGF_USERS"] = "自动邀请WQGF的使用者"
 L["WQGF_CONFIG_AUTOINVITE_WQGF_USERS_HOVER"] = "World Quest Group Finder的使用者会自动被邀请到队伍中"
+L["WQGF_CONFIG_BINDING_ADVICE"] = "提示：你可以在游戏的按键设定中为WQGF按扭绑定一个按键。"
 L["WQGF_CONFIG_LANGUAGE_FILTER_ENABLE"] = "搜索任何语言的队伍（忽略队伍搜索器的语言选项）"
 L["WQGF_CONFIG_LANGUAGE_FILTER_HOVER"] = "将会搜索所有可加入的队伍，并忽略他们的语言"
 L["WQGF_CONFIG_LANGUAGE_FILTER_TITLE"] = "队伍搜索语言过滤"
@@ -64,7 +65,15 @@ L["WQGF_DEBUG_WQ_ZONES_ENTERED"] = "这一次登入所进入的世界任务区�
 L["WQGF_DELIST"] = "除名"
 L["WQGF_DROPPED_WB_SUPPORT"] = "WQGF 0.21.3 已经取消了世界boss任务的支持，请使用默认UI按扭寻找队伍。"
 L["WQGF_FIND_GROUP_TOOLTIP"] = "用 WQGF 查找队伍"
-L["WQGF_FIND_GROUP_TOOLTIP_2"] = "点击右键打开组队查找器窗口"
+L["WQGF_FIND_GROUP_TOOLTIP_2"] = "点击鼠标中键开组"
+L["WQGF_FRAME_APPLY_DONE"] = "向所有未满的队伍提交申请了。"
+L["WQGF_FRAME_CLICK_TWICE"] = "点击按扭 %d 次开启新的组队。"
+L["WQGF_FRAME_CREATE_WAIT"] = "如果你没有响应，你将建立一个新的组队。"
+L["WQGF_FRAME_FOUND_GROUPS"] = "找到 %d 个队伍，点击按扭加入"
+L["WQGF_FRAME_GROUPS_LEFT"] = "离开 %d 个队伍，点击继续。"
+L["WQGF_FRAME_INIT_SEARCH"] = "单击按钮初始化搜索"
+L["WQGF_FRAME_NO_GROUPS"] = "没有找到组队，单击按扭建立新的组队。"
+L["WQGF_FRAME_SEARCH_GROUPS"] = "点击按扭寻找组队..."
 L["WQGF_GLOBAL_CONFIGURATION"] = "全局配置:"
 L["WQGF_GROUP_CREATION_ERROR"] = "尝试建立队伍时出问题了，请重新试一次。"
 L["WQGF_GROUP_NO_LONGER_DOING_QUEST"] = "你的队伍不再执行任务 ： |c00bfffff%s|c00ffffff "

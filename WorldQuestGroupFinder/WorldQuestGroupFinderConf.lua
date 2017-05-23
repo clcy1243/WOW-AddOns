@@ -78,10 +78,14 @@ function WorldQuestGroupFinderConf.CreateConfigMenu()
 
 	local silentModeOpt = WorldQuestGroupFinderConf.CreateCheckButton(L["WQGF_CONFIG_SILENT_MODE_ENABLE"], configPanel, L["WQGF_CONFIG_SILENT_MODE_HOVER"], "silent", 'InterfaceOptionsCheckButtonTemplate')
 	silentModeOpt:SetPoint('TOPLEFT', silentModeDesc, 'BOTTOMLEFT', 0, -2)
+
+	local bindingAdvice = configPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
+	bindingAdvice:SetPoint('TOPLEFT', silentModeOpt, 'BOTTOMLEFT', 0, -10)
+	bindingAdvice:SetText(L["WQGF_CONFIG_BINDING_ADVICE"])
 	
 	if (GetLocale() ~= "enUS" and GetLocale() ~= "enGB") then
 		local translationInfo = configPanel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
-		translationInfo:SetPoint('TOPLEFT', silentModeOpt, 'BOTTOMLEFT', 0, -10)
+		translationInfo:SetPoint('TOPLEFT', bindingAdvice, 'BOTTOMLEFT', 0, -10)
 		translationInfo:SetText(L["WQGF_TRANSLATION_INFO"])
 	end
 	

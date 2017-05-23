@@ -102,8 +102,10 @@ function RegisteredEvents:PLAYER_LOGIN(event)
 end
 
 function RegisteredEvents:LFG_LIST_APPLICANT_LIST_UPDATED(event, hasNewPending, hasNewPendingWithData)
-	if ( currentWQ ~= nil and hasNewPending and hasNewPendingWithData and LFGListUtil_IsEntryEmpowered()) then
-		--WorldQuestGroupFinder.HandleCustomAutoInvite()
+	if (currentWQ ~= nil and not raidQuests[currentWQ] and StaticPopup_Visible("LFG_LIST_AUTO_ACCEPT_CONVERT_TO_RAID")) then
+		WorldQuestGroupFinder.dprint("Raid conversion popup has been closed.")
+		StaticPopup_Hide("LFG_LIST_AUTO_ACCEPT_CONVERT_TO_RAID")
+		QueueStatusMinimapButton_SetGlowLock(QueueStatusMinimapButton, "lfglist-applicant", false)
 	end
 end
 
@@ -212,15 +214,17 @@ function RegisteredEvents:LFG_LIST_APPLICATION_STATUS_UPDATED(event, application
 		if (status == "invited") then
 			recentlyInvited = true
 			WorldQuestGroupFinder.StopTimeoutTimer()
+			manualActionsFrame.NextButton:Show()
+			manualActionsFrame.NextButton:Enable()
+			manualActionsFrame.NextButton:SetText(L["WQGF_FRAME_ACCEPT_INVITE"])
+			manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
+				C_LFGList.AcceptInvite(applicationID)
+			end)
 		end
 		if (status == "declined") then
 			if (author) then
 				blacklistedLeaders[author] = true
 			end
-			---- If all applications have been declined, restart process. A new group will be created if nothing else is found.
-			--if ((C_LFGList.GetNumApplications() - 1 == 0) and not (recentlyInvited or currentWQ)) then
-			--	WorldQuestGroupFinder.InitSearchProcess(pendingApplications[applicationID], true)
-			--end
 			table.remove(pendingApplications, applicationID)
 		end
 		if (status == "failed" or status == "timedout") then
@@ -229,8 +233,9 @@ function RegisteredEvents:LFG_LIST_APPLICATION_STATUS_UPDATED(event, application
 			end
 		end
 		if (status == "invitedeclined") then
-			blacklistedLeaders[author] = true
-			--WorldQuestGroupFinder.prefixedPrint(string.format(L["WQGF_WQ_GROUP_APPLY_CANCELLED"], author, WorldQuestGroupFinder.GetQuestInfo(pendingApplications[applicationID])), true)
+			if (author) then
+				blacklistedLeaders[author] = true
+			end
 			table.remove(pendingApplications, applicationID)
 			if (C_LFGList.GetNumApplications() == 0) then
 				WorldQuestGroupFinder.StopTimeoutTimer()
@@ -244,10 +249,6 @@ function RegisteredEvents:LFG_LIST_APPLICATION_STATUS_UPDATED(event, application
 					recentlyTimedOut = false
 				end)
 			else
-				if (author) then
-					blacklistedLeaders[author] = true
-					WorldQuestGroupFinder.prefixedPrint(string.format(L["WQGF_WQ_GROUP_APPLY_CANCELLED"], author, WorldQuestGroupFinder.GetQuestInfo(pendingApplications[applicationID])), true)
-				end
 				table.remove(pendingApplications, applicationID)
 				if (C_LFGList.GetNumApplications() == 0) then
 					WorldQuestGroupFinder.StopTimeoutTimer()
@@ -394,6 +395,7 @@ function WorldQuestGroupFinder.resetTmpWQ ()
 	WorldQuestGroupFinder.dprint("Resetting tempWQ")
 end
 
+
 function WorldQuestGroupFinder.SetHooks()	
 	hooksecurefunc("BonusObjectiveTracker_OnBlockClick", function(self, button)
 		if (button == "MiddleButton") then
@@ -443,7 +445,7 @@ function WorldQuestGroupFinder.SetHooks()
 			local title, tagID, tagName, worldQuestType, rarity, elite, tradeskillLineIndex, activityID, categoryID, filters = WorldQuestGroupFinder.GetQuestInfo(questID)
 			popupWQ = questID
 			-- If already queued for something or if the quest is in blacklist, do not prompt
-			if (not WorldQuestGroupFinder.IsAlreadyQueued(false) and not blacklistedQuests[popupWQ] and not WorldBosses[popupWQ]) then
+			if (not WorldQuestGroupFinder.IsAlreadyQueued(false) and not blacklistedQuests[popupWQ]) then
 				-- Ignore pet battle and dungeon quests
 				if (worldQuestType ~= LE_QUEST_TAG_TYPE_PET_BATTLE and worldQuestType ~= LE_QUEST_TAG_TYPE_DUNGEON and worldQuestType ~= LE_QUEST_TAG_TYPE_PROFESSION) then
 					if not currentlyApplying then
@@ -528,7 +530,7 @@ function WorldQuestGroupFinder.IsAlreadyQueued(verbose)
 end
 
 function WorldQuestGroupCurrentWQFrameNextButton__OnClick()
-	if manualActionsFrame:IsShown() then
+	if (manualActionsFrame:IsShown() and manualActionsFrame.NextButton:IsEnabled()) then
 		local pf_NextButton_OnClick = manualActionsFrame.NextButton:GetScript("OnClick")
 		pf_NextButton_OnClick()
 	end
@@ -551,12 +553,13 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate, wa
 		--	return false
 		--end
 	end
-		manualActionsFrame:Show()
+
+	manualActionsFrame:Show()
 	manualActionsFrame.NextButton:Show()
-	manualActionsFrame.currentText:SetText("Click the button to search for groups...")
+	
+	manualActionsFrame.NextButton:SetText(L["WQGF_FRAME_SEARCH_GROUPS"])
 	manualActionsFrame.secondLine:SetText("")
 	manualActionsFrame.NextButton:Enable()
-	WorldQuestGroupFinder.AssignButtonTextures(manualActionsFrame.NextButton)
 	manualActionsFrame.questTitle:SetText(title)
 	
 	local foundZone = false
@@ -624,7 +627,7 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate, wa
 				selectedLanguages = C_LFGList.GetLanguageSearchFilter()
 			end		
 			if (wait) then
-				manualActionsFrame.currentText:SetText(L["WQGF_FRAME_INIT_SEARCH"])
+				manualActionsFrame.NextButton:SetText(L["WQGF_FRAME_INIT_SEARCH"])
 				manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
 					if (NEW_AREA_TIMER) then NEW_AREA_TIMER:Cancel() end
 					C_LFGList.Search(1, title, 0, 4, selectedLanguages)
@@ -649,6 +652,7 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate, wa
 				local blacklistedApplicationsCount = 0
 				local searchCount, searchResults = C_LFGList.GetSearchResults()
 				local currentPlayers = 1;
+								
 				if (IsInGroup()) then
 					currentPlayers = GetNumGroupMembers()
 				end
@@ -708,9 +712,9 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate, wa
 						end
 					end
 					if (arrayID == 0) then
-						manualActionsFrame.currentText:SetText(L["WQGF_FRAME_NO_GROUPS"])
+						manualActionsFrame.NextButton:SetText(L["WQGF_FRAME_NO_GROUPS"])
 					else
-						manualActionsFrame.currentText:SetText(string.format(L["WQGF_FRAME_FOUND_GROUPS"], applicationsCount))
+						manualActionsFrame.NextButton:SetText(string.format(L["WQGF_FRAME_FOUND_GROUPS"], applicationsCount))
 					end
 					manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
 						if (arrayID == 0) then			
@@ -726,23 +730,25 @@ function WorldQuestGroupFinder.InitSearchProcess(questID, retry, forceCreate, wa
 								C_LFGList.ApplyToGroup(groupIDs[currentApplyID], "WorldQuestGroupFinderUser-"..questID, canBeTank, canBeHealer, canBeDamager)
 								currentApplyID = currentApplyID + 1
 								if (currentApplyID < applicationsCount) then
-									manualActionsFrame.currentText:SetText(string.format(L["WQGF_FRAME_GROUPS_LEFT"], applicationsCount - currentApplyID))
+									manualActionsFrame.NextButton:SetText(string.format(L["WQGF_FRAME_GROUPS_LEFT"], applicationsCount - currentApplyID))
 								else
 									manualActionsFrame.currentText:SetText(L["WQGF_FRAME_APPLY_DONE"])
 									manualActionsFrame.secondLine:SetText(L["WQGF_FRAME_CREATE_WAIT"])
 									manualActionsFrame.NextButton:Hide()
+									manualActionsFrame.NextButton:Disable()
 									manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
-										if (C_LFGList.GetNumApplications() > 0) then 
-											manualActionsFrame.currentText:SetText(string.format(L["WQGF_FRAME_CLICK_TWICE"], C_LFGList.GetNumApplications()+1))
+										manualActionsFrame.NextButton:SetText(string.format(L["WQGF_FRAME_CLICK_TWICE"], C_LFGList.GetNumApplications()))		
+										if (C_LFGList.GetNumApplications() > 0) then 							
 											WorldQuestGroupFinder.ClearOneApplication()
 										else 
 											WorldQuestGroupFinder.CreateGroup(questID, activityID, title)
 										end
 									end)
 									TIMEOUT_TIMER = C_Timer.NewTicker(INVITE_TIMEOUT_DELAY, function() 
-										manualActionsFrame.currentText:SetText(string.format(L["WQGF_FRAME_CLICK_TWICE"], C_LFGList.GetNumApplications()+1))
+										manualActionsFrame.NextButton:SetText(string.format(L["WQGF_FRAME_CLICK_TWICE"], C_LFGList.GetNumApplications()+1))									
 										manualActionsFrame.secondLine:SetText("")
 										manualActionsFrame.NextButton:Show()
+										manualActionsFrame.NextButton:Enable()
 										WorldQuestGroupFinder.dprint(string.format("The timeout timer has ended (%d seconds)", INVITE_TIMEOUT_DELAY))
 									end, 1)
 								end
@@ -773,20 +779,20 @@ function WorldQuestGroupFinder.CreateGroup(questID, activityID, title)
 end
 
 function WorldQuestGroupFinder.ClearOneApplication()
+	local applications = C_LFGList.GetApplications()
 	if (C_LFGList.GetNumApplications() > 0) then
-		for k,v in pairs( C_LFGList.GetApplications() ) do
-			-- If this is retry and some applications didnt get confirmed, put group in BL
-			if (retry) then
-				local _,_,_,_,_,_,_,_,_,_,_,_,groupAuthor,_ = C_LFGList.GetSearchResultInfo(v)
-				pendingApplications = {}
-				if (groupAuthor) then
-					blacklistedLeaders[groupAuthor] = true
-				end
-			end
-			WorldQuestGroupFinder.dprint(string.format("Clearing application: %d", v))
-			C_LFGList.CancelApplication(v)
-			return true
+		-- Have to do this because GetApplications sometimes returns already cancelled applications
+		local applicationToClear = C_LFGList.GetNumApplications()
+		local _, applicationStatus = C_LFGList.GetApplicationInfo(applications[applicationToClear])
+		WorldQuestGroupFinder.dumpTable(applications)
+		if (applicationStatus == "invited") then
+			C_LFGList.DeclineInvite(applications[applicationToClear])
+			WorldQuestGroupFinder.dprint(string.format("Canceling invite: %d", applications[applicationToClear]))
+		else
+			WorldQuestGroupFinder.dprint(string.format("Clearing application: %d", applications[applicationToClear]))
+			C_LFGList.CancelApplication(applications[applicationToClear])
 		end
+		return true
 	end
 end
 
@@ -1012,32 +1018,33 @@ end
 	
 function WorldQuestGroupFinder.HandleBlockClick(wqID, forceCreate, wait)	
 	if (tempWQ ~= wqID or (C_LFGList.GetNumApplications() == 0 and not C_LFGList.GetActiveEntryInfo())) then
-		if WorldBosses[wqID] then
-			WorldQuestGroupFinder.prefixedPrint(L["WQGF_DROPPED_WB_SUPPORT"])
-		else
-			WorldQuestGroupFinder.dprint(string.format("World quest has been clicked. ID: %d", wqID))
-			if (IsInGroup() and not UnitIsGroupLeader("player")) then
-				WorldQuestGroupFinder.prefixedPrint(L["WQGF_PLAYER_IS_NOT_LEADER"])
-				return false
+		WorldQuestGroupFinder.dprint(string.format("World quest has been clicked. ID: %d", wqID))
+		-- Ignore pet battle and dungeon quests
+		if (blacklistedQuests[wqID] or worldQuestType == LE_QUEST_TAG_TYPE_PET_BATTLE or worldQuestType == LE_QUEST_TAG_TYPE_DUNGEON or worldQuestType == LE_QUEST_TAG_TYPE_PROFESSION) then
+			WorldQuestGroupFinder.prefixedPrint(L["WQGF_CANNOT_DO_WQ_IN_GROUP"])
+			return false
+		end
+		if (IsInGroup() and not UnitIsGroupLeader("player")) then
+			WorldQuestGroupFinder.prefixedPrint(L["WQGF_PLAYER_IS_NOT_LEADER"])
+			return false
+		end
+		if (currentWQ ~= nil and wqID ~= currentWQ) then
+			WorldQuestGroupFinder.dprint(string.format("Clicked world quest is not the same is current (%d). Showing NEW_WORLD_QUEST_PROMPT.", currentWQ))
+			if QuestUtils_IsQuestWorldQuest(currentWQ) then
+				WorldQuestGroupFinder.ShowDialog ("NEW_WORLD_QUEST_PROMPT")
+			else
+				WorldQuestGroupFinder.ShowDialog ("NEW_QUEST_PROMPT")
 			end
-			if (currentWQ ~= nil and wqID ~= currentWQ) then
-				WorldQuestGroupFinder.dprint(string.format("Clicked world quest is not the same is current (%d). Showing NEW_WORLD_QUEST_PROMPT.", currentWQ))
-				if QuestUtils_IsQuestWorldQuest(currentWQ) then
-					WorldQuestGroupFinder.ShowDialog ("NEW_WORLD_QUEST_PROMPT")
-				else
-					WorldQuestGroupFinder.ShowDialog ("NEW_QUEST_PROMPT")
-				end
-			else 
-				-- No current WQ. 
-				if (currentWQ == nil or (C_LFGList.GetNumApplications() == 0 and not C_LFGList.GetActiveEntryInfo())) then
-					-- Hide join WQ prompts
-					WorldQuestGroupFinder.HideDialog ("WORLD_QUEST_ENTERED_PROMPT")
-					WorldQuestGroupFinder.HideDialog ("WORLD_QUEST_ENTERED_SWITCH_PROMPT")
-					if (NEW_AREA_TIMER) then NEW_AREA_TIMER:Cancel() end
-					WorldQuestGroupFinder.InitSearchProcess(wqID, false, forceCreate, wait)
-				else
-					WorldQuestGroupFinder.prefixedPrint(L["WQGF_ALREADY_IS_GROUP_FOR_WQ"])
-				end
+		else 
+			-- No current WQ. 
+			if (currentWQ == nil or (C_LFGList.GetNumApplications() == 0 and not C_LFGList.GetActiveEntryInfo())) then
+				-- Hide join WQ prompts
+				WorldQuestGroupFinder.HideDialog ("WORLD_QUEST_ENTERED_PROMPT")
+				WorldQuestGroupFinder.HideDialog ("WORLD_QUEST_ENTERED_SWITCH_PROMPT")
+				if (NEW_AREA_TIMER) then NEW_AREA_TIMER:Cancel() end
+				WorldQuestGroupFinder.InitSearchProcess(wqID, false, forceCreate, wait)
+			else
+				WorldQuestGroupFinder.prefixedPrint(L["WQGF_ALREADY_IS_GROUP_FOR_WQ"])
 			end
 		end
 	else
@@ -1145,9 +1152,8 @@ function WorldQuestGroupFinder.CreateWQGFButton(block, questID)
 	groupFinderButton:SetFrameLevel(10)
 	groupFinderButton:RegisterForClicks("LeftButtonUp", "MiddleButtonUp", "RightButtonUp")
 	groupFinderButton:SetScript("OnClick", function(self, button, down)
-		if (button == "RightButton" or WorldBosses[questID]) then
+		if (button == "RightButton") then
 			WorldQuestGroupFinder.prefixedPrint("Please right-click on the world quest and select \"Find Group\".")
-			--LFGListUtil_FindQuestGroup(self:GetParent().id)
 		elseif (button == "MiddleButton") then
 			WorldQuestGroupFinder.HandleBlockClick(self:GetParent().id, true)
 		else
@@ -1437,11 +1443,13 @@ function WorldQuestGroupFinder.InitFrames()
 	currentWQFrame.RefreshButton = CreateFrame("button", currentWQFrame:GetName().."RefreshButton", currentWQFrame)
 	currentWQFrame.StopButton = CreateFrame("button", currentWQFrame:GetName().."StopButton", currentWQFrame)
 				
-	manualActionsFrame.NextButton = CreateFrame("button", manualActionsFrame:GetName().."NextButton", manualActionsFrame)
+	manualActionsFrame.NextButton = CreateFrame("button", manualActionsFrame:GetName().."NextButton", manualActionsFrame, "UIPanelButtonTemplate")
 	manualActionsFrame.CloseButton = CreateFrame("button", manualActionsFrame:GetName().."CloseButton", manualActionsFrame)
 	manualActionsFrame.LockButton = CreateFrame("button", manualActionsFrame:GetName().."LockButton", manualActionsFrame)
 	manualActionsFrame.TitleFrame = CreateFrame("frame",  manualActionsFrame:GetName().."TitleFrame", manualActionsFrame)
 
+	tinsert(UISpecialFrames, manualActionsFrame:GetName())
+	
 	manualActionsFrame:SetFrameStrata("DIALOG")
 	manualActionsFrame:SetToplevel(false) 
 	manualActionsFrame:SetClampedToScreen(true)
@@ -1453,7 +1461,7 @@ function WorldQuestGroupFinder.InitFrames()
 	manualActionsFrame:SetScript("OnDragStop", manualActionsFrame.StopMovingOrSizing)
 	manualActionsFrame:SetPoint("CENTER", 0, 60); 
 	manualActionsFrame:SetWidth(370); 
-	manualActionsFrame:SetHeight(100);
+	manualActionsFrame:SetHeight(110);
 	manualActionsFrame:SetFrameLevel(0)
 	manualActionsFrame:SetBackdrop({
 	  bgFile="Interface\\MINIMAP\\TooltipBackdrop-Background", 
@@ -1472,17 +1480,30 @@ function WorldQuestGroupFinder.InitFrames()
 	  insets={left=5, right=5, top=5, bottom=5}
 	})		
 
+	local font = "Fonts\\FRIZQT__.TTF"
+	local locale = GetLocale();
+	if locale == "ruRU" then
+		font = "Fonts\\FRIZQT___CYR.TTF"
+	elseif locale == "koKR" then
+		font = "Fonts\\2002.TTF"
+	elseif locale == "zhTW" then
+		font = "Fonts\\bHEI01B.TTF"
+	elseif locale == "zhCN" then
+		font = "Fonts\\ARKai_C.ttf"
+	end
+
 	manualActionsFrame.TitleFrame.TitleText = manualActionsFrame.TitleFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	manualActionsFrame.TitleFrame.TitleText:SetPoint("CENTER", 0, 0)
 	manualActionsFrame.TitleFrame.TitleText:SetText("World Quest Group Finder v"..GetAddOnMetadata("WorldQuestGroupFinder", "Version"))
 
 	manualActionsFrame.questTitle = manualActionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	manualActionsFrame.questTitle:SetPoint("TOP", 0, -35)
+	manualActionsFrame.questTitle:SetFont(font, 16)
 	manualActionsFrame.questTitle:SetText("")
 
 	manualActionsFrame.currentText = manualActionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	manualActionsFrame.currentText:SetPoint("TOP", 0, -53)
-	manualActionsFrame.currentText:SetText("Click the button to search for groups...")
+	manualActionsFrame.currentText:SetPoint("TOP", 0, -63)
+			
 	manualActionsFrame.currentText:SetTextColor(0.85, 0.85, 0.85, 1)
 
 	manualActionsFrame.secondLine = manualActionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -1494,19 +1515,19 @@ function WorldQuestGroupFinder.InitFrames()
 	manualActionsFrame.NextButton:SetPoint("BOTTOM", 0, 10)
 	manualActionsFrame.NextButton:SetFrameLevel(10)
 	manualActionsFrame.NextButton:RegisterForClicks("LeftButtonUp")
-	manualActionsFrame.NextButton:SetSize(20, 20);
-	manualActionsFrame.NextButton.Icon = manualActionsFrame.NextButton:CreateTexture(manualActionsFrame.NextButton:GetName().."Texture", "OVERLAY")
-	manualActionsFrame.NextButton.Icon:SetSize(12, 12)
-	manualActionsFrame.NextButton.Icon:SetPoint("CENTER", 0, 0)
-	manualActionsFrame.NextButton.Icon:SetTexture([[Interface\AddOns\WorldQuestGroupFinder\img\autokick.blp]])
-			
+
+	manualActionsFrame.NextButton:SetSize(
+		manualActionsFrame.NextButton:GetParent():GetWidth() - 20,
+		(manualActionsFrame.NextButton:GetParent():GetHeight() / 3) + 7
+	)
+
 	manualActionsFrame.CloseButton:ClearAllPoints()
 	manualActionsFrame.CloseButton:SetPoint("TOPRIGHT", 0, 0)
 	manualActionsFrame.CloseButton:SetSize(24, 24)
 	manualActionsFrame.CloseButton:SetScale(1.25)
 	manualActionsFrame.CloseButton:SetNormalTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
 	manualActionsFrame.CloseButton:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
-	manualActionsFrame.CloseButton:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")			
+	manualActionsFrame.CloseButton:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
 	manualActionsFrame.CloseButton:SetScript("OnClick", function(self, button, down)
 		C_LFGList.ClearSearchResults()
 		self:GetParent():Hide()
@@ -1732,6 +1753,7 @@ function WorldQuestGroupFinder.InitBlacklists()
 		[43431] = true, -- WANTED: Warbringer Mox'na
 	}
 
+	-- No longer used
 	WorldBosses = {
 		[46945] = true, -- Si'vash
 		[47061] = true, -- Apocron

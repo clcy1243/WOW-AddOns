@@ -1,4 +1,26 @@
-﻿0.24.3 (30/04/2017)
+﻿0.25.3 (21/05/2017)
+- The "Convert to raid" pop-up should no longer appear while doing non-raid world quests
+- The button now allows joining a group when invited
+- Fixed the group creation process when no application is answered
+- Removed the world boss WQ restriction
+- The Hotkey no longer works when the button is disabled
+- The WQGF frame is now closed when pressing escape
+- Minor bugfixes
+
+0.25.2 (20/05/2017)
+- The WQGF frame will no longer appear on unsupported WQs
+- The "create new group" button should no longer fail when multiple applications are active
+- Fixed WQ name's font for russian/korean/chinese localizations
+- Localizations updated
+
+0.25.1 (17/05/2017)
+- Back from my holidays, time to work again!
+- The button is now much larger and includes the current text (thanks VincentSDSH!)
+- Added some advice about the key binding in the configuration panel
+- More UI changes coming in the next few days, stay tuned!
+- Localizations updated
+
+0.24.3 (30/04/2017)
 - Removed auto-invite options as the groups are now using the WoW auto-invite function
 - The lock/unlock icons have been reversed
 - The frame will no longer hide after cancelling all the group applications

@@ -1,0 +1,12 @@
+tag b87be75cbd7e61b4a816cde5efe44fa53aca327d v1.0.4
+Author:	Ketho <sghs17@outlook.com>
+Date:	Wed Apr 12 07:14:19 2017 +0200
+
+Tagging as v1.0.4
+
+commit dec028861eaf0a8e7feaec6186a790cdd2b51fcd
+Author: Ketho <sghs17@outlook.com>
+Date:   Wed Apr 12 07:14:00 2017 +0200
+
+    Bump TOC
+

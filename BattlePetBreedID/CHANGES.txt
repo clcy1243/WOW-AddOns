@@ -1,13 +1,7 @@
-changeset:   142:0854d5cf1fd9
-tag:         v1.10.0
+changeset:   147:be64a52687e3
+tag:         v1.10.2
 user:        MMOSimca
-date:        Thu Mar 30 17:50:02 2017 -0400
-summary:     Updated TOC for Patch 7.2.0.
-
-
-changeset:   141:a41c1f490e94
-user:        MMOSimca
-date:        Thu Mar 30 17:49:14 2017 -0400
-summary:     Added breed data for Wonderous Wisdomball, Cavern Moccasin, and Young Venomfang.
+date:        Wed May 17 22:47:06 2017 -0400
+summary:     New fix for TSM tooltips that works with items linked from chat as well as in other places (thanks 'thecurseaccount').
 
 

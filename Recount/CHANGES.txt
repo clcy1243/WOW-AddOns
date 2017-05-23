@@ -1,8 +1,13 @@
 ------------------------------------------------------------------------
-r1423 | Resike | 2017-04-18 09:09:31 -0500 (Tue, 18 Apr 2017) | 1 line
+r1425 | Resike | 2017-05-20 18:01:47 -0500 (Sat, 20 May 2017) | 3 lines
 Changed paths:
-   M /trunk/GUI_Main.lua
+   M /trunk/GUI_Config.lua
+   M /trunk/Recount.lua
+   M /trunk/Recount_Modes.lua
+   M /trunk/Tracker.lua
 
-- Holding the Alt key while reseting the data will override the reset confirmation.
+- Major changes in the DPS calculations.
+- Added mouse wheel functions for sliders.
+- Fixed some other issues.
 ------------------------------------------------------------------------
 

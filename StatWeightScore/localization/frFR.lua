@@ -4,10 +4,20 @@ if not L then return end
 L["AlternativeStatDisplayNames_Crit"] = "critique,coup critique"
 L["CharacterPane_Tooltip_Title"] = "Score calculé"
 L["CharacterPane_Tooltip_Title_Text"] = "Score total calculé pour tous les équipements de la spécialisation %s"
+--Translation missing 
+-- L["CharacterScore_Command"] = ""
+--Translation missing 
+-- L["CharacterScore_Info"] = ""
+--Translation missing 
+-- L["Crafting_Upgrade_Label"] = ""
 L["Culture"] = "frFR"
 L["DecimalSeparator"] = ","
+--Translation missing 
+-- L["Empowered_Upgrade_Label"] = ""
 L["Error_MultiplePrimaryStatsSelected"] = "Vous ne pouvez sélectionner qu'une seul amélioration (agi, force, int)"
 L["GemsDisplayFormat"] = "%s gemmes"
+--Translation missing 
+-- L["ItemLevel_Upgrade_Label"] = ""
 L["Matcher_ICD_ArgOrder"] = "value stat duration chance cd"
 L["Matcher_ICD_Pattern"] = "^Équipé\\194\\160: Chaque fois que vous réussissez vos attaques, vous avez une chance de gagner un bonus de ([%d,%. ]+) a?u? ?s?c?o?r?e? ?d?e?\\195?\\160? ?l?a?\\226?\\128?\\153? ?(.-) pendant (%d+) s%. %((%d+)%% de chances, (%d+)\\194\\160s de temps de recharge%)$"
 L["Matcher_ICD2_ArgOrder"] = "stat value duration chance cd"
@@ -46,8 +56,14 @@ L["Matcher_Use3_ArgOrder"] = ""
 L["Matcher_Use3_Pattern"] = ""
 L["Matcher_Use4_ArgOrder"] = ""
 L["Matcher_Use4_Pattern"] = ""
+--Translation missing 
+-- L["Obliterum_Upgrade_Label"] = ""
 L["Offhand_DPS"] = "DPS main gauche"
 L["Offhand_Score"] = "Score main gauche"
+--Translation missing 
+-- L["Options_AssociatedSet_Label"] = ""
+--Translation missing 
+-- L["Options_AssociatedSet_Tooltip"] = ""
 L["Options_BlankLineMainAbove_Label"] = "Ligne vide en haut (principale)"
 L["Options_BlankLineMainAbove_Tooltip"] = "Affiche une ligne vide au dessus du socre dans l'infobulle principale"
 L["Options_BlankLineMainBelow_Label"] = "Ligne vide en bas (principale)"
@@ -56,6 +72,10 @@ L["Options_BlankLineRefAbove_Label"] = "Ligne vide en haut (Référence)"
 L["Options_BlankLineRefAbove_Tooltip"] = "Affiche une ligne vide au dessus du socre dans les infobulles de référence (ex: si vous survoler un objet)"
 L["Options_BlankLineRefBelow_Label"] = "Ligne vide en bas (Référence)"
 L["Options_BlankLineRefBelow_Tooltip"] = "Affiche une ligne vide en bas du socre dans les infobulles de référence (ex: si vous survoler un objet)"
+--Translation missing 
+-- L["Options_CompactMode_Label"] = ""
+--Translation missing 
+-- L["Options_CompactMode_Tooltip"] = ""
 L["Options_Compare_Character"] = "Score total du personnage"
 L["Options_Compare_Item"] = "Score des objets équipés"
 L["Options_Compare_Label"] = "Comparer le pourcentage gagné à"
@@ -100,16 +120,43 @@ L["Options_SelectStats_Label"] = "Séléctionner les améliorations"
 L["Options_SelectStats_Tooltip"] = "Choisir les améliorations relatif a cette spécialisation"
 L["Options_ShowStatsPane_Label"] = "Afficher le socre total"
 L["Options_ShowStatsPane_Tooltip"] = "Afficher le socre total sur l'onglet de feuille de personnage"
+--Translation missing 
+-- L["Options_ShowUpgrades_Label"] = ""
+--Translation missing 
+-- L["Options_ShowUpgrades_Tooltip"] = ""
+--Translation missing 
+-- L["Options_SpecColor_Label"] = ""
+--Translation missing 
+-- L["Options_SpecColor_Tooltip"] = ""
 L["Options_Specialization_Label"] = "Spécialisation"
 L["Options_Specialization_Tooltip"] = "Titre de ce groupe de valeur d'améliorations"
+--Translation missing 
+-- L["Options_SpecIcon_Label"] = ""
+--Translation missing 
+-- L["Options_SpecIcon_Tooltip"] = ""
 L["Options_StatWeightsSetup"] = "Organisation des valeurs d'améliorations"
+--Translation missing 
+-- L["Options_SuggestSabersEye_Label"] = ""
+--Translation missing 
+-- L["Options_SuggestSabersEye_Tooltip"] = ""
 L["Options_Weights_Open"] = "Ouvrir la configuration des valeurs d'améliorations"
 L["Options_Weights_Section"] = "Valeurs d'améliorations"
 L["StatPaneCategoryTitle"] = "Score des valeurs d'améliorations"
 L["ThousandSeparator"] = " "
+--Translation missing 
+-- L["TooltipMessage_ArtifactOffhand"] = ""
+--Translation missing 
+-- L["TooltipMessage_EquipmentSetCompare"] = ""
+--Translation missing 
+-- L["TooltipMessage_Offhand"] = ""
 L["TooltipMessage_StatScore"] = "Score"
 L["TooltipMessage_WithGem"] = "avec une gemme"
 L["TooltipMessage_WithProcAverage"] = "avec un proc en moyen"
 L["TooltipMessage_WithUseAverage"] = "avec un utiliser moyen"
+--Translation missing 
+-- L["Upgrade_1_Label"] = ""
+--Translation missing 
+-- L["Upgrade_2_Label"] = ""
 L["Warning"] = "Avertissement"
 L["WelcomeMessage"] = "loaded. v%s by Necroskillz, French translation by Gennoken"
+

@@ -1,6 +1,8 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("StatWeightScore", "zhTW");
 if not L then return end
 
+--Translation missing 
+-- L["AlternativeStatDisplayNames_Crit"] = ""
 L["CharacterPane_Tooltip_Title"] = "評量屬性分數"
 L["CharacterPane_Tooltip_Title_Text"] = "在%s 專精下所有現有裝備物品的總屬性權重分數"
 L["CharacterScore_Command"] = "角色權重分數總計"
@@ -8,29 +10,69 @@ L["CharacterScore_Info"] = "所有此專精當前裝備物品的權重屬性分�
 L["Crafting_Upgrade_Label"] = "階段 %d之%d"
 L["Culture"] = "enUS"
 L["DecimalSeparator"] = "%."
+--Translation missing 
+-- L["Empowered_Upgrade_Label"] = ""
 L["Error_MultiplePrimaryStatsSelected"] = "您只能選擇一個主要屬性(敏捷、力量或智力)"
 L["GemsDisplayFormat"] = "%s 珠寶"
+--Translation missing 
+-- L["ItemLevel_Upgrade_Label"] = ""
 L["Matcher_ICD_ArgOrder"] = "value stat duration chance cd"
 L["Matcher_ICD_Pattern"] = "^Equip: Each time your attacks hit, you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$"
 L["Matcher_ICD2_ArgOrder"] = "value stat duration chance cd"
 L["Matcher_ICD2_Pattern"] = "^Equip: Your attacks have a chance to grant you ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %((%d+)%% chance, (%d+) sec cooldown%)$"
+--Translation missing 
+-- L["Matcher_ICD3_ArgOrder"] = ""
+--Translation missing 
+-- L["Matcher_ICD3_Pattern"] = ""
 L["Matcher_InsigniaOfConquest_ArgOrder"] = "value stat duration"
 L["Matcher_InsigniaOfConquest_Pattern"] = "^Equip: When you deal damage you have a chance to gain ([%d,%. ]+) ([%a ]-) for (%d+) sec%."
+--Translation missing 
+-- L["Matcher_InsigniaOfConquest2_ArgOrder"] = ""
+--Translation missing 
+-- L["Matcher_InsigniaOfConquest2_Pattern"] = ""
 L["Matcher_Partial_CdMin"] = "(%d+) Min"
 L["Matcher_Partial_CdSec"] = "(%d+) Sec"
 L["Matcher_Precheck_Equip"] = "^裝備:"
 L["Matcher_Precheck_Use"] = "^使用:"
 L["Matcher_RPPM_ArgOrder"] = "value stat duration ppm"
 L["Matcher_RPPM_Pattern"] = "^Equip: Your attacks have a chance to grant ([%d,%. ]+) ([%a ]-) for (%d+) sec%.  %(Approximately ([%d%.]+) procs per minute%)$"
+--Translation missing 
+-- L["Matcher_RPPM2_ArgOrder"] = ""
+--Translation missing 
+-- L["Matcher_RPPM2_Pattern"] = ""
+--Translation missing 
+-- L["Matcher_RPPM3_ArgOrder"] = ""
+--Translation missing 
+-- L["Matcher_RPPM3_Pattern"] = ""
+--Translation missing 
+-- L["Matcher_RPPM4_ArgOrder"] = ""
+--Translation missing 
+-- L["Matcher_RPPM4_Pattern"] = ""
 L["Matcher_StatTooltipParser_Armor"] = "^(%d+) (RESISTANCE0_NAME)$"
+--Translation missing 
+-- L["Matcher_StatTooltipParser_Armor_ArgOrder"] = ""
 L["Matcher_StatTooltipParser_DPS"] = "^%(([%d,%. ]+) ([%a ]+)%)$"
+--Translation missing 
+-- L["Matcher_StatTooltipParser_DPS_ArgOrder"] = ""
 L["Matcher_StatTooltipParser_Stat"] = "^%+([%d,%. ]+) ([%a ]+)$"
+--Translation missing 
+-- L["Matcher_StatTooltipParser_Stat_ArgOrder"] = ""
 L["Matcher_StoneOfFire_ArgOrder"] = "value duration"
 L["Matcher_StoneOfFire_Pattern"] = "^Equip: When you heal or deal damage you have a chance to increase your Strength, Agility, or Intellect by ([%d,%. ]+) for (%d+) sec%.  Your highest stat is always chosen%.$"
 L["Matcher_Use_ArgOrder"] = "stat value duration cd"
 L["Matcher_Use_Pattern"] = "^Use: Increases y?o?u?r? ?([%a ]-) by ([%d,%. ]+) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$"
 L["Matcher_Use2_ArgOrder"] = "value stat duration cd"
 L["Matcher_Use2_Pattern"] = "^Use: Grants ([%d,%. ]+) ([%a ]-) for (%d+) sec%. %(([%d%a ]-) Cooldown%)$"
+--Translation missing 
+-- L["Matcher_Use3_ArgOrder"] = ""
+--Translation missing 
+-- L["Matcher_Use3_Pattern"] = ""
+--Translation missing 
+-- L["Matcher_Use4_ArgOrder"] = ""
+--Translation missing 
+-- L["Matcher_Use4_Pattern"] = ""
+--Translation missing 
+-- L["Obliterum_Upgrade_Label"] = ""
 L["Offhand_DPS"] = "副手秒傷"
 L["Offhand_Score"] = "副手分數"
 L["Options_AssociatedSet_Label"] = "相關套裝設定"
@@ -43,6 +85,10 @@ L["Options_BlankLineRefAbove_Label"] = "上方加入空行(比較)"
 L["Options_BlankLineRefAbove_Tooltip"] = "在比較提示中屬性評分資訊之上顯示空白行(例：你在一個物品上同時按下Shift鍵)"
 L["Options_BlankLineRefBelow_Label"] = "下方加入空行(比較)"
 L["Options_BlankLineRefBelow_Tooltip"] = "在比較提示中屬性評分資訊之下顯示空白行(例：你在一個物品上同時按下Shift鍵)"
+--Translation missing 
+-- L["Options_CompactMode_Label"] = ""
+--Translation missing 
+-- L["Options_CompactMode_Tooltip"] = ""
 L["Options_Compare_Character"] = "角色分數總計"
 L["Options_Compare_Item"] = "裝備物品分數"
 L["Options_Compare_Label"] = "百分比獲取比較為"
@@ -89,13 +135,27 @@ L["Options_ShowStatsPane_Label"] = "顯示總分"
 L["Options_ShowStatsPane_Tooltip"] = "是否在角色視窗顯示總分"
 L["Options_ShowUpgrades_Label"] = "顯示升級"
 L["Options_ShowUpgrades_Tooltip"] = "是否顯示可升級物品的升級後分數(製造、惡毒系列)"
+--Translation missing 
+-- L["Options_SpecColor_Label"] = ""
+--Translation missing 
+-- L["Options_SpecColor_Tooltip"] = ""
 L["Options_Specialization_Label"] = "專精"
 L["Options_Specialization_Tooltip"] = "此屬性權重設置的標籤"
+--Translation missing 
+-- L["Options_SpecIcon_Label"] = ""
+--Translation missing 
+-- L["Options_SpecIcon_Tooltip"] = ""
 L["Options_StatWeightsSetup"] = "屬性權重設置"
+--Translation missing 
+-- L["Options_SuggestSabersEye_Label"] = ""
+--Translation missing 
+-- L["Options_SuggestSabersEye_Tooltip"] = ""
 L["Options_Weights_Open"] = "開啟屬性權重的設置"
 L["Options_Weights_Section"] = "屬性權重"
 L["StatPaneCategoryTitle"] = "屬性評量分數"
 L["ThousandSeparator"] = ","
+--Translation missing 
+-- L["TooltipMessage_ArtifactOffhand"] = ""
 L["TooltipMessage_EquipmentSetCompare"] = "比對到 %s 從套裝設定 '%s'"
 L["TooltipMessage_Offhand"] = "%s (副手)"
 L["TooltipMessage_StatScore"] = "屬性評分"
@@ -106,3 +166,4 @@ L["Upgrade_1_Label"] = "升級1階"
 L["Upgrade_2_Label"] = "升級2階"
 L["Warning"] = "警告"
 L["WelcomeMessage"] = "已載入。 v%s by Necroskillz"
+

@@ -135,3 +135,4 @@ L["Upgrade_1_Label"] = "Upgrade 1"
 L["Upgrade_2_Label"] = "Upgrade 2"
 L["Warning"] = "Warning"
 L["WelcomeMessage"] = "loaded. v%s by Necroskillz"
+

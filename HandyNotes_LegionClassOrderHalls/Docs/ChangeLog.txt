@@ -1,0 +1,93 @@
+$Id: ChangeLog.txt 39 2017-05-20 07:06:54Z arith $
+
+Revision History:
+=================
+
+* v1.11 (May 20, 2017)
+-----------------------
+- Added Eran Droll to Deathknight's order hall
+- Added Tormented Shivarra to Demonhunter's order hall
+- Added Shalorn Star to Druid's order hall
+- Added Nighthuntress Silus to Hunter's order hall
+- Added Guardian Alar to Mage's order hall
+- Lib update:
+  - NoTaint_UIDropDownMenu
+
+* v1.10 (May 19, 2017)
+-----------------------
+- Added Charger Saddle, Crusader Kern and Terric the Illuminator in Paladin's order hall
+- Added Matilda Skoptidottir and Sharak Tor / Matthew Glensorrow in Warrior's order hall
+- Localization update:
+  - German (pas06)
+
+* v1.09 (May 12, 2017)
+-----------------------
+- Replaced UIDropDown with NoTaint_UIDropDown
+- Added dungeonLevel information
+- Revised iter function to return dungeonLevel value, should now well supported Carbonite
+- Fixed typo of "Class Hall Quartermaster"
+- Changed class hall's mission icon to green button
+
+* v1.08 (May 09, 2017)
+-----------------------
+- Re-organized config options
+- Standardize localization key style
+- Changed the registered name to HandyNotes
+- Localization update:
+  - Russian (BLizzatron)
+  - Simplified Chinese
+
+* v1.07 (Apr. 27, 2017)
+-----------------------
+- Fixed class hall researcher's data config
+- Added Light's Heart location to Hunter and Shaman's halls
+- Added option to toggle Light's Heart displaying
+- Localization update:
+  - Korean (yuk6196)
+
+* v1.06 (Apr. 25, 2017)
+-----------------------
+- Localization update:
+  - German (pas06)
+  - Russian (BLizzatron)
+
+* v1.05 (Apr. 24, 2017)
+-----------------------
+- Added more flexible displaying options
+
+* v1.04 (Apr. 22, 2017)
+-----------------------
+- Localization update:
+  - German (pas06)
+  - Korean (yuk6196)
+
+* v1.03 (Apr. 20, 2017)
+-----------------------
+- Corrected Amal'thazad and Calydus's NPC ID
+- Enhanced NPC name's looking-up
+- Added notes for Artifact Research, Class Hall Quartermaster
+
+* v1.02 (Apr. 19, 2017)
+-----------------------
+- Added Warrior's jumping points
+- Added Mage's Teleportation Nexus Portals
+- Added Druid's portals in Emerald Dreamway and also in the destination including below:
+  - Grizzly Hills
+  - Feralas
+  - Moonglade
+  - Duskwood
+  - The Hinterlands
+  - Mount Hyjal
+- Added Hunter's Great Eagle flight points
+- Localization update:
+  - German (pas06)
+
+* v1.01 (Apr. 17, 2017)
+-----------------------
+- Added Tianji in Monk's order hall
+- Added node's notes
+- Added more options' toggling
+
+* v1.00 (Apr. 17, 2017)
+-----------------------
+- Initial version which support WoW 7.2.0

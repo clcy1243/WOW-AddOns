@@ -106,7 +106,7 @@ function GSE.GetOptionsTable()
           },
           showClassMacros = {
             name = L["Show Class Macros in Editor"],
-            desc = L["By setting this value the Sequence Editor will show every macro for your class."],
+            desc = L["By setting this value the Sequence Editor will show every macro for your class.  Turning this off will only show the class macros for your current specialisation."],
             type = "toggle",
             set = function(info,val) GSEOptions.filterList["Class"] = val end,
             get = function(info) return GSEOptions.filterList["Class"] end,
@@ -658,7 +658,7 @@ function GSE.GetOptionsTable()
     ord = ord + 1
     OptionsTable.args.pluginsTab.args[v.Name] = {
       name = v.Name,
-      desc = string.format(L["Addin Version %s contained versions for the following macros:\n%s"], v.Name, GSE.FormatSequenceNames(v.SequenceNames)),
+      desc = string.format(L["Addin Version %s contained versions for the following macros:"], v.Name) .. string.format("\n%s", GSE.FormatSequenceNames(v.SequenceNames)),
       type = "execute",
       func = function(info, val)
         GSE:SendMessage(Statics.ReloadMessage, v.Name)
