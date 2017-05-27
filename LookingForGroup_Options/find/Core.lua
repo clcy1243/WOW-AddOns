@@ -766,7 +766,7 @@ get_search_result = function()
 	if find_a_group_filter == "" then
 		find_a_group_filter = nil
 	end
-	local filters = profile.spam_filter_keywords
+	local filters = LookingForGroup.db.profile.spam_filter_keywords
 	local mbnm = 0
 	local k,v
 	for k,v in pairs(encounters) do
@@ -798,7 +798,9 @@ function LookingForGroup_Options:SearchResult_Tooltip_Feedback()
 		GameTooltip:AddLine(srinfo, 0.5, 0.5, 0.8, true)
 		GameTooltip:Show()
 	else
-		select_sup[val] = nil
+		if val ~= nil then
+			select_sup[val] = nil
+		end
 		obj:SetValue(false)
 		obj:SetDisabled(true)
 		if LookingForGroup_Options.SearchResult_Tooltip_Feedback_timer ~= nil then

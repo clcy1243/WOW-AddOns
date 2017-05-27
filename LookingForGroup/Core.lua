@@ -15,6 +15,9 @@ function LookingForGroup:OnEnable()
 	if profile.enable_event then
 		LoadAddOn("LookingForGroup_Event")
 	end
+	if profile.enable_sf then
+		LoadAddOn("LookingForGroup_SF")
+	end
 	if profile.enable_av then
 		LoadAddOn("LookingForGroup_AV")
 	end

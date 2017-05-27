@@ -21,7 +21,7 @@ function LookingForGroup_AV:OnInitialize()
 			{},
 --			raid_leader = nil
 		}
-	})
+	},true)
 	self:RegisterComm("LFG_AV")
 end
 

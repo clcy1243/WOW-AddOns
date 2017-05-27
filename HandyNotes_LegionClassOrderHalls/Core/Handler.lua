@@ -1,4 +1,4 @@
--- $Id: Handler.lua 30 2017-05-12 15:45:08Z arith $
+-- $Id: Handler.lua 46 2017-05-25 06:01:07Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -50,7 +50,7 @@ local function work_out_texture(point)
 	local icon_key
 	
 	if (point.mission) then icon_key = "greenButton" end
-	if (point.recruiter or point.research or point.armaments) then icon_key = "workOrder" end
+	if (point.recruiter or point.research or point.armaments or point.sealOrder) then icon_key = "workOrder" end
 	if (point.quartermaster) then icon_key = "repair" end
 	if (point.classUpgrade) then icon_key = "class" end
 	if (point.artifact and point.class) then icon_key = point.class end
@@ -73,6 +73,15 @@ end
 local get_point_info = function(point)
 	if point then
 		local label = point.label or UNKNOWN
+		if (point.recruiter or point.research or point.armaments or point.sealOrder) then 
+			if not point.scale then point.scale = 0.8 end
+		end
+		if (point.quartermaster) then
+			if not point.scale then point.scale = 0.8 end
+		end
+		if (point.classUpgrade) then
+			if not point.scale then point.scale = 0.8 end
+		end
 		if (point.lightsHeart) then
 			if not point.scale then point.scale = 0.8 end
 		end
@@ -153,7 +162,7 @@ local function hideNode(button, mapFile, coord)
 end
 
 local function closeAllDropdowns()
-	Lib_CloseDropDownMenus(1)
+	L_CloseDropDownMenus(1)
 end
 
 local function addTomTomWaypoint(button, mapFile, coord)
@@ -175,38 +184,38 @@ do
 		if (not level) then return end
 		if (level == 1) then
 			-- Create the title of the menu
-			info = Lib_UIDropDownMenu_CreateInfo()
+			info = L_UIDropDownMenu_CreateInfo()
 			info.isTitle 		= 1
 			info.text 		= "HandyNotes - " ..addon.pluginName
 			info.notCheckable 	= 1
-			Lib_UIDropDownMenu_AddButton(info, level)
+			L_UIDropDownMenu_AddButton(info, level)
 
 			if TomTom then
 				-- Waypoint menu item
-				info = Lib_UIDropDownMenu_CreateInfo()
+				info = L_UIDropDownMenu_CreateInfo()
 				info.text = LH["Add this location to TomTom waypoints"]
 				info.notCheckable = 1
 				info.func = addTomTomWaypoint
 				info.arg1 = currentZone
 				info.arg2 = currentCoord
-				Lib_UIDropDownMenu_AddButton(info, level)
+				L_UIDropDownMenu_AddButton(info, level)
 			end
 
 			-- Hide menu item
-			info = Lib_UIDropDownMenu_CreateInfo()
+			info = L_UIDropDownMenu_CreateInfo()
 			info.text		= HIDE 
 			info.notCheckable 	= 1
 			info.func		= hideNode
 			info.arg1		= currentZone
 			info.arg2		= currentCoord
-			Lib_UIDropDownMenu_AddButton(info, level)
+			L_UIDropDownMenu_AddButton(info, level)
 
 			-- Close menu item
-			info = Lib_UIDropDownMenu_CreateInfo()
+			info = L_UIDropDownMenu_CreateInfo()
 			info.text		= CLOSE
 			info.func		= closeAllDropdowns
 			info.notCheckable 	= 1
-			Lib_UIDropDownMenu_AddButton(info, level)
+			L_UIDropDownMenu_AddButton(info, level)
 		end
 	end
 	local HL_Dropdown = CreateFrame("Frame", private.addon_name.."DropdownMenu")
@@ -217,7 +226,7 @@ do
 		if (button == "RightButton" and not down) then
 			currentZone = gsub(mapFile, "_terrain%d+$", "")
 			currentCoord = coord
-			Lib_ToggleDropDownMenu(1, nil, HL_Dropdown, self, 0, 0)
+			L_ToggleDropDownMenu(1, nil, HL_Dropdown, self, 0, 0)
 		end
 	end
 end
@@ -266,6 +275,7 @@ do
 		if (point.portal and not private.db.show_portal) then return false; end
 		if (point.flight and not private.db.show_flight) then return false; end
 		if (point.lightsHeart and not private.db.show_lightsHeart) then return false; end
+		if (point.sealOrder and not private.db.show_sealOrder) then return false; end
 		if (point.others and not private.db.show_others) then return false; end
 		return true
 	end
@@ -283,10 +293,17 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
+	for key, value in pairs( addon.constants.events ) do
+		self:RegisterEvent( value );
+	end
 end
 
 function addon:Refresh()
 	self:SendMessage("HandyNotes_NotifyUpdate", addon.pluginName)
+end
+
+function addon:CLOSE_WORLD_MAP()
+	closeAllDropdowns()
 end
 
 -- //////////////////////////////////////////////////////////////////////////

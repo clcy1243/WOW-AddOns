@@ -1,0 +1,12 @@
+tag 62bbf26fab97b2ba187ed3160ca9e50c858196c5 v70100-1.0.0
+Author:	Jim Whitehead <jnwhiteh@gmail.com>
+Date:	Fri Jan 27 11:42:16 2017 +0100
+
+Tagging v70100-1.0.0
+
+commit 37ab40d742d5317cf9f257f9a3af3f1d6e275d2a
+Author: Jim Whitehead <jnwhiteh@gmail.com>
+Date:   Fri Jan 27 09:10:47 2017 +0100
+
+    Update for 7.1
+

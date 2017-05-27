@@ -1,28 +1,14 @@
 ------------------------------------------------------------------------
-r81 | euloanty@live.com | 2017-05-22 19:50:10 -0500 (Mon, 22 May 2017) | 1 line
+r90 | euloanty@live.com | 2017-05-24 10:23:42 -0500 (Wed, 24 May 2017) | 1 line
 Changed paths:
-   M /trunk/Init.lua
+   M /trunk/SF/Core.lua
 
-Event
+LFG SF
 ------------------------------------------------------------------------
-r80 | euloanty@live.com | 2017-05-22 19:10:05 -0500 (Mon, 22 May 2017) | 1 line
+r89 | euloanty@live.com | 2017-05-23 12:18:00 -0500 (Tue, 23 May 2017) | 1 line
 Changed paths:
-   M /trunk/Core.lua
-   M /trunk/Event/Core.lua
-   D /trunk/Options/hook
-   D /trunk/Options/icon
-   M /trunk/Options/module.xml
-   A /trunk/Options/options
-   A /trunk/Options/options/Core.lua
-   A /trunk/Options/options/options.xml
+   M /trunk/SF/Core.lua
 
-features tuning
-------------------------------------------------------------------------
-r79 | euloanty@live.com | 2017-05-22 18:23:42 -0500 (Mon, 22 May 2017) | 1 line
-Changed paths:
-   M /trunk/Event/Core.lua
-   M /trunk/WQ/Core.lua
-
-alpha
+sf
 ------------------------------------------------------------------------
 

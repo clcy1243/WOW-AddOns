@@ -202,23 +202,6 @@ LookingForGroup_Options:push("wq",{
 	type = "group",
 	args =
 	{
-		enable =
-		{
-			order = get_order(),
-			name = ENABLE,
-			type = "toggle",
-			get = function(info)
-				return LookingForGroup.db.profile.enable_wq
-			end,
-			set = function(info,val)
-				LookingForGroup.db.profile.enable_wq = val
-				if val then
-					LoadAddOn("LookingForGroup_WQ")
-				end
-				local LookingForGroup_WQ = AceAddon:GetAddon("LookingForGroup_WQ")
-				LookingForGroup_WQ:OnEnable()
-			end,
-		},
 		quest_id =
 		{
 			order = get_order(),

@@ -5,7 +5,7 @@
 	<Include file="find\find.xml"/>
 	<Include file="options\options.xml"/>
 	<Include file="languages\languages.xml"/>
-	<Include file="filter\filter.xml"/>
+	<Include file="sf\sf.xml"/>
 	<Include file="wq\wq.xml"/>
 	<Include file="cr\cr.xml"/>
 	<Include file="av\av.xml"/>

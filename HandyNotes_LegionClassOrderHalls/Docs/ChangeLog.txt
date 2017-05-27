@@ -1,7 +1,25 @@
-$Id: ChangeLog.txt 39 2017-05-20 07:06:54Z arith $
+$Id: ChangeLog.txt 48 2017-05-25 17:03:24Z arith $
 
 Revision History:
 =================
+
+* v1.13 (May 26, 2017)
+-----------------------
+- Added Tu'Las the Gifted (Seal of Broken Fate vendor) to Hunter's order hall
+- Localization update:
+  - Russian (DogmatX)
+  - German (pas06)
+- Fixed issue that no-lib version was not able to locate LibBabble-SubZone-3.0
+
+* v1.12 (May 24, 2017)
+-----------------------
+- Added Treant Sapling to Druid's order hall
+- Added Master Swoo and Tianili to Monk's order hall
+- Added Winter Payne to Deathknight's order hall
+- Added Evelune Soulreaver to Demon Hunter's order hall
+- Lib update:
+  - Replace NoTaint_UIDropDownMenu with LibUIDropDownMenu
+- Enhanced dropdown menu's behavior when world map is changed or closed
 
 * v1.11 (May 20, 2017)
 -----------------------

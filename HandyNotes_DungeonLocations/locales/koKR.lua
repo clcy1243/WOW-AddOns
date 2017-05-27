@@ -6,8 +6,7 @@ L["Allow right click to create waypoints with TomTom"] = "TomTom으로 웨이포
 L["Continent Alpha"] = "대륙 투명토"
 L["Continent Scale"] = "대륙 크기 비율"
 L["Enable TomTom integration"] = "TomTom 기능 활성화"
---Translation missing 
--- L["Filter Options"] = ""
+L["Filter Options"] = "필터 옵션"
 L["Hide all Broken Isle nodes from the map"] = "지도에서 부서진 섬의 모든 위치 표시를 숨깁니다"
 L["Hide all Cataclysm nodes from the map"] = "지도에서 대격변의 모든 위치 표시를 숨깁니다"
 L["Hide all Draenor nodes from the map"] = "지도에서 드레노어의 모든 위치 표시를 숨깁니다"
@@ -29,21 +28,15 @@ L["Lockout Alpha"] = "귀속 투명도"
 L["Lockout Gray Icon"] = "귀속 회색 아이콘"
 L["Lockout Options"] = "귀속 옵션"
 L["Lockout Tooltip"] = "귀속 툴팁"
---Translation missing 
--- L["Show dungeon locations on the map"] = ""
---Translation missing 
--- L["Show Dungeons"] = ""
+L["Show dungeon locations on the map"] = "지도에 던전 위치 표시"
+L["Show Dungeons"] = "던전 표시"
 L["Show icons on continent map"] = "대륙 지도에 아이콘 표시"
 L["Show lockout information on tooltips"] = "툴팁에 귀속 정보 표시"
---Translation missing 
--- L["Show Mixed"] = ""
---Translation missing 
--- L["Show mixed (dungeons + raids) locations on the map"] = ""
+L["Show Mixed"] = "혼합 표시"
+L["Show mixed (dungeons + raids) locations on the map"] = "지도에 혼합 (던전 + 공격대) 위치 표시"
 L["Show on Continent"] = "대륙에 표시"
---Translation missing 
--- L["Show raid locations on the map"] = ""
---Translation missing 
--- L["Show Raids"] = ""
+L["Show raid locations on the map"] = "지도에 공격대 위치 표시"
+L["Show Raids"] = "공격대 표시"
 L["The alpha of dungeons and raids that are locked to any extent"] = "하나라도 묶인 던전과 공격대의 투명도"
 L["The alpha of the icons shown on the continent map"] = "대륙 지도에 표시되는 아이콘의 투명도"
 L["The alpha of the icons shown on the zone map"] = "지역 지도에 표시되는 아이콘의 투명도"

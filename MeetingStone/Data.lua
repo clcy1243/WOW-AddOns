@@ -7,7 +7,8 @@ ADDON_NAME          = ...
 ADDON_LOGO          = [[Interface\AddOns\]] .. ADDON_NAME .. [[\Media\Logo]]
 ADDON_VERSION       = GetAddOnMetadata(ADDON_NAME, 'Version')
 ADDON_VERSION_SHORT = ADDON_VERSION:gsub('(%d)%d(%d)%d%d%.(%d%d)','%1%2%3')
-ADDON_REGIONSUPPORT = GetCurrentRegion() == 5
+-- ADDON_REGIONSUPPORT = GetCurrentRegion() == 5
+ADDON_REGIONSUPPORT = true
 ADDON_SERVER        = (NETEASE_SERVER_PREFIX or 'S1') .. UnitFactionGroup('player')
 SERVER_TIMEOUT      = 120
 

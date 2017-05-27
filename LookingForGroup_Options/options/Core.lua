@@ -3,13 +3,6 @@ local AceAddon = LibStub("AceAddon-3.0")
 local LookingForGroup = AceAddon:GetAddon("LookingForGroup")
 local LookingForGroup_Options = AceAddon:GetAddon("LookingForGroup_Options")
 
-local order = 0
-local function get_order()
-	local temp = order
-	order = order +1
-	return temp
-end
-
 LookingForGroup_Options:push("options",{
 	name = OPTIONS,
 	type = "group",
@@ -17,7 +10,6 @@ LookingForGroup_Options:push("options",{
 	{
 		icon =
 		{
-			order = get_order(),
 			name = EMBLEM_SYMBOL,
 			type = "toggle",
 			get = function(info)
@@ -34,7 +26,6 @@ LookingForGroup_Options:push("options",{
 		},
 		hook =
 		{
-			order = get_order(),
 			name = "Hook",
 			type = "toggle",
 			get = function(info)
@@ -51,7 +42,6 @@ LookingForGroup_Options:push("options",{
 		},
 		event =
 		{
-			order = get_order(),
 			name = "Event",
 			type = "toggle",
 			get = function(info)
@@ -65,6 +55,55 @@ LookingForGroup_Options:push("options",{
 				local LookingForGroup_Event = AceAddon:GetAddon("LookingForGroup_Event")
 				LookingForGroup_Event:OnEnable()
 			end
+		},
+		av =
+		{
+			name = GetMapNameByID(401),
+			type = "toggle",
+			get = function(info)
+				return LookingForGroup.db.profile.enable_av
+			end,
+			set = function(info,val)
+				LookingForGroup.db.profile.enable_av = val
+				if val then
+					LoadAddOn("LookingForGroup_AV")
+				end
+				local LookingForGroup_AV = AceAddon:GetAddon("LookingForGroup_AV")
+				LookingForGroup_AV:OnEnable()
+			end,
+		},
+		sf =
+		{
+			name = SPAM_FILTER,
+			type = "toggle",
+			get = function(info)
+				return LookingForGroup.db.profile.enable_sf
+			end,
+			set = function(info,val)
+				LookingForGroup.db.profile.enable_sf = val
+				if val then
+					LoadAddOn("LookingForGroup_SF")
+				end
+				local LookingForGroup_SF = AceAddon:GetAddon("LookingForGroup_SF")
+				LookingForGroup_SF:OnEnable()
+			end,
+			width = "full"
+		},
+		wq =
+		{
+			name = TRACKER_HEADER_WORLD_QUESTS,
+			type = "toggle",
+			get = function(info)
+				return LookingForGroup.db.profile.enable_wq
+			end,
+			set = function(info,val)
+				LookingForGroup.db.profile.enable_wq = val
+				if val then
+					LoadAddOn("LookingForGroup_WQ")
+				end
+				local LookingForGroup_WQ = AceAddon:GetAddon("LookingForGroup_WQ")
+				LookingForGroup_WQ:OnEnable()
+			end,
 		},
 	}
 })

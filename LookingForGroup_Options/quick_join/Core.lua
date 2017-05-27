@@ -49,7 +49,7 @@ local function get_social()
 	if LookingForGroup.db.profile.enable_qj then
 		local all_groups = C_SocialQueue.GetAllGroups(false)
 		local i
-		local filters = LookingForGroup_Options.db.profile.spam_filter_keywords
+		local filters = LookingForGroup.db.profile.spam_filter_keywords
 		local  C_SocialQueue_GetGroupQueues = C_SocialQueue.GetGroupQueues
 		for i = 1, #all_groups do
 			local ai = all_groups[i]

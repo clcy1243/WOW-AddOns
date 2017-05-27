@@ -9,6 +9,7 @@
 ## Notes: Shows the NPC locations and major POIs in Class Order Halls
 ## Notes-deDE: Zeigt die Positionen von NSCs und anderen interessanten Orten in Klassenordenshallen.
 ## Notes-koKR: 직업 조합 전당에 NPC 위치와 주요 관심 지점을 표시합니다
+## Notes-ruRU: Показывает расположение НИП и основные объекты в оплоте класса
 ## Notes-zhCN: 显示各职业大厅里 NPC 与主要的 POI 的位置
 ## Notes-zhTW: 顯示各職業大廳裡 NPC 與主要的 POI 的位置
 #@end-non-debug@
@@ -19,11 +20,12 @@
 # ## Notes-zhTW: 顯示各職業大廳裡 NPC 與主要的 POI 的位置
 #@end-debug@
 ## Author: arith
-## Version: v1.11
+## Version: v1.13
 ## RequiredDeps: HandyNotes
+## OptionalDeps: LibBabble-SubZone-3.0, LibUIDropDownMenu
 ## DefaultState: enabled
 ## SavedVariables: HandyNotes_LegionClassOrderHallsDB
-## X-Date: 2017-05-20T7:06:54Z
+## X-Date: 2017-05-25T17:03:24Z
 ## X-License: GPLv2
 ## X-Category: Map
 

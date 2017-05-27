@@ -12,11 +12,10 @@ local C_LFGList_ClearSearchResults = C_LFGList.ClearSearchResults
 function LookingForGroup_Options:OnInitialize()
 	local options = LookingForGroup_Options : get_table()
 --	LookingForGroup_Options.option_table = nil
-	self.db = LibStub("AceDB-3.0"):New("LookingForGroup_OptionsDB",
+	self.db = LibStub("AceDB-3.0"):New("LookingForGroup_OptionsCharacterDB",
 	{
 		profile = 
 		{
-			spam_filter_keywords = {},
 			cr_category = 1,
 			a_group_category = 0,
 			a_group_group = 0,
@@ -30,12 +29,12 @@ function LookingForGroup_Options:OnInitialize()
 			find_a_group_filter = "",
 			find_a_group_encounters = {}
 		}
-	})
-	options.args.profile = AceDBOptions:GetOptionsTable(self.db)
+	},true)
+	options.args.profile = AceDBOptions:GetOptionsTable(LookingForGroup.db)
 	AceConfig:RegisterOptionsTable("LookingForGroup", options, nil)
-	self.db.RegisterCallback(self, "OnProfileChanged", "OnEnable")
-	self.db.RegisterCallback(self, "OnProfileCopied", "OnEnable")
-	self.db.RegisterCallback(self, "OnProfileReset", "OnEnable")
+	LookingForGroup.db.RegisterCallback(LookingForGroup, "OnProfileChanged", "OnEnable")
+	LookingForGroup.db.RegisterCallback(LookingForGroup, "OnProfileCopied", "OnEnable")
+	LookingForGroup.db.RegisterCallback(LookingForGroup, "OnProfileReset", "OnEnable")
 	self:RegisterEvent("LFG_LIST_SEARCH_FAILED")
 	self:RegisterEvent("LFG_LIST_APPLICANT_UPDATED")
 end

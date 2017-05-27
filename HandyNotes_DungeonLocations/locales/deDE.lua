@@ -6,8 +6,7 @@ L["Allow right click to create waypoints with TomTom"] = "Per Rechtsklick werden
 L["Continent Alpha"] = "Deckkraft auf Kontinent"
 L["Continent Scale"] = "Größe auf Kontinent"
 L["Enable TomTom integration"] = "TomTom-Integration aktivieren"
---Translation missing 
--- L["Filter Options"] = ""
+L["Filter Options"] = "Filteroptionen"
 L["Hide all Broken Isle nodes from the map"] = "Versteckt alle Knoten der Verheerten Inseln auf der Karte"
 L["Hide all Cataclysm nodes from the map"] = "Versteckt alle Knoten von Cataclysm auf der Karte"
 L["Hide all Draenor nodes from the map"] = "Versteckt alle Knoten von Draenor auf der Karte"
@@ -30,21 +29,15 @@ L["Lockout Alpha"] = "Deckkraft bei Sperre"
 L["Lockout Gray Icon"] = "Graues Symbol bei Sperre"
 L["Lockout Options"] = "Sperroptionen"
 L["Lockout Tooltip"] = "Sperrtooltips"
---Translation missing 
--- L["Show dungeon locations on the map"] = ""
---Translation missing 
--- L["Show Dungeons"] = ""
+L["Show dungeon locations on the map"] = "Zeigt Dungeonstandorte auf der Karte an"
+L["Show Dungeons"] = "Dungeons zeigen"
 L["Show icons on continent map"] = "Zeigt Symbole auf der Kontinentkarte"
 L["Show lockout information on tooltips"] = "Zeigt Sperrinformationen in Tooltips"
---Translation missing 
--- L["Show Mixed"] = ""
---Translation missing 
--- L["Show mixed (dungeons + raids) locations on the map"] = ""
+L["Show Mixed"] = "Gemischte zeigen"
+L["Show mixed (dungeons + raids) locations on the map"] = "Zeigt gemischte (Dungeon- und Schlachtzugs-) Standorte auf der Karte"
 L["Show on Continent"] = "Auf Kontinent anzeigen"
---Translation missing 
--- L["Show raid locations on the map"] = ""
---Translation missing 
--- L["Show Raids"] = ""
+L["Show raid locations on the map"] = "Zeigt Schlachtzugsstandorte auf der Karte an"
+L["Show Raids"] = "Schlachtzüge zeigen"
 L["The alpha of dungeons and raids that are locked to any extent"] = "Die Deckkraft von Dungeons und Schlachtzügen, die in irgendeiner Weise gesperrt sind"
 L["The alpha of the icons shown on the continent map"] = "Die Deckkraft von Symbolen auf der Kontinentkarte"
 L["The alpha of the icons shown on the zone map"] = "Die Deckkraft von Symbolen auf der Zonenkarte"

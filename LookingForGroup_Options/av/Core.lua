@@ -198,24 +198,6 @@ LookingForGroup_Options:push("av",{
 	type = "group",
 	args =
 	{
-		enable =
-		{
-			order = get_order(),
-			name = ENABLE,
-			type = "toggle",
-			get = function(info)
-				return LookingForGroup.db.profile.enable_av
-			end,
-			set = function(info,val)
-				LookingForGroup.db.profile.enable_av = val
-				if val then
-					LoadAddOn("LookingForGroup_AV")
-				end
-				local LookingForGroup_AV = AceAddon:GetAddon("LookingForGroup_AV")
-				LookingForGroup_AV:OnEnable()
-			end,
-			width = "full"
-		},
 		search =
 		{
 			order = get_order(),
@@ -429,7 +411,7 @@ end
 
 get_search_result = function()
 	wipe(results_table)
-	local filters = LookingForGroup_Options.db.profile.spam_filter_keywords
+	local filters = LookingForGroup.db.profile.spam_filter_keywords
 	local groups, groupsIDs = C_LFGList.GetSearchResults()
 	local i
 	for i=1,#groupsIDs do

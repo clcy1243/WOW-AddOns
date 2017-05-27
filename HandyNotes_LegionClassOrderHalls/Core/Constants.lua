@@ -1,4 +1,4 @@
--- $Id: Constants.lua 29 2017-05-12 14:24:43Z arith $
+-- $Id: Constants.lua 46 2017-05-25 06:01:07Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -37,6 +37,7 @@ constants.defaults = {
 		show_portal = true,
 		show_flight = true,
 		show_lightsHeart = true,
+		show_sealOrder = true,
 		show_others = true,
 	},
 	char = {
@@ -88,3 +89,7 @@ constants.icon_texture = {
 
 -- Define the default icon here
 constants.defaultIcon = constants.icon_texture["yellowButton"]
+
+constants.events = {
+	"CLOSE_WORLD_MAP",
+};

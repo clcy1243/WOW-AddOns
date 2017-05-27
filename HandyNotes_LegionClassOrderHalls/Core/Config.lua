@@ -1,4 +1,4 @@
--- $Id: Config.lua 24 2017-04-28 07:24:21Z arith $
+-- $Id: Config.lua 46 2017-05-25 06:01:07Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -125,11 +125,17 @@ config.options = {
 					desc = L["Show the location of Light's Heart."],
 					order = 29,
 				},
+				show_sealOrder = {
+					type = "toggle",
+					name = L["Seal of Broken Fate"],
+					desc = L["Show the location of Seal of Broken Fate vendor."],
+					order = 30,
+				},
 				show_others = {
 					type = "toggle",
 					name = L["Others"],
 					desc = L["Show all the other POIs."],
-					order = 30,
+					order = 40,
 				},
 			},
 		},

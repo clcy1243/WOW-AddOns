@@ -3,6 +3,12 @@ local LookingForGroup = AceAddon:GetAddon("LookingForGroup")
 local LookingForGroup_WQ = AceAddon:NewAddon("LookingForGroup_WQ","AceEvent-3.0","AceTimer-3.0")
 
 function LookingForGroup_WQ:OnInitialize()
+	self.db = LibStub("AceDB-3.0"):New("LookingForGroup_WQCharacterDB",
+	{
+		profile =
+		{
+		}
+	},true)
 end
 
 function LookingForGroup_WQ:OnEnable()
@@ -20,16 +26,13 @@ function LookingForGroup_WQ:OnEnable()
 		StaticPopupDialogs.LookingForGroup_WQ_LeaveParty = nil
 		self:UnregisterEvent("QUEST_ACCEPTED")
 		self:UnregisterEvent("QUEST_REMOVED")
+		LookingForGroup_WQ.db.profile.doing_wq = nil
 	end
 end
 
-local doing_wq = nil
-
---local con cat_tb = {"#LookingForGroup_WQ# [",0,"] #WQ:",0,"#PVE#"}
 local wq_id = 0
 
 local function createlist()
---	local id = con cat_tb[4]
 	local activityID = LFGListUtil_GetQuestCategoryData(wq_id)
 	C_LFGList.CreateListing(activityID,
 						"",
@@ -45,7 +48,7 @@ end
 local function create_or_join()
 	local groupmembers = GetNumGroupMembers()
 	if not UnitInRaid("player") and groupmembers == 5 then
-		doing_wq = nil
+		LookingForGroup_WQ.db.profile.doing_wq = nil
 		return
 	end
 	if C_LFGList.GetActiveEntryInfo() then
@@ -53,16 +56,14 @@ local function create_or_join()
 	end
 	local activityID, categoryID, filters, questName = LFGListUtil_GetQuestCategoryData(wq_id)
 	if activityID ~= nil then
---		con cat_tb[2] = questName
 		if UnitInParty("player") then
 			if UnitIsGroupLeader("player") then
 				createlist()
-				doing_wq = nil
+				LookingForGroup_WQ.db.profile.doing_wq = nil
 			end
 		else
-			doing_wq = wq_id
+			LookingForGroup_WQ.db.profile.doing_wq = wq_id
 			LookingForGroup_WQ:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
---			local activityID, categoryID, filters, questName = LFGListUtil_GetQuestCategoryData(id)
 			C_LFGList.Search(categoryID,questName,filters,C_LFGList.GetLanguageSearchFilter())
 		end
 	end
@@ -85,12 +86,7 @@ end
 function LookingForGroup_WQ:QUEST_ACCEPTED(info,index,id)
 	if id and (info == LookingForGroup or is_group_wq(id)) then
 		wq_id = id
---[[		if doing_wq == id then
-			LeaveParty()
-			LookingForGroup_WQ:ScheduleTimer(create_or_join,1)
-		else]]
-			create_or_join()
---		end
+		create_or_join()
 	end
 end
 
@@ -158,7 +154,7 @@ function LookingForGroup_WQ:LFG_LIST_SEARCH_RESULTS_RECEIVED()
 end
 
 function LookingForGroup_WQ:QUEST_REMOVED(info,id)
-	if doing_wq == id  then
+	if LookingForGroup_WQ.db.profile.doing_wq == id  then
 		self:CancelAllTimers()
 		self:UnregisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 		local numgm = GetNumGroupMembers()
@@ -167,7 +163,7 @@ function LookingForGroup_WQ:QUEST_REMOVED(info,id)
 		elseif numgm ~= 0 then
 			StaticPopup_Show("LookingForGroup_WQ_LeaveParty")
 		end
-		doing_wq = nil
+		LookingForGroup_WQ.db.profile.doing_wq = nil
 	end
 end
 
@@ -178,8 +174,8 @@ end
 
 function LookingForGroup_WQ:START_A_GROUP(id)
 	wq_id = id
-	if doing_wq then
-		doing_wq = id
+	if LookingForGroup_WQ.db.profile.doing_wq then
+		LookingForGroup_WQ.db.profile.doing_wq = id
 		self:RegisterEvent("GROUP_ROSTER_UPDATE")
 		LeaveParty()
 	else

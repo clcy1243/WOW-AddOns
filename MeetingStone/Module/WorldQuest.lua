@@ -5,7 +5,7 @@ WorldQuest.lua
 ]]
 
 BuildEnv(...)
-
+--[[
 local WorldQuest = Addon:NewModule('WorldQuest', 'AceEvent-3.0', 'AceHook-3.0')
 
 function WorldQuest:OnInitialize()
@@ -228,3 +228,4 @@ function WorldQuest:AutoApply(questID, activityCode, title)
     AutoApply:Add(apply)
     AutoApply:Start()
 end
+]]

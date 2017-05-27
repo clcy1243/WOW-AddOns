@@ -1,7 +1,13 @@
-$Id: ChangeLog.txt 26 2017-05-20 08:41:11Z arith $
+$Id: ChangeLog.txt 28 2017-05-24 15:30:01Z arith $
 
 Revision History:
 =================
+
+* v1.08 (May 24, 2017)
+-----------------------
+- Lib update:
+  - Replace NoTaint_UIDropDownMenu with LibUIDropDownMenu
+- Enhanced dropdown menu's behavior when world map is changed or closed
 
 * v1.07 (May 20, 2017)
 -----------------------

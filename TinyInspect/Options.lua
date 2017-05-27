@@ -17,10 +17,10 @@ end})
 
 local DefaultDB = {
     version = VERSION,                    --配置的版本號
-    ShowItemBorder = true,                --物品直角邊框
+    ShowItemBorder = false,                --物品直角邊框
     EnableItemLevel  = true,              --物品等級
       ShowColoredItemLevelString = false, --裝等文字隨物品品質
-      ShowItemSlotString = true,          --物品部位文字
+      ShowItemSlotString = false,          --物品部位文字
         EnableItemLevelBag = true,
         EnableItemLevelBank = true,
         EnableItemLevelMerchant = true,
@@ -29,9 +29,9 @@ local DefaultDB = {
         EnableItemLevelAuction = true,
         EnableItemLevelAltEquipment = true,
         EnableItemLevelPaperDoll = true,
-        EnableItemLevelGuildNews = true,
+        EnableItemLevelGuildNews = false,
     ShowInspectAngularBorder = false,     --觀察面板直角邊框
-    ShowInspectColoredLabel = true,       --觀察面板高亮橙裝武器標簽
+    ShowInspectColoredLabel = false,       --觀察面板高亮橙裝武器標簽
     ShowOwnFrameWhenInspecting = false,   --觀察同時顯示自己裝備列表
     DisplayPercentageStats = false,       --裝備屬性換算成百分比數值
     EnablePartyItemLevel = true,          --小隊裝等

@@ -8,9 +8,25 @@ local AceConfigCmd = LibStub("AceConfigCmd-3.0")
 --------------------------------------------------------------------------------------
 
 function LookingForGroup:OnInitialize()
-	self.db = LibStub("AceDB-3.0"):New("LookingForGroupDB",{profile = {enable_wq = true,enable_av = false,enable_icon = true,enable_hook = true,enable_event = true,enable_qj = true}})
+	self.db = LibStub("AceDB-3.0"):New("LookingForGroupDB",
+	{
+		profile =
+		{
+			enable_wq = true,
+			enable_av = false,
+			enable_icon = true,
+			enable_hook = true,
+			enable_event = true,
+			enable_qj = true,
+			enable_sf = true,
+			spam_filter_keywords = {}
+		}
+	},true)
 	self:RegisterChatCommand("LookingForGroup", "ChatCommand")
 	self:RegisterChatCommand("LFG", "ChatCommand")
+	if self.db.profile.enable_sf then
+		LoadAddOn("LookingForGroup_SF")
+	end
 end
 
 function LookingForGroup.GetAddon(name)
