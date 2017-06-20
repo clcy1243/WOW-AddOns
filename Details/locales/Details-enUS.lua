@@ -40,12 +40,14 @@ L["STRING_ATTRIBUTE_DAMAGE_FRAGS"] = "Frags"
 L["STRING_ATTRIBUTE_DAMAGE_FRIENDLYFIRE"] = "Friendly Fire"
 L["STRING_ATTRIBUTE_DAMAGE_TAKEN"] = "Damage Taken"
 L["STRING_ATTRIBUTE_ENERGY"] = "Resources"
+L["STRING_ATTRIBUTE_ENERGY_ALTERNATEPOWER"] = "Alternate Power"
 L["STRING_ATTRIBUTE_ENERGY_ENERGY"] = "Energy Generated"
 L["STRING_ATTRIBUTE_ENERGY_MANA"] = "Mana Restored"
 L["STRING_ATTRIBUTE_ENERGY_RAGE"] = "Rage Generated"
 L["STRING_ATTRIBUTE_ENERGY_RESOURCES"] = "Other Resources"
 L["STRING_ATTRIBUTE_ENERGY_RUNEPOWER"] = "Runic Power Generated"
 L["STRING_ATTRIBUTE_HEAL"] = "Heal"
+L["STRING_ATTRIBUTE_HEAL_ABSORBED"] = "Heal Absorbed"
 L["STRING_ATTRIBUTE_HEAL_DONE"] = "Healing Done"
 L["STRING_ATTRIBUTE_HEAL_ENEMY"] = "Enemy Healing Done"
 L["STRING_ATTRIBUTE_HEAL_HPS"] = "HPS"
@@ -107,6 +109,7 @@ L["STRING_CUSTOM_CREATE"] = "Create"
 L["STRING_CUSTOM_CREATED"] = "The new display has been created."
 L["STRING_CUSTOM_DAMAGEONANYMARKEDTARGET"] = "Damage On Other Marked Targets"
 L["STRING_CUSTOM_DAMAGEONANYMARKEDTARGET_DESC"] = "Show the amount of damage applied on targets marked with any other mark."
+L["STRING_CUSTOM_DAMAGEONSHIELDS"] = "Damage on Shields"
 L["STRING_CUSTOM_DAMAGEONSKULL"] = "Damage On Skull Marked Targets"
 L["STRING_CUSTOM_DAMAGEONSKULL_DESC"] = "Show the amount of damage applied on targets marked with skull."
 L["STRING_CUSTOM_DESCRIPTION"] = "Desc:"
@@ -114,6 +117,7 @@ L["STRING_CUSTOM_DESCRIPTION_DESC"] = "Description about what this display does.
 L["STRING_CUSTOM_DONE"] = "Done"
 L["STRING_CUSTOM_DTBS"] = "Damage Taken By Spell"
 L["STRING_CUSTOM_DTBS_DESC"] = "Show the damage of enemy spells against your group."
+L["STRING_CUSTOM_DYNAMICOVERAL"] = "Dynamic Overall Damage"
 L["STRING_CUSTOM_EDIT"] = "Edit"
 L["STRING_CUSTOM_EDIT_SEARCH_CODE"] = "Edit Search Code"
 L["STRING_CUSTOM_EDIT_TOOLTIP_CODE"] = "Edit Tooltip Code"
@@ -566,6 +570,8 @@ L["STRING_OPTIONS_DATABROKER_TEXT1_DESC"] = [=[|cFFFFFF00{dmg}|r: player damage 
 
 |cFFFFFF00{dps}|r: player effective damage per second.
 
+|cFFFFFF00{rdps}|r: raid effective damage per second.
+
 |cFFFFFF00{dpos}|r: rank position between members of the raid or party group damage.
 
 |cFFFFFF00{ddiff}|r: damage difference between you and the first place position.
@@ -573,6 +579,8 @@ L["STRING_OPTIONS_DATABROKER_TEXT1_DESC"] = [=[|cFFFFFF00{dmg}|r: player damage 
 |cFFFFFF00{heal}|r: player healing done.
 
 |cFFFFFF00{hps}|r: player effective healing per second.
+
+|cFFFFFF00{rhps}|r: raid effective healing per second.
 
 |cFFFFFF00{hpos}|r: rank position between members of the raid or party group healing.
 
@@ -1587,3 +1595,4 @@ L["STRING_WIPE_ERROR1"] = "a wipe already has been call."
 L["STRING_WIPE_ERROR2"] = "we aren't in a raid encounter."
 L["STRING_WIPE_ERROR3"] = "couldn't end the encounter."
 L["STRING_YES"] = "Yes"
+

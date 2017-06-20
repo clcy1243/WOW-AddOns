@@ -369,6 +369,7 @@
 			tipo = class_type,
 			
 			total = alphabetical,
+			totalabsorbed = alphabetical,
 			total_without_pet = alphabetical,
 			custom = 0,
 			
@@ -2825,7 +2826,8 @@ function atributo_damage:ToolTip_DamageDone (instancia, numero, barra, keydown)
 		--> TOP HABILIDADES
 		
 			--get variables
-			local ActorDamage = self.total_without_pet
+			local ActorDamage = self.total_without_pet --mostrando os pets no tooltip
+			local ActorDamage = self.total
 			local ActorDamageWithPet = self.total
 			if (ActorDamage == 0) then
 				ActorDamage = 0.00000001
@@ -2843,20 +2845,31 @@ function atributo_damage:ToolTip_DamageDone (instancia, numero, barra, keydown)
 			
 			--print ("time:", meu_tempo)
 			
-			--add and sort
+			--add actor spells
 			for _spellid, _skill in _pairs (ActorSkillsContainer) do
 				ActorSkillsSortTable [#ActorSkillsSortTable+1] = {_spellid, _skill.total, _skill.total/meu_tempo}
 			end
+			--add actor pets
+			for petIndex, petName in _ipairs (self:Pets()) do
+				local petActor = instancia.showing[class_type]:PegarCombatente (nil, petName)
+				if (petActor) then
+					for _spellid, _skill in _pairs (petActor:GetActorSpells()) do
+						ActorSkillsSortTable [#ActorSkillsSortTable+1] = {_spellid, _skill.total, _skill.total/meu_tempo, petName:gsub ((" <.*"), "")}
+					end
+				end
+			end
+			--sort
 			_table_sort (ActorSkillsSortTable, _detalhes.Sort2)
 		
 		--> TOP INIMIGOS
 			--get variables
 			local ActorTargetsSortTable = {}
 			
-			--add and sort
+			--add
 			for target_name, amount in _pairs (self.targets) do
 				ActorTargetsSortTable [#ActorTargetsSortTable+1] = {target_name, amount}
 			end
+			--sort
 			_table_sort (ActorTargetsSortTable, _detalhes.Sort2)
 
 			--tooltip stuff
@@ -2889,12 +2902,23 @@ function atributo_damage:ToolTip_DamageDone (instancia, numero, barra, keydown)
 			
 			if (#ActorSkillsSortTable > 0) then
 				for i = 1, _math_min (tooltip_max_abilities, #ActorSkillsSortTable) do
+				
 					local SkillTable = ActorSkillsSortTable [i]
-					local nome_magia, _, icone_magia = _GetSpellInfo (SkillTable [1])
+					
+					local spellID = SkillTable [1]
+					local totalDamage = SkillTable [2]
+					local totalDPS = SkillTable [3]
+					local petName = SkillTable [4]
+				
+					local nome_magia, _, icone_magia = _GetSpellInfo (spellID)
+					if (petName) then
+						nome_magia = nome_magia .. " (|cFFCCBBBB" .. petName .. "|r)"
+					end
+					
 					if (instancia.sub_atributo == 1 or instancia.sub_atributo == 6) then
-						GameCooltip:AddLine (nome_magia..": ", FormatTooltipNumber (_, SkillTable [2]) .." (".._cstr("%.1f", SkillTable [2]/ActorDamage*100).."%)")
+						GameCooltip:AddLine (nome_magia..": ", FormatTooltipNumber (_, totalDamage) .." (".._cstr("%.1f", totalDamage/ActorDamage*100).."%)")
 					else
-						GameCooltip:AddLine (nome_magia..": ", FormatTooltipNumber (_, _math_floor (SkillTable [3])) .." (".._cstr("%.1f", SkillTable [2]/ActorDamage*100).."%)")
+						GameCooltip:AddLine (nome_magia..": ", FormatTooltipNumber (_, _math_floor (totalDPS)) .." (".._cstr("%.1f", totalDamage/ActorDamage*100).."%)")
 					end
 					
 					GameCooltip:AddIcon (icone_magia, nil, nil, icon_size.W, icon_size.H, icon_border.L, icon_border.R, icon_border.T, icon_border.B)
@@ -4831,6 +4855,7 @@ end
 				
 			--> total de dano (captura de dados)
 				shadow.total = shadow.total + actor.total				
+				shadow.totalabsorbed = shadow.totalabsorbed + actor.totalabsorbed
 			--> total de dano sem o pet (captura de dados)
 				shadow.total_without_pet = shadow.total_without_pet + actor.total_without_pet
 			--> total de dano que o ator sofreu (captura de dados)
@@ -4920,6 +4945,7 @@ atributo_damage.__add = function (tabela1, tabela2)
 	
 	--> total de dano
 		tabela1.total = tabela1.total + tabela2.total
+		tabela1.totalabsorbed = tabela1.totalabsorbed + tabela2.totalabsorbed
 	--> total de dano sem o pet
 		tabela1.total_without_pet = tabela1.total_without_pet + tabela2.total_without_pet
 	--> total de dano que o cara levou
@@ -4999,6 +5025,8 @@ atributo_damage.__sub = function (tabela1, tabela2)
 	
 	--> total de dano
 		tabela1.total = tabela1.total - tabela2.total
+		tabela1.totalabsorbed = tabela1.totalabsorbed - tabela2.totalabsorbed
+		
 	--> total de dano sem o pet
 		tabela1.total_without_pet = tabela1.total_without_pet - tabela2.total_without_pet
 	--> total de dano que o cara levou

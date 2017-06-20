@@ -48,6 +48,21 @@ function ns.getNumberTargets()
                 npCount = npCount + 1
             end
         end
+
+        for i = 1, 5 do
+            local unit = 'boss'..i
+
+            local guid = UnitGUID( unit )
+
+            if not nameplates[ guid ] then
+                local maxRange = RC:GetRange( unit )
+
+                if maxRange and maxRange <= ( Hekili.DB.profile['Nameplate Detection Range'] or 5 ) and UnitExists( unit ) and ( not UnitIsDead( unit ) ) and UnitCanAttack( 'player', unit ) and ( UnitIsPVP( 'player' ) or not UnitIsPlayer( unit ) ) then
+                    nameplates[ UnitGUID( unit ) ] = maxRange
+                    npCount = npCount + 1
+                end
+            end
+        end
     end
 
     if Hekili.DB.profile['Count Targets by Damage'] or not Hekili.DB.profile['Count Nameplate Targets'] or not showNPs or state.ranged then
@@ -140,6 +155,12 @@ ns.isMinion = function( id ) return minions[ id ] ~= nil end
 
 local debuffs = {}
 local debuffCount = {}
+local debuffMods = {}
+
+
+function ns.saveDebuffModifier( name, val )
+    debuffMods[ name ] = val
+end
 
 
 ns.wipeDebuffs = function()
@@ -150,7 +171,7 @@ ns.wipeDebuffs = function()
 end
 
 
-ns.trackDebuff = function( spell, target, time )
+ns.trackDebuff = function( spell, target, time, application )
 
   debuffs[ spell ] = debuffs[ spell ] or {}
   debuffCount[ spell ] = debuffCount[ spell ] or 0
@@ -158,22 +179,40 @@ ns.trackDebuff = function( spell, target, time )
   if not time then
     if debuffs[ spell ][ target ] then
       -- Remove it.
-      debuffs[ spell ][ target ]	= nil
-      debuffCount[ spell ] = max(0, debuffCount[ spell ] - 1)
+      debuffs[ spell ][ target ] = nil
+      debuffCount[ spell ] = max( 0, debuffCount[ spell ] - 1 )
     end
 
   else
     if not debuffs[ spell ][ target ] then
-      debuffs[ spell ][ target ]	= {}
+      debuffs[ spell ][ target ] = {}
       debuffCount[ spell ] = debuffCount[ spell ] + 1
     end
 
     local debuff = debuffs[ spell ][ target ]
+
     debuff.last_seen = time
+    debuff.applied = debuff.applied or time
 
-    if new then debuff.applied = time end
-
+    if application then
+        debuff.pmod = debuffMods[ spell ]
+    else
+        debuff.pmod = debuff.pmod or 1
+    end
   end
+
+end
+
+
+function ns.getModifier( spell, target )
+
+    local debuff = debuffs[ spell ]
+    if not debuff then return 1 end
+
+    local app = debuff[ target ]
+    if not app then return 1 end
+
+    return app.pmod or 1
 
 end
 
@@ -182,14 +221,16 @@ ns.numDebuffs = function( spell ) return debuffCount[ spell ] or 0 end
 ns.isWatchedDebuff = function( spell ) return debuffs[ spell ] ~= nil end
 
 
-ns.eliminateUnit = function( id )
+ns.eliminateUnit = function( id, force )
   ns.updateMinion( id )
   ns.updateTarget( id )
 
   ns.TTD[ id ] = nil
 
-  for k,v in pairs( debuffs ) do
-    ns.trackDebuff( k, id )
+  if force then
+      for k,v in pairs( debuffs ) do
+        ns.trackDebuff( k, id )
+      end
   end
 end
 
@@ -238,29 +279,29 @@ local TTD = ns.TTD
 -- Borrowed TTD linear regression model from 'Nemo' by soulwhip (with permission).
 ns.initTTD = function( unit )
 
-  if not unit then return end
+    if not unit then return end
 
-  local GUID = UnitGUID( unit )
+    local GUID = UnitGUID( unit )
 
-  TTD[ GUID ] = TTD[ GUID ] or {}
-  TTD[ GUID ].n = 1
-  TTD[ GUID ].timeSum = GetTime()
-  TTD[ GUID ].healthSum = UnitHealth( unit ) or 0
-  TTD[ GUID ].timeMean = TTD[ GUID ].timeSum * TTD[ GUID ].timeSum
-  TTD[ GUID ].healthMean = TTD[ GUID ].timeSum * TTD[ GUID ].healthSum
-  TTD[ GUID ].name = UnitName( unit )
-  TTD[ GUID ].sec = 300
+    TTD[ GUID ] = TTD[ GUID ] or {}
+    TTD[ GUID ].n = 1
+    TTD[ GUID ].timeSum = GetTime()
+    TTD[ GUID ].healthSum = UnitHealth( unit ) or 0
+    TTD[ GUID ].timeMean = TTD[ GUID ].timeSum * TTD[ GUID ].timeSum
+    TTD[ GUID ].healthMean = TTD[ GUID ].timeSum * TTD[ GUID ].healthSum
+    TTD[ GUID ].name = UnitName( unit )
+    TTD[ GUID ].sec = state.boss and 300 or 15
 
 end
 
 
 ns.getTTD = function( unit )
 
-  local GUID = UnitGUID( unit )
+  local GUID = UnitGUID( unit ) or unit
 
-  if not TTD[ GUID ] then return 300 end
+  if not TTD[ GUID ] then return 15 end
 
-  return TTD[ GUID ].sec or 300
+  return TTD[ GUID ].sec or 15
 
 end
 
@@ -272,9 +313,10 @@ ns.Audit = function ()
   local grace = Hekili.DB.profile['Audit Targets']
 
   for aura, targets in pairs( debuffs ) do
-    for unit, aura in pairs( targets ) do
+    for unit, entry in pairs( targets ) do
       -- NYI: Check for dot vs. debuff, since debuffs won't 'tick'
-      if now - aura.last_seen > grace then
+      local window = class.auras[ aura ] and class.auras[ aura ].duration or grace
+      if now - entry.last_seen > window then
         ns.trackDebuff( aura, unit )
       end
     end

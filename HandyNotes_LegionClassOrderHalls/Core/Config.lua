@@ -1,4 +1,4 @@
--- $Id: Config.lua 46 2017-05-25 06:01:07Z arith $
+-- $Id: Config.lua 67 2017-06-18 11:25:51Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -130,6 +130,12 @@ config.options = {
 					name = L["Seal of Broken Fate"],
 					desc = L["Show the location of Seal of Broken Fate vendor."],
 					order = 30,
+				},
+				show_alltalents = {
+					type = "toggle",
+					name = L["Un-researched"],
+					desc = L["Show all workorder NPCs' locations even the corresponding order hall advancement has not been researched."],
+					order = 31,
 				},
 				show_others = {
 					type = "toggle",

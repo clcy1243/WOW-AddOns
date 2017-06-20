@@ -1,20 +1,26 @@
 # How to Read This Page
-All items are listed alphabetically in English, broken down by category, with the itemID number to the item's right.
+All items are broken down by category, with the itemID number to the item's right.
 
 ## General Items That Aren't Equipped
+* Adept's Guide to Dimensional Rifting 140493
 * Admiral's Compass 128353
+* Bladespire Relic 118662
 * Dalaran Hearthstone 140192
 * Direbrew's Remote 37863
+* Emblem of Margoss 138448
 * Garrison Hearthstone 110560
 * Hearthstone 6948
+* Hunter's Seeking Crystal 128502
+* Intra-Dalaran Wormhole Generator 132517
 * Jaina's Locket 52251
+* Master Hunter's Seeking Crystal 128503
+* Reaves Battery 132523
+* Rechargeable Reaves Battery 144341
 * Relic of Karabor 118663
 * Socrethar's Teleportation Stone 29796
 * The Last Relic of Argus 64457
-* Bladespire Relic 118662
-* Intra-Dalaran Wormhole Generator 132517
 
-## Armor With a Hearthing Component
+## Armor With a Hearth Component
 Includes Tabards, Cloaks, Weapons, Shrouds, and Wraps
 
 * Argent Crusader's Tabard
@@ -36,6 +42,7 @@ Includes Tabards, Cloaks, Weapons, Shrouds, and Wraps
 ## Jewelry with a Hearthing Component
 Includes Rings, Neck Items, and Trinkets
 
+* Band of the Kirin Tor 40586
 * Blessed Medallion of Karabor 32757
 * Empowered Ring of the Kirin Tor 139599
 * Etched Ring of the Kirin Tor 48956
@@ -50,6 +57,7 @@ Includes Rings, Neck Items, and Trinkets
 * Inscribed Signet of the Kirin Tor 45691
 * Pit Fighter's Punching Ring (Bizmo's Brawlpub) 118907
 * Pit Fighter's Punching Ring (Brawl'gar Arena) 118908
+* Pugilist's Powerful Punching Ring 144391
 * Ring of the Kirin Tor 44935
 * Runed Ring of the Kirin Tor 51559
 * Runed Signet of the Kirin Tor 51557
@@ -60,10 +68,15 @@ Includes Rings, Neck Items, and Trinkets
 * Stormpike Insignia Rank 4 17902
 * Stormpike Insignia Rank 5 17903
 * Stormpike Insignia Rank 6 17904
+* Talisman of the Shal'dorei 141324
 * The Brassiest Knuckle (Bizmo's Brawlpub) 95051
 * The Brassiest Knuckle (Brawl'gar Arena) 95050
 * Time-Lost Artifact 103678
-* Band of the Kirin Tor 40586
+* Violet Seal of the Grand Magus 142469
+* Etched Loop of the Kirin Tor 48955
+* Inscribed Loop of the Kirin Tor 45689
+* Loop of the Kirin Tor 44934
+* Runed Loop of the Kirin Tor 51558
 
 ## Quest Items (usually one use only)
 * Gidwin's Hearthstone 61379

@@ -74,6 +74,7 @@ L["WQGF_FRAME_FOUND_GROUPS"] = "%d groupe(s) trouvé(s). Cliquez sur le bouton p
 L["WQGF_FRAME_GROUPS_LEFT"] = "Encore %d groupe(s), continuez à cliquer !"
 L["WQGF_FRAME_INIT_SEARCH"] = "Cliquez sur le bouton pour initialiser la recherche"
 L["WQGF_FRAME_NO_GROUPS"] = "Aucun groupe trouvé, cliquez sur le bouton pour en créer un nouveau."
+L["WQGF_FRAME_RELIST_GROUP"] = "Cliquez sur le bouton pour réinscrire le groupe"
 L["WQGF_FRAME_SEARCH_GROUPS"] = "Cliquez sur le bouton pour rechercher un groupe..."
 L["WQGF_GLOBAL_CONFIGURATION"] = "Configuration globale:"
 L["WQGF_GROUP_CREATION_ERROR"] = "Une erreur a été rencontrée lors de la tentative de création d'un nouveau groupe. Merci de réessayer."

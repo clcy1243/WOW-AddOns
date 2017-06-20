@@ -1,4 +1,4 @@
--- $Id: DB.lua 46 2017-05-25 06:01:07Z arith $
+-- $Id: DB.lua 67 2017-06-18 11:25:51Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -53,10 +53,10 @@ DB.points = {
 		[50225054] = { mission=true, dungeonLevel=2, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[41057399] = { recruiter=true, dungeonLevel=2, label=L["Dark Summoner Marogh <Risen Horde Recruiter>"], npc=106435, note=CAPACITANCE_START_RECRUITMENT },
 		[53376858] = { recruiter=true, dungeonLevel=1, label=L["Korgaz Deadaxe <Ebon Soldier Recruiter>"], npc=106436, note=CAPACITANCE_START_RECRUITMENT },
-		[22003200] = { recruiter=true, dungeonLevel=2, label=L["Eran Droll <Ebon Knight Frostreavers Recruiter>"], npc=120135, note=L["Requires Frost and Death order advancement"] },
-		[25382043] = { recruiter=true, dungeonLevel=2, label=L["Winter Payne"], npc=111634, note=L["Frost Crux"].."\n"..L["Requires Frost Wyrm work order advancement"] },
+		[22003200] = { recruiter=true, dungeonLevel=2, label=L["Eran Droll <Ebon Knight Frostreavers Recruiter>"], npc=120135, talent=486, note=L["Requires Frost and Death order advancement"] },
+		[25382043] = { recruiter=true, dungeonLevel=2, label=L["Winter Payne"], npc=111634, talent=432, note=L["Frost Crux"].."\n"..L["Requires Frost Wyrm work order advancement"] },
 		[49785586] = { research=true, dungeonLevel=2, label=L["Illanna Dreadmoore <Ebon Blade Archivist>"], npc=97111, note=L["Artifact Research"] },
-		[51793238] = { armaments=true, dungeonLevel=1, label=L["Dead Collector Bane <Champion Armaments>"], npc=110410, note=L["Champion Armaments"] },
+		[51793238] = { armaments=true, dungeonLevel=1, label=L["Dead Collector Bane <Champion Armaments>"], npc=110410, talent=433, note=L["Champion Armaments"] },
 		[61116036] = { artifact=true, dungeonLevel=1, label=L["Soul Forge"], class="DEATHKNIGHT", note=ARTIFACT_POWER },
 		[43923760] = { quartermaster=true, dungeonLevel=1, label=L["Quartermaster Ozorg <Rare Goods Vendor>"], npc=93550, note=L["Class Hall Quartermaster"] },
 		[47775389] = { classUpgrade=true, dungeonLevel=2, label=L["Archivist Zubashi <Class Hall Upgrades>"], npc=97485, note=ORDER_HALL_TALENT_TITLE  },
@@ -77,10 +77,11 @@ DB.points = {
 		[58935364] = { mission=true, dungeonLevel=2, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[56285416] = { recruiter=true, dungeonLevel=2, label=L["Battlelord Gaardoun <Ashtongue Captain>"], npc=103025, note=CAPACITANCE_START_RECRUITMENT },
 		[58623885] = { recruiter=true, dungeonLevel=2, label=L["Ariana Fireheart <Illidari>"], npc=103760, note=CAPACITANCE_START_RECRUITMENT },
-		[56207480] = { recruiter=true, dungeonLevel=2, label=L["Tormented Shivarra <Shivarra Recruiter>"], npc=120140, note=L["Requires Blades of Death order advancement"] },
-		[58236907] = { recruiter=true, dungeonLevel=2, label=L["Evelune Soulreaver <Wrath of the Order>"], npc=111775, note=L["Empowered Rift Core"].."\n"..L["Requires Fel Hammer's Wrath order advancement"] },
+		[56207480] = { recruiter=true, dungeonLevel=2, label=L["Tormented Shivarra <Shivarra Recruiter>"], npc=120140, talent=489, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Blades of Death order advancement"] },
+		[58236907] = { recruiter=true, dungeonLevel=2, label=L["Evelune Soulreaver <Wrath of the Order>"], npc=111775, talent=421, note=L["Empowered Rift Core"].."\n"..L["Requires Fel Hammer's Wrath order advancement"] },
+		[54315981] = { sealOrder=true, dungeonLevel=3, label=L["Seer Aleis <Seal of Broken Fate Shipment>"], npc=112992, talent=420, note=L["Seal of Broken Fate"].."\n"..L["Requires Focused War Effort order advancement"] },
 		[62007501] = { research=true, dungeonLevel=3, label=L["Vahu the Weathered <Illidari Researcher>"], npc=111736, note=L["Artifact Research"] },
-		[60044331] = { armaments=true, dungeonLevel=2, label=L["Slitesh <Armaments Requisitioner>"], npc=110433, note=L["Champion Armaments"] },
+		[60044331] = { armaments=true, dungeonLevel=2, label=L["Slitesh <Armaments Requisitioner>"], npc=110433, talent=422, note=L["Champion Armaments"] },
 		[58442679] = { artifact=true, dungeonLevel=3, label=L["Cursed Forge of the Nathrezim"], class="DEMONHUNTER", note=ARTIFACT_POWER },
 		[57804351] = { quartermaster=true, dungeonLevel=2, label=L["Falara Nightsong <Illidari Provisioner>"], npc=112407, note=L["Class Hall Quartermaster"] },
 		[54976271] = { classUpgrade=true, dungeonLevel=3, label=L["Loramus Thalipedes <Class Hall Upgrades>"], npc=108527, note=ORDER_HALL_TALENT_TITLE  },
@@ -101,8 +102,9 @@ DB.points = {
 		[52415079] = { mission=true, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[38483422] = { recruiter=true, label=L["Yaris Darkclaw <Recruiter>"], npc=106442, note=CAPACITANCE_START_RECRUITMENT },
 		[36332544] = { recruiter=true, label=L["Sister Lilith <Recruiter>"], npc=108393, note=CAPACITANCE_START_RECRUITMENT },
-		[43256329] = { recruiter=true, label=L["Treant Sapling <Ancient of War Tender>"], npc= 111786, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Ancient of War order advancement"] },
-		[29944293] = { recruiter=true, label=L["Shalorn Star <Dreamgrove Warden Recruiter>"], npc=108391, note=L["Requires Wardens of the Grove order advancement"] },
+		[43256329] = { recruiter=true, label=L["Treant Sapling <Ancient of War Tender>"], npc= 111786, talent=356, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Ancient of War order advancement"] },
+		[29944293] = { recruiter=true, label=L["Shalorn Star <Dreamgrove Warden Recruiter>"], npc=108391, talent=492, note=L["Requires Wardens of the Grove order advancement"] },
+		[40992938] = { sealOrder=true, label=L["Almenis <Seal of Broken Fate Shipment>"], npc=110810, talent=355, note=L["Seal of Broken Fate"].."\n"..L["Requires Elune's Chosen order advancement"] },
 		[33883255] = { research=true, label=L["Celadine the Fatekeeper <Dreamgrove Researcher>"], npc=111737, note=L["Artifact Research"] },
 		[30525359] = { artifact=true, label=L["Seed of Ages"], class="DRUID", note=ARTIFACT_POWER },
 		[32782925] = { classUpgrade=true, label=L["Leafbeard the Storied <Ancient of Lore>"], npc=97989, note=ORDER_HALL_TALENT_TITLE  },
@@ -122,10 +124,10 @@ DB.points = {
 		[42484656] = { mission=true, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[42883776] = { recruiter=true, label=L["Lenara <Recruiter>"], npc=106444, note=CAPACITANCE_START_RECRUITMENT },
 		[57733260] = { recruiter=true, label=L["Sampson <Recruiter>"], npc=106446, note=CAPACITANCE_START_RECRUITMENT },
-		[51003160] = { recruiter=true, label=L["Nighthuntress Silus <Nightborne Hunters Recruiter>"], npc=106445, note=L["Requires Born of the Night order advancement"] },
-		[43234858] = { sealOrder=true, label=L["Tu'Las the Gifted <Seal of Broken Fate Shipment>"], npc=110816, note=L["Seal of Broken Fate"].."\n"..L["Requires Unseen Path order advancement"] },
+		[51003160] = { recruiter=true, label=L["Nighthuntress Silus <Nightborne Hunters Recruiter>"], npc=106445, talent=495, note=L["Requires Born of the Night order advancement"] },
+		[43234858] = { sealOrder=true, label=L["Tu'Las the Gifted <Seal of Broken Fate Shipment>"], npc=110816, talent=377, note=L["Seal of Broken Fate"].."\n"..L["Requires Unseen Path order advancement"] },
 		[52575434] = { research=true, label=L["Holt Thunderhorn <Lore and Legends>"], npc=98737, note=L["Artifact Research"] },
-		[58674880] = { armaments=true, label=L["Berger the Steadfast <Champion Armaments>"], npc=110412, note=L["Champion Armaments"] },
+		[58674880] = { armaments=true, label=L["Berger the Steadfast <Champion Armaments>"], npc=110412, talent=378, note=L["Champion Armaments"] },
 		[58635110] = { classUpgrade=true, label=L["Survivalist Bahn <Class Hall Upgrades>"], npc=108050, note=ORDER_HALL_TALENT_TITLE  },
 		[44574885] = { quartermaster=true, label=L["Outfitter Reynolds <Unseen Path>"], npc=103693, note=L["Class Hall Quartermaster"] },
 		[47455351] = { artifact=true, label=L["Altar of the Eternal Hunt"], class="HUNTER", note=ARTIFACT_POWER },
@@ -135,16 +137,18 @@ DB.points = {
 		[47255388] = { others=true, label=L["Altar Keeper Biehn"], npc=102940 },
 		[42794697] = { others=true, label=L["Tactician Tinderfell <Unseen Path>"], npc=103023 },
 		[44454495] = { others=true, label=L["Image of Mimiron"], npc=110424 },
-		[40022846] = { others=true, flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
+		[40022846] = { others=true, flight=true, label=L["Great Eagle"], npc=109572, talent=375 },
 		[47394343] = { lightsHeart=true, label=L["Light's Heart"], },
 	},
 	["MageClassShrine"] = { -- Mage
 		[81346105] = { mission=true, dungeonLevel=1, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[87904753] = { recruiter=true, dungeonLevel=1, label=L["Archmage Omniara <Recruiter>"], npc=106377, note=CAPACITANCE_START_RECRUITMENT },
 		[47743202] = { recruiter=true, dungeonLevel=1, label=L["Grand Conjurer Mimic <Mage Recruiter Extraordinaire>"], npc=106433, note=CAPACITANCE_START_RECRUITMENT },
-		[81342831] = { recruiter=true, dungeonLevel=1, label=L["Guardian Alar <Kirin Tor Guardians Recruiter>"], npc=106434, note=L["Requires Guardians of the Kirin Tor order advancement"] },
+		[81342831] = { recruiter=true, dungeonLevel=1, label=L["Guardian Alar <Kirin Tor Guardians Recruiter>"], npc=106434, talent=483, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Guardians of the Kirin Tor order advancement"] },
+		[78065295] = { recruiter=true, dungeonLevel=1, label=L["Conjurer Awlyn"], npc=111734, talent=388, note=L["Focusing Crystal"].."\n"..L["Requires Might of Dalaran order advancement"] },
+		[42602260] = { sealOrder=true, dungeonLevel=1, label=L["Researcher Tulius <Seal of Broken Fate Shipment>"], npc=112982, talent=387, note=L["Seal of Broken Fate"].."\n"..L["Requires Arcane Divination order advancement"] },
 		[64615027] = { research=true, dungeonLevel=2, label=L["Edirah <Tirisgarde Researcher>"], npc=110624, note=L["Artifact Research"] },
-		[82875672] = { armaments=true, dungeonLevel=1, label=L["Minuette <Armament Summoner>"], npc=110427, note=L["Champion Armaments"] },
+		[82875672] = { armaments=true, dungeonLevel=1, label=L["Minuette <Armament Summoner>"], npc=110427, talent=389, note=L["Champion Armaments"] },
 		[74912892] = { classUpgrade=true, dungeonLevel=1, label=L["Chronicler Elrianne <Class Hall Upgrades>"], npc=108331, note=ORDER_HALL_TALENT_TITLE  },
 		[59824246] = { artifact=true, dungeonLevel=2, label=L["Forge of the Guardian"], class="MAGE", note=ARTIFACT_POWER },
 		[44685796] = { quartermaster=true, dungeonLevel=2, label=L["Jackson Watkins <Tirisgarde Quartermaster>"], npc=112440, note=L["Class Hall Quartermaster"] },
@@ -153,18 +157,19 @@ DB.points = {
 		[37114833] = { others=true, dungeonLevel=1, label=L["Ari"], npc=109307 },
 		[63463743] = { others=true, dungeonLevel=2, label=L["Magister Varenthas <High Forgeguard>"], npc=109642 },
 		[57289046] = { portal=true, dungeonLevel=1, label=format(L["Portal to %s"], BZ["Dalaran"]),  },
-		[67154168] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Stormheim"]),  },
-		[66704673] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Val'sharah"]),  },
-		[55023947] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Azsuna"]),  },
-		[54604451] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Highmountain"]),  },
-		[60285200] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Suramar"]),  },
+		[67154168] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], talent=386, note=format(L["Portal to %s"], BZ["Stormheim"]),  },
+		[66704673] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], talent=386, note=format(L["Portal to %s"], BZ["Val'sharah"]),  },
+		[55023947] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], talent=386, note=format(L["Portal to %s"], BZ["Azsuna"]),  },
+		[54604451] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], talent=386, note=format(L["Portal to %s"], BZ["Highmountain"]),  },
+		[60285200] = { portal=true, dungeonLevel=1, label=L["Teleportation Nexus"], talent=386, note=format(L["Portal to %s"], BZ["Suramar"]),  },
 	},
 	["MonkOrderHallTheWanderingIsle"] = { -- Monk
 		[52966022] = { mission=true, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[54445714] = { recruiter=true, label=L["Gin Lai <Tiger Troop Trainer>"], npc=105019, note=CAPACITANCE_START_RECRUITMENT },
 		[53335975] = { recruiter=true, label=L["Tianji <Ox Troop Trainer>"], npc=105015, note=CAPACITANCE_START_RECRUITMENT },
-		[54405880] = { recruiter=true, label=L["Tianili <Celestial Trainer>"], npc=106538, note=CAPACITANCE_START_RECRUITMENT .."\n"..L["Requires Celestial Favor order advancement"] },
-		[51805560] = { recruiter=true, label=L["Master Swoo <Masters of Serenity Recruiter>"], npc=120145, note=L["Requires Masters of the Path order advancement"] },
+		[54405880] = { recruiter=true, label=L["Tianili <Celestial Trainer>"], npc=106538, talent=257, note=CAPACITANCE_START_RECRUITMENT .."\n"..L["Requires Celestial Favor order advancement"] },
+		[51805560] = { recruiter=true, label=L["Master Swoo <Masters of Serenity Recruiter>"], npc=120145, talent=498, note=L["Requires Masters of the Path order advancement"] },
+		--[] = { sealOrder=true, label=L["xxx <Seal of Broken Fate Shipment>"], npc=0, talent=256, note=L["Seal of Broken Fate"].."\n"..L["Requires One with Destiny order advancement"] },
 		[46704669] = { research=true, label=L["Lorewalker Cho <Head Archivist>"], npc=106942, note=L["Artifact Research"] },
 		[51464800] = { artifact=true, label=L["Forge of the Roaring Mountain"], class="MONK", note=ARTIFACT_POWER },
 		[53045977] = { classUpgrade=true, label=L["Number Nine Jia <Class Hall Upgrades>"], npc=98939, note=ORDER_HALL_TALENT_TITLE  },
@@ -181,10 +186,11 @@ DB.points = {
 		[53427865] = { mission=true, dungeonLevel=20, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[53295617] = { recruiter=true, dungeonLevel=20, label=L["Commander Ansela <Silver Hand Recruiter>"], npc=106447, note=CAPACITANCE_START_RECRUITMENT },
 		[58893898] = { recruiter=true, dungeonLevel=20, label=L["Commander Born <Silver Hand Officer Recruiter>"], npc=106448, note=CAPACITANCE_START_RECRUITMENT },
-		[75103456] = { recruiter=true, dungeonLevel=20, label=L["Terric the Illuminator"], npc=111772, note=L["Silver Hand Orders"].."\n"..L["Requires Grand Crusade order advancement"] },
-		[62914473] = { recruiter=true, dungeonLevel=20, label=L["Crusader Kern <Silver Hand Crusader Recruiter>"], npc=120146, note=L["Requires Silver Hand Crusaders order advancement"] },
+		[75103456] = { recruiter=true, dungeonLevel=20, label=L["Terric the Illuminator"], npc=111772, talent=399, note=L["Silver Hand Orders"].."\n"..L["Requires Grand Crusade order advancement"] },
+		[62914473] = { recruiter=true, dungeonLevel=20, label=L["Crusader Kern <Silver Hand Crusader Recruiter>"], npc=120146, talent=480, note=L["Requires Silver Hand Crusaders order advancement"] },
+		[49127655] = { sealOrder=true, dungeonLevel=20, label=L["Librarian Lightmorne <Seal of Broken Fate Shipment>"], npc=112986, talent=398, note=L["Seal of Broken Fate"].."\n"..L["Requires Holy Purpose order advancement"] },
 		[37775731] = { research=true, dungeonLevel=20, label=L["Sister Elda <Keeper of the Ancient Tomes>"], npc=91190, note=L["Artifact Research"] },
-		[54044961] = { armaments=true, dungeonLevel=20, label=L["Kristoff <Armaments Requisitioner>"], npc=110434, note=L["Champion Armaments"] },
+		[54044961] = { armaments=true, dungeonLevel=20, label=L["Kristoff <Armaments Requisitioner>"], npc=110434, talent=400, note=L["Champion Armaments"] },
 		[39895652] = { classUpgrade=true, dungeonLevel=20, label=L["Sir Alamande Graythorn <Class Hall Upgrades>"], npc=109901, note=ORDER_HALL_TALENT_TITLE  },
 		[41366115] = { quartermaster=true, dungeonLevel=20, label=L["Eadric the Pure <Quartermaster>"], npc=100196, note=L["Class Hall Quartermaster"] },
 		[72752391] = { artifact=true, dungeonLevel=20, label=L["Altar of Ancient Kings"], class="PALADIN", note=ARTIFACT_POWER },
@@ -192,14 +198,16 @@ DB.points = {
 		[52476919] = { lightsHeart=true, dungeonLevel=20, label=L["Light's Heart"], },
 		[52297812] = { others=true, dungeonLevel=20, label=L["Lord Grayson Shadowbreaker <Mission Specialist>"], npc=90250 },
 		[70992844] = { others=true, dungeonLevel=20, label=L["Valgar Highforge <Grand Smith of the Order>"], npc=90261 },
-		[39197445] = { others=true, dungeonLevel=20, label=L["Charger Saddle"], object=252389 },
+		[39197445] = { others=true, dungeonLevel=20, label=L["Charger Saddle"], talent=391, object=252389 },
 	},
 	["NetherlightTemple"] = { -- Priest, Netherlight Temple
 		[49704720] = { mission=true, dungeonLevel=1, label=L["Command Map"], note=ORDER_HALL_MISSIONS },
 		[40882759] = { recruiter=true, dungeonLevel=1, label=L["Grand Anchorite Gesslar <Recruiter>"], npc=106450, note=CAPACITANCE_START_RECRUITMENT },
 		[40865394] = { recruiter=true, dungeonLevel=1, label=L["Vicar Eliza <Recruiter>"], npc=106451, note=CAPACITANCE_START_RECRUITMENT },
+		[57365501] = { recruiter=true, dungeonLevel=1, label=L["High Priestess Mourn <Recruiter>"], npc=120160, talent=501, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Hooded Priests order advancement"] },
+		[59402917] = { sealOrder=true, dungeonLevel=1, label=L["Truth <Seal of Broken Fate Shipment>"], npc=110819, talent=454, note=L["Seal of Broken Fate"].."\n"..L["Requires Blessed Seals order advancement"] },
 		[59852805] = { research=true, dungeonLevel=1, label=L["Juvess the Duskwhisperer <Keeper of Scrolls>"], npc=111738, note=L["Artifact Research"] },
-		[45492658] = { armaments=true, dungeonLevel=1, label=L["Lilith <Armament Supplier>"], npc=110595, note=L["Champion Armaments"] },
+		[45492658] = { armaments=true, dungeonLevel=1, label=L["Lilith <Armament Supplier>"], npc=110595, talent=455, note=L["Champion Armaments"] },
 		[56014078] = { classUpgrade=true, dungeonLevel=1, label=L["Archon Torias <Class Hall Upgrades>"], npc=110725, note=ORDER_HALL_TALENT_TITLE  },
 		[49792262] = { artifact=true, dungeonLevel=1, label=L["Altar of Light and Shadow"], class="PRIEST", note=ARTIFACT_POWER },
 		[38632384] = { quartermaster=true, dungeonLevel=1, label=L["Meridelle Lightspark <Logistics>"], npc=112401, note=L["Class Hall Quartermaster"] },
@@ -208,14 +216,17 @@ DB.points = {
 		[48792296] = { others=true, dungeonLevel=1, label=L["Betild Deepanvil <Master Artificer>"], npc=102709 },
 		[39485327] = { others=true, dungeonLevel=1, label=L["Dark Cleric Cecille <Priest Trainer>"], npc=112576 },
 		[51574782] = { others=true, dungeonLevel=1, label=L["Alonsus Faol <Bishop of Secrets>"], npc=110564 },
-		[75944029] = { others=true, dungeonLevel=1, label=L["Light Well"], object=252162 },
-		[23234030] = { others=true, dungeonLevel=1, label=L["Shadow Well"], object=252160 },
+		[75944029] = { others=true, dungeonLevel=1, label=L["Light Well"], talent=452, object=252162 },
+		[23234030] = { others=true, dungeonLevel=1, label=L["Shadow Well"], talent=452, object=252160 },
 	},
 	["Dalaran70"] = { -- Rogue and Dalaran for other classes
 		[36644514] = { mission=true, dungeonLevel=4, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[31882674] = { recruiter=true, dungeonLevel=4, label=L["Lonika Stillblade <Rogue Academy Proprietor>"], npc=105979, note=CAPACITANCE_START_RECRUITMENT },
 		[48174120] = { recruiter=true, dungeonLevel=4, label=L["Yancey Grillsen <Bloodsail Recruiter>"], npc=106083, note=CAPACITANCE_START_RECRUITMENT },
+		[45897777] = { recruiter=true, dungeonLevel=4, label=L["Laura Stern <Recruiter>"], npc=120162, talent=504, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Ravenholdt's Finest order advancement"] },
+		[61355108] = { sealOrder=true, dungeonLevel=4, label=L["Scythe <Seal of Broken Fate Shipment>"], npc=110820, talent=443, note=L["Seal of Broken Fate"].."\n"..L["Requires Plunder order advancement"] },
 		[37937007] = { research=true, dungeonLevel=4, label=L["Filius Sparkstache <Archivist>"], npc=102641, note=L["Artifact Research"] },
+		[75095650] = { armaments=true, dungeonLevel=4, label=L["Mal <Weapons Smuggler>"], npc=110348, talent=444, note=L["Champion Armaments"] },
 		[26903685] = { quartermaster=true, dungeonLevel=4, label=L["Kelsey Steelspark <Quartermaster>"], npc=105986, note=L["Class Hall Quartermaster"] },
 		[26956177] = { artifact=true, dungeonLevel=4, label=L["Crucible of the Uncrowned"], class="ROGUE", note=ARTIFACT_POWER },
 		[45966931] = { classUpgrade=true, dungeonLevel=4, label=L["Winstone Wolfe <The Wolf>"], npc=105998, note=ORDER_HALL_TALENT_TITLE  },
@@ -234,12 +245,15 @@ DB.points = {
 		[54293277] = { portal=true, dungeonLevel=10, label=format(L["Knocker - %s"], BZ["One More Glass"]), class="ROGUE" },
 	-- ground floor for other class
 		[75254723] = { portal=true, dungeonLevel=10, spell=192085, class="WARRIOR" },
-		[72934115] = { flight=true, dungeonLevel=10, label=L["Great Eagle"], npc=109572, class="HUNTER" },
+		[72934115] = { flight=true, dungeonLevel=10, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
 	},
 	["MaelstromShaman"] = { -- Shaman
 		[33645923] = { mission=true, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[30545877] = { recruiter=true, label=L["Summoner Morn <Elemental Summoner>"], npc=106457, note=CAPACITANCE_START_RECRUITMENT },
 		[29254276] = { recruiter=true, label=L["Felinda Frye <Earthwarden Recruiter>"], npc=112208, note=CAPACITANCE_START_RECRUITMENT },
+		[34003480] = { recruiter=true, label=L["Marick Ven <Earthen Ring Protectors Recruiter>"], npc=120165, talent=507, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Ring of Earth order advancement"] },
+		[31935148] = { recruiter=true, label=L["Alexor <The Ascended>"], npc=109829, talent=46, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires \"Rise!\" order advancement"] },
+		[31153510] = { sealOrder=true, label=L["Bath'rah the Windwatcher <Seal of Broken Fate Shipment>"], npc=112299, talent=49, note=L["Seal of Broken Fate"].."\n"..L["Requires Spirit Walk order advancement"] },
 		[32564961] = { research=true, label=L["Gorma Windspeaker <Keeper of Legends>"], npc=111739, note=L["Artifact Research"] },
 		[33385820] = { classUpgrade=true, label=L["Journeyman Goldmine <Class Hall Upgrades>"], npc=112199, note=ORDER_HALL_TALENT_TITLE  },
 		[37184577] = { artifact=true, label=L["Ancient Elemental Altar"], class="SHAMAN", note=ARTIFACT_POWER },
@@ -259,13 +273,15 @@ DB.points = {
 		[66724823] = { mission=true, label=L["Dreadscar Battle Plans"], note=ORDER_HALL_MISSIONS },
 		[61515179] = { recruiter=true, label=L["Jared <Recruiter>"], npc=106217, note=CAPACITANCE_START_RECRUITMENT },
 		[66703029] = { recruiter=true, label=L["Imp Mother Dyala <Recruiter>"], npc=106216, note=CAPACITANCE_START_RECRUITMENT },
+		[53002240] = { recruiter=true, label=L["Galen Foul <Demon Summoner>"], npc=120166, talent=510, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Demonic Brutes order advancement"] },
+		[49442491] = { recruiter=true, label=L["Demonia Pickerin"], npc=113371, talent=367, note=L["Demonic Phylactery"].."\n"..L["Requires Unleash Infernal order advancement"] },
 		[57054108] = { research=true, label=L["Mile Raitheborne <Head Archivist>"], npc=111740, note=L["Artifact Research"] },
-		[57325258] = { armaments=true, label=L["Murr"], npc=110408, note=L["Champion Armaments"] },
+		[57325258] = { armaments=true, label=L["Murr"], npc=110408, talent=364, note=L["Champion Armaments"] },
 		[33792790] = { artifact=true, label=L["Felblood Altar"], class="WARLOCK", note=ARTIFACT_POWER },
 		[75853708] = { portal=true, label=format(L["Portal to %s"], BZ["Dalaran"]),  },
 		[55304105] = { classUpgrade=true, label=L["Archivist Melinda <Class Hall Upgrades>"], npc=108018, note=ORDER_HALL_TALENT_TITLE  },
 		[58793268] = { quartermaster=true, label=L["Gigi Gigavoid <Black Harvest Quartermaster>"], npc=112434, note=L["Class Hall Quartermaster"] },
-		[51972136] = { portal=true, label=L["Demonic Gateway"],  },
+		[51972136] = { portal=true, label=L["Demonic Gateway"], talent=366 },
 		[35773313] = { others=true, label=L["Unjari Feltongue <The Heartbearer>"], npc=109686 },
 		[37703124] = { others=true, label=L["Calydus"], npc=101097 },
 		[67024645] = { others=true, label=L["Gakin the Darkbinder <Mission Strategist>"], npc=106199 },
@@ -276,10 +292,10 @@ DB.points = {
 		[59141200] = { mission=true, dungeonLevel=1, label=L["Eye of Odyn"], note=ORDER_HALL_MISSIONS },
 		[62391499] = { recruiter=true, dungeonLevel=1, label=L["Captain Hjalmar Stahlstrom <Recruiter>"], npc=106459, note=CAPACITANCE_START_RECRUITMENT },
 		[55681507] = { recruiter=true, dungeonLevel=1, label=L["Savyn Valorborn <Recruiter>"], npc=106460, note=CAPACITANCE_START_RECRUITMENT },
-		[54771738] = { recruiter=true, dungeonLevel=1, label=(faction == "Alliance") and L["Matthew Glensorrow <Recruiter>"] or L["Sharak Tor <Recruiter>"], npc=(faction == "Alliance") and 120077 or 106461, note=L["Requires Strike Hard order advancement"] },
-		[72773026] = { recruiter=true, dungeonLevel=1, label=L["Matilda Skoptidottir"], npc=111774, note=L["Horn of War"].."\n"..L["Requires Val'kyr Call order advancement"] },
+		[54771738] = { recruiter=true, dungeonLevel=1, label=(faction == "Alliance") and L["Matthew Glensorrow <Recruiter>"] or L["Sharak Tor <Recruiter>"], npc=(faction == "Alliance") and 120077 or 106461, talent=513, note=L["Requires Strike Hard order advancement"] },
+		[72773026] = { recruiter=true, dungeonLevel=1, label=L["Matilda Skoptidottir"], npc=111774, talent=410, note=L["Horn of War"].."\n"..L["Requires Val'kyr Call order advancement"] },
 		[45082826] = { research=true, dungeonLevel=1, label=L["Fjornson Stonecarver <Keeper of Legends>"], npc=111741, note=L["Artifact Research"] },
-		[62322593] = { armaments=true, dungeonLevel=1, label=L["Haklang Ulfsson <Armaments Requisitioner>"], npc=110437, note=L["Champion Armaments"] },
+		[62322593] = { armaments=true, dungeonLevel=1, label=L["Haklang Ulfsson <Armaments Requisitioner>"], npc=110437, talent=411, note=L["Champion Armaments"] },
 		[46522887] = { classUpgrade=true, dungeonLevel=1, label=L["Einar the Runecaster <Class Hall Upgrades>"], npc=107994, note=ORDER_HALL_TALENT_TITLE  },
 		[55972661] = { quartermaster=true, dungeonLevel=1, label=L["Quartermaster Durnolf"], npc=112392, note=L["Class Hall Quartermaster"] },
 		[39423590] = { artifact=true, dungeonLevel=1, label=L["Forge of Odyn"], class="WARRIOR", note=ARTIFACT_POWER },
@@ -296,34 +312,63 @@ DB.points = {
 	},
 	[mapFile(1015)] = { -- Azsuna
 		[47572808] = { portal=true, spell=192085, class="WARRIOR" },
-		[57951515] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), class="MAGE" },
-		[50967990] = { flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
-		[24544312] = { flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
+		[57951515] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" },
+		[50967990] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
+		[24544312] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
 	},
 	[mapFile(1018)] = { -- Val'sharah
 		[54707490] = { portal=true, spell=192085, class="WARRIOR" },
-		[51255610] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), class="MAGE" },
-		[44321507] = { flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
+		[51255610] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" },
+		[44321507] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
+		[41932172] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" }, -- The Dreamgrove
 	},
 	[mapFile(1080)] = { -- Thunder Totem
 		[39794219] = { portal=true, spell=192085, class="WARRIOR" },
 	},
 	[mapFile(1024)] = { -- Highmountain
 		[46115998] = { portal=true, spell=192085, class="WARRIOR" },
-		[31416381] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), class="MAGE" },
-		[56666776] = { flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
+		[31416381] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" },
+		[56666776] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
 	},
 	[mapFile(1017)] = { -- Stormheim
 		[60175227] = { portal=true, spell=192085, class="WARRIOR" },
-		[31346051] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), class="MAGE" },
-		[45923577] = { flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
-		[38097919] = { flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
+		[31346051] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" },
+		[45923577] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
+		[38097919] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
 	},
 	[mapFile(1033)] = { -- Suramar
 		[33084820] = { portal=true, spell=192085, class="WARRIOR" },
-		[33435044] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), class="MAGE" },
-		[70207105] = { flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
-		[41328282] = { flight=true, label=L["Great Eagle"], npc=109572, class="HUNTER" },
+		[33435044] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" },
+		[70207105] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
+		[41328282] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" },
+	},
+	[mapFile(1007)] = { -- Broken Isles
+		-- Druid
+		[30792486] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" }, -- The Dreamgrove
+		-- Mage
+		[33543470] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" }, -- Val'sharah
+		[37614873] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" }, -- Azsuna
+		[40522634] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" }, -- Highmountain
+		[52473524] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" }, -- Stormheim
+		[44054525] = { portal=true, label=L["Teleportation Nexus"], note=format(L["Portal to %s"], BZ["Hall of the Guardian"]), talent=386, class="MAGE" }, -- Suramar
+		-- Hunter
+		[25945853] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Azsuna
+		[35187140] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Azsuna
+		[31512270] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Val'sharah
+		[49992781] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Highmountain
+		[41292094] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Highmountain
+		[54554100] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Stormheim
+		[56972762] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Stormheim
+		[46375480] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Suramar
+		[54885133] = { flight=true, label=L["Great Eagle"], npc=109572, talent=375, class="HUNTER" }, -- Suramar
+		-- Warrior
+		[46966454] = { portal=true, spell=192085, class="WARRIOR" }, -- Dalaran
+		[33995327] = { portal=true, spell=192085, class="WARRIOR" }, -- Azsuna
+		[61353270] = { portal=true, spell=192085, class="WARRIOR" }, -- Stormheim
+		[34554020] = { portal=true, spell=192085, class="WARRIOR" }, -- Val'sharah
+		[46032488] = { portal=true, spell=192085, class="WARRIOR" }, -- Highmountain
+		[43944459] = { portal=true, spell=192085, class="WARRIOR" }, -- Suramar
+		[52607039] = { portal=true, spell=192085, class="WARRIOR" }, -- Broken Shore
 	},
 	[mapFile(1048)] = { -- Emerald Dreamway
 		[44592362] = { portal=true, label=format(L["Portal to %s"], BZ["The Dreamgrove"]), class="DRUID" },
@@ -334,8 +379,18 @@ DB.points = {
 		[48736345] = { portal=true, label=format(L["Portal to %s"], BZ["The Hinterlands"]), class="DRUID" },
 		[52635138] = { portal=true, label=format(L["Portal to %s"], BZ["Mount Hyjal"]), class="DRUID" },
 	},
+	-- Northrend
+	[mapFile(485)] = { -- Northrend
+		[73075158] = { portal=true, L["Portal"], class="DRUID" }, -- Grizzly Hills
+	},
 	[mapFile(490)] = { -- Grizzly Hills
 		[50362937] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" },
+	},
+	-- Kalimdor
+	[mapFile(13)] = { -- Kalimdor
+		[41286383] = { portal=true, L["Portal"], class="DRUID" }, -- Feralas
+		[54402134] = { portal=true, L["Portal"], class="DRUID" }, -- Moonglade
+		[55712998] = { portal=true, L["Portal"], class="DRUID" }, -- Mount Hyjal
 	},
 	[mapFile(121)] = { -- Feralas
 		[51291076] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" },
@@ -343,13 +398,28 @@ DB.points = {
 	[mapFile(241)] = { -- Moonglade
 		[67585994] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" },
 	},
+	[mapFile(606)] = { -- Mount Hyjal
+		[59072614] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" },
+	},
+	-- Eastern Kingdom
+	[mapFile(14)] = { -- Eastern Kingdom
+		[45647930] = { portal=true, L["Portal"], class="DRUID" }, -- Duskwood
+		[54353789] = { portal=true, L["Portal"], class="DRUID" }, -- The Hinterlands
+	},
 	[mapFile(34)] = { -- Duskwood
 		[46573587] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" },
 	},
 	[mapFile(26)] = { -- The Hinterlands
 		[62322271] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" },
 	},
-	[mapFile(606)] = { -- Mount Hyjal
-		[59072614] = { portal=true, label=format(L["Portal to %s"], BZ["Emerald Dreamway"]), class="DRUID" },
-	},
+	-- World
+	["World"] = {
+		[56593757] = { portal=true, L["Portal"], class="DRUID" }, -- The Dreamgrove
+		[57091776] = { portal=true, L["Portal"], class="DRUID" }, -- Grizzly Hills
+		[15106137] = { portal=true, L["Portal"], class="DRUID" }, -- Feralas
+		[22753655] = { portal=true, L["Portal"], class="DRUID" }, -- Moonglade
+		[23524158] = { portal=true, L["Portal"], class="DRUID" }, -- Mount Hyjal
+		[84317124] = { portal=true, L["Portal"], class="DRUID" }, -- Duskwood
+		[89884473] = { portal=true, L["Portal"], class="DRUID" }, -- The Hinterlands
+	}
 }

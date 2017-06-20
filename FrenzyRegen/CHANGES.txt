@@ -1,13 +1,13 @@
-changeset:   43:499f8f04384b
-tag:         v1.0.1
+changeset:   45:5f224bf5fb1d
+tag:         v1.0.2
 user:        Ogion
-date:        Sun Apr 30 00:09:13 2017 +0300
-summary:     Updated option to show remaining charges on status bar with Fleshknitting trait.
+date:        Wed Jun 14 20:17:34 2017 +0300
+summary:     Healing from Frenzied Regeneration and Skysec's Hold is no longer increased by Mastery
 
 
-changeset:   42:6d9566943b24
+changeset:   44:a57e148791fa
 user:        Ogion
-date:        Sat Jan 28 01:57:50 2017 +0200
-summary:     Tagging as v1.0
+date:        Sun Apr 30 00:09:49 2017 +0300
+summary:     Tagging as v1.0.1
 
 

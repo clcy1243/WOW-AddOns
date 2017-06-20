@@ -25,8 +25,7 @@ L["WQGF_CONFIG_AUTOINVITE_EVERYONE"] = "Invitar automáticamente a todo el mundo
 L["WQGF_CONFIG_AUTOINVITE_EVERYONE_HOVER"] = "Cualquiera que se inscriba será automáticamente invitado al grupo hasta el límite de 5 jugadores"
 L["WQGF_CONFIG_AUTOINVITE_WQGF_USERS"] = "Invitar automáticamente a los usuarios de WQGF"
 L["WQGF_CONFIG_AUTOINVITE_WQGF_USERS_HOVER"] = "Los usuarios de World Quest Finder serán automáticamente invitados al grupo"
---Translation missing 
-L["WQGF_CONFIG_BINDING_ADVICE"] = "Remember you can bind the WQGF button to a key from WoW's Key Bindings menu!"
+L["WQGF_CONFIG_BINDING_ADVICE"] = "Recuerda que puedes bindear el botón de WQGF a una tecla desde el menú de Atajos de teclado!"
 L["WQGF_CONFIG_LANGUAGE_FILTER_ENABLE"] = "Buscar grupos de cualquier idioma (ignorar la selección de idiomas del buscador de grupos)"
 L["WQGF_CONFIG_LANGUAGE_FILTER_HOVER"] = "Se buscarán los grupos para todos los idiomas disponibles"
 L["WQGF_CONFIG_LANGUAGE_FILTER_TITLE"] = "Filtro de idioma al buscar grupo"
@@ -68,6 +67,7 @@ L["WQGF_DROPPED_WB_SUPPORT"] = [=[El jefe mundial y el apoyo de misiones mundial
 Utilice el botón de interfaz de usuario predeterminado para buscar un grupo.]=]
 L["WQGF_FIND_GROUP_TOOLTIP"] = "Buscar grupo con WQGF"
 L["WQGF_FIND_GROUP_TOOLTIP_2"] = "Haga clic para crear un grupo nuevo"
+L["WQGF_FRAME_ACCEPT_INVITE"] = "Haz click en el botón para unirte al grupo "
 L["WQGF_FRAME_APPLY_DONE"] = [=[Has solicitado todos los grupos disponibles.
 ]=]
 L["WQGF_FRAME_CLICK_TWICE"] = "Haga clic en el botón % veces para crear un grupo nuevo."
@@ -76,8 +76,7 @@ L["WQGF_FRAME_FOUND_GROUPS"] = "Encontrado(s) % grupo(s). Haga clic en el botón
 L["WQGF_FRAME_GROUPS_LEFT"] = "% grupo(s) ha(n) abandonado, ¡sigue clicando!"
 L["WQGF_FRAME_INIT_SEARCH"] = "Haga clic en el botón para inicializar la búsqueda"
 L["WQGF_FRAME_NO_GROUPS"] = "Ningún grupo encontrado, haga clic en el botón para crear un grupo nuevo."
---Translation missing 
-L["WQGF_FRAME_SEARCH_GROUPS"] = "Click the button to search for groups..."
+L["WQGF_FRAME_SEARCH_GROUPS"] = "Haz click al botón para buscar grupos..."
 L["WQGF_GLOBAL_CONFIGURATION"] = "Configuración global:"
 L["WQGF_GROUP_CREATION_ERROR"] = "Ha ocurrido un error al intentar crear una entrada para el buscador de grupos. Por favor inténtalo de nuevo."
 L["WQGF_GROUP_NO_LONGER_DOING_QUEST"] = "Tu grupo ya no está haciendo la misión |c00bfffff%s|c00ffffff."
@@ -122,10 +121,7 @@ L["WQGF_START_ANOTHER_WQ_DIALOG"] = [=[Estás en un grupo para otra misión de m
 Estas seguro que quieres empezar otro?]=]
 L["WQGF_STAY"] = "Permanecer"
 L["WQGF_STOP_TOOLTIP"] = "Deja de hacer esta búsqueda mundial"
-L["WQGF_TRANSLATION_INFO"] = [=[¿Le interesa traducir WQGF a su idioma? ¡No dude en ponerse en contacto conmigo en Curse!
-
-Contexto: 
-¡IMPORTANTE !!! - En versiones localizadas esto tiene que traducirse como "traducido al español por Ooka"]=]
+L["WQGF_TRANSLATION_INFO"] = "Traducción al Español por Ooka (EU-DunModr)."
 L["WQGF_USER_JOINED"] = "Un usuario de World Quest Group Finder se ha unido al grupo!"
 L["WQGF_USERS_JOINED"] = "Los usuarios de World Quest Group Finder se han unido al grupo!"
 L["WQGF_WQ_AREA_ENTERED_ALREADY_GROUPED_DIALOG"] = [=[Has entrado en una nueva zona de misión de mundo,pero ya estás en un grupo para otra misión de mundo.

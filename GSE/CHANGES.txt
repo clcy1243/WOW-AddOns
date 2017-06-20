@@ -1,10 +1,28 @@
-lightweight tag ec18e502d083e5de6c64d1b72fd58093015a6156 GSE_2.1.01
-Author:	Timothy Minahan <timothy@minahan.net>
-Date:	Wed May 17 16:43:22 2017 +0930
+lightweight tag 5e98c36bb37bc8b51e929663fa34f3b356a3ed36 GSE_2.1.02
+Author:	TimothyLuke <timothy@minahan.net>
+Date:	Wed Jun 14 16:17:54 2017 +0930
 
-commit ec18e502d083e5de6c64d1b72fd58093015a6156
+commit 5e98c36bb37bc8b51e929663fa34f3b356a3ed36
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Wed Jun 14 16:17:54 2017 +0930
+
+    more Unittest updates for #302
+
+commit edc410b904929139b3dbd80524e5a208a9292eda
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Wed Jun 14 16:14:00 2017 +0930
+
+    UnitTest update for #302
+
+commit a2c17c99c691ae789df50c6c1dd952ea0bfc69bd
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Wed Jun 14 14:13:23 2017 +0930
+
+    Priority checks and update for #302
+
+commit 26b6c2b89ee28c37b66ac30dddaec9bd8f7eec37
 Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed May 17 16:43:22 2017 +0930
+Date:   Wed Jun 14 07:41:21 2017 +0930
 
-    Fix for #298
+    TOC updates for 7.2.5
 

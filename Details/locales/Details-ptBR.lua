@@ -38,12 +38,16 @@ L["STRING_ATTRIBUTE_DAMAGE_FRAGS"] = "Abates"
 L["STRING_ATTRIBUTE_DAMAGE_FRIENDLYFIRE"] = "Fogo Amigo"
 L["STRING_ATTRIBUTE_DAMAGE_TAKEN"] = "Dano Recebido"
 L["STRING_ATTRIBUTE_ENERGY"] = "Recursos"
+--Translation missing 
+-- L["STRING_ATTRIBUTE_ENERGY_ALTERNATEPOWER"] = ""
 L["STRING_ATTRIBUTE_ENERGY_ENERGY"] = "Energia Gerada"
 L["STRING_ATTRIBUTE_ENERGY_MANA"] = "Mana Restaurada"
 L["STRING_ATTRIBUTE_ENERGY_RAGE"] = "Raiva Gerada"
 L["STRING_ATTRIBUTE_ENERGY_RESOURCES"] = "Outros Recursos"
 L["STRING_ATTRIBUTE_ENERGY_RUNEPOWER"] = "Poder Rúnico Gerado"
 L["STRING_ATTRIBUTE_HEAL"] = "Cura"
+--Translation missing 
+-- L["STRING_ATTRIBUTE_HEAL_ABSORBED"] = ""
 L["STRING_ATTRIBUTE_HEAL_DONE"] = "Cura Feita"
 L["STRING_ATTRIBUTE_HEAL_ENEMY"] = "Cura Feita por Inimigos"
 L["STRING_ATTRIBUTE_HEAL_HPS"] = "Cura Por Segundo"
@@ -105,6 +109,8 @@ L["STRING_CUSTOM_CREATE"] = "Criar"
 L["STRING_CUSTOM_CREATED"] = "O novo display foi criado com sucesso."
 L["STRING_CUSTOM_DAMAGEONANYMARKEDTARGET"] = "Dano em Outros Alvos Marcados"
 L["STRING_CUSTOM_DAMAGEONANYMARKEDTARGET_DESC"] = "Mostra o dano causado em alvos marcados com outras marcas."
+--Translation missing 
+-- L["STRING_CUSTOM_DAMAGEONSHIELDS"] = ""
 L["STRING_CUSTOM_DAMAGEONSKULL"] = "Dano no Alvo com Caveira"
 L["STRING_CUSTOM_DAMAGEONSKULL_DESC"] = "Mostra o dano causado em alvos marcados com caveira."
 L["STRING_CUSTOM_DESCRIPTION"] = "Descrição:"
@@ -112,6 +118,8 @@ L["STRING_CUSTOM_DESCRIPTION_DESC"] = "Descreva o que este display faz."
 L["STRING_CUSTOM_DONE"] = "Terminar"
 L["STRING_CUSTOM_DTBS"] = "Dano Sofrido por Magias"
 L["STRING_CUSTOM_DTBS_DESC"] = "Mostra o dano de magias inimigas contra o seu grupo de raide."
+--Translation missing 
+-- L["STRING_CUSTOM_DYNAMICOVERAL"] = ""
 L["STRING_CUSTOM_EDIT"] = "Editar"
 L["STRING_CUSTOM_EDIT_SEARCH_CODE"] = "Editar Código de Busca"
 L["STRING_CUSTOM_EDIT_TOOLTIP_CODE"] = "Editar Código do Tooltip"
@@ -798,6 +806,10 @@ L["STRING_OPTIONS_PERFORMANCE_BG15"] = "Campo de batalha 15"
 L["STRING_OPTIONS_PERFORMANCE_BG40"] = "Campo de batalha 40"
 L["STRING_OPTIONS_PERFORMANCE_DUNGEON"] = "Masmorra"
 L["STRING_OPTIONS_PERFORMANCE_ENABLE_DESC"] = "Se habilitado, essas configurações serão aplicadas quando sua raide for compatível com o tipo de raide selecionado."
+--Translation missing 
+-- L["STRING_OPTIONS_PERFORMANCE_ERASEWORLD"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_PERFORMANCE_ERASEWORLD_DESC"] = ""
 L["STRING_OPTIONS_PERFORMANCE_MYTHIC"] = "Mítico"
 L["STRING_OPTIONS_PERFORMANCE_PROFILE_LOAD"] = "Perfil de desempenho alterado: "
 L["STRING_OPTIONS_PERFORMANCE_RAID15"] = "Raide 10-15"
@@ -1297,6 +1309,8 @@ L["STRING_OPTIONSMENU_ROWSETTINGS"] = "Barras: Configurações"
 L["STRING_OPTIONSMENU_ROWTEXTS"] = "Barras: Textos"
 L["STRING_OPTIONSMENU_SKIN"] = "Seletor de Skin"
 L["STRING_OPTIONSMENU_SPELLS"] = "Customização de Magia"
+--Translation missing 
+-- L["STRING_OPTIONSMENU_SPELLS_CONSOLIDATE"] = ""
 L["STRING_OPTIONSMENU_TITLETEXT"] = "Barra de Título: Texto"
 L["STRING_OPTIONSMENU_TOOLTIP"] = "Tooltips"
 L["STRING_OPTIONSMENU_WALLPAPER"] = "Janela: Papel de Parede"
@@ -1468,6 +1482,8 @@ L["STRING_TOTAL"] = "Total"
 L["STRING_TRANSLATE_LANGUAGE"] = "Ajude a traduzir o Details!"
 L["STRING_TUTORIAL_FULLY_DELETE_WINDOW"] = [=[Você fechou uma janela e pode reabri-la quando quiser.
 Para deleta-la por completo, vá nas opções -> Janela: Geral -> Deletar.]=]
+--Translation missing 
+-- L["STRING_TUTORIAL_OVERALL1"] = ""
 L["STRING_UNKNOW"] = "Desconhecido"
 L["STRING_UNKNOWSPELL"] = "Magia Desconhecida"
 L["STRING_UNLOCK"] = [=[Separe as janelas
@@ -1564,6 +1580,7 @@ L["STRING_WIPE_ERROR1"] = "um wipe já foi chamado."
 L["STRING_WIPE_ERROR2"] = "não estamos em um chefe de raide."
 L["STRING_WIPE_ERROR3"] = "não foi possível finalizar o encontro."
 L["STRING_YES"] = "Sim"
+
 
 
 

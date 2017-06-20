@@ -3,6 +3,9 @@
 
 local addon, ns = ...
 Hekili = LibStub("AceAddon-3.0"):NewAddon( "Hekili", "AceConsole-3.0", "AceSerializer-3.0" )
+Hekili.Version = GetAddOnMetadata("Hekili", "Version");
+
+
 
 local format = string.format
 
@@ -41,14 +44,18 @@ ns.class = {
     abilities = {},
     auras = {},
     castExclusions = {},
+    resetCastExclusions = {},
     defaults = {},
 	exclusions = {}, -- exclude from target detection
 	gearsets = {},
 	glyphs = {},
 	hooks = {},
+    incapacitates = {},
+    items = {},
 	perks = {},
     range = 8,
 	resources = {},
+    resourceModels = {},
 	searchAbilities = {},
 	settings = {},
 	stances = {},

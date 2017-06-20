@@ -64,13 +64,12 @@ function ns.StartEventHandler()
             ns.recountTargets()
         end
 
-        local updatePeriod = state.combat == 0 and 1 or ( 1 / ( Hekili.DB.profile['Updates Per Second'] or 5 ) )
+        local updatePeriod = state.combat == 0 and 1 or 0.25
 
         local forced = false
 
         for i = 1, #Hekili.DB.profile.displays do
             if not displayUpdates[i] then 
-                -- if not forced then print( now, "Updating." ); forced = true; end
                 Hekili:ProcessHooks( i )
                 lastRefresh[i] = now
 
@@ -142,16 +141,9 @@ ns.cacheCriteria = function()
 
     for i, display in ipairs( Hekili.DB.profile.displays ) do
         ns.visible.display[ i ] = display.Enabled and ( display.Specialization == 0 or display.Specialization == state.spec.id )
-
-        --[[ for j, hook in ipairs( display.Queues ) do
-            ns.visible.hook[ i..':'..j ] = hook.Enabled and hook['Action List'] ~= 0
-        end ]]
     end
 
     for i, list in ipairs( Hekili.DB.profile.actionLists ) do
-
-        -- if list.Enabled == nil then list.Enabled = true end
-
         ns.visible.list[ i ] = ( list.Specialization == 0 or list.Specialization == state.spec.id )
 
         for j, action in ipairs( list.Actions ) do
@@ -171,6 +163,16 @@ RegisterEvent( "PLAYER_ENTERING_WORLD", function ()
     ns.restoreDefaults( nil, true )
     ns.convertDisplays()
     ns.buildUI()
+
+    for key, ability in pairs( class.abilities ) do
+        if ability.recheck_name then
+            ability.name = GetItemInfo( ability.item )
+            ability.texture = select( 10, GetItemInfo( ability.item ) )
+            ability.recheck_name = nil
+            class.abilities[ ability.name ] = ability
+        end
+    end
+
 end )
 
 RegisterEvent( "ACTIVE_TALENT_GROUP_CHANGED", function ()
@@ -178,9 +180,11 @@ RegisterEvent( "ACTIVE_TALENT_GROUP_CHANGED", function ()
     ns.checkImports()
 end )
 
-RegisterEvent( "PLAYER_SPECIALIZATION_CHANGED", function ()
-    ns.specializationChanged()
-    ns.checkImports()
+RegisterUnitEvent( "PLAYER_SPECIALIZATION_CHANGED", function ( event, unit )
+    if unit == 'player' then
+        ns.specializationChanged()
+        ns.checkImports()
+    end
 end )
 
 RegisterEvent( "BARBER_SHOP_OPEN", function ()
@@ -317,54 +321,6 @@ ns.updateGear = function ()
     ns.Tooltip:SetOwner( UIParent, "ANCHOR_NONE")
     ns.Tooltip:ClearLines()
 
-    local MH = GetInventoryItemLink( "player", 16 )
-
-    if MH then
-        ns.Tooltip:SetInventoryItem( "player", 16 )
-        local lines = ns.Tooltip:NumLines()
-
-        for i = 2, lines do
-            line = _G[ "HekiliTooltipTextRight"..i ]:GetText()
-
-            if line then
-                local speed = tonumber( line:match( "%d[.,]%d+" ) )
-
-                if speed then
-                    state.mainhand_speed = speed
-                    break
-                end
-            end
-        end
-
-        gearInitialized = true
-    else
-        state.mainhand_speed = 0
-    end
-    
-    ns.Tooltip:ClearLines()
-
-    if OffhandHasWeapon() then
-        ns.Tooltip:SetInventoryItem( "player", 17 )
-        local lines = ns.Tooltip:NumLines()
-
-        for i = 2, lines do
-            line = _G[ "HekiliTooltipTextRight"..i ]:GetText()
-
-            if line then
-                local speed = tonumber( line:match( "%d[.,]%d+" ) )
-
-                if speed then
-                    state.offhand_speed = speed
-                    break
-                end
-            end
-        end
-    else
-        state.offhand_speed = 0
-    end
-    
-    ns.Tooltip:ClearLines()
-    
     local T1 = GetInventoryItemID( "player", 13 )
     
     if T1 then
@@ -403,7 +359,7 @@ ns.updateGear = function ()
                 key = formatKey( key )
                 state.set_bonus[ key ] = 1
                 state.set_bonus[ item ] = 1
-                gearInitCompleted = true
+                gearInitialized = true
             end
         end
     end
@@ -419,6 +375,7 @@ end
 
 RegisterEvent( "PLAYER_EQUIPMENT_CHANGED", function()
     ns.updateGear()
+    ns.updateTalents()
     -- ns.updateArtifact()
 end )
 
@@ -457,22 +414,12 @@ local castsOn, castsOff, castsAll = ns.castsOn, ns.castsOff, ns.castsAll
 
 local function forceUpdate( from, super )
 
-    -- print( GetTime(), from or "NONE", tostring( super ) )
-
     for i = 1, #Hekili.DB.profile.displays do
         displayUpdates[ i ] = nil
     end
 
     return
 
-    --[[ local updatePeriod = 1 / ( Hekili.DB.profile['Updates Per Second'] or 5 )
-    local now = GetTime()
-
-    local new_delay = now - updatePeriod
-
-    for i = 1, #Hekili.DB.profile.displays do
-        lastRefresh[ i ] = lastRefresh[ i ] and min( lastRefresh[ i ], new_delay )
-    end ]]
 end
 
 ns.forceUpdate = forceUpdate
@@ -531,6 +478,10 @@ local function spellcastEvents( event, unit, spell, _, _, spellID )
     end
 
 end
+
+
+
+
 
 
 -- Need to make caching system.
@@ -683,7 +634,7 @@ end )
 RegisterEvent( "COMBAT_LOG_EVENT_UNFILTERED", function( event, _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName, _, amount, interrupt, a, b, c, d, offhand, multistrike, ... )
 
     if subtype == 'UNIT_DIED' or subtype == 'UNIT_DESTROYED' and ns.isTarget( destGUID ) then
-        ns.eliminateUnit( destGUID )
+        ns.eliminateUnit( destGUID, true )
         return
     end
 
@@ -728,7 +679,7 @@ RegisterEvent( "COMBAT_LOG_EVENT_UNFILTERED", function( event, _, subtype, _, so
 
         elseif not offhand and time > sw.mh_actual then
             sw.mh_actual = time
-            sw.mh_speed = UnitAttackSpeed( 'player' )
+            sw.mh_speed = UnitAttackSpeed( 'player' ) or sw.mh_speed
             sw.mh_projected = sw.mh_actual + sw.mh_speed
 
         end
@@ -773,7 +724,7 @@ RegisterEvent( "COMBAT_LOG_EVENT_UNFILTERED", function( event, _, subtype, _, so
         elseif sourceGUID == state.GUID and class.auras[ spellID ] and class.auras[ spellID ].friendly then -- friendly effects
 
             if subtype == 'SPELL_AURA_APPLIED'  or subtype == 'SPELL_AURA_REFRESH' or subtype == 'SPELL_AURA_APPLIED_DOSE' then
-                ns.trackDebuff( spellName, destGUID, time, true )
+                ns.trackDebuff( spellName, destGUID, time, subtype == 'SPELL_AURA_APPLIED' )
 
             elseif subtype == 'SPELL_PERIODIC_HEAL' or subtype == 'SPELL_PERIODIC_MISSED' then
                 ns.trackDebuff( spellName, destGUID, time )
@@ -906,6 +857,10 @@ local function StoreKeybindInfo( key, aType, id )
         local _, _, sID = GetMacroSpell( id )
 
         ability = sID and class.abilities[ sID ] and class.abilities[ sID ].key
+    
+    elseif aType == "item" then
+        local name = GetItemInfo( id )
+        ability = class.abilities[ name ] and class.abilities[ name ].key or "unknown"
 
     end
 
@@ -929,6 +884,8 @@ end
 
 local function ReadKeybindings()
 
+    if class.file == "DRUID" then return end
+
     for k in pairs( updatedKeys ) do
         updatedKeys[ k ] = nil
     end
@@ -937,9 +894,9 @@ local function ReadKeybindings()
         StoreKeybindInfo( GetBindingKey( "ACTIONBUTTON" .. i ), GetActionInfo( i ) )
     end
 
-    for i = 13, 24 do
+    --[[ for i = 13, 24 do
         StoreKeybindInfo( GetBindingKey( "ACTIONBUTTON" .. i - 12 ), GetActionInfo( i ) )
-    end
+    end ]]
 
     for i = 25, 36 do
         StoreKeybindInfo( GetBindingKey( "MULTIACTIONBAR3BUTTON" .. i - 24 ), GetActionInfo( i ) )
@@ -957,21 +914,21 @@ local function ReadKeybindings()
         StoreKeybindInfo( GetBindingKey( "MULTIACTIONBAR1BUTTON" .. i - 60 ), GetActionInfo( i ) )
     end
 
-    for i = 73, 120 do
+    --[[ for i = 73, 120 do
         StoreKeybindInfo( GetBindingKey( "ACTIONBUTTON" .. ( i - 60 ) % 12 ), GetActionInfo( i ) )
-    end
+    end ]]
 
     for k in pairs( keys ) do
         if not updatedKeys[ k ] then keys[ k ] = nil end
     end
 
-    for k in pairs( keys ) do
+    --[[ for k in pairs( keys ) do
         local ability = class.abilities[ k ]
 
         if ability and ability.bind then
             keys[ ability.bind ] = keys[ k ]
         end
-    end
+    end ]]
 
 end    
 
@@ -983,8 +940,12 @@ RegisterEvent( "UPDATE_BINDINGS", ReadKeybindings )
 RegisterEvent( "PLAYER_ENTERING_WORLD", ReadKeybindings )
 RegisterEvent( "ACTIONBAR_SLOT_CHANGED", ReadKeybindings )
 RegisterEvent( "ACTIONBAR_SHOWGRID", ReadKeybindings )
+RegisterEvent( "ACTIONBAR_HIDEGRID", ReadKeybindings )
+RegisterEvent( "SPELL_UPDATE_ICON", ReadKeybindings )
+RegisterEvent( "SPELLS_CHANGED", ReadKeybindings )
+RegisterEvent( "ACTIONBAR_PAGE_CHANGED", ReadKeybindings )
 RegisterEvent( "UPDATE_SHAPESHIFT_FORM", ReadKeybindings )
-
+RegisterUnitEvent( "PLAYER_TALENT_UPDATE", ReadKeybindings() )
 
 function Hekili:GetBindingForAction( key, caps )
     return ( key and keys[ key ] ) and ( caps and keys[ key ].upper or keys[ key ].binding ) or ""

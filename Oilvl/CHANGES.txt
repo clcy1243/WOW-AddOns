@@ -1,28 +1,10 @@
 ------------------------------------------------------------------------
-r701 | olzenkhaw | 2017-05-12 19:58:39 -0500 (Fri, 12 May 2017) | 1 line
+r707 | olzenkhaw | 2017-06-13 08:50:40 -0500 (Tue, 13 Jun 2017) | 1 line
 Changed paths:
    M /trunk/Oilvl.lua
    M /trunk/Oilvl.toc
-   A /trunk/libs/LibQTip-1.0/Changelog-LibQTip-1.0-r178-release.txt
-   A /trunk/libs/LibQTip-1.0/LICENSE.txt
-   A /trunk/libs/NoTaint_UIDropDownMenu
-   A /trunk/libs/NoTaint_UIDropDownMenu/Docs
-   A /trunk/libs/NoTaint_UIDropDownMenu/Docs/Readme.txt
-   A /trunk/libs/NoTaint_UIDropDownMenu/Docs/Revision.txt
-   A /trunk/libs/NoTaint_UIDropDownMenu/EasyMenu.lua
-   A /trunk/libs/NoTaint_UIDropDownMenu/LibStub
-   A /trunk/libs/NoTaint_UIDropDownMenu/LibStub/LibStub.lua
-   A /trunk/libs/NoTaint_UIDropDownMenu/LibStub/LibStub.toc
-   A /trunk/libs/NoTaint_UIDropDownMenu/LibStub/tests
-   A /trunk/libs/NoTaint_UIDropDownMenu/LibStub/tests/test.lua
-   A /trunk/libs/NoTaint_UIDropDownMenu/LibStub/tests/test2.lua
-   A /trunk/libs/NoTaint_UIDropDownMenu/LibStub/tests/test3.lua
-   A /trunk/libs/NoTaint_UIDropDownMenu/LibStub/tests/test4.lua
-   A /trunk/libs/NoTaint_UIDropDownMenu/NoTaint_UIDropDownMenu.toc
-   A /trunk/libs/NoTaint_UIDropDownMenu/UIDropDownMenu.lua
-   A /trunk/libs/NoTaint_UIDropDownMenu/UIDropDownMenu.xml
-   A /trunk/libs/NoTaint_UIDropDownMenu/UIDropDownMenuTemplates.xml
+   D /trunk/libs/LibUIDropDownMenu
 
-v6.5.4 - fix a bug
+v6.6.0 Added Tome of Sargeras Raid Progression
 ------------------------------------------------------------------------
 

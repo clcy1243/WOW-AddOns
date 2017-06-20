@@ -1,7 +1,57 @@
-$Id: ChangeLog.txt 48 2017-05-25 17:03:24Z arith $
+$Id: ChangeLog.txt 68 2017-06-19 16:50:53Z arith $
 
 Revision History:
 =================
+
+* v1.19 (Jun. 19, 2017)
+-----------------------
+- Added Almenis <Seal of Broken Fate Shipment> to Druid's order hall
+- Added Researcher Tulius <Seal of Broken Fate Shipment> to Mage's order hall
+- Added Mal <Weapons Smuggler> (Champion Armaments) to Rogue's order hall
+- Added option to toggle show / hide un-researched order hall advancement's NPC
+- Localization update:
+  - German (pas06)
+  - Korean (yuk6196)
+
+* v1.18 (Jun. 13, 2017)
+-----------------------
+- Added Demonia Pickerin and Galen Foul to Warlock's order hall
+- Localization update:
+  - German (pas06)
+
+* v1.17 (Jun. 11, 2017)
+-----------------------
+- Added Druid's portal nodes to the following maps:
+  Northrend, Kalimdor, Eastern Kingdom, and the World maps
+- Added Mage's Teleportation Nexus nodes to Broken Isles map
+- Added Hunter's Great Eagle nodes to Broken Isles map
+- Added Warrior's jumping points to Broken Isles map
+- Localization update:
+  - German (pas06)
+
+* v1.16 (Jun. 08, 2017)
+-----------------------
+- Added Truth <Seal of Broken Fate Shipment> and High Priestess Mourn 
+  <Recruiter> to Priest' order hall
+- Added Scythe <Seal of Broken Fate Shipment> and Laura Stern <Recruiter> 
+  to Rogue's order hall
+- Added Marick Ven <Earthen Ring Protectors Recruiter>, Bath'rah the 
+  Windwatcher <Seal of Broken Fate Shipment>, and Alexor <The Ascended> 
+  to Shaman's order hall
+- Added Seer Aleis <Seal of Broken Fate Shipment> to Demon Hunter's order hall
+- Added Librarian Lightmorne <Seal of Broken Fate Shipment> to Paladin's 
+  order hall
+- Localization update:
+  - German (pas06)
+
+* v1.15 (Jun. 02, 2017)
+-----------------------
+- Added Conjurer Awlyn to Mage's order hall
+
+* v1.14 (May 30, 2017)
+-----------------------
+- Localization update:
+  - German (pas06)
 
 * v1.13 (May 26, 2017)
 -----------------------

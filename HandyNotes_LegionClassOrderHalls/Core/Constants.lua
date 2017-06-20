@@ -1,4 +1,4 @@
--- $Id: Constants.lua 46 2017-05-25 06:01:07Z arith $
+-- $Id: Constants.lua 67 2017-06-18 11:25:51Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -38,6 +38,7 @@ constants.defaults = {
 		show_flight = true,
 		show_lightsHeart = true,
 		show_sealOrder = true,
+		show_alltalents = true,
 		show_others = true,
 	},
 	char = {

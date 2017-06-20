@@ -1,6 +1,11 @@
 Revision History:
 =================
 
+* v1.5 (June 12, 2017)
+-----------------------
+- added Stormwind portal to Ashran
+- updated for 7.2.5
+
 * v1.4 (May 22, 2017)
 -----------------------
 - added druid portals in Class Hall/ Val'sharah

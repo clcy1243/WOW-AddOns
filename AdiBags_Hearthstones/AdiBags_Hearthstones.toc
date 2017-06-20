@@ -7,12 +7,13 @@
 ## Notes-esMX: Añadir objetos de teletransporte a los grupos virtuales de AdiBags
 ## Notes-esES: Añadir objetos de teletransporte a los grupos virtuales de AdiBags
 ## Notes-ptBR: Adiciona um grupo ao AdiBags que contém vários itens como a Pedra de Regresso.
+## Notes-zhCN: 增加各种传送物品到AdiBags的虚拟类别
 ## Notes-zhTW: 增加各種傳送物品到AdiBags的虛擬類別
 ## Notes-frFR: Ajoute différents objets de type Pierre de foyer aux groupes virtuels d'AdiBags
 
-## Version: 7.2-release1
+## Version: 7.2-release3
 ## Author: Myrroddin of Llane-US (Knights of the Storm, Alliance)
-## X-Date: 2017-03-28T16:51:19Z
+## X-Date: 2017-06-04T18:05:53Z
 ## X-License: © 2016 - 2017 Paul "Myrroddin" Vandersypen, All Rights Reserved
 ## X-Category: Bags & Inventory
 ## Dependencies: AdiBags

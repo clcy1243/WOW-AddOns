@@ -1,12 +1,24 @@
-tag 539ae95328cbdb447a1f50de70e94d8f63f099da 1.1.1
+tag c8454aed6205756accc3aef5950c881151857a54 1.1.2
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Tue Apr 25 17:07:25 2017 -0500
+Date:	Fri Jun 2 02:04:21 2017 -0500
 
-Tagging as 1.1.1
+Tagging as 1.1.2
 
-commit d8181e2748f03b90319b4a603a507752f033b0eb
+commit d31ba2aeb0715ca3a11e37e1d95b4583a9fef267
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Tue Apr 25 16:53:01 2017 -0500
+Date:   Fri May 26 20:24:58 2017 -0500
 
-    Add Athena (Hanamura) and Commodore (Unknown)
+    Add D.Va and Genji
+
+commit ae6f5193c9dcd340401534c7ce7dd302b9d2b705
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sun Apr 30 13:35:50 2017 -0500
+
+    Add Butcher (nonverbal)
+
+commit df1e51c1cb850c66450876a3471226ceb0283924
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Tue Apr 25 17:22:31 2017 -0500
+
+    Update README.md
 

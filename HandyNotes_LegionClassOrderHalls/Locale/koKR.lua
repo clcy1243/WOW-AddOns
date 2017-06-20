@@ -79,8 +79,12 @@ L["Quartermaster Ozorg <Rare Goods Vendor>"] = "병참장교 오조르그 <희�
 L["Query from server"] = "서버에 요청하기"
 L["Ramp to lower floor"] = "아래층으로 연결된 내리막 길"
 L["Ramp to top floor"] = "위층으로 연결된 오르막 길"
+L["Requires Ancient of War order advancement"] = "전쟁의 고대정령 연맹 성장 필요"
+L["Requires Blessed Seals order advancement"] = "축복받은 인장 연맹 성장 필요"
+L["Requires Hooded Priests order advancement"] = "두건 쓴 사제 연맹 성장 필요"
 L["Reset hidden nodes"] = "숨겨진 노드 초기화"
 L["Salanar the Horseman"] = "기사 살라나르"
+L["Seal of Broken Fate"] = "부서진 운명의 인장"
 L["Seer Akalu <Nathrezim Scholar>"] = "현자 아칼루 <나스레짐 학자>"
 L["Send query request to server to lookup localized name. May be a little bit slower for the first time lookup but would be very fast once the name is found and cached."] = "현지화된 이름을 조회하기 위해 서버에 요청을 보냅니다. 첫 조회는 조금 느릴 수 있지만 이름을 발견하고 캐시하면 매우 빨라집니다."
 L["Shadow Well"] = "어둠샘"
@@ -93,6 +97,7 @@ L["Show the Champion Armaments NPC's location."] = "용사 무장 NPC의 위치�
 L["Show the class hall quartermaster's location."] = "직업 전당 병참장교의 위치를 표시합니다."
 L["Show the class hall researcher's location."] = "직업 전당 연구자의 위치를 표시합니다."
 L["Show the location of Light's Heart."] = "빛의 심장의 위치를 표시합니다."
+L["Show the location of Seal of Broken Fate vendor."] = "부서진 운명의 인장 상인의 위치를 표시합니다."
 L["Show the location of the NPC where you can learn for your class hall upgrade."] = "직업 전당을 강화할 수 있는 NPC의 위치를 표시합니다."
 L["Show the location of your class hall forge where you can manage your artifact power."] = "유물력을 관리할 수 있는 자신의 직업 전당 가열로의 위치를 표시합니다."
 L["Show the node where you can manage your class hall missions."] = "직업 전당 임무를 관리할 수 있는 노드를 표시합니다."
@@ -118,7 +123,7 @@ L["What to display"] = "표시할 내용"
 L["Zen'kiki"] = "젠키키"
 
 -- ToC
-L["Description"] = "직업 조합 전당에 NPC 위치와 주요 관심 지점을 표시합니다"
+L["Description"] = "직업 조합 전당의 NPC 위치와 주요 관심 지점을 표시합니다"
 L["Title"] = "HandyNotes - 군단 직업 조합 전당"
 
 end

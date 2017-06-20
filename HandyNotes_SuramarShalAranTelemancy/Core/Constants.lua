@@ -1,4 +1,4 @@
--- $Id: Constants.lua 31 2017-05-24 15:01:26Z arith $
+-- $Id: Constants.lua 37 2017-06-19 16:46:00Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -41,18 +41,15 @@ constants.defaults = {
 	},
 }
 
+local OBJECTICONS = "Interface\\MINIMAP\\OBJECTICONS"
 constants.icon_texture = {
 	flight = "Interface\\MINIMAP\\TRACKING\\FlightMaster",
-	yellowButton = {
-		icon = "Interface\\MINIMAP\\OBJECTICONS",
-		tCoordLeft = 0.125, tCoordRight = 0.25, tCoordTop = 0.5, tCoordBottom = 0.625 },
-	portal = {
-		icon = 1121272,
-		tCoordLeft = 0.33203125,
-		tCoordRight = 0.39453125,
-		tCoordTop = 0.1953125,
-		tCoordBottom = 0.2578125,
-	},
+	yellowButton 	= {
+			icon = OBJECTICONS,
+			tCoordLeft = 0.125, tCoordRight = 0.25, tCoordTop = 0.5, tCoordBottom = 0.625 },
+	portal 		= {
+			icon = OBJECTICONS,
+			tCoordLeft = 0.125, tCoordRight = 0.25, tCoordTop = 0.875, tCoordBottom = 1 },
 	door = "Interface\\MINIMAP\\Suramar_Door_Icon",
 }
 

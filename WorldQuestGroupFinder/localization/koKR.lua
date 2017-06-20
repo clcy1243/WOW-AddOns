@@ -67,6 +67,7 @@ L["WQGF_DROPPED_WB_SUPPORT"] = [=[WQGF 0.21.3에서 야외 우두머리 전역 �
 파티를 찾으려면 기본 UI 버튼을 사용해 주세요.]=]
 L["WQGF_FIND_GROUP_TOOLTIP"] = "WQGF로 파티 찾기"
 L["WQGF_FIND_GROUP_TOOLTIP_2"] = "가운데 클릭으로 새로운 파티를 만듭니다"
+L["WQGF_FRAME_ACCEPT_INVITE"] = "파티에 참여하려면 버튼 클릭"
 L["WQGF_FRAME_APPLY_DONE"] = "이용 가능한 모든 파티에 적용했습니다."
 L["WQGF_FRAME_CLICK_TWICE"] = "새로운 파티를 만드려면 버튼을 %d번 클릭하세요."
 L["WQGF_FRAME_CREATE_WAIT"] = "아무런 응답을 받지 못해야 새로운 파티를 만들 수 있습니다."

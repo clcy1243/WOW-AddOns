@@ -1,4 +1,4 @@
--- $Id: Handler.lua 46 2017-05-25 06:01:07Z arith $
+-- $Id: Handler.lua 67 2017-06-18 11:25:51Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -231,6 +231,16 @@ do
 	end
 end
 
+local function isTalentResearched(talentID)
+	if not talentID or type(talentID) ~= "number" then return end
+	local talent = C_Garrison.GetTalent(talentID)
+	if talent.researched then 
+		return talent.researched
+	else
+		return
+	end
+end
+
 do
 	-- This is a custom iterator we use to iterate over every node in a given zone
 	local currentLevel, currentZone
@@ -265,18 +275,20 @@ do
 		if (point.class and point.class ~= select(2, UnitClass("player"))) then
 			return false
 		end
-		if (point.mission and not private.db.show_mission) then return false; end
-		if (point.recruiter and not private.db.show_recruiter) then return false; end
-		if (point.research and not private.db.show_research) then return false; end
-		if (point.armaments and not private.db.show_armaments) then return false; end
+		if (point.mission 	and not private.db.show_mission) then return false; end
+		if (point.research 	and not private.db.show_research) then return false; end
+		if (point.armaments 	and not private.db.show_armaments) then return false; end
 		if (point.quartermaster and not private.db.show_quartermaster) then return false; end
-		if (point.classUpgrade and not private.db.show_classUpgrade) then return false; end
-		if (point.artifact and not private.db.show_artifact) then return false; end
-		if (point.portal and not private.db.show_portal) then return false; end
-		if (point.flight and not private.db.show_flight) then return false; end
-		if (point.lightsHeart and not private.db.show_lightsHeart) then return false; end
-		if (point.sealOrder and not private.db.show_sealOrder) then return false; end
-		if (point.others and not private.db.show_others) then return false; end
+		if (point.classUpgrade 	and not private.db.show_classUpgrade) then return false; end
+		if (point.artifact 	and not private.db.show_artifact) then return false; end
+		if (point.portal 	and not private.db.show_portal) then return false; end
+		if (point.flight 	and not private.db.show_flight) then return false; end
+		if (point.lightsHeart 	and not private.db.show_lightsHeart) then return false; end
+		if (point.others 	and not private.db.show_others) then return false; end
+		if (point.recruiter 	and not private.db.show_recruiter) then return false; end
+		if (point.sealOrder 	and not private.db.show_sealOrder) then return false; end
+
+		if (point.talent and not private.db.show_alltalents and not isTalentResearched(point.talent)) then return false; end
 		return true
 	end
 end

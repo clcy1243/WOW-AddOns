@@ -10,7 +10,7 @@
 ## Title-zhCN: BigWigs |cffff7f3f+|r|cffffffff声音：风暴英雄|r
 ## Title-zhTW: BigWigs |cffff7f3f+|r|cffffffff聲音：暴雪英霸|r
 ## Author: Neb
-## Version: 1.1.1
+## Version: 1.1.2
 ## Dependencies: BigWigs
 
 Core.lua

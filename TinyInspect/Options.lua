@@ -17,10 +17,10 @@ end})
 
 local DefaultDB = {
     version = VERSION,                    --配置的版本號
-    ShowItemBorder = false,                --物品直角邊框
+    ShowItemBorder = true,                --物品直角邊框
     EnableItemLevel  = true,              --物品等級
       ShowColoredItemLevelString = false, --裝等文字隨物品品質
-      ShowItemSlotString = false,          --物品部位文字
+      ShowItemSlotString = true,          --物品部位文字
         EnableItemLevelBag = true,
         EnableItemLevelBank = true,
         EnableItemLevelMerchant = true,
@@ -29,9 +29,9 @@ local DefaultDB = {
         EnableItemLevelAuction = true,
         EnableItemLevelAltEquipment = true,
         EnableItemLevelPaperDoll = true,
-        EnableItemLevelGuildNews = false,
+        EnableItemLevelGuildNews = true,
     ShowInspectAngularBorder = false,     --觀察面板直角邊框
-    ShowInspectColoredLabel = false,       --觀察面板高亮橙裝武器標簽
+    ShowInspectColoredLabel = true,       --觀察面板高亮橙裝武器標簽
     ShowOwnFrameWhenInspecting = false,   --觀察同時顯示自己裝備列表
     DisplayPercentageStats = false,       --裝備屬性換算成百分比數值
     EnablePartyItemLevel = true,          --小隊裝等
@@ -39,6 +39,9 @@ local DefaultDB = {
         SendPartyItemLevelToParty = true, --發送小隊裝等到隊伍頻道
         ShowPartySpecialization = true,   --顯示隊友天賦
     EnableRaidItemLevel = false,          --團隊裝等
+    EnableMouseItemLevel = true,          --鼠標裝等
+    EnableMouseSpecialization = true,     --鼠標天賦
+    PaperDollItemLevelOutsideString = false, --PaperDoll文字外邊顯示(沒有在配置面板)
 }
 
 local options = {
@@ -75,7 +78,11 @@ local options = {
         checkedFunc = function() TinyInspectRaidFrame:Show() end,
         uncheckedFunc = function() TinyInspectRaidFrame:Hide() end,
     },
-    { key = "EnableMouseItemLevel" },
+    { key = "EnableMouseItemLevel",
+      child = {
+        { key = "EnableMouseSpecialization" }
+      }
+    },
 }
 
 TinyInspectDB = DefaultDB

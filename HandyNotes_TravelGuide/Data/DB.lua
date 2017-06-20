@@ -57,15 +57,16 @@ DB.points = {
 --		[] = { portal=true, level=10, label=format(L[" Portal to Ogrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Shrine of Two Moons"]), faction="Horde" },
 	},
 	[mapFile(1007)] = { -- Broken Isles
-		[30712543] = { portal=true, label=format(L[" Portal to Dalaran \n Portal to Emerald Dreamway"]), Class="DRUID" },
+		[30712543] = { portal=true, label=format(L[" Portal to Dalaran \n Portal to Emerald Dreamway"]), class="DRUID" },
 		[45666494] = { portal=true, label=format(L[" Portal to Stormwind \n Portal to Ironforge \n Portal to Darnasuss \n Portal to Exodar \n Portal to Shrine of Seven Stars \n Portal to Caverns of Time \n Portal to Shattrath \n Portal to Wyrmrest Temple \n Portal to Dalaran Crater \n Portal to Karazhan"]), faction="Alliance" },
 		[45666495] = { portal=true, label=format(L[" Portal to Ogrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Shrine of Two Moons \n Portal to Caverns of Time \n Portal to Shattrath \n Portal to Wyrmrest Temple \n Portal to Dalaran Crater \n Portal to Karazhan"]), faction="Horde" },
 	},
 	[mapFile(1018)] = { -- Val'sharah
-		[41742385] = { portal=true, label=format(L[" Portal to Dalaran \n Portal to Emerald Dreamway"]), Class="DRUID" },
+		[41742385] = { portal=true, label=format(L[" Portal to Dalaran \n Portal to Emerald Dreamway"]), class="DRUID" },
 	},
 	[mapFile(301)] = { -- Stormwind
 		[48948733] = { portal=true, label=format(L[" Portal to Blasted Lands \n Portal to Hellfire Peninsula"]), faction="Alliance" },
+		[87543524] = { portal=true, label=format(L["Portal to Ashran"]) },
 		[22015670] = { boat=true, label=format(L["Boat to Darnassus"]), note=L["Rut'theran Village"], faction="Alliance" },
 		[17592553] = { boat=true, label=format(L["Boat to Borean Tundra"]), note=L["Valiance Keep"], faction="Alliance" },
 		[74481841] = { portal=true, label=format(L[" Portal to Tol Barad \n Portal ro Uldum \n Portal to Deepholm \n Portal to Vashj'ir \n Portal to Twilight Highlands \n Portal to Hyjal"]), faction="Alliance" },

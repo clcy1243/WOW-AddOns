@@ -8,11 +8,11 @@
 # ## Notes: Shows the boat and portal locations in major zones
 #@end-debug@
 ## Author: Varnzeck
-## Version: v1.4
+## Version: v1.5
 ## RequiredDeps: HandyNotes
 ## DefaultState: enabled
 ## SavedVariables: HandyNotes_TravelGuideDB
-## X-Date: 2017-05-13
+## X-Date: 2017-06-12
 ## X-Category: Map
 
 Libs\Libs.xml

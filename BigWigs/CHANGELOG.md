@@ -1,9 +1,25 @@
 # BigWigs
 
-## [v54](https://github.com/BigWigsMods/BigWigs/tree/v54) (2017-05-19) [](#top)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v53...v54)
+## [v55](https://github.com/BigWigsMods/BigWigs/tree/v55) (2017-06-13)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v54...v55)
 
 - bump version  
-- Nighthold/Guldan: Fix warmup timer for Horde side.  
-- Core/BossPrototype: Remove call to CombatLogClearEntries() when engaging a boss, which was added back in 2010 to fix a combat log bug. This causes a game crash when called from a CLEU event, and hopefully the original issue is resolved now.  
-- Loader: Add Black Temple id  
+- TombOfSargeras/FallenAvatar: Remove PTR fix  
+- TombOfSargeras/Harjatan: Do not display bars that arn't cast and add berserk timer  
+- TombOfSargeras/TheDesolateHost: Minor fixes  
+- Core: Don't completely die when using an invalid id in the options.  
+- Core: Don't completely die when using an invalid id in the option headers.  
+- BossPrototype: Fix countdown for cast bars.  
+- Nighthold/Guldan: Fix Fel Efflux ids  
+- Nighthold/Guldan: Quality of Life improvements  
+- TombOfSargeras/FallenAvatar: fix minor bug  
+- TombOfSargeras/FallenAvatar: Updates and fixes  
+- TombOfSargeras/Harjatan: Remove Taskmasker from the encounter  
+- Add optional name arg for :RegisterCountdown  
+- TombOfSargeras/Kiljaeden: Drycode  
+- Update deDE (#258)  
+- update zhCN/zhTW. (#259)  
+- TombOfSargeras/Goroth: Bug fixes & Mythic update  
+- TombOfSargeras/FallenAvatar: Temp fix spell list for PTR  
+- koKR update (#257)  
+- Add "Removed From" to common locale strings.  

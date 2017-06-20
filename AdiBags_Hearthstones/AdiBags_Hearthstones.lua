@@ -30,6 +30,12 @@ local hearthstones = {
 	64457,		-- The Last Relic of Argus
 	118662,		-- Bladespire Relic
 	132517,		-- Intra-Dalaran Wormhole Generator
+	140493,		-- Adept's Guide to Dimensional Rifting
+	128502,		-- Hunter's Seeking Crystal
+	128503,		-- Master Hunter's Seeking Crystal
+	132523,		-- Reaves Battery
+	144341,		-- Rechargeable Reaves Battery
+	138448,		-- Emblem of Margoss
 }
 
 local armour = {
@@ -79,6 +85,13 @@ local jewelry = {
 	45691,		-- Inscribed Signet of the Kirin Tor
 	40585,		-- Signet of the Kirin Tor
 	48957,		-- Etched Signet of the Kirin Tor
+	144391,		-- Pugilist's Powerful Punching Ring
+	142469,		-- Violet Seal of the Grand Magus
+	141324,		-- Talisman of the Shal'dorei
+	44934,		-- Loop of the Kirin Tor
+	51558,		-- Runed Loop of the Kirin Tor
+	45689,		-- Inscribed Loop of the Kirin Tor
+	48955,		-- Etched Loop of the Kirin Tor
 }
 
 local quest_items = {

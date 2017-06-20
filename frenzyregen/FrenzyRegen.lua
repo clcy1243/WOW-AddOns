@@ -94,14 +94,8 @@ function frenzyRegenFrame:countHealing()
   
   if IsEquippedItem(137025) and settingsFR.legendaryFlag then -- Skysec's Hold
     legendaryHealing = maxHP*0.12*(1+versatilityBonus/100)
-  end
-  
-  if GetSpecialization() == 3 and settingsFR.masteryFlag then
-    mastery, coefficient = GetMasteryEffect()
-    expectedHealing = expectedHealing*(1+mastery/100)
-    legendaryHealing = legendaryHealing*(1+mastery/100)
-  end
-   
+  end  
+ 
   local t18set = {124246, 124255, 124261, 124267, 124272}
   local t18items = 0
   for i=1,5,1 do
@@ -226,9 +220,6 @@ function frenzyRegenFrame:initFlags()
   end
   if settingsFR.shortNumFlag == nil then
     settingsFR.shortNumFlag = true;
-  end
-  if settingsFR.masteryFlag == nil then
-    settingsFR.masteryFlag = false;
   end
   if settingsFR.hideOutOfCombatFlag == nil then
     settingsFR.hideOutOfCombatFlag = false;
@@ -438,12 +429,6 @@ UIDropDownMenu_Initialize(dropDown, function(self, level, menuList)
     info = UIDropDownMenu_CreateInfo()
     info.notCheckable = false
     info.isNotRadio = true
-    info.text = "Include mastery bonus"
-    info.func = function() settingsFR.masteryFlag = not settingsFR.masteryFlag end
-    info.checked = function() return settingsFR.masteryFlag end
-    UIDropDownMenu_AddButton(info, level)
-  end
-  if UIDROPDOWNMENU_MENU_VALUE == "position_submenu" then
     info.text = "Include Skysec's Hold"
     info.func = function() settingsFR.legendaryFlag = not settingsFR.legendaryFlag end
     info.checked = function() return settingsFR.legendaryFlag end

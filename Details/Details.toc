@@ -3,13 +3,22 @@
 ## Notes: Computes detailed infos about combats.
 ## SavedVariables: _detalhes_global
 ## SavedVariablesPerCharacter: _detalhes_database
-
+## OptionalDeps: Ace3, LibSharedMedia-3.0, LibWindow-1.1, LibDBIcon-1.0, NickTag-1.0, LibDataBroker-1.1, LibItemUpgradeInfo-1.0, LibGroupInSpecT-1.1, LibCompress, LibGraph-2.0
 #@no-lib-strip@
 Libs\libs.xml
 #@end-no-lib-strip@
 
 locales\Details-enUS.lua
+locales\Details-deDE.lua
+locales\Details-esES.lua
+locales\Details-esMX.lua
+locales\Details-frFR.lua
+locales\Details-itIT.lua
+locales\Details-koKR.lua
+locales\Details-ptBR.lua
+locales\Details-ruRU.lua
 locales\Details-zhCN.lua
+locales\Details-zhTW.lua
 
 boot.lua
 indent.lua

@@ -550,8 +550,7 @@ for classID = 1, MAX_CLASSES do
 	classes[classTag].fixname = {}
 	classes[classTag].fix = false
 	for i = 1, numTabs do
-		--local id, name, _, icon, _, role = GetSpecializationInfoForClassID(classID, i)
-		local id, name, _, icon, role = GetSpecializationInfoForClassID(classID, i)
+		local id, name, _, icon, _, role = GetSpecializationInfoForClassID(classID, i)
 		--print(role, id, classID, i, name, icon, "#", GetSpecializationInfoForClassID(classID, i))
 		if     role == "DAMAGER" then classes[classTag].spec[i] = {role = 3, specID = id, specName = name, icon = icon} tinsert(classROLES.DAMAGER, {classTag = classTag, specIndex = i}) -- DAMAGER: total = 23
 		elseif role == "HEALER"  then classes[classTag].spec[i] = {role = 1, specID = id, specName = name, icon = icon} tinsert(classROLES.HEALER,  {classTag = classTag, specIndex = i}) -- HEALER : total =  6

@@ -1,7 +1,7 @@
-changeset:   147:be64a52687e3
-tag:         v1.10.2
+changeset:   149:6ea87fdf0abb
+tag:         v1.10.3
 user:        MMOSimca
-date:        Wed May 17 22:47:06 2017 -0400
-summary:     New fix for TSM tooltips that works with items linked from chat as well as in other places (thanks 'thecurseaccount').
+date:        Fri Jun 16 01:09:38 2017 -0400
+summary:     Updated for Patch 7.2.5 Battle Pets, including some breeds from 7.2.0 like Squirky.
 
 

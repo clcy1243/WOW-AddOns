@@ -1,12 +1,18 @@
-tag 067b337a7cc93d21b0592a8b61c3f4de7a917ecd v1.7.6
+tag 0ce522d1999449ded7dc5d647a1afbf9e67ba962 v1.7.8
 Author:	Devin Collins <me@imdevinc.com>
-Date:	Thu May 4 19:51:03 2017 -0700
+Date:	Tue Jun 13 10:54:04 2017 -0700
 
-Added support for French language
+Added support for new database
 
-commit 723729da7579a1f57da7bc5d9891aba33f36f263
+commit e0c5c5ef91b08200198ad37564118ea8b4a8cbec
 Author: Devin Collins <me@imdevinc.com>
-Date:   Thu May 4 19:49:00 2017 -0700
+Date:   Tue Jun 13 10:53:48 2017 -0700
 
-    Added french language
+    Removed unneeded print
+
+commit 14f2ca8b9d6f165acbe2b80111c3851f3f075eba
+Author: Devin Collins <me@imdevinc.com>
+Date:   Tue Jun 13 10:52:24 2017 -0700
+
+    Updated to new keystone link
 

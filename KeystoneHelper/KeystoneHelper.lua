@@ -6,7 +6,7 @@
 
 local function GetModifiers(linkType, ...)
 	if type(linkType) ~= 'string' then return end
-	local modifierOffset = 4
+	local modifierOffset = 3
 	local instanceID, mythicLevel, notDepleted, _ = ... -- "keystone" links
 	if linkType:find('item') then -- only used for ItemRefTooltip currently
 		_, _, _, _, _, _, _, _, _, _, _, _, _, instanceID, mythicLevel = ...
@@ -35,8 +35,10 @@ local function GetModifiers(linkType, ...)
 	return modifiers, instanceID, mythicLevel
 end
 
-local function DecorateTooltip(self)
-	local _, link = self:GetItem()
+local function DecorateTooltip(self, link, _)
+	if not link then
+		_, link = self:GetItem()
+	end
 	if type(link) == 'string' then
 		local modifiers, instanceID, mythicLevel = GetModifiers(strsplit(':', link))
 		if modifiers then
@@ -52,5 +54,7 @@ local function DecorateTooltip(self)
 	end
 end
 
-ItemRefTooltip:HookScript('OnTooltipSetItem', DecorateTooltip)
+-- hack to handle ItemRefTooltip:GetItem() not returning a proper keystone link
+hooksecurefunc(ItemRefTooltip, 'SetHyperlink', DecorateTooltip) 
+--ItemRefTooltip:HookScript('OnTooltipSetItem', DecorateTooltip)
 GameTooltip:HookScript('OnTooltipSetItem', DecorateTooltip)

@@ -101,6 +101,11 @@ ns.addCastExclusion = function( spellID )
 end
 
 
+ns.ignoreCastOnReset = function( spellID )
+    class.resetCastExclusions[ spellID ] = true
+end
+
+
 ns.addHook = function( hook, func )
     class.hooks[ hook ] = func
 end
@@ -198,6 +203,34 @@ end
 ns.modifyElement = modifyElement
 
 
+local function addGearSet( name, ... )
+
+    class.gearsets[ name ] = class.gearsets[ name ] or {}
+
+    for i = 1, select( '#', ... ) do
+        local id = select( i, ... )
+        local key = ns.formatKey( GetItemInfo( select( i, ... ) ) or "nothing" )
+        class.gearsets[ name ][ id ] = key
+    end
+
+    ns.commitKey( name )
+
+end
+ns.addGearSet = addGearSet
+
+
+local function addUsableItem( key, id )
+    class.items = class.items or {}
+    class.items[ key ] = id
+
+    addGearSet( key, id )
+end
+ns.addUsableItem = addUsableItem
+
+
+
+
+
 -- Wrapper for the ability table.
 local function modifyAbility( k, elem, value )
 
@@ -213,8 +246,20 @@ local function addAbility( key, values, ... )
         ns.Error( "addAbility( " .. key .. " ) - values table is missing 'id' element." )
         return
     end
+
+    if values.item then
+        values.name = GetItemInfo( values.item )
+
+        if not values.name then
+            values.name = key
+            values.recheck_name = true
+        end
+
+        values.texture = select( 10, GetItemInfo( values.item ) ) or 'Interface\\ICONS\\Spell_Nature_BloodLust'
+        addUsableItem( key, values.item )
+    end
     
-    local name = GetSpellInfo( values.id )
+    local name = values.name or GetSpellInfo( values.id )
     if not name and values.id > 0 then
         ns.Error( "addAbility( " .. key .. " ) - unable to get name of spell #" .. values.id .. "." )
         return
@@ -233,12 +278,16 @@ local function addAbility( key, values, ... )
     for i = 1, select( "#", ... ) do
         class.abilities[ select( i, ... ) ] = class.abilities[ key ]
     end
-    
-    ns.commitKey( key )
-    
+
     storeAbilityElements( key, values )
     
-    class.searchAbilities[ key ] = '|T' .. ( GetSpellTexture( values.id ) or 'Interface\\ICONS\\Spell_Nature_BloodLust' ) .. ':O|t ' .. class.abilities[ key ].name
+    if values.item then
+        class.searchAbilities[ key ] = '|T' .. ( values.texture or GetSpellTexture( values.id ) or 'Interface\\ICONS\\Spell_Nature_BloodLust' ) .. ':O|t [' .. ( class.abilities[ key ].name or key ) .. ']'
+    else
+        class.searchAbilities[ key ] = '|T' .. ( values.texture or GetSpellTexture( values.id ) or 'Interface\\ICONS\\Spell_Nature_BloodLust' ) .. ':O|t ' .. ( class.abilities[ key ].name or key )
+    end
+
+    ns.commitKey( key )    
     
 end
 ns.addAbility = addAbility
@@ -299,7 +348,11 @@ local function addAura( key, id, ... )
 
         -- Add the elements, front-loading defaults and just overriding them if something else is specified.
         storeAuraElements( key, 'name', name, 'duration', 30, 'max_stack', 1, ... )
-        
+
+        if class.auras[ key ].incapacitate then
+            table.insert( class.incapacitates, key )
+        end
+                
     end
     
     -- Allow reference by ID and name as well.
@@ -330,6 +383,16 @@ end
 ns.addGlyph = addGlyph 
 
 
+local function addPet( key )
+    state.pet[ key ] = rawget( state.pet, key ) or {}
+    state.pet[ key ].name = key
+    state.pet[ key ].expires = 0
+
+    ns.commitKey( key )
+end
+ns.addPet = addPet
+
+
 local function addPerk( key, id )
 
     local name = GetSpellInfo( id )
@@ -340,13 +403,12 @@ local function addPerk( key, id )
     end
 
     class.perks[ key ] = {
-    id = id,
-    key = key,
-    name = name
-}
+        id = id,
+        key = key,
+        name = name
+    }
 
-ns.commitKey( key )
-
+    ns.commitKey( key )
 end
 ns.addPerk = addPerk
 
@@ -371,9 +433,9 @@ end
 ns.addTalent = addTalent
 
 
-local function addResource( resource, primary )
+local function addResource( resource, primary, no_regen )
 
-    class.resources[ resource ] = true
+    class.resources[ resource ] = 1 + ( no_regen and 1 or 0 )
 
     if primary or #class.resources == 1 then class.primaryResource = resource end
 
@@ -386,24 +448,18 @@ ns.addResource = addResource
 local function removeResource( resource )
 
     class.resources[ resource ] = nil
+    class.regenModel = nil
+
     if class.primaryResource == resource then class.primaryResource = nil end
 
 end
 ns.removeResource = removeResource
 
 
-local function addGearSet( name, ... )
-
-    class.gearsets[ name ] = class.gearsets[ name ] or {}
-
-    for i = 1, select( '#', ... ) do
-        class.gearsets[ name ][ select( i, ... ) ] = ns.formatKey( GetItemInfo( select( i, ... ) ) or "nothing" )
-    end
-
-    ns.commitKey( name )
-
+local function setRegenModel( db )
+    class.regenModel = db
 end
-ns.addGearSet = addGearSet
+ns.setRegenModel = setRegenModel
 
 
 local function setPotion( potion )
@@ -613,8 +669,6 @@ addAura( 'archmages_greater_incandescence_str', 177175, 'duration', 10 )
 addAura( 'maalus', 187620, 'duration', 15 )
 addAura( 'thorasus', 187619, 'duration', 15 )
 
-addAura( 'xavarics_magnum_opus', 207428, 'duration', 30 )
-
 -- Raid Buffs
 addAura( 'str_agi_int', -1, 'duration', 3600 )
 addAura( 'stamina', -2, 'duration', 3600 )
@@ -625,6 +679,7 @@ addAura( 'critical_strike', -6, 'duration', 3600 )
 addAura( 'mastery', -7, 'duration', 3600 )
 addAura( 'multistrike', -8, 'duration', 3600 )
 addAura( 'versatility', -9, 'duration', 3600 )
+
 
 addAura( 'casting', -10, 'feign', function()
     if target.casting then
@@ -641,6 +696,8 @@ addAura( 'casting', -10, 'feign', function()
     debuff.casting.caster = 'unknown'
 end )
 
+
+addAura( 'unknown_buff', -11 )
 
 
 
@@ -706,7 +763,7 @@ addAbility( 'arcane_torrent', {
     cast = 0,
     gcdType = 'off',
     cooldown = 120,
-    toggle = 'cooldowns'
+    -- toggle = 'cooldowns'
     }, 50613, 80483, 129597, 155145, 25046, 69179 )
 
 modifyAbility( 'arcane_torrent', 'id', function( x )
@@ -730,6 +787,22 @@ addHandler( 'arcane_torrent', function ()
 end )
 
 ns.registerInterrupt( 'arcane_torrent' )
+
+
+addAura( "shadowmeld", 58984, "duration", 3600 )
+
+addAbility( "shadowmeld", {
+    id = 58984,
+    spend = 0,
+    cast = 0,
+    gcdType = "spell",
+    cooldown = 120,
+    known = function () return race.night_elf end,
+} )
+
+addHandler( "shadowmeld", function ()
+    applyBuff( "shadowmeld" )
+end )
 
 
 addAbility( 'call_action_list', {
@@ -775,6 +848,15 @@ addAura( 'vigilance_perch', 241332, 'duration', 60, 'max_stack', 5 )
 
 addGearSet( 'the_sentinels_eternal_refuge', 146669 )
 addAura( 'the_sentinels_eternal_refuge', 241331, 'duration', 60, 'max_stack', 5 )
+
+addGearSet( 'prydaz_xavarics_magnum_opus', 132444 )
+addAura( 'xavarics_magnum_opus', 207428, 'duration', 30 )
+
+addGearSet( 'aggramars_stride', 132443 )
+addAura( 'aggramars_stride', 207438, 'duration', 3600 )
+
+addGearSet( 'sephuzs_secret', 132452 )
+addAura( 'sephuzs_secret', 208051, 'duration', 10 )
 
 
 class.potions = {
@@ -830,19 +912,92 @@ end )
 
 
 
---[[ 
-addAbility( 'use_item', {
-    id = -3,
-    name = 'Use Item',
+
+
+--[[ class.usable_items = {
+    no_item = {
+        key = "no_item",
+        item = -1,
+        cooldown = 3600,
+        cast = 0,
+        gcdType = 'off',
+        passive = 'false',
+    },
+    draught_of_souls = {
+        key = "draught_of_souls",
+        item = 140808,
+        cooldown = 80,
+        cast = 0,
+        gcdType = 'off',
+        passive = false,
+        handler = setfenv( function ()
+            applyBuff( "fel_crazed_rage", 3 )
+            setCooldown( "global_cooldown", 3 )
+        end, state )
+    },
+    kiljaedens_burning_wish = {
+        key = "kiljaedens_burning_wish",
+        item = 144259,
+        cooldown = 75,
+        cast = 0,
+        gcdType = 'off',
+        passive = false,
+        handler = setfenv( function () end, state )
+    }
+}
+for k,v in pairs( class.usable_items ) do
+    class.usable_items[ v.item ] = v
+end ]]
+
+
+addUsableItem( "draught_of_souls", 140808 )
+addAura( "fel_crazed_rage", 225141, "duration", 3, "incapacitate", true )
+
+
+addAbility( "draught_of_souls", {
+    id = -100,
+    item = 140808,
     spend = 0,
     cast = 0,
+    cooldown = 80,
     gcdType = 'off',
-    cooldown = 60,
-    toggle = 'cooldowns'
 } )
 
-class.items = {
-} ]]
+addHandler( "draught_of_souls", function ()
+    applyBuff( "fel_crazed_rage", 3 )
+    setCooldown( "global_cooldown", 3 )
+end )
+
+
+addUsableItem( "kiljaedens_burning_wish", 144259 )
+
+addAbility( "kiljaedens_burning_wish", {
+    id = -101,
+    item = 144259,
+    spend = 0,
+    cast = 0,
+    cooldown = 75,
+    gcdType = 'off',
+} )
+
+
+addUsableItem( "faulty_countermeasure", 137539 )
+
+addAbility( "faulty_countermeasure", {
+    id = -102,
+    item = 137539,
+    spend = 0,
+    cast = 0,
+    cooldown = 120,
+    gcdType = 'off',
+} )
+
+addAura( "sheathed_in_frost", 214962, "duration", 30 )
+
+addHandler( "faulty_countermeasure", function ()
+    applyBuff( "sheathed_in_frost", 30 )
+end )
+
 
 
 addAbility( 'variable', {
