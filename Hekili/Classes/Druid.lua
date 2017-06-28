@@ -37,7 +37,7 @@ local setClass = ns.setClass
 local setPotion = ns.setPotion
 local setRegenModel = ns.setRegenModel
 local setRole = ns.setRole
-
+local setTalentLegendary = ns.setTalentLegendary
 
 local RegisterEvent = ns.RegisterEvent
 local RegisterUnitEvent = ns.RegisterUnitEvent
@@ -57,10 +57,10 @@ if (select(2, UnitClass('player')) == 'DRUID') then
         -- setSpecialization( "feral" )
 
         -- Resources
-        addResource( "mana" )
-        addResource( "energy" )
-        addResource( "rage", nil, true )
-        addResource( "combo_points", nil, true )
+        addResource( "mana", SPELL_POWER_MANA )
+        addResource( "energy", SPELL_POWER_ENERGY )
+        addResource( "rage", SPELL_POWER_RAGE, true )
+        addResource( "combo_points", SPELL_POWER_COMBO_POINTS, true )
 
         setRegenModel( {
             elunes_guidance = {
@@ -269,6 +269,11 @@ if (select(2, UnitClass('player')) == 'DRUID') then
 
         addGearSet( 'fangs_of_ashamane', 128860 )
         setArtifact( 'fangs_of_ashamane' )
+
+
+        addGearSet( 'soul_of_the_archdruid', 151636 )
+        setTalentLegendary( 'soul_of_the_archdruid', 'feral',       'soul_of_the_forest' )
+        setTalentLegendary( 'soul_of_the_archdruid', 'guardian',    'soul_of_the_forest' )
 
 
         addMetaFunction( 'state', 'gcd', function()

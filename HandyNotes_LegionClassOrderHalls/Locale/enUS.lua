@@ -1,4 +1,4 @@
--- $Id: enUS.lua 67 2017-06-18 11:25:51Z arith $
+-- $Id: enUS.lua 70 2017-06-21 17:55:46Z arith $
 
 local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local L = AceLocale:NewLocale("HandyNotes_LegionClassOrderHalls", "enUS", true, true);
@@ -308,6 +308,7 @@ L["Winter Payne"] = "Winter Payne"
 L["Wise Scholar Lianji <Senior Master Serpent>"] = "Wise Scholar Lianji <Senior Master Serpent>"
 L["Yancey Grillsen <Bloodsail Recruiter>"] = "Yancey Grillsen <Bloodsail Recruiter>"
 L["Yaris Darkclaw <Recruiter>"] = "Yaris Darkclaw <Recruiter>"
+L["Yushi <Seal of Broken Fate Shipment>"] = "Yushi <Seal of Broken Fate Shipment>"
 L["Zen'kiki"] = "Zen'kiki"
 
 -- ToC

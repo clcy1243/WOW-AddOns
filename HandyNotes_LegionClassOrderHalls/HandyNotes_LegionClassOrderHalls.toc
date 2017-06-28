@@ -20,12 +20,12 @@
 # ## Notes-zhTW: 顯示各職業大廳裡 NPC 與主要的 POI 的位置
 #@end-debug@
 ## Author: arith
-## Version: v1.19
+## Version: v1.20
 ## RequiredDeps: HandyNotes
 ## OptionalDeps: LibBabble-SubZone-3.0, LibUIDropDownMenu
 ## DefaultState: enabled
 ## SavedVariables: HandyNotes_LegionClassOrderHallsDB
-## X-Date: 2017-06-19T16:50:53Z
+## X-Date: 2017-06-21T17:55:46Z
 ## X-License: GPLv2
 ## X-Category: Map
 

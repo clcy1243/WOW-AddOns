@@ -1,3 +1,120 @@
+commit 96ff11f7223ad43d823a3cc4bf0f31ab73514e29
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Tue Jun 27 22:30:15 2017 -0400
+
+    Quick fixes.
+    
+    T20 fix for Shamans.
+    Stuff.
+
+commit 470b7d2f9136ab040182cbbfdbfac5b79c55771e
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Mon Jun 26 23:36:48 2017 -0400
+
+    Paladins
+    
+    Use new talent checking system.
+    Fix? Crusade detection.  If it was broken.  IDK.
+
+commit 0bcef853c5753ba34c8900a0dae11b8050bc4065
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Jun 25 23:51:22 2017 -0400
+
+    Vengeance
+    
+    - Still work-in-progress, but fix Spirit Bomb and toggle.defensives ->
+    toggle.use_defensives.
+
+commit d49c89219853a674dd3bcc91b728663fe626eaf2
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Jun 25 23:42:24 2017 -0400
+
+    Warlock.lua
+    
+    Fix soul_shard forecasting error that prevented loading.
+
+commit bb814f9e91c85312459de8e0241ae40d9db766ff
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Jun 25 23:37:23 2017 -0400
+
+    Patch 7.2.5 Legendary Rings
+    
+    - Alpha test for DK, DH, Druid (sorta), Hunter, Monk, Paladin, Shaman.
+    - Remove some outdated PTR flags.
+
+commit 5aa15685ad0b17e83fe6ad8537a1eccbfaf6cd95
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Jun 25 21:23:44 2017 -0400
+
+    Maelstrom doesn't auto-regen.
+
+commit a044572d556512f9f3c50377b00401f5e686eeb6
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Jun 25 21:23:29 2017 -0400
+
+    Lots of Post 7.2.5 Updates/Fixes/Testing...
+    
+    Classes.lua
+    - Do a better job of labeling resources/modeling/resources.
+    - Preliminary support for the legendary talent rings, not able to test
+    personally at this time.
+    - Support some more on-use trinkets (have to manually add to your APLs,
+    unfortunately).
+    
+    DeathKnight.lua
+    - Model Runes/RP more accurately.
+    - Update APLs.
+    
+    DemonHunter.lua
+    - Model resources.
+    - Update APLs.
+    
+    Druid.lua
+    - Update resource installation process.
+    
+    Hunter.lua
+    - Update Survival APLs.
+    
+    Monk.lua
+    - Update resource regen model.
+    - Update RJW talent detection.
+    
+    Paladin.lua
+    - Update APLs.
+    
+    Shaman.lua
+    - Update resource regen/detection.
+    - Add in default clash for Windstrike.
+    
+    Warrior.lua
+    - Initial Warrior stuff ( later prediction stuff not yet supported )
+    from UnleashedD3.
+    
+    Constants.lua
+    - Update resource names/IDs.
+    
+    Core.lua
+    - Revamped base engine again, still work-in-progress...
+    
+    Events.lua
+    - Still working on keybinding detection (and responsiveness)...
+    
+    Options.lua
+    - Add clashes to the Class Settings tab.
+    
+    State.lua
+    - Revise mt_resources to handle forecasting.
+    
+    Targets.lua
+    - Ignore enemies not in your phase (i.e., Desolate Host adds).
+    
+    UI.lua
+    - Maybe fix a bug where locking/unlocking via minimap icon would leave
+    your displays unlocked even though you locked them.
+    
+    Utils.lua
+    - Convert APLs with "cds" sections to read "CDs" because ugh.
+
 commit 0547fa8d3190697f2c8c6f0e8bc65434a2644546
 Author: Hekili <Hekili@users.noreply.github.com>
 Date:   Thu Jun 15 08:50:17 2017 -0400
@@ -1175,127 +1292,4 @@ Author: Hekili <Hekili@users.noreply.github.com>
 Date:   Mon Feb 6 10:11:43 2017 -0500
 
     FIX:  Tiny error in flicker-protection code.
-
-commit 2912bff1c292a8e7249be1e1841a64d2ae90a01e
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Mon Feb 6 01:01:55 2017 -0500
-
-    Assorted Fixes, Improvements for Hunter Support
-    
-    Classes:  Block a 'pseudo-start' of combat for actions that are "in-air"
-    and projected to land.
-    + Add Netherwinds to the list of Bloodlust buffs.
-    
-    Core:  Initial implementation of "flicker protection."
-    + Basically, if it sees that the addon's last several recommendations
-    have flickered between the newest actions and something else, it just
-    won't bother updating.  Will be iterating on this.
-    
-    Events:  Spells that have been cast and are projected to land will
-    default to a 0.05 travel time.
-    
-    State:  'query_time' will now incorporate latency into its
-    recommendation.  This will result in the addon making recommendations
-    based on a slightly later game-state.
-    + Holy Power is treated like a regenerating resource when Liadrin's Fury
-    Unleashed is equipped and AW/Crusade is up.  THIS NEEDS TESTING.
-    + Tried to improve ability "timeToReady" calculations for Survival
-    Hunters when using Spitting Cobra.
-
-commit e08f75682d33de3028b13802bc6cb9d9c5a6b9b1
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Wed Feb 1 22:25:59 2017 -0500
-
-    Paladin:  Import updates for Retribution APLs.
-
-commit fa58f4651b5456718e9c386bea65a447dd0e45fc
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Wed Feb 1 18:09:26 2017 -0500
-
-    Elemental:  Recommend Stormkeeper more often in one of the Ele builds.
-
-commit 4111653b17642a66a731119e01110b9f722f1948
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Wed Feb 1 17:53:19 2017 -0500
-
-    Improve keybinding detection and labeling.
-
-commit a4bf55dca02774bac6f4e0903106a7ce4bd636e0
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sun Jan 29 20:26:30 2017 -0500
-
-    Harder, Faster, Better, Stronger
-    
-    Events:  The addon will respond more quickly to events that impact
-    ability recommendations.  This may require further tuning on a per-spec
-    basis, to make sure all abilities with a travel time are flagged
-    appropriately.
-    + The addon will now gather keybindings using the default API.  This
-    *should* work for any bar mod, but I'm not going to test them
-    personally.
-    
-    Paladins:  You can now specify the maximum amount of Holy Power that
-    you'll allow Wake of Ashes to waste.  The addon will not recommend Wake
-    of Ashes if you have more than the specified amount of Holy Power (and
-    have the Ashes to Ashes trait).
-    
-    Core:  The addon will do a better job of purging ancient profiles so it
-    will, you know, work.
-    + Display updates will occur more frequently (so Monk/Hunter timers will
-    be less...lurchy?).
-    + The addon will attempt to detect and display ability keybindings.
-    
-    Options:  Default Nameplate Detection Range increased to 8.
-    + Recommendation Window added, allows you to specify that an ability has
-    to be available for at least X seconds (by default, 0.1) in order to be
-    recommend.  This *may* reduce some ability flicker.
-    + Each display has its own independent settings for keybinds (show/don't
-    show, upper/lowercase).
-    o Renamed the "Blizzard Overlay" to "Overlay Glow" for slight clarity
-    improvement.
-    
-    State:  Keep track of latency, may factor it into buff.X.up,
-    buff.X.remains and similar criteria going forward.
-    - Removed the 0.05s padding from timeToReady() for focus/energy based
-    classes.
-
-commit 7197fb8ff0f6cb7c31c4e05047fd33bb3c7ec589
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sat Jan 28 11:15:47 2017 -0500
-
-    Tweaks and Fixes
-    
-    Classes:  Store item keys when storing gearsets.
-    - Hunters gain 15 Focus from Arcane Torrent.
-    
-    Core and Scripts:  Removed old override and delay arguments from
-    checkScript.
-    + Added 'recheck' as arg4 to checkScript.  recheck tells the addon to
-    see if the same script passes after `recheck' seconds, ostensibly to
-    confirm that the action will be recommended for at least that much time.
-    o recheck will need further config option support through the UI, it is
-    not yet used.
-    
-    State: Check GetSpellCharges() using spellID rather than spell name,
-    mainly to fix Storm, Earth, and Fire but will surely impact other
-    things.
-    o Built in padding on energy/focus regen reduced to 0.05s from 0.1s.
-
-commit 39a10f34f6839a9d28962246fbf3e6bce8d21b87
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Fri Jan 20 20:55:58 2017 -0500
-
-    7.1.5.2 work-in-progress
-    
-    Shaman:  Add Lava Surge buff for Elemental.  Add Lava Surge/Lava Burst
-    interaction.
-    
-    Core:  Allow texture overrides.  Allow time offsets to show for Hunters.
-    
-    Scripts:  Allow basic duplicate checking to see if action criteria is
-    met over a window period (not presently used).
-    
-    State:  Improve basic pet mechanics.
-    + Fix an error with regard to unit IDs in debuffs.
-    + Remove maelstrom hook from the state table.
 

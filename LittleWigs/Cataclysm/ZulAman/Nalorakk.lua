@@ -23,11 +23,13 @@ local bear = GetSpellInfo(7090)
 local L = mod:NewLocale("enUS", true)
 if L then
 
-L["bear_trigger"] = "You call on da beast"
-L["forms"] = "Forms"
-L["forms_desc"] = "Warn for form changes."
-L["troll_message"] = "Troll Form"
-L["troll_trigger"] = "Make way for da Nalorakk!"
+-- ZulAman/Nalorakk
+	L["bear_trigger"] = "You call on da beast"
+	L["forms"] = "Forms"
+	L["forms_desc"] = "Warn for form changes."
+	L["troll_message"] = "Troll Form"
+	L["troll_trigger"] = "Make way for da Nalorakk!"
+
 end
 L = mod:GetLocale()
 

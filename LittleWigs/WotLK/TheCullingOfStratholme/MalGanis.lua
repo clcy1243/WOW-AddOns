@@ -1,4 +1,4 @@
--------------------------------------------------------------------------------
+﻿-------------------------------------------------------------------------------
 --  Module Declaration
 
 local mod = BigWigs:NewBoss("Mal'Ganis", 521)
@@ -21,6 +21,7 @@ local sleepDuration = 8
 
 local L = mod:NewLocale("enUS", true)
 if L then
+
 
 end
 L = mod:GetLocale()

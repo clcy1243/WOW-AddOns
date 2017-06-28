@@ -1,4 +1,4 @@
--- $Id: DB.lua 67 2017-06-18 11:25:51Z arith $
+-- $Id: DB.lua 70 2017-06-21 17:55:46Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -103,7 +103,7 @@ DB.points = {
 		[38483422] = { recruiter=true, label=L["Yaris Darkclaw <Recruiter>"], npc=106442, note=CAPACITANCE_START_RECRUITMENT },
 		[36332544] = { recruiter=true, label=L["Sister Lilith <Recruiter>"], npc=108393, note=CAPACITANCE_START_RECRUITMENT },
 		[43256329] = { recruiter=true, label=L["Treant Sapling <Ancient of War Tender>"], npc= 111786, talent=356, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Ancient of War order advancement"] },
-		[29944293] = { recruiter=true, label=L["Shalorn Star <Dreamgrove Warden Recruiter>"], npc=108391, talent=492, note=L["Requires Wardens of the Grove order advancement"] },
+		[29944293] = { recruiter=true, label=L["Shalorn Star <Dreamgrove Warden Recruiter>"], npc=108391, talent=492, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Wardens of the Grove order advancement"] },
 		[40992938] = { sealOrder=true, label=L["Almenis <Seal of Broken Fate Shipment>"], npc=110810, talent=355, note=L["Seal of Broken Fate"].."\n"..L["Requires Elune's Chosen order advancement"] },
 		[33883255] = { research=true, label=L["Celadine the Fatekeeper <Dreamgrove Researcher>"], npc=111737, note=L["Artifact Research"] },
 		[30525359] = { artifact=true, label=L["Seed of Ages"], class="DRUID", note=ARTIFACT_POWER },
@@ -124,7 +124,7 @@ DB.points = {
 		[42484656] = { mission=true, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS },
 		[42883776] = { recruiter=true, label=L["Lenara <Recruiter>"], npc=106444, note=CAPACITANCE_START_RECRUITMENT },
 		[57733260] = { recruiter=true, label=L["Sampson <Recruiter>"], npc=106446, note=CAPACITANCE_START_RECRUITMENT },
-		[51003160] = { recruiter=true, label=L["Nighthuntress Silus <Nightborne Hunters Recruiter>"], npc=106445, talent=495, note=L["Requires Born of the Night order advancement"] },
+		[51003160] = { recruiter=true, label=L["Nighthuntress Silus <Nightborne Hunters Recruiter>"], npc=106445, talent=495, note=CAPACITANCE_START_RECRUITMENT.."\n"..L["Requires Born of the Night order advancement"] },
 		[43234858] = { sealOrder=true, label=L["Tu'Las the Gifted <Seal of Broken Fate Shipment>"], npc=110816, talent=377, note=L["Seal of Broken Fate"].."\n"..L["Requires Unseen Path order advancement"] },
 		[52575434] = { research=true, label=L["Holt Thunderhorn <Lore and Legends>"], npc=98737, note=L["Artifact Research"] },
 		[58674880] = { armaments=true, label=L["Berger the Steadfast <Champion Armaments>"], npc=110412, talent=378, note=L["Champion Armaments"] },
@@ -169,7 +169,7 @@ DB.points = {
 		[53335975] = { recruiter=true, label=L["Tianji <Ox Troop Trainer>"], npc=105015, note=CAPACITANCE_START_RECRUITMENT },
 		[54405880] = { recruiter=true, label=L["Tianili <Celestial Trainer>"], npc=106538, talent=257, note=CAPACITANCE_START_RECRUITMENT .."\n"..L["Requires Celestial Favor order advancement"] },
 		[51805560] = { recruiter=true, label=L["Master Swoo <Masters of Serenity Recruiter>"], npc=120145, talent=498, note=L["Requires Masters of the Path order advancement"] },
-		--[] = { sealOrder=true, label=L["xxx <Seal of Broken Fate Shipment>"], npc=0, talent=256, note=L["Seal of Broken Fate"].."\n"..L["Requires One with Destiny order advancement"] },
+		[53475760] = { sealOrder=true, label=L["Yushi <Seal of Broken Fate Shipment>"], npc=110817, talent=256, note=L["Seal of Broken Fate"].."\n"..L["Requires One with Destiny order advancement"] },
 		[46704669] = { research=true, label=L["Lorewalker Cho <Head Archivist>"], npc=106942, note=L["Artifact Research"] },
 		[51464800] = { artifact=true, label=L["Forge of the Roaring Mountain"], class="MONK", note=ARTIFACT_POWER },
 		[53045977] = { classUpgrade=true, label=L["Number Nine Jia <Class Hall Upgrades>"], npc=98939, note=ORDER_HALL_TALENT_TITLE  },

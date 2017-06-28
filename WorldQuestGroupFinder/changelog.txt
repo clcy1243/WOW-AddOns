@@ -1,4 +1,13 @@
-﻿0.26.1 (17/06/2017)
+﻿0.26.3 (25/06/2017)
+- Fix for error at login 
+- Localizations updated
+
+0.26.2 (22/06/2017)
+- The "Relist" frame will no longer appear after creating a new group
+- The "cannot be accomplished in a group" false error should no longer occur (need feedback!)
+- Localizations updated
+
+0.26.1 (17/06/2017)
 - The WQGF frame now appears again when someone leaves the party and the group is no longer listed to allow the leader to relist the group
 - The "Too many players" pop-up will no longer appear
 - Localizations updated

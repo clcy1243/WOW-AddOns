@@ -1,4 +1,4 @@
--- $Id: zhTW.lua 67 2017-06-18 11:25:51Z arith $
+-- $Id: zhTW.lua 70 2017-06-21 17:55:46Z arith $
 
 local L = LibStub("AceLocale-3.0"):NewLocale("HandyNotes_LegionClassOrderHalls", "zhTW", false)
 
@@ -309,6 +309,7 @@ L["Winter Payne"] = "寒冬派恩"
 L["Wise Scholar Lianji <Senior Master Serpent>"] = "睿智的學者蓮姬 <蛟上師>"
 L["Yancey Grillsen <Bloodsail Recruiter>"] = "楊希·貴爾森 <血帆招募員>"
 L["Yaris Darkclaw <Recruiter>"] = "亞里斯·暗爪 <招募員>"
+L["Yushi <Seal of Broken Fate Shipment>"] = "遊曦 <破碎命運徽印貨物>"
 L["Zen'kiki"] = "贊基奇"
 
 -- ToC

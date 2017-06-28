@@ -261,13 +261,24 @@ end
 function GSE.IsLoopSequence(sequence)
   local loopcheck = false
   if not GSE.isEmpty(sequence.PreMacro) then
-    loopcheck = true
+    if type(sequence.PreMacro) == "table" then
+      if table.getn(sequence.PreMacro) > 0 then
+        loopcheck = true
+        GSE.PrintDebugMessage("Setting Loop Check True due to PreMacro", "Storage")
+      end
+    end
   end
   if not GSE.isEmpty(sequence.PostMacro) then
-    loopcheck = true
+    if type(sequence.Postmacro) == "table" then
+      if table.getn(sequence.PostMacro) > 0 then
+        loopcheck = true
+        GSE.PrintDebugMessage("Setting Loop Check True due to PreMacro", "Storage")
+      end
+    end
   end
   if not GSE.isEmpty(sequence.LoopLimit) then
     loopcheck = true
+    GSE.PrintDebugMessage("Setting Loop Check True due to LoopLimit", "Storage")
   end
   return loopcheck
 end
@@ -763,7 +774,9 @@ function GSE.OOCCheckMacroCreated(SequenceName, create)
   local macroIndex = GetMacroIndexByName(SequenceName)
   if macroIndex and macroIndex ~= 0 then
     found = true
-    EditMacro(macroIndex, nil, nil,  GSE.CreateMacroString(SequenceName))
+    if create then
+      EditMacro(macroIndex, nil, nil,  GSE.CreateMacroString(SequenceName))
+    end
   else
     if create then
       local icon = (GSE.isEmpty(GSELibrary[classid][SequenceName].Icon) and Statics.QuestionMark or GSELibrary[classid][SequenceName].Icon)

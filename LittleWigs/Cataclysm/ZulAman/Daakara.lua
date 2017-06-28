@@ -20,16 +20,18 @@ mod.toggleOptions = {
 local L = mod:NewLocale("enUS", true)
 if L then
 
-L["bear_message"] = "Bear Form!"
-L["bear_trigger"] = "Got me some new tricks... like me brudda bear...."
-L["dragonhawk_message"] = "Dragonhawk Form!"
-L["dragonhawk_trigger"] = "Ya don' have to look to da sky to see da dragonhawk!"
-L["eagle_message"] = "Eagle Form!"
-L["eagle_trigger"] = "Dere be no hidin' from da eagle!"
-L["form"] = "Phases"
-L["form_desc"] = "Warn when Daakara changes form."
-L["lynx_message"] = "Lynx Form!"
-L["lynx_trigger"] = "Let me introduce you to me new bruddas: fang and claw!"
+-- ZulAman/Daakara
+	L["bear_message"] = "Bear Form!"
+	L["bear_trigger"] = "Got me some new tricks... like me brudda bear...."
+	L["dragonhawk_message"] = "Dragonhawk Form!"
+	L["dragonhawk_trigger"] = "Ya don' have to look to da sky to see da dragonhawk!"
+	L["eagle_message"] = "Eagle Form!"
+	L["eagle_trigger"] = "Dere be no hidin' from da eagle!"
+	L["form"] = "Phases"
+	L["form_desc"] = "Warn when Daakara changes form."
+	L["lynx_message"] = "Lynx Form!"
+	L["lynx_trigger"] = "Let me introduce you to me new bruddas: fang and claw!"
+
 end
 L = mod:GetLocale()
 

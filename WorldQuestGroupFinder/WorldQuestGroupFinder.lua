@@ -73,7 +73,7 @@ function RegisteredEvents:PLAYER_LOGIN(event)
 	WorldQuestGroupFinder.SetHooks()
 	WorldQuestGroupFinderConf.CreateConfigMenu()
 	WorldQuestGroupFinder.dprint("World Quest Group Finder - "..L["WQGF_DEBUG_MODE_ENABLED"])
-	C_Timer.After(1, function()
+	C_Timer.After(4, function()
 		local playerRealmInfo = select(4, LibStub("LibRealmInfo"):GetRealmInfoByUnit("player"))
 		if (playerRealmInfo == "PVP" or playerRealmInfo == "RPPVP") then
 			playerRealmType = "PVP"
@@ -283,10 +283,19 @@ function RegisteredEvents:GROUP_ROSTER_UPDATE(event)
 		end
 		if (UnitIsGroupLeader("player")) then
 			CheckDistances()
-			-- If doing a world quest, group is not full and applicants are waiting, we will try to invite them
 			C_Timer.After(1, function()
+				-- If doing a world quest, group is not full and applicants are waiting, we will try to invite them
 				if (((GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) + C_LFGList.GetNumInvitedApplicantMembers() < (MAX_PARTY_MEMBERS+1)) or raidQuests[currentWQ]) and C_LFGList.GetNumApplicants() > 0) then
 					--WorldQuestGroupFinder.HandleCustomAutoInvite()
+				end
+				-- Ask to relist
+				if (GetNumGroupMembers() <= MAX_PARTY_MEMBERS and not C_LFGList.GetActiveEntryInfo()) then
+					manualActionsFrame:Show()
+					manualActionsFrame.NextButton:Show()
+					manualActionsFrame.NextButton:SetText(L["WQGF_FRAME_RELIST_GROUP"])
+					manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
+						WorldQuestGroupFinder.CreateGroup(currentWQ)
+					end)
 				end
 			end)
 			-- You don't want to  be in raid mode, unless it is an elite quest
@@ -295,14 +304,6 @@ function RegisteredEvents:GROUP_ROSTER_UPDATE(event)
 			end
 			if raidQuests[currentWQ] then
 				ConvertToRaid()
-			end
-			if (GetNumGroupMembers() <= MAX_PARTY_MEMBERS and not C_LFGList.GetActiveEntryInfo()) then
-				manualActionsFrame:Show()
-				manualActionsFrame.NextButton:Show()
-				manualActionsFrame.NextButton:SetText(L["WQGF_FRAME_RELIST_GROUP"])
-				manualActionsFrame.NextButton:SetScript("OnClick", function(self, button, down)
-					WorldQuestGroupFinder.CreateGroup(currentWQ)
-				end)
 			end
 		end
 	end
@@ -857,6 +858,7 @@ function WorldQuestGroupFinder.HandleBlockClick(wqID, forceCreate, wait)
 	if (tempWQ ~= wqID or (C_LFGList.GetNumApplications() == 0 and not C_LFGList.GetActiveEntryInfo())) then
 		WorldQuestGroupFinder.dprint(string.format("World quest has been clicked. ID: %d", wqID))
 		-- Ignore pet battle and dungeon quests
+		local _, _, _, worldQuestType, _, _, _, _, _, _ = WorldQuestGroupFinder.GetQuestInfo(wqID)
 		if (blacklistedQuests[wqID] or worldQuestType == LE_QUEST_TAG_TYPE_PET_BATTLE or worldQuestType == LE_QUEST_TAG_TYPE_DUNGEON or worldQuestType == LE_QUEST_TAG_TYPE_PROFESSION) then
 			WorldQuestGroupFinder.prefixedPrint(L["WQGF_CANNOT_DO_WQ_IN_GROUP"])
 			return false

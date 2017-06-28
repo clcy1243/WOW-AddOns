@@ -27,8 +27,10 @@ local wave = GetSpellInfo(96457)
 local L = mod:NewLocale("enUS", true)
 if L then
 
-L["phase"] = "Phase"
-L["phase_desc"] = "Warn for phase changes."
+-- ZulGurub/Kilnara
+	L["phase"] = "Phase"
+	L["phase_desc"] = "Warn for phase changes."
+
 end
 L = mod:GetLocale()
 

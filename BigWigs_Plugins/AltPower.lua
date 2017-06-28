@@ -350,7 +350,7 @@ do
 				local tbl = class and colorTbl[class] or GRAY_FONT_COLOR
 				roleColoredList[unit] = ("%s|cFF%02x%02x%02x%s|r"):format(roleIcons[UnitGroupRolesAssigned(unit)], tbl.r*255, tbl.g*255, tbl.b*255, name)
 			end
-			updater = plugin:ScheduleRepeatingTimer(UpdateDisplay, 2)
+			updater = plugin:ScheduleRepeatingTimer(UpdateDisplay, 1)
 		end
 
 		if repeatSync then
@@ -496,7 +496,8 @@ do
 	function UpdateDisplay()
 		for i = 1, maxPlayers do
 			local unit = unitList[i]
-			powerList[unit] = syncPowerList and (syncPowerList[unit] or -1) or UnitPower(unit, 10) -- ALTERNATE_POWER_INDEX = 10
+			-- If we don't have sync data (players not using BigWigs) use whatever (potentially incorrect) data Blizz gives us.
+			powerList[unit] = syncPowerList and syncPowerList[unit] or UnitPower(unit, 10) -- ALTERNATE_POWER_INDEX = 10
 		end
 		tsort(sortedUnitList, sortTbl)
 		for i = 1, db.expanded and 25 or 10 do

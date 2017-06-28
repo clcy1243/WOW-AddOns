@@ -11,7 +11,7 @@
 ## Notes-zhTW: 增加各種傳送物品到AdiBags的虛擬類別
 ## Notes-frFR: Ajoute différents objets de type Pierre de foyer aux groupes virtuels d'AdiBags
 
-## Version: 7.2-release3
+## Version: 7.2-release4
 ## Author: Myrroddin of Llane-US (Knights of the Storm, Alliance)
 ## X-Date: 2017-06-04T18:05:53Z
 ## X-License: © 2016 - 2017 Paul "Myrroddin" Vandersypen, All Rights Reserved

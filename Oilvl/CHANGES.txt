@@ -1,10 +1,9 @@
 ------------------------------------------------------------------------
-r707 | olzenkhaw | 2017-06-13 08:50:40 -0500 (Tue, 13 Jun 2017) | 1 line
+r721 | olzenkhaw | 2017-06-27 12:13:16 -0500 (Tue, 27 Jun 2017) | 1 line
 Changed paths:
    M /trunk/Oilvl.lua
    M /trunk/Oilvl.toc
-   D /trunk/libs/LibUIDropDownMenu
 
-v6.6.0 Added Tome of Sargeras Raid Progression
+v6.6.7 - fix a bug
 ------------------------------------------------------------------------
 

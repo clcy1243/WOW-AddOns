@@ -4,7 +4,7 @@
 -- NickTag:SetNickname (name) -> set the player nick name, after set nicktag will broadcast the nick over addon guild channel.
 -- 
 
-local major, minor = "NickTag-1.0", 8
+local major, minor = "NickTag-1.0", 9
 local NickTag, oldminor = LibStub:NewLibrary (major, minor)
 
 if (not NickTag) then 
@@ -939,7 +939,10 @@ end
 
 			serial = select ( 3, strsplit ( "-", serial ) )
 		end
-		return tonumber ("0x"..serial)
+		if (not serial) then
+			return
+		end
+		return tonumber ("0x" .. serial)
 	end
 	
 	--> choose avatar window

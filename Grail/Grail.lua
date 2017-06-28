@@ -407,6 +407,11 @@
 --		087	Updates some quest/NPC information for Legion.
 --			Corrects problem where GrailDatabase.learned was not being initialized before accessed.
 --			Uses Blizzard's new calendar API present in 7.2.
+--		088	Changes the Interface to 70200
+--			Updates some quest/NPC information for Legion.
+--			Adds the ability to handle artifact levels which are required for some newer quests.
+--		089	Corrects problem where garrison NPC building prerequisites was causing a Lua error.
+--			Updates some quest/NPC information.
 --
 --	Known Issues
 --
@@ -609,6 +614,7 @@ experimental = false,	-- currently this implementation does not reduce memory si
 		NPC_TYPE_KILL = 'KILL',
 		abandonPostNotificationDelay = 1.0,
 		abandoningQuestIndex = nil,
+		artifactLevels = {},	-- key is itemID, value is level
 		availableWorldQuests = {},
 
 		-- Bit mask system for quest status
@@ -724,6 +730,7 @@ experimental = false,	-- currently this implementation does not reduce memory si
 		bitMaskQuestRareMob		=	0x00010000,		-- rare mob
 		bitMaskQuestTreasure	=	0x00020000,
 		bitMaskQuestWorldQuest	=	0x00040000,
+		bitMaskQuestBiweekly	=	0x00080000,
 -- 		lots of unused bits we can still abuse :-)
 		bitMaskQuestSpecial		=	0x80000000,		-- quest is "special" and never appears in the quest log
 		-- End of bit mask values
@@ -888,6 +895,7 @@ experimental = false,	-- currently this implementation does not reduce memory si
 					if self.forceLocalizedQuestNameLoad then
 						self:LoadAddOn("Grail-Quests-" .. self.playerLocale)
 					end
+					self:LoadAddOn("Blizzard_ArtifactUI")
 
 					--
 					--	Create the tooltip that we use for getting information like NPC name
@@ -1134,7 +1142,7 @@ experimental = false,	-- currently this implementation does not reduce memory si
 					end
 					for i = 1, #(continentNames), (1 + offset) do
 						mapId = self.existsWoD and tonumber(continentNames[i]) or self.continentMapIds[i]
-						L = { name = continentNames[(i + offset)], zones = {}, mapID = mapId }
+						L = { name = continentNames[(i + offset)], zones = {}, mapID = mapId, dungeons = {} }
 						continentIndex = (i + offset) / (1 + offset)
 						zoneNames = { GetMapZones(continentIndex) }
 						for j = 1, #(zoneNames), (1 + offset) do
@@ -1329,6 +1337,8 @@ experimental = false,	-- currently this implementation does not reduce memory si
 						self:_CoalesceDelayedNotification("Status", 0)
 					end)
 
+frame:RegisterEvent("ARTIFACT_UPDATE")
+frame:RegisterEvent("ARTIFACT_MAX_RANKS_UPDATE")
 					frame:RegisterEvent("ACHIEVEMENT_EARNED")		-- e.g., quest 29452 can be gotten if certain achievements are complete
 					frame:RegisterEvent("CRITERIA_EARNED")		-- for debugging to see when criteria are earned in MoP
 					frame:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")	-- needed for quest status caching
@@ -1384,6 +1394,18 @@ experimental = false,	-- currently this implementation does not reduce memory si
 						self:_CoalesceDelayedNotification("Bags", self.delayBagUpdate)
 					else
 						self:_RegisterDelayedEvent(frame, { 'BAG_UPDATE' } )
+					end
+				end
+			end,
+
+			['ARTIFACT_XP_UPDATE'] = function(self, frame)
+				local Dynamic = C_ArtifactUI.IsAtForge() and C_ArtifactUI.GetArtifactInfo or C_ArtifactUI.GetEquippedArtifactInfo
+				local itemID, _, _, _, _, ranksPurchased = Dynamic()
+				if nil ~= itemID and nil ~= ranksPurchased then
+					local olderValue = self.artifactLevels[itemID]
+					if olderValue ~= ranksPurchased then
+						self.artifactLevels[itemID] = ranksPurchased
+						self:_StatusCodeInvalidate(self.invalidateControl[self.invalidateGroupArtifactLevel])
 					end
 				end
 			end,
@@ -1548,6 +1570,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 				-- This would manifest itself when the UI is reloaded, and then the map location would be lost.  By forcing the map to the current zone
 				-- the problem goes away.
 				SetMapToCurrentZone()
+				frame:RegisterEvent("ARTIFACT_XP_UPDATE")
 			end,
 
 			-- Note that the new level is recorded here, because during processing of this event calls to UnitLevel('player')
@@ -1722,7 +1745,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 				--	If the level as reported by Blizzard API does not match our internal database we should note that fact
 				if self:DoesQuestExist(questId) then
 					local internalQuestLevel = self:QuestLevel(questId)
-					if (0 ~= internalQuestLevel and (internalQuestLevel or 1) ~= level) or (0 == internalQuestLevel and level ~= UnitLevel('player')) then
+					if (0 ~= internalQuestLevel and (internalQuestLevel or 1) ~= level) or (0 == internalQuestLevel and level ~= 0 and level ~= UnitLevel('player')) then
 						errorString = errorString .. "|Level:" .. level
 						self:_RecordBadQuestData(errorString)
 					end
@@ -2114,12 +2137,13 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 		-- are associated with Blizzard groups (like factions), which are noted.
 		invalidateControl = {},
 
-		invalidateGroupHighestValue = 4,
+		invalidateGroupHighestValue = 5,
 
 		invalidateGroupWithering = 1,
 		invalidateGroupGarrisonBuildings = 2,
 		invalidateGroupCurrentWorldQuests = 3,
 		invalidateGroupArtifactKnowledge = 4,
+		invalidateGroupArtifactLevel = 5,
 		invalidateGroupBaseAchievement = 1000000,	-- the actual achievement ID is added to this
 		invalidateGroupBaseBuff = 2000000,	-- the actual buff ID is added to this
 		invalidateGroupBaseItem = 3000000,	-- the actual item ID is added to this
@@ -2231,7 +2255,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			[4] = { 1158, 1173, 1135, 1171, 1174, 1178, 1172, 1177, 1204, },
 			[5] = { 1216, 1351, 1270, 1277, 1275, 1283, 1282, 1228, 1281, 1269, 1279, 1243, 1273, 1358, 1276, 1271, 1242, 1278, 1302, 1341, 1337, 1345, 1272, 1280, 1352, 1357, 1353, 1359, 1375, 1376, 1387, 1388, 1435, 1492, },
 			[6] = { 1445, 1515, 1520, 1679, 1681, 1682, 1708, 1710, 1711, 1731, 1732, 1733, 1735, 1736, 1737, 1738, 1739, 1740, 1741, 1847, 1848, 1849, 1850, },
-			[7] = { 1815, 1828, 1859, 1860, 1862, 1883, 1888, 1894, 1899, 1900, 1919, 1947, 1948, 1975, 1984, 1989, },
+			[7] = { 1815, 1828, 1859, 1860, 1862, 1883, 1888, 1894, 1899, 1900, 1919, 1947, 1948, 1975, 1984, 1989, 2045, },
 			},
 
 		-- These reputations use the friendship names instead of normal reputation names
@@ -2446,6 +2470,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			["7B7"] = "Conjurer Margoss",
 			["7C0"] = "The First Responders",
 			["7C5"] = "Moon Guard",
+			["7FD"] = "Armies of Legionfall",
 			},
 
 		reputationMappingFaction = {
@@ -2623,6 +2648,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			["7B7"] = "Neutral",
 			["7C0"] = "Neutral",
 			["7C5"] = "Neutral",
+			["7FD"] = "Neutral",
 			},
 
 		slashCommandOptions = {},
@@ -2649,6 +2675,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			[949] = true, -- Gorgrond
 			[950] = true,
 			[951] = true,
+			[1014] = true, -- Dalaran
 			[1015] = true, -- Azsuna
 			[1017] = true, -- Sturmheim
 			[1018] = true, -- Val'sharah
@@ -2659,6 +2686,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			[1032] = true,
 			[1033] = true, -- Suramar
 			[1080] = true, -- Thunder Totem village in HighMountain
+			[1096] = true, -- Eye of Azshara
 			},
 
 		---
@@ -2805,7 +2833,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			self.invalidateControl[self.invalidateGroupCurrentWorldQuests] = {}
 --			self.availableWorldQuests = {}
 			local currentMap = GetCurrentMapAreaID()
-			local mapIdsForWorldQuests = { 1014, 1015, 1017, 1018, 1024, 1033, 1096, }
+			local mapIdsForWorldQuests = { 1014, 1015, 1017, 1018, 1021, 1024, 1033, 1096, }
 			for _, mapId in pairs(mapIdsForWorldQuests) do
 				SetMapByID(mapId)
 				local tasks = C_TaskQuest.GetQuestsForPlayerByMapID(mapId)
@@ -2844,7 +2872,16 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 --	135	rare
 --	136	rare elite
 --	137	Dungeon
-						self:_LearnWorldQuest(v.questId)
+
+--	139 Legion Invasion World Quest
+
+--	141	Raid World Quest
+--	142	Legion Invasion Elite World Quest
+
+--	144	Legionfall World Quest
+--	145	Legionfall Dungeon World Quest
+
+						self:_LearnWorldQuest(v.questId, mapId)
 --						self.availableWorldQuests[v.questId] = true
 						tinsert(self.invalidateControl[self.invalidateGroupCurrentWorldQuests], v.questId)
 						C_TaskQuest.GetQuestTimeLeftMinutes(v.questId)	-- attempting to prime the system, because first calls do not work
@@ -2858,9 +2895,9 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 
 		_LearnedWorldQuestProfessionMapping = { [116] = 'B', [117] = 'L', [118] = 'A', [119] = 'H', [120]= 'M', [121] = 'T', [122] = 'N', [123] = 'E', [124] = 'S', [125] = 'J', [126] = 'I', [130] = 'F', [131] = 'C', },
 
-		_LearnedWorldQuestTypeMapping = { [109] = 0, [111] = 0, [112] = 0, [113] = 0x00000100, [115] = 0x00004000, [135] = 0, [136] = 0, [137] = 0x00000040, },
+		_LearnedWorldQuestTypeMapping = { [109] = 0, [111] = 0, [112] = 0, [113] = 0x00000100, [115] = 0x00004000, [135] = 0, [136] = 0, [137] = 0x00000040, [139] = 0, [141] = 0x00000080, [142] = 0, [144] = 0, [145] = 0x00000040, },
 
-		_LearnWorldQuest = function(self, questId)
+		_LearnWorldQuest = function(self, questId, mapId)
 			questId = tonumber(questId)
 			if nil == questId then return end
 			GrailDatabase.learned = GrailDatabase.learned or {}
@@ -2875,6 +2912,9 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 
 			if nil ~= professionRequirement then
 				pCodeToAdd = pCodeToAdd .. '+P' .. professionRequirement .. '001'
+			end
+			if 1021 == mapId then
+				pCodeToAdd = pCodeToAdd .. '+46734'
 			end
 			if nil ~= typeModifier then
 				typeValue = typeValue + typeModifier
@@ -3113,6 +3153,15 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			return self.artifactKnowledgeLevel
 		end,
 
+		ArtifactLevelMeetsOrExceeds = function(self, itemId, soughtLevel)
+			local retval = false
+			local currentLevel = self.artifactLevels[itemId]
+			if nil ~= currentLevel and currentLevel >= soughtLevel then
+				retval = true
+			end
+			return retval
+		end,
+
 		---
 		--	Returns a table of questIds that are available breadcrumb quests for the specified quest.
 		--	@param questId The standard numeric questId representing a quest.
@@ -3132,6 +3181,10 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 		end,
 
 		_BagUpdates = function(type, ignored)
+			if nil == Grail.processedBagUpdates then
+				Grail:_RecordArtifactLevels()
+				Grail.processedBagUpdates = true
+			end
 			local self = Grail
 			self.cachedBagItems = nil
 			-- we cheat and instead of doing any work here we just invalidate all the quests associated with
@@ -3380,6 +3433,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 					retval = self:_iLvlMatches(code, numeric) and 'C' or 'P'
 				elseif 'a' == code then
 					retval = self:IsAvailable(numeric) and 'C' or 'P'
+				elseif '@' == code then
+					retval = self:ArtifactLevelMeetsOrExceeds(subcode, numeric) and 'C' or 'P'
 				else	-- A, B, C, D, E, H, O, X
 					local questBitMask = self:StatusCode(numeric)
 					local questTypeMask = self:CodeType(numeric)
@@ -4230,8 +4285,9 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 									local iQuests = self.quests[questId]['I']
 									if nil ~= iQuests then
 										for _, iQuestId in pairs(iQuests) do
-											if nil == self.questStatusCache["I"][iQuestId] then self.questStatusCache["I"][iQuestId] = {} end
-											if not tContains(self.questStatusCache["I"][iQuestId], questId) then tinsert(self.questStatusCache["I"][iQuestId], questId) end
+											local t = self.questStatusCache["I"][iQuestId] or {}
+											if not tContains(t, questId) then tinsert(t, questId) end
+											self.questStatusCache["I"][iQuestId] = t
 										end
 									end
 									self:_ProcessQuestsForHandlers(questId, self.quests[questId]['I'])
@@ -4434,31 +4490,50 @@ self.totalFixedTime = self.totalFixedTime + (debugprofilestop() - start2Time)
 		CodeParts = function(self, questCode)
 			local code, subcode, numeric = '', '', tonumber(questCode)
 			if nil == numeric and nil ~= questCode then
+				-- Cn+ (c can be a letter)
 				code = strsub(questCode, 1, 1)
 				numeric = tonumber(strsub(questCode, 2))
 
+				-- CSSSn+ (sss can have letters)
 				if 'T' == code or 't' == code or 'U' == code or 'u' == code then
 					subcode = strsub(questCode, 2, 4)
 					numeric = tonumber(strsub(questCode, 5))
+
+				-- Csssn+ (sss must be numbers)
 				elseif 'V' == code or 'W' == code or 'w' == code then
 					subcode = tonumber(strsub(questCode, 2, 4))
 					numeric = tonumber(strsub(questCode, 5))
+
+				-- CS
 				elseif 'F' == code or 'N' == code then
 					subcode = strsub(questCode, 2, 2)
 					numeric = ''
+
+				-- Cnnnns+
 				elseif 'G' == code then
 					-- Note numeric and subcode are reverse from traditional codes
 					numeric = tonumber(strsub(questCode, 2, 5))
 					if 5 < strlen(questCode) then
 						subcode = tonumber(strsub(questCode, 6))
 					end
+
+				-- Cnnnnn
 				elseif 'z' == code then
 					numeric = tonumber(strsub(questCode, 2, 5))
+
+				-- Cssssn+ (ssss must be numbers)
 				elseif '=' == code or '<' == code or '>' == code then
 					subcode = tonumber(strsub(questCode, 2, 5))
 					numeric = tonumber(strsub(questCode, 6))
+
+				-- Cnnns+
+				elseif '@' == code then
+					-- Note numeric and subcode are reverse from traditional codes
+					numeric = tonumber(strsub(questCode, 2, 4))
+					subcode = tonumber(strsub(questCode, 5))
 				end
 
+				-- CSn+ (s can be a letter)
 				if nil == numeric then
 					subcode = strsub(questCode, 2, 2)
 					numeric = tonumber(strsub(questCode, 3))
@@ -4804,8 +4879,8 @@ end
 			if nil ~= codeString then
 				local questId = p and p.q or nil
 				local dangerous = p and p.d or false
-				local questCompleted, questInLog, questStatus, questEverCompleted, canAcceptQuest, spellPresent, achievementComplete, itemPresent, questEverAbandoned, professionGood, questEverAccepted, hasSkill, spellEverCast, spellEverExperienced, groupDone, groupAccepted, reputationUnder, reputationExceeds, factionMatches, phaseMatches, iLvlMatches, garrisonBuildingMatches, needsMatchBoth, levelMeetsOrExceeds, groupDoneOrComplete, achievementNotComplete, levelLessThan, playerAchievementComplete, playerAchievementNotComplete, garrisonBuildingNPCMatches, classMatches, artifactKnowledgeLevelMatches, worldQuestAvailable, friendshipReputationUnder, friendshipReputationExceeds = false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
-				local checkLog, checkEver, checkStatusComplete, shouldCheckTurnin, checkSpell, checkAchievement, checkItem, checkItemLack, checkEverAbandoned, checkNeverAbandoned, checkProfession, checkEverAccepted, checkHasSkill, checkNotCompleted, checkNotSpell, checkEverCastSpell, checkEverExperiencedSpell, checkGroupDone, checkGroupAccepted, checkReputationUnder, checkReputationExceeds, checkSkillLack, checkFaction, checkPhase, checkILvl, checkGarrisonBuilding, checkStatusNotComplete, checkLevelMeetsOrExceeds, checkGroupDoneOrComplete, checkAchievementLack, checkLevelLessThan, checkPlayerAchievement, checkPlayerAchievementLack, checkGarrisonBuildingNPC, checkNotTurnin, checkNotLog, checkClass, checkArtifactKnowledgeLevel, checkWorldQuestAvailable, checkFriendshipReputationExceeds, checkFriendshipReputationUnder = false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+				local questCompleted, questInLog, questStatus, questEverCompleted, canAcceptQuest, spellPresent, achievementComplete, itemPresent, questEverAbandoned, professionGood, questEverAccepted, hasSkill, spellEverCast, spellEverExperienced, groupDone, groupAccepted, reputationUnder, reputationExceeds, factionMatches, phaseMatches, iLvlMatches, garrisonBuildingMatches, needsMatchBoth, levelMeetsOrExceeds, groupDoneOrComplete, achievementNotComplete, levelLessThan, playerAchievementComplete, playerAchievementNotComplete, garrisonBuildingNPCMatches, classMatches, artifactKnowledgeLevelMatches, worldQuestAvailable, friendshipReputationUnder, friendshipReputationExceeds, artifactLevelMatches = false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+				local checkLog, checkEver, checkStatusComplete, shouldCheckTurnin, checkSpell, checkAchievement, checkItem, checkItemLack, checkEverAbandoned, checkNeverAbandoned, checkProfession, checkEverAccepted, checkHasSkill, checkNotCompleted, checkNotSpell, checkEverCastSpell, checkEverExperiencedSpell, checkGroupDone, checkGroupAccepted, checkReputationUnder, checkReputationExceeds, checkSkillLack, checkFaction, checkPhase, checkILvl, checkGarrisonBuilding, checkStatusNotComplete, checkLevelMeetsOrExceeds, checkGroupDoneOrComplete, checkAchievementLack, checkLevelLessThan, checkPlayerAchievement, checkPlayerAchievementLack, checkGarrisonBuildingNPC, checkNotTurnin, checkNotLog, checkClass, checkArtifactKnowledgeLevel, checkWorldQuestAvailable, checkFriendshipReputationExceeds, checkFriendshipReputationUnder, checkArtifactLevel = false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
 				local code, value, position, subcode
 				local forcingProfessionOnly, forcingReputationOnly = false, false
 
@@ -4818,16 +4893,26 @@ end
 					end
 				end
 
-				position = 1
-				code = strsub(codeString, 1, 1)
-				if nil == tonumber(code) then
-					-- code is already a letter, so leave it alone
-					position = 2
-				elseif dangerous then	-- we are checking I:
-					code = 'C'
-				else					-- we are checking P:
-					code = 'A'
+				code, subcode, value = Grail:CodeParts(codeString)
+
+				if code == '' then
+					if dangerous then	-- we are checking I:
+						code = 'C'
+					else				-- we are checking P:
+						code = 'A'
+					end
 				end
+
+-----				position = 1
+-----				code = strsub(codeString, 1, 1)
+-----				if nil == tonumber(code) then
+-----					-- code is already a letter, so leave it alone
+-----				position = 2
+-----				elseif dangerous then	-- we are checking I:
+-----					code = 'C'
+-----				else					-- we are checking P:
+-----					code = 'A'
+-----				end
 
 				--	We do not care about any prerequisite except profession ones when forcingProfessionOnly
 				if forcingProfessionOnly and 'P' ~= code then
@@ -4837,29 +4922,29 @@ end
 					code = ' '
 				end
 
-				if 'P' == code then
-					subcode = strsub(codeString, 2, 2)
-					position = 3
-				elseif 't' == code or 'T' == code or 'u' == code or 'U' == code then
-					subcode = strsub(codeString, 2, 4)
-					position = 5
-				elseif 'W' == code or 'V' == code or 'w' == code then
-					subcode = tonumber(strsub(codeString, 2, 4))
-					position = 5
-				elseif 'F' == code then
-					subcode = strsub(codeString, 2, 2)
-				elseif '=' == code or '<' == code or '>' == code then
-					subcode = tonumber(strsub(codeString, 2, 5))
-					position = 6
-				elseif 'G' == code then
-					subcode = tonumber(strsub(codeString, 2, 5))
-					position = 6
-				elseif 'z' == code then
-					subcode = tonumber(strsub(codeString, 2, 5))
-				else
-					subcode = nil
-				end
-				value = tonumber(strsub(codeString, position))
+--				if 'P' == code then
+--					subcode = strsub(codeString, 2, 2)
+--					position = 3
+--				elseif 't' == code or 'T' == code or 'u' == code or 'U' == code then
+--					subcode = strsub(codeString, 2, 4)
+--					position = 5
+--				elseif 'W' == code or 'V' == code or 'w' == code then
+--					subcode = tonumber(strsub(codeString, 2, 4))
+--					position = 5
+--				elseif 'F' == code then
+--					subcode = strsub(codeString, 2, 2)
+--				elseif '=' == code or '<' == code or '>' == code then
+--					subcode = tonumber(strsub(codeString, 2, 5))
+--					position = 6
+--				elseif 'G' == code then
+--					subcode = tonumber(strsub(codeString, 2, 5))
+--					position = 6
+--				elseif 'z' == code then
+--					subcode = tonumber(strsub(codeString, 2, 5))
+--				else
+--					subcode = nil
+--				end
+--				value = tonumber(strsub(codeString, position))
 
 --				code, subcode, value = Grail:CodeParts(codeString)
 --	TODO:	See when we can convert to use CodeParts()
@@ -4895,6 +4980,8 @@ end
 				elseif code == 'N' then checkClass = true
 				elseif code == 'O' then	checkEverAccepted = true
 				elseif code == 'P' then	checkProfession = true
+				elseif code == 'Q' or
+					   code == 'q' then checkILvl = true
 				elseif code == 'R' then checkEverExperiencedSpell = true
 				elseif code == 'S' then	checkHasSkill = true
 				elseif code == 's' then checkSkillLack = true
@@ -4914,8 +5001,7 @@ end
 				elseif code == '=' or
 					   code == '<' or
 					   code == '>' then checkPhase = true
-				elseif code == 'Q' or
-					   code == 'q' then checkILvl = true
+				elseif code == '@' then checkArtifactLevel = true
 				else print("|cffff0000Grail|r _EvaluateCodeAsPrerequisite cannot process code", codeString)
 				end
 
@@ -4928,8 +5014,9 @@ end
 --		30726 is no longer obtainable (since it is likewise marked I:H30726 which resolves as unobtainable since 30726 has already been completed) and we
 --		get the inherited prerequisite failure.
 					if dangerous then
-						if nil == Grail.currentMortalIssues[value] then Grail.currentMortalIssues[value] = {} end
-						if value ~= questId and not tContains(Grail.currentMortalIssues[value], questId) then tinsert(Grail.currentMortalIssues[value], questId) end
+						local t = Grail.currentMortalIssues[value] or {}
+						if value ~= questId and not tContains(t, questId) then tinsert(t, questId) end
+						Grail.currentMortalIssues[value] = t
 					else
 --						canAcceptQuest = Grail:CanAcceptQuest(value, true)
 						canAcceptQuest = Grail:CanAcceptQuest(value, true, true, true, true, true)
@@ -4970,14 +5057,14 @@ end
 				if checkPhase then phaseMatches = Grail:_PhaseMatches(code, subcode, value) end
 				if checkILvl then iLvlMatches = Grail:_iLvlMatches(code, value) end
 				if checkGarrisonBuilding then
-					if nil == value or '' == value then
-						garrisonBuildingMatches = Grail:HasGarrisonBuilding(subcode)
+					if nil == subcode or '' == subcode then
+						garrisonBuildingMatches = Grail:HasGarrisonBuilding(value)
 					else
-						garrisonBuildingMatches = Grail:HasGarrisonBuildingInPlot(subcode, value)
+						garrisonBuildingMatches = Grail:HasGarrisonBuildingInPlot(value, subcode)
 					end
 				end
 				if checkGarrisonBuildingNPC then
-					garrisonBuildingNPCMatches = Grail:HasGarrisonBuildingNPCWorking(subcode)
+					garrisonBuildingNPCMatches = Grail:HasGarrisonBuildingNPCWorking(value)
 				end
 				if checkStatusNotComplete and checkNotCompleted then
 					-- TODO: this is a situation where we need an AND between the two, where each individually will not succeed
@@ -4998,6 +5085,9 @@ end
 				end
 				if checkWorldQuestAvailable then
 					worldQuestAvailable = Grail:IsAvailable(value)
+				end
+				if checkArtifactLevel then
+					artifactLevelMatches = Grail:ArtifactLevelMeetsOrExceeds(subcode, value)
 				end
 
 				good =
@@ -5042,7 +5132,8 @@ end
 					(checkNotLog and checkNotTurnin and not questCompleted and not questInLog) or
 					(checkClass and classMatches) or
 					(checkArtifactKnowledgeLevel and artifactKnowledgeLevelMatches) or
-					(checkWorldQuestAvailable and worldQuestAvailable)
+					(checkWorldQuestAvailable and worldQuestAvailable) or
+					(checkArtifactLevel and artifactLevelMatches)
 				if not good then tinsert(failures, codeString) end
 			end
 
@@ -5122,8 +5213,9 @@ end
 --					if nil == currentQuestId then currentQuestId = tonumber(strsub(codeString, 2)) end
 					local currentQuestId = numeric
 
-					Grail.questStatusCache.Q[currentQuestId] = Grail.questStatusCache.Q[currentQuestId] or {}
-					if not tContains(Grail.questStatusCache.Q[currentQuestId], questId) then tinsert(Grail.questStatusCache.Q[currentQuestId], questId) end
+					local t = Grail.questStatusCache.Q[currentQuestId] or {}
+					if not tContains(t, questId) then tinsert(t, questId) end
+					Grail.questStatusCache.Q[currentQuestId] = t
 					local subCode = Grail:StatusCode(currentQuestId)
 					--	SMH 2014-02-09
 					--	The behavior of failing for ancestors is changing such that we will return both the current status hard failure and the ancestor one together and let
@@ -5458,7 +5550,7 @@ end
 					end
 				end
 				if GrailDatabase.debug then
-					local message = "Looting from " .. self.lootingGUID .. " locale: " .. self.playerLocale .. " name: " .. lootingNameToUse
+					local message = "Looting from " .. (self.lootingGUID or "NO LOOTING GUID") .. " locale: " .. self.playerLocale .. " name: " .. lootingNameToUse
 					print(message)
 					self:_AddTrackingMessage(message)
 				end
@@ -6095,6 +6187,14 @@ end
 		--	@return True if the quest is a weekly quest, false otherwise.
 		IsWeekly = function(self, questId)
 			return (bitband(self:CodeType(questId), self.bitMaskQuestWeekly) > 0)
+		end,
+
+		---
+		--	Returns whether the quest is a biweekly quest (meaning once every two weeks).
+		--	@param questId The standard numeric questId representing a quest.
+		--	@return True if the quest is a biweekly quest, false otherwise.
+		IsBiweekly = function(self, questId)
+			return (bitband(self:CodeType(questId), self.bitMaskQuestBiweekly) > 0)
 		end,
 
 		---
@@ -7314,6 +7414,14 @@ print("end:", strgsub(controlTable.something, "|", "*"))
 			elseif 'x' ==  code then
 				self.invalidateControl[self.invalidateGroupArtifactKnowledge] = self.invalidateControl[self.invalidateGroupArtifactKnowledge] or {}
 				tinsert(self.invalidateControl[self.invalidateGroupArtifactKnowledge], questId)
+			elseif '@' == code then
+				-- This is implemented quite simply to say that any quest that has an artifact level requirement will be invalidated
+				-- if there is a change in any artifact level, not examining the actual artifact involved in the change.
+				local t = self.invalidateControl[self.invalidateGroupArtifactLevel] or {}
+				if not tContains(t, questId) then
+					tinsert(t, questId)
+				end
+				self.invalidateControl[self.invalidateGroupArtifactLevel] = t
 			end
 		end,
 
@@ -8143,6 +8251,34 @@ if GrailDatabase.debug then print("Marking OEC quest complete", oecCodes[i]) end
 			return retval
 		end,
 
+		--	This goes through all the bags to look for artifacts and attempts to record their
+		--	levels by pretending to socket each of them which should open the UI that allows
+		--	queries to be made against the "current artifact".
+		_RecordArtifactLevels = function(self)
+			for bag = 0, 4 do
+				local numSlots = GetContainerNumSlots(bag)
+				for slot = 1, numSlots do
+					local _, _, _, quality, _, _, _, _, _, itemID = GetContainerItemInfo(bag, slot)
+					if LE_ITEM_QUALITY_ARTIFACT == quality then
+						local classID = select(12, GetItemInfo(itemID))
+						if LE_ITEM_CLASS_WEAPON == classID or LE_ITEM_CLASS_ARMOR == classID then
+							SocketContainerItem(bag, slot)
+							local duplicateItemId, _, _, _, _, ranksPurchased = C_ArtifactUI.GetArtifactInfo()
+							if itemID == duplicateItemId then
+								self.artifactLevels[itemID] = ranksPurchased
+							end
+						end
+					end
+				end
+			end
+			if HasArtifactEquipped() then
+				SocketInventoryItem(INVSLOT_MAINHAND)
+				local duplicateItemId, _, _, _, _, ranksPurchased = C_ArtifactUI.GetArtifactInfo()
+				self.artifactLevels[duplicateItemId] = ranksPurchased
+			end
+			C_ArtifactUI.Clear()
+		end,
+
 		_RecordBadData = function(self, whichData, errorString)
 			if nil == GrailDatabase[whichData] then GrailDatabase[whichData] = {} end
 			if nil ~= errorString then tinsert(GrailDatabase[whichData], errorString) end
@@ -8161,30 +8297,29 @@ if GrailDatabase.debug then print("Marking OEC quest complete", oecCodes[i]) end
 		--	any previous information if the "daily" day changes.  It returns the count 
 		_RecordGroupValueChange = function(self, group, isAdding, isRemoving, questId)
 			local dailyDay = self:_GetDailyDay()
-			if nil == GrailDatabasePlayer["dailyGroups"] or nil == GrailDatabasePlayer["dailyGroups"][dailyDay] then
-				GrailDatabasePlayer["dailyGroups"] = {}
-				GrailDatabasePlayer["dailyGroups"][dailyDay] = {}
-			end
-			if nil == GrailDatabasePlayer["dailyGroups"][dailyDay][group] then GrailDatabasePlayer["dailyGroups"][dailyDay][group] = {} end
+			GrailDatabasePlayer["dailyGroups"] = GrailDatabasePlayer["dailyGroups"] or {}
+			GrailDatabasePlayer["dailyGroups"][dailyDay] = GrailDatabasePlayer["dailyGroups"][dailyDay] or {}
+			local t = GrailDatabasePlayer["dailyGroups"][dailyDay][group] or {}
 			if isAdding then
-				if not tContains(GrailDatabasePlayer["dailyGroups"][dailyDay][group], questId) then tinsert(GrailDatabasePlayer["dailyGroups"][dailyDay][group], questId) end
+				if not tContains(t, questId) then tinsert(t, questId) end
 			elseif isRemoving then
-				if tContains(GrailDatabasePlayer["dailyGroups"][dailyDay][group], questId) then
+				if tContains(t, questId) then
 					local index, foundIndex = 1, nil
-					while GrailDatabasePlayer["dailyGroups"][dailyDay][group][index] do
-						if GrailDatabasePlayer["dailyGroups"][dailyDay][group][index] == questId then
+					while t[index] do
+						if t[index] == questId then
 							foundIndex = index
 						end
 						index = index + 1
 					end
 					if foundIndex then
-						tremove(GrailDatabasePlayer["dailyGroups"][dailyDay][group], foundIndex)
+						tremove(t, foundIndex)
 					end
 				else
 					if GrailDatabase.debug then print("|cFFFFFF00Grail|r _RecordGroupValueChange could not remove a non-existent quest", questId) end
 				end
 			end
-			return #(GrailDatabasePlayer["dailyGroups"][dailyDay][group])
+			GrailDatabasePlayer["dailyGroups"][dailyDay][group] = t
+			return #(t)
 		end,
 
 		_RegisterDelayedEvent = function(self, frame, delayTable)

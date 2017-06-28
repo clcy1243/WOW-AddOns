@@ -26,13 +26,15 @@ local count = true
 local L = mod:NewLocale("enUS", true)
 if L then
 
-L["normal_message"] = "Normal Phase!"
-L["normal_trigger"] = "Spirit, come back to me!"
-L["phase"] = "Phases"
-L["phase_desc"] = "Warn for phase changes."
-L["spirit_message"] = "%d%% - Spirit Phase!"
-L["spirit_soon"] = "Spirit Phase soon!"
-L["spirit_trigger"] = "I fight wit' untamed spirit...."
+-- ZulAman/Halazzi
+	L["normal_message"] = "Normal Phase!"
+	L["normal_trigger"] = "Spirit, come back to me!"
+	L["phase"] = "Phases"
+	L["phase_desc"] = "Warn for phase changes."
+	L["spirit_message"] = "%d%% - Spirit Phase!"
+	L["spirit_soon"] = "Spirit Phase soon!"
+	L["spirit_trigger"] = "I fight wit' untamed spirit...."
+
 end
 L = mod:GetLocale()
 

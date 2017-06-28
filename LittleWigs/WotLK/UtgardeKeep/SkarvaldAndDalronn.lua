@@ -22,6 +22,7 @@ local deaths = 0
 local L = mod:NewLocale("enUS", true)
 if L then
 
+
 end
 L = mod:GetLocale()
 

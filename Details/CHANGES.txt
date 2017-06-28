@@ -1,7 +1,7 @@
-changeset:   642:359c01b86e67
-tag:         v7.2.5.3967.120-release
+changeset:   655:61f3bdbef2d6
+tag:         v7.2.5.4201.122-release
 user:        Tercio
-date:        Mon Jun 19 19:27:03 2017 -0300
-summary:     - added tomb of sargeras raid info plugin.
+date:        Tue Jun 27 15:36:27 2017 -0300
+summary:     - using GetServerTime() instead of time() to compare when a boss has died across guild members.
 
 

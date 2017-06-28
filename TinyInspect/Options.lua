@@ -5,7 +5,7 @@
 
 local LibEvent = LibStub:GetLibrary("LibEvent.7000")
 
-local VERSION = 2.1
+local VERSION = 2.2
 
 local addon, ns = ...
 
@@ -30,6 +30,7 @@ local DefaultDB = {
         EnableItemLevelAltEquipment = true,
         EnableItemLevelPaperDoll = true,
         EnableItemLevelGuildNews = true,
+        EnableItemLevelChat = true,
     ShowInspectAngularBorder = false,     --觀察面板直角邊框
     ShowInspectColoredLabel = true,       --觀察面板高亮橙裝武器標簽
     ShowOwnFrameWhenInspecting = false,   --觀察同時顯示自己裝備列表
@@ -41,7 +42,9 @@ local DefaultDB = {
     EnableRaidItemLevel = false,          --團隊裝等
     EnableMouseItemLevel = true,          --鼠標裝等
     EnableMouseSpecialization = true,     --鼠標天賦
+    EnableMouseWeaponLevel = true,        --鼠標物品等級
     PaperDollItemLevelOutsideString = false, --PaperDoll文字外邊顯示(沒有在配置面板)
+    ItemLevelAnchorPoint = "TOP",         --裝等位置
 }
 
 local options = {
@@ -61,7 +64,9 @@ local options = {
         { key = "GuildBank" },
         { key = "GuildNews" },
         { key = "PaperDoll" },
-      }
+        { key = "Chat" },
+      },
+      anchorkey = "ItemLevelAnchorPoint",
     },
     { key = "ShowInspectAngularBorder" },
     { key = "ShowInspectColoredLabel" },
@@ -80,7 +85,8 @@ local options = {
     },
     { key = "EnableMouseItemLevel",
       child = {
-        { key = "EnableMouseSpecialization" }
+        { key = "EnableMouseSpecialization" },
+        { key = "EnableMouseWeaponLevel" },
       }
     },
 }
@@ -153,9 +159,49 @@ local function CreateSubtypeFrame(list, parent)
     parent.SubtypeFrame:SetSize(168, #list*32+58)
 end
 
+local function CreateAnchorFrame(anchorkey, parent)
+    if (not anchorkey) then return end
+    local CreateAnchorButton = function(frame, anchorPoint)
+        local button = CreateFrame("Button", nil, frame)
+        button.anchorPoint = anchorPoint
+        button:SetSize(12, 12)
+        button:SetPoint(anchorPoint)
+        button:SetNormalTexture("Interface\\Buttons\\WHITE8X8")
+        if (TinyInspectDB[frame.anchorkey] == anchorPoint) then
+            button:GetNormalTexture():SetVertexColor(1, 0.2, 0.1)
+        end
+        button:SetScript("OnClick", function(self)
+            local parent = self:GetParent()
+            local anchorPoint = self.anchorPoint
+            local anchorOrig = TinyInspectDB[parent.anchorkey]
+            if (parent[anchorOrig]) then
+                parent[anchorOrig]:GetNormalTexture():SetVertexColor(1, 1, 1)
+            end
+            self:GetNormalTexture():SetVertexColor(1, 0.2, 0.1)
+            TinyInspectDB[parent.anchorkey] = anchorPoint
+        end)
+        frame[anchorPoint] = button
+    end
+    local frame = CreateFrame("Frame", nil, parent.SubtypeFrame or parent, "ThinBorderTemplate")
+    frame.anchorkey = anchorkey
+    frame:SetBackdrop(GameTooltip:GetBackdrop())
+    frame:SetBackdropColor(GameTooltip:GetBackdropColor())
+    frame:SetBackdropBorderColor(1, 1, 1, 0)
+    frame:SetSize(80, 80)
+    frame:SetPoint("TOPRIGHT", 100, -5)
+    CreateAnchorButton(frame, "TOPLEFT")
+    CreateAnchorButton(frame, "LEFT")
+    CreateAnchorButton(frame, "BOTTOMLEFT")
+    CreateAnchorButton(frame, "TOP")
+    CreateAnchorButton(frame, "BOTTOM")
+    CreateAnchorButton(frame, "TOPRIGHT")
+    CreateAnchorButton(frame, "RIGHT")
+    CreateAnchorButton(frame, "BOTTOMRIGHT")
+end
+
 local function CreateCheckbox(list, parent, anchor, offsetx, offsety)
     local checkbox, subbox
-    local stepx, stepy = 20, 32
+    local stepx, stepy = 20, 31
     if (not list) then return offsety end
     for i, v in ipairs(list) do
         checkbox = CreateFrame("CheckButton", nil, parent, "InterfaceOptionsCheckButtonTemplate")
@@ -168,6 +214,7 @@ local function CreateCheckbox(list, parent, anchor, offsetx, offsety)
         offsety = offsety + stepy
         offsety = CreateCheckbox(v.child, checkbox, anchor, offsetx+stepx, offsety)
         CreateSubtypeFrame(v.subtype, checkbox)
+        CreateAnchorFrame(v.anchorkey, checkbox)
     end
     return offsety
 end
@@ -199,10 +246,10 @@ CreateCheckbox(options, frame, frame.title, 18, 10)
 LibEvent:attachEvent("VARIABLES_LOADED", function()
     if (not TinyInspectDB or not TinyInspectDB.version) then
         TinyInspectDB = DefaultDB
-    elseif (TinyInspectDB.version < DefaultDB.version) then
+    elseif (TinyInspectDB.version <= DefaultDB.version) then
         TinyInspectDB.version = DefaultDB.version
         for k, v in pairs(DefaultDB) do
-            if (not TinyInspectDB[k]) then
+            if (TinyInspectDB[k] == nil) then
                 TinyInspectDB[k] = v
             end
         end

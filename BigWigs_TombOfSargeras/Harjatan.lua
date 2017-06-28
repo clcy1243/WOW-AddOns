@@ -43,10 +43,12 @@ function mod:GetOptions()
 		233429, -- Frigid Blows
 		232174, -- Frosty Discharge
 		{231729, "SAY", "FLASH"}, -- Aqueous Burst
+		231768, -- Drenching Waters
 		{234128, "SAY", "FLASH"}, -- Driven Assault
 		"custom_on_fixate_plates",
 		240319, -- Hatching
-		{241600, "SAY", "FLASH"} -- Sickly Fixate
+		{241600, "SAY", "FLASH"}, -- Sickly Fixate
+		"berserk",
 	},{
 		[231998] = "general",
 		[231729] = -14555,
@@ -60,13 +62,15 @@ function mod:OnBossEnable()
 	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1", "boss2", "boss3", "boss4", "boss5")
 	self:RegisterEvent("RAID_BOSS_WHISPER")
 
+	self:Log("SPELL_AURA_APPLIED", "GroundEffectDamage", 231768) -- Drenching Waters
+	self:Log("SPELL_PERIODIC_DAMAGE", "GroundEffectDamage", 231768)
+	self:Log("SPELL_PERIODIC_MISSED", "GroundEffectDamage", 231768)
+
 	-- Boss
 	self:Log("SPELL_AURA_APPLIED", "JaggedAbrasion", 231998)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "JaggedAbrasion", 231998)
 	self:Log("SPELL_CAST_START", "UncheckedRage", 231854)
 	self:Log("SPELL_AURA_APPLIED", "DrawIn", 232061)
-	self:Log("SPELL_AURA_REMOVED", "DrawInSuccess", 232061)
-	self:Log("SPELL_AURA_APPLIED", "FrigidBlowsApplied", 233429)
 	self:Log("SPELL_AURA_REMOVED_DOSE", "FrigidBlows", 233429)
 	self:Log("SPELL_CAST_START", "FrostyDischarge", 232174)
 
@@ -89,12 +93,12 @@ function mod:OnEngage()
 	rageCounter = 1
 
 	self:Bar(232192, 17.5) -- Commanding Roar
-	self:Bar(231854, 21) -- Unchecked Rage
-	self:Bar(232061, 60) -- Draw In
+	self:CDBar(231854, 20.7) -- Unchecked Rage
+	self:CDBar(232061, 58) -- Draw In
 	if self:Mythic() then
 		self:Bar(240319, 30) -- Hatching
 	end
-	self:Berserk(360) -- Confirmed Mythic
+	self:Berserk(self:Mythic() and 360 or 480)
 end
 
 function mod:OnBossDisable()
@@ -122,6 +126,17 @@ function mod:RAID_BOSS_WHISPER(event, msg)
 	end
 end
 
+do
+	local prev = 0
+	function mod:GroundEffectDamage(args)
+		local t = GetTime()
+		if self:Me(args.destGUID) and t-prev > 1.5 then
+			prev = t
+			self:Message(args.spellId, "Personal", "Alert", CL.underyou:format(args.spellName))
+		end
+	end
+end
+
 function mod:JaggedAbrasion(args)
 	local amount = args.amount or 1
 	self:StackMessage(args.spellId, args.destName, amount, "Urgent", amount > 4 and "Warning") -- Swap on 4~5
@@ -130,7 +145,7 @@ end
 function mod:UncheckedRage(args)
 	rageCounter = rageCounter + 1
 	self:Message(args.spellId, "Urgent", "Warning")
-	if rageCounter <= 3 then
+	if rageCounter <= 2 then
 		self:Bar(args.spellId, 20.5)
 	end
 end
@@ -151,12 +166,12 @@ function mod:FrostyDischarge(args)
 	roarCounter = 1
 	rageCounter = 1
 	self:Message(args.spellId, "Urgent", "Warning", args.spellName)
-	self:Bar(232192, 18.2)	-- Commanding Roar
-	self:Bar(231854, 21.4) -- Unchecked Rage
+	self:CDBar(232192, 17) -- Commanding Roar
+	self:CDBar(231854, 21.4) -- Unchecked Rage
 	if self:Mythic() then
 		self:Bar(240319, 32) -- Hatching
 	end
-	self:Bar(232061, 60) -- Draw In
+	self:CDBar(232061, 59.1) -- Draw In
 end
 
 do

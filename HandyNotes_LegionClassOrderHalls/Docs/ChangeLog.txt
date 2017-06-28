@@ -1,7 +1,13 @@
-$Id: ChangeLog.txt 68 2017-06-19 16:50:53Z arith $
+$Id: ChangeLog.txt 70 2017-06-21 17:55:46Z arith $
 
 Revision History:
 =================
+
+* v1.20 (Jun. 22, 2017)
+-----------------------
+- Added Yushi <Seal of Broken Fate Shipment> to Monk's order hall
+- Localization update:
+  - German (pas06)
 
 * v1.19 (Jun. 19, 2017)
 -----------------------

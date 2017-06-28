@@ -27,6 +27,9 @@ local twilightGlaiveCounter = 1
 local screechCounter = 0
 local rapidShotCounter = 1
 local lunarFireCounter = 1
+local lunarBeaconCounter = 1
+
+local nextUltimate = 0
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -42,7 +45,7 @@ function mod:GetOptions()
 	return {
 		"stages",
 		{236541, "SAY", "ICON"}, -- Twilight Glaive
-		236547, -- Moon Glaive
+		{236547, "TANK"}, -- Moon Glaive
 		{236550, "TANK"}, -- Discorporate
 		236480,	-- Glaive Storm
 		{236305, "SAY", "ICON"}, -- Incorporeal Shot
@@ -53,6 +56,7 @@ function mod:GetOptions()
 		{233263, "PROXIMITY"}, -- Embrace of the Eclipse
 		236519, -- Moon Burn
 		236712, -- Lunar Beacon
+		237351, -- Lunar Barrage
 		{239264, "TANK"}, -- Lunar Fire
 	},{
 		["stages"] = "general",
@@ -70,6 +74,7 @@ function mod:OnBossEnable()
 	-- Huntress Kasparian
 	self:Log("SPELL_AURA_APPLIED", "TwilightGlaiveApplied", 237561) -- Twilight Glaive
 	self:Log("SPELL_AURA_REMOVED", "TwilightGlaiveRemoved", 237561) -- Twilight Glaive
+	self:Log("SPELL_CAST_START", "MoonGlaive", 236547) -- Glaive Storm
 	self:Log("SPELL_AURA_APPLIED", "Discorporate", 236550) -- Discorporate
 	-- Stage Two: Bow of the Night
 	self:Log("SPELL_CAST_START", "GlaiveStorm", 239379) -- Glaive Storm
@@ -78,6 +83,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "IncorporealShotApplied", 236305) -- Incorporeal Shot
 	self:Log("SPELL_AURA_REMOVED", "IncorporealShotRemoved", 236305) -- Incorporeal Shot
 	self:Log("SPELL_CAST_START", "TwilightVolley", 236442) -- Twilight Volley
+	self:Log("SPELL_CAST_SUCCESS", "TwilightVolleySuccess", 236442) -- Twilight Volley
 	self:Log("SPELL_AURA_APPLIED", "TwilightVolleyDamage", 236516) -- Twilight Volley
 	self:Log("SPELL_PERIODIC_DAMAGE", "TwilightVolleyDamage", 236516) -- Twilight Volley
 	self:Log("SPELL_PERIODIC_MISSED", "TwilightVolleyDamage", 236516) -- Twilight Volley
@@ -93,8 +99,12 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "MoonBurn", 236518) -- Moon Burn
 	self:Log("SPELL_AURA_APPLIED", "MoonBurnApplied", 236519) -- Moon Burn
 	-- Stage Three: Wrath of Elune
-	self:Log("SPELL_CAST_START", "LunarBeacon", 236712) -- Lunar Beacon
 	self:Log("SPELL_AURA_APPLIED", "LunarBeaconApplied", 236712) -- Lunar Beacon (Debuff)
+	self:Log("SPELL_AURA_REMOVED", "LunarBeaconRemoved", 236712) -- Lunar Beacon (Debuff)
+	self:Log("SPELL_CAST_START", "LunarBeacon", 236712) -- Lunar Beacon
+	self:Log("SPELL_AURA_APPLIED", "GroundEffectDamage", 237351) -- Lunar Barrage
+	self:Log("SPELL_PERIODIC_DAMAGE", "GroundEffectDamage", 237351)
+	self:Log("SPELL_PERIODIC_MISSED", "GroundEffectDamage", 237351)
 	self:Log("SPELL_CAST_SUCCESS", "LunarFire", 239264) -- Lunar Fire
 	self:Log("SPELL_AURA_APPLIED", "LunarFireApplied", 239264) -- Lunar Fire
 	self:Log("SPELL_AURA_APPLIED_DOSE", "LunarFireApplied", 239264) -- Lunar Fire
@@ -102,18 +112,23 @@ end
 
 function mod:OnEngage()
 	phase = 1
-	screechCount = 0
+	screechCounter = 0
 	moonGlaiveCounter = 1
 	twilightGlaiveCounter = 1
 	rapidShotCounter = 1
+	lunarBeaconCounter = 1
+
+	nextUltimate = GetTime() + 48.3
 
 	self:Message("stages", "Neutral", "Long", stageOne, false)
 	self:Bar(236519, 9.4) -- Moon Burn
 	self:Bar(236547, 14.2) -- Moon Glaive
 	self:Bar(236442, 16.6) -- Twilight Volley
-	self:Bar(236541, 19.1) -- Twilight Glaive
+	self:Bar(236541, 18.1) -- Twilight Glaive
 	self:Bar(236305, 48.3) -- Incorporeal Shot
-	self:Bar(233263, 48.3) -- Embrace of the Eclipse
+	if not self:Easy() then
+		self:Bar(233263, 48.3) -- Embrace of the Eclipse
+	end
 end
 
 --------------------------------------------------------------------------------
@@ -121,11 +136,9 @@ end
 --
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(unit, spellName, _, _, spellId)
-	if spellId == 236547 then -- Moon Glaive
-		moonGlaiveCounter = moonGlaiveCounter + 1
-		self:Bar(spellId, moonGlaiveCounter == 4 and 27.6 or 14.6) -- XXX Had a pull where the 3rd cast was delayed instead.
-	elseif spellId == 235268 then -- Lunar Ghost (Transition) XXX Need to confirm
+	if spellId == 235268 then -- Lunar Ghost (Transition)
 		phase = phase + 1
+		local nextUltimateTimer = nextUltimate - GetTime()
 		if phase == 2 then
 			self:Message("stages", "Neutral", "Long", stageTwo, false)
 			self:StopBar(236547) -- Moon Glaive
@@ -133,11 +146,16 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(unit, spellName, _, _, spellId)
 			self:StopBar(236541) -- Twilight Glaive
 			self:StopBar(236305) -- Incorporeal Shot
 
-			self:Bar(236694, 5.7) -- Call Moontalon
-			self:Bar(236541, 7) -- Twilight Glaive
+			self:Bar(236541, 6) -- Twilight Glaive
+			self:Bar(236694, 7.3) -- Call Moontalon
 			self:Bar(236442, 11) -- Twilight Volley
-			self:Bar(236603, 17.1) -- Rapid Shot
-			self:Bar(236480, 42.6) -- Glaive Storm
+			self:Bar(236603, 15.8) -- Rapid Shot
+
+			if self:Easy() and nextUltimateTimer > 0 then
+				self:Bar(233263, nextUltimateTimer) -- Embrace of the Eclipse
+			elseif nextUltimateTimer > 0 then
+				self:Bar(236480, nextUltimateTimer) -- Glaive Storm
+			end
 		elseif phase == 3 then
 			self:Message("stages", "Neutral", "Long", stageThree, false)
 			self:StopBar(233263) -- Embrace of the Eclipse
@@ -146,11 +164,16 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(unit, spellName, _, _, spellId)
 			self:StopBar(236603) -- Rapid Shot
 			self:StopBar(236442) -- Twilight Volley
 
-			self:Bar(239264, 6.8) -- Lunar Fire
-			self:Bar(236519, 9.5) -- Moon Burn
+			self:Bar(236519, 10) -- Moon Burn
+			self:Bar(239264, 11) -- Lunar Fire
 			self:Bar(236442, 15.8) -- Twilight Volley
-			self:Bar(239264, 18.2) -- Lunar Beacon
-			self:Bar(236305, 35.2) -- Incorporeal Shot
+			self:Bar(236712, 18.2) -- Lunar Beacon
+
+			if self:Easy() and nextUltimateTimer > 0 then
+				self:Bar(236480, nextUltimateTimer) -- Glaive Storm
+			elseif nextUltimateTimer > 0 then
+				self:Bar(236305, nextUltimateTimer) -- Incorporeal Shot
+			end
 		end
 	end
 end
@@ -158,7 +181,7 @@ end
 function mod:TwilightGlaiveApplied(args)
 	twilightGlaiveCounter = twilightGlaiveCounter + 1
 	self:TargetMessage(236541, args.destName, "Attention", "Warning")
-	if self:Me(guid) then
+	if self:Me(args.destGUID) then
 		self:Say(236541)
 	end
 	self:SecondaryIcon(236541, args.destName)
@@ -169,6 +192,12 @@ function mod:TwilightGlaiveRemoved(args)
 	self:SecondaryIcon(236541)
 end
 
+function mod:MoonGlaive(args)
+	self:Message(args.spellId, "Important", "Warning")
+	moonGlaiveCounter = moonGlaiveCounter + 1
+	self:Bar(args.spellId, moonGlaiveCounter == 4 and 27.6 or 14.6) -- XXX Had a pull where the 3rd cast was delayed instead.
+end
+
 function mod:Discorporate(args)
 	self:TargetMessage(args.spellId, args.destName, "Urgent", "Alarm", nil, nil, self:Tank())
 end
@@ -176,16 +205,18 @@ end
 function mod:GlaiveStorm(args)
 	self:Message(236480, "Important", "Warning", CL.incoming:format(args.spellName))
 	self:Bar(236480, 54.7)
+	nextUltimate = GetTime() + 54.7
 end
 
 function mod:IncorporealShotApplied(args)
 	self:TargetMessage(args.spellId, args.destName, "Urgent", "Warning", nil, nil, true)
 	self:TargetBar(args.spellId, 6, args.destName)
-	if self:Me(guid) then
+	if self:Me(args.destGUID) then
 		self:Say(args.spellId)
 	end
 	self:PrimaryIcon(args.spellId, args.destName)
 	self:CDBar(args.spellId, 54.7)
+	nextUltimate = GetTime() + 54.7
 end
 
 function mod:IncorporealShotRemoved(args)
@@ -205,8 +236,11 @@ do
 		else -- Can only find target in P2
 			self:Message(args.spellId, "Attention", "Alert", CL.incoming:format(args.spellName))
 		end
-		self:Bar(args.spellId, 19.5)
 	end
+end
+
+function mod:TwilightVolleySuccess(args) -- Cast can be interupted (fd/vanish), will recast if it happens.
+	self:Bar(args.spellId, 19.5)
 end
 
 do
@@ -221,25 +255,26 @@ do
 end
 
 function mod:CallMoontalon(args)
-	screechCount = 0
 	self:Message(args.spellId, "Urgent", "Alert", CL.incoming:format(self:SpellName(-15064))) -- Moontalon
+	screechCounter = 1
 	self:Bar(args.spellId, 146.9)
 end
 
 function mod:DeadlyScreech(args)
-	screechCounter = screechCounter + 1
 	self:Message(args.spellId, "Attention", "Alert", CL.count:format(args.spellName, screechCounter))
+	screechCounter = screechCounter + 1
 end
 
 function mod:RapidShotApplied(args)
-	rapidShotCounter = rapidShotCounter + 1
 	self:TargetMessage(236603, args.destName, "Attention", "Warning")
-	self:Bar(236603, rapidShotCounter % 2 == 0 and 19.4 or 31.6)
+	rapidShotCounter = rapidShotCounter + 1
+	self:Bar(236603, rapidShotCounter % 2 == 0 and 18.5 or 30.5)
 end
 
 function mod:EmbraceoftheEclipse(args)
 	self:Message(args.spellId, "Attention", "Alarm", args.spellName)
 	self:Bar(args.spellId, 54.7)
+	nextUltimate = GetTime() + 54.7
 end
 
 function mod:EmbraceoftheEclipseApplied(args)
@@ -255,7 +290,7 @@ function mod:EmbraceoftheEclipseRemoved(args)
 end
 
 function mod:MoonBurn(args)
-	self:Bar(236519, phase == 3 and 17 or 24.3) -- XXX Need more P3 data/timers
+	self:Bar(236519, phase == 3 and 18.3 or 24.3) -- XXX Need more P3 data/timers
 end
 
 do
@@ -263,12 +298,23 @@ do
 	function mod:MoonBurnApplied(args)
 		playerList[#playerList+1] = args.destName
 		if #playerList == 1 then
-			self:ScheduleTimer("TargetMessage", 0.1, args.spellId, playerList, "Attention", "Alert")
+			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "Attention", "Alert")
 		end
 	end
 end
 
 do
+	function mod:LunarBeaconApplied(args)
+		if self:Me(args.destGUID) then
+			self:SayCountdown(args.spellId, 6)
+		end
+	end
+	function mod:LunarBeaconRemoved(args)
+		if self:Me(args.destGUID) then
+			self:CancelSayCountdown(args.spellId)
+		end
+	end
+
 	local function printTarget(self, name, guid)
 		self:TargetMessage(236712, name, "Attention", "Alert")
 		if self:Me(guid) then
@@ -276,17 +322,20 @@ do
 		end
 	end
 	function mod:LunarBeacon(args)
-		lunarBeaconCounter = lunarBeaconCounter + 1
 		self:GetBossTarget(printTarget, 0.5, args.sourceGUID) -- Faster than waiting for debuff/cast end
-		self:Bar(args.spellId, lunarBeaconCounter % 2 == 0 and 35.3 or 21.9)
+		lunarBeaconCounter = lunarBeaconCounter + 1
+		self:Bar(args.spellId, lunarBeaconCounter == 2 and 21.9 or 35) -- XXX Need Data longer than 4 casts
 	end
 end
 
-function mod:LunarBeaconApplied(args)
-	if self:Me(args.destGUID) then
-		self:ScheduleTimer("Say", 3, args.spellId, 3, true)
-		self:ScheduleTimer("Say", 4, args.spellId, 2, true)
-		self:ScheduleTimer("Say", 5, args.spellId, 1, true)
+do
+	local prev = 0
+	function mod:GroundEffectDamage(args)
+		local t = GetTime()
+		if self:Me(args.destGUID) and t-prev > 1.5 then
+			prev = t
+			self:Message(args.spellId, "Personal", "Alert", CL.underyou:format(args.spellName))
+		end
 	end
 end
 
@@ -294,10 +343,9 @@ do
 	local prev = 0
 	function mod:LunarFire(args)
 		lunarFireCounter = lunarFireCounter + 1
-		local amount = args.amount or 1
 		local t = GetTime()
 		if t-prev > 20 or lunarFireCounter == 5 then -- Either 3rd or 4th is >20s, after that every 4th is.
-		 lunarFireCounter = 1
+			lunarFireCounter = 1
 		end
 		prev = t
 		self:Bar(args.spellId, lunarBeaconCounter % 4 == 0 and 23.1 or 10.9)
@@ -305,5 +353,6 @@ do
 end
 
 function mod:LunarFireApplied(args)
+	local amount = args.amount or 1
 	self:StackMessage(args.spellId, args.destName, amount, "Important", amount > 1 and "Warning")
 end

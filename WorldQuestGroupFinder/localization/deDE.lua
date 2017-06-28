@@ -74,6 +74,7 @@ L["WQGF_FRAME_FOUND_GROUPS"] = "Fand %d Gruppe(n). Klicke auf den Button, um dic
 L["WQGF_FRAME_GROUPS_LEFT"] = "%d Gruppe(n) verbleibend, Klicke weiter!"
 L["WQGF_FRAME_INIT_SEARCH"] = "Klicke auf den Button, um die Suche einzuleiten"
 L["WQGF_FRAME_NO_GROUPS"] = "Keine Gruppen gefunden. Klicke auf den Button, um eine neue Gruppe zu erstellen."
+L["WQGF_FRAME_RELIST_GROUP"] = "Klicke auf den Button, um die Gruppe erneut zu listen"
 L["WQGF_FRAME_SEARCH_GROUPS"] = "Klicke auf den Button, um nach Gruppen zu suchen..."
 L["WQGF_GLOBAL_CONFIGURATION"] = "Allgemeine Konfiguration:"
 L["WQGF_GROUP_CREATION_ERROR"] = "Ein Fehler ist bei der Erstellung eines neuen Eintrages im Dungeonbrowser aufgetreten. Bitte erneut versuchen."

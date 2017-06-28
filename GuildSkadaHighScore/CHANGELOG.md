@@ -1,8 +1,12 @@
+Version 1.0.13 (2017-06-21)
+
+* Bump for 7.2.5
+* Updated dependencies
+
 # Version 1.0.12 (2017-03-28)
 
 * Bump TOC for 7.2
 * Added tracking of Tomb of Sargeras
-
 
 # Version 1.0.11 (2017-01-19)
 
@@ -11,7 +15,7 @@
 # Version 1.0.10 (2016-11-09)
 
 * Added tracking of Trial of Valor.
-* Now also tracks kills when not in a guild. These entries are grouped under a guild called "<No Guild>".
+* Now also tracks kills when not in a guild. These entries are grouped under a guild called "`<No Guild>`".
 
 # Version 1.0.9 (2016-10-26)
 

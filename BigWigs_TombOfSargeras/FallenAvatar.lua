@@ -1,7 +1,9 @@
 
 --------------------------------------------------------------------------------
 -- TODO List:
--- - Re-check phase 1 timers on live
+-- - Keep updating the timers if any new timers shorter than current are found
+-- - Check Desolate timers in P1 again - might get offset later in the fight
+-- - Maybe mark Shadowy Blades? 3 in heroic, 7 in mythic. Maybe too much for mythic?
 
 --------------------------------------------------------------------------------
 -- Module Declaration
@@ -18,10 +20,10 @@ mod.respawnTime = 25
 --
 
 local timersHeroic = {
-	[234057] = {7, 40, 35.2, 47.3, 40, 35}, -- Unbound Chaos
-	[239207] = {15, 42.6, 59.5, 60, 42.5, 42.4}, -- Touch of Sargeras
-	[236573] = {28, 42.5, 40, 30.3, 49, 36.5, 36.5}, -- Shadowy Blades
-	[239132] = {34.3, 60.8, 60.8, 62.1}, -- Rupture Realities
+	[234057] = {7, 42, 35, 41, 36, 35, 43}, -- Unbound Chaos
+	[239207] = {15, 42.5, 55, 43, 42.5, 42.5}, -- Touch of Sargeras
+	[236573] = {30, 42.5, 36.5, 30, 30, 30, 33}, -- Shadowy Blades
+	[239132] = {37, 60.8, 60, 62}, -- Rupture Realities
 }
 
 local phase = 1
@@ -41,23 +43,32 @@ local timers = timersHeroic
 --
 
 local L = mod:GetLocale()
+if L then
+	L.touch_impact = "Touch Impact" -- Touch of Sargeras Impact (short)
 
+	L.custom_on_stop_timers = "Always show ability bars"
+	L.custom_on_stop_timers_desc = "Fallen Avatar randomizes which off-cooldown ability he uses next. When this option is enabled, the bars for those abilities will stay on your screen."
+end
 --------------------------------------------------------------------------------
 -- Initialization
 --
 
+local darkMarkIcons = mod:AddMarkerOption(false, "player", 6, 239739, 6, 4, 3)
 function mod:GetOptions()
 	return {
 		"stages",
+		"custom_on_stop_timers",
 		239207, -- Touch of Sargeras
 		239132, -- Rupture Realities
 		234059, -- Unbound Chaos
 		{236604, "SAY", "FLASH"}, -- Shadowy Blades
+		239212, -- Lingering Darkness
 		{236494, "TANK"}, -- Desolate
 		236528, -- Ripple of Darkness
 		233856, -- Cleansing Protocol
 		233556, -- Corrupted Matrix
 		{239739, "FLASH", "SAY"}, -- Dark Mark
+		darkMarkIcons,
 		235572, -- Rupture Realities
 		242017, -- Black Winds
 		236684, -- Fel Infusion
@@ -79,6 +90,10 @@ function mod:OnBossEnable()
 	self:RegisterEvent("RAID_BOSS_WHISPER")
 	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE")
 
+	self:Log("SPELL_AURA_APPLIED", "GroundEffectDamage", 239212) -- Lingering Darkness
+	self:Log("SPELL_PERIODIC_DAMAGE", "GroundEffectDamage", 239212)
+	self:Log("SPELL_PERIODIC_MISSED", "GroundEffectDamage", 239212)
+
 	-- Stage One: A Slumber Disturbed
 	self:Log("SPELL_CAST_START", "TouchofSargeras", 239207) -- Touch of Sargeras
 	self:Log("SPELL_CAST_START", "RuptureRealities", 239132) -- Rupture Realities
@@ -98,6 +113,7 @@ function mod:OnBossEnable()
 
 	-- Stage Two: An Avatar Awakened
 	self:Log("SPELL_AURA_APPLIED", "DarkMark", 239739) -- Dark Mark
+	self:Log("SPELL_AURA_REMOVED", "DarkMarkRemoved", 239739) -- Dark Mark
 	self:Log("SPELL_CAST_START", "RuptureRealitiesP2", 235572) -- Rupture Realities
 	self:Log("SPELL_AURA_APPLIED", "FelInfusion", 236684) -- Dark Mark
 	self:Log("SPELL_AURA_APPLIED_DOSE", "FelInfusion", 236684) -- Dark Mark
@@ -106,7 +122,8 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "TaintedMatrix", 240623) -- Tainted Matrix
 	self:Log("SPELL_AURA_APPLIED", "TaintedEssence", 240728) -- Desolate
 	self:Log("SPELL_AURA_APPLIED_DOSE", "TaintedEssence", 240728) -- Desolate
-	self:Log("SPELL_CAST_SUCCESS", "RainoftheDestroyer", 234418) -- Rain of the Destroyer
+
+	self:RegisterMessage("BigWigs_BarCreated", "BarCreated")
 end
 
 function mod:OnEngage()
@@ -122,7 +139,9 @@ function mod:OnEngage()
 
 	self:Bar(236494, 12) -- Desolate
 	self:Bar(234059, timers[234057][unboundChaosCounter]) -- Unbound Chaos
-	self:Bar(239207, timers[239207][touchofSargerasCounter], CL.count:format(self:SpellName(239207), touchofSargerasCounter)) -- Touch of Sargeras
+	if not self:Easy() then
+		self:Bar(239207, timers[239207][touchofSargerasCounter], CL.count:format(self:SpellName(239207), touchofSargerasCounter)) -- Touch of Sargeras
+	end
 	self:Bar(236604, timers[236573][shadowyBladesCounter]) -- Shadowy Blades
 	self:Bar(239132, timers[239132][ruptureRealitiesCounter]) -- Rupture Realities (P1)
 end
@@ -131,14 +150,42 @@ end
 -- Event Handlers
 --
 
+do
+	local abilitysToPause = {
+		[234059] = true, -- Unbound Chaos
+		[239207] = true, -- Touch of Sargeras
+		[236604] = true, -- Shadowy Blades
+		[239132] = true, -- Rupture Realities (P1)
+	}
+
+	local castPattern = CL.cast:gsub("%%s", ".+")
+
+	local function stopAtZeroSec(bar)
+		if bar.remaining < 0.15 then -- Pause at 0.0
+			bar:SetDuration(0.01) -- Make the bar look full
+			bar:Start()
+			bar:Pause()
+			bar:SetTimeVisibility(false)
+		end
+	end
+
+	function mod:BarCreated(_, _, bar, module, key, text, time, icon, isApprox)
+		if self:GetOption("custom_on_stop_timers") and abilitysToPause[key] and not text:match(castPattern) and text ~= L.touch_impact then
+			bar:AddUpdateFunction(stopAtZeroSec)
+		end
+	end
+end
+
 function mod:UNIT_SPELLCAST_SUCCEEDED(unit, spellName, _, _, spellId)
 	if spellId == 234057 then -- Unbound Chaos
+		if self:Tank() then
+			self:Message(234059, "Attention", "Alert")
+		end
 		unboundChaosCounter = unboundChaosCounter + 1
-		self:Message(234059, "Attention", "Alert", spellName)
 		self:Bar(234059, timers[spellId][unboundChaosCounter])
 	elseif spellId == 236573 then -- Shadowy Blades
-		shadowyBladesCounter = shadowyBladesCounter + 1
 		self:Message(236604, "Attention", "Alert", spellName)
+		shadowyBladesCounter = shadowyBladesCounter + 1
 		self:CDBar(236604, timers[spellId][shadowyBladesCounter])
 		self:CastBar(236604, 5)
 	elseif spellId == 235597 then -- Annihilation // Stage 2
@@ -160,16 +207,9 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(unit, spellName, _, _, spellId)
 		desolateCounter = 1
 		darkMarkCounter = 1
 
-		self:CDBar(236494, 17.3) -- Desolate
-		self:CDBar(239739, 19.8) -- Dark Mark
-		--if self:Heroic() or self:Mythic() then -- XXX Black Winds always active last mythic test
-		--	self:CDBar(242017, 23.4) -- Black Winds
-		--end
-		self:CDBar(235572, 33.4, CL.count:format(self:SpellName(235572), ruptureRealitiesCounter)) -- Rupture Realities (P2)
-
-	--elseif spellId == 239417 then -- Black Winds
-	--	self:Message(242017, "Attention", "Alert", spellName)
-	--	self:Bar(242017, 25.5)
+		self:CDBar(236494, 20) -- Desolate
+		self:CDBar(239739, 21.5) -- Dark Mark
+		self:CDBar(235572, 38, CL.count:format(self:SpellName(235572), ruptureRealitiesCounter)) -- Rupture Realities (P2)
 	end
 end
 
@@ -187,16 +227,28 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg)
 	end
 end
 
+do
+	local prev = 0
+	function mod:GroundEffectDamage(args)
+		local t = GetTime()
+		if self:Me(args.destGUID) and t-prev > 1.5 then
+			prev = t
+			self:Message(args.spellId, "Personal", "Alert", CL.underyou:format(args.spellName))
+		end
+	end
+end
+
 function mod:TouchofSargeras(args)
+	self:StopBar(CL.count:format(args.spellName, touchofSargerasCounter))
+	self:Message(args.spellId, "Attention", "Alert", CL.incoming:format(CL.count:format(args.spellName, touchofSargerasCounter)))
+	self:Bar(args.spellId, 10.5, L.touch_impact)
 	touchofSargerasCounter = touchofSargerasCounter + 1
-	self:Message(args.spellId, "Attention", "Alert", CL.incoming:format(CL.count:format(args.spellName, (touchofSargerasCounter-1))))
 	self:Bar(args.spellId, timers[args.spellId][touchofSargerasCounter], CL.count:format(args.spellName, touchofSargerasCounter))
-	self:CastBar(args.spellId, 10.5, CL.count:format(args.spellName, (touchofSargerasCounter-1)))
 end
 
 function mod:RuptureRealities(args)
-	ruptureRealitiesCounter = ruptureRealitiesCounter + 1
 	self:Message(args.spellId, "Urgent", "Warning", CL.casting:format(args.spellName))
+	ruptureRealitiesCounter = ruptureRealitiesCounter + 1
 	self:Bar(args.spellId, timers[args.spellId][ruptureRealitiesCounter])
 	self:CastBar(args.spellId, 7.5)
 end
@@ -208,9 +260,9 @@ function mod:UnboundChaos(args)
 end
 
 function mod:Desolate(args)
-	desolateCounter = desolateCounter + 1
 	self:Message(args.spellId, "Attention", "Alert", CL.casting:format(args.spellName))
-	self:CDBar(args.spellId, phase == 2 and (desolateCounter == 2 and 19 or desolateCounter == 6 and 19 or 12) or (desolateCounter % 4 == 3 and 24.3 or 11.5))
+	desolateCounter = desolateCounter + 1
+	self:CDBar(args.spellId, phase == 2 and (desolateCounter % 2 == 0 and 12 or 23) or (desolateCounter % 4 == 3 and 24.3 or 11.5))
 end
 
 function mod:DesolateApplied(args)
@@ -238,9 +290,9 @@ function mod:Malfunction(args)
 end
 
 function mod:CorruptedMatrix(args)
-	corruptedMatrixCounter = corruptedMatrixCounter + 1
 	self:Message(args.spellId, "Important", "Warning", CL.incoming:format(args.spellName))
-	self:CDBar(args.spellId, self:Mythic() and 20 or (corruptedMatrixCounter == 2 and 51 or 60))
+	corruptedMatrixCounter = corruptedMatrixCounter + 1
+	self:CDBar(args.spellId, self:Mythic() and 20 or 50)
 	self:CastBar(args.spellId, self:Mythic() and 5 or 10)
 end
 
@@ -251,26 +303,37 @@ do
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
 			self:Say(args.spellId, CL.count:format(args.spellName, #list)) -- Announce which mark you have
-
-			local _, _, _, _, _, _, expires = UnitDebuff(args.destName, args.spellName)
-			local remaining = expires-GetTime()
-			self:ScheduleTimer("Say", remaining-3, args.spellId, 3, true)
-			self:ScheduleTimer("Say", remaining-2, args.spellId, 2, true)
-			self:ScheduleTimer("Say", remaining-1, args.spellId, 1, true)
+			self:SayCountdown(args.spellId, 6)
 		end
 		if #list == 1 then
+			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, list, "Attention", "Alarm")
 			darkMarkCounter = darkMarkCounter + 1
-			self:ScheduleTimer("TargetMessage", 0.1, args.spellId, list, "Attention", "Alarm")
-			self:Bar(args.spellId, darkMarkCounter == 3 and 27 or 23, CL.count:format(args.spellName, darkMarkCounter))
+			self:Bar(args.spellId, 34, CL.count:format(args.spellName, darkMarkCounter))
+		end
+
+		if self:GetOption(darkMarkIcons) then
+			local icon = #list == 1 and 6 or #list == 2 and 4 or #list == 3 and 3 -- (Blue -> Green -> Purple) in order of exploding/application
+			if icon then
+				SetRaidTarget(args.destName, icon)
+			end
+		end
+	end
+
+	function mod:DarkMarkRemoved(args)
+		if self:Me(args.destGUID) then
+			self:CancelSayCountdown(args.spellId)
+		end
+		if self:GetOption(darkMarkIcons) then
+			SetRaidTarget(args.destName, 0)
 		end
 	end
 end
 
 function mod:RuptureRealitiesP2(args)
+	self:Message(args.spellId, "Urgent", "Warning", CL.casting:format(CL.count:format(args.spellName, ruptureRealitiesCounter)))
+	self:CastBar(args.spellId, 7.5, CL.count:format(args.spellName, ruptureRealitiesCounter))
 	ruptureRealitiesCounter = ruptureRealitiesCounter + 1
-	self:Message(args.spellId, "Urgent", "Warning", CL.casting:format(CL.count:format(args.spellName, (ruptureRealitiesCounter-1))))
-	self:CastBar(args.spellId, 7.5, CL.count:format(args.spellName, (ruptureRealitiesCounter-1)))
-	self:Bar(args.spellId, 28, CL.count:format(args.spellName, ruptureRealitiesCounter))
+	self:Bar(args.spellId, 37.7, CL.count:format(args.spellName, ruptureRealitiesCounter))
 end
 
 function mod:FelInfusion(args)
@@ -281,8 +344,8 @@ function mod:FelInfusion(args)
 end
 
 function mod:TaintedMatrix(args)
-	taintedMatrixCounter = taintedMatrixCounter + 1
 	self:Message(args.spellId, "Important", "Warning", CL.incoming:format(args.spellName))
+	taintedMatrixCounter = taintedMatrixCounter + 1
 end
 
 function mod:TaintedEssence(args)

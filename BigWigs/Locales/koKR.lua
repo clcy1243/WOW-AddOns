@@ -3,7 +3,7 @@ if not L then return end
 
 -- Core.lua
 L.berserk = "광폭화"
-L.berserk_desc = "우두머리가 언제 광폭화되는지 바와 시간 경고를 표시합니다."
+L.berserk_desc = "우두머리가 언제 광폭화하는지 바와 시간 경고를 표시합니다."
 L.altpower = "보조 자원 표시"
 L.altpower_desc = "보조 자원 창을 표시합니다, 자신의 파티/공격대원의 보조 자원 양을 표시합니다."
 L.infobox = "정보 상자"
@@ -83,7 +83,6 @@ L.slashDescRange = "|cFFFED000/range:|r 거리 지시기를 엽니다."
 L.slashDescVersion = "|cFFFED000/bwv:|r BigWigs 버전 확인을 수행합니다."
 L.slashDescConfig = "|cFFFED000/bw:|r BigWigs 구성을 엽니다."
 
-L.gitHubTitle = "BigWigs는 GitHub에 있습니다"
 L.gitHubDesc = "BigWigs는 GitHub에 호스트되는 오픈 소스 소프트웨어입니다. 우리는 우리를 도와줄 새로운 사람들을 항상 찾고 있으며 우리의 코드를 누구나 살펴보는 것을 환영합니다, 기고를 만들고 오류 보고를 제출하세요. BigWigs는 현재 WoW 커뮤니티로부터 큰 도움을 받고 있습니다.\n\n|cFF33FF99이제 문서화된 우리의 API를 GitHub 위키에서 자유롭게 읽을 수 있습니다.|r"
 
 L.BAR = "바"
@@ -124,10 +123,10 @@ L.INFOBOX_desc = L.infobox_desc
 L.advanced = "고급 옵션"
 L.back = "<< 뒤로"
 
-L.tank = "|cFFFF0000방어 전담 경보만.|r "
-L.healer = "|cFFFF0000치유 전담 경보만.|r "
-L.tankhealer = "|cFFFF0000방어 & 치유 전담 경보만.|r "
-L.dispeller = "|cFFFF0000무효화 시전자 경보만.|r "
+L.tank = "|cFFFF0000방어 전담만 경보합니다.|r "
+L.healer = "|cFFFF0000치유 전담만 경보합니다.|r "
+L.tankhealer = "|cFFFF0000방어 & 치유 전담만 경보합니다.|r "
+L.dispeller = "|cFFFF0000무효화 시전자만 경보합니다.|r "
 
 -- Statistics
 L.statistics = "통계"

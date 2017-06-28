@@ -1,28 +1,124 @@
-lightweight tag 5e98c36bb37bc8b51e929663fa34f3b356a3ed36 GSE_2.1.02
-Author:	TimothyLuke <timothy@minahan.net>
-Date:	Wed Jun 14 16:17:54 2017 +0930
+lightweight tag 5ccc018addba918c3959c61cd573c4977b19a3b3 2.1.03-alpha1
+Author:	GitHub <noreply@github.com>
+Date:	Mon Jun 19 15:39:39 2017 +0930
 
-commit 5e98c36bb37bc8b51e929663fa34f3b356a3ed36
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Wed Jun 14 16:17:54 2017 +0930
-
-    more Unittest updates for #302
-
-commit edc410b904929139b3dbd80524e5a208a9292eda
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Wed Jun 14 16:14:00 2017 +0930
-
-    UnitTest update for #302
-
-commit a2c17c99c691ae789df50c6c1dd952ea0bfc69bd
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Wed Jun 14 14:13:23 2017 +0930
-
-    Priority checks and update for #302
-
-commit 26b6c2b89ee28c37b66ac30dddaec9bd8f7eec37
+commit 5ccc018addba918c3959c61cd573c4977b19a3b3
 Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Jun 14 07:41:21 2017 +0930
+Date:   Mon Jun 19 15:39:39 2017 +0930
 
-    TOC updates for 7.2.5
+    TOC update to 2.1.03
+
+commit d1e6a38b4a6893ad37645a8c0dec4a84f6a6e3f6
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Mon Jun 19 14:34:23 2017 +0930
+
+    changes fo #320
+
+commit d9f3e7289047559cef93852152111581217efb64
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Mon Jun 19 14:22:21 2017 +0930
+
+    Fix for #319
+
+commit 081b6f9fc1e984e0752e3449f558b163a44998be
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Fri Jun 16 11:45:34 2017 +0930
+
+    Mock GetUnitName
+
+commit 78d7243e131eb591433bcd1d36eb4e46f9275210
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Fri Jun 16 11:35:48 2017 +0930
+
+    CleanStrings Unittests
+
+commit 72f0948928c1b9293d3f6b48457c6e133e156448
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Fri Jun 16 11:31:52 2017 +0930
+
+    test GSE.CleanStrings()
+
+commit b5b02767a099ece8059765c5b55ca7b2719c732e
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Fri Jun 16 11:21:59 2017 +0930
+
+    correction to Unittest commit
+
+commit b7effe8d15daa0014ccd1ae875d08be152250620
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Fri Jun 16 11:19:07 2017 +0930
+
+    Unit tests for GSE.UnEscapeSequence, GSE.UnEscapeString and GSE.UnescapeTable
+
+commit 317d91902d08ab79ed5c7dcb1822181602c64d18
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Jun 15 10:54:00 2017 +0930
+
+    Add Code Coverage badge.
+
+commit f80900a63eaa1ba9608daef7f4aab2c7e27f6c13
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 10:48:00 2017 +0930
+
+    more exclusions #317
+
+commit b618ad424c1be3d6d74ba157a40116a2dc390fab
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 10:41:22 2017 +0930
+
+    more attempts at exclusions #317
+
+commit af519a127c85b6ccb0b378812de09b41305ec8c9
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 10:35:53 2017 +0930
+
+    typonese for #317
+
+commit 33cd8474888cf13e6388b80349dc7512fbb51b39
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 10:33:33 2017 +0930
+
+    Changes for #317
+
+commit 102eafc0e628ca36094b22394f74c8905cf81760
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 09:28:25 2017 +0930
+
+    #302 correct numeric check
+
+commit 98803c3e0c1de87937cd0a02bf55463f772dd086
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 09:23:40 2017 +0930
+
+    #302 table and type checking for loopcheck
+
+commit f8eb05967f78b9559f39b741404de8d44ddd527b
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 09:11:48 2017 +0930
+
+    more debug to trace storage #302
+
+commit 9ec6e8f75f469406142a5797dbde5ff3160deb89
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 09:06:58 2017 +0930
+
+    reverting Storage change for #302 to rerun unit tests
+
+commit a5b600a401f45f0b07bdcfa53afdd5cc43010853
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 09:01:24 2017 +0930
+
+    #302 more unittest updates
+
+commit a17eca34a8f3433dd322b2de6695294dfb60eb13
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 09:00:18 2017 +0930
+
+    #302 storage grammer Travis error.
+
+commit 314274237931fd531a6123b8064d1a1719142289
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Thu Jun 15 08:57:37 2017 +0930
+
+    #302 Update to GSE.IsLoopSequence check and associated
 

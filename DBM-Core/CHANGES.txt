@@ -1,251 +1,214 @@
-tag 096b433ae6da1dee76eafdb030a097a228cc138c 7.2.8
+tag 42ddb51495f0ef3fca9dd6b9e85a60810a774e75 7.2.11
 Author:	subversion <svn@deadlybossmods.com>
-Date:	Mon Jun 19 23:24:56 2017 +0200
+Date:	Tue Jun 27 12:32:59 2017 +0200
 
-Tagging as 7.2.8
+Tagging as 7.2.11
 
-commit fb5b55c31f5b2f08c82d09d7ca2d52811d711b23
+commit f9f4c84ba67405eac786c7d62173ceaafb431b23
 Author: subversion <svn@deadlybossmods.com>
-Date:   Mon Jun 19 23:24:56 2017 +0200
+Date:   Tue Jun 27 12:32:59 2017 +0200
 
-    increment version number to 7.2.8
+    increment version number to 7.2.11
 
-commit 47e173846957675fdb88458450083bb472d7aa5a
+commit a9239d0ab80e753cec27985587ab3e370a8c1363
 Author: subversion <svn@deadlybossmods.com>
-Date:   Mon Jun 19 06:14:11 2017 +0200
+Date:   Tue Jun 27 07:33:46 2017 +0200
 
-    Omega via svn r16276:
-    Generic GTFO for future use. some mods have 4+ GTFO warnings now, they should be combined instead of having multiple options.
+    Omega via svn r16352:
+    While at it, add shorter text for hopeless reflection
 
-commit fb712d9d02e58c48c0692cf25c47051a48fe899c
+commit e2bcbeca5a2eabb9a51f22a859dcaaf664dfc47d
 Author: subversion <svn@deadlybossmods.com>
-Date:   Thu Jun 15 03:40:22 2017 +0200
+Date:   Tue Jun 27 07:20:44 2017 +0200
 
-    Omega via svn r16275:
-    Fix bug where info frame doesn?\226?\128?\153t hide on combat end
+    Omega via svn r16351:
+    Bump HF
 
-commit f48fd53cb41a76187511ff6aacc2d7a070b95caa
+commit 5188cb7c1262af87418dd6ef04b72571f5bac066
 Author: subversion <svn@deadlybossmods.com>
-Date:   Thu Jun 15 00:09:12 2017 +0200
+Date:   Tue Jun 27 07:14:41 2017 +0200
 
-    Omega via svn r16274:
-    make dway less strict about reaching arrow point before closing
+    Omega via svn r16350:
+    KJ Update
+    Added more phase 3 timer data
+    Made fel claw taunt warning faster
+    Changed many timers to count timers
+    Added target messages for reflections
+    Changed first darkness warning to say move to ?\226?\128?\156group?\226?\128?\157 instead of ?\226?\128?\156rift?\226?\128?\157 since rift isn?\226?\128?\153t up yet for first one.
+    TODO, more orb timer data. I know it?\226?\128?\153s incomplete but it?\226?\128?\153s just not in WCL public logs and my transcriptor logs only saw 2 orbs (so don?\226?\128?\153t know time between 2nd and 3rd, etc yet)
+    Account for fact second bursting is delayed on heroic by singularity
+    Fixed passing pets to IsTanking on felclaw check (wasn?\226?\128?\153t causing errors but also wasn?\226?\128?\153t very efficient either)
+    Fixed info frame sometimes not hiding after combat end
+    Fixed ?\226?\128?\156phase 3?\226?\128?\157 message showing on phase 2.5 wipes.
 
-commit c98217fb26ab80ce6930e5fe394572b4eb41af15
+commit 1ce3444bcf7cbeb005fa6a0127c254d6ca20c405
 Author: subversion <svn@deadlybossmods.com>
-Date:   Wed Jun 14 22:17:47 2017 +0200
+Date:   Tue Jun 27 05:24:30 2017 +0200
 
-    Omega via svn r16273:
+    Omega via svn r16349:
+    Orbs
+
+commit 0db148fb4e8ad81fda6a8f164e24e9633e5ecde4
+Author: subversion <svn@deadlybossmods.com>
+Date:   Tue Jun 27 05:05:50 2017 +0200
+
+    Omega via svn r16348:
+    Push quick phase 1 arm timer
+
+commit 944d9139ed6f8163a3a29aef189ea88c878e3726
+Author: subversion <svn@deadlybossmods.com>
+Date:   Tue Jun 27 04:03:00 2017 +0200
+
+    Omega via svn r16347:
+    That should fix felclaws
+
+commit 1067cd2cfd7324b2b02c10aece1d17e00cabfdc4
+Author: subversion <svn@deadlybossmods.com>
+Date:   Tue Jun 27 03:06:37 2017 +0200
+
+    Omega via svn r16346:
+    Fix one stack taunt warning for avatar
+
+commit 4bdefb24d6cd98007ee86b6bc7e0086ad6510005
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Jun 26 22:35:56 2017 +0200
+
+    Omega via svn r16345:
+    Fix another bug
+
+commit cb3e3f33bde558c7e863999f766331561427110c
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Jun 26 22:12:43 2017 +0200
+
+    Omega via svn r16344:
+    Fix function name
+
+commit deafc823c056f7f8810e183fe2cec07a734613ac
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Jun 26 21:48:47 2017 +0200
+
+    Omega via svn r16343:
+    Ooops, another infoframe fix
+
+commit 52d6639f2776fb7262ed751561758d4376ccfa52
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Jun 26 21:47:03 2017 +0200
+
+    Omega via svn r16342:
+    Fix info frame bug on fallen avatar
+    Add shield absorb amount to info frame on fallen avatar
+    Added a shield ended positive message on fallen avatar
+
+commit fda0d8f9ed9e0d084565e5dabb691a03223c456a
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Jun 26 21:04:32 2017 +0200
+
+    Omega via svn r16341:
     CN update
 
-commit 57a3c74dca52dcc419f7ab9997e6500f202fe035
+commit 86fdb0c020324f0d8d9e74f7338ecd237ea59649
 Author: subversion <svn@deadlybossmods.com>
-Date:   Wed Jun 14 22:16:55 2017 +0200
+Date:   Mon Jun 26 09:06:01 2017 +0200
 
-    Omega via svn r16272:
-    Some ana fixes
+    Omega via svn r16340:
+    Some notes, and update glaivestorm
 
-commit 4e2e0f2f0d564ad144065886f9d7db6ff76c8e60
+commit 00502bebcc1680b2f067afc5595a6c14214e331c
 Author: subversion <svn@deadlybossmods.com>
-Date:   Wed Jun 14 08:01:56 2017 +0200
+Date:   Mon Jun 26 08:48:28 2017 +0200
 
-    Omega via svn r16271:
-    Add voice for echo so it no longer uses generic sound if voice pack is installed
-    tweaked one timer by 1 second
-    reduced chosen fate spam
+    Omega via svn r16339:
+    Change corp shot other to special warning and add ?\226?\128?\156help soak?\226?\128?\157 to it
 
-commit 147a530806332ae7ee4d3c432ba80152902b7ba9
+commit 3a05a82010833d6a1ec280bcdc38dd1abd275176
 Author: subversion <svn@deadlybossmods.com>
-Date:   Wed Jun 14 06:22:58 2017 +0200
+Date:   Mon Jun 26 08:42:49 2017 +0200
 
-    Omega via svn r16270:
-    Change host back to this way and flip range frame logics which had filters backwards
+    Omega via svn r16338:
+    Remove confusing voice warning. there is no good voice for that so for now just remove voice pack support on embrace of the eclipse
 
-commit 87ead1ab6e213e55d6c3022f993c58d502e166ad
+commit dfa9ee2bf24cdf01d0c3c4d250c9140c02dec4dd
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Jun 13 20:15:35 2017 +0200
+Date:   Mon Jun 26 07:39:00 2017 +0200
 
-    Omega via svn r16269:
+    Omega via svn r16337:
+    Add GTFO requested by Kaedys on discord.
+
+commit 0800cfcd9d36e974839de5389cac93a5172da7ab
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sun Jun 25 23:47:18 2017 +0200
+
+    Omega via svn r16336:
+    Update info frame on fallen avatar to track ability cds and show yes/no if an ability is on cooldown
+    Fix lua error on goroth
+
+commit b38426f3cdbbbc688a94441df8c940632650f397
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sun Jun 25 22:54:25 2017 +0200
+
+    Omega via svn r16335:
+    Add first shadow bolt volley to Kurtalos by user requests
+
+commit c648519ccc3f882e5aff4c7b88460e27841ecbc3
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sun Jun 25 11:24:19 2017 +0200
+
+    ultrashining via svn r16334:
+    zhTW update
+
+commit 6e86a240229b1bc7fc32da63b199b262b49164c5
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sun Jun 25 05:09:17 2017 +0200
+
+    Omega via svn r16333:
     KR update
 
-commit f394340b339571c02af6596f5cecf517244353a9
+commit 39b98b9f37b722578b185aa713ea17ca0950dc28
 Author: subversion <svn@deadlybossmods.com>
-Date:   Mon Jun 12 07:21:00 2017 +0200
+Date:   Sun Jun 25 03:38:05 2017 +0200
 
-    Omega via svn r16268:
-    Don?\226?\128?\153t treat solochallenge scenarios as scenarios when reporting win/wipe, this way boss HP is reported in wipe.
-    sync TW raid engage/defeat messages if guild group
+    Omega via svn r16332:
+    Fix couple singular timers not showing count
 
-commit c902ff8aae0de84979fa76573c53478cad560fc0
+commit 43ded3bb74158d116ddcd729041b1ca6111e7886
 Author: subversion <svn@deadlybossmods.com>
-Date:   Thu Jun 8 09:39:41 2017 +0200
+Date:   Sun Jun 25 03:29:35 2017 +0200
 
-    Omega via svn r16267:
-    Minor tweaks
+    Omega via svn r16331:
+    Refix crashing comet (reported by F5in)
 
-commit 2318f4087eba1714fe8b876c71809bbf6128b1e1
+commit 8162ad5773cea57e36df9680e2dc6b448ba45e33
 Author: subversion <svn@deadlybossmods.com>
-Date:   Wed Jun 7 06:20:13 2017 +0200
+Date:   Sun Jun 25 03:02:48 2017 +0200
 
-    Omega via svn r16266:
-    HF rev
+    Omega via svn r16330:
+    Improve scream warning to only tell you to move to boned if number of boned mobs > 0, else just tell you to move away from others
 
-commit c8c41feb370bd2fa62126325ab0ae1892213dcd2
+commit 81447410778364ec66a92e45ba90610f1dff9a1c
 Author: subversion <svn@deadlybossmods.com>
-Date:   Wed Jun 7 06:19:13 2017 +0200
+Date:   Sat Jun 24 23:29:47 2017 +0200
 
-    Omega via svn r16265:
-    Fix bug that caused singularity timer not to start for last one of phase
+    Omega via svn r16329:
+    Count armageddon warnings
 
-commit 1eec10663884f9ba1a1166806131abbad6c2f340
+commit 9d47e87fe329601fbcab32e982a68a09dbf06941
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Jun 3 22:53:21 2017 +0200
+Date:   Sat Jun 24 20:45:38 2017 +0200
 
-    Omega via svn r16264:
-    The drop down menus can?\226?\128?\153t be fixed right now, so at east add a note about menu scrolling.
+    Omega via svn r16328:
+    Add armageddon rain cast bar
 
-commit 9303c994db9dd3a5424a2fb2a6aff33857c7fe77
+commit b23680e2617795d85e409beb802dcd8e5ca68cc0
 Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Jun 3 08:47:27 2017 +0200
+Date:   Sat Jun 24 20:40:14 2017 +0200
 
-    Omega via svn r16263:
-    Make sure 240910 is watched
-
-commit bd88baa58f6bef352d57d24cead1f7fdca184fd1
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Jun 3 08:37:14 2017 +0200
-
-    Omega via svn r16262:
-    Couple more timers that can kinda work in
-
-commit 09939e46b9d7991d18cf157e16b17bc1c0e85c7c
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Jun 3 08:29:24 2017 +0200
-
-    Omega via svn r16261:
-    Some minor phase 1 first timers for KJ. without phase changes in CLEU though can?\226?\128?\153t properly do any other timers.
-    Fix armageddon cast trigger, it is in CLEU.
-
-commit b33a729514cee29ba4b50e17af37ccc5ba76c714
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Jun 3 08:08:04 2017 +0200
-
-    Omega via svn r16260:
-    fix draw in, which no longer fires SUCCESS event
-    Code cleanup and hack removal for draw in bug that seems fixed.
-    Tweak first draw in timer
-    Other fixes
-
-commit e9e0e2d97cb7a058dd16486a194b7a63fde1fa80
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Jun 3 06:16:04 2017 +0200
-
-    Omega via svn r16259:
-    Missed some stuff
-
-commit 394516cbfb7009c7852ff669319d8d62f6657962
-Author: subversion <svn@deadlybossmods.com>
-Date:   Fri Jun 2 00:26:02 2017 +0200
-
-    Omega via svn r16258:
-    Disable taskmaster on Harjatan, that mechanic seems to be removed from game, or at very least removed from journal
-    add combat message to KJ
-
-commit c32c4aca961175fdb14133ce8b0b0e8e700f74d1
-Author: subversion <svn@deadlybossmods.com>
-Date:   Thu Jun 1 04:52:57 2017 +0200
-
-    Omega via svn r16257:
-    Add some more singularity IDs that can cause missing timers
-
-commit ca0276cdeda3da058124c019ecc82b2468c56d27
-Author: subversion <svn@deadlybossmods.com>
-Date:   Wed May 31 06:58:28 2017 +0200
-
-    Omega via svn r16256:
-    Kill redundant timer on Etraeus, don?\226?\128?\153t need timer for grav pull an thing, especially since thing pops out early if tank dies.
-    Changed yells and timers on guldan to use shorter text names for bonds of fel and storm of destroyer
-    Fixed timer bug for carrion nightmare on tichondrius which was showing ?\226?\128?\156unknown?\226?\128?\157 instead of a number for count.
-
-commit aeb60b19e2dd17a0d9177d93238259165043c627
-Author: subversion <svn@deadlybossmods.com>
-Date:   Wed May 31 06:25:13 2017 +0200
-
-    Omega via svn r16255:
-    added taunt warning to burst if burst is applied to tank currently on elisande
-    Tweaked timing on add count for voice pack on phase3 guldan
-    added missing run out warning to this weeks trash world quest.
-
-commit 2cca6f686234ad4ee992a2e40a50c8706d851d73
-Author: subversion <svn@deadlybossmods.com>
-Date:   Tue May 30 20:59:25 2017 +0200
-
-    Omega via svn r16254:
-    Fix lua error on Maiden of Vigilance
-
-commit 28d001cdd2d1cd5c1928e38fc9b53689465020ab
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sat May 27 04:12:39 2017 +0200
-
-    Omega via svn r16253:
-    Update heroic Anomaly data
-
-commit a3d443c7ef5ce56fe4914a97755d8319eab18e5d
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sat May 27 01:58:03 2017 +0200
-
-    Omega via svn r16252:
-    Comment updates, and update one timer from todays mythic testing
-
-commit 6c59569d369aa5bf9b07698d73593dfe9d9d2b76
-Author: subversion <svn@deadlybossmods.com>
-Date:   Fri May 26 01:18:14 2017 +0200
-
-    Omega via svn r16251:
-    some timer updates from todays mythic testing
-
-commit 94f0c77e467f586d3b3a3992f65c5eddd74a00ac
-Author: subversion <svn@deadlybossmods.com>
-Date:   Thu May 25 07:34:07 2017 +0200
-
-    Omega via svn r16250:
-    Fix orb
-
-commit ed69385cdddcb6162944e1679c03bb2c26a12f4c
-Author: subversion <svn@deadlybossmods.com>
-Date:   Thu May 25 05:55:10 2017 +0200
-
-    Omega via svn r16249:
-    Fix run to edge voice playing for everyone
-    Change run to edge to ranged DPS only warning
-    Add audio count to add spawns in phase 3 guldan voice pack
-
-commit 03c3be8d8c947878041e57c869c6d595ceb3fa47
-Author: subversion <svn@deadlybossmods.com>
-Date:   Wed May 24 23:58:33 2017 +0200
-
-    Omega via svn r16248:
-    Couple tweaks
-
-commit 20e311a874a63ea3030b0b1fdab0e49bb737ef84
-Author: subversion <svn@deadlybossmods.com>
-Date:   Wed May 24 20:43:57 2017 +0200
-
-    Omega via svn r16247:
-    Add other timewalking difficulty index
-
-commit 40885ebbc5061d1de1dc258b9d0cad5d149308b8
-Author: subversion <svn@deadlybossmods.com>
-Date:   Wed May 24 11:03:29 2017 +0200
-
-    Omega via svn r16246:
-    remove a bad radar/hud message that should have been removed in patch 7.1, how did no one report this. :o
-    Change voice used by call of night
-
-commit 34016ef39fa9203f727f15f446667bd984abcb44
-Author: subversion <svn@deadlybossmods.com>
-Date:   Tue May 23 22:02:21 2017 +0200
-
-    tandanu via svn r16245:
+    tandanu via svn r16327:
     increment alpha version
+
+commit 8309ff815aa0ca2d41642f21f7dbffeff631f5d2
+Author: subversion <svn@deadlybossmods.com>
+Date:   Sat Jun 24 20:39:36 2017 +0200
+
+    Omega via svn r16326:
+    Fix icons used, add a fades yell to focused dread
 

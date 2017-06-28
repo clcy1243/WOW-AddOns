@@ -26,10 +26,12 @@ local rebirthcount = 8
 local L = mod:NewLocale("enUS", true)
 if L then
 
-L["Ohgan_message"] = "Ohgan rebirth!"
-L["rebirth"] = "Ghost rebirth"
-L["rebirth_desc"] = "Warn for Ghost rebirth remaining."
-L["rebirth_message"] = "Ghost rebirth - %d left"
+-- ZulGurub/Mandokir
+	L["Ohgan_message"] = "Ohgan rebirth!"
+	L["rebirth"] = "Ghost rebirth"
+	L["rebirth_desc"] = "Warn for Ghost rebirth remaining."
+	L["rebirth_message"] = "Ghost rebirth - %d left"
+
 end
 L = mod:GetLocale()
 

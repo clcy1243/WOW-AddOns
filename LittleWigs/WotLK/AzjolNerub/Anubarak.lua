@@ -17,6 +17,7 @@ local LCL = LibStub("AceLocale-3.0"):GetLocale("Little Wigs: Common")
 local L = mod:NewLocale("enUS", true)
 if L then
 
+
 end
 L = mod:GetLocale()
 

@@ -1,4 +1,4 @@
--- $Id: Handler.lua 67 2017-06-18 11:25:51Z arith $
+-- $Id: Handler.lua 70 2017-06-21 17:55:46Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -6,12 +6,10 @@
 local _G = getfenv(0)
 -- Libraries
 local string = _G.string;
-local format = string.format
-local gsub = string.gsub
-local next = next
-local wipe = wipe
-local GameTooltip = GameTooltip
-local WorldMapTooltip = WorldMapTooltip
+local format, gsub = string.format, string.gsub
+local next, wipe, pairs, select, type = next, wipe, pairs, select, type
+local GameTooltip, WorldMapTooltip, GetSpellInfo, CreateFrame, UnitClass = _G.GameTooltip, _G.WorldMapTooltip, _G.GetSpellInfo, _G.CreateFrame, _G.UnitClass
+
 -- ----------------------------------------------------------------------------
 -- AddOn namespace.
 -- ----------------------------------------------------------------------------
@@ -185,16 +183,16 @@ do
 		if (level == 1) then
 			-- Create the title of the menu
 			info = L_UIDropDownMenu_CreateInfo()
-			info.isTitle 		= 1
-			info.text 		= "HandyNotes - " ..addon.pluginName
-			info.notCheckable 	= 1
+			info.isTitle 		= true
+			info.text 			= "HandyNotes - " ..addon.pluginName
+			info.notCheckable 	= true
 			L_UIDropDownMenu_AddButton(info, level)
 
 			if TomTom then
 				-- Waypoint menu item
 				info = L_UIDropDownMenu_CreateInfo()
 				info.text = LH["Add this location to TomTom waypoints"]
-				info.notCheckable = 1
+				info.notCheckable = true
 				info.func = addTomTomWaypoint
 				info.arg1 = currentZone
 				info.arg2 = currentCoord
@@ -204,7 +202,7 @@ do
 			-- Hide menu item
 			info = L_UIDropDownMenu_CreateInfo()
 			info.text		= HIDE 
-			info.notCheckable 	= 1
+			info.notCheckable 	= true
 			info.func		= hideNode
 			info.arg1		= currentZone
 			info.arg2		= currentCoord
@@ -214,7 +212,7 @@ do
 			info = L_UIDropDownMenu_CreateInfo()
 			info.text		= CLOSE
 			info.func		= closeAllDropdowns
-			info.notCheckable 	= 1
+			info.notCheckable 	= true
 			L_UIDropDownMenu_AddButton(info, level)
 		end
 	end

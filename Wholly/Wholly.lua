@@ -333,6 +333,11 @@
 --			Updates Korean localization.
 --			Updates Spanish (Latin America) localization.
 --			Adds support for world quests to have their own pin color.
+--		063	Updates the Interface to 70200.
+--			Adds support for artifact level prerequisites.
+--			Updates Spanish (Latin America) localization.
+--			Updates French localization by sk8cravis.
+--			Updates German localization by RobbyOGK.
 --
 --	Known Issues
 --
@@ -2711,6 +2716,8 @@ if nil == Wholly or Wholly.versionNumber < Wholly_File_Version then
 				return format("|c%s"..ARTIFACTS_KNOWLEDGE_TOOLTIP_LEVEL.."|r", colorCode, numeric)
 			elseif questCode == 'a' then
 				return format("|c%s"..AVAILABLE_QUEST.."|r", colorCode)
+			elseif questCode == '@' then
+				return format("|c%s%s %s %d|r", colorCode, Grail:NPCName(100000000 + subcode), self.s.LEVEL, numeric)
 			else
 				questId = numeric
 				local typeString = ""
@@ -3298,7 +3305,7 @@ if nil == Wholly or Wholly.versionNumber < Wholly_File_Version then
 			local TomTom = TomTom
 
 			for code, t in pairs(self.waypoints) do
-				if tContains(t.uids, uid) then
+				if t.uids and tContains(t.uids, uid) then
 					foundGrouping = t.grouping
 				end
 			end
@@ -4116,12 +4123,9 @@ if nil == Wholly or Wholly.versionNumber < Wholly_File_Version then
 		S["GENDER_BOTH"] = "Beide"
 		S["GENDER_NONE"] = "Keins"
 		S["GRAIL_NOT_HAVE"] = "Grail kennt diese Quest nicht"
---Translation missing 
-		S["HIDE_BLIZZARD_WORLD_MAP_BONUS_OBJECTIVES"] = "Hide Blizzard bonus objectives"
---Translation missing 
-		S["HIDE_BLIZZARD_WORLD_MAP_QUEST_PINS"] = "Hide Blizzard quest map pins"
---Translation missing 
-		S["HIDE_BLIZZARD_WORLD_MAP_TREASURES"] = "Hide Blizzard treasures"
+		S["HIDE_BLIZZARD_WORLD_MAP_BONUS_OBJECTIVES"] = "Blende Blizzards Bonus Ziele aus"
+		S["HIDE_BLIZZARD_WORLD_MAP_QUEST_PINS"] = "Blende Blizzards Questkarten Punkte aus"
+		S["HIDE_BLIZZARD_WORLD_MAP_TREASURES"] = "Blende Blizzards Weltkarten Schätze aus"
 		S["HIDE_WORLD_MAP_FLIGHT_POINTS"] = "verstecke Flugpunkt"
 		S["HIGH_LEVEL"] = "Hochstufig"
 		S["HOLIDAYS_ONLY"] = "Verfügbar nur an Feiertagen:"
@@ -4396,9 +4400,9 @@ if nil == Wholly or Wholly.versionNumber < Wholly_File_Version then
 		S["SEARCH_CLEAR"] = "Limpiar buscador"
 		S["SEARCH_NEW"] = "Nueva búsqueda"
 		S["SELF"] = "Auto"
-		S["SHOW_BREADCRUMB"] = "Mostrar la información del sendero de la búsqueda en la Cuadra de la Búsqueda"
+		S["SHOW_BREADCRUMB"] = "Mostrar la información de la Mision El Sendero de Migas en la Cuadra de Búsqueda"
 		S["SHOW_LOREMASTER"] = "Solo mostrar misiones del Maestro Cultural"
-		S["SINGLE_BREADCRUMB_FORMAT"] = "Búsqueda de senderos migas de pan disponibles"
+		S["SINGLE_BREADCRUMB_FORMAT"] = "Mision El Sendero de Migas de Pan Disponible"
 		S["SP_MESSAGE"] = "Misiones especiales nunca entran al registro de misiones de Blizzard"
 		S["TAGS"] = "Etiquetas"
 		S["TAGS_DELETE"] = "Eliminar Etiqueta"
@@ -4463,7 +4467,7 @@ if nil == Wholly or Wholly.versionNumber < Wholly_File_Version then
 		S["IN_LOG"] = "Dans le journal"
 		S["IN_LOG_STATUS"] = "Afficher l'état des quêtes dans le journal"
 		S["INVALIDATE"] = "Invalidé(e) par les quêtes :"
-		S["IS_BREADCRUMB"] = "Donne accès aux quêtes suivantes :"
+		S["IS_BREADCRUMB"] = "Est le prérequis des quêtes :"
 		S["ITEM"] = "Objet"
 		S["ITEM_LACK"] = "Objet manquant"
 		S["KILL_TO_START_FORMAT"] = "Tuer pour commencer [%s]"
