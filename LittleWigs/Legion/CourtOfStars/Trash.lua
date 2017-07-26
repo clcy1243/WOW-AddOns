@@ -1,3 +1,6 @@
+
+-- GLOBALS: BigWigs, table
+
 --------------------------------------------------------------------------------
 -- Module Declaration
 --
@@ -23,7 +26,20 @@ mod:RegisterEnableMob(
 	104247, -- Duskwatch Arcanist
 	112668, -- Infernal Imp
 	108796, -- Arcanist Malrodi (Court of Stars: The Deceitful Student World Quest)
-	108740  -- Velimar (Court of Stars: Bring Me the Eyes World Quest)
+	108740, -- Velimar (Court of Stars: Bring Me the Eyes World Quest)
+	106468, -- Ly'leth Lunastre
+	107486, -- Chatty Rumormonger
+	105729, -- Signal Lantern: Boat at the start
+	105157, -- Arcane Power Conduit: Disables Constructs
+	105117, -- Flask of the Solemn Night: Poisons first boss
+	105160, -- Fel Orb: 10% Crit
+	105831, -- Infernal Tome: -10% Dmg taken
+	106024, -- Magical Lantern: +10% Dmg dealt
+	105249, -- Nightshade Refreshments: +25% HP
+	106108, -- Starlight Rose Brew: +HP & Mana reg
+	105340, -- Umbral Bloom: +10% Haste
+	106110, -- Waterlogged Scroll: +30% Movement speed
+	108154 -- Arcane Keys
 )
 
 --------------------------------------------------------------------------------
@@ -49,6 +65,131 @@ if L then
 	L.InfernalImp = "Infernal Imp"
 	L.Malrodi = "Arcanist Malrodi"
 	L.Velimar = "Velimar"
+	L.ArcaneKeys = "Arcane Keys"
+	L.clues = "Clues"
+
+	L.InfernalTome = "Infernal Tome"
+	L.MagicalLantern = "Magical Lantern"
+	L.NightshadeRefreshments = "Nightshade Refreshments"
+	L.StarlightRoseBrew = "Starlight Rose Brew"
+	L.UmbralBloom = "Umbral Bloom"
+	L.WaterloggedScroll = "Waterlogged Scroll"
+	L.BazaarGoods = "Bazaar Goods"
+	L.LifesizedNightborneStatue = "Lifesized Nightborne Statue"
+	L.DiscardedJunk = "Discarded Junk"
+	L.WoundedNightborneCivilian = "Wounded Nightborne Civilian"
+
+	L.announce_buff_items = "Announce buff items"
+	L.announce_buff_items_desc = "Announces all available buff items around the dungeon and who is able to use them."
+	L.announce_buff_items_icon = 211080
+
+	L.available = "%s|cffffffff%s|r available" -- Context: item is available to use
+	L.usableBy = "usable by"  -- Context: item is usable by someone
+
+	L.custom_on_use_buff_items = "Instantly use buff items"
+	L.custom_on_use_buff_items_desc = "Enable this option to instantly use the buff items around the dungeon. This will not use items which aggro the guards before the second boss."
+	L.custom_on_use_buff_items_icon = 211110
+
+	L.spy_helper = "Spy Event Helper"
+	L.spy_helper_desc = "Shows an InfoBox with all clues your group gathered about the spy. The clues will also be sent to your party members in chat."
+	L.spy_helper_icon = 213213
+
+	L.clueFound = "Clue found (%d/5): |cffffffff%s|r"
+	L.spyFound = "Spy found by %s!"
+	L.spyFoundChat = "I found the spy!"
+	L.spyFoundPattern = "Now now, let's not be hasty" -- Now now, let's not be hasty [player]. Why don't you follow me so we can talk about this in a more private setting...
+
+	L.hints = {
+		"Cape",
+		"No Cape",
+		"Pouch",
+		"Potions",
+		"Long Sleeves",
+		"Short Sleeves",
+		"Gloves",
+		"No Gloves",
+		"Male",
+		"Female",
+		"Light Vest",
+		"Dark Vest",
+		"No Potions",
+		"Book",
+	}
+
+	-- Cape
+	L["I heard the spy enjoys wearing capes."] = 1
+	L["Someone mentioned the spy came in earlier wearing a cape."] = 1
+
+	-- No Cape
+	L["I heard that the spy left their cape in the palace before coming here."] = 2
+	L["I heard the spy dislikes capes and refuses to wear one."] = 2
+
+	-- Pouch
+	L["A friend said the spy loves gold and a belt pouch filled with it."] = 3
+	L["I heard the spy's belt pouch is filled with gold to show off extravagance."] = 3
+	L["I heard the spy carries a magical pouch around at all times."] = 3
+	L["I heard the spy's belt pouch is lined with fancy threading."] = 3
+
+	-- Potions
+	L["I heard the spy brought along some potions... just in case."] = 4
+	L["I'm pretty sure the spy has potions at the belt."] = 4
+	L["I heard the spy brought along potions, I wonder why?"] = 4
+	L["I didn't tell you this... but the spy is masquerading as an alchemist and carrying potions at the belt."] = 4
+
+	-- Long Sleeves
+	L["I just barely caught a glimpse of the spy's long sleeves earlier in the evening."] = 5
+	L["I heard the spy's outfit has long sleeves tonight."] = 5
+	L["Someone said the spy is covering up their arms with long sleeves tonight."] = 5
+	L["A friend of mine mentioned the spy has long sleeves on."] = 5
+
+	-- Short Sleeves
+	L["I heard the spy enjoys the cool air and is not wearing long sleeves tonight."] = 6
+	L["A friend of mine said she saw the outfit the spy was wearing. It did not have long sleeves."] = 6
+	L["Someone told me the spy hates wearing long sleeves."] = 6
+	L["I heard the spy wears short sleeves to keep their arms unencumbered."] = 6
+
+	-- Gloves
+	L["I heard the spy always dons gloves."] = 7
+	L["There's a rumor that the spy always wears gloves."] = 7
+	L["Someone said the spy wears gloves to cover obvious scars."] = 7
+	L["I heard the spy carefully hides their hands."] = 7
+
+	-- No Gloves
+	L["There's a rumor that the spy never has gloves on."] = 8
+	L["I heard the spy dislikes wearing gloves."] = 8
+	L["I heard the spy avoids having gloves on, in case some quick actions are needed."] = 8
+	L["You know... I found an extra pair of gloves in the back room. The spy is likely to be bare handed somewhere around here."] = 8
+
+	-- Male
+	L["A guest said she saw him entering the manor alongside the Grand Magistrix."] = 9
+	L["I heard somewhere that the spy isn't female."] = 9
+	L["I heard the spy is here and he's very good looking."] = 9
+	L["One of the musicians said he would not stop asking questions about the district."] = 9
+
+	-- Female
+	L["A guest saw both her and Elisande arrive together earlier."] = 10
+	L["I hear some woman has been constantly asking about the district..."] = 10
+	L["Someone's been saying that our new guest isn't male."] = 10
+	L["They say that the spy is here and she's quite the sight to behold."] = 10
+
+	-- Light Vest
+	L["The spy definitely prefers the style of light colored vests."] = 11
+	L["I heard that the spy is wearing a lighter vest to tonight's party."] = 11
+	L["People are saying the spy is not wearing a darker vest tonight."] = 11
+
+	-- Dark Vest
+	L["I heard the spy's vest is a dark, rich shade this very night."] = 12
+	L["The spy enjoys darker colored vests... like the night."] = 12
+	L["Rumor has it the spy is avoiding light colored clothing to try and blend in more."] = 12
+	L["The spy definitely prefers darker clothing."] = 12
+
+	-- No Potions
+	L["I heard the spy is not carrying any potions around."] = 13
+	L["A musician told me she saw the spy throw away their last potion and no longer has any left."] = 13
+
+	-- Book
+	L["I heard the spy always has a book of written secrets at the belt."] = 14
+	L["Rumor has is the spy loves to read and always carries around at least one book."] = 14
 end
 L = mod:GetLocale()
 
@@ -58,6 +199,9 @@ L = mod:GetLocale()
 
 function mod:GetOptions()
 	return {
+		"announce_buff_items",
+		"custom_on_use_buff_items",
+		{"spy_helper", "INFOBOX"},
 		209027, -- Quelling Strike (Duskwatch Guard)
 		209033, -- Fortification (Duskwatch Guard)
 		225100, -- Charging Station (Guardian Construct)
@@ -84,7 +228,9 @@ function mod:GetOptions()
 		216096, -- Wild Magic (Arcanist Malrodi)
 		216000, -- Mighty Stomp (Velimar)
 		216006, -- Shadowflame Breath (Velimar)
+		214697, -- Picking Up (Arcane Keys)
 	}, {
+		["announce_buff_items"] = "general",
 		[209027] = L.Guard,
 		[225100] = L.Construct,
 		[211464] = L.Enforcer,
@@ -102,7 +248,8 @@ function mod:GetOptions()
 		[224377] = L.InfernalImp,
 		[216110] = L.Malrodi,
 		[216000] = L.Velimar,
-}
+		[214697] = L.ArcaneKeys,
+	}
 end
 
 function mod:OnBossEnable()
@@ -121,11 +268,427 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "DisintegrationBeam", 207980)
 	-- Eye Storm
 	self:Log("SPELL_CAST_SUCCESS", "EyeStorm", 212784)
+	-- Picking Up
+	self:Log("SPELL_CAST_START", "PickingUp", 214697)
+	self:Log("SPELL_CAST_SUCCESS", "PickingUpSuccess", 214697)
+
+	self:RegisterEvent("CHAT_MSG_MONSTER_SAY")
+	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	self:RegisterMessage("BigWigs_BossComm")
+	self:RegisterMessage("DBM_AddonMessage") -- Catch DBM clues
+
+	-- Purely because DBM, and maybe others, call CloseGossip. That is just sooooo useful.
+	local frames = {GetFramesRegisteredForEvent("GOSSIP_SHOW")}
+	for i = 1, #frames do
+		frames[i]:UnregisterEvent("GOSSIP_SHOW")
+	end
+	self:RegisterEvent("GOSSIP_SHOW")
+	for i = 1, #frames do
+		frames[i]:RegisterEvent("GOSSIP_SHOW")
+	end
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
+
+do
+	local autoTalk = {
+		[107486] = true, -- Chatty Rumormonger
+		[106468] = true, -- Ly'leth Lunastre
+		[105729] = true, -- Signal Lantern: Boat at the start
+	}
+
+	local buffItems = {
+		[105157] = { -- Arcane Power Conduit: Disables Constructs
+			["name"] = 210466,
+			["professions"] = {
+				[136243] = 100, -- Engineering
+			},
+			["races"] = {
+				["Gnome"] = true,
+				["Goblin"] = true,
+			},
+		},
+		[105117] = { -- Flask of the Solemn Night: Poisons first boss
+			["name"] = 207815,
+			["professions"] = {
+				[136240] = 100, -- Alchemy
+			},
+			["classes"] = {
+				["ROGUE"] = true,
+			},
+		},
+		[105160] = { -- Fel Orb: 10% Crit
+			["name"] = 208275,
+			["classes"] = {
+				["DEMONHUNTER"] = true,
+				["WARLOCK"] = true,
+				["PRIEST"] = true,
+				["PALADIN"] = true,
+			},
+		},
+		[105831] = { -- Infernal Tome: -10% Dmg taken
+			["name"] = "InfernalTome",
+			["classes"] = {
+				["DEMONHUNTER"] = true,
+				["PRIEST"] = true,
+				["PALADIN"] = true,
+			},
+		},
+		[106024] = { -- Magical Lantern: +10% Dmg dealt
+			["name"] = "MagicalLantern",
+			["classes"] = {
+				["MAGE"] = true,
+			},
+			["professions"] = {
+				[136244] = 100, -- Enchanting
+			},
+			["races"] = {
+				["BloodElf"] = true,
+				["NightElf"] = true,
+			},
+		},
+		[105249] = { -- Nightshade Refreshments: +25% HP
+			["name"] = "NightshadeRefreshments",
+			["professions"] = {
+				[133971] = 800, -- Cooking
+				[136246] = 100, -- Herbalism
+			},
+			["races"] = {
+				["Pandaren"] = true,
+			},
+		},
+		[106108] = { -- Starlight Rose Brew: +HP & Mana reg
+			["name"] = "StarlightRoseBrew",
+			["classes"] = {
+				["DEATHKNIGHT"] = true,
+				["MONK"] = true,
+			},
+		},
+		[105340] = { -- Umbral Bloom: +10% Haste
+			["name"] = "UmbralBloom",
+			["classes"] = {
+				["DRUID"] = true,
+			},
+			["professions"] = {
+				[136246] = 100, -- Herbalism
+			}
+		},
+		[106110] = { -- Waterlogged Scroll: +30% Movement speed
+			["name"] = "WaterloggedScroll",
+			["classes"] = {
+				["SHAMAN"] = true,
+			},
+			["professions"] = {
+				[134366] = 100, -- Skinning
+				[237171] = 100, -- Inscription
+			}
+		},
+	}
+
+	local guardItems = {
+		[106018] = { -- Bazaar Goods
+			["name"] = "BazaarGoods",
+			["classes"] = {
+				["ROGUE"] = true,
+				["WARRIOR"] = true,
+			},
+			["professions"] = {
+				[136247] = 100, -- Leatherworking
+			},
+		},
+		[106113] = { -- Lifesized Nightborne Statue
+			["name"] = "LifesizedNightborneStatue",
+			["professions"] = {
+				[134708] = 100, -- Mining
+				[134071] = 100, -- Jewelcrafting
+			},
+		},
+		[105215] = { -- Discarded Junk
+			["name"] = "DiscardedJunk",
+			["classes"] = {
+				["HUNTER"] = true,
+			},
+			["professions"] = {
+				[136241] = 100, -- Blacksmithing
+			},
+		},
+		[106112] = { -- Wounded Nightborne Civilian
+			["name"] = "WoundedNightborneCivilian",
+			["roles"] = {
+				["Healer"] = true,
+			},
+			["professions"] = {
+				[135966] = 100, -- First Aid
+				[136249] = 100, -- Tailoring
+			},
+		},
+	}
+
+	local professionCache = {}
+
+	local raceIcons = {
+		["Pandaren"] = "|T626190:0|t",
+		["NightElf"] = "|T236449:0|t",
+		["BloodElf"] = "|T236439:0|t",
+		["Gnome"] = "|T236445:0|t",
+		["Goblin"] = "|T632354:0|t",
+	}
+
+	local roleIcons = {
+		["Healer"] = "|T337497:0:0:0:0:64:64:20:39:1:20|t",
+	}
+
+	local function getClassIcon(class)
+		return ("|TInterface/Icons/classicon_%s:0|t"):format(strlower(class))
+	end
+
+	local function getIconById(id)
+		return ("|T%d:0|t"):format(id)
+	end
+
+	local dbmClues = {
+		["cape"] = 1,
+		["no cape"] = 2,
+		["pouch"] = 3,
+		["potions"] = 4,
+		["long sleeves"] = 5,
+		["short sleeves"] = 6,
+		["gloves"] = 7,
+		["no gloves"] = 8,
+		["male"] = 9,
+		["female"] = 10,
+		["light vest"] = 11,
+		["dark vest"] = 12,
+		["no potion"] = 13,
+		["book"] = 14,
+	}
+
+	local knownClues, clueCount, timer = {}, 0, nil
+
+	function mod:OnBossDisable()
+		clueCount = 0
+		timer = nil
+		wipe(knownClues)
+	end
+
+	local function sendChatMessage(msg)
+		if IsInGroup() then
+			SendChatMessage(("[LittleWigs] %s"):format(msg), IsInGroup(2) and "INSTANCE_CHAT" or "PARTY")
+		end
+	end
+
+	local function addClue(self, clue)
+		if clueCount == 0 then
+			self:OpenInfo("spy_helper", L.clues)
+		end
+		if not knownClues[clue] then
+			knownClues[clue] = true
+			clueCount = clueCount + 1
+			self:SetInfo("spy_helper", (clueCount*2)-1, L.hints[clue])
+			self:Message("spy_helper", "Neutral", "Info", L.clueFound:format(clueCount, L.hints[clue]), false)
+		end
+	end
+
+	function mod:DBM_AddonMessage(_, _, prefix, _, _, event, clue)
+		if prefix == "M" and event == "CoS" and dbmClues[clue] then
+			self:BigWigs_BossComm(nil, "clue", dbmClues[clue])
+		end
+	end
+
+	local function printNew(locale, clue)
+		timer = nil
+		knownClues[clue] = true -- Throttle to only show once per new message
+		sendChatMessage(clue)
+		RaidNotice_AddMessage(RaidWarningFrame, "LittleWigs: Unknown clue detected, see chat for info.", {r=1,g=1,b=1})
+		BigWigs:Print("LittleWigs is sending the entire clue to chat as it detected an unknown clue, please report it on Discord/GitHub/Curse so we can add it and shorten the message.")
+		BigWigs:Error(("|cffffff00TELL THE AUTHORS:|r New clue '%s' with '%s'"):format(clue, locale))
+	end
+
+	function mod:GOSSIP_SHOW()
+		local mobId = self:MobId(UnitGUID("npc"))
+		local spyEventHelper = self:GetOption("spy_helper") > 0
+		if autoTalk[mobId] or buffItems[mobId] then
+			if GetGossipOptions() then
+				if (spyEventHelper and autoTalk[mobId]) or (self:GetOption("custom_on_use_buff_items") and buffItems[mobId]) then
+					SelectGossipOption(1)
+				end
+			else
+				if mobId == 107486 then -- Chatty Rumormonger
+					if timer then
+						self:CancelTimer(timer)
+						timer = nil
+					end
+
+					local clue = GetGossipText()
+					if L[clue] then
+						if not knownClues[L[clue]] then
+							sendChatMessage(L.hints[L[clue]])
+						end
+						mod:Sync("clue", L[clue])
+					else
+						--if spyEventHelper then -- XXX temp until we are more clued up
+						if not knownClues[clue] then
+							timer = self:ScheduleTimer(printNew, 1, GetLocale(), clue)
+						end
+					end
+				end
+			end
+		end
+	end
+
+	function mod:CHAT_MSG_MONSTER_SAY(_, msg, _, _, _, target)
+		if msg:find(L.spyFoundPattern) and self:GetOption("spy_helper") > 0 then
+			self:Message("spy_helper", "Positive", "Info", L.spyFound:format(self:ColorName(target)), false)
+			self:CloseInfo("spy_helper")
+			if target == self:UnitName("player") then
+				sendChatMessage(L.spyFoundChat)
+				SetRaidTarget("target", 8)
+			else
+				for unit in self:IterateGroup() do
+					if UnitName(unit) == target then -- Normal UnitName since CHAT_MSG_MONSTER_SAY doesn't append servers to names
+						SetRaidTarget(unit.."target", 8)
+						break
+					end
+				end
+			end
+		end
+	end
+
+	local function announceUsable(self, id, item)
+		self:Sync("itemAvailable", id)
+		local players = {} -- who can use the item
+		local icons = {}
+		if item.professions then
+			for profIcon, requiredSkill in pairs(item.professions) do
+				if professionCache[profIcon] then
+					for _,v in pairs(professionCache[profIcon]) do
+						if v.skill >= requiredSkill then
+							players[v.name] = true
+						end
+					end
+				end
+				icons[#icons+1] = getIconById(profIcon)
+			end
+		end
+		if item.races then
+			for race, _ in pairs(item.races) do
+				for unit in self:IterateGroup() do
+					local _, unitRace = UnitRace(unit)
+					if unitRace == race then
+						players[self:UnitName(unit)] = true
+					end
+				end
+				icons[#icons+1] = raceIcons[race]
+			end
+		end
+		if item.classes then
+			for class, _ in pairs(item.classes) do
+				for unit in self:IterateGroup() do
+					local _, unitClass = UnitClass(unit)
+					if unitClass == class then
+						players[self:UnitName(unit)] = true
+					end
+				end
+				icons[#icons+1] = getClassIcon(class)
+			end
+		end
+		if item.roles then
+			for role, _ in pairs(item.roles) do
+				for unit in self:IterateGroup() do
+					if self[role](unit) then
+						players[self:UnitName(unit)] = true
+					end
+				end
+				icons[#icons+1] = roleIcons[role]
+			end
+		end
+
+		local name = type(item.name) == "number" and self:SpellName(item.name) or L[item.name]
+		local message = (L.available):format(table.concat(icons, ""), name)
+
+		if next(players) then
+			local list = ""
+			for player in pairs(players) do
+				if UnitInParty(player) then -- don't announce players from previous groups
+					list = list .. self:ColorName(player) .. ", "
+				end
+			end
+			if list:len() > 0 then
+				message = message .. " - ".. L.usableBy .. " " .. list:sub(0, list:len()-2)
+			end
+		end
+
+		self:Message("announce_buff_items", "Neutral", "Info", message, false)
+	end
+
+	local prevTable, usableTimer, lastProfessionUpdate = {}, nil, 0
+	local function usableFound(self, id, item)
+		local t = GetTime()
+		if t-(prevTable[id] or 0) > 300 then
+			prevTable[id] = t
+
+			local delayAnnouncement = false
+			if item.professions then
+				if t-lastProfessionUpdate > 300 then
+					lastProfessionUpdate = t
+					self:Sync("getProfessions")
+					delayAnnouncement = true
+				end
+			end
+			if delayAnnouncement then
+				usableTimer = self:ScheduleTimer(announceUsable, 0.3, self, id, item)
+			else
+				announceUsable(self, id, item)
+			end
+		end
+	end
+
+	function mod:UPDATE_MOUSEOVER_UNIT()
+		local id = self:MobId(UnitGUID("mouseover"))
+		local item = buffItems[id] or guardItems[id]
+		if item then
+			usableFound(self, id, item)
+		end
+	end
+
+	function mod:BigWigs_BossComm(_, msg, data, sender)
+		if self:GetOption("spy_helper") > 0 and msg == "clue" then
+			local clue = tonumber(data)
+			if clue and clue > 0 and clue <= #L.hints then
+				addClue(self, clue)
+			end
+		elseif msg == "getProfessions" then
+			local professions = {}
+			for _,id in pairs({GetProfessions()}) do
+				local _, icon, skill = GetProfessionInfo(id) -- name is localized, so use icon instead
+				professions[icon] = skill
+			end
+			local profString = ""
+			for k,v in pairs(professions) do
+				profString = profString .. k .. ":" .. v .. "#"
+			end
+			self:Sync("professions", profString)
+		elseif msg == "professions" then
+			lastProfessionUpdate = GetTime()
+			for icon, skill in data:gmatch("(%d+):(%d+)#") do
+				icon = tonumber(icon)
+				skill = tonumber(skill)
+				if not professionCache[icon] then
+					professionCache[icon] = {}
+				end
+				professionCache[icon][#professionCache[icon]+1] = {name=sender, skill=skill}
+			end
+		elseif msg == "itemAvailable" then
+			local id = tonumber(data)
+			local item = buffItems[id] or guardItems[id]
+			if item then
+				usableFound(self, id, item)
+			end
+		end
+	end
+end
 
 local prevTable = {}
 local function throttleMessages(key)
@@ -177,4 +740,26 @@ end
 function mod:EyeStorm(args)
 	self:Message(args.spellId, "Attention", "Long")
 	self:Bar(args.spellId, 8, CL.cast:format(args.spellName))
+end
+
+do
+	local prev = 0
+	function mod:PickingUp(args)
+		local t = GetTime()
+		if t-prev > 10 then
+			prev = t
+			self:TargetMessage(args.spellId, args.sourceName, "Neutral", "Info")
+		end
+	end
+end
+
+do
+	local prev = 0
+	function mod:PickingUpSuccess(args)
+		local t = GetTime()
+		if t-prev > 10 then
+			prev = t
+			self:TargetMessage(args.spellId, args.sourceName, "Positive", "Long", args.destName)
+		end
+	end
 end

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1861, "DBM-TombofSargeras", nil, 875)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 16303 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 16451 $"):sub(12, -3))
 mod:SetCreatureID(115767)--116328 Vellius, 115795 Abyss Stalker, 116329/116843 Sarukel
 mod:SetEncounterID(2037)
 mod:SetZone()
@@ -47,7 +47,7 @@ local warnPhase3					= mod:NewPhaseAnnounce(3, 2)
 
 --General Stuff
 local specWarnHydraShot				= mod:NewSpecialWarningYou(230139, nil, nil, nil, 1, 2)
-local yellHydraShot					= mod:NewPosYell(230139)
+local yellHydraShot					= mod:NewPosYell(230139, DBM_CORE_AUTO_YELL_CUSTOM_POSITION)
 local specWarnBurdenofPain			= mod:NewSpecialWarningYou(230201, nil, nil, nil, 1, 2)
 local specWarnBurdenofPainTaunt		= mod:NewSpecialWarningTaunt(230201, nil, nil, nil, 1, 2)
 local specWarnFromtheAbyss			= mod:NewSpecialWarningSwitch(230227, "-Healer", nil, nil, 1, 2)
@@ -63,14 +63,17 @@ local specWarnCrashingWave			= mod:NewSpecialWarningDodge(232827, nil, nil, nil,
 local specWarnDeliciousBufferfish	= mod:NewSpecialWarningYou(239375, nil, nil, nil, 1, 2)
 
 --General Stuff
+mod:AddTimerLine(GENERAL)
 local timerHydraShotCD				= mod:NewCDTimer(40, 230139, nil, nil, nil, 3)
 local timerBurdenofPainCD			= mod:NewCDTimer(28, 230201, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)--28-32
 local timerFromtheAbyssCD			= mod:NewCDTimer(27, 230227, nil, nil, nil, 1)--27-31
 --Stage One: Ten Thousand Fangs
+mod:AddTimerLine(SCENARIO_STAGE:format(1))
 local timerSlicingTornadoCD			= mod:NewCDTimer(43.2, 232722, nil, nil, nil, 3)--43.2-54
 local timerConsumingHungerCD		= mod:NewCDTimer(32, 230920, nil, nil, nil, 1)
 local timerThunderingShockCD		= mod:NewCDTimer(32.2, 230358, nil, nil, nil, 3)
 --Stage Two: Terrors of the Deep
+mod:AddTimerLine(SCENARIO_STAGE:format(2))
 local timerDevouringMawCD			= mod:NewCDTimer(42, 232745, nil, nil, nil, 3)
 local timerCrashingWaveCD			= mod:NewCDCountTimer(42, 232827, nil, nil, nil, 3)
 local timerInkCD					= mod:NewCDTimer(41, 232913, nil, nil, nil, 3)
@@ -79,11 +82,13 @@ local timerInkCD					= mod:NewCDTimer(41, 232913, nil, nil, nil, 3)
 --local berserkTimer				= mod:NewBerserkTimer(300)
 
 --General Stuff
---local countdownDrawPower			= mod:NewCountdown(33, 227629)
+local countdownHydraShot			= mod:NewCountdown(40, 230139)
+local countdownBurdenofPain			= mod:NewCountdown("Alt28", 230139, "Tank")
 --Stage One: Ten Thousand Fangs
+local countdownSlicingTorando		= mod:NewCountdown("AltTwo43", 232722)
 
 --General Stuff
-local voiceHydraShot				= mod:NewVoice(230139)--targetyou
+local voiceHydraShot				= mod:NewVoice(230139)--targetyou/mm
 local voiceBurdenofPain				= mod:NewVoice(230201)--defensive/tauntboss
 local voiceFromtheAbyss				= mod:NewVoice(230227, "-Healer")--killmob
 --Stage One: Ten Thousand Fangs
@@ -95,6 +100,7 @@ local voiceDevouringMaw				= mod:NewVoice(232745)-- inktoshark (bring ink to sha
 local voiceCrashingWave				= mod:NewVoice(232827)--chargemove
 
 mod:AddSetIconOption("SetIconOnHydraShot", 230139, true)
+mod:AddBoolOption("TauntOnPainSuccess", false)
 --mod:AddInfoFrameOption(227503, true)
 --mod:AddRangeFrameOption("5/8/15")
 
@@ -111,16 +117,25 @@ function mod:OnCombatStart(delay)
 	self.vb.hydraShotCount = 0
 	table.wipe(hydraIcons)
 	timerThunderingShockCD:Start(10-delay)--10-11
-	timerBurdenofPainCD:Start(15.4-delay)
+	if self.Options.TauntOnPainSuccess then
+		timerBurdenofPainCD:Start(15.4-delay)
+		countdownBurdenofPain:Start(15.4-delay)
+	else
+		timerBurdenofPainCD:Start(17.9-delay)
+		countdownBurdenofPain:Start(17.9-delay)
+	end
 	timerFromtheAbyssCD:Start(18-delay)
 	timerConsumingHungerCD:Start(20-delay)--20-23
 	if self:IsEasy() then
 		timerSlicingTornadoCD:Start(36-delay)--36
+		countdownSlicingTorando:Start(36-delay)
 	else
 		timerSlicingTornadoCD:Start(30-delay)
+		countdownSlicingTorando:Start(30-delay)
 	end
 	if not self:IsLFR() then
 		timerHydraShotCD:Start(25.4-delay, 1)
+		countdownHydraShot:Start(25.4-delay)
 	end
 end
 
@@ -142,8 +157,10 @@ function mod:SPELL_CAST_START(args)
 		voiceSlicingTornado:Play("watchwave")
 		if self:IsMythic() then
 			timerSlicingTornadoCD:Start(34)
+			countdownSlicingTorando:Start(34)
 		else
 			timerSlicingTornadoCD:Start()
+			countdownSlicingTorando:Start()
 		end
 	elseif spellId == 230384 or spellId == 234661 then
 		timerConsumingHungerCD:Start()
@@ -172,15 +189,21 @@ function mod:SPELL_CAST_START(args)
 		end
 		timerThunderingShockCD:Start()
 	elseif spellId == 230201 then
-		timerBurdenofPainCD:Start()
+		if not self.Options.TauntOnPainSuccess then
+			timerBurdenofPainCD:Start()
+			countdownBurdenofPain:Start()
+		end
 		local tanking, status = UnitDetailedThreatSituation("player", "boss1")
 		if tanking or (status == 3) then
 			specWarnBurdenofPain:Show()
 			voiceBurdenofPain:Play("defensive")
 		else
-			if self:AntiSpam(5, args.destName) then
-				specWarnBurdenofPainTaunt:Show(args.destName)
-				voiceBurdenofPain:Play("tauntboss")
+			if not self.Options.TauntOnPainSuccess then
+				local targetName = UnitName("boss1target") or DBM_CORE_UNKNOWN
+				if self:AntiSpam(5, targetName) then
+					specWarnBurdenofPainTaunt:Show(targetName)
+					voiceBurdenofPain:Play("tauntboss")
+				end
 			end
 		end
 	end
@@ -202,13 +225,21 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnHydraShot:CombinedShow(0.3, self.vb.hydraShotCount, args.destName)
 		if args:IsPlayer() then
 			specWarnHydraShot:Show()
-			voiceHydraShot:Play("targetyou")
-			yellHydraShot:Yell(count, count, count)
+			if self:IsHard() then
+				voiceHydraShot:Play("mm"..count)
+			else
+				voiceHydraShot:Play("targetyou")
+			end
+			yellHydraShot:Yell(count, args.spellName, count)
 		end
 		if self.Options.SetIconOnHydraShot then
 			self:SetIcon(name, count)
 		end
 	elseif spellId == 230201 then
+		if self.Options.TauntOnPainSuccess then
+			timerBurdenofPainCD:Start()
+			countdownBurdenofPain:Start()
+		end
 		if not args:IsPlayer() and self:AntiSpam(5, args.destName) then
 			specWarnBurdenofPainTaunt:Show(args.destName)
 			voiceBurdenofPain:Play("tauntboss")
@@ -272,10 +303,12 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 		--event still fires in LFR even though mechanic doesn't exist there, so LFR must be filtered for timer
 		table.wipe(hydraIcons)
 		self.vb.hydraShotCount = self.vb.hydraShotCount + 1
-		if self:IsMythic() then
+		if self:IsMythic() or self.vb.phase == 2 then
 			timerHydraShotCD:Start(30, self.vb.hydraShotCount+1)
+			countdownHydraShot:Start(30)
 		else
 			timerHydraShotCD:Start(40, self.vb.hydraShotCount+1)
+			countdownHydraShot:Start(40)
 		end
 	elseif spellId == 239423 then--Dread Shark
 		if self:IsMythic() then
@@ -293,18 +326,28 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 			warnPhase2:Show()
 			timerThunderingShockCD:Stop()
 			timerSlicingTornadoCD:Stop()
+			countdownSlicingTorando:Cancel()
 			timerConsumingHungerCD:Stop()
 			timerHydraShotCD:Stop()
+			countdownHydraShot:Cancel()
 			timerBurdenofPainCD:Stop()
+			countdownBurdenofPain:Cancel()
 			timerFromtheAbyssCD:Stop()
 			
 			timerInkCD:Start(10.8)
-			timerBurdenofPainCD:Start(23.5)
+			if self.Options.TauntOnPainSuccess then
+				timerBurdenofPainCD:Start(26)
+				countdownBurdenofPain:Start(26)
+			else
+				timerBurdenofPainCD:Start(23.5)
+				countdownBurdenofPain:Start(23.5)
+			end
 			timerFromtheAbyssCD:Start(29)
 			timerCrashingWaveCD:Start(30, 1)
 			timerDevouringMawCD:Start(40)
 			if not self:IsLFR() then
 				timerHydraShotCD:Start(17, 1)
+				countdownHydraShot:Start(17)
 			end
 		elseif self.vb.phase == 3 then
 			self.vb.crashingWaveCount = 0
@@ -313,18 +356,28 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 			timerCrashingWaveCD:Stop()
 			timerInkCD:Stop()
 			timerHydraShotCD:Stop()
+			countdownHydraShot:Cancel()
 			timerBurdenofPainCD:Stop()
+			countdownBurdenofPain:Cancel()
 			timerDevouringMawCD:Stop()
 			timerFromtheAbyssCD:Stop()
 			
 			timerInkCD:Start(10.2)
-			timerBurdenofPainCD:Start(23.5)
+			if self.Options.TauntOnPainSuccess then
+				timerBurdenofPainCD:Start(26)
+				countdownBurdenofPain:Start(26)
+			else
+				timerBurdenofPainCD:Start(23.5)
+				countdownBurdenofPain:Start(23.5)
+			end
 			timerFromtheAbyssCD:Start(29)
 			timerCrashingWaveCD:Start(30, 1)
 			timerConsumingHungerCD:Start(39)--SUCCESS
 			timerSlicingTornadoCD:Start(51)
+			countdownSlicingTorando:Start(51)
 			if not self:IsLFR() then
 				timerHydraShotCD:Start(17, 1)
+				countdownHydraShot:Start(17)
 			end
 		end
 	end

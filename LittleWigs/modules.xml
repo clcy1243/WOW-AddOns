@@ -90,8 +90,10 @@
 <Include file="Legion\BlackRookHold\modules.xml"/>
 
 <Include file="Legion\CourtOfStars\modules.xml"/>
+<Include file="Legion\CourtOfStars\locales.xml"/>
 
 <Include file="Legion\DarkheartThicket\modules.xml"/>
+<Include file="Legion\DarkheartThicket\locales.xml"/>
 
 <Include file="Legion\EyeOfAzshara\modules.xml"/>
 
@@ -106,9 +108,12 @@
 <Include file="Legion\NeltharionsLair\locales.xml"/>
 
 <Include file="Legion\TheArcway\modules.xml"/>
+<Include file="Legion\TheArcway\locales.xml"/>
 
 <Include file="Legion\VaultOfTheWardens\modules.xml"/>
 <Include file="Legion\VaultOfTheWardens\locales.xml"/>
 
 <Include file="Legion\CathedralOfEternalNight\modules.xml"/>
+
+<Include file="Legion\SeatOfTheTriumvirate\modules.xml"/>
 </Ui>

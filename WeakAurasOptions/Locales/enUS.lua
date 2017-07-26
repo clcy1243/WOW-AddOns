@@ -63,7 +63,7 @@ L["Border Size"] = "Border Size"
 L["Border Style"] = "Border Style"
 L["Bottom Text"] = "Bottom Text"
 L["Button Glow"] = "Button Glow"
-L["Can be a name or a UID (e.g., party1). Only works on friendly players in your group."] = "Can be a name or a UID (e.g., party1). Only works on friendly players in your group."
+L["Can be a name or a UID (e.g., party1). A name only works on friendly players in your group."] = "Can be a name or a UID (e.g., party1). A name only works on friendly players in your group."
 L["Cancel"] = "Cancel"
 L["Cat"] = "Cat"
 L["Change the name of this display"] = "Change the name of this display"
@@ -398,6 +398,3 @@ L["Z Offset"] = "Z Offset"
 L["Zoom"] = "Zoom"
 L["Zoom In"] = "Zoom In"
 L["Zoom Out"] = "Zoom Out"
-
-
-

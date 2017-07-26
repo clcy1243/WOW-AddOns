@@ -1,8 +1,5 @@
 
 --------------------------------------------------------------------------------
--- TODO List:
-
---------------------------------------------------------------------------------
 -- Module Declaration
 --
 
@@ -92,7 +89,7 @@ function mod:OnEngage()
 	roarCounter = 1
 	rageCounter = 1
 
-	self:Bar(232192, 17.5) -- Commanding Roar
+	self:CDBar(232192, 17.5) -- Commanding Roar
 	self:CDBar(231854, 20.7) -- Unchecked Rage
 	self:CDBar(232061, 58) -- Draw In
 	if self:Mythic() then
@@ -110,7 +107,7 @@ end
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
-function mod:UNIT_SPELLCAST_SUCCEEDED(unit, spellName, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName, _, _, spellId)
 	if spellId == 232192 then -- Commanding Roar
 		roarCounter = roarCounter + 1
 		self:Message(spellId, "Important", "Alert", spellName)

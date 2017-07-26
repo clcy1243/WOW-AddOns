@@ -5,6 +5,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate2", "frFR")
 if not L then return end
 
+-- Options
 L["Add this location to Cartographer_Waypoints"] = "Ajouter cette position à Cartographer_Waypoints"
 L["Add this location to TomTom waypoints"] = "Ajouter cette position aux points de navigation de TomTom"
 L["Always show"] = "Toujours afficher"
@@ -203,9 +204,11 @@ L["World Map Icon Scale"] = "Échelle des icônes de la carte du monde"
 L["World Map Icons"] = "Icônes de la carte du monde"
 L["Wrath of the Lich King"] = "Wrath of the Lich King"
 
+
 local NL = LibStub("AceLocale-3.0"):NewLocale("GatherMate2Nodes", "frFR")
 if not NL then return end
 
+-- Nodes
 NL["Abundant Bloodsail Wreckage"] = "Débris abondants de la Voile sanglante"
 NL["Abundant Firefin Snapper School"] = "Banc abondant de lutjans de nagefeu"
 NL["Abundant Oily Blackmouth School"] = "Banc abondant de bouches-noires huileux"
@@ -523,3 +526,4 @@ NL["Wild Steelbloom"] = "Aciérite sauvage"
 NL["Windy Cloud"] = "Nuage venteux"
 NL["Wintersbite"] = "Hivernale"
 NL["Withered Herb"] = "Herbe flétrie"
+

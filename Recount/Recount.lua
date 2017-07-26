@@ -11,10 +11,7 @@ local FilterSize	= 20
 local RampUp		= 5
 local RampDown		= 10
 
-Recount.Version = tonumber(string.sub("$Revision: 1425 $", 12, -3))
-
-
-
+Recount.Version = tonumber(string.sub("$Revision: 1429 $", 12, -3))
 
 local _G = _G
 local abs = abs
@@ -971,7 +968,7 @@ function Recount:FindPetUnitFromFlags(unitFlags, unitGUID)
 	-- Check for raid and party pets.
 	if bit_band(unitFlags, COMBATLOG_OBJECT_TYPE_PET) ~= 0 and bit_band(unitFlags, COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID + COMBATLOG_OBJECT_AFFILIATION_MINE) ~= 0 then
 		if bit_band(unitFlags, COMBATLOG_OBJECT_AFFILIATION_RAID) ~= 0 then
-			local Num = GetNumRaidMembers() 
+			local Num = GetNumRaidMembers()
 			if IsInRaid() and Num > 0 then
 				for i = 1, Num do
 					if unitGUID == UnitGUID("raidpet"..i) then
@@ -1152,7 +1149,7 @@ function Recount:AddPetCombatant(nameGUID, petName, nameFlags, ownerGUID, owner,
 	end]]
 	local inheritowner = Recount:GetGuardianOwnerByGUID(ownerGUID)
 	if inheritowner then -- This should only happen for pets of pets such as greater elementals
-		owner = inheritowner 
+		owner = inheritowner
 	end
 	local name = petName.." <"..owner..">"
 	local combatant = dbCombatants[name] or { }

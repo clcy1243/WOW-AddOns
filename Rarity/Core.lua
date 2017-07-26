@@ -1,5 +1,5 @@
 Rarity = LibStub("AceAddon-3.0"):NewAddon("Rarity", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0", "LibSink-2.0", "AceBucket-3.0", "LibBars-1.0", "AceSerializer-3.0")
-Rarity.MINOR_VERSION = tonumber(("$Revision: 594 $"):match("%d+"))
+Rarity.MINOR_VERSION = tonumber(("$Revision: 599 $"):match("%d+"))
 local FORCE_PROFILE_RESET_BEFORE_REVISION = 1 -- Set this to one higher than the Revision on the line above this
 local L = LibStub("AceLocale-3.0"):GetLocale("Rarity")
 local R = Rarity
@@ -327,6 +327,8 @@ R.opennodes = {
 	[L["Crane Nest"]] = true,
 	[L["Timeless Chest"]] = true,
 	[L["Snow Mound"]] = true,
+	[L["Glimmering Treasure Chest"]] = true,
+	[L["Curious Wyrmtongue Cache"]] = true,
 }
 
 
@@ -1527,6 +1529,42 @@ function R:OnEvent(event, ...)
     self:OutputAttempts(v)
    end
   end
+
+		-- Handle opening Curious Wyrmtongue Cache
+		if fishing and opening and lastNode and (lastNode == L["Curious Wyrmtongue Cache"]) then
+  	local v = self.db.profile.groups.pets["Scraps"]
+   if v and type(v) == "table" and v.enabled ~= false then
+    if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
+    self:OutputAttempts(v)
+   end
+		end
+
+		-- Handle opening Glimmering Treasure Chest
+		if fishing and opening and lastNode and (lastNode == L["Glimmering Treasure Chest"]) and select(8, GetInstanceInfo()) == 1626 then
+			local bigChest = false
+			for _, slot in pairs(GetLootInfo()) do
+				if slot.item == L["Ancient Mana"] and slot.quantity == 100 then
+					bigChest = true
+				end
+			end
+
+			if bigChest == true then
+				local names = {"Arcano-Shower", "Displacer Meditation Stone", "Kaldorei Light Globe", "Unstable Powder Box", "Wisp in a Bottle", "Ley Spider Eggs"}
+				for _, name in pairs(names) do
+					local v = self.db.profile.groups.items[name]
+					if v and type(v) == "table" and v.enabled ~= false then
+						if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
+						self:OutputAttempts(v)
+					end
+				end
+
+				v = self.db.profile.groups.mounts["Torn Invitation"]
+				if v and type(v) == "table" and v.enabled ~= false then
+					if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
+					self:OutputAttempts(v)
+				end
+			end
+		end
 
   -- HANDLE FISHING
   if fishing and opening == false then

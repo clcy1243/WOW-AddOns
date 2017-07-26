@@ -24,12 +24,16 @@ local default = {
 
 local function create(parent)
   local region = CreateFrame("FRAME", nil, parent);
+  region:SetHeight(16);
+  region:SetWidth(16);
   region:SetMovable(true);
 
   local background = CreateFrame("frame", nil, region);
   region.background = background;
 
   region.trays = {};
+
+  WeakAuras.regionPrototype.create(region);
 
   return region;
 end
@@ -44,26 +48,6 @@ function WeakAuras.GetPolarCoordinates(x, y, originX, originY)
 end
 
 local function modify(parent, region, data)
-  local background = region.background;
-
-  local bgFile = data.background ~= "None" and SharedMedia:Fetch("background", data.background or "") or "";
-  local edgeFile = data.border ~= "None" and SharedMedia:Fetch("border", data.border or "") or "";
-  background:SetBackdrop({
-    bgFile = bgFile,
-    edgeFile = edgeFile,
-    tile = false,
-    tileSize = 0,
-    edgeSize = 16,
-    insets = {
-      left = data.backgroundInset,
-      right = data.backgroundInset,
-      top = data.backgroundInset,
-      bottom = data.backgroundInset
-    }
-  });
-  background:SetPoint("bottomleft", region, "bottomleft", -1 * data.borderOffset, -1 * data.borderOffset);
-  background:SetPoint("topright", region, "topright", data.borderOffset, data.borderOffset);
-
   local selfPoint;
   if(data.grow == "RIGHT") then
     selfPoint = "LEFT";
@@ -112,9 +96,29 @@ local function modify(parent, region, data)
   end
   data.selfPoint = selfPoint;
 
-  region:ClearAllPoints();
+  WeakAuras.regionPrototype.modify(parent, region, data);
 
-  WeakAuras.AnchorFrame(data, region, parent);
+  local background = region.background;
+
+  local bgFile = data.background ~= "None" and SharedMedia:Fetch("background", data.background or "") or "";
+  local edgeFile = data.border ~= "None" and SharedMedia:Fetch("border", data.border or "") or "";
+  background:SetBackdrop({
+    bgFile = bgFile,
+    edgeFile = edgeFile,
+    tile = false,
+    tileSize = 0,
+    edgeSize = 16,
+    insets = {
+      left = data.backgroundInset,
+      right = data.backgroundInset,
+      top = data.backgroundInset,
+      bottom = data.backgroundInset
+    }
+  });
+  background:SetPoint("bottomleft", region, "bottomleft", -1 * data.borderOffset, -1 * data.borderOffset);
+  background:SetPoint("topright", region, "topright", data.borderOffset, data.borderOffset);
+
+
 
   region.controlledRegions = {};
 
@@ -270,11 +274,8 @@ local function modify(parent, region, data)
         tray:SetWidth(regionData.data.width);
         tray:SetHeight(regionData.data.height);
 
-        local point, relativeTo, relativePoint, xOfs, yOfs = regionData.region:GetPoint();
-        if (relativeTo ~= tray or relativePoint ~= selfPoint or point ~= selfPoint or xOfs ~= 0 or yOfs ~= 0) then
-          regionData.region:ClearAllPoints();
-          regionData.region:SetPoint(selfPoint, tray, selfPoint);
-        end
+        regionData.region:SetAnchor(selfPoint, tray, selfPoint);
+        regionData.region:SetOffset(0, 0);
       end
     end
   end

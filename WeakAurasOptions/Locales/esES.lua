@@ -112,7 +112,11 @@ Si la duración de la animación es |cFF00CC0010%|r, y el disparador del aura es
 	L["Border Size"] = "Tamaño del borde"
 	L["Border Style"] = "Estilo de borde"
 	L["Bottom Text"] = "Texto de Fondo"
+	--Translation missing 
+	-- L["Bracket Matching"] = ""
 	L["Button Glow"] = "Resplandor del Botón"
+	--Translation missing 
+	-- L["Can be a name or a UID (e.g., party1). A name only works on friendly players in your group."] = ""
 	L["Can be a name or a UID (e.g., party1). Only works on friendly players in your group."] = "Puede ser un nombre o un identificador de unidad(p.ej., party1). Solo funciona con personajes amistosos en tu grupo."
 	L["Cancel"] = "Cancelar"
 	L["Channel Number"] = "Número de Canal"
@@ -251,7 +255,7 @@ UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED
 	L["Font Flags"] = "Fuente de banderas"
 	L["Font Size"] = "Tamaño de fuente"
 	L["Font Type"] = "Tipo de fuente"
-	L["Foreground Color"] = "Color Fontal"
+	L["Foreground Color"] = "Color Frontal"
 	L["Foreground Texture"] = "Textura Frontal"
 	L["Frame"] = "Macro"
 	L["Frame Strata"] = "Importancia del Marco"
@@ -328,6 +332,8 @@ Con |cFF00CC00>= 0|r se activará siempre.]=]
 	L["Load"] = "Cargar"
 	L["Loaded"] = "Cargado"
 	--Translation missing 
+	-- L["Loop"] = ""
+	--Translation missing 
 	-- L["Low Mana"] = ""
 	L["Main"] = "Principal"
 	L["Manage displays defined by Addons"] = "Administra Auras definidas por Addons"
@@ -398,8 +404,7 @@ Sólo un valor coincidente puede ser escogido.]=]
 	--Translation missing 
 	-- L["Preset"] = ""
 	L["Prevents duration information from decreasing when an aura refreshes. May cause problems if used with multiple auras with different durations."] = "Prevenir que el temporizador siga contando cuando el aura se refresca. Ten cuidado, pueden aparecer problemas si usas múltiples auras con múltiples duraciones."
-	--Translation missing 
-	-- L["Processed %i chars"] = ""
+	L["Processed %i chars"] = "%i personajes procesados"
 	L["Progress Bar"] = "Barra de Progreso"
 	L["Progress Texture"] = "Texture de Progreso"
 	--Translation missing 
@@ -417,9 +422,11 @@ Sólo un valor coincidente puede ser escogido.]=]
 	-- L["Remove this display from its group"] = ""
 	--Translation missing 
 	-- L["Rename"] = ""
-	L["Required For Activation"] = "Necesario para Activación"
+	--Translation missing 
+	-- L["Repeat After"] = ""
 	--Translation missing 
 	-- L["Required for Activation"] = ""
+	L["Required For Activation"] = "Necesario para Activación"
 	--Translation missing 
 	-- L["Right 2 HUD position"] = ""
 	--Translation missing 
@@ -443,6 +450,8 @@ Sólo un valor coincidente puede ser escogido.]=]
 	-- L["Set Parent to Anchor"] = ""
 	--Translation missing 
 	-- L["Set tooltip description"] = ""
+	--Translation missing 
+	-- L["Settings"] = ""
 	--Translation missing 
 	-- L["Shift-click to create chat link"] = ""
 	L["Show all matches (Auto-clone)"] = "Mostrar todas las coincidencias (Auto-clonar)"
@@ -500,6 +509,8 @@ Sólo un valor coincidente puede ser escogido.]=]
 	L["Stealable"] = "Puede Robarse"
 	L["Sticky Duration"] = "Duración Adhesiva"
 	--Translation missing 
+	-- L["Stop Sound"] = ""
+	--Translation missing 
 	-- L["Symbol Settings"] = ""
 	L["Temporary Group"] = "Grupo Temporal"
 	L["Text"] = "Texto"
@@ -545,6 +556,8 @@ Sólo un valor coincidente puede ser escogido.]=]
 	L["Unlike the start or finish animations, the main animation will loop over and over until the display is hidden."] = "Ignorar animaciones de inicio y final: la animación principal se repetirá hasta que el aura se oculte."
 	L["Update Custom Text On..."] = "Actualizar Texto Personalizado En..."
 	L["Use Full Scan (High CPU)"] = "Escaneo Total (carga el procesador)"
+	--Translation missing 
+	-- L["Use SetTransform (will change behaviour in 7.3)"] = ""
 	--Translation missing 
 	-- L["Use SetTransform api"] = ""
 	L["Use tooltip \"size\" instead of stacks"] = "Usa \"tamaño\" en vez de acumulaciones"

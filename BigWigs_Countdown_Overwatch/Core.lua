@@ -11,6 +11,7 @@ local heroes = {
 	"Ana",
 	"Bastion",
 	"D.Va",
+	"Doomfist",
 	"Genji",
 	"Hanzo",
 	"Junkrat",

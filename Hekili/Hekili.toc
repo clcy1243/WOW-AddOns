@@ -1,5 +1,5 @@
 ## Interface: 70200 
-## Version: 96ff11f
+## Version: 0f7e14c
 ## Title: Hekili
 ## Author: Hekili
 ## Notes: Priority helper for Shamans, Paladins, Monks, and Hunters with support for in-game modifications.
@@ -24,6 +24,7 @@ Classes\Monk.lua
 Classes\Paladin.lua
 Classes\Shaman.lua
 Classes\Warlock.lua
+Classes\Warrior.lua
 Targets.lua
 Options.lua
 UI.lua

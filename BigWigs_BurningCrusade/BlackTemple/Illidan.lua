@@ -20,6 +20,7 @@ local barrageCount = 0
 local inDemonPhase = false
 local isCaged = false
 local timer1, timer2 = nil, nil
+local fixateList = {}
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -43,7 +44,7 @@ function mod:GetOptions()
 
 		--[[ Stage One: You Are Not Prepared ]]--
 		41032, -- Shear
-		{41917, "ICON"}, -- Parasitic Shadowfiend
+		{41917, "ICON", "SAY"}, -- Parasitic Shadowfiend
 		40841, -- Flame Crash
 
 		--[[ Stage Two: Flames of Azzinoth ]]--
@@ -73,6 +74,8 @@ function mod:OnBossEnable()
 	--[[ Stage One: You Are Not Prepared ]]--
 	self:Log("SPELL_AURA_APPLIED", "Shear", 41032)
 	self:Log("SPELL_AURA_APPLIED", "ParasiticShadowfiend", 41917)
+	self:Log("SPELL_AURA_APPLIED", "ParasiticShadowfiendFailure", 41914)
+	self:Log("SPELL_AURA_REMOVED", "ParasiticShadowfiendOver", 41917, 41914)
 
 	--[[ Stage Two: Flames of Azzinoth ]]--
 	self:Log("SPELL_CAST_START", "ThrowGlaive", 39849)
@@ -89,6 +92,7 @@ function mod:OnBossEnable()
 
 	--[[ Stage Four: The Long Hunt ]]--
 	self:Log("SPELL_CAST_SUCCESS", "ShadowPrison", 40647)
+	self:Log("SPELL_AURA_REMOVED", "ShadowPrisonRemoved", 40647)
 	self:Log("SPELL_CAST_SUCCESS", "Frenzy", 40683)
 	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1")
 	self:RegisterUnitEvent("UNIT_AURA", nil, "boss1")
@@ -107,12 +111,24 @@ function mod:OnEngage()
 	inDemonPhase = false
 	isCaged = false
 	wipe(playerList)
+	wipe(fixateList)
+
 	self:Berserk(1500)
+	self:RegisterTargetEvents("CheckForFixate")
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
+
+function mod:CheckForFixate(_, unit, guid)
+	local mobId = self:MobId(guid)
+	if mobId == 23498 and not fixateList[guid] and self:Me(UnitGUID(unit.."target")) then -- Parasitic Shadowfiend
+		fixateList[guid] = true
+		self:Say(41917, 41951) -- 41951 = "Fixate"
+		self:Message(41917, "Personal", "Long", CL.you:format(self:SpellName(41951)), 41951)
+	end
+end
 
 --[[ Stage One: You Are Not Prepared ]]--
 function mod:Shear(args)
@@ -124,6 +140,21 @@ function mod:ParasiticShadowfiend(args)
 	self:TargetMessage(args.spellId, args.destName, "Attention", "Long")
 	self:PrimaryIcon(args.spellId, args.destName)
 	self:TargetBar(args.spellId, 10, args.destName, 36469, args.spellId) -- 36469 = "Parasite"
+	if self:Me(args.destGUID) then
+		self:Say(args.spellId, 36469) -- 36469 = "Parasite"
+	end
+end
+
+function mod:ParasiticShadowfiendFailure(args) -- The parasite reached someone new before it was killed
+	self:TargetMessage(41917, args.destName, "Attention")
+	self:TargetBar(41917, 10, args.destName, 36469, 41917) -- 36469 = "Parasite"
+	if self:Me(args.destGUID) then
+		self:Say(41917, 36469) -- 36469 = "Parasite"
+	end
+end
+
+function mod:ParasiticShadowfiendOver(args)
+	self:StopBar(args.spellName, args.destName)
 end
 
 --[[ Stage Two: Flames of Azzinoth ]]--
@@ -132,7 +163,7 @@ function mod:ThrowGlaive() -- Stage 2
 
 	self:PrimaryIcon(41917) -- Parasitic Shadowfiend
 	self:CDBar(40585, 95) -- Dark Barrage
-	self:Message("stages", "Neutral", nil, -15740, false) -- Stage Two: Flames of Azzinoth
+	self:Message("stages", "Neutral", nil, CL.stage:format(2), false)
 end
 
 function mod:DarkBarrage(args)
@@ -157,7 +188,7 @@ do
 	function mod:EyeBlast(args)
 		local t = GetTime()
 		if t-prev > 2 then
-			self:Message(args.spellId, "Attention", "Info")
+			self:Message(args.spellId, "Attention", "Info", args.spellName, 224284) -- XXX temp until it has an icon
 		end
 		prev = t -- Continually spams every 1s during the cast
 	end
@@ -168,7 +199,7 @@ function mod:FlameDeath() -- Stage 3
 	flamesDead = flamesDead + 1
 	if flamesDead == 2 then
 		self:StopBar(40585) -- Dark Barrage
-		self:Message("stages", "Neutral", "Alarm", -15751, false) -- Stage Three: The Demon Within
+		self:Message("stages", "Neutral", "Alarm", CL.stage:format(3), false)
 		self:Bar(40506, 75) -- Demon Form
 		self:OpenProximity(40932, 5) -- Agonizing Flames
 	end
@@ -194,11 +225,18 @@ function mod:SummonShadowDemons(args)
 end
 
 --[[ Stage Four: The Long Hunt ]]--
-function mod:ShadowPrison(args) -- Stage 4
-	self:Message("stages", "Neutral", nil, -15757, false) -- Stage Four: The Long Hunt
+function mod:ShadowPrison(args) -- Pre Stage 4 Intermission
+	self:Message("stages", "Neutral", nil, CL.intermission, false)
+	self:Bar("stages", 30, CL.intermission, args.spellId)
+end
 
-	self:Bar(40683, 75) -- Frenzy
-	self:Bar(40506, 90) -- Demon Form
+function mod:ShadowPrisonRemoved(args) -- Stage 4
+	if self:MobId(args.destGUID) == 23089 then -- When debuff drops from Akama (downstairs)
+		self:Message("stages", "Neutral", nil, CL.stage:format(4), false)
+
+		self:Bar(40683, 45) -- Frenzy
+		self:Bar(40506, 60) -- Demon Form
+	end
 end
 
 function mod:Frenzy(args)

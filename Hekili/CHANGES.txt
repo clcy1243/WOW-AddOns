@@ -1,3 +1,20 @@
+commit 0f7e14c77c2e73d4494e527bc360efcf196ef27f
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Fri Jun 30 06:35:13 2017 -0400
+
+    Unholy:  Fix for T20 4pc.
+    
+    Enhancement Shaman:  1 stack of Crashing Lightning per cast of SS, not
+    2.
+
+commit ddf295920410255a51a4347752fbf57f981adbaf
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Wed Jun 28 20:49:13 2017 -0400
+
+    Re-unfix keybinds.
+    
+    Fix BrM error ('last_tick').
+
 commit 96ff11f7223ad43d823a3cc4bf0f31ab73514e29
 Author: Hekili <Hekili@users.noreply.github.com>
 Date:   Tue Jun 27 22:30:15 2017 -0400
@@ -1270,26 +1287,4 @@ Date:   Mon Feb 6 18:03:58 2017 -0500
     (equipped.X will fail except for Artifacts).
     3.  Track UNIT_POWER_FREQUENT ticks and round energy gains to the next
     tick.
-
-commit 97ddad64812f9feab90457cced7fcb2b260d3b13
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Mon Feb 6 11:31:28 2017 -0500
-
-    FIXES
-    
-    CORE
-    + spendResources() comes *before* runHandler() so that the handler
-    doesn't change the amount of resources to spend.  For instance,
-    runHandler could remove Divine Purpose or The Fires of Justice, which
-    would change the cost of Divine Storm or Templar's Verdict.
-    + Tweak the flicker protection a little bit.
-    
-    STATE
-    + Slight cleanup to timeToReady().
-
-commit c6b3fcf5d5a490d38c86735f6f70da5f580a92da
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Mon Feb 6 10:11:43 2017 -0500
-
-    FIX:  Tiny error in flicker-protection code.
 

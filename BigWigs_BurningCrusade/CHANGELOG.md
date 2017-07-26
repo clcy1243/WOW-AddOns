@@ -1,22 +1,10 @@
 # BigWigs [Burning Crusade]
 
-## [v7.2.2](https://github.com/BigWigsMods/BigWigs_BurningCrusade/tree/v7.2.2) (2017-06-13)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_BurningCrusade/compare/v7.2.1...v7.2.2)
+## [v7.2.5](https://github.com/BigWigsMods/BigWigs_BurningCrusade/tree/v7.2.5) (2017-07-16)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_BurningCrusade/compare/v7.2.4...v7.2.5)
 
-- BlackTemple/ShadeOfAkama: Semi-functional module.  
-- Update koKR.lua (#8)  
-- BlackTemple/Illidan: Don't use the yell for Eye Blast.  
-- BlackTemple/Illidan: Update to the latest BigWigs API.  
-- BlackTemple: Cleanup locale  
-- BlackTemple/Council: Update to the latest BigWigs API.  
-- update zhCN. (#7)  
-- BlackTemple/Shahraz: Update to the latest BigWigs API.  
-- BlackTemple/Souls: Update to the latest BigWigs API.  
-- BlackTemple/Gurtogg: Fix a local var  
-- BlackTemple/Gurtogg: Update to the latest BigWigs API.  
-- BlackTemple/Teron: Update to the latest BigWigs API.  
-- BlackTemple/Supremus: Cleanups  
-- BlackTemple/Supremus: Update to the latest BigWigs API.  
-- BlackTemple/Najentus: Fix the icon not being removed  
-- BlackTemple/Najentus: Update to latest BigWigs API.  
-- Load Black Temple  
+- BlackTemple/ShadeOfAkama: Sync the engage for now.  
+- BlackTemple/Illidan: Use the correct spell for fixate.  
+- BlackTemple/Illidan: Fix parasite say.  
+- BlackTemple/Illidan: Add fixate warnings  
+- Update koKR.lua (#11)  

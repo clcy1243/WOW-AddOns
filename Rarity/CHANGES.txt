@@ -1,10 +1,10 @@
 ------------------------------------------------------------------------
-r594 | Allara | 2017-06-13 16:31:12 -0500 (Tue, 13 Jun 2017) | 1 line
+r599 | Allara | 2017-07-17 11:45:17 -0500 (Mon, 17 Jul 2017) | 1 line
 Changed paths:
    M /trunk/Core.lua
-   M /trunk/Modules/Options
-   D /trunk/Modules/Options/.vs
+   M /trunk/Locales.lua
+   M /trunk/Options_Defaults.lua
 
-- Attempt to fix Lua error in ScanCalendar line 4015 which appeared for some users after the 7.2.5 patch
+- Added Abyss Worm, Blight Boar Microphone, Nightmare Whelpling (thanks Urtgard!)
 ------------------------------------------------------------------------
 

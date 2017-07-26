@@ -20,7 +20,7 @@ DBM_CORE_LOAD_MOD_DISABLED			= "%s|1이;가; 설치는 돼있지만 켜져있질
 DBM_CORE_LOAD_MOD_DISABLED_PLURAL	= "%s|1이;가; 설치는 돼있지만 켜져있질 않습니다. 직접 켜기 전까진 모드들이 로딩되지 않습니다."
 
 DBM_CORE_WHATS_NEW					= "오버워치와 히어로즈 오브 더 스톰 초읽기 효과음이 DBM 핵심 모듈에서 분리되어 별도의 다운로드 파일로 옮겨졌습니다. 초읽기 팩을 다시 설치하려면 DBM-CountPack-Overwatch와 DBM-CountPack-HoTS를 다운로드 받으세요. 분리 작업을 통해 이들 게임에 캐릭터가 새로 추가될 떄마다 미디어 파일이 DBM에 추가되어 번번히 다시 다운로드 받는 일이 현저히 줄어들 것입니다. 또한 지금 보시는 메시지 같은게 다시 표시되지 않도록 숨기는 설정도 추가되었습니다."
-DBM_CORE_WHATS_NEW_LINK				= "DBM은 음성팩과 함께 이용하는 걸 권장하고 있습니다. 그 이유와 사용 방법에 대한 도움말은 |HDBM:forumsnews|h|cff3588ff이곳을 클릭|r해서 알아보세요"
+DBM_CORE_WHATS_NEW_LINK				= "정보: DBM 디스코드 채널에 오셔서 버그 제보나 피드백을 해주세요. 아니면 그냥 놀러 오셔도 됩니다. |HDBM:forumsnews|h|cff3588ff디스코드 채널 링크|r"
 
 --Post Patch 7.1
 DBM_CORE_NO_RANGE					= "거리 레이더를 인스턴스 던전에서 사용할 수 없습니다. 예전의 텍스트 방식 거리창으로 대체됩니다."
@@ -60,7 +60,7 @@ DBM_CORE_COMBAT_STATE_RECOVERED		= "%s 전투가 %s전에 시작됐습니다. �
 DBM_CORE_TRANSCRIPTOR_LOG_START		= "Transcriptor 기록이 시작됐습니다."
 DBM_CORE_TRANSCRIPTOR_LOG_END		= "Transcriptor 기록이 종료됐습니다."
 
-DBM_CORE_MOVIE_SKIPPED				= "동영상이 자동으로 생략되었습니다."
+DBM_CORE_MOVIE_SKIPPED				= "DBM이 동영상 자동 생략 기능을 작동시켰습니다."
 
 DBM_CORE_AFK_WARNING				= "자리 비움 상태에서 전투에 돌입하여 (남은 생명력 %d퍼센트) 경고음을 재생중입니다. 자리를 비우고 있는게 아니라면 자리 비움 상태를 해제하거나 '기타 기능' 항목에서 해당 설정을 비활성화 해주세요."
 
@@ -256,6 +256,10 @@ DBM_CORE_RIGHT						= "오른쪽"
 DBM_CORE_BACK						= "뒤쪽"--BACK
 DBM_CORE_MIDDLE						= "가운데"
 DBM_CORE_FRONT						= "앞쪽"
+DBM_CORE_EAST						= "동쪽"
+DBM_CORE_WEST						= "서쪽"
+DBM_CORE_NORTH						= "북쪽"
+DBM_CORE_SOUTH						= "남쪽"
 DBM_CORE_INTERMISSION				= "사잇 단계"
 DBM_CORE_ORB						= "구슬"
 DBM_CHEST							= "상자"--As in Treasure 'Chest'. Not Chest as in body part.
@@ -263,6 +267,7 @@ DBM_NO_DEBUFF						= "%s 없음"--For use in places like info frame where you pu
 DBM_ALLY							= "공대원"--Such as "Move to Ally"
 DBM_ADDS							= "쫄"--Such as "Move to Ally"
 DBM_CORE_ROOM_EDGE					= "구석"
+DBM_CORE_SAFE						= "안전함"
 --Common Locals end
 
 DBM_CORE_BREAK_USAGE				= "쉬는 시간은 60분을 초과할 수 없습니다. 쉬는 시간은 초단위가 아니라 분단위로 입력해야 합니다."
@@ -332,7 +337,7 @@ DBM_CORE_AUTO_SPEC_WARN_TEXTS.youpos		= "%s (위치: %%s): 당신"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.soakpos		= "%s (뭉칠 위치: %%s)"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.target		= "%s: >%%s<"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.targetcount	= "%s (%%s): >%%s< "
-DBM_CORE_AUTO_SPEC_WARN_TEXTS.defensive		= "%s - 방어 기술 사용"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.defensive		= "%s - 생존기 켜세요"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.taunt		= "%s: >%%s< - 지금 도발"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.close		= "근처의 >%%2$s<에게 %1$s"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.move		= "%s - 피하세요"
@@ -349,6 +354,7 @@ DBM_CORE_AUTO_SPEC_WARN_TEXTS.switch		= "%s - 대상 바꾸세요"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.switchcount	= "%s - 대상 바꾸세요 (%%s)"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.gtfo		= "바닥 - 피하세요"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.Adds		= "쫄 등장 - 대상 바꾸세요"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.Addscustom	= "쫄 등장 - %s"
 
 -- Auto-generated Special Warning Localizations
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell			= "$spell:%s 특수 경고 보기"
@@ -382,6 +388,7 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS.switch			= "$spell:%s에 대상 변경 특수 �
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.switchcount 		= "$spell:%s에 대상 변경 특수 경고 보기 (횟수 포함)"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.gtfo 			= "바닥 피하기 특수 경고 보기"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.Adds 			= "쫄 등장시 대상 변경 특수 경고 보기"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.Addscustom		= "쫄 등장시 특수 경고 보기"
 
 -- Auto-generated Timer Localizations
 DBM_CORE_AUTO_TIMER_TEXTS.target		= "%s: %%s"
@@ -401,6 +408,7 @@ DBM_CORE_AUTO_TIMER_TEXTS.nextspecial		= "다음 특수 능력"
 DBM_CORE_AUTO_TIMER_TEXTS.achievement		= "%s"
 DBM_CORE_AUTO_TIMER_TEXTS.phase			= "다음 단계"
 DBM_CORE_AUTO_TIMER_TEXTS.adds			= "다음 쫄 등장"
+DBM_CORE_AUTO_TIMER_TEXTS.addscustom		= "쫄 등장 (%s)"
 
 DBM_CORE_AUTO_TIMER_OPTIONS.target		= "$spell:%s 디버프 타이머 바 보기"
 DBM_CORE_AUTO_TIMER_OPTIONS.cast		= "$spell:%s 시전 타이머 바 보기"
@@ -419,6 +427,7 @@ DBM_CORE_AUTO_TIMER_OPTIONS.nextspecial		= "다음 특수 능력 타이머 바 �
 DBM_CORE_AUTO_TIMER_OPTIONS.achievement		= "%s 업적의 타이머 바 보기"
 DBM_CORE_AUTO_TIMER_OPTIONS.phase		= "다음 단계 타이머 바 보기"
 DBM_CORE_AUTO_TIMER_OPTIONS.adds		= "쫄 등장 타이머 바 보기"
+DBM_CORE_AUTO_TIMER_OPTIONS.addscustom		= "쫄 등장 타이머 바 보기"
 DBM_CORE_AUTO_TIMER_OPTIONS.roleplay		= "역할 수행(롤플레이) 지속 시간 타이머 바 보기"
 
 DBM_CORE_AUTO_ICONS_OPTION_TEXT			= "$spell:%s 대상에 공격대 징표 설정"
@@ -431,15 +440,19 @@ DBM_CORE_AUTO_VOICE2_OPTION_TEXT		= "단계 전환시 음성 경보 듣기"
 DBM_CORE_AUTO_VOICE3_OPTION_TEXT		= "쫄 등장시 음성 경보 듣기"
 DBM_CORE_AUTO_VOICE4_OPTION_TEXT		= "바닥 밟았을 때 음성 경보 듣기"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "$spell:%s 쿨타임에 맞춰 초읽기 듣기"
-DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2	= "$spell:%s 남은 시간 초읽기 듣기"
+DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2		= "$spell:%s 남은 시간 초읽기 듣기"
 DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "$spell:%s 지속 시간 초읽기 듣기"
-DBM_CORE_AUTO_YELL_OPTION_TEXT.yell		= "$spell:%s 대상일 때 대화로 알리기"
-DBM_CORE_AUTO_YELL_OPTION_TEXT.count	= "$spell:%s 대상일 때 대화로 알리기 (횟수 포함)"
-DBM_CORE_AUTO_YELL_OPTION_TEXT.fade		= "$spell:%s 대상일 때 대화로 알리기 (초읽기 포함)"
+DBM_CORE_AUTO_YELL_OPTION_TEXT.shortyell	= "$spell:%s 대상일 때 대화로 알리기"
+DBM_CORE_AUTO_YELL_OPTION_TEXT.yell		= "$spell:%s 대상일 때 대화로 알리기 (플레이어 이름 포함)"
+DBM_CORE_AUTO_YELL_OPTION_TEXT.count		= "$spell:%s 대상일 때 대화로 알리기 (횟수 포함)"
+DBM_CORE_AUTO_YELL_OPTION_TEXT.fade		= "$spell:%s 지속시간이 끝나갈 때 대화로 알리기 (주문 이름 및 초읽기 포함)"
+DBM_CORE_AUTO_YELL_OPTION_TEXT.shortfade	= "$spell:%s 지속시간이 끝나갈 때 대화로 알리기 (초읽기 포함)"
 DBM_CORE_AUTO_YELL_OPTION_TEXT.position	= "$spell:%s 대상일 때 대화로 알리기 (위치 포함)"
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.shortyell	= "%s"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.yell	= UnitName("player") .. "에게 %s!"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.count	= UnitName("player") .. "에게 %s! (%%d)"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.fade	= "%s %%d초 후 사라짐!"
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.shortfade	= "%%d초"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.position	= "{rt%%3$d}"..UnitName("player").."{rt%%3$d}에게 %1$s %%2$s"
 DBM_CORE_AUTO_HUD_OPTION_TEXT			= "$spell:%s에 HUD 표시 (중단됨)"
 DBM_CORE_AUTO_HUD_OPTION_TEXT_MULTI		= "여러 보스 기술에 HUD 표시 (중단됨)"

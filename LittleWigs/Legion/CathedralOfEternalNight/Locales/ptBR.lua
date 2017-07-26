@@ -5,13 +5,20 @@ if L then
 	--L.custom_on_time_lost_desc = "Show the time lost during Shadow Fade on the bar in |cffff0000red|r."
 end
 
+L = BigWigs:NewBossLocale("Domatrax", "ptBR")
+if L then
+	--L.custom_on_autotalk = "Autotalk"
+	--L.custom_on_autotalk_desc = "Instantly selects the Aegis of Aggramars gossip option to start the Domatrax encounter."
+end
+
 L = BigWigs:NewBossLocale("Cathedral of Eternal Night Trash", "ptBR")
 if L then
-	--L.felguard = "Felguard Destroyer"
-	--L.soulmender = "Helblaze Soulmender"
-	--L.temptress = "Hellblaze Temptress"
-	--L.botanist = "Felborne Botanist"
-	--L.orbcaster = "Felstrider Orbcaster"
-	--L.waglur = "Wa'glur"
-	--L.gazerax = "Gazerax"
+	L.dulzak = "Dul'zak"
+	L.felguard = "Guarda Vil Destruidor"
+	L.soulmender = "Trata-alma Ardinferno"
+	L.temptress = "Tentadora Ardinferno"
+	L.botanist = "Botânica Vilanesca"
+	L.orbcaster = "Lança-orbe Passovil"
+	L.waglur = "Wa'glur"
+	L.gazerax = "Gazerax"
 end

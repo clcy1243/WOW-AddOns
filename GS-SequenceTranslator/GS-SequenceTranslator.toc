@@ -3,7 +3,7 @@
 ## Notes: This addon allows you to Trnaslate GnomeSequenced-Enhanced Sequences into your local client language
 ## Author: Draik
 ## Version: 1.4.0
-## RequiredDeps: GS-Core
+## RequiredDeps: GSE
 ## X-Curse-Packaged-Version: r20161025175148
 ## X-Curse-Project-Name: GS-E Sequence Translator
 ## X-Curse-Project-ID: gs-e-sequence-translator

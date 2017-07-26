@@ -335,7 +335,7 @@ function OiLvlPlayer_Update(sw)
 				end
 				CharacterFrameAverageItemLevel:SetText(ilt)
 				CharacterFrameAverageItemLevel:ClearAllPoints()
-				CharacterFrameAverageItemLevel:SetPoint("CENTER",CharacterLevelText,"BOTTOM",0,0)
+				CharacterFrameAverageItemLevel:SetPoint("CENTER",CharacterLevelText,"TOP",0,0)
 			end	
 			-- add Show Gem / Enchant button
 			if not oilvlGemEnchantButton then
@@ -651,7 +651,7 @@ function OiLvLInspect_Update()
 			end
 			InspectFrameAverageItemLevel:SetText(ilt)
 			InspectFrameAverageItemLevel:ClearAllPoints()
-			InspectFrameAverageItemLevel:SetPoint("LEFT",InspectPaperDollFrame.ViewButton,"RIGHT",10,0)
+			InspectFrameAverageItemLevel:SetPoint("CENTER",InspectPaperDollFrame.ViewButton,"RIGHT",50,0)
 		end
 		-- add Show Gem / Enchant button
 		if not oilvlGemEnchantButton2 then

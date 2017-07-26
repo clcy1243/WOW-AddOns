@@ -1,12 +1,9 @@
 # BigWigs
 
-## [v60.2](https://github.com/BigWigsMods/BigWigs/tree/v60.2) (2017-06-28)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v60.1...v60.2)
+## [v66.2](https://github.com/BigWigsMods/BigWigs/tree/v66.2) (2017-07-23)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v66.1...v66.2)
 
-- bump version  
-- Kiljaeden: Add berserk (Hotfixes: June 27)  
-- Update zhTW.lua (#282)  
-- update zhTW (#281)  
-- ruRU update (#280)  
-- TombOfSargeras/DemonicInquisition: Add Jail list and CD Bars for Belac  
-- MaidenofVigilance: Tune message colors  
+- TombOfSargeras: bug fixes  
+- TombOfSargeras/Kiljaeden: Refactor Flame Orb Calculations  
+- TombOfSargeras/Kiljaeden: Add Stage 3 Mythic timers and show a counter for Flame Orbs  
+- Update deDE.lua (#327)  

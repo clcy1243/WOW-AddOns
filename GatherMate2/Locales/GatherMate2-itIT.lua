@@ -5,6 +5,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate2", "itIT")
 if not L then return end
 
+-- Options
 L["Always show"] = "Mostra Sempre"
 L["Archaeology"] = "Archeologia"
 L["Are you sure you want to delete all nodes from this database?"] = "Sei sicuro di voler cancellare tutti i nodi da questo database?"
@@ -116,9 +117,11 @@ L["World Map Icon Scale"] = "Grandezza delle icone sulla Mappa del Mondo"
 L["World Map Icons"] = "Icone sulla Mappa del Mondo"
 L["Wrath of the Lich King"] = "Wrath of the Lich King"
 
+
 local NL = LibStub("AceLocale-3.0"):NewLocale("GatherMate2Nodes", "itIT")
 if not NL then return end
 
+-- Nodes
 NL["Abyssal Gulper School"] = "Banco di Anguille Abissali delle Profondità"
 NL["Adder's Tongue"] = "Lingua di vipera"
 NL["Aethril"] = "Aethril"
@@ -271,3 +274,4 @@ NL["Twilight Jasmine"] = "Gelsomino del Crepuscolo"
 NL["Vrykul Archaeology Find"] = "Scoperta Archeologica Vrykul"
 NL["Waterlogged Wreckage"] = "Rottami Fradici"
 NL["Whiptail"] = "Frustaliana"
+

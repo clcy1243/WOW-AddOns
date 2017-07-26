@@ -1519,6 +1519,56 @@ function VUHDO_loadDefaultConfig()
 		-- Grand Magistrix Elisande
 	);
 
+	-- 7.2.5 - Legion - Tomb of Sargeras
+	VUHDO_addCustomSpellIds(36,
+		-- [[ Tomb of Sargeras ]]
+		-- Goroth
+		231363, -- Burning Armor
+		230345, -- Crashing Comet
+		233062, -- Infernal Burning
+		-- Demonic Inquistion
+		-- Atrigan
+		-- Belac
+		-- Harjatan
+		231998, -- Jagged Abrasion
+		-- Mistress Sassz'ine
+		230201, -- Burden of Pain
+		230920, -- Consuming Hunger
+		230139, -- Hydra Shot
+		232754, -- Hydra Acid
+		230276, -- Jaws from the Deep
+		-- Sisters of the Moon
+		-- Huntress Kasparian
+		236550, -- Discorporate
+		237561, -- Twilight Glaive
+		-- Priestess Lunaspyre
+		239264, -- Lunar Fire
+		236519, -- Moon Burn
+		-- Captain Yathae Moonstrike
+		233263, -- Embrace of the Eclipse
+		236596, -- Rapid Shot
+		-- The Desolate Host
+		236515, -- Shattering Scream
+		236459, -- Soulbind
+		235621, -- Spirit Realm
+		236011, -- Tormented Cries
+		238442, -- Spear of Anguish
+		235924, -- Spear of Anguish
+		236131, -- Wither
+		236138, -- Wither
+		-- Maiden of Vigilence
+		235117, -- Unstable Soul
+		-- Fallen Avatar
+		239739, -- Dark Mark
+		236494, -- Desolate
+		242017, -- Black Winds
+		240728, -- Tainted Essence
+		-- Kil'jaeden
+		234310, -- Armageddon Rain
+		245509, -- Felclaws    
+		243624  -- Lingering Wail
+	);
+
 	local debuffRemovalList = {};
 
 	for tIndex, tName in pairs(VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED"]) do

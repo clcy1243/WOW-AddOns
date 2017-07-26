@@ -7,7 +7,7 @@
 -- Main non-UI code
 ------------------------------------------------------------
 
-PawnVersion = 2.0208
+PawnVersion = 2.0209
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.09
@@ -3703,6 +3703,9 @@ end
 
 -- Called whenever the artifact UI is used.
 function PawnOnArtifactUpdated(NewItem)
+	-- Compatibility fix with AethysRotation and any other addon that scans artifacts at startup
+	if not PawnOptions then return nil end
+
 	-- Get details about this artifact and then cache them.
 	local ArtifactItemID, _, ArtifactName = C_ArtifactUI.GetArtifactInfo()
 	if not ArtifactItemID then return end

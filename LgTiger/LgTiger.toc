@@ -1,0 +1,7 @@
+﻿## Interface: 70200
+## Title: |cffEE3A8C主母萨丝琳助手 Lg|rTiger
+## Version: 0.2
+## Author: Paopao001
+## SavedVariablesPerCharacter: LgTiger_CDB
+
+Lgtiger.lua

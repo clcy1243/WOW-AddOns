@@ -3128,8 +3128,7 @@ local function SaveAOTCCE(tt,...)
 		local temp = {GetAchievementComparisonInfo(an[j])} 
 		local _,temp2,_ = GetAchievementInfo(an[j]); 
 		for i = 1, 4 do tt[#tt+1] = temp[i] end 
-		tt[j*5] = temp2
-		--tt[j*6] = GetAchievementLink(an[j])
+		tt[#tt+1] = temp2
 		if temp[1] then
 			_, cunitid = OilvlTooltip:GetUnit();
 			local clink = GetAchievementLink(an[j]):gsub(UnitGUID("player"):gsub("-","%%-"),UnitGUID(cunitid):gsub("-","%%-"))
@@ -3139,9 +3138,7 @@ local function SaveAOTCCE(tt,...)
 			else
 				clink = clink:gsub("0:0:0:%-1","1:"..cdate)
 			end
-			tt[j*6] = clink
-		else
-			tt[j*6] = ""
+			tt[#tt+1] = clink
 		end
 	end
 end
@@ -5582,10 +5579,16 @@ function events:PLAYER_ENTERING_WORLD(...)
 		rpsw=false;
 		rpunit="";
 		Omover2 = 0;
-		hooksecurefunc("OpenAllBags",oilvlShowBagItemLevel)
-		hooksecurefunc("ToggleAllBags",oilvlShowBagItemLevel)
-		hooksecurefunc("ToggleBag",oilvlShowBagItemLevel)
-		hooksecurefunc("OpenBag",oilvlShowBagItemLevel)
+		hooksecurefunc("OpenAllBags",function() oilvlShowBagItemLevel() C_Timer.After(0.3, oilvlShowBagItemLevel) end)
+		hooksecurefunc("ToggleAllBags",function() oilvlShowBagItemLevel() C_Timer.After(0.3, oilvlShowBagItemLevel) end)
+		hooksecurefunc("ToggleBag",function() oilvlShowBagItemLevel() C_Timer.After(0.3, oilvlShowBagItemLevel) end)
+		hooksecurefunc("OpenBag",function() oilvlShowBagItemLevel() C_Timer.After(0.3, oilvlShowBagItemLevel) end)
+		if Bagnon then
+			BagnonFrameinventory:HookScript('onShow', function()
+				oilvlShowBagItemLevel()
+				C_Timer.After(0.3, oilvlShowBagItemLevel)
+			end)
+		end
 	end
 end
 
@@ -5905,17 +5908,9 @@ function OilvlConfigFrame()
 		Omover=0
 		Omover2 = 0;
 		if oilvlsilvl:GetChecked() then
-			oicbten:Enable();
-			oicbtn:Enable();
-			oicbtov:Enable();
-			oilvlsrpd:Enable();
-			oicbtos:Enable();
+			UIDropDownMenu_EnableDropDown(ORaidDropDownMenu)
 		else
-			oicbten:Disable();
-			oicbtn:Disable();
-			oicbtov:Disable();
-			oilvlsrpd:Disable();
-			oicbtos:Disable();
+			UIDropDownMenu_DisableDropDown(ORaidDropDownMenu)
 		end
 	end);
 	if cfg.oilvlms then mscb:SetChecked(true) end
@@ -6258,33 +6253,36 @@ function oilvlCheckUpgrade(i)
 end
 
 function oilvlShowBagItemLevel()
-	if not bagupdatesw then 
-		bagupdatesw = true;
-		OILVL:RegisterEvent("BAG_UPDATE")
-	end
-	for i=1,NUM_CONTAINER_FRAMES do
-		for j=1,MAX_CONTAINER_ITEMS do
-			local frame = _G["ContainerFrame"..i.."Item"..j]
-			if frame and frame:GetParent() and frame:GetParent():GetID() then
-				if not frame.iLvl then
-					frame.iLvl = frame:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
-					frame.iLvl:SetPoint("BOTTOM", 0, 0)
-					frame.iLvl:SetTextColor(1,1,0)
-					frame.iLvl:SetText("")
-				end
-				local itemLink = GetContainerItemLink(frame:GetParent():GetID(), frame:GetID())
-				if itemLink then
-					local _, _, _, _, _,itemType,itemType2, _, _, _, _ = GetItemInfo(itemLink)
-					if (itemType == "Armor" or itemType == "Weapon" or itemType == "Artifact Relic" or itemType2 == "Artifact Relic") and cfg.oilvlbagilvl then 
-						frame.iLvl:SetText(OItemAnalysis_CheckILVLGear2(itemLink))
-					else
+	if GetTime() - bagilvltime > 0.3 then
+		if not bagupdatesw then 
+			bagupdatesw = true;
+			OILVL:RegisterEvent("BAG_UPDATE")
+		end
+		for i=1,NUM_CONTAINER_FRAMES do
+			for j=1,MAX_CONTAINER_ITEMS do
+				local frame = _G["ContainerFrame"..i.."Item"..j]
+				if frame and frame:GetParent() and frame:GetParent():GetID() then
+					if not frame.iLvl then
+						frame.iLvl = frame:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
+						frame.iLvl:SetPoint("BOTTOM", 0, 0)
+						frame.iLvl:SetTextColor(1,1,0)
 						frame.iLvl:SetText("")
 					end
-				else
-					frame.iLvl:SetText("")
-				end				
+					local itemLink = GetContainerItemLink(frame:GetParent():GetID(), frame:GetID())
+					if itemLink then
+						local _, _, _, _, _,itemType,itemType2, _, _, _, _ = GetItemInfo(itemLink)
+						if (itemType == "Armor" or itemType == "Weapon" or itemType == "Artifact Relic" or itemType2 == "Artifact Relic") and cfg.oilvlbagilvl then 
+							frame.iLvl:SetText(OItemAnalysis_CheckILVLGear2(itemLink))
+						else
+							frame.iLvl:SetText("")
+						end
+					else
+						frame.iLvl:SetText("")
+					end				
+				end
 			end
 		end
+		bagilvltime = GetTime()
 	end
 end
 

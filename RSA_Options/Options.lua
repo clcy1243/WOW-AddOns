@@ -10814,7 +10814,7 @@ local Druid = {
 				},
 			},
 		},
-		MarkOfUrsol = {
+		--[[MarkOfUrsol = {
 			type = "group",
 			name = GetSpellInfo(192083),
 			order = 25,
@@ -10958,6 +10958,7 @@ local Druid = {
 				},
 			},
 		},
+		]]--
 		RageOfTheSleeper = {
 			type = "group",
 			name = GetSpellInfo(200851),

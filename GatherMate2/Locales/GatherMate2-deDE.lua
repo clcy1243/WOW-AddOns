@@ -5,6 +5,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate2", "deDE")
 if not L then return end
 
+-- Options
 L["Add this location to Cartographer_Waypoints"] = "Diese Stelle zu Cartographer_Waypoints hinzufügen"
 L["Add this location to TomTom waypoints"] = "Diese Stelle zu TomTom hinzufügen"
 L["Always show"] = "Immer anzeigen"
@@ -157,8 +158,8 @@ L["Select Database"] = "Datenbank auswählen"
 L["Select Databases"] = "Wähle Datensatz (Datenbank)"
 L["Select Node"] = "Knoten auswählen"
 L["Select None"] = "Nichts auswählen"
-L["Select the archaeology nodes you wish to display."] = "Wähle die Archäologie Knoten aus, die angezeigt werden solllen."
-L["Select the fish nodes you wish to display."] = "Wähle die Fische aus, die angezeigt werden solllen."
+L["Select the archaeology nodes you wish to display."] = "Wähle die Archäologie Knoten aus, die angezeigt werden sollen."
+L["Select the fish nodes you wish to display."] = "Wähle die Fische aus, die angezeigt werden sollen."
 L["Select the gas clouds you wish to display."] = "Wähle die Gaswolken aus, die angezeigt werden sollen."
 L["Select the herb nodes you wish to display."] = "Wähle die Pflanzen aus, die angezeigt werden sollen."
 L["Select the mining nodes you wish to display."] = "Wähle die Minen aus, die angezeigt werden sollen."
@@ -204,9 +205,11 @@ L["World Map Icon Scale"] = "Weltkarte Symbolgröße"
 L["World Map Icons"] = "Weltkarten Symbole"
 L["Wrath of the Lich King"] = "Wrath of the Lich King"
 
+
 local NL = LibStub("AceLocale-3.0"):NewLocale("GatherMate2Nodes", "deDE")
 if not NL then return end
 
+-- Nodes
 NL["Abundant Bloodsail Wreckage"] = "Blutsegelwrackteile"
 NL["Abundant Firefin Snapper School"] = "Ein ergiebiger Schwarm Feuerflossenschnapper"
 NL["Abundant Oily Blackmouth School"] = "Ergiebiger Schwarm öliger Schwarzmaulfische"
@@ -283,6 +286,8 @@ NL["Fat Sleeper School"] = "Ein Schwarm dicker Schläfer"
 NL["Fathom Eel Swarm"] = "Klafteraalschwarm"
 NL["Fel Iron Chest"] = "Teufelseisentruhe"
 NL["Fel Iron Deposit"] = "Teufelseisenvorkommen"
+NL["Fel-encrusted Herb"] = "Teufelsverkrustetes Kraut"
+NL["Fel-encrusted Herb Cluster"] = "Teufelsverkrustetes Kräuterbündel"
 NL["Felmist"] = "Teufelsnebel"
 NL["Felmouth Frenzy School"] = "Ein Schwarm Dämonenschlundfrenzys"
 NL["Felslate Deposit"] = "Teufelsschiefervorkommen"
@@ -525,3 +530,4 @@ NL["Wild Steelbloom"] = "Wildstahlblume"
 NL["Windy Cloud"] = "Windige Wolke"
 NL["Wintersbite"] = "Winterbiss"
 NL["Withered Herb"] = "Verwelktes Kraut"
+

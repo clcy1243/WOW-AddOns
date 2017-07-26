@@ -5,6 +5,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate2", "koKR")
 if not L then return end
 
+-- Options
 L["Add this location to Cartographer_Waypoints"] = "현재 위치를 Cartographer_Waypoints에 추가합니다."
 L["Add this location to TomTom waypoints"] = "현재 위치를 TomTom 웨이포인트에 추가합니다."
 L["Always show"] = "항상 표시"
@@ -203,9 +204,11 @@ L["World Map Icon Scale"] = "세계지도 아이콘 크기"
 L["World Map Icons"] = "세계지도 아이콘"
 L["Wrath of the Lich King"] = "리치왕의 분노"
 
+
 local NL = LibStub("AceLocale-3.0"):NewLocale("GatherMate2Nodes", "koKR")
 if not NL then return end
 
+-- Nodes
 NL["Abundant Bloodsail Wreckage"] = "풍부한 붉은해적단 잔해"
 NL["Abundant Firefin Snapper School"] = "풍부한 불지느러미퉁돔 떼"
 NL["Abundant Oily Blackmouth School"] = "풍부한 기름기 많은 아귀 떼"
@@ -523,3 +526,4 @@ NL["Wild Steelbloom"] = "야생 철쭉"
 NL["Windy Cloud"] = "흩어지는 구름"
 NL["Wintersbite"] = "겨울서리풀"
 NL["Withered Herb"] = "시든 약초"
+

@@ -77,9 +77,9 @@ function RSA_Druid:OnEnable()
 			[192081] = { -- IRONFUR
 				profile = 'Ironfur'
 			},
-			[192083] = { -- MARK OF URSOL
+			--[[[192083] = { -- MARK OF URSOL
 				profile = 'MarkOfUrsol'
-			},
+			},]]--
 			[200851] = { -- Rage Of The Sleeper
 				profile = 'RageOfTheSleeper'
 			},
@@ -169,10 +169,10 @@ function RSA_Druid:OnEnable()
 				profile = 'Ironfur',
 				section = 'End'
 			},
-			[192083] = { -- MARK OF URSOL
+			--[[[192083] = { -- MARK OF URSOL
 				profile = 'MarkOfUrsol',
 				section = 'End'
-			},
+			},]]--
 			[200851] = { -- Rage Of The Sleeper
 				profile = 'RageOfTheSleeper',
 				section = 'End'

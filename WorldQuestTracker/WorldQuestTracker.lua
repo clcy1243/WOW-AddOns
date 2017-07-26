@@ -265,7 +265,7 @@ local WQT_QUEST_NAMES_AND_ICONS = {
 	--[WQT_QUESTTYPE_PROFESSION] = {name = "Profession", icon = [[Interface\Garrison\MobileAppIcons]], coords = {256/1024, 384/1024, 0/1024, 128/1024}},
 	--[WQT_QUESTTYPE_PVP] = {name = "PvP", icon = [[Interface\PVPFrame\Icon-Combat]], coords = {0, 1, 0, 1}},
 	[WQT_QUESTTYPE_PVP] = {name = L["S_QUESTTYPE_PVP"], icon = [[Interface\QUESTFRAME\QuestTypeIcons]], coords = {37/128, 53/128, 19/64, 36/64}},
-	[WQT_QUESTTYPE_PETBATTLE] = {name = L["S_QUESTTYPE_PETBATTLE"], icon = [[Interface\MINIMAP\ObjectIconsAtlas]], coords = {172/512, 201/512, 270/512, 301/512}},
+	[WQT_QUESTTYPE_PETBATTLE] = {name = L["S_QUESTTYPE_PETBATTLE"], icon = [[Interface\MINIMAP\ObjectIconsAtlas]], coords = {219/512, 246/512, 478/512, 502/512}},
 	[WQT_QUESTTYPE_TRADE] = {name = L["S_QUESTTYPE_TRADESKILL"], icon = [[Interface\ICONS\INV_Blood of Sargeras]], coords = {5/64, 59/64, 5/64, 59/64}},
 }
 
@@ -2902,7 +2902,7 @@ function WorldQuestTracker.SetupWorldQuestButton (self, worldQuestType, rarity, 
 			self.questTypeBlip:Show()
 			self.questTypeBlip:SetTexture ([[Interface\MINIMAP\ObjectIconsAtlas]])
 			--self.questTypeBlip:SetTexCoord (172/512, 201/512, 273/512, 301/512)
-			self.questTypeBlip:SetTexCoord (376/512, 403/512, 239/512, 265/512) -- left right    top botton
+			self.questTypeBlip:SetTexCoord (219/512, 246/512, 478/512, 502/512) -- left right    top botton
 			self.questTypeBlip:SetAlpha (1)
 			
 		elseif (worldQuestType == LE_QUEST_TAG_TYPE_PROFESSION) then
@@ -3346,7 +3346,7 @@ hooksecurefunc ("ToggleWorldMap", function (self)
 			
 			WorldQuestButton:SetScript ("OnClick", function()
 				SetMapByID (MAPID_BROKENISLES)
-				PlaySound ("igMainMenuOptionCheckBoxOn")
+				--PlaySound ("igMainMenuOptionCheckBoxOn")
 				WorldQuestTracker.WorldQuestButton_Click = GetTime()
 			end)
 			WorldQuestButton:HookScript ("PreClick", deny_auto_switch)
@@ -3794,7 +3794,7 @@ hooksecurefunc ("ToggleWorldMap", function (self)
 			DF:CreateAnimation (SummaryFrame.ShowAnimation, "Scale", 1, .1, .1, 1, 1, 1, "left", 0, 0)
 			
 			SummaryFrame.HideAnimation = DF:CreateAnimationHub (SummaryFrame, function()
-				PlaySound ("igMainMenuOptionCheckBoxOn")
+				--PlaySound ("igMainMenuOptionCheckBoxOn")
 			end, 
 				function() 
 					SummaryFrame:Hide() 
@@ -6580,29 +6580,31 @@ local TrackerIconButtonOnClick = function (self, button)
 	end
 	
 	if (HaveQuestData (self.questID)) then
-		SetSuperTrackedQuestID (self.questID)
+		WorldQuestTracker.SelectSingleQuestInBlizzardWQTracker (self.questID) --thanks @ilintar on CurseForge
+		--SetSuperTrackedQuestID (self.questID)
 		WorldQuestTracker.RefreshTrackerWidgets()
 		WorldQuestTracker.SuperTracked = self.questID
 	end
 end
 
 -- �rrow ~arrow
-local UpdateSuperQuestTracker = function()
-	if (WorldQuestTracker.SuperTracked and HaveQuestData (WorldQuestTracker.SuperTracked)) then
-		--verifica se a quest esta sendo mostrada no tracker
-		for i = 1, #TrackerWidgetPool do
-			if (TrackerWidgetPool[i]:IsShown() and TrackerWidgetPool[i].questID == WorldQuestTracker.SuperTracked) then
-				SetSuperTrackedQuestID (WorldQuestTracker.SuperTracked)
-				return
+
+--from the user @ilintar on CurseForge
+--Doing that instead of just SetSuperTrackedQuestID(questID) will make the arrow stay. The code also ensures that only the selected world quest is present in the Blizzard window, as to not make it cluttered.
+	function WorldQuestTracker.SelectSingleQuestInBlizzardWQTracker (questID)
+		for i = 1, GetNumWorldQuestWatches() do
+			local watchedWorldQuestID = GetWorldQuestWatchInfo(i);
+			if (watchedWorldQuestID) then
+				BonusObjectiveTracker_UntrackWorldQuest(watchedWorldQuestID)
 			end
 		end
-		WorldQuestTracker.SuperTracked = nil
+		BonusObjectiveTracker_TrackWorldQuest(questID, true)
+		SetSuperTrackedQuestID (questID)
 	end
-end
+--
 
---[[
--- overwriting this was causing taint issues
-
+--> overwriting this was causing taint issues	
+--[=[
 --rewrite QuestSuperTracking_IsSuperTrackedQuestValid to avoid conflict with World Quest Tracker
 function QuestSuperTracking_IsSuperTrackedQuestValid()
 	local trackedQuestID = GetSuperTrackedQuestID();
@@ -6624,14 +6626,32 @@ function QuestSuperTracking_IsSuperTrackedQuestValid()
 
 	return true;
 end
---]]
+--]=]
 
+--> thise functions isn't being used at the moment
+--[=[
+local UpdateSuperQuestTracker = function()
+	if (WorldQuestTracker.SuperTracked and HaveQuestData (WorldQuestTracker.SuperTracked)) then
+		--verifica se a quest esta sendo mostrada no tracker
+		for i = 1, #TrackerWidgetPool do
+			if (TrackerWidgetPool[i]:IsShown() and TrackerWidgetPool[i].questID == WorldQuestTracker.SuperTracked) then
+				SetSuperTrackedQuestID (WorldQuestTracker.SuperTracked)
+				return
+			end
+		end
+		WorldQuestTracker.SuperTracked = nil
+	end
+end
+--]=]
+--[=[
 hooksecurefunc ("QuestSuperTracking_ChooseClosestQuest", function()
 	if (WorldQuestTracker.SuperTracked) then
 		--delay increased from 20ms to 200ms to avoid lag spikes
 		C_Timer.After (.2, UpdateSuperQuestTracker)
 	end
 end)
+--]=]
+
 
 local TrackerIconButtonOnMouseDown = function (self, button)
 	self.Icon:SetPoint ("topleft", self:GetParent(), "topleft", -12, -3)
@@ -8872,7 +8892,7 @@ function WorldQuestTracker.UpdateWorldQuestsOnWorldMap (noCache, showFade, isQue
 										widget.questTypeBlip:Show()
 										widget.questTypeBlip:SetTexture ([[Interface\MINIMAP\ObjectIconsAtlas]])
 										--widget.questTypeBlip:SetTexCoord (172/512, 201/512, 273/512, 301/512)
-										widget.questTypeBlip:SetTexCoord (376/512, 403/512, 239/512, 265/512) -- left right    top botton
+										widget.questTypeBlip:SetTexCoord (219/512, 246/512, 478/512, 502/512) -- left right    top botton
 										widget.questTypeBlip:SetAlpha (.85)
 										
 									elseif (worldQuestType == LE_QUEST_TAG_TYPE_DUNGEON) then
@@ -9076,23 +9096,49 @@ function WorldQuestTracker.UpdateWorldQuestsOnWorldMap (noCache, showFade, isQue
 end
 
 --quando clicar no bot�o de por o world map em fullscreen ou window mode, reajustar a posi��o dos widgets
-WorldMapFrameSizeDownButton:HookScript ("OnClick", function() --window mode
-	if (WorldQuestTracker.UpdateWorldQuestsOnWorldMap) then
-		if (GetCurrentMapAreaID() == MAPID_BROKENISLES) then
-			WorldQuestTracker.UpdateWorldQuestsOnWorldMap (false, true)
-			WorldQuestTracker.RefreshStatusBar()
-			C_Timer.After (1, WorldQuestTracker.RefreshStatusBar)
+if (WorldMapFrameSizeDownButton) then
+	WorldMapFrameSizeDownButton:HookScript ("OnClick", function() --window mode
+		if (WorldQuestTracker.UpdateWorldQuestsOnWorldMap) then
+			if (GetCurrentMapAreaID() == MAPID_BROKENISLES) then
+				WorldQuestTracker.UpdateWorldQuestsOnWorldMap (false, true)
+				WorldQuestTracker.RefreshStatusBar()
+				C_Timer.After (1, WorldQuestTracker.RefreshStatusBar)
+			end
 		end
-	end
-end)
-WorldMapFrameSizeUpButton:HookScript ("OnClick", function() --full screen
-	if (WorldQuestTracker.UpdateWorldQuestsOnWorldMap) then
-		if (GetCurrentMapAreaID() == MAPID_BROKENISLES) then
-			WorldQuestTracker.UpdateWorldQuestsOnWorldMap (false, true)
-			C_Timer.After (1, WorldQuestTracker.RefreshStatusBar)
+	end)
+	
+elseif (MinimizeButton) then
+	MinimizeButton:HookScript ("OnClick", function() --window mode
+		if (WorldQuestTracker.UpdateWorldQuestsOnWorldMap) then
+			if (GetCurrentMapAreaID() == MAPID_BROKENISLES) then
+				WorldQuestTracker.UpdateWorldQuestsOnWorldMap (false, true)
+				WorldQuestTracker.RefreshStatusBar()
+				C_Timer.After (1, WorldQuestTracker.RefreshStatusBar)
+			end
 		end
-	end
-end)
+	end)
+end
+
+if (WorldMapFrameSizeUpButton) then
+	WorldMapFrameSizeUpButton:HookScript ("OnClick", function() --full screen
+		if (WorldQuestTracker.UpdateWorldQuestsOnWorldMap) then
+			if (GetCurrentMapAreaID() == MAPID_BROKENISLES) then
+				WorldQuestTracker.UpdateWorldQuestsOnWorldMap (false, true)
+				C_Timer.After (1, WorldQuestTracker.RefreshStatusBar)
+			end
+		end
+	end)
+
+elseif (MaximizeButton) then
+	MaximizeButton:HookScript ("OnClick", function() --full screen
+		if (WorldQuestTracker.UpdateWorldQuestsOnWorldMap) then
+			if (GetCurrentMapAreaID() == MAPID_BROKENISLES) then
+				WorldQuestTracker.UpdateWorldQuestsOnWorldMap (false, true)
+				C_Timer.After (1, WorldQuestTracker.RefreshStatusBar)
+			end
+		end
+	end)
+end
 
 --atualiza a quantidade de alpha nos widgets que mostram quantas quests ha para a fac��o
 function WorldQuestTracker.UpdateFactionAlpha()

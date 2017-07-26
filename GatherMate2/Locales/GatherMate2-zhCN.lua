@@ -5,6 +5,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate2", "zhCN")
 if not L then return end
 
+-- Options
 L["Add this location to Cartographer_Waypoints"] = "将该地点加入 Cartographer_Waypoints"
 L["Add this location to TomTom waypoints"] = "将该地点加入 TomTom 节点"
 L["Always show"] = "总是显示"
@@ -204,9 +205,11 @@ L["World Map Icon Scale"] = "世界地图图标缩放"
 L["World Map Icons"] = "世界地图图标"
 L["Wrath of the Lich King"] = "巫妖王之怒"
 
+
 local NL = LibStub("AceLocale-3.0"):NewLocale("GatherMate2Nodes", "zhCN")
 if not NL then return end
 
+-- Nodes
 NL["Abundant Bloodsail Wreckage"] = "大型的血帆残骸"
 NL["Abundant Firefin Snapper School"] = "大型的火鳞鳝鱼群"
 NL["Abundant Oily Blackmouth School"] = "大型的黑口鱼群"
@@ -283,6 +286,8 @@ NL["Fat Sleeper School"] = "塘鲈鱼群"
 NL["Fathom Eel Swarm"] = "深水鳗鱼群"
 NL["Fel Iron Chest"] = "魔铁宝箱"
 NL["Fel Iron Deposit"] = "魔铁矿脉"
+NL["Fel-encrusted Herb"] = "被邪能包裹的草药"
+NL["Fel-encrusted Herb Cluster"] = "被邪能包裹的草药丛"
 NL["Felmist"] = "魔雾"
 NL["Felmouth Frenzy School"] = "魔口狂鱼群"
 NL["Felslate Deposit"] = "邪能页岩矿脉"
@@ -508,3 +513,4 @@ NL["Wild Steelbloom"] = "野钢花"
 NL["Windy Cloud"] = "气体云雾"
 NL["Wintersbite"] = "冬刺草"
 NL["Withered Herb"] = "枯萎的草药"
+

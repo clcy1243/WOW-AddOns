@@ -1,0 +1,12 @@
+tag 52f4ef593f61e4b56fea8b2d6ea0d6c0361fab84 v4.1.19
+Author:	Hendrik Leppkes <h.leppkes@gmail.com>
+Date:	Thu Jun 29 15:56:16 2017 +0200
+
+Tag as v4.1.19
+
+commit 48bc8b5fdafa01ce5b162bf1eb8b23cf687d242e
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Thu Jun 29 15:56:00 2017 +0200
+
+    Fix combo points in "bar" layout
+

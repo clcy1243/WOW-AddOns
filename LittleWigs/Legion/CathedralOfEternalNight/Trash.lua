@@ -7,6 +7,7 @@ local mod, CL = BigWigs:NewBoss("Cathedral of Eternal Night Trash", 1146)
 if not mod then return end
 mod.displayName = CL.trash
 mod:RegisterEnableMob(
+	118704, -- Dul'zak
 	119952, -- Felguard Destroyer
 	119923, -- Helblaze Soulmender
 	118703, -- Felborne Botanist
@@ -22,6 +23,7 @@ mod:RegisterEnableMob(
 
 local L = mod:NewLocale("enUS", true)
 if L then
+	L.dulzak = "Dul'zak"
 	L.felguard = "Felguard Destroyer"
 	L.soulmender = "Helblaze Soulmender"
 	L.botanist = "Felborne Botanist"
@@ -38,6 +40,8 @@ L = mod:GetLocale()
 
 function mod:GetOptions()
 	return {
+		-- Dul'zak
+		238653, -- Shadow Wave
 		-- Felguard Destroyer
 		241598, -- Shadow Wall
 		-- Helblaze Soulmender
@@ -53,6 +57,7 @@ function mod:GetOptions()
 		-- Gazerax
 		239232, -- Blinding Glare
 	}, {
+		[238653] = L.dulzak,
 		[241598] = L.felguard,
 		[238543] = L.soulmender,
 		[237565] = L.botanist,
@@ -65,6 +70,7 @@ end
 
 function mod:OnBossEnable()
 	self:RegisterMessage("BigWigs_OnBossEngage", "Disable")
+	self:Log("SPELL_CAST_START", "ShadowWave", 238653) -- Shadow Wave
 	self:Log("SPELL_CAST_START", "ShadowWall", 241598) -- Shadow Wall
 	self:Log("SPELL_CAST_START", "DemonicMending", 238543) -- Demonic Mending
 	self:Log("SPELL_CAST_START", "BlisteringRain", 237565) -- Blistering Rain
@@ -77,6 +83,11 @@ end
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
+
+-- Dul'zak
+function mod:ShadowWave(args)
+	self:Message(args.spellId, "Attention", "Long", CL.casting:format(args.spellName))
+end
 
 -- Felguard Destroyer
 function mod:ShadowWall(args)

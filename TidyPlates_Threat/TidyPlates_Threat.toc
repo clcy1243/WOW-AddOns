@@ -1,0 +1,14 @@
+## Interface: 70200
+## Title: Tidy Plates: Threat
+## Notes: Threat reactive nameplates for TidyPlates.
+## Version: v1.31
+## Author: iceeagle
+## RequiredDeps: TidyPlates, TidyPlatesWidgets
+## OptionalDeps: Ace3, LibSharedMedia-3.0
+## SavedVariables: TidyPlatesThreatDB
+## DefaultState: enabled
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: true
+
+TidyPlates_Threat.xml

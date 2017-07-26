@@ -16,6 +16,9 @@ plugin.displayName = L.infoBox
 local opener, display = nil, nil
 local nameList = {}
 
+local db = nil
+local inTestMode = false
+
 function plugin:RestyleWindow(dirty)
 	if db.lock then
 		display:EnableMouse(false)
@@ -83,11 +86,13 @@ do
 		end
 	end)
 	display:SetScript("OnHide", function(self)
+		inTestMode = false
+		opener = nil
+		nameList = {}
 		for i = 1, 10 do
 			self.text[i]:SetText("")
 		end
 		self.title:SetText(L.infoBox)
-		nameList = {}
 	end)
 
 	local bg = display:CreateTexture()
@@ -162,6 +167,7 @@ end
 function plugin:OnPluginEnable()
 	self:RegisterMessage("BigWigs_ShowInfoBox")
 	self:RegisterMessage("BigWigs_HideInfoBox", "Close")
+	self:RegisterMessage("BigWigs_SetInfoBoxTitle")
 	self:RegisterMessage("BigWigs_SetInfoBoxLine")
 	self:RegisterMessage("BigWigs_SetInfoBoxTable")
 	self:RegisterMessage("BigWigs_OnBossDisable")
@@ -193,12 +199,20 @@ function plugin:BigWigs_SetConfigureTarget(_, module)
 end
 
 function plugin:BigWigs_ShowInfoBox(_, module, title)
-	opener = module
+	if opener then
+		display:Hide()
+	end
+
+	opener = module or self
 	for unit in self:IterateGroup() do
 		nameList[#nameList+1] = self:UnitName(unit)
 	end
 	display.title:SetText(title)
 	display:Show()
+end
+
+function plugin:BigWigs_SetInfoBoxTitle(_, _, text)
+	display.title:SetText(text)
 end
 
 function plugin:BigWigs_SetInfoBoxLine(_, _, line, text)
@@ -208,7 +222,7 @@ end
 do
 	local sortingTbl = nil
 	local function sortFunc(x,y)
-		local px, py = sortingTbl[x] or 0, sortingTbl[y] or 0
+		local px, py = sortingTbl[x] or -1, sortingTbl[y] or -1
 		return px > py
 	end
 	local tsort = table.sort
@@ -238,6 +252,7 @@ function plugin:BigWigs_OnBossDisable(_, module)
 end
 
 function plugin:Test()
+	inTestMode = true
 	for i = 1, 10 do
 		display.text[i]:SetText(i)
 	end

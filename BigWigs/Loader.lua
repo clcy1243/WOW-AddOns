@@ -7,7 +7,7 @@ local bwFrame = CreateFrame("Frame")
 -- Generate our version variables
 --
 
-local BIGWIGS_VERSION = 60
+local BIGWIGS_VERSION = 66
 local BIGWIGS_RELEASE_STRING = ""
 local versionQueryString, versionResponseString = "Q^%d^%s", "V^%d^%s"
 
@@ -18,7 +18,7 @@ do
 	local RELEASE = "RELEASE"
 
 	local releaseType = RELEASE
-	local myGitHash = "86f2c4f" -- The ZIP packager will replace this with the Git hash.
+	local myGitHash = "8a634de" -- The ZIP packager will replace this with the Git hash.
 	local releaseString = ""
 	--[===[@alpha@
 	-- The following code will only be present in alpha ZIPs.
@@ -122,14 +122,14 @@ do
 		[747]=lw_cata, [757]=lw_cata, [767]=lw_cata, [768]=lw_cata, [769]=lw_cata, [820]=lw_cata, -- Cataclysm
 		[877]=lw_mop, [871]=lw_mop, [874]=lw_mop, [885]=lw_mop, [867]=lw_mop, [919]=lw_mop, -- MoP
 		[964]=lw_wod, [969]=lw_wod, [984]=lw_wod, [987]=lw_wod, [989]=lw_wod, [993]=lw_wod, [995]=lw_wod, [1008]=lw_wod, -- WoD
-		[1041]=lw_l, [1042]=lw_l, [1045]=lw_l, [1046]=lw_l, [1065]=lw_l, [1066]=lw_l, [1067]=lw_l, [1079]=lw_l, [1081]=lw_l, [1087]=lw_l, [1115]=lw_l, [1146]=lw_l, -- Legion
+		[1041]=lw_l, [1042]=lw_l, [1045]=lw_l, [1046]=lw_l, [1065]=lw_l, [1066]=lw_l, [1067]=lw_l, [1079]=lw_l, [1081]=lw_l, [1087]=lw_l, [1115]=lw_l, [1146]=lw_l, [1178]=lw_l, -- Legion
 		[1021]=lw_l, [1129]=lw_l, -- Legion Scenarios
 	}
 
 	public.zoneTblWorld = {
 		[-473] = 466, [-465] = 466, -- Outland
 		[-807] = 862, [-809] = 862, [-928] = 862, [-929] = 862, [-951] = 862, -- Pandaria
-		[-948] = 962, [-949] = 962, [-949] = 962, [-945] = 962, -- Draenor
+		[-948] = 962, [-949] = 962, [-945] = 962, -- Draenor
 		[-1015] = 1007, [-1017] = 1007, [-1018] = 1007, [-1024] = 1007, [-1033] = 1007, -- Broken Isles
 	}
 	public.fakeWorldZones = fakeWorldZones
@@ -149,7 +149,7 @@ end
 -- GLOBALS: _G, ADDON_LOAD_FAILED, BigWigs, BigWigs3DB, BigWigs3IconDB, BigWigsLoader, BigWigsOptions, CreateFrame, CUSTOM_CLASS_COLORS, error, GetAddOnEnableState, GetAddOnInfo
 -- GLOBALS: GetAddOnMetadata, GetLocale, GetNumGroupMembers, GetRealmName, GetSpecialization, GetSpecializationRole, GetSpellInfo, GetTime, GRAY_FONT_COLOR, InCombatLockdown
 -- GLOBALS: InterfaceOptionsFrameOkay, IsAddOnLoaded, IsAltKeyDown, IsControlKeyDown, IsEncounterInProgress, IsInGroup, IsInRaid, IsLoggedIn, IsPartyLFG, IsSpellKnown, LFGDungeonReadyPopup
--- GLOBALS: LibStub, LoadAddOn, message, PlaySoundFile, print, RAID_CLASS_COLORS, RaidNotice_AddMessage, RaidWarningFrame, RegisterAddonMessagePrefix, RolePollPopup, select
+-- GLOBALS: LibStub, LoadAddOn, message, PlaySound, print, RAID_CLASS_COLORS, RaidNotice_AddMessage, RaidWarningFrame, RegisterAddonMessagePrefix, RolePollPopup, select, StopSound
 -- GLOBALS: tostring, tremove, type, UnitAffectingCombat, UnitClass, UnitGroupRolesAssigned, UnitIsConnected, UnitIsDeadOrGhost, UnitName, UnitSetRole, unpack, SLASH_BigWigs1, SLASH_BigWigs2
 -- GLOBALS: SLASH_BigWigsVersion1, UnitBuff, wipe
 
@@ -227,7 +227,7 @@ end
 
 tooltipFunctions[#tooltipFunctions+1] = function(tt)
 	local add, i = nil, 0
-	for player, version in next, usersVersion do
+	for _, version in next, usersVersion do
 		i = i + 1
 		if version < highestFoundVersion then
 			add = true
@@ -487,6 +487,10 @@ function mod:ADDON_LOADED(addon)
 				end
 			end
 		end
+		if not BigWigs3DB.discord or BigWigs3DB.discord < 15 then
+			BigWigs3DB.discord = (BigWigs3DB.discord or 0) + 1
+			CTimerAfter(11, function() sysprint("We are now on Discord: https://discord.gg/jGveg85") end)
+		end
 	end
 	self:BigWigs_CoreOptionToggled(nil, "fakeDBMVersion", self.isFakingDBM)
 
@@ -615,11 +619,9 @@ do
 		delayedMessages[#delayedMessages+1] = "BigWigs needs translations. Can you translate BigWigs into Brazilian Portugese (ptBR)? Check out our GitHub page!"
 	elseif L == "itIT" then
 		delayedMessages[#delayedMessages+1] = "BigWigs needs translations. Can you translate BigWigs into Italian (itIT)? Check out our GitHub page!"
-	elseif L == "esES" then
+	elseif L == "esES" or L == "esMX" then
 		delayedMessages[#delayedMessages+1] = "BigWigs needs translations. Can you translate BigWigs into Spanish (esES)? Check out our GitHub page!"
 	end
-
-	delayedMessages[#delayedMessages+1] = "We are now on Discord: https://discord.gg/jGveg85"
 
 	CTimerAfter(11, function()
 		--local _, _, _, _, month, _, year = GetAchievementInfo(10043) -- Mythic Archimonde
@@ -695,8 +697,8 @@ end
 
 do
 	-- This is a crapfest mainly because DBM's actual handling of versions is a crapfest, I'll try explain how this works...
-	local DBMdotRevision = "16352" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
-	local DBMdotDisplayVersion = "7.2.11" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
+	local DBMdotRevision = "16445" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
+	local DBMdotDisplayVersion = "7.2.15" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
 	local DBMdotReleaseRevision = DBMdotRevision -- This is manually changed by them every release, they use it to track the highest release version, a new DBM release is the only time it will change.
 
 	local timer, prevUpgradedUser = nil, nil
@@ -742,7 +744,7 @@ end
 -- Events
 --
 
-bwFrame:SetScript("OnEvent", function(frame, event, ...)
+bwFrame:SetScript("OnEvent", function(_, event, ...)
 	mod[event](mod, ...)
 end)
 bwFrame:RegisterEvent("ADDON_LOADED")
@@ -751,7 +753,7 @@ bwFrame:RegisterEvent("UPDATE_FLOATING_CHAT_WINDOWS")
 do
 	-- Role Updating
 	local prev = 0
-	function mod:ACTIVE_TALENT_GROUP_CHANGED(player)
+	function mod:ACTIVE_TALENT_GROUP_CHANGED()
 		if IsInGroup() then
 			if IsPartyLFG() then return end
 
@@ -814,10 +816,13 @@ do
 			self.LFG_PROPOSAL_SHOW = function()
 				prev = GetTime() + 40
 				-- Play in Master for those that have SFX off or very low.
-				-- We can't do PlaySound("ReadyCheck", "Master") as PlaySound is throttled, and Blizz already plays it.
+				-- Using false as third arg to avoid the "only one of each sound at a time" throttle.
 				-- Only play via the "Master" channel if we have sounds turned on
 				if (BigWigs and BigWigs:GetPlugin("Sounds") and BigWigs:GetPlugin("Sounds").db.profile.sound) or self.isSoundOn ~= false then
-					PlaySoundFile("Sound\\Interface\\levelup2.ogg", "Master")
+					local _, id = PlaySound(PlaySoundKitID and "ReadyCheck" or 8960, "Master", false) -- SOUNDKIT.READY_CHECK
+					if id then
+						StopSound(id-1) -- Should work most of the time to stop the blizz sound
+					end
 				end
 			end
 			self:LFG_PROPOSAL_SHOW()
@@ -882,7 +887,7 @@ function mod:CHAT_MSG_ADDON(prefix, msg, channel, sender)
 	end
 end
 
-local resetVersionWarnings
+local ResetVersionWarning
 do
 	local timer = nil
 	local function sendMsg()
@@ -892,38 +897,54 @@ do
 		timer = nil
 	end
 
-	local hasWarned, hasReallyWarned, hasExtremelyWarned = nil, nil, nil
-	function resetVersionWarnings()
-		hasWarned, hasReallyWarned, hasExtremelyWarned = nil, nil, nil
+	local hasWarned = 0
+	local verTimer = nil
+	function ResetVersionWarning()
+		hasWarned = 0
+		if verTimer then verTimer:Cancel() end -- We may have left the group whilst a warning is about to show
+		verTimer = nil
 	end
 
 	local function printOutOfDate(tbl)
-		if hasExtremelyWarned then return end
+		if hasWarned == 3 then return end
 		local warnedOutOfDate, warnedReallyOutOfDate, warnedExtremelyOutOfDate = 0, 0, 0
 		for k,v in next, tbl do
 			if v > BIGWIGS_VERSION then
 				warnedOutOfDate = warnedOutOfDate + 1
-				if warnedOutOfDate > 1 and not hasWarned then
-					hasWarned = true
-					sysprint(L.getNewRelease)
-				end
 				if (v - 1) > BIGWIGS_VERSION then -- 2+ releases
 					warnedReallyOutOfDate = warnedReallyOutOfDate + 1
-					if warnedReallyOutOfDate > 1 and not hasReallyWarned then
-						hasReallyWarned = true
-						sysprint(L.warnTwoReleases)
-						RaidNotice_AddMessage(RaidWarningFrame, L.warnTwoReleases, {r=1,g=1,b=1})
-					end
-					if (v - 2) > BIGWIGS_VERSION then -- Currently at 3+ releases since it's a quiet period, always adjust this higher for busy periods.
+					if (v - 2) > BIGWIGS_VERSION then -- 3+ releases
 						warnedExtremelyOutOfDate = warnedExtremelyOutOfDate + 1
-						if warnedExtremelyOutOfDate > 1 and not hasExtremelyWarned then
-							hasExtremelyWarned = true
-							sysprint(L.warnSeveralReleases)
-							message(L.warnSeveralReleases)
-						end
 					end
 				end
 			end
+		end
+		if warnedExtremelyOutOfDate > 1 then
+			if verTimer then verTimer:Cancel() end
+			verTimer = CTimerNewTicker(3, function()
+				hasWarned = 3
+				verTimer = nil
+				local diff = highestFoundVersion - BIGWIGS_VERSION
+				local msg = L.warnSeveralReleases:format(diff)
+				sysprint(msg)
+				message(msg)
+				RaidNotice_AddMessage(RaidWarningFrame, msg, {r=1,g=1,b=1}, 20)
+			end, 1)
+		elseif warnedReallyOutOfDate > 1 and hasWarned < 2 then
+			if verTimer then verTimer:Cancel() end
+			verTimer = CTimerNewTicker(3, function()
+				hasWarned = 2
+				verTimer = nil
+				sysprint(L.warnTwoReleases)
+				RaidNotice_AddMessage(RaidWarningFrame, L.warnTwoReleases, {r=1,g=1,b=1}, 20)
+			end, 1)
+		elseif warnedOutOfDate > 1 and hasWarned < 1 then
+			if verTimer then verTimer:Cancel() end
+			verTimer = CTimerNewTicker(3, function()
+				hasWarned = 1
+				verTimer = nil
+				sysprint(L.getNewRelease)
+			end, 1)
 		end
 	end
 
@@ -1060,7 +1081,7 @@ do
 				warnedThisZone[id] = true
 				local msg = L.missingAddOn:format(zoneAddon)
 				sysprint(msg)
-				RaidNotice_AddMessage(RaidWarningFrame, msg, {r=1,g=1,b=1})
+				RaidNotice_AddMessage(RaidWarningFrame, msg, {r=1,g=1,b=1}, 15)
 			end
 		end
 	end
@@ -1079,7 +1100,7 @@ do
 			self:ACTIVE_TALENT_GROUP_CHANGED() -- Force role check
 		elseif grouped and not groupType then
 			grouped = nil
-			resetVersionWarnings()
+			ResetVersionWarning()
 			wipe(usersVersion)
 			wipe(usersHash)
 			self:ZONE_CHANGED_NEW_AREA()
@@ -1132,8 +1153,8 @@ public.RegisterMessage(mod, "BigWigs_CoreDisabled")
 --
 
 function public:RegisterTooltipInfo(func)
-	for i, v in next, tooltipFunctions do
-		if v == func then
+	for i = 1, #tooltipFunctions do
+		if tooltipFunctions[i] == func then
 			error(("The function %q has already been registered."):format(func))
 		end
 	end
@@ -1202,8 +1223,8 @@ do
 					end
 				end
 			end
-			for i, v in next, tooltipFunctions do
-				v(tt)
+			for i = 1, #tooltipFunctions do
+				tooltipFunctions[i](tt)
 			end
 			tt:AddLine(L.tooltipHint, 0.2, 1, 0.2, 1)
 		end
@@ -1238,10 +1259,10 @@ SlashCmdList.BigWigsVersion = function()
 		return ("|cFF%02x%02x%02x%s|r%s"):format(tbl.r*255, tbl.g*255, tbl.b*255, name, version)
 	end
 
-	local m = {}
+	local list = {}
 	local unit
 	if not IsInRaid() then
-		m[1] = UnitName("player")
+		list[1] = UnitName("player")
 		unit = "party%d"
 	else
 		unit = "raid%d"
@@ -1249,7 +1270,7 @@ SlashCmdList.BigWigsVersion = function()
 	for i = 1, GetNumGroupMembers() do
 		local n, s = UnitName((unit):format(i))
 		if n and s and s ~= "" then n = n.."-"..s end
-		if n then m[#m+1] = n end
+		if n then list[#list+1] = n end
 	end
 
 	local good = {} -- highest release users
@@ -1257,7 +1278,8 @@ SlashCmdList.BigWigsVersion = function()
 	local bad = {} -- no boss mod
 	local crazy = {} -- DBM users
 
-	for i, player in next, m do
+	for i = 1, #list do
+		local player = list[i]
 		local usesBossMod = nil
 		if usersVersion[player] then
 			if usersVersion[player] < highestFoundVersion then

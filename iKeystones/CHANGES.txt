@@ -1,13 +1,24 @@
-tag 92c7e25d8e1f50e5ba58ff511de2e9dbbbf70b01 v1.39
+tag 45d40f03f117958a7bc6326e275183afbca97e26 v1.40
 Author:	Jesse Manelius <jessemanelius@gmail.com>
-Date:	Thu Jun 15 22:02:31 2017 +0300
+Date:	Wed Jul 5 03:34:39 2017 +0300
 
-tagging as v1.39
+tagging as v1.40
 
-commit 731cc70178152a7b17623a708338078cb1262c90
+commit 8e1ea7ad739f6dbd8b64913efdce506b0bb707b2
 Author: Jesse Manelius <jessemanelius@gmail.com>
-Date:   Thu Jun 15 01:29:43 2017 +0300
+Date:   Wed Jul 5 03:34:16 2017 +0300
 
-    fixed for 7.2.5
-    added /iks <s/f/force>
+    update version number
+
+commit d6128e980a2f2a4df8cf79dfe7590a103bf1584c
+Author: Jesse Manelius <jessemanelius@gmail.com>
+Date:   Wed Jul 5 03:33:49 2017 +0300
+
+    update weekly chest reward ilvls
+
+commit 0a3199ad638f48ee0b7ed4e327e4126f01ec8a42
+Author: Jesse Manelius <jessemanelius@gmail.com>
+Date:   Thu Jun 15 22:03:31 2017 +0300
+
+    pushing right version is hard.
 

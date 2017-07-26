@@ -1,0 +1,12 @@
+tag 888ae7ab8709adc561633e672d1c5ecf37a63e68 v1.31
+Author:	iceeagle <ciprianmihai.coman@gmail.com>
+Date:	Wed Mar 29 16:02:23 2017 +0300
+
+v1.31
+
+commit 08da13d60bf7c38fc401cbf2dbe67f86c3879fd9
+Author: iceeagle <ciprianmihai.coman@gmail.com>
+Date:   Wed Mar 29 16:02:06 2017 +0300
+
+    update for patch 7.2
+

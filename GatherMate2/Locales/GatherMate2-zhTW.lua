@@ -5,6 +5,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate2", "zhTW")
 if not L then return end
 
+-- Options
 L["Add this location to Cartographer_Waypoints"] = "將該地點加入 Cartographer_Waypoints"
 L["Add this location to TomTom waypoints"] = "將該地點加入 TomTom waypoints"
 L["Always show"] = "總是顯示"
@@ -203,9 +204,11 @@ L["World Map Icon Scale"] = "世界地圖圖示縮放"
 L["World Map Icons"] = "世界地圖按鈕"
 L["Wrath of the Lich King"] = "巫妖王之怒"
 
+
 local NL = LibStub("AceLocale-3.0"):NewLocale("GatherMate2Nodes", "zhTW")
 if not NL then return end
 
+-- Nodes
 NL["Abundant Bloodsail Wreckage"] = "豐碩漂浮殘骸"
 NL["Abundant Firefin Snapper School"] = "豐碩火鰭鯛魚群"
 NL["Abundant Oily Blackmouth School"] = "豐碩黑口魚群"
@@ -262,7 +265,7 @@ NL["Dark Soil"] = "深色土壤"
 NL["Dart's Nest"] = "達爾特的巢"
 NL["Deep Sea Monsterbelly School"] = "深海大肚魚群"
 NL["Deepsea Sagefish School"] = "深海鼠尾魚群"
-NL["Demonic Archaeology Find"] = "惡魔考古學發現"
+NL["Demonic Archaeology Find"] = "惡魔考古學文物"
 NL["Dented Footlocker"] = "被砸過的箱子"
 NL["Draenei Archaeology Find"] = "德萊尼考古學文物"
 NL["Draenor Clans Archaeology Find"] = "德拉諾氏族考古學文物"
@@ -282,6 +285,8 @@ NL["Fat Sleeper School"] = "胖睡魚魚群"
 NL["Fathom Eel Swarm"] = "澗鰻群"
 NL["Fel Iron Chest"] = "魔鐵箱"
 NL["Fel Iron Deposit"] = "魔鐵礦床"
+NL["Fel-encrusted Herb"] = "魔能草藥"
+NL["Fel-encrusted Herb Cluster"] = "魔能草藥簇"
 NL["Felmist"] = "魔化霧"
 NL["Felmouth Frenzy School"] = "魔嘴狂魚群"
 NL["Felslate Deposit"] = "魔岩礦床"
@@ -331,12 +336,12 @@ NL["Green Tea Leaf"] = "綠茶葉"
 NL["Gromsblood"] = "格羅姆之血"
 NL["Heartblossom"] = "心綻花"
 NL["Heavy Fel Iron Chest"] = "沉重的魔鐵箱"
-NL["Highborne Archaeology Find"] = "精靈貴族考古學發現"
+NL["Highborne Archaeology Find"] = "精靈貴族考古學文物"
 NL["Highland Guppy School"] = "高地孔雀魚群"
 NL["Highland Mixed School"] = "高地綜合魚群"
 NL["Highmaul Reliquary"] = "天槌聖物"
 NL["Highmountain Salmon School"] = "高嶺鮭魚群"
-NL["Highmountain Tauren Archaeology Find"] = "高嶺牛頭人考古學發現"
+NL["Highmountain Tauren Archaeology Find"] = "高嶺牛頭人考古學文物"
 NL["Huge Obsidian Slab"] = "巨型黑曜石片"
 NL["Icecap"] = "冰蓋草"
 NL["Icethorn"] = "冰棘"
@@ -522,3 +527,4 @@ NL["Wild Steelbloom"] = "野鋼花"
 NL["Windy Cloud"] = "多風之雲"
 NL["Wintersbite"] = "冬刺草"
 NL["Withered Herb"] = "枯萎的草藥"
+

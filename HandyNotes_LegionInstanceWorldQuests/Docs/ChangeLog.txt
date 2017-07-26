@@ -1,7 +1,13 @@
-$Id: ChangeLog.txt 28 2017-05-24 15:30:01Z arith $
+$Id: ChangeLog.txt 30 2017-07-19 09:59:37Z arith $
 
 Revision History:
 =================
+
+* v1.09 (Jul. 19, 2017)
+-----------------------
+- Added World Quest boss locations in Tomb of Sargeras:
+  - The Dread Stalker
+  - Warlord Darjah (Azshara's Reach)
 
 * v1.08 (May 24, 2017)
 -----------------------

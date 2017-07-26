@@ -1,10 +1,14 @@
 # LittleWigs
 
-## [v7.2.5](https://github.com/BigWigsMods/LittleWigs/tree/v7.2.5) (2017-06-22)
-[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v7.2.4...v7.2.5)
+## [v7.2.11](https://github.com/BigWigsMods/LittleWigs/tree/v7.2.11) (2017-07-25)
+[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v7.2.10...v7.2.11)
 
-- Legion/ArtifactScenarios/Raest: Add Rune of Summoning and Thing of Nightmares warnings  
-- Update koKR.lua (#56)  
-- Legion/CourtOfStars/Trash: Reduce dispel warnings, cleanup options  
-- Legion/CourtOfStars/Trash: Dispellable debuffs don't all need a say message.  
-- Cataclysm/HallsOfOrigination/Isiset: Fix packaging error  
+- Legion/CourtOfStars: Add more translated clues  
+- SeatOfTheTriumvirate/Zuraal: Enable trash module instantly after the kill to make sure Allerias yell will be picked up  
+- SeatOfTheTriumvirate/Trash: Initial module  
+- SeatOfTheTriumvirate/ViceroyNezhar: Make options nice again!  
+- SeatOfTheTriumvirate/ViceroyNezhar: Add initial module  
+- SeatOfTheTriumvirate/Lura:  Add first warnings and timers  
+- SeatOfTheTriumvirate/Saprish: Add first warnings and timers  
+- SeatOfTheTriumvirate/Zuraal: Add first warnings and timers  
+- Legion/CourtOfStars: Add more translated clues  
