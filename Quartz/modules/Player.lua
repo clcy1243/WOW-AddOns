@@ -213,7 +213,11 @@ local function getChannelingTicks(spell)
 	if not db.showticks then
 		return 0
 	end
-	
+
+	if spell == GetSpellInfo(47540) and IsPlayerSpell(193134) then
+		return channelingTicks[spell] + 1
+	end
+
 	return channelingTicks[spell] or 0
 end
 
