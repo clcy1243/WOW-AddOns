@@ -311,7 +311,7 @@ function VuhDoActionPreClick(aButton, aMouseButton)
 		ToggleDropDownMenu(1, nil, VuhDoPlayerTargetDropDown, aButton:GetName(), 0, -5);
 
 	elseif tKey and strlower(tKey[3]) == "tell" then
-		ChatFrame_SendTell(VUHDO_RAID[aButton:GetAttribute("unit")]["name"]);
+		ChatFrame_SendTell(VUHDO_RAID[aButton:GetAttribute("unit")]["fullName"]);
 
 	else
 		if VUHDO_SPELL_CONFIG["smartCastModi"] == "all"
@@ -402,11 +402,19 @@ function VUHDO_showDebuffTooltip(aDebuffIcon)
 	if not VUHDO_CONFIG["DEBUFF_TOOLTIP"] then return; end
 
 	tButton = aDebuffIcon:GetParent():GetParent():GetParent():GetParent();
-	GameTooltip:SetOwner(aDebuffIcon, "ANCHOR_RIGHT", 0, 0);
+
+	if not GameTooltip:IsForbidden() then
+		GameTooltip:SetOwner(aDebuffIcon, "ANCHOR_RIGHT", 0, 0);
+	end
 
 	if aDebuffIcon["debuffInfo"] then
-		if aDebuffIcon["isBuff"] then GameTooltip:SetUnitBuff(tButton["raidid"], aDebuffIcon["debuffInfo"]);
-		else GameTooltip:SetUnitDebuff(tButton["raidid"], aDebuffIcon["debuffInfo"]); end
+		if not GameTooltip:IsForbidden() then
+			if aDebuffIcon["isBuff"] then 
+				GameTooltip:SetUnitBuff(tButton["raidid"], aDebuffIcon["debuffInfo"]);
+			else 
+				GameTooltip:SetUnitDebuff(tButton["raidid"], aDebuffIcon["debuffInfo"]); 
+			end
+		end
 	end
 	sDebuffIcon = aDebuffIcon;
 end
@@ -416,7 +424,10 @@ end
 --
 function VUHDO_hideDebuffTooltip()
 	sDebuffIcon = nil;
-	GameTooltip:Hide();
+
+	if not GameTooltip:IsForbidden() then
+		GameTooltip:Hide();
+	end
 end
 
 

@@ -269,7 +269,7 @@ if arg2=="UNIT_DIED" and legionbosskilled==nil then
   if legionhraspisokon[4]==1 and legionhraachdone1 and UnitGUID("boss1") then
   local id=raGetUnitID(arg7)
   if id==97264 then
-    legionhrafailnoreason(1)
+    legionhrafailnoreason(4)
   end
   end
 end

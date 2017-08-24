@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1896, "DBM-TombofSargeras", nil, 875)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 16485 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 16618 $"):sub(12, -3))
 mod:SetCreatureID(118460, 118462, 119072)--118460 Engine of Souls, 118462 Soul Queen Dajahna, 119072 The Desolate Host
 mod:SetEncounterID(2054)
 mod:SetZone()
@@ -41,7 +41,7 @@ ability.id = 236072 and (type = "applybuff" or type = "removebuff") or
 (ability.id = 236459 or ability.id = 235969 or ability.id = 236513) and (type = "applydebuff" or type = "removedebuff" or type = "applybuff" or type = "removebuff")
 --]]
 --Corporeal Realm
-local warnSpearofAnguish			= mod:NewTargetAnnounce(235924, 3)
+local warnSpearofAnguish			= mod:NewTargetCountAnnounce(235924, 3)
 local warnCollapsingFissure			= mod:NewSpellAnnounce(235907, 3)--Upgrade to special, if needed
 local warnTormentingCries			= mod:NewTargetAnnounce(238018, 3)--Spammy? off by default?
 ----Adds
@@ -78,24 +78,23 @@ local specWarnDoomedSunderingRun	= mod:NewSpecialWarningRun(236544, nil, nil, ni
 
 mod:AddTimerLine(SCENARIO_STAGE:format(1))
 --Corporeal Realm
-local timerSpearofAnquishCD			= mod:NewCDTimer(20, 235924, nil, nil, nil, 3)
+local timerSpearofAnquishCD			= mod:NewCDCountTimer(20, 235924, nil, nil, nil, 3)
 --local timerCollapsingFissureCD		= mod:NewAITimer(31, 235907, nil, nil, nil, 3)
-local timerTormentedCriesCD			= mod:NewCDCountTimer(58, 238570, nil, nil, nil, 6)
---local timerRupturingSlamCD			= mod:NewCDTimer(23, 235927, nil, nil, nil, 3)--23 seconds, per add
+local timerTormentedCriesCD			= mod:NewNextCountTimer(58, 238570, nil, nil, nil, 6)
 --Spirit Realm
 local timerSoulbindCD				= mod:NewCDCountTimer(24, 236459, nil, nil, nil, 3)
 --local timerWitherCD					= mod:NewCDTimer(9.4, 236138, nil, nil, nil, 3)
 --local timerShatteringScreamCD		= mod:NewCDTimer(12, 235969, nil, nil, nil, 3)--12 seconds, per add
-local timerWailingSoulsCD			= mod:NewCDCountTimer(58, 236072, nil, nil, nil, 2)
+local timerWailingSoulsCD			= mod:NewNextCountTimer(58, 236072, nil, nil, nil, 2)
 --The Desolate Host
 mod:AddTimerLine(SCENARIO_STAGE:format(2))
-local timerSunderingDoomCD			= mod:NewCDTimer(25.4, 236542, nil, nil, nil, 5)
-local timerDoomedSunderingCD		= mod:NewCDTimer(25.2, 236544, nil, nil, nil, 5)
+local timerSunderingDoomCD			= mod:NewCDTimer(24.4, 236542, nil, nil, nil, 5)
+local timerDoomedSunderingCD		= mod:NewCDTimer(24.4, 236544, nil, nil, nil, 5)
 
 local berserkTimer					= mod:NewBerserkTimer(480)
 
-local countdownSunderingDoom		= mod:NewCountdown(25.4, 236542)
-local countdownDoomedSundering		= mod:NewCountdown(25.2, 236544)
+local countdownSunderingDoom		= mod:NewCountdown(24.4, 236542)
+local countdownDoomedSundering		= mod:NewCountdown(24.4, 236544)
 
 --Corporeal Realm
 local voiceSpearofAnguish			= mod:NewVoice(235924)--runout
@@ -181,7 +180,7 @@ function mod:OnCombatStart(delay)
 	timerSoulbindCD:Start(14.2-delay, 1)
 	if not self:IsEasy() then
 		doBones = true
-		timerSpearofAnquishCD:Start(20.7-delay)
+		timerSpearofAnquishCD:Start(20.7-delay, 1)
 		if self:IsMythic() then
 			berserkTimer:Start(480-delay)
 		end
@@ -209,7 +208,6 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:OnCombatEnd()
-	self:UnregisterShortTermEvents()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
@@ -228,7 +226,6 @@ function mod:SPELL_CAST_START(args)
 		timerSpearofAnquishCD:Stop()
 	elseif spellId == 235927 and self.vb.tankCount < 3 then
 		warnRupturingSlam:Show()
-		--timerRupturingSlamCD:Start(nil, args.sourceGUID)
 	elseif spellId == 236542 then--Sundering Doom (regular realm soaks)
 		if UnitBuff("player", spiritRealm) or UnitDebuff("player", spiritRealm) then--Figure out which it is
 			specWarnSunderingDoomRun:Show()
@@ -321,8 +318,9 @@ function mod:SPELL_AURA_APPLIED(args)
 			self.vb.soulIcon = 3
 		end
 	elseif spellId == 235924 then
-		warnSpearofAnguish:CombinedShow(0.3, args.destName)
-		timerSpearofAnquishCD:DelayedStart(0.3)
+		self.vb.spearCast = self.vb.spearCast + 1
+		warnSpearofAnguish:Show(self.vb.spearCast, args.destName)
+		timerSpearofAnquishCD:Start(nil, self.vb.spearCast+1)
 		if args:IsPlayer() then
 			specWarnSpearofAnguish:Show()
 			voiceSpearofAnguish:Play("runout")
@@ -340,9 +338,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		local cid = self:GetCIDFromGUID(args.destGUID)
 		if self.Options.IgnoreTemplarOn3Tank and (cid == 119938 or cid == 118715) and self.vb.tankCount >= 3 then return end--Reanimated templar
 		self.vb.boneArmorCount = self.vb.boneArmorCount + 1
-		warnBonecageArmor:Show(args.destName)
+		if self:AntiSpam(2, args.destName) then
+			warnBonecageArmor:Show(args.destName)
+		end
 		if self.Options.NPAuraOnBonecageArmor then
-			DBM.Nameplate:Show(true, args.destGUID, spellId, nil, 60)
+			DBM.Nameplate:Show(true, args.destGUID, spellId)
 		end
 	elseif (spellId ==  236138 or spellId == 236131) then
 		warnWither:CombinedShow(0.3, args.destName)
@@ -421,15 +421,10 @@ end
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 119938 or cid == 118715 then--Reanimated templar
-		--timerRupturingSlamCD:Stop(args.destName)
---	elseif cid == 119939 then--Ghastly Bonewarden
-	
---	elseif cid == 119940 then--Fallen Priestess
---		timerShatteringScreamCD:Stop(args.destGUID)
-	elseif cid == 118462 then
+	if cid == 118462 then
 		timerSoulbindCD:Stop()
 		timerSpearofAnquishCD:Stop()
+		berserkTimer:Cancel()
 	end
 end
 
@@ -461,7 +456,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 		timerTormentedCriesCD:Stop()
 		if not self:IsEasy() then
 			timerSpearofAnquishCD:Stop()
-			timerSpearofAnquishCD:Start(8)
+			timerSpearofAnquishCD:Start(8, self.vb.spearCast+1)
 		end
 		timerSoulbindCD:Start(10)
 		--New Phase Timers

@@ -6,7 +6,7 @@ if GetLocale()=="deDE" or GetLocale()=="ruRU" or GetLocale()=="zhTW" or GetLocal
 end
 
 
-	raversion=7.206
+	raversion=7.209
 	local raverstiptext="alpha"
 	if string.len(raversion)==6 then
 		raverstiptext="beta"
@@ -20,7 +20,7 @@ end
 	if wherereportraidach==nil then wherereportraidach="raid" end
 	if wherereportpartyach==nil then wherereportpartyach="party" end
 	if raminibutshowt==nil then raminibutshowt=true end
-	if raannouncerun3==nil then raannouncerun3=0 end
+	if raannouncerun4==nil then raannouncerun4=0 end
 	if RA_Settings==nil then RA_Settings = {RAMinimapPos = -176} end
 	rabigmenuchatlisten={"raid", "raid_warning", "officer", "party", "guild", "say", "yell", "sebe"}
 	ralowmenuchatlisten={"party", "officer", "guild", "say", "yell", "sebe"}
@@ -489,7 +489,7 @@ raraerrordfsdfsdfjy4:SetAutoFocus(false)
 raraerrordfsdfsdfjy4:SetHeight(150)
 raraerrordfsdfsdfjy4:SetWidth(225)
 raraerrordfsdfsdfjy4:Show()
-raraerrordfsdfsdfjy4:SetScript("OnTextChanged", function(self) raraerrordfsdfsdfjy4:SetText("http://www.phoenixstyle.com/help") end ) --raraerrordfsdfsdfjy4:HighlightText(0,string.len(raraerrordfsdfsdfjy4:GetText()))
+raraerrordfsdfsdfjy4:SetScript("OnTextChanged", function(self) raraerrordfsdfsdfjy4:SetText("http://www.phoenixstyle.com/help\r\nhttps://www.fblikeinviter.com/") end ) --raraerrordfsdfsdfjy4:HighlightText(0,string.len(raraerrordfsdfsdfjy4:GetText()))
 
 raraerrordfdfdpsdonatefr2:SetScrollChild(raraerrordfsdfsdfjy4)
 raraerrordfdfdpsdonatefr2:Show()
@@ -2341,13 +2341,15 @@ end
 
 --инфо о ДР
 local _, month, day, year = CalendarGetDate()
-if (year==2017 and month==2 and (day==12 or day==13) and raannouncerun3==0 and (psDoNotShowOtherAnnounces==nil or (psDoNotShowOtherAnnounces and psDoNotShowOtherAnnounces==0)) and math.random(1,100)>70) then
+--if (year==2017 and month==2 and (day==12 or day==13) and raannouncerun4==0 and (psDoNotShowOtherAnnounces==nil or (psDoNotShowOtherAnnounces and psDoNotShowOtherAnnounces==0)) and math.random(1,100)>70) then
+if (year==2017 and (month==8 or month==9) and (day>22 and day<31) and raannouncerun4==0 and (psDoNotShowOtherAnnounces==nil or (psDoNotShowOtherAnnounces and psDoNotShowOtherAnnounces==0)) and math.random(1,100)>70) then
 	local text=""
-	text="|cff00ff00RaidAchievement|r > I got WoW for my 20 years birthday, |cff00ff00today I celebrate 30|r. I created PS and RA addons 8 years ago, hope you use and like them :) They got more than |cff00ff0010 mln downloads|r and I raised just 1200 euro in 8 years with the bigger one of 300$. Now, addon is dying as I don't play for last 5 years, if you want to help: http://www.phoenixstyle.com/ also you can find more info about me and Italy where I live :)"
+	--text="|cff00ff00RaidAchievement|r > I got WoW for my 20 years birthday, |cff00ff00today I celebrate 30|r. I created PS and RA addons 8 years ago, hope you use and like them :) They got more than |cff00ff0010 mln downloads|r and I raised just 1200 euro in 8 years with the bigger one of 300$. Now, addon is dying as I don't play for last 5 years, if you want to help: http://www.phoenixstyle.com/ also you can find more info about me and Italy where I live :)"
+	text="|cff00ff00NEW ADDON|r > sorry for the delay with updates. I am working now on awesome addons for Facebook. |cff00ff00if you are administator of fan/business page in Facebook|r you will love my programs, check them here: https://www.fblikeinviter.com/"
 	
 	out (text)
 	
-	raannouncerun3=1
+	raannouncerun4=1
 	psDoNotShowOtherAnnounces=1
 end
 
@@ -2359,10 +2361,10 @@ if UnitInRaid("player")==nil and UnitInParty("player")==nil and psDoNotShowOther
   radonateq1=radonateq1+1
   --сообщение
   --local text="|cff00ff00RaidAchievement|r |cffff0000important update:|r to track achieves from Cataclysm and WotLK you have to |cff00ff00download RaidAchievement_OldModules|r (from curse). |cff00ff00AchievementsReminder|r - is now a separate addon and will have new features soon, if you need it - take it from curse too."
-  local text="|cff00ff00RaidAchievement|r > need your help, so addon will be available in |cff00ff00Legion|r too. More info: http://www.phoenixstyle.com/help"
+  local text="|cff00ff00RaidAchievement|r > need your help, so addon will be available in |cff00ff00next patch|r too. More info: http://www.phoenixstyle.com/help"
   if GetLocale()=="ruRU" then
     --text="|cff00ff00RaidAchievement|r |cffff0000важное обновление:|r для трекера достижений Катаклизма and ЛК требуется |cff00ff00скачать RaidAchievement_OldModules|r (с curse сайта). |cff00ff00AchievementsReminder|r - теперь отдельный независимый аддон, скоро с новыми функциями, если он вам тоже нужен - скачайте его отдельно."
-	text="|cff00ff00RaidAchievement|r > требуется Ваша помощь, чтобы аддон продолжил свое существование в |cff00ff00Легионе!|r Детальнее: http://www.phoenixstyle.com/help"
+	text="|cff00ff00RaidAchievement|r > требуется Ваша помощь, чтобы аддон продолжил свое существование в |cff00ff00следующем патче!|r Детальнее: http://www.phoenixstyle.com/help"
   end
   
   out(text)

@@ -1,3 +1,35 @@
+Version 3.87
+
+
+Known issues:
+-- Limited support for Class Order Hall Bodyguards
+--   Bodyguards can be used in panels when set to target or focus
+--   Bodyguards have no unit ID so for now are only partially supported
+-- Incoming heal estimation reported is not even close to accurate
+--   Bug in Blizzard API UnitGetIncomingHeals() - returns bogus values
+-- Patch 7.1 disabled retrieval of unit facing and position in instances
+--   This was an intentional breaking change by Blizzard
+--   This breaks AOE Advice, Clusters and out-of-range direction arrow
+--   At this time there is no way to fix or renable these features
+-- Patch 7.2.5 Tomb of Sargeras Desolate Host encounter workaround
+--   Under 'VuhDo Options > General > Scanners' set:
+--     Range => '40 yards'
+--     Global Scanner => 'Infinite'
+-- Tracking of 'debuff absorbs' like 'Embrace of the Eclipse' requires 
+--   Under 'VuhDo Options > Panels > HoT Icons > Shields' set:
+--      Shield Status => checked
+
+
+Bugfixes:
+-- Use full player name including realm for tell command
+-- Check if GameTooltip is flagged forbidden before any interaction
+--   Should fix taints related to Blizzard lock down in 7.2.5
+
+
+Improvements:
+
+
+--------------------------------------------------------------
 Version 3.86
 
 
@@ -15,6 +47,7 @@ Known issues:
 --   Under 'VuhDo Options > General > Scanners' set:
 --     Range => '40 yards'
 --     Global Scanner => 'Infinite'
+
 
 Bugfixes:
 -- Use new power type enumeration in place of deprecated constants

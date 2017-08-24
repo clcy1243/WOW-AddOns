@@ -59,7 +59,7 @@ local slashCommands = {
 	["unignore"] = L["Resets ignored specs for the currently active character"],
 	
 	["loginmsg"] = L["Toggle login message on load"],
-	["combat"] = L["Toggle visibility in combat"],
+	["autohide"] = L["Toggle visibility while items are unable to be used"],
 	["reset"] =  L["Load default settings (will overwrite any changes made)"],
 	["debug"] = L["Toggle debug mode (not particularly useful as long as everything is working as expected)"],
 	
@@ -224,14 +224,15 @@ local slashHandlers = {
 	
 	end,
 	
-	["combat"] =  function(settings) -- Toggle automatic hiding of the display while player is in combat (also: vehicle/pet battle but those can't be turned off here)
-		if settings.hideInCombat then
-			TotalAP.ChatMsg(L["Display will now remain visible in combat."]);
+	["autohide"] =  function(settings) -- Toggle automatic hiding of the display while player is unable to use AP items
+	
+		if settings.autoHide then
+			TotalAP.ChatMsg(L["Display will now remain visible at all times."])
 		else
-			TotalAP.ChatMsg(L["Display will now be hidden in combat."]);
+			TotalAP.ChatMsg(L["Display will now be hidden while items can't be used."])
 		end
 		
-	settings.hideInCombat = not settings.hideInCombat;
+	settings.autoHide = not settings.autoHide
 
 	end,
 	
@@ -377,6 +378,10 @@ local function SlashCommandHandler(input, usedAlias)
 		
 			local slashHandlerFunction = slashHandlers[command]
 			slashHandlerFunction() -- Parameter is nil -> There's no need to submit the DB for test commands, really
+						
+			-- Always update displays to make sure any changes will be displayed immediately (if possible/not locked) -< TODO. DRY
+			TotalAP.Controllers.RenderGUI() 
+			
 			return
 		
 		elseif command == validCommand then -- Execute individual handler function for this slash command
@@ -387,7 +392,7 @@ local function SlashCommandHandler(input, usedAlias)
 			slashHandlerFunction(settings)
 			
 			-- Always update displays to make sure any changes will be displayed immediately (if possible/not locked)
-			TotalAP.Controllers.UpdateGUI()
+			if not InCombatLockdown() and not UnitAffectingCombat("player") then TotalAP.Controllers.RenderGUI() end -- Mostly required to avoid taint while toggling /ap autohide while engaged in combat -> normal update afterwards
 			
 			return
 	

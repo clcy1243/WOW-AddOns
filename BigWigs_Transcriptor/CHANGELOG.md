@@ -1,6 +1,8 @@
 # BigWigs +Transcriptor
 
-## [v7.1.2](https://github.com/BigWigsMods/BigWigs_Transcriptor/tree/v7.1.2) (2016-11-06) [](#top)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Transcriptor/compare/v7.1.1...v7.1.2)
+## [v7.2.3](https://github.com/BigWigsMods/BigWigs_Transcriptor/tree/v7.2.3) (2017-08-12)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Transcriptor/compare/v7.2.2...v7.2.3)
 
-- Fix another typo  
+- Add option to only log in raids  
+- Tweak options loading  
+- Handle the new Transcriptor TIMERS format  

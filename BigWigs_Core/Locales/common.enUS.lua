@@ -29,6 +29,7 @@ L.duration = "%s for %s sec"
 L.over = "%s Over!"
 L.removed = "%s Removed"
 L.removed_from = "%s Removed From %s"
+L.removed_by = "%s removed by %s" -- spell removed by player
 L.incoming = "%s Incoming!"
 L.interrupted = "%s Interrupted"
 L.no = "No %s!"
@@ -65,3 +66,14 @@ L.trash = "Trash"
 L.marker = "%s Marker"
 L.marker_player_desc = "Mark players affected by %s with %s, requires promoted or leader."
 L.marker_npc_desc = "Mark %s with %s, requires promoted or leader."
+
+-- Ability where two players have to move close to each other
+L.link = "Linked with %s"
+L.link_short = "Linked: %s"
+L.link_both = "%s linked with %s"
+L.link_removed = "Link removed"
+
+-- Abbreviated numbers
+L.amount_one = "%dB"
+L.amount_two = "%dM"
+L.amount_three = "%dK"

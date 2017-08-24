@@ -1,3 +1,49 @@
+commit e02b3566c361c43921869ac603fd35ac99ef96d0
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Wed Jun 14 12:08:46 2017 +0930
+
+    Travis Build Error
+
+commit f3be51ca012342f02bbe7e8dd902550a55f30dc2
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Wed Jun 14 11:53:22 2017 +0930
+
+    Beast Master Updates and 7.2.5 updates
+
+commit 33c2d28ac45b6b5b26417375e2bed03dc7b36caa
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Fri May 12 12:22:49 2017 +0930
+
+    Fixed Travis line length warning and toc updates to 2.0.8
+
+commit 3750b2b73e3d8ca34103ee90a561dcf65c6d69c0
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Fri May 5 08:31:53 2017 -0700
+
+    Update DeathKnight.lua
+
+commit 1eb56400a748906b77d06a39f9471b177cc41534
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Sun Apr 16 14:06:34 2017 -0700
+
+    Update Warlock.lua
+    
+    Removed Haste version, macro cleanup
+
+commit 3750b2b73e3d8ca34103ee90a561dcf65c6d69c0
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Fri May 5 08:31:53 2017 -0700
+
+    Update DeathKnight.lua
+
+commit 1eb56400a748906b77d06a39f9471b177cc41534
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Sun Apr 16 14:06:34 2017 -0700
+
+    Update Warlock.lua
+    
+    Removed Haste version, macro cleanup
+
 commit 003b7936574d153e15c978b4152ff89042e5c970
 Author: Timothy Minahan <timothy@minahan.net>
 Date:   Wed Apr 12 17:24:43 2017 +0930

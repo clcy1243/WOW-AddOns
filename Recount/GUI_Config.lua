@@ -6,7 +6,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 local BC = {} -- = LibStub("LibBabble-Class-3.0"):GetLookupTable()
 
-local revision = tonumber(string.sub("$Revision: 1425 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1431 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -141,7 +141,7 @@ function Recount:ResetDefaultClassColors()
 				classcols = RAID_CLASS_COLORS[v]
 			end
 			classcols.a = 1
-			Recount.Colors:SetColor("Class", v, classcols) 
+			Recount.Colors:SetColor("Class", v, classcols)
 		end
 	end
 	Recount.Colors:SetColor("Bar", "Bar Text", {r = 1, g = 1, b = 1, a = 1})
@@ -1554,6 +1554,22 @@ function me:SetupMiscOptions(parent)
 			Recount.db.profile.HideCollect = false
 			local _, inst = IsInInstance()
 			Recount:SetZoneFilter(inst)
+		end
+	end)
+
+	i = i + 1
+
+	theFrame.HidePetBattle = me:CreateSavedCheckbox(L["Hide While In Pet Battle"], theFrame, "Data", "HidePetBattle")
+	theFrame.HidePetBattle:SetPoint("TOPLEFT", theFrame, "TOPLEFT", 6, -59 - i * 16 - 6)
+	theFrame.HidePetBattle:SetScript("OnClick", function(this)
+		if this:GetChecked() then
+			this:SetChecked(true)
+			Recount.db.profile.HidePetBattle = true
+			Recount:PetBattleUpdate()
+		else
+			this:SetChecked(false)
+			Recount.db.profile.HidePetBattle = false
+			Recount:PetBattleUpdate()
 		end
 	end)
 end

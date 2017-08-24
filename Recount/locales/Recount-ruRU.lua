@@ -167,6 +167,8 @@ L["Heals"] = "Исцеляющие способности"
 L["Health"] = "Здоровье"
 L["Hide"] = "Скрыть"
 L["Hide When Not Collecting"] = "Скрывать при простое"
+--Translation missing 
+-- L["Hide While In Pet Battle"] = "Hide While In Pet Battle"
 L["Hides the main window"] = "Скрвает основное окно"
 L["Hit"] = "Удар"
 L["Holy"] = "Свет"

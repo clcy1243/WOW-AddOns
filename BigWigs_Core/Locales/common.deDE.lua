@@ -39,6 +39,7 @@ L.over = "%s vorbei!"
 L.phase = "Phase %d"
 L.removed = "%s entfernt"
 L.removed_from = "%s wurde von %s entfernt"
+--L.removed_by = "%s removed by %s" -- spell removed by player
 L.small_adds = "Kleine Adds"
 L.soon = "%s bald!"
 L.spawned = "%s Erschienen"
@@ -56,3 +57,14 @@ L.active = "Aktiv" -- When a boss becomes active, after speech finishes
 L.marker = "%s markieren"
 L.marker_player_desc = "Markiert Spieler, die von %s betroffen sind, mit %s, benötigt Leiter oder Assistent."
 L.marker_npc_desc = "Markiert %s mit %s, benötigt Leiter oder Assistent."
+
+-- Ability where two players have to move close to each other
+--L.link = "Linked with %s"
+--L.link_short = "Linked: %s"
+--L.link_both = "%s linked with %s"
+--L.link_removed = "Link removed"
+
+-- Abbreviated numbers
+--L.amount_one = "%dB"
+--L.amount_two = "%dM"
+--L.amount_three = "%dK"

@@ -4,7 +4,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 local BossIDs = LibStub("LibBossIDs-1.0")
 
-local revision = tonumber(string.sub("$Revision: 1427 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1435 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -1099,7 +1099,7 @@ Recount.dstRetention = false
 local srcRetention = Recount.srcRetention
 local dstRetention = Recount.dstRetention
 
-function Recount:CombatLogEvent(_, timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags, dstGUID, dstName, dstFlags, dstRaidFlags, ...)
+function Recount:COMBAT_LOG_EVENT_UNFILTERED(timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags, dstGUID, dstName, dstFlags, dstRaidFlags, ...)
 	if not Recount.db.profile.GlobalDataCollect or not Recount.CurrentDataCollect then
 		return
 	end
@@ -1111,11 +1111,11 @@ function Recount:CombatLogEvent(_, timestamp, eventtype, hideCaster, srcGUID, sr
 	-- Pre-4.2 CLEU compat start
 	--[[if TOC < 40100 and hideCaster ~= dummyTable then
 		-- Insert a dummy for the new argument introduced in 4.1 and perform a tail call
-		return self:CombatLogEvent(_, timestamp, eventtype, dummyTable, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+		return self:COMBAT_LOG_EVENT_UNFILTERED(timestamp, eventtype, dummyTable, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	elseif TOC < 40200 and TOC > 40000 and not loopprevent then
 		loopprevent = true -- Prevent infinite recursion...
 		-- Also make it compatible with 4.1 by dropping the raid flags that don't exist in it.
-		return self:CombatLogEvent(_, timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
+		return self:COMBAT_LOG_EVENT_UNFILTERED(timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, dstGUID, dstName, dstFlags, ...)
 	end]]
 	-- Pre-4.2 CLEU compat end
 

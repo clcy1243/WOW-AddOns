@@ -1,9 +1,8 @@
 ------------------------------------------------------------------------
-r1429 | Resike | 2017-07-09 10:36:16 -0500 (Sun, 09 Jul 2017) | 1 line
+r1438 | Resike | 2017-08-18 12:33:14 -0500 (Fri, 18 Aug 2017) | 1 line
 Changed paths:
    M /trunk/Recount.lua
-   M /trunk/colors.lua
 
-- Canceling colors will properly revert the changes.
+- Fixed an event handler issue for pet battles.
 ------------------------------------------------------------------------
 

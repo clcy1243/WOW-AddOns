@@ -1,7 +1,7 @@
-changeset:   153:43c2659818a9
-tag:         tip
+changeset:   188:f2e843ce050a
+tag:         v7.2.5.188-release
 user:        Tercio
-date:        Fri Jul 14 18:27:53 2017 -0300
-summary:     - framework update to version v54 and localization updates.
+date:        Mon Aug 21 20:46:45 2017 -0300
+summary:     - Group Finder: middle click on the quest name in the quest tracker should pass the click if the auto open is disabled.
 
 

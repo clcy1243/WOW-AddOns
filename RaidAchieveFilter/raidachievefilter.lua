@@ -378,7 +378,7 @@ function RaidAchFilter:Initialize()
 					  UIDropDownMenu_AddButton(info, level)
 				end
 			elseif UIDROPDOWNMENU_MENU_VALUE == "submenub4" then
-				for i = 69, 76 do
+				for i = 70, 77 do
 					  info.value = i
 					  info.checked = false
 					  info.text = RAFdb.MapName[i]

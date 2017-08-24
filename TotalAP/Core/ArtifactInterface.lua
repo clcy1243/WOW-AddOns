@@ -141,13 +141,13 @@ local function GetNumAvailableTraits()
 	
 	if not aUI or not HasArtifactEquipped() then
 		TotalAP.Debug("ArtifactInterface -> Attempted to calculate number of available traits, but the artifact UI was not available (No/wrong artifact weapon?)")
-		return
+		return 0
 	end
 	
 	local settings = TotalAP.Settings.GetReference()
 	local thisLevelUnspentAP, numTraitsPurchased, _, _, _, _, _, _, tier = select(5, aUI.GetEquippedArtifactInfo())
 	local numTraitsAvailable = GetNumRanksPurchasableWithAP(numTraitsPurchased, thisLevelUnspentAP + TotalAP.inventoryCache.inBagsAP + tonumber(settings.scanBank and TotalAP.bankCache.inBankAP or 0), tier) or 0
-	TotalAP.Debug(format("ArtifactInterface -> %s new traits available from all sources", numTraitsAvailable))
+--	TotalAP.Debug(format("ArtifactInterface -> %s new traits available from all sources", numTraitsAvailable))
 	
 	return numTraitsAvailable
 	
@@ -186,10 +186,46 @@ local function GetArtifactProgressPercent()
 	local settings = TotalAP.Settings.GetReference()
 	local percentageOfCurrentLevelUp = (thisLevelUnspentAP + TotalAP.inventoryCache.inBagsAP + tonumber(settings.scanBank and TotalAP.bankCache.inBankAP or 0)) / nextLevelRequiredAP * 100
 	
-	TotalAP.Debug(format("ArtifactInterface -> Calculated progress towards next trait to be  %s%% ", percentageOfCurrentLevelUp or 0)) 
+--	TotalAP.Debug(format("ArtifactInterface -> Calculated progress towards next trait to be  %s%% ", percentageOfCurrentLevelUp or 0)) 
 	
 	return min(100, percentageOfCurrentLevelUp or 0)
 	
+end
+
+--- Returns whether or not the player is currently wearing their spec's artifact weapon
+-- @return True if the equipped weapon is the right artifact; false otherwise
+local function HasCorrectSpecArtifactEquipped()
+	
+	local _, _, classID = UnitClass("player"); -- 1 to 12
+	local specID = GetSpecialization(); -- 1 to 4
+
+	-- Check all artifacts for this spec
+	TotalAP.Debug(format("Checking artifacts for class %d, spec %d", classID, specID));
+	
+	local itemID = TotalAP.DB.GetArtifactItemID(classID, specID)
+
+	if not IsEquippedItem(itemID) then
+		TotalAP.Debug(format("Expected to find artifact weapon %s, but it isn't equipped", GetItemInfo(itemID) or "<none>"));
+		return false 
+	end
+	
+	-- All checks passed -> Looks like the equipped weapon is in fact (one of) the class' artifact weapon 
+	return true;
+	
+end
+
+--- Returns whether or not an artifact is already maxed
+-- @param numTraits The number of traits for the given artifact
+-- @param tier The artifact tier of the given artifact
+-- @returns True if the artifact is already maxed; nil otherwise (also in the case of invalid parameters)
+local function IsArtifactMaxed(numTraits, tier)
+
+	if numTraits and type(numTraits) == "number" and numTraits == 54 and tier == 1 then -- Artifact is maxed tier 1 artifact (before finishing the empowerment quest)
+		return true
+	end
+	
+	-- Everything else is just a giant ball of nope
+
 end
 
 
@@ -203,6 +239,8 @@ T.ArtifactInterface.GetNumRanksPurchasableWithAP = GetNumRanksPurchasableWithAP
 T.ArtifactInterface.GetProgressTowardsNextRank = GetProgressTowardsNextRank
 T.ArtifactInterface.GetNumAvailableTraits = GetNumAvailableTraits
 T.ArtifactInterface.GetArtifactProgressPercent = GetArtifactProgressPercent
+T.ArtifactInterface.HasCorrectSpecArtifactEquipped = HasCorrectSpecArtifactEquipped
+T.ArtifactInterface.IsArtifactMaxed = IsArtifactMaxed
 
 -- Keep this private, since it isn't used anywhere else
 -- T.ArtifactInterface.GetResearchNotesShipmentInfo = GetResearchNotesShipmentInfo

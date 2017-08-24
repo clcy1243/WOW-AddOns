@@ -1,6 +1,6 @@
 
 DBM_CORE_NEED_LOCALS				= "Are you good with programming or languages? If yes, the DBM needs your help in localizing DBM in more languages. If you can help, visit our forums by |HDBM:localizersneeded|h|cff3588ffclicking here|r"
-DBM_CORE_NEED_LOGS					= "DBM needs Transcriptor (http://www.wowace.com/addons/transcriptor/) logs of these test fights to make best mods possible. If you want to help, log these fights with transcriptor and post them to our forums. Only interested in 7.0 raid & dungeon logs."
+DBM_CORE_NEED_LOGS					= "DBM needs Transcriptor (http://www.wowace.com/addons/transcriptor/) log of this fight to make best mods possible. If you want to help, log this fight with transcriptor and post them to DBM forums or discord"
 DBM_HOW_TO_USE_MOD					= "Welcome to DBM. Type /dbm help for a list of supported commands. To access options type /dbm in your chat to begin configuration. Load specific zones manually to configure any boss specific settings to your liking as well. DBM tries to do this for you by scanning your spec on first run, but some might want additional options turned on anyways."
 DBM_SILENT_REMINDER					= "Reminder: DBM is still in silent mode."
 
@@ -18,7 +18,7 @@ DBM_CORE_LOAD_MOD_VER_MISMATCH		= "%s could not be loaded because your DBM-Core 
 DBM_CORE_LOAD_MOD_DISABLED			= "%s is installed but currently disabled. This mod will not be loaded unless you enable it."
 DBM_CORE_LOAD_MOD_DISABLED_PLURAL	= "%s are installed but currently disabled. These mods will not be loaded unless you enable them."
 
-DBM_CORE_WHATS_NEW					= "The Overwatch & Heroes of the Storm countdown sounds have been split from DBM core and moved to a seperate optional downloads. To get these counts back, just install DBM-CountPack-Overwatch & DBM-CountPack-HoTS. This was done to significantly reduce the pointless redownloading of media files, especially with a LOT of additional counts having just been added. There is also a new setting to hide notes like this from ever being shown again."
+DBM_CORE_WHATS_NEW					= "'Expand Upwards' and 'Fill Bars' options can now be adjusted per bar type (small/large) instead of globally. Try it out!"
 DBM_CORE_WHATS_NEW_LINK				= "Remember: You can report bugs, give feedback, or just hang out in DBM Discord. |HDBM:forumsnews|h|cff3588ffDiscord Link|r"
 
 --Post Patch 7.1
@@ -267,6 +267,7 @@ DBM_ALLY							= "Ally"--Such as "Move to Ally"
 DBM_ADDS							= "Adds"--Such as "Move to Ally"
 DBM_CORE_ROOM_EDGE					= "Room Edge"
 DBM_CORE_SAFE						= "Safe"
+DBM_INCOMING						= "%s Incoming"
 --Common Locals end
 
 DBM_CORE_BREAK_USAGE				= "Break timer cannot be longer than 60 minutes. Make sure you're inputting time in minutes and not seconds."
@@ -300,8 +301,8 @@ DBM_CORE_AUTO_ANNOUNCE_TEXTS = {
 	cast		= "Casting %s: %.1f sec",
 	soon		= "%s soon",
 	prewarn		= "%s in %s",
-	phase		= "Phase %s",
-	prephase	= "Phase %s soon",
+	stage		= "Stage %s",
+	prestage	= "Stage %s soon",
 	count		= "%s (%%s)",
 	stack		= "%s on >%%s< (%%d)"
 }
@@ -319,9 +320,9 @@ DBM_CORE_AUTO_ANNOUNCE_OPTIONS = {
 	cast		= "Show warning when $spell:%s is being cast",
 	soon		= prewarnOption,
 	prewarn 	= prewarnOption,
-	phase		= "Announce Phase %s",
-	phasechange	= "Announce phase changes",
-	prephase	= "Show a prewarning for Phase %s",
+	stage		= "Announce Stage %s",
+	stagechange	= "Announce stage changes",
+	prestage	= "Show a prewarning for Stage %s",
 	count		= "Show warning for $spell:%s (with count)",
 	stack		= "Announce $spell:%s stacks"
 }
@@ -414,7 +415,7 @@ DBM_CORE_AUTO_TIMER_TEXTS = {
 	nextsource	= "Next %s: %%s",
 	nextspecial	= "Next Special Ability",
 	achievement	= "%s",
-	phase		= "Next Phase",
+	stage		= "Next Stage",
 	adds		= "Next Incoming Adds",
 	addscustom	= "Incoming Adds (%s)",
 	roleplay	= GUILD_INTEREST_RP
@@ -436,7 +437,7 @@ DBM_CORE_AUTO_TIMER_OPTIONS = {
 	nextsource	= "Show timer (with source) for next $spell:%s",--Maybe better wording?
 	nextspecial	= "Show timer for next special ability",
 	achievement	= "Show timer for %s",
-	phase		= "Show timer for next phase",
+	stage		= "Show timer for next stage",
 	adds		= "Show timer for incoming adds",
 	addscustom	= "Show timer for incoming adds",
 	roleplay	= "Show timer for roleplay duration"--This does need localizing though.
@@ -449,29 +450,32 @@ DBM_CORE_AUTO_ARROW_OPTION_TEXT			= "Show DBM Arrow to move toward target affect
 DBM_CORE_AUTO_ARROW_OPTION_TEXT2		= "Show DBM Arrow to move away from target affected by $spell:%s"
 DBM_CORE_AUTO_ARROW_OPTION_TEXT3		= "Show DBM Arrow to move toward specific location for $spell:%s"
 DBM_CORE_AUTO_VOICE_OPTION_TEXT			= "Play spoken alerts for $spell:%s"
-DBM_CORE_AUTO_VOICE2_OPTION_TEXT		= "Play spoken alerts for phase changes"
+DBM_CORE_AUTO_VOICE2_OPTION_TEXT		= "Play spoken alerts for stage changes"
 DBM_CORE_AUTO_VOICE3_OPTION_TEXT		= "Play spoken alerts for incoming adds"
 DBM_CORE_AUTO_VOICE4_OPTION_TEXT		= "Play spoken alerts for bad stuff on ground"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "Play countdown sound for $spell:%s cooldown"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2	= "Play countdown sound for when $spell:%s fades"
 DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "Play countout sound for $spell:%s duration"
 DBM_CORE_AUTO_YELL_OPTION_TEXT = {
-	shortyell	= "Yell when you are affected by $spell:%s",
-	yell		= "Yell (with player name) when you are affected by $spell:%s",
-	count		= "Yell (with count) when you are affected by $spell:%s",
-	fade		= "Yell (with countdown and spell name) when $spell:%s is fading",
-	shortfade	= "Yell (with countdown) when $spell:%s is fading",
-	position	= "Yell (with position) when you are affected by $spell:%s"
+	shortyell		= "Yell when you are affected by $spell:%s",
+	yell			= "Yell (with player name) when you are affected by $spell:%s",
+	count			= "Yell (with count) when you are affected by $spell:%s",
+	fade			= "Yell (with countdown and spell name) when $spell:%s is fading",
+	shortfade		= "Yell (with countdown) when $spell:%s is fading",
+	iconfade		= "Yell (with countdown and icon) when $spell:%s is fading",
+	position		= "Yell (with position) when you are affected by $spell:%s"
 }
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT = {
-	shortyell	= "%s",
-	yell		= "%s on " .. UnitName("player") .. "!",
-	count		= "%s on " .. UnitName("player") .. "! (%%d)",
-	fade		= "%s fading in %%d",
-	shortfade	= "%%d",
-	position 	= "%s %%s on {rt%%d}"..UnitName("player").."{rt%%d}"
+	shortyell		= "%s",
+	yell			= "%s on " .. UnitName("player") .. "!",
+	count			= "%s on " .. UnitName("player") .. "! (%%d)",
+	fade			= "%s fading in %%d",
+	shortfade		= "%%d",
+	iconfade		= "{rt%%2$d}%%1$d",
+	position 		= "%s %%s on {rt%%d}"..UnitName("player").."{rt%%d}"
 }
-DBM_CORE_AUTO_YELL_CUSTOM_POSITION		= "{rt%d} %s {rt%d}"--Doesn't need translating. Has no strings
+DBM_CORE_AUTO_YELL_CUSTOM_POSITION		= "{rt%d}%s{rt%d}"--Doesn't need translating. Has no strings
+DBM_CORE_AUTO_YELL_CUSTOM_POSITION2		= "{rt%d}{rt%d}%s{rt%d}{rt%d}"--Doesn't need translating. Has no strings
 DBM_CORE_AUTO_HUD_OPTION_TEXT			= "Show HudMap for $spell:%s (Retired)"
 DBM_CORE_AUTO_HUD_OPTION_TEXT_MULTI		= "Show HudMap for various mechanics (Retired)"
 DBM_CORE_AUTO_NAMEPLATE_OPTION_TEXT		= "Show Nameplate Auras for $spell:%s"

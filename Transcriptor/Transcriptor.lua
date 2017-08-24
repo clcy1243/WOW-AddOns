@@ -1,41 +1,50 @@
 
 local Transcriptor = {}
-local version = "v7.2.1"
+local version = "v7.2.9"
 if version:find("@", nil, true) then
 	version = "repo"
 end
 
 local playerSpellBlacklist
 local badSourcelessPlayerSpellList
+local specialEvents
+local data = {}
 
 do
 	local n, tbl = ...
 	playerSpellBlacklist = tbl.blacklist
+	specialEvents = tbl.specialEvents
+	tbl.data = data
 end
 
 local logName = nil
 local currentLog = nil
 local logStartTime = nil
 local logging = nil
+local previousWorldState = nil
 local compareSuccess = nil
 local compareUnitSuccess = nil
 local compareStart = nil
 local compareAuraApplied = nil
 local compareStartTime = nil
-local inEncounter = false
+local collectPlayerAuras = nil
+local shouldLogFlags = false
+local inEncounter, blockingRelease = false, false
 local wowVersion, buildRevision, _, buildTOC = GetBuildInfo() -- Note that both returns here are strings, not numbers.
+local mineOrPartyOrRaid = 7 -- COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID
 
+local band = bit.band
 local tinsert = table.insert
 local format, strjoin = string.format, string.join
 local tostring, tostringall = tostring, tostringall
 local type, select, next = type, select, next
 local date = date
-local debugprofilestop = debugprofilestop
+local debugprofilestop, wipe = debugprofilestop, wipe
 local print = print
 
 local C_Scenario = C_Scenario
 local RegisterAddonMessagePrefix = RegisterAddonMessagePrefix
-local IsEncounterInProgress, IsAltKeyDown, EJ_GetEncounterInfo, EJ_GetSectionInfo = IsEncounterInProgress, IsAltKeyDown, EJ_GetEncounterInfo, EJ_GetSectionInfo
+local IsEncounterInProgress, IsEncounterSuppressingRelease, IsAltKeyDown, EJ_GetEncounterInfo, EJ_GetSectionInfo = IsEncounterInProgress, IsEncounterSuppressingRelease, IsAltKeyDown, EJ_GetEncounterInfo, EJ_GetSectionInfo
 local UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo = UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo
 local UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification = UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification
 local UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth, UnitHealthMax = UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth, UnitHealthMax
@@ -49,13 +58,54 @@ local GetSpellTabInfo, GetNumSpellTabs, GetSpellBookItemInfo, GetSpellBookItemNa
 
 do
 	local origPrint = print
-	function print(msg)
-		return origPrint(format("|cffffff00%s|r", msg))
+	function print(msg, ...)
+		return origPrint(format("|cffffff00%s|r", msg), ...)
 	end
 
 	local origUnitName = UnitName
 	function UnitName(name)
 		return origUnitName(name) or "??"
+	end
+end
+
+local function MobId(guid)
+	if not guid then return 1 end
+	local _, _, _, _, _, id = strsplit("-", guid)
+	return tonumber(id) or 1
+end
+
+local function InsertSpecialEvent(name)
+	if type(name) == "function" then
+		name = name()
+	end
+	if not name then return end
+	if compareSuccess then
+		for id,tbl in next, compareSuccess do
+			for npcId, list in next, tbl do
+				list[#list+1] = {debugprofilestop(), name}
+			end
+		end
+	end
+	if compareStart then
+		for id,tbl in next, compareStart do
+			for npcId, list in next, tbl do
+				list[#list+1] = {debugprofilestop(), name}
+			end
+		end
+	end
+	if compareAuraApplied then
+		for id,tbl in next, compareAuraApplied do
+			for npcId, list in next, tbl do
+				list[#list+1] = {debugprofilestop(), name}
+			end
+		end
+	end
+	if compareUnitSuccess then
+		for id,tbl in next, compareUnitSuccess do
+			for npcId, list in next, tbl do
+				list[#list+1] = {debugprofilestop(), name}
+			end
+		end
 	end
 end
 
@@ -149,91 +199,61 @@ do
 	end
 
 	local function GetLogSpells()
-		if InCombatLockdown() or UnitAffectingCombat("player") then return end
+		if InCombatLockdown() or UnitAffectingCombat("player") or IsFalling() then return end
 
 		local total, totalSorted = {}, {}
 		local auraTbl, castTbl, summonTbl = {}, {}, {}
 		local aurasSorted, castsSorted, summonSorted = {}, {}, {}
 		local ignoreList = {
-			[39565] = true, -- Stand State (Iron Cannoneer in Frostfire Ridge, some kind of long lasting debuff)
-			[163322] = true, -- Flamethrower (Brackenspore)
-			[180247] = true, -- Gather Felfire Munitions (Hellfire Assault)
-			[180410] = true, -- Heart Seeker (Kilrogg Deadeye)
-			[180413] = true, -- Heart Seeker (Kilrogg Deadeye)
-			[181102] = true, -- Mark Eruption (Mannoroth)
-			[181488] = true, -- Vision of Death (Kilrogg Deadeye)
-			[182008] = true, -- Latent Energy (Fel Lord Zakuun)
-			[182038] = true, -- Shattered Defenses (Socrethar the Eternal)
-			[182218] = true, -- Felblaze Residue (Socrethar the Eternal)
-			[183963] = true, -- Light of the Naaru (Archimonde)
-			[184450] = true, -- Mark of the Necromancer (Dia Darkwhisper - Hellfire High Council)
-			[185014] = true, -- Focused Chaos (Archimonde)
-			[185577] = true, -- Undying Salvation (Kilrogg Deadeye)
-			[185656] = true, -- Shadowfel Annihilation
-			[186123] = true, -- Wrought Chaos (Archimonde)
-			[187344] = true, -- Phantasmal Cremation (Shadow-Lord Iskar)
-			[187668] = true, -- Mark of Kazzak (Supreme Lord Kazzak)
-			[189030] = true, -- Befouled (Fel Lord Zakuun)
-			[189031] = true, -- Befouled (Fel Lord Zakuun)
-			[189032] = true, -- Befouled (Fel Lord Zakuun)
-			[189559] = true, -- Carrion Swarm (Korvos, Hellfire Citadel trash)
-			[189565] = true, -- Torpor (Korvos, Hellfire Citadel trash)
-			[190466] = true, -- Incomplete Binding (Socrethar the Eternal)
-			[197996] = true, -- Branded (Odyn)
-			[193743] = true, -- Aegis of Aggramar (Odyn)
-			[193765] = true, -- Aegis of Aggramar (Odyn)
-			[193783] = true, -- Aegis of Aggramar (Odyn)
-			[202160] = true, -- Odyn's Blessing (Odyn)
-			[213395] = true, -- Deepening Shadows (Cordana Felsong)
-			[204481] = true, -- Elune's Light (Cordana Felsong)
-			[215300] = true, -- Web of Pain (Elerethe Renferal)
-			[215307] = true, -- Web of Pain (Elerethe Renferal)
+			[234264] = true, -- Melted Armor (Goroth)
+			[233430] = true, -- Unbearable Torment (Demonic Inquisition)
+			[234332] = true, -- Hydra Acid (Mistress Sassz'ine)
+			[234995] = true, -- Lunar Suffusion (Sisters)
+			[234996] = true, -- Umbra Suffusion (Sisters)
+			[236726] = true, -- Lunar Barrage (Sisters)
+			[235732] = true, -- Spiritual Barrier (Desolate Host)
+			[235117] = true, -- Unstable Soul (Maiden of Vigilance)
+			[238028] = true, -- Light Remanence (Maiden of Vigilance)
+			[238408] = true, -- Fel Remanence (Maiden of Vigilance)
+		}
+		local events = {
+			"SPELL_AURA_[AR][^#]+#(%d+)#([^#]+%-[^#]+)#([^#]+)#([^#]*)#([^#]+)#(%d+)#([^#]+)#", -- SPELL_AURA_[AR] to filter _BROKEN
+			"SPELL_CAST_[^#]+#(%d+)#([^#]+%-[^#]+)#([^#]+)#([^#]*)#([^#]+)#(%d+)#([^#]+)#",
+			"SPELL_SUMMON#(%d+)#([^#]+%-[^#]+)#([^#]+)#([^#]*)#([^#]+)#(%d+)#([^#]+)#"
+		}
+		local tables = {
+			auraTbl,
+			castTbl,
+			summonTbl,
+		}
+		local sortedTables = {
+			aurasSorted,
+			castsSorted,
+			summonSorted,
 		}
 		for logName, logTbl in next, TranscriptDB do
 			if type(logTbl) == "table" and logTbl.total then
 				for i=1, #logTbl.total do
 					local text = logTbl.total[i]
 
-					-- AURA
-					local name, destGUID, tarName, id, spellName = text:match("SPELL_AURA_[^#]+#P[le][at][^#]+#([^#]+)#([^#]*)#([^#]+)#(%d+)#([^#]+)#")
-					id = tonumber(id)
-					local trim = destGUID and destGUID:find("^P[le][at]")
-					if id and not ignoreList[id] and not playerSpellBlacklist[id] and not total[id] and #aurasSorted < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
-						if name == tarName then
-							auraTbl[id] = "|cFF81BEF7".. name:gsub("%-.+", "*") .." >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."|r"
-						else
-							auraTbl[id] = "|cFF3ADF00".. name:gsub("%-.+", "*") .." >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."|r"
+					for j = 1, 3 do
+						local flagsText, srcGUID, name, destGUID, tarName, idText, spellName = text:match(events[j])
+						local id = tonumber(idText)
+						local flags = tonumber(flagsText)
+						local tbl = tables[j]
+						local sortedTbl = sortedTables[j]
+						if id and flags and band(flags, mineOrPartyOrRaid) ~= 0 and not ignoreList[id] and not playerSpellBlacklist[id] and not total[id] and #sortedTbl < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
+							local srcGUIDType = strsplit("-", srcGUID)
+							local destGUIDType = strsplit("-", destGUID)
+							local trim = destGUID and destGUID:find("^P[le][at]")
+							if srcGUID == destGUID then
+								tbl[id] = "|cFF81BEF7".. name:gsub("%-.+", "*") .."(".. srcGUIDType ..") >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."(".. destGUIDType ..")|r"
+							else
+								tbl[id] = "|cFF3ADF00".. name:gsub("%-.+", "*") .."(".. srcGUIDType ..") >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."(".. destGUIDType ..")|r"
+							end
+							total[id] = true
+							sortedTbl[#sortedTbl+1] = id
 						end
-						total[id] = true
-						aurasSorted[#aurasSorted+1] = id
-					end
-
-					-- CAST
-					name, destGUID, tarName, id, spellName = text:match("SPELL_CAST_[^#]+#P[le][at][^#]+#([^#]+)#([^#]*)#([^#]+)#(%d+)#([^#]+)#")
-					id = tonumber(id)
-					local trim = destGUID and destGUID:find("^P[le][at]")
-					if id and not ignoreList[id] and not playerSpellBlacklist[id] and not total[id] and #castsSorted < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
-						if name == tarName then
-							castTbl[id] = "|cFF81BEF7".. name:gsub("%-.+", "*") .." >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."|r"
-						else
-							castTbl[id] = "|cFF3ADF00".. name:gsub("%-.+", "*") .." >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."|r"
-						end
-						total[id] = true
-						castsSorted[#castsSorted+1] = id
-					end
-
-					-- SUMMON
-					name, destGUID, tarName, id, spellName = text:match("SPELL_SUMMON#P[le][at][^#]+#([^#]+)#([^#]*)#([^#]+)#(%d+)#([^#]+)#")
-					id = tonumber(id)
-					local trim = destGUID and destGUID:find("^P[le][at]")
-					if id and not ignoreList[id] and not playerSpellBlacklist[id] and not total[id] and #summonSorted < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
-						if name == tarName then
-							summonTbl[id] = "|cFF81BEF7".. name:gsub("%-.+", "*") .." >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."|r"
-						else
-							summonTbl[id] = "|cFF3ADF00".. name:gsub("%-.+", "*") .." >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."|r"
-						end
-						total[id] = true
-						summonSorted[#summonSorted+1] = id
 					end
 				end
 			end
@@ -299,67 +319,71 @@ do
 		auraTbl, castTbl, summonTbl = {}, {}, {}
 		aurasSorted, castsSorted, summonSorted = {}, {}, {}
 		ignoreList = {
-			[179202] = true, -- Eye of Anzu (Shadow-Lord Iskar)
-			[179908] = true, -- Shared Fate (Gorefiend)
-			[180079] = true, -- Felfire Munitions (Hellfire Assault)
-			[180164] = true, -- Touch of Harm (Tyrant Velhari)
-			[180270] = true, -- Shadow Globule (Kormrok)
-			[180575] = true, -- Fel Flames (Kilrogg Deadeye)
-			[181295] = true, -- Digest (Gorefiend)
-			[181653] = true, -- Fel Crystals (Fel Lord Zakuun)
-			[182159] = true, -- Fel Corruption (Kilrogg Deadeye)
-			[182171] = true, -- Blood of Mannoroth (Mannoroth)
-			[182600] = true, -- Fel Fire (Shadow-Lord Iskar)
-			[182879] = true, -- Doomfire Fixate (Archimonde)
-			[183586] = true, -- Doomfire (Archimonde)
-			[184396] = true, -- Fel Corruption (Kilrogg Deadeye)
-			[184398] = true, -- Fel Corruption (Kilrogg Deadeye)
-			[184652] = true, -- Reap (Dia Darkwhisper - Hellfire High Council)
-			[185065] = true, -- Mark of the Necromancer (Dia Darkwhisper - Hellfire High Council)
-			[185066] = true, -- Mark of the Necromancer (Dia Darkwhisper - Hellfire High Council)
-			[185239] = true, -- Radiance of Anzu (Shadow-Lord Iskar)
-			[185242] = true, -- Blitz (Iron Reaver)
-			[186046] = true, -- Solar Chakram (Shadow-Lord Iskar)
-			[186770] = true, -- Pool of Souls (Gorefiend)
-			[186952] = true, -- Nether Banish (Archimonde)
-			[187255] = true, -- Nether Storm (Archimonde)
-			[188520] = true, -- Fel Sludge (Supreme Lord Kazzak, pools close by)
-			[188796] = true, -- Fel Corruption (Archimonde)
-			[188852] = true, -- Blood Splatter (Kilrogg Deadeye)
-			[189276] = true, -- Unleashed Energy (Fel Lord Zakuun)
-			[189891] = true, -- Nether Tear (Archimonde)
-			[190341] = true, -- Nether Corruption (Archimonde)
+			[236283] = true, -- Belac's Prisoner
+			[236516] = true, -- Twilight Volley
+			[236519] = true, -- Moon Burn
+			[237351] = true, -- Lunar Barrage
+			[240706] = true, -- Arcane Ward
+			[241032] = true, -- Desolation of the Moon
+			[241169] = true, -- Umbra Destruction
+			[236011] = true, -- Tormented Cries
+			[236241] = true, -- Soul Rot
+			[236459] = true, -- Soulbind
+			[235534] = true, -- Creator's Grace
+			[235538] = true, -- Demon's Vigor
+			[236420] = true, -- Aegwynn's Ward
+			[240209] = true, -- Unstable Soul
+			[240249] = true, -- Molten Fel
+			[243267] = true, -- Velen's Light
+			[231768] = true, -- Drenching Waters
+			[231770] = true, -- Drenched
+			[232732] = true, -- Slicing Tornado
+			[232913] = true, -- Befouling Ink
+			[234621] = true, -- Devouring Maw 
+			[236329] = true, -- Star Burn
+			[243294] = true, -- Fel Slicer
+			[238442] = true, -- Spear of Anguish
+			[241593] = true, -- Aegwynn's Ward
+			[236555] = true, -- Deceiver's Veil
+			[241721] = true, -- Illidan's Sightless Gaze
+			[241822] = true, -- Choking Shadow
+			[242696] = true, -- Deceiver's Veil
+			[230345] = true, -- Crashing Comet
+			[230348] = true, -- Fel Pool
+			[233901] = true, -- Suffocating Dark
+		}
+		local eventsNoSource = {
+			"SPELL_AURA_[AR][^#]+#(%d+)##([^#]+)#([^#]+%-[^#]+)#([^#]+)#(%d+)#([^#]+)#", -- SPELL_AURA_[AR] to filter _BROKEN
+			"SPELL_CAST_[^#]+#(%d+)##([^#]+)#([^#]+%-[^#]+)#([^#]+)#(%d+)#([^#]+)#",
+			"SPELL_SUMMON#(%d+)##([^#]+)#([^#]+%-[^#]+)#([^#]+)#(%d+)#([^#]+)#"
+		}
+		tables = {
+			auraTbl,
+			castTbl,
+			summonTbl,
+		}
+		sortedTables = {
+			aurasSorted,
+			castsSorted,
+			summonSorted,
 		}
 		for logName, logTbl in next, TranscriptDB do
 			if type(logTbl) == "table" and logTbl.total then
 				for i=1, #logTbl.total do
 					local text = logTbl.total[i]
 
-					-- AURA
-					local name, destGUID, tarName, id, spellName = text:match("SPELL_AURA_[AR][^#]+##([^#]+)#(P[le][at][^#]+)#([^#]+)#(%d+)#([^#]+)#") -- For sourceless we use SPELL_AURA_[AR] to filter _BROKEN which usually originates from NPCs
-					id = tonumber(id)
-					if name == "nil" and id and not ignoreList[id] and not badSourcelessPlayerSpellList[id] and not total[id] and #aurasSorted < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
-						auraTbl[id] = tarName:gsub("%-.+", "*")
-						total[id] = true
-						aurasSorted[#aurasSorted+1] = id
-					end
-
-					-- CAST
-					name, destGUID, tarName, id, spellName = text:match("SPELL_CAST_[^#]+##([^#]+)#(P[le][at][^#]+)#([^#]+)#(%d+)#([^#]+)#")
-					id = tonumber(id)
-					if name == "nil" and id and not ignoreList[id] and not badSourcelessPlayerSpellList[id] and not total[id] and #castsSorted < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
-						castTbl[id] = tarName:gsub("%-.+", "*")
-						total[id] = true
-						castsSorted[#castsSorted+1] = id
-					end
-
-					-- SUMMON
-					name, destGUID, tarName, id, spellName = text:match("SPELL_SUMMON##([^#]+)#(P[le][at][^#]+)#([^#]+)#(%d+)#([^#]+)#")
-					id = tonumber(id)
-					if name == "nil" and id and not ignoreList[id] and not badSourcelessPlayerSpellList[id] and not total[id] and #summonSorted < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
-						summonTbl[id] = tarName:gsub("%-.+", "*")
-						total[id] = true
-						summonSorted[#summonSorted+1] = id
+					for j = 1, 3 do
+						local flagsText, name, destGUID, tarName, idText, spellName = text:match(eventsNoSource[j])
+						local id = tonumber(idText)
+						local flags = tonumber(flagsText)
+						local tbl = tables[j]
+						local sortedTbl = sortedTables[j]
+						if name == "nil" and id and flags and band(flags, mineOrPartyOrRaid) ~= 0 and not ignoreList[id] and not badSourcelessPlayerSpellList[id] and not total[id] and #sortedTbl < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
+							local destGUIDType = strsplit("-", destGUID)
+							tbl[id] = tarName:gsub("%-.+", "*")
+							total[id] = true
+							sortedTbl[#sortedTbl+1] = id
+						end
 					end
 				end
 			end
@@ -482,16 +506,18 @@ do
 		L["|cffFF0000Recording|r"] = "|cffFF0000记录中|r"
 		--L["|cFFFFD200Transcriptor|r - Disabled Events"] = "|cFFFFD200Transcriptor|r - Disabled Events"
 	elseif locale == "koKR" then
-		L["Beginning Transcript: "] = "기록 시작됨: "
+		L["Remember to stop and start Transcriptor between each wipe or boss kill to get the best logs."] = "최상의 기록을 얻으려면 전멸이나 우두머리 처치 후에 Transcriptor를 중지하고 시작하는 걸 기억하세요."
+		L["You are already logging an encounter."] = "이미 우두머리 전투를 기록 중입니다."
+		L["Beginning Transcript: "] = "기록 시작: "
+		L["You are not logging an encounter."] = "우두머리 전투를 기록하고 있지 않습니다."
 		L["Ending Transcript: "] = "기록 종료: "
-		L["Logs will probably be saved to WoW\\WTF\\Account\\<name>\\SavedVariables\\Transcriptor.lua once you relog or reload the user interface."] = "UI 재시작 후에 WoW\\WTF\\Account\\<아이디>\\SavedVariables\\Transcriptor.lua 에 기록이 저장됩니다."
-		L["All transcripts cleared."] = "모든 기록 초기화 완료"
-		L["You can't clear your transcripts while logging an encounter."] = "전투 기록중엔 기록을 초기화 할 수 없습니다."
-		L["|cffFF0000Recording|r: "] = "|cffFF0000기록중|r: "
-		L["|cff696969Idle|r"] = "|cff696969무시|r"
-		L["|cffeda55fClick|r to start or stop transcribing. |cffeda55fRight-Click|r to configure events. |cffeda55fAlt-Middle Click|r to clear all stored transcripts."] = "|cffeda55f클릭|r 전투 기록 시작/정지. |cffeda55f우-클릭|r 이벤트 설정. |cffeda55f알트-중앙 클릭|r 기록된 자료 삭제."
-		L["|cffFF0000Recording|r"] = "|cffFF0000기록중|r"
-		--L["|cFFFFD200Transcriptor|r - Disabled Events"] = "|cFFFFD200Transcriptor|r - Disabled Events"
+		L["Logs will probably be saved to WoW\\WTF\\Account\\<name>\\SavedVariables\\Transcriptor.lua once you relog or reload the user interface."] = "재기록하거나 사용자 인터페이스를 다시 불러오면 WoW\\WTF\\Account\\<name>\\SavedVariables\\Transcriptor.lua에 기록이 저장됩니다."
+		L["All transcripts cleared."] = "모든 기록이 초기화되었습니다."
+		L["You can't clear your transcripts while logging an encounter."] = "우두머리 전투를 기록 중일 때는 기록을 초기화 할 수 없습니다."
+		L["|cff696969Idle|r"] = "|cff696969대기|r"
+		L["|cffeda55fClick|r to start or stop transcribing. |cffeda55fRight-Click|r to configure events. |cffeda55fAlt-Middle Click|r to clear all stored transcripts."] = "|cffeda55f클릭|r - 기록을 시작하거나 중지합니다.\n|cffeda55f오른쪽-클릭|r - 이벤트를 구성합니다.\n|cffeda55fAlt-가운데 클릭|r - 저장된 모든 기록을 초기화합니다."
+		L["|cffFF0000Recording|r"] = "|cffFF0000기록 중|r"
+		L["|cFFFFD200Transcriptor|r - Disabled Events"] = "|cFFFFD200Transcriptor|r - 비활성된 이벤트"
 	elseif locale == "ruRU" then
 		L["Remember to stop and start Transcriptor between each wipe or boss kill to get the best logs."] = "Чтобы получить лучшие записи боя, не забудьте остановить и запустить Transcriptor между вайпом или убийством босса."
 		L["You are already logging an encounter."] = "Вы уже записываете бой."
@@ -513,6 +539,7 @@ end
 --
 
 local eventFrame = CreateFrame("Frame")
+eventFrame:Hide()
 
 local sh = {}
 function sh.UPDATE_WORLD_STATES()
@@ -527,25 +554,18 @@ function sh.UPDATE_WORLD_STATES()
 			end
 		end
 	end
-	return ret
+	if not ret or ret == previousWorldState then
+		return
+	else
+		previousWorldState = ret
+		return ret
+	end
 end
 sh.WORLD_STATE_UI_TIMER_UPDATE = sh.UPDATE_WORLD_STATES
 
 do
 	badSourcelessPlayerSpellList = {
 		[81782] = true, -- Power Word: Barrier
-		[145629] = true, -- Anti-Magic Zone
-		[156055] = true, -- Oglethorpe's Missile Splitter
-		[156060] = true, -- Megawatt Filament
-		[157384] = true, -- Eye of the Storm
-		[159234] = true, -- Mark of the Thunderlord
-		[159675] = true, -- Mark of Warsong
-		[159676] = true, -- Mark of the Frostwolf
-		[159678] = true, -- Mark of Shadowmoon
-		[159679] = true, -- Mark of Blackrock
-		[173288] = true, -- Hemet's Heartseeker
-		[173322] = true, -- Mark of Bleeding Hollow
-		[183767] = true, -- Doom Shroom
 	}
 	local badPlayerFilteredEvents = {
 		["SPELL_CAST_SUCCESS"] = true,
@@ -556,7 +576,9 @@ do
 		["SPELL_AURA_REMOVED_DOSE"] = true,
 		["SPELL_CAST_START"] = true,
 		["SPELL_SUMMON"] = true,
-		["SPELL_AURA_BROKEN_SPELL"] = true,
+		--"<87.10 17:55:03> [CLEU] SPELL_AURA_BROKEN_SPELL#Creature-0-3771-1676-28425-118022-000004A6B5#Infernal Chaosbringer#Player-XXX#XXX#115191#Stealth#242906#Immolation Aura", -- [148]
+		--"<498.56 22:02:38> [CLEU] SPELL_AURA_BROKEN_SPELL#Creature-0-3895-1676-10786-106551-00008631CC-TSGuardian#Hati#Creature-0-3895-1676-10786-120697-000086306F#Worshiper of Elune#206961#Tremble Before Me#118459#Beast Cleave", -- [8039]
+		--["SPELL_AURA_BROKEN_SPELL"] = true,
 	}
 	local badPlayerEvents = {
 		["SPELL_DAMAGE"] = true,
@@ -583,36 +605,191 @@ do
 		["SPELL_ABSORBED"] = true,
 		["SPELL_CAST_FAILED"] = true,
 	}
-	local playerOrPet = 13312 -- COMBATLOG_OBJECT_TYPE_PLAYER + COMBATLOG_OBJECT_TYPE_PET + COMBATLOG_OBJECT_TYPE_GUARDIAN
-	local band = bit.band
+	local guardian = 8192 -- COMBATLOG_OBJECT_TYPE_GUARDIAN
+	local dmgCache, dmgPrdcCache = {}, {}
 	-- Note some things we are trying to avoid filtering:
 	-- BRF/Kagraz - Player damage with no source "SPELL_DAMAGE##nil#Player-GUID#PLAYER#154938#Molten Torrent#"
 	-- HFC/Socrethar - Player cast on friendly vehicle "SPELL_CAST_SUCCESS#Player-GUID#PLAYER#Vehicle-0-3151-1448-8853-90296-00001D943C#Soulbound Construct#190466#Incomplete Binding"
 	-- HFC/Zakuun - Player boss debuff cast on self "SPELL_AURA_APPLIED#Player-GUID#PLAYER#Player-GUID#PLAYER#189030#Befouled#DEBUFF#"
+	-- ToS/Sisters - Boss pet marked as guardian "SPELL_CAST_SUCCESS#Creature-0-3895-1676-10786-119205-0000063360#Moontalon##nil#236697#Deathly Screech"
 	function sh.COMBAT_LOG_EVENT_UNFILTERED(timeStamp, event, caster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, _, extraSpellId, amount)
-		if badEvents[event] or spellId == 120694 or -- Dire Beast, Creature applies buff to player
-		   (sourceName and badPlayerEvents[event] and band(sourceFlags, playerOrPet) ~= 0) or
-		   (sourceName and badPlayerFilteredEvents[event] and playerSpellBlacklist[spellId] and band(sourceFlags, playerOrPet) ~= 0) or
-		   (not sourceName and destName and badPlayerFilteredEvents[event] and badSourcelessPlayerSpellList[spellId] and band(destFlags, playerOrPet) ~= 0)
+		if badEvents[event] or
+		   (event == "UNIT_DIED" and band(destFlags, mineOrPartyOrRaid) ~= 0 and band(destFlags, guardian) == guardian) or -- Guardian deaths, player deaths can explain debuff removal
+		   (sourceName and badPlayerEvents[event] and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
+		   (sourceName and badPlayerFilteredEvents[event] and playerSpellBlacklist[spellId] and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
+		   (not sourceName and destName and badPlayerFilteredEvents[event] and badSourcelessPlayerSpellList[spellId] and band(destFlags, mineOrPartyOrRaid) ~= 0)
 		then
 			return
 		else
-			if event == "SPELL_CAST_SUCCESS" and (not sourceName or band(sourceFlags, playerOrPet) == 0) then
+			--if (sourceName and badPlayerFilteredEvents[event] and playerSpellBlacklist[spellId] and band(sourceFlags, mineOrPartyOrRaid) == 0) then
+			--	print("Transcriptor:", sourceName..":"..MobId(sourceGUID), "used spell", spellName..":"..spellId, "in event", event, "but isn't in our group.")
+			--end
+
+			if event == "SPELL_CAST_SUCCESS" and (not sourceName or band(sourceFlags, mineOrPartyOrRaid) == 0) then
 				if not compareSuccess then compareSuccess = {} end
 				if not compareSuccess[spellId] then compareSuccess[spellId] = {} end
-				compareSuccess[spellId][#compareSuccess[spellId]+1] = debugprofilestop()
+				local npcId = MobId(sourceGUID)
+				if not compareSuccess[spellId][npcId] then compareSuccess[spellId][npcId] = {compareStartTime} end
+				compareSuccess[spellId][npcId][#compareSuccess[spellId][npcId]+1] = debugprofilestop()
 			end
-			if event == "SPELL_CAST_START" and (not sourceName or band(sourceFlags, playerOrPet) == 0) then
+			if event == "SPELL_CAST_START" and (not sourceName or band(sourceFlags, mineOrPartyOrRaid) == 0) then
 				if not compareStart then compareStart = {} end
 				if not compareStart[spellId] then compareStart[spellId] = {} end
-				compareStart[spellId][#compareStart[spellId]+1] = debugprofilestop()
+				local npcId = MobId(sourceGUID)
+				if not compareStart[spellId][npcId] then compareStart[spellId][npcId] = {compareStartTime} end
+				compareStart[spellId][npcId][#compareStart[spellId][npcId]+1] = debugprofilestop()
 			end
-			if event == "SPELL_AURA_APPLIED" and (not sourceName or band(sourceFlags, playerOrPet) == 0) then
+			if event == "SPELL_AURA_APPLIED" and (not sourceName or band(sourceFlags, mineOrPartyOrRaid) == 0) then
 				if not compareAuraApplied then compareAuraApplied = {} end
 				if not compareAuraApplied[spellId] then compareAuraApplied[spellId] = {} end
-				compareAuraApplied[spellId][#compareAuraApplied[spellId]+1] = debugprofilestop()
+				local npcId = MobId(sourceGUID)
+				if not compareAuraApplied[spellId][npcId] then compareAuraApplied[spellId][npcId] = {compareStartTime} end
+				compareAuraApplied[spellId][npcId][#compareAuraApplied[spellId][npcId]+1] = debugprofilestop()
 			end
-			return strjoin("#", tostringall(event, sourceGUID, sourceName, destGUID, destName, spellId, spellName, extraSpellId, amount))
+
+			if sourceName and badPlayerFilteredEvents[event] and band(sourceFlags, mineOrPartyOrRaid) ~= 0 then
+				if not collectPlayerAuras then collectPlayerAuras = {} end
+				if not collectPlayerAuras[spellId] then collectPlayerAuras[spellId] = {} end
+				if not collectPlayerAuras[spellId][event] then collectPlayerAuras[spellId][event] = true end
+			end
+
+			if event == "UNIT_DIED" then
+				local name = specialEvents.UNIT_DIED[MobId(destGUID)]
+				if name then
+					InsertSpecialEvent(name)
+				end
+			elseif specialEvents[event] and specialEvents[event][spellId] then
+				local name = specialEvents[event][spellId][MobId(sourceGUID)]
+				if name then
+					InsertSpecialEvent(name)
+				end
+			end
+
+			if event == "SPELL_DAMAGE" or event == "SPELL_MISSED" then
+				if dmgPrdcCache.spellId then
+					if dmgPrdcCache.count == 1 then
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s#%s#%s#%s#%s#%d#%s", dmgPrdcCache.timeStop, dmgPrdcCache.time, dmgPrdcCache.event, dmgPrdcCache.sourceGUID, dmgPrdcCache.sourceName, dmgPrdcCache.destGUID, dmgPrdcCache.destName, dmgPrdcCache.spellId, dmgPrdcCache.spellName)
+					else
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] SPELL_PERIODIC_DAMAGE[CONDENSED]#%s#%s#%d Targets#%d#%s", dmgPrdcCache.timeStop, dmgPrdcCache.time, dmgPrdcCache.sourceGUID, dmgPrdcCache.sourceName, dmgPrdcCache.count, dmgPrdcCache.spellId, dmgPrdcCache.spellName)
+					end
+					dmgPrdcCache.spellId = nil
+				end
+
+				if spellId == dmgCache.spellId then
+					if timeStamp - dmgCache.timeStamp > 0.2 then
+						if dmgCache.count == 1 then
+							currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s#%s#%s#%s#%s#%d#%s", dmgCache.timeStop, dmgCache.time, dmgCache.event, dmgCache.sourceGUID, dmgCache.sourceName, dmgCache.destGUID, dmgCache.destName, dmgCache.spellId, dmgCache.spellName)
+						else
+							currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] SPELL_DAMAGE[CONDENSED]#%s#%s#%d Targets#%d#%s", dmgCache.timeStop, dmgCache.time, dmgCache.sourceGUID, dmgCache.sourceName, dmgCache.count, dmgCache.spellId, dmgCache.spellName)
+						end
+						dmgCache.spellId = spellId
+						dmgCache.sourceGUID = sourceGUID
+						dmgCache.sourceName = sourceName or "nil"
+						dmgCache.spellName = spellName
+						dmgCache.timeStop = (debugprofilestop() / 1000) - logStartTime
+						dmgCache.time = date("%H:%M:%S")
+						dmgCache.timeStamp = timeStamp
+						dmgCache.count = 1
+						dmgCache.event = event
+						dmgCache.destGUID = destGUID
+						dmgCache.destName = destName
+					else
+						dmgCache.count = dmgCache.count + 1
+					end
+				else
+					if dmgCache.spellId then
+						if dmgCache.count == 1 then
+							currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s#%s#%s#%s#%s#%d#%s", dmgCache.timeStop, dmgCache.time, dmgCache.event, dmgCache.sourceGUID, dmgCache.sourceName, dmgCache.destGUID, dmgCache.destName, dmgCache.spellId, dmgCache.spellName)
+						else
+							currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] SPELL_DAMAGE[CONDENSED]#%s#%s#%d Targets#%d#%s", dmgCache.timeStop, dmgCache.time, dmgCache.sourceGUID, dmgCache.sourceName, dmgCache.count, dmgCache.spellId, dmgCache.spellName)
+						end
+					end
+					dmgCache.spellId = spellId
+					dmgCache.sourceGUID = sourceGUID
+					dmgCache.sourceName = sourceName or "nil"
+					dmgCache.spellName = spellName
+					dmgCache.timeStop = (debugprofilestop() / 1000) - logStartTime
+					dmgCache.time = date("%H:%M:%S")
+					dmgCache.timeStamp = timeStamp
+					dmgCache.count = 1
+					dmgCache.event = event
+					dmgCache.destGUID = destGUID
+					dmgCache.destName = destName
+				end
+			elseif event == "SPELL_PERIODIC_DAMAGE" or event == "SPELL_PERIODIC_MISSED" then
+				if dmgCache.spellId then
+					if dmgCache.count == 1 then
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s#%s#%s#%s#%s#%d#%s", dmgCache.timeStop, dmgCache.time, dmgCache.event, dmgCache.sourceGUID, dmgCache.sourceName, dmgCache.destGUID, dmgCache.destName, dmgCache.spellId, dmgCache.spellName)
+					else
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] SPELL_DAMAGE[CONDENSED]#%s#%s#%d Targets#%d#%s", dmgCache.timeStop, dmgCache.time, dmgCache.sourceGUID, dmgCache.sourceName, dmgCache.count, dmgCache.spellId, dmgCache.spellName)
+					end
+					dmgCache.spellId = nil
+				end
+
+				if spellId == dmgPrdcCache.spellId then
+					if timeStamp - dmgPrdcCache.timeStamp > 0.2 then
+						if dmgPrdcCache.count == 1 then
+							currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s#%s#%s#%s#%s#%d#%s", dmgPrdcCache.timeStop, dmgPrdcCache.time, dmgPrdcCache.event, dmgPrdcCache.sourceGUID, dmgPrdcCache.sourceName, dmgPrdcCache.destGUID, dmgPrdcCache.destName, dmgPrdcCache.spellId, dmgPrdcCache.spellName)
+						else
+							currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] SPELL_PERIODIC_DAMAGE[CONDENSED]#%s#%s#%d Targets#%d#%s", dmgPrdcCache.timeStop, dmgPrdcCache.time, dmgPrdcCache.sourceGUID, dmgPrdcCache.sourceName, dmgPrdcCache.count, dmgPrdcCache.spellId, dmgPrdcCache.spellName)
+						end
+						dmgPrdcCache.spellId = spellId
+						dmgPrdcCache.sourceGUID = sourceGUID
+						dmgPrdcCache.sourceName = sourceName or "nil"
+						dmgPrdcCache.spellName = spellName
+						dmgPrdcCache.timeStop = (debugprofilestop() / 1000) - logStartTime
+						dmgPrdcCache.time = date("%H:%M:%S")
+						dmgPrdcCache.timeStamp = timeStamp
+						dmgPrdcCache.count = 1
+						dmgPrdcCache.event = event
+						dmgPrdcCache.destGUID = destGUID
+						dmgPrdcCache.destName = destName
+					else
+						dmgPrdcCache.count = dmgPrdcCache.count + 1
+					end
+				else
+					if dmgPrdcCache.spellId then
+						if dmgPrdcCache.count == 1 then
+							currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s#%s#%s#%s#%s#%d#%s", dmgPrdcCache.timeStop, dmgPrdcCache.time, dmgPrdcCache.event, dmgPrdcCache.sourceGUID, dmgPrdcCache.sourceName, dmgPrdcCache.destGUID, dmgPrdcCache.destName, dmgPrdcCache.spellId, dmgPrdcCache.spellName)
+						else
+							currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] SPELL_PERIODIC_DAMAGE[CONDENSED]#%s#%s#%d Targets#%d#%s", dmgPrdcCache.timeStop, dmgPrdcCache.time, dmgPrdcCache.sourceGUID, dmgPrdcCache.sourceName, dmgPrdcCache.count, dmgPrdcCache.spellId, dmgPrdcCache.spellName)
+						end
+					end
+					dmgPrdcCache.spellId = spellId
+					dmgPrdcCache.sourceGUID = sourceGUID
+					dmgPrdcCache.sourceName = sourceName or "nil"
+					dmgPrdcCache.spellName = spellName
+					dmgPrdcCache.timeStop = (debugprofilestop() / 1000) - logStartTime
+					dmgPrdcCache.time = date("%H:%M:%S")
+					dmgPrdcCache.timeStamp = timeStamp
+					dmgPrdcCache.count = 1
+					dmgPrdcCache.event = event
+					dmgPrdcCache.destGUID = destGUID
+					dmgPrdcCache.destName = destName
+				end
+			else
+				if dmgCache.spellId then
+					if dmgCache.count == 1 then
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s#%s#%s#%s#%s#%d#%s", dmgCache.timeStop, dmgCache.time, dmgCache.event, dmgCache.sourceGUID, dmgCache.sourceName, dmgCache.destGUID, dmgCache.destName, dmgCache.spellId, dmgCache.spellName)
+					else
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] SPELL_DAMAGE[CONDENSED]#%s#%s#%d Targets#%d#%s", dmgCache.timeStop, dmgCache.time, dmgCache.sourceGUID, dmgCache.sourceName, dmgCache.count, dmgCache.spellId, dmgCache.spellName)
+					end
+					dmgCache.spellId = nil
+				elseif dmgPrdcCache.spellId then
+					if dmgPrdcCache.count == 1 then
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s#%s#%s#%s#%s#%d#%s", dmgPrdcCache.timeStop, dmgPrdcCache.time, dmgPrdcCache.event, dmgPrdcCache.sourceGUID, dmgPrdcCache.sourceName, dmgPrdcCache.destGUID, dmgPrdcCache.destName, dmgPrdcCache.spellId, dmgPrdcCache.spellName)
+					else
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] SPELL_PERIODIC_DAMAGE[CONDENSED]#%s#%s#%d Targets#%d#%s", dmgPrdcCache.timeStop, dmgPrdcCache.time, dmgPrdcCache.sourceGUID, dmgPrdcCache.sourceName, dmgPrdcCache.count, dmgPrdcCache.spellId, dmgPrdcCache.spellName)
+					end
+					dmgPrdcCache.spellId = nil
+				end
+
+				if shouldLogFlags and (sourceName or destName) and badPlayerFilteredEvents[event] then
+					return strjoin("#", tostringall(event, sourceName and sourceFlags or destFlags, sourceGUID, sourceName, destGUID, destName, spellId, spellName, extraSpellId, amount))
+				else
+					return strjoin("#", tostringall(event, sourceGUID, sourceName, destGUID, destName, spellId, spellName, extraSpellId, amount))
+				end
+			end
 		end
 	end
 end
@@ -663,7 +840,17 @@ do
 			local _, _, _, spellId = ...
 			if not compareUnitSuccess then compareUnitSuccess = {} end
 			if not compareUnitSuccess[spellId] then compareUnitSuccess[spellId] = {} end
-			compareUnitSuccess[spellId][#compareUnitSuccess[spellId]+1] = debugprofilestop()
+			local npcId = MobId(UnitGUID(unit))
+			if not compareUnitSuccess[spellId][npcId] then compareUnitSuccess[spellId][npcId] = {compareStartTime} end
+			compareUnitSuccess[spellId][npcId][#compareUnitSuccess[spellId][npcId]+1] = debugprofilestop()
+
+			if specialEvents.UNIT_SPELLCAST_SUCCEEDED[spellId] then
+				local name = specialEvents.UNIT_SPELLCAST_SUCCEEDED[spellId][npcId]
+				if name then
+					InsertSpecialEvent(name)
+				end
+			end
+
 			return format("%s(%s) [[%s]]", UnitName(unit), UnitName(unit.."target"), strjoin(":", tostringall(unit, ...)))
 		end
 	end
@@ -808,6 +995,7 @@ end
 
 function sh.ENCOUNTER_START(...)
 	compareStartTime = debugprofilestop()
+	wipe(data)
 	return strjoin("#", "ENCOUNTER_START", ...)
 end
 
@@ -891,7 +1079,10 @@ local eventCategories = {
 	ARENA_OPPONENT_UPDATE = "PVP",
 	BigWigs_Message = "BigWigs",
 	BigWigs_StartBar = "BigWigs",
-	BigWigs_Debug = "BigWigs",
+	--BigWigs_Debug = "BigWigs",
+	DBM_Announce = "DBM",
+	DBM_TimerStart = "DBM",
+	DBM_TimerStop = "DBM",
 }
 local bwEvents = {
 	"BigWigs_Message",
@@ -905,7 +1096,7 @@ local dbmEvents = {
 }
 
 local function eventHandler(self, event, ...)
-	if TranscriptDB.ignoredEvents[event] then return end
+	if TranscriptIgnore[event] then return end
 	local line
 	if sh[event] then
 		line = sh[event](...)
@@ -918,23 +1109,10 @@ local function eventHandler(self, event, ...)
 	local time = date("%H:%M:%S")
 	-- We only have CLEU in the total log, it's way too much information to log twice.
 	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		tinsert(currentLog.total, format("<%.2f %s> [CLEU] %s", t, time, line))
-
-		-- Throw this in here rather than polling it.
-		if not inEncounter and IsEncounterInProgress() then
-			inEncounter = true
-			tinsert(currentLog.total, format("<%.2f %s> [IsEncounterInProgress()] true", t, time))
-			if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
-			tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterInProgress()] true", t, time))
-		elseif inEncounter and not IsEncounterInProgress() then
-			inEncounter = false
-			tinsert(currentLog.total, format("<%.2f %s> [IsEncounterInProgress()] false", t, time))
-			if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
-			tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterInProgress()] false", t, time))
-		end
+		currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s", t, time, line)
 	else
 		local text = format("<%.2f %s> [%s] %s", t, time, event, line)
-		tinsert(currentLog.total, text)
+		currentLog.total[#currentLog.total+1] = text
 		if event == "WORLD_STATE_UI_TIMER_UPDATE" then return end -- Only in total table
 		local cat = eventCategories[event] or event
 		if type(currentLog[cat]) ~= "table" then currentLog[cat] = {} end
@@ -942,6 +1120,42 @@ local function eventHandler(self, event, ...)
 	end
 end
 eventFrame:SetScript("OnEvent", eventHandler)
+eventFrame:SetScript("OnUpdate", function()
+	if not inEncounter and IsEncounterInProgress() then
+		inEncounter = true
+		local stop = debugprofilestop() / 1000
+		local t = stop - logStartTime
+		local time = date("%H:%M:%S")
+		currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IsEncounterInProgress()] true", t, time)
+		if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
+		tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterInProgress()] true", t, time))
+	elseif inEncounter and not IsEncounterInProgress() then
+		inEncounter = false
+		local stop = debugprofilestop() / 1000
+		local t = stop - logStartTime
+		local time = date("%H:%M:%S")
+		currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IsEncounterInProgress()] false", t, time)
+		if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
+		tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterInProgress()] false", t, time))
+	end
+	if not blockingRelease and IsEncounterSuppressingRelease() then
+		blockingRelease = true
+		local stop = debugprofilestop() / 1000
+		local t = stop - logStartTime
+		local time = date("%H:%M:%S")
+		currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IsEncounterSuppressingRelease()] true", t, time)
+		if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
+		tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterSuppressingRelease()] true", t, time))
+	elseif blockingRelease and not IsEncounterSuppressingRelease() then
+		blockingRelease = false
+		local stop = debugprofilestop() / 1000
+		local t = stop - logStartTime
+		local time = date("%H:%M:%S")
+		currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IsEncounterSuppressingRelease()] false", t, time)
+		if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
+		tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterSuppressingRelease()] false", t, time))
+	end
+end)
 
 --------------------------------------------------------------------------------
 -- Addon
@@ -986,8 +1200,8 @@ local function insertMenuItems(tbl)
 	for i, v in next, tbl do
 		tinsert(menu, {
 			text = v,
-			func = function() TranscriptDB.ignoredEvents[v] = not TranscriptDB.ignoredEvents[v] end,
-			checked = function() return TranscriptDB.ignoredEvents[v] end,
+			func = function() TranscriptIgnore[v] = not TranscriptIgnore[v] end,
+			checked = function() return TranscriptIgnore[v] end,
 			isNotRadio = true,
 			keepShownOnClick = 1,
 		})
@@ -997,8 +1211,9 @@ end
 
 local init = CreateFrame("Frame")
 init:SetScript("OnEvent", function(self, event, addon)
-	TranscriptDB = TranscriptDB or {}
-	if not TranscriptDB.ignoredEvents then TranscriptDB.ignoredEvents = {} end
+	if type(TranscriptDB) ~= "table" then TranscriptDB = {} end
+	if type(TranscriptIgnore) ~= "table" then TranscriptIgnore = {} end
+	TranscriptDB.ignoredEvents = nil
 
 	tinsert(menu, { text = L["|cFFFFD200Transcriptor|r - Disabled Events"], fontObject = "GameTooltipHeader", notCheckable = 1 })
 	insertMenuItems(wowEvents)
@@ -1064,6 +1279,9 @@ do
 		else
 			ldb.text = L["|cffFF0000Recording|r"]
 			ldb.icon = "Interface\\AddOns\\Transcriptor\\icon_on"
+			previousWorldState = nil
+			shouldLogFlags = TranscriptIgnore.logFlags and true or false
+			wipe(data)
 
 			compareStartTime = debugprofilestop()
 			logStartTime = compareStartTime / 1000
@@ -1073,26 +1291,27 @@ do
 			logName = format(logNameFormat, date("%Y-%m-%d"), date("%H:%M:%S"), GetCurrentMapAreaID() or 0, instanceId or 0, GetZoneText() or "?", GetRealZoneText() or "?", GetSubZoneText() or "none", diffText)
 
 			if type(TranscriptDB[logName]) ~= "table" then TranscriptDB[logName] = {} end
-			if type(TranscriptDB.ignoredEvents) ~= "table" then TranscriptDB.ignoredEvents = {} end
+			if type(TranscriptIgnore) ~= "table" then TranscriptIgnore = {} end
 			currentLog = TranscriptDB[logName]
 
 			if type(currentLog.total) ~= "table" then currentLog.total = {} end
 			--Register Events to be Tracked
+			eventFrame:Show()
 			for i, event in next, wowEvents do
-				if not TranscriptDB.ignoredEvents[event] then
+				if not TranscriptIgnore[event] then
 					eventFrame:RegisterEvent(event)
 				end
 			end
 			if BigWigsLoader then
 				for i, event in next, bwEvents do
-					if not TranscriptDB.ignoredEvents[event] then
+					if not TranscriptIgnore[event] then
 						BigWigsLoader.RegisterMessage(eventFrame, event, BWEventHandler)
 					end
 				end
 			end
 			if DBM then
 				for i, event in next, dbmEvents do
-					if not TranscriptDB.ignoredEvents[event] then
+					if not TranscriptIgnore[event] then
 						DBM:RegisterCallback(event, DBMEventHandler)
 					end
 				end
@@ -1126,7 +1345,10 @@ function Transcriptor:StopLog(silent)
 	else
 		ldb.text = L["|cff696969Idle|r"]
 		ldb.icon = "Interface\\AddOns\\Transcriptor\\icon_off"
+		previousWorldState = nil
+
 		--Clear Events
+		eventFrame:Hide()
 		eventFrame:UnregisterAllEvents()
 		if BigWigsLoader then
 			BigWigsLoader.SendMessage(eventFrame, "BigWigs_OnPluginDisable", eventFrame)
@@ -1142,76 +1364,199 @@ function Transcriptor:StopLog(silent)
 			print(L["Logs will probably be saved to WoW\\WTF\\Account\\<name>\\SavedVariables\\Transcriptor.lua once you relog or reload the user interface."])
 		end
 
-		if compareSuccess or compareStart or compareAuraApplied then
+		if compareSuccess or compareStart or compareAuraApplied or compareUnitSuccess then
 			currentLog.TIMERS = {}
 			if compareSuccess then
 				currentLog.TIMERS.SPELL_CAST_SUCCESS = {}
 				for id,tbl in next, compareSuccess do
-					local n = format("%d-%s", id, (GetSpellInfo(id)))
-					local str
-					for i = 1, #tbl do
-						if not str then
-							local t = tbl[i] - compareStartTime
-							str = format("pull:%.1f", t/1000)
-						else
-							local t = tbl[i] - tbl[i-1]
-							str = format("%s, %.1f", str, t/1000)
+					for npcId, list in next, tbl do
+						local n = format("%s-%d-npc:%d", GetSpellInfo(id), id, npcId)
+						local str
+						for i = 2, #list do
+							if not str then
+								local t = list[i] - list[1]
+								str = format("%s = pull:%.1f", n, t/1000)
+							else
+								if type(list[i]) == "table" then
+									str = format("%s, %s", str, list[i][2])
+								else
+									if type(list[i-1]) == "table" then
+										if type(list[i-2]) == "table" then
+											if type(list[i-3]) == "table" then
+												local tStage = list[i] - list[i-1][1]
+												local tStagePrevious = list[i] - list[i-2][1]
+												local tStagePreviousMore = list[i] - list[i-3][1]
+												local t = list[i] - list[i-4]
+												str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+											else
+												local tStage = list[i] - list[i-1][1]
+												local tStagePrevious = list[i] - list[i-2][1]
+												local t = list[i] - list[i-3]
+												str = format("%s, %.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, t/1000)
+											end
+										else
+											local tStage = list[i] - list[i-1][1]
+											local t = list[i] - list[i-2]
+											str = format("%s, %.1f/%.1f", str, tStage/1000, t/1000)
+										end
+									else
+										local t = list[i] - list[i-1]
+										str = format("%s, %.1f", str, t/1000)
+									end
+								end
+							end
 						end
+						currentLog.TIMERS.SPELL_CAST_SUCCESS[#currentLog.TIMERS.SPELL_CAST_SUCCESS+1] = str
 					end
-					currentLog.TIMERS.SPELL_CAST_SUCCESS[n] = str
 				end
+				table.sort(currentLog.TIMERS.SPELL_CAST_SUCCESS)
 			end
 			if compareStart then
 				currentLog.TIMERS.SPELL_CAST_START = {}
 				for id,tbl in next, compareStart do
-					local n = format("%d-%s", id, (GetSpellInfo(id)))
-					local str
-					for i = 1, #tbl do
-						if not str then
-							local t = tbl[i] - compareStartTime
-							str = format("pull:%.1f", t/1000)
-						else
-							local t = tbl[i] - tbl[i-1]
-							str = format("%s, %.1f", str, t/1000)
+					for npcId, list in next, tbl do
+						local n = format("%s-%d-npc:%d", GetSpellInfo(id), id, npcId)
+						local str
+						for i = 2, #list do
+							if not str then
+								local t = list[i] - list[1]
+								str = format("%s = pull:%.1f", n, t/1000)
+							else
+								if type(list[i]) == "table" then
+									str = format("%s, %s", str, list[i][2])
+								else
+									if type(list[i-1]) == "table" then
+										if type(list[i-2]) == "table" then
+											if type(list[i-3]) == "table" then
+												local tStage = list[i] - list[i-1][1]
+												local tStagePrevious = list[i] - list[i-2][1]
+												local tStagePreviousMore = list[i] - list[i-3][1]
+												local t = list[i] - list[i-4]
+												str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+											else
+												local tStage = list[i] - list[i-1][1]
+												local tStagePrevious = list[i] - list[i-2][1]
+												local t = list[i] - list[i-3]
+												str = format("%s, %.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, t/1000)
+											end
+										else
+											local tStage = list[i] - list[i-1][1]
+											local t = list[i] - list[i-2]
+											str = format("%s, %.1f/%.1f", str, tStage/1000, t/1000)
+										end
+									else
+										local t = list[i] - list[i-1]
+										str = format("%s, %.1f", str, t/1000)
+									end
+								end
+							end
 						end
+						currentLog.TIMERS.SPELL_CAST_START[#currentLog.TIMERS.SPELL_CAST_START+1] = str
 					end
-					currentLog.TIMERS.SPELL_CAST_START[n] = str
 				end
+				table.sort(currentLog.TIMERS.SPELL_CAST_START)
 			end
 			if compareAuraApplied then
 				currentLog.TIMERS.SPELL_AURA_APPLIED = {}
 				for id,tbl in next, compareAuraApplied do
-					local n = format("%d-%s", id, (GetSpellInfo(id)))
-					local str
-					for i = 1, #tbl do
-						if not str then
-							local t = tbl[i] - compareStartTime
-							str = format("pull:%.1f", t/1000)
-						else
-							local t = tbl[i] - tbl[i-1]
-							str = format("%s, %.1f", str, t/1000)
+					for npcId, list in next, tbl do
+						local n = format("%s-%d-npc:%d", GetSpellInfo(id), id, npcId)
+						local str
+						for i = 2, #list do
+							if not str then
+								local t = list[i] - list[1]
+								str = format("%s = pull:%.1f", n, t/1000)
+							else
+								if type(list[i]) == "table" then
+									str = format("%s, %s", str, list[i][2])
+								else
+									if type(list[i-1]) == "table" then
+										if type(list[i-2]) == "table" then
+											if type(list[i-3]) == "table" then
+												local tStage = list[i] - list[i-1][1]
+												local tStagePrevious = list[i] - list[i-2][1]
+												local tStagePreviousMore = list[i] - list[i-3][1]
+												local t = list[i] - list[i-4]
+												str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+											else
+												local tStage = list[i] - list[i-1][1]
+												local tStagePrevious = list[i] - list[i-2][1]
+												local t = list[i] - list[i-3]
+												str = format("%s, %.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, t/1000)
+											end
+										else
+											local tStage = list[i] - list[i-1][1]
+											local t = list[i] - list[i-2]
+											str = format("%s, %.1f/%.1f", str, tStage/1000, t/1000)
+										end
+									else
+										local t = list[i] - list[i-1]
+										str = format("%s, %.1f", str, t/1000)
+									end
+								end
+							end
 						end
+						currentLog.TIMERS.SPELL_AURA_APPLIED[#currentLog.TIMERS.SPELL_AURA_APPLIED+1] = str
 					end
-					currentLog.TIMERS.SPELL_AURA_APPLIED[n] = str
 				end
+				table.sort(currentLog.TIMERS.SPELL_AURA_APPLIED)
 			end
 			if compareUnitSuccess then
 				currentLog.TIMERS.UNIT_SPELLCAST_SUCCEEDED = {}
 				for id,tbl in next, compareUnitSuccess do
-					if not compareSuccess or not compareSuccess[id] then
-						local n = format("%d-%s", id, (GetSpellInfo(id)))
-						local str
-						for i = 1, #tbl do
-							if not str then
-								local t = tbl[i] - compareStartTime
-								str = format("pull:%.1f", t/1000)
-							else
-								local t = tbl[i] - tbl[i-1]
-								str = format("%s, %.1f", str, t/1000)
+					for npcId, list in next, tbl do
+						if not compareSuccess or not compareSuccess[id] or not compareSuccess[id][npcId] then
+							local n = format("%s-%d-npc:%d", GetSpellInfo(id), id, npcId)
+							local str
+							for i = 2, #list do
+								if not str then
+									local t = list[i] - list[1]
+									str = format("%s = pull:%.1f", n, t/1000)
+								else
+									if type(list[i]) == "table" then
+										str = format("%s, %s", str, list[i][2])
+									else
+										if type(list[i-1]) == "table" then
+											if type(list[i-2]) == "table" then
+												if type(list[i-3]) == "table" then
+													local tStage = list[i] - list[i-1][1]
+													local tStagePrevious = list[i] - list[i-2][1]
+													local tStagePreviousMore = list[i] - list[i-3][1]
+													local t = list[i] - list[i-4]
+													str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+												else
+													local tStage = list[i] - list[i-1][1]
+													local tStagePrevious = list[i] - list[i-2][1]
+													local t = list[i] - list[i-3]
+													str = format("%s, %.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, t/1000)
+												end
+											else
+												local tStage = list[i] - list[i-1][1]
+												local t = list[i] - list[i-2]
+												str = format("%s, %.1f/%.1f", str, tStage/1000, t/1000)
+											end
+										else
+											local t = list[i] - list[i-1]
+											str = format("%s, %.1f", str, t/1000)
+										end
+									end
+								end
 							end
+							currentLog.TIMERS.UNIT_SPELLCAST_SUCCEEDED[#currentLog.TIMERS.UNIT_SPELLCAST_SUCCEEDED+1] = str
 						end
-						currentLog.TIMERS.UNIT_SPELLCAST_SUCCEEDED[n] = str
 					end
+				end
+				table.sort(currentLog.TIMERS.UNIT_SPELLCAST_SUCCEEDED)
+			end
+		end
+		if collectPlayerAuras then
+			if not currentLog.TIMERS then currentLog.TIMERS = {} end
+			currentLog.TIMERS.PLAYER_AURAS = {}
+			for id,tbl in next, collectPlayerAuras do
+				local n = format("%d-%s", id, (GetSpellInfo(id)))
+				currentLog.TIMERS.PLAYER_AURAS[n] = {}
+				for event in next, tbl do
+					currentLog.TIMERS.PLAYER_AURAS[n][#currentLog.TIMERS.PLAYER_AURAS[n]+1] = event
 				end
 			end
 		end
@@ -1224,6 +1569,7 @@ function Transcriptor:StopLog(silent)
 		compareStart = nil
 		compareAuraApplied = nil
 		compareStartTime = nil
+		collectPlayerAuras = nil
 		logStartTime = nil
 
 		return logName
@@ -1232,12 +1578,7 @@ end
 
 function Transcriptor:ClearAll()
 	if not logging then
-		local t2 = {}
-		for k, v in next, TranscriptDB.ignoredEvents do
-			t2[k] = v
-		end
 		TranscriptDB = {}
-		TranscriptDB.ignoredEvents = t2
 		print(L["All transcripts cleared."])
 	else
 		print(L["You can't clear your transcripts while logging an encounter."])

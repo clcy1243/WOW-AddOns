@@ -167,6 +167,8 @@ L["Heals"] = "治疗"
 L["Health"] = "生命"
 L["Hide"] = "隐藏"
 L["Hide When Not Collecting"] = "不收集数据时隐藏"
+--Translation missing 
+-- L["Hide While In Pet Battle"] = "Hide While In Pet Battle"
 L["Hides the main window"] = "隐藏主窗口"
 L["Hit"] = "命中"
 L["Holy"] = "神圣"

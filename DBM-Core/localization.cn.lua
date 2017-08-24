@@ -25,7 +25,7 @@ DBM_CORE_LOAD_MOD_VER_MISMATCH		= "%s 模块无法被载入。 DBM核心版本�
 DBM_CORE_LOAD_MOD_DISABLED			= "%s 模块已安装但被禁用。该模块不会被载入除非启用它。"
 DBM_CORE_LOAD_MOD_DISABLED_PLURAL	= "%s 模块已安装但被禁用。这些模块不会被载入除非启用它们。"
 
-DBM_CORE_WHATS_NEW					= "为了提高更新速度，守望先锋及风暴英雄倒计时音效已经从主模块中移除。请单独下载 DBM-CountPack-Overwatch & DBM-CountPack-HoTS。"
+--DBM_CORE_WHATS_NEW					= "为了提高更新速度，守望先锋及风暴英雄倒计时音效已经从主模块中移除。请单独下载 DBM-CountPack-Overwatch & DBM-CountPack-HoTS。"
 --DBM_CORE_WHATS_NEW_LINK				= "建议配合语音包使用。 |HDBM:forumsnews|h|cff3588ff点击这里|r 获取更多信息。"
 
 --Post Patch 7.1
@@ -301,8 +301,8 @@ DBM_CORE_AUTO_ANNOUNCE_TEXTS.adds				= "%s剩余：%%d"
 DBM_CORE_AUTO_ANNOUNCE_TEXTS.cast				= "正在施放 %s：%.1f秒"
 DBM_CORE_AUTO_ANNOUNCE_TEXTS.soon				= "即将 %s"
 DBM_CORE_AUTO_ANNOUNCE_TEXTS.prewarn			= "%2$s后 %1$s"
-DBM_CORE_AUTO_ANNOUNCE_TEXTS.phase				= "第%s阶段"
-DBM_CORE_AUTO_ANNOUNCE_TEXTS.prephase			= "第%s阶段 即将到来"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.stage				= "第%s阶段"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.prestage			= "第%s阶段 即将到来"
 DBM_CORE_AUTO_ANNOUNCE_TEXTS.count				= "%s (%%s)"
 DBM_CORE_AUTO_ANNOUNCE_TEXTS.stack				= "%s -> >%%s< (%%d)"
 
@@ -318,9 +318,9 @@ DBM_CORE_AUTO_ANNOUNCE_OPTIONS.adds				= "警报：$spell:%s剩余数量"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast				= "警报：$spell:%s的施放"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.soon				= prewarnOption
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prewarn			= prewarnOption
-DBM_CORE_AUTO_ANNOUNCE_OPTIONS.phase			= "警报：第%s阶段"
-DBM_CORE_AUTO_ANNOUNCE_OPTIONS.phasechange		= "警报：阶段转换"
-DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prephase			= "预警：第%s阶段"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.stage			= "警报：第%s阶段"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.stagechange		= "警报：阶段转换"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prestage			= "预警：第%s阶段"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.count			= "警报：$spell:%s(带计数)"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.stack			= "警报：$spell:%s叠加层数"
 
@@ -402,7 +402,7 @@ DBM_CORE_AUTO_TIMER_TEXTS.nextcount				= "下一次%s（%%s）"
 DBM_CORE_AUTO_TIMER_TEXTS.nextsource			= "下一次%s: >%%s<"
 DBM_CORE_AUTO_TIMER_TEXTS.nextspecial			= "下一次特殊技能"
 DBM_CORE_AUTO_TIMER_TEXTS.achievement 			= "%s"
-DBM_CORE_AUTO_TIMER_TEXTS.phase					= "下一阶段"
+DBM_CORE_AUTO_TIMER_TEXTS.stage					= "下一阶段"
 DBM_CORE_AUTO_TIMER_TEXTS.adds					= "下一波小怪"
 
 DBM_CORE_AUTO_TIMER_OPTIONS.target				= "计时条：$spell:%s减益效果持续时间"
@@ -419,7 +419,7 @@ DBM_CORE_AUTO_TIMER_OPTIONS.nextcount			= "计时条：下一次$spell:%s"
 DBM_CORE_AUTO_TIMER_OPTIONS.nextsource			= "计时条：下一次$spell:%s以及来源"
 DBM_CORE_AUTO_TIMER_OPTIONS.nextspecial			= "计时条：下一次特殊技能"
 DBM_CORE_AUTO_TIMER_OPTIONS.achievement			= "计时条：成就%s"
-DBM_CORE_AUTO_TIMER_OPTIONS.phase				= "计时条：下一阶段"
+DBM_CORE_AUTO_TIMER_OPTIONS.stage				= "计时条：下一阶段"
 DBM_CORE_AUTO_TIMER_OPTIONS.adds				= "计时条：下一波小怪"
 DBM_CORE_AUTO_TIMER_OPTIONS.roleplay			= "计时条：剧情"
 

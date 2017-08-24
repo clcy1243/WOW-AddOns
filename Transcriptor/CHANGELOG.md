@@ -1,7 +1,8 @@
 # Transcriptor
 
-## [v7.2.1](https://github.com/BigWigsMods/Transcriptor/tree/v7.2.1) (2017-06-21)
-[Full Changelog](https://github.com/BigWigsMods/Transcriptor/compare/v7.2.0...v7.2.1)
+## [v7.2.9](https://github.com/BigWigsMods/Transcriptor/tree/v7.2.9) (2017-08-20)
+[Full Changelog](https://github.com/BigWigsMods/Transcriptor/compare/v7.2.8...v7.2.9)
 
-- update blacklist  
-- update blacklist  
+- Fix error when there are 3 special events between timers  
+- blacklist update  
+- blacklist update  
