@@ -119,6 +119,13 @@ function EU:OptionsTable()
                         type = "toggle",
                         desc = LE["opt_guildNotes_desc"],
                      },
+                     -- rcscore = {
+                     --    name = "RC Score",
+                     --    order = 15,
+                     --    type = "toggle",
+                     --    desc = "A performance metric based on hps/dps and item levels.",
+                     --    tristate = true,
+                     -- },
                      header = {
                         order = -1,
                         name = "",
@@ -393,6 +400,8 @@ function EU:ColSet(info, val)
    if info.option.tristate then
       if info[#info] == "pawn" then
          if not PawnVersion then return addon:Print(info.option.name, LE["opt_addon_requirement"]) end
+      elseif info[#info] == "rcscore" then
+         if not (Details or Recount or Skada) then return addon:Print("A damage meter", LE["opt_addon_requirement"]) end
       else
          if not EPGP then return addon:Print("EPGP", LE["opt_addon_requirement"]) end
       end
@@ -406,6 +415,8 @@ function EU:ColGet(info)
    if info.option.tristate then
       if info[#info] == "pawn" then
          if not PawnVersion then return nil end
+      elseif info[#info] == "rcscore" then
+         if not (Details or Recount or Skada) then return nil end
       else
          if not EPGP then return nil end
       end

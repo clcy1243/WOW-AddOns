@@ -1,4 +1,4 @@
--- $Id: Handler.lua 70 2017-06-21 17:55:46Z arith $
+-- $Id: Handler.lua 73 2017-08-29 18:29:07Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -30,7 +30,9 @@ addon.description 	= private.description
 addon.pluginName 	= private.pluginName
 
 addon.Name = FOLDER_NAME;
-_G.HandyNotes_LegionClassOrderHalls = addon;
+_G.HandyNotes_LegionClassOrderHalls = addon
+
+local profile
 
 -- //////////////////////////////////////////////////////////////////////////
 -- get creature's name from server
@@ -100,7 +102,7 @@ end
 local function handle_tooltip(tooltip, point)
 	if point then
 		if point.label then
-			if (point.npc and private.db.query_server) then
+			if (point.npc and profile.query_server) then
 				getCreatureNamebyID(point.npc)
 				if creature_cache then
 					tooltip:SetHyperlink(("unit:Creature-0-0-0-0-%d"):format(point.npc))
@@ -118,7 +120,7 @@ local function handle_tooltip(tooltip, point)
 				tooltip:AddLine(spellName, 1, 1, 1, true)
 			end
 		end
-		if (point.note and private.db.show_note) then
+		if (point.note and profile.show_note) then
 			tooltip:AddLine("("..point.note..")", nil, nil, nil, true)
 		end
 	else
@@ -248,8 +250,8 @@ do
 		while state do -- Have we reached the end of this zone?
 			if value and private:ShouldShow(state, value, currentZone, currentLevel) then
 				local label, icon, scale, alpha, dungeonLevel = get_point_info(value)
-				scale = (scale or 1) * (icon and icon.scale or 1) * private.db.icon_scale
-				alpha = (alpha or 1) * (icon and icon.alpha or 1) * private.db.icon_alpha
+				scale = (scale or 1) * (icon and icon.scale or 1) * profile.icon_scale
+				alpha = (alpha or 1) * (icon and icon.alpha or 1) * profile.icon_alpha
 				return state, nil, icon, scale, alpha, dungeonLevel or 0
 			end
 			state, value = next(t, state) -- Get next data
@@ -273,20 +275,20 @@ do
 		if (point.class and point.class ~= select(2, UnitClass("player"))) then
 			return false
 		end
-		if (point.mission 	and not private.db.show_mission) then return false; end
-		if (point.research 	and not private.db.show_research) then return false; end
-		if (point.armaments 	and not private.db.show_armaments) then return false; end
-		if (point.quartermaster and not private.db.show_quartermaster) then return false; end
-		if (point.classUpgrade 	and not private.db.show_classUpgrade) then return false; end
-		if (point.artifact 	and not private.db.show_artifact) then return false; end
-		if (point.portal 	and not private.db.show_portal) then return false; end
-		if (point.flight 	and not private.db.show_flight) then return false; end
-		if (point.lightsHeart 	and not private.db.show_lightsHeart) then return false; end
-		if (point.others 	and not private.db.show_others) then return false; end
-		if (point.recruiter 	and not private.db.show_recruiter) then return false; end
-		if (point.sealOrder 	and not private.db.show_sealOrder) then return false; end
+		if (point.mission 	and not profile.show_mission) then return false; end
+		if (point.research 	and not profile.show_research) then return false; end
+		if (point.armaments 	and not profile.show_armaments) then return false; end
+		if (point.quartermaster and not profile.show_quartermaster) then return false; end
+		if (point.classUpgrade 	and not profile.show_classUpgrade) then return false; end
+		if (point.artifact 	and not profile.show_artifact) then return false; end
+		if (point.portal 	and not profile.show_portal) then return false; end
+		if (point.flight 	and not profile.show_flight) then return false; end
+		if (point.lightsHeart 	and not profile.show_lightsHeart) then return false; end
+		if (point.others 	and not profile.show_others) then return false; end
+		if (point.recruiter 	and not profile.show_recruiter) then return false; end
+		if (point.sealOrder 	and not profile.show_sealOrder) then return false; end
 
-		if (point.talent and not private.db.show_alltalents and not isTalentResearched(point.talent)) then return false; end
+		if (point.talent and not profile.show_alltalents and not isTalentResearched(point.talent)) then return false; end
 		return true
 	end
 end
@@ -295,7 +297,8 @@ end
 function addon:OnInitialize()
 	self.db = AceDB:New(private.addon_name.."DB", private.constants.defaults)
 	
-	private.db = self.db.profile
+	profile = self.db.profile
+	private.db = profile
 	private.hidden = self.db.char.hidden
 
 	-- Initialize database with HandyNotes

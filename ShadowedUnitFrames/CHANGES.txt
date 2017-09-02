@@ -1,12 +1,12 @@
-tag 52f4ef593f61e4b56fea8b2d6ea0d6c0361fab84 v4.1.19
+tag d9ef0479ad8e33ffa7f5ee4301743a9806c66a85 v4.1.20
 Author:	Hendrik Leppkes <h.leppkes@gmail.com>
-Date:	Thu Jun 29 15:56:16 2017 +0200
+Date:	Wed Aug 30 08:41:39 2017 +0200
 
-Tag as v4.1.19
+Tag as v4.1.20
 
-commit 48bc8b5fdafa01ce5b162bf1eb8b23cf687d242e
+commit 68b403c9f70a1e3529fbc50d5490e7f0642ef028
 Author: Hendrik Leppkes <h.leppkes@gmail.com>
-Date:   Thu Jun 29 15:56:00 2017 +0200
+Date:   Tue Aug 29 23:27:35 2017 +0200
 
-    Fix combo points in "bar" layout
+    Update TOC for 7.3
 

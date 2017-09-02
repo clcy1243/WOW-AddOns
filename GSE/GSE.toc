@@ -1,8 +1,8 @@
-## Interface: 70250
+## Interface: 70300
 ## Title: |cffff0000GSE2:|r |cFF00D1FFGnome Sequencer Enhanced|r
 ## Notes: Allows you to execute a sequence of macros without stopping on unusable spells.
 ## Author: TimothyLuke
-## Version: 2104
+## Version: 2107
 ## SavedVariables: GSEOptions GSELibrary
 ## OptionalDeps: WeakAuras
 
@@ -68,6 +68,7 @@ GUI\Import.lua
 GUI\Export.lua
 GUI\DebugWindow.lua
 GUI\Transmission.lua
+GUI\LDBProvider.lua
 GUI\VersionManagement.lua
 GUI\Recorder.lua
 GUI\Editor.lua

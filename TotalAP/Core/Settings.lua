@@ -58,8 +58,6 @@ local defaultSettings =	{
 			size = 18,
 			border = 1,
 			inset = 1,
-			
-			alignment = "center", -- TODO: Provide option via GUI (AceConfig)
 		},
 		
 		-- Controls what information is displayed in the tooltip
@@ -77,7 +75,7 @@ local defaultSettings =	{
 			border = 1,
 			inset = 1,
 			showMiniBar = true,
-			alignment = "top", -- TODO: Provide option via GUI (AceConfig)
+			alignment = "center", -- TODO: Provide option via GUI (AceConfig)
 			
 			progressBar = {
 				red = 250,
@@ -224,7 +222,6 @@ local validators = {
 	["infoFrame.inBankBar.alpha"] = IsDecimalFraction,
 	
 	["specIcons"] = IsTable,
-	["specIcons.alignment"] = IsAlignmentString,
 	["specIcons.border"] = IsNumber,
 	["specIcons.enabled"] = IsBoolean,
 	["specIcons.inset"] = IsNumber,

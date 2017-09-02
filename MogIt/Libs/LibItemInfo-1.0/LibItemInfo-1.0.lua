@@ -1,4 +1,4 @@
-local MAJOR, MINOR = "LibItemInfo-1.0", 5
+local MAJOR, MINOR = "LibItemInfo-1.0", 6
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not lib then return end
@@ -25,8 +25,9 @@ local function onUpdate(self)
 	lib.callbacks:Fire("OnItemInfoReceivedBatch")
 	if not next(lib.queue) then
 		self:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
-		self:Hide()
 	end
+	-- always hide after an update to prevent endless reattempting of items that for whatever reason never returns data
+	self:Hide()
 end
 
 lib.frame = lib.frame or CreateFrame("Frame")

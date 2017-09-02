@@ -76,7 +76,8 @@ ThreatPlates.DebuffMode = {
   ["whitelistMine"] = L["White List (Mine)"],
   ["blacklistMine"] = L["Black List (Mine)"],
   ["all"] = L["All Auras"],
-  ["allMine"] = L["All Auras (Mine)"]
+  ["allMine"] = L["All Auras (Mine)"],
+  ["BLIZZARD"] = L["Blizzard"]
 }
 
 ThreatPlates.SPEC_ROLES = {
@@ -105,39 +106,39 @@ ThreatPlates.FontStyle = {
 
 -- "By Threat", "By Level Color", "By Normal/Elite/Boss"
 ThreatPlates.ENEMY_TEXT_COLOR = {
-  CLASS = "By Class",
-  CUSTOM = "By Custom Color",
-  REACTION = "By Reaction",
-  HEALTH = "By Health",
+  CLASS = L["By Class"],
+  CUSTOM = L["By Custom Color"],
+  REACTION = L["By Reaction"],
+  HEALTH = L["By Health"],
 }
 
 ThreatPlates.FRIENDLY_TEXT_COLOR = {
-  CLASS = "By Class",
-  CUSTOM = "By Custom Color",
-  REACTION = "By Reaction",
-  HEALTH = "By Health",
+  CLASS = L["By Class"],
+  CUSTOM = L["By Custom Color"],
+  REACTION = L["By Reaction"],
+  HEALTH = L["By Health"],
 }
 
 -- NPC Role, Guild, or Quest", "Quest",
 ThreatPlates.ENEMY_SUBTEXT = {
-  NONE = "None",
-  HEALTH = "Percent Health",
-  ROLE = "NPC Role",
-  ROLE_GUILD = "NPC Role, Guild",
-  ROLE_GUILD_LEVEL = "NPC Role, Guild, or Level",
-  LEVEL = "Level",
-  ALL = "Everything"
+  NONE = L["None"],
+  HEALTH = L["Health"],
+  ROLE = L["NPC Role"],
+  ROLE_GUILD = L["NPC Role, Guild"],
+  ROLE_GUILD_LEVEL = L["NPC Role, Guild, or Level"],
+  LEVEL = L["Level"],
+  ALL = L["Everything"],
 }
 
 -- "NPC Role, Guild, or Quest", "Quest"
 ThreatPlates.FRIENDLY_SUBTEXT = {
-  NONE = "None",
-  HEALTH = "Percent Health",
-  ROLE = "NPC Role",
-  ROLE_GUILD = "NPC Role, Guild",
-  ROLE_GUILD_LEVEL = "NPC Role, Guild, or Level",
-  LEVEL = "Level",
-  ALL = "Everything"
+  NONE = L["None"],
+  HEALTH = L["Health"],
+  ROLE = L["NPC Role"],
+  ROLE_GUILD = L["NPC Role, Guild"],
+  ROLE_GUILD_LEVEL = L["NPC Role, Guild, or Level"],
+  LEVEL = L["Level"],
+  ALL = L["Everything"],
 }
 
 -------------------------------------------------------------------------------
@@ -289,14 +290,26 @@ ThreatPlates.DEFAULT_SETTINGS = {
     ShowThreatGlowOffTank = true,
     NamePlateEnemyClickThrough = false,
     NamePlateFriendlyClickThrough = false,
+    ShowFriendlyBlizzardNameplates = false,
     HeadlineView = {
       ON = false,
       name = {
         size = 10,
-        width = 140, -- old default: 116,
-        height = 14,
+        -- width = 140, -- same as for healthbar view -- old default: 116,
+        -- height = 14, -- same as for healthbar view
         x = 0,
         y = 4,
+        align = "CENTER",
+        vertical = "CENTER",
+      },
+      customtext = {
+        size = 8,
+        -- shadow = true,  -- never used
+        -- flags = "NONE", -- never used
+        -- width = 140,    -- never used, same as for healthbar view
+        -- height = 14,    -- never used, same as for healthbar view
+        x = 0,
+        y = -6,
         align = "CENTER",
         vertical = "CENTER",
       },
@@ -472,6 +485,7 @@ ThreatPlates.DEFAULT_SETTINGS = {
         [5] = true,
         [6] = true
       },
+      ShowDebuffsOnFriendly = false,
       FilterBySpell = {},
       ShowTargetOnly = false,
       ShowCooldownSpiral = false,
@@ -1455,23 +1469,24 @@ ThreatPlates.DEFAULT_SETTINGS = {
         show = true,
         ShowInHeadlineView = false,
       },
-      name = {
+      name = { -- Names for Healthbar View
+        show = true,
         typeface = DEFAULT_FONT, -- old default: "Accidental Presidency",
+        size = 10, -- old default: 14
+        shadow = true,
+        flags = "NONE",
         width = 140, -- old default: 116,
         height = 14,
-        size = 10, -- old default: 14
         x = 0,
         y = 13,
         align = "CENTER",
         vertical = "CENTER",
-        shadow = true,
-        flags = "NONE",
-        color = {
-          r = 1,
-          g = 1,
-          b = 1
-        },
-        show = true,
+        --
+        EnemyTextColorMode = "CUSTOM",
+        EnemyTextColor = RGB(255, 255, 255),
+        FriendlyTextColorMode = "CUSTOM",
+        FriendlyTextColor = RGB(255, 255, 255),
+        UseRaidMarkColoring = false,
       },
       level = {
         typeface = DEFAULT_FONT, -- old default: "Accidental Presidency",
@@ -1506,7 +1521,12 @@ ThreatPlates.DEFAULT_SETTINGS = {
         vertical = "CENTER",
         shadow = true,
         flags = "NONE",
-        show = true,
+        --
+        FriendlySubtext = "HEALTH",
+        EnemySubtext = "HEALTH",
+        SubtextColorUseHeadline = false,
+        SubtextColorUseSpecific = false,
+        SubtextColor =  RGB(255, 255, 255, 1),
       },
       spelltext = {
         typeface = DEFAULT_FONT, -- old default: "Accidental Presidency",
@@ -1679,50 +1699,53 @@ ThreatPlates.DEFAULT_SETTINGS = {
         ["NoTargetS"]  = false, -- Custom Target Alpha
         ["MarkedA"] = false,
         ["MarkedS"] = false,
-        ["CastingUnitAlpha"] = false,
-        ["CastingUnitScale"] = false,
+        ["CastingUnitAlpha"] = false, -- Friendly Unit Alpha
+        ["CastingEnemyUnitAlpha"] = false,
+        ["CastingUnitScale"] = false, -- Friendly Unit Scale
+        ["CastingEnemyUnitScale"] = false,
         ["MouseoverUnitAlpha"] = false,
-        ["MouseoverUnitScale"] = false,
       },
       scale = {
-        ["Target"]	  	    = 1,
-        ["NoTarget"]	      = 1,
-        ["Totem"]		        = 0.75,
-        ["Marked"] 		      = 1.3,
-        --["Normal"]		    = 1,
-        ["CastingUnit"]     = 1.3,
-        ["MouseoverUnit"]   = 1.3,
-        ["FriendlyPlayer"]  = 1,
-        ["FriendlyNPC"]     = 1,
-        ["Neutral"]		      = 0.9,
-        ["EnemyPlayer"]     = 1,
-        ["EnemyNPC"]        = 1,
-        ["Elite"]		        = 1.04,
-        ["Boss"]		        = 1.1,
-        ["Guardian"]       = 0.75,
-        ["Pet"]            = 0.75,
-        ["Minus"]	          = 0.6,
-        ["Tapped"] 		      = 0.9,
+        ["Target"]	  	     = 1,
+        ["NoTarget"]	       = 1,
+        ["Totem"]		         = 0.75,
+        ["Marked"] 		       = 1.3,
+        --["Normal"]		     = 1,
+        ["CastingUnit"]      = 1.3,  -- Friendly Unit Scale
+        ["CastingEnemyUnit"] = 1.3,
+        ["MouseoverUnit"]    = 1.3,
+        ["FriendlyPlayer"]   = 1,
+        ["FriendlyNPC"]      = 1,
+        ["Neutral"]		       = 0.9,
+        ["EnemyPlayer"]      = 1,
+        ["EnemyNPC"]         = 1,
+        ["Elite"]		         = 1.04,
+        ["Boss"]		         = 1.1,
+        ["Guardian"]         = 0.75,
+        ["Pet"]              = 0.75,
+        ["Minus"]	           = 0.6,
+        ["Tapped"] 		       = 0.9,
       },
       alpha = {
-        ["Target"]		      = 1,
-        ["NoTarget"]	      = 1,
-        ["Totem"]		        = 1,
-        ["Marked"] 		      = 1,
-        --["Normal"]		    = 1,
-        ["CastingUnit"]	    = 1,
-        ["MouseoverUnit"]	  = 1,
-        ["FriendlyPlayer"]  = 1,
-        ["FriendlyNPC"]     = 1,
-        ["Neutral"]		      = 1,
-        ["EnemyPlayer"]     = 1,
-        ["EnemyNPC"]        = 1,
-        ["Elite"]		        = 1,
-        ["Boss"]		        = 1,
-        ["Guardian"]        = 0.8,
-        ["Pet"]             = 0.8,
-        ["Minus"]	          = 0.8,
-        ["Tapped"]		      = 1,
+        ["Target"]		       = 1,
+        ["NoTarget"]	       = 1,
+        ["Totem"]		         = 1,
+        ["Marked"] 		       = 1,
+        --["Normal"]		     = 1,
+        ["CastingUnit"]	     = 1,  -- Friendly Unit Alpha
+        ["CastingEnemyUnit"] = 1,
+        ["MouseoverUnit"]	   = 1,
+        ["FriendlyPlayer"]   = 1,
+        ["FriendlyNPC"]      = 1,
+        ["Neutral"]		       = 1,
+        ["EnemyPlayer"]      = 1,
+        ["EnemyNPC"]         = 1,
+        ["Elite"]		         = 1,
+        ["Boss"]		         = 1,
+        ["Guardian"]         = 0.8,
+        ["Pet"]              = 0.8,
+        ["Minus"]	           = 0.8,
+        ["Tapped"]		       = 1,
       },
     },
   }

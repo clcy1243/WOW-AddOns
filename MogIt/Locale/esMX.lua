@@ -133,3 +133,4 @@ L["Width"] = "Ancho"
 L["Wishlist"] = "Lista de deseos"
 L["Wishlist profile"] = "Perfil de la lista de deseos"
 L["You have this item."] = "Usted tiene este objeto"
+

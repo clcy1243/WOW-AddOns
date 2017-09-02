@@ -1,7 +1,7 @@
 local L = BigWigsAPI:NewLocale("BigWigs", "frFR")
 if not L then return end
 
-L.getNewRelease = "Votre BigWigs est ancien (/bwv), mais vous pouvez facilement le mettre à jour en utilisant le client Curse. Vous pouvez également le mettre à jour à partir de curse.com ou wowinterface.com."
+L.getNewRelease = "Votre BigWigs est ancien (/bwv), mais vous pouvez facilement le mettre à jour en utilisant le client Twitch. Vous pouvez également le mettre à jour à partir de curse.com ou wowinterface.com."
 L.warnTwoReleases = "Votre BigWigs est obsolète de 2 versions ! Votre version risque de contenir des bugs, des fonctionnalités manquantes, voire même des délais totalement incorrects. Il est recommandé de faire la mise à jour."
 L.warnSeveralReleases = "|cffff0000Votre BigWigs est %d versions derrière la plus récente !! Il est VIVEMENT recommandé d'effectuer la mise à jour afin d'éviter tout problème de synchronisation avec les autres joueurs !|r"
 
@@ -32,7 +32,6 @@ L.BAR_desc = "Des barres sont affichées pour certaines techniques des rencontre
 L.berserk = "Berserk"
 L.berserk_desc = "Prévient quand le boss devient fou furieux."
 L.best = "Meilleur :"
-L.blizzRestrictionsConfig = "En raison de restrictions mises en place par Blizzard, la configuration doit être chargée une première fois hors combat avant de pouvoir être accessible en combat."
 L.chatMessages = "Messages de la fenêtre de discussion"
 L.chatMessagesDesc = "Affiche tous les messages de BigWigs dans la fenêtre de discussion par défaut, en plus de son affichage normal."
 L.colors = "Couleurs"

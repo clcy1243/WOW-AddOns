@@ -231,6 +231,7 @@ local TENname, _, _, _, _, _, _ = EJ_GetInstanceInfo(768) -- The Emerald Nightma
 local TNname, _, _, _, _, _, _ = EJ_GetInstanceInfo(786) -- The Nighthold
 local TOVname, _, _, _, _, _, _ = EJ_GetInstanceInfo(861) -- Trial of Valor
 local TOSname, _, _, _, _, _, _ = EJ_GetInstanceInfo(875) -- Tomb of Sargeras
+local ABTname, _, _, _, _, _, _ = EJ_GetInstanceInfo(946) -- Antorus, the Burning Throne
 
 local OSTATTEN = {
 	{
@@ -416,6 +417,75 @@ local OSTATTOS = {
 		11911, -- [3]
 		11912, -- [4]
 	}, -- [9]
+}
+
+local OSTATABT={
+  {
+    12117,
+    11954,
+    11955,
+    11956,
+  },
+  {
+    12118,
+    11957,
+    11958,
+    11959,
+  },
+  {
+    12119,
+    11960,
+    11961,
+    11962,
+  },
+  {
+    12120,
+    11963,
+    11964,
+    11965,
+  },
+  {
+    12121,
+    11966,
+    11967,
+    11968,
+  },
+  {
+    12122,
+    11969,
+    11970,
+    11971,
+  },
+  {
+    12123,
+    11972,
+    11973,
+    11974,
+  },
+  {
+    12124,
+    11975,
+    11976,
+    11977,
+  },
+  {
+    12125,
+    11978,
+    11979,
+    11980,
+  },
+  {
+    12126,
+    11981,
+    11982,
+    11983,
+  },
+  {
+    12127,
+    11984,
+    11985,
+    11986,
+  }
 }
 
 local function round(number, digits)
@@ -2487,7 +2557,7 @@ function oilvlcfgbutton(btnParent)
 		elseif button == "LeftButton" or button == "LeftButtonDown" then
 				otooltip7func()
 		else
-			PlaySound("igMainMenuOption");
+			--PlaySound("igMainMenuOption");
 			InterfaceOptionsFrameTab2:Click();
 			InterfaceOptionsFrame_OpenToCategory("O Item Level (OiLvL)")		
 		end
@@ -2939,6 +3009,12 @@ function oilvlSetOSTATTOS()
 	end
 end
 
+function oilvlSetOSTATABT()
+	for i = 1,11 do
+		OSTATABT[i][5] = select(2,GetAchievementInfo(OSTATABT[i][1])):gsub(" %(.*%)","")..""
+	end
+end
+
 -------------------------------------------------------------------------------
 -- Font definitions.
 -------------------------------------------------------------------------------
@@ -3317,6 +3393,7 @@ function OGetRaidProgression2(RaidName, OSTAT, NumRaidBosses)
 	bigorp[TENname] = Save_orp(TENname, OSTATTEN, 7)
 	bigorp[TOVname] = Save_orp(TOVname, OSTATTOV, 3)
 	bigorp[TOSname] = Save_orp(TOSname, OSTATTOS, 9)
+	--bigorp[ABTname] = Save_orp(TOSname, OSTATABT, 11)
 	
 	local function Save_orp_vars(raidname3)
 		OSTAT, NumRaidBosses, twohighest, progression, orp["raidname"], orp["progression"], orp["LFR"], orp["Normal"], orp["Heroic"], orp["Mythic"] = bigorp[raidname3][1],bigorp[raidname3][2],bigorp[raidname3][3],bigorp[raidname3][4],bigorp[raidname3][5],bigorp[raidname3][6],bigorp[raidname3][7],bigorp[raidname3][8],bigorp[raidname3][9],bigorp[raidname3][10]
@@ -3340,6 +3417,7 @@ function OGetRaidProgression2(RaidName, OSTAT, NumRaidBosses)
 	SaveAOTCCE(RaidAchiv[TENname],11194,11191) 
 	SaveAOTCCE(RaidAchiv[TOVname],11581,11580)
 	SaveAOTCCE(RaidAchiv[TOSname],11790,11874,11875)
+	--SaveAOTCCE(RaidAchiv[ABTname],11790,11874,11875)
 	
 	local oilvltooltiptexts = {}
 	for i = 1, OilvlTooltip:NumLines() do
@@ -3753,6 +3831,8 @@ function OGetRaidProgression3(RaidName, OSTAT, NumRaidBosses)
 	bigorp[TENname] = Save_orp(TENname, OSTATTEN, 7)
 	bigorp[TOVname] = Save_orp(TOVname, OSTATTOV, 3)
 	bigorp[TOSname] = Save_orp(TOSname, OSTATTOS, 9)
+	--bigorp[ABTname] = Save_orp(TOSname, OSTATABT, 11)
+
 	local function Save_orp_vars(raidname3)
 		OSTAT, NumRaidBosses, twohighest, progression, orp["raidname"], orp["progression"], orp["LFR"], orp["Normal"], orp["Heroic"], orp["Mythic"] = bigorp[raidname3][1],bigorp[raidname3][2],bigorp[raidname3][3],bigorp[raidname3][4],bigorp[raidname3][5],bigorp[raidname3][6],bigorp[raidname3][7],bigorp[raidname3][8],bigorp[raidname3][9],bigorp[raidname3][10]
 	end
@@ -3774,6 +3854,8 @@ function OGetRaidProgression3(RaidName, OSTAT, NumRaidBosses)
 	SaveAOTCCE(RaidAchiv[TENname],11194,11191) 
 	SaveAOTCCE(RaidAchiv[TOVname],11581,11580)
 	SaveAOTCCE(RaidAchiv[TOSname],11790,11874,11875)
+	--SaveAOTCCE(RaidAchiv[ABTname],11790,11874,11875)
+
 
 	local oilvltooltiptexts = {}
 	for i = 1, OilvlTooltip:NumLines() do
@@ -5407,9 +5489,14 @@ function events:INSPECT_ACHIEVEMENT_READY(...)
 			if Omover2 == 1 then
 				if UnitExists(rpunit) and CheckInteractDistance(rpunit, 1) and rpsw then
 					if cfg.raidmenuid == 4 then OGetRaidProgression2(TENname, OSTATTEN, 7); end
-					if cfg.raidmenuid == 2 then OGetRaidProgression2(TNname, OSTATTN, 10); end
 					if cfg.raidmenuid == 3 then OGetRaidProgression2(TOVname, OSTATTOV, 3); end
+					if cfg.raidmenuid == 2 then OGetRaidProgression2(TNname, OSTATTN, 10); end
 					if cfg.raidmenuid == 1 then OGetRaidProgression2(TOSname, OSTATTOS, 9); end
+					--[[if cfg.raidmenuid == 5 then OGetRaidProgression2(TENname, OSTATTEN, 7); end
+					if cfg.raidmenuid == 4 then OGetRaidProgression2(TOVname, OSTATTOV, 3); end
+					if cfg.raidmenuid == 3 then OGetRaidProgression2(TNname, OSTATTN, 10); end
+					if cfg.raidmenuid == 2 then OGetRaidProgression2(TOSname, OSTATTOS, 9); end
+					if cfg.raidmenuid == 1 then OGetRaidProgression2(ABTnamename, OSTATABT, 11); end]]
 				else
 					ClearAchievementComparisonUnit();
 					rpsw=false;
@@ -5419,9 +5506,14 @@ function events:INSPECT_ACHIEVEMENT_READY(...)
 			elseif Omover2 == 2 then
 				if UnitExists(rpunit) and CheckInteractDistance(rpunit, 1) and rpsw then
 					if cfg.raidmenuid  == 4 then OGetRaidProgression3(TENname, OSTATTEN, 7); end
-					if cfg.raidmenuid  == 2 then OGetRaidProgression3(TNname, OSTATTN, 10); end
 					if cfg.raidmenuid  == 3 then OGetRaidProgression3(TOVname, OSTATTOV, 3); end
+					if cfg.raidmenuid  == 2 then OGetRaidProgression3(TNname, OSTATTN, 10); end
 					if cfg.raidmenuid  == 1 then OGetRaidProgression3(TOSname, OSTATTOS, 9); end
+					--[[if cfg.raidmenuid == 5 then OGetRaidProgression3(TENname, OSTATTEN, 7); end
+					if cfg.raidmenuid == 4 then OGetRaidProgression3(TOVname, OSTATTOV, 3); end
+					if cfg.raidmenuid == 3 then OGetRaidProgression3(TNname, OSTATTN, 10); end
+					if cfg.raidmenuid == 2 then OGetRaidProgression3(TOSname, OSTATTOS, 9); end
+					if cfg.raidmenuid == 1 then OGetRaidProgression3(ABTnamename, OSTATABT, 11); end]]
 				else
 					ClearAchievementComparisonUnit();
 					rpsw=false;
@@ -5431,9 +5523,14 @@ function events:INSPECT_ACHIEVEMENT_READY(...)
 			else
 				if UnitExists("target") and CheckInteractDistance("target", 1)  and rpsw then
 					if cfg.raidmenuid  == 4 then OGetRaidProgression(TENname, OSTATTEN, 7); end
-					if cfg.raidmenuid  == 2 then OGetRaidProgression(TNname, OSTATTN, 10); end
 					if cfg.raidmenuid  == 3 then OGetRaidProgression(TOVname, OSTATTOV, 3); end
+					if cfg.raidmenuid  == 2 then OGetRaidProgression(TNname, OSTATTN, 10); end
 					if cfg.raidmenuid  == 1 then OGetRaidProgression(TOSname, OSTATTOS, 9); end
+					--[[if cfg.raidmenuid == 5 then OGetRaidProgression(TENname, OSTATTEN, 7); end
+					if cfg.raidmenuid == 4 then OGetRaidProgression(TOVname, OSTATTOV, 3); end
+					if cfg.raidmenuid == 3 then OGetRaidProgression(TNname, OSTATTN, 10); end
+					if cfg.raidmenuid == 2 then OGetRaidProgression(TOSname, OSTATTOS, 9); end
+					if cfg.raidmenuid == 1 then OGetRaidProgression(ABTnamename, OSTATABT, 11); end]]
 				else
 					ClearAchievementComparisonUnit();
 					rpsw=false;
@@ -5527,6 +5624,7 @@ function events:PLAYER_LOGIN(...)
 	oilvlSetOSTATTN()
 	oilvlSetOSTATTOV()
 	oilvlSetOSTATTOS()
+	oilvlSetOSTATABT()
 	--[[Fix for Lua errors with Blizzard_AchievementUI below]]--
 	local unregistered,reregistered
 	local function reregisterBlizz()
@@ -5791,6 +5889,7 @@ function OilvlRaidMenu()
 	ORaidDropDownMenu:Show()
 	 
 	local items = {
+	-- ABTname,
 	   TOSname,
 	   TNname,
 	   TOVname,
@@ -6021,7 +6120,7 @@ function LDB:OnClick(button)
 		end
 	end
 	if button == "RightButton" then
-		PlaySound("igMainMenuOption");
+		--PlaySound("igMainMenuOption");
 		InterfaceOptionsFrameTab2:Click();
 		InterfaceOptionsFrame_OpenToCategory("O Item Level (OiLvL)")
 	end

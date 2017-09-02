@@ -2121,6 +2121,7 @@ local set_bar_value = function (self, value)
 	end
 end
 
+-- ~talent ~icon
 local icon_frame_on_enter = function (self)
 	local actor = self.row.minha_tabela
 	
@@ -2375,10 +2376,10 @@ local icon_frame_on_click_up = function (self, button)
 			local diff = combat:GetDifficulty()
 			local bossInfo = combat:GetBossInfo()
 			
-			if (attribute == 1 or attribute == 2) then
+			if (attribute == 1 or attribute == 2 and bossInfo) then --if bossInfo is nil, means the combat isn't a boss
 				local db = _detalhes.OpenStorage()
 				if (db) then
-					local haveData = _detalhes.storage:HaveDataForEncounter (diff, bossInfo.id, true)
+					local haveData = _detalhes.storage:HaveDataForEncounter (diff, bossInfo.id, true) --attempt to index local 'bossInfo' (a nil value)
 					if (haveData) then
 						_detalhes:OpenRaidHistoryWindow (bossInfo.zone, bossInfo.id, diff, attribute == 1 and "damage" or "healing", true, 1, false, 2)
 					end
@@ -4485,11 +4486,11 @@ end
 
 -- search key: ~row
 function _detalhes:InstanceRefreshRows (instancia)
-
+	
 	if (instancia) then
 		self = instancia
 	end
-
+	
 	if (not self.barras or not self.barras[1]) then
 		return
 	end
@@ -4690,7 +4691,7 @@ function _detalhes:InstanceRefreshRows (instancia)
 		
 		if (is_mirror) then
 			row.right_to_left_texture:Show()
-		else
+			else
 			row.right_to_left_texture:Hide()
 		end
 		
@@ -4699,8 +4700,10 @@ function _detalhes:InstanceRefreshRows (instancia)
 			row.textura:SetVertexColor (texture_r, texture_g, texture_b, alpha)
 			row.right_to_left_texture:SetVertexColor (texture_r, texture_g, texture_b, alpha)
 		else
+			--automatically color the bar by the actor class
+			--forcing alpha 1 instead of use the alpha from the fixed color
 			local r, g, b = row.textura:GetVertexColor()
-			row.textura:SetVertexColor (r, g, b, alpha)
+			row.textura:SetVertexColor (r, g, b, 1) --alpha
 		end
 		
 		--> text class color: if true color changes on the fly through class refresh

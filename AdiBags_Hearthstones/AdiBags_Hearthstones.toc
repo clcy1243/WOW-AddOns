@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: AdiBags - Hearthstones
 ## Notes: Adds various hearthing items to AdiBags virtual groups
 ## Notes-ruRU: Добавляют разные возвращающие предметы в виртуальные группы аддона.
@@ -11,9 +11,9 @@
 ## Notes-zhTW: 增加各種傳送物品到AdiBags的虛擬類別
 ## Notes-frFR: Ajoute différents objets de type Pierre de foyer aux groupes virtuels d'AdiBags
 
-## Version: 7.2-release4
+## Version: 7.3-release1
 ## Author: Myrroddin of Llane-US (Knights of the Storm, Alliance)
-## X-Date: 2017-06-04T18:05:53Z
+## X-Date: 2017-08-28T5:13:02Z
 ## X-License: © 2016 - 2017 Paul "Myrroddin" Vandersypen, All Rights Reserved
 ## X-Category: Bags & Inventory
 ## Dependencies: AdiBags

@@ -983,7 +983,7 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 					text = text:gsub ([[@INSTANCESHOWN]], "|cFFFFFF22not visible|r")
 				end
 				
-				text = text:gsub ([[@INSTANCESEGMENT]], (instance.showing == _detalhes.tabela_vigente and "|cFF22FF22good|r" or "|cFFFFFF22isn't the current segment|r"))
+				text = text:gsub ([[@INSTANCESEGMENT]], (instance.showing == _detalhes.tabela_vigente and "|cFF22FF22good|r" or "|cFFFFFF22isn't the current combat object|r") .. (" window segment: " .. instance:GetSegment()))
 				
 				text = text:gsub ([[@INSTANCEDAMAGESTATUS]], (_detalhes._tempo - (_detalhes.LastFullDamageUpdate or 0)) < 3 and "|cFF22FF22good|r" or "|cFFFF2222last update registered is > than 3 seconds, is there actors to show?|r")
 			else
@@ -1390,6 +1390,14 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		local instance = _detalhes:GetInstance (lower_instance)
 		
 		instance:InstanceAlert ("Boss Defeated! Show Ranking", icon, 10, func, true)
+	
+	elseif (msg == "record") then	
+			
+			
+			_detalhes.ScheduleLoadStorage()
+			_detalhes.TellDamageRecord = C_Timer.NewTimer (0.6, _detalhes.PrintEncounterRecord)
+			_detalhes.TellDamageRecord.Boss = 2032
+			_detalhes.TellDamageRecord.Diff = 16
 	
 	elseif (msg == "recordtest") then	
 

@@ -11,7 +11,7 @@ function GSE.DeleteSequence(classid, sequenceName)
   GSELibrary[classid][sequenceName] = nil
 end
 
-function GSE.CloneSequence(sequence)
+function GSE.CloneSequence(sequence, keepcomments)
   local newsequence = {}
 
   for k,v in pairs(sequence) do
@@ -20,48 +20,56 @@ function GSE.CloneSequence(sequence)
 
   newsequence.MacroVersions = {}
   for k,v in ipairs(sequence.MacroVersions) do
-    newsequence.MacroVersions[tonumber(k)] = GSE.CloneMacroVersion(v)
+    newsequence.MacroVersions[tonumber(k)] = GSE.CloneMacroVersion(v, keepcomments)
   end
 
   return newsequence
 end
 
 --- This function clones the Macro Version part of a sequence.
-function GSE.CloneMacroVersion(macroversion)
+function GSE.CloneMacroVersion(macroversion, keepcomments)
   local retseq = {}
   for k,v in ipairs(macroversion) do
-    table.insert(retseq, v)
+    if GSE.isEmpty(string.find(v, '--', 1, true)) then
+      table.insert(retseq, v)
+    else
+      if not GSE.isEmpty(keepcomments) then
+        table.insert(retseq, v)
+      else
+        GSE.PrintDebugMessage(string.format("comment found %s", v), "Storage")
+      end
+    end
   end
 
   for k,v in pairs(macroversion) do
-    retseq[k] = v
-  end
-
-  if not GSE.isEmpty(macroversion.PreMacro) then
-    retseq.PreMacro = {}
-    for k,v in ipairs(macroversion.PreMacro) do
-      table.insert(retseq.PreMacro, v)
-    end
-  end
-
-  if not GSE.isEmpty(macroversion.PostMacro) then
-    retseq.PostMacro = {}
-    for k,v in ipairs(macroversion.PostMacro)do
-      table.insert(retseq.PostMacro, v)
-    end
-  end
-
-  if not GSE.isEmpty(macroversion.KeyRelease) then
-    retseq.KeyRelease = {}
-    for k,v in ipairs(macroversion.KeyRelease) do
-      table.insert(retseq.KeyRelease, v)
-    end
-  end
-
-  if not GSE.isEmpty(macroversion.KeyPress) then
-    retseq.KeyPress = {}
-    for k,v in ipairs(macroversion.KeyPress) do
-      table.insert(retseq.KeyPress, v)
+    GSE.PrintDebugMessage(string.format("Processing Key: %s KeyType: %s valuetype: %s", k, type(k), type(v)), "Storage")
+    if type(k) == "string" and type(v) == "string" then
+      if GSE.isEmpty(string.find(v, '--', 1, true)) then
+        retseq[k] = v
+      else
+        if not GSE.isEmpty(keepcomments) then
+          table.insert(retseq, v)
+        else
+          GSE.PrintDebugMessage(string.format("comment found %s", v), "Storage")
+        end
+      end
+    elseif type(k) == "string" and type(v) == "boolean" then
+      retseq[k] = v
+    elseif type(k) == "string" and type(v) == "number" then
+      retseq[k] = v
+    elseif type(k) == "string" and type(v) == "table" then
+      retseq[k] = {}
+      for i,x in ipairs(v) do
+        if GSE.isEmpty(string.find(x, '--', 1, true)) then
+          table.insert(retseq[k], x)
+        else
+          if not GSE.isEmpty(keepcomments) then
+            table.insert(retseq[k], x)
+          else
+            GSE.PrintDebugMessage(string.format("comment found %s", x), "Storage")
+          end
+        end
+      end
     end
   end
 
@@ -573,7 +581,7 @@ function GSE.OOCUpdateSequence(name,sequence)
 end
 
 function GSE.PrepareStepFunction(stepper, looper)
-  retvalue = ""
+  local retvalue = ""
   if looper then
     if GSE.isEmpty(stepper) or stepper == Statics.Sequential then
       retvalue = Statics.LoopSequentialImplementation
@@ -1141,6 +1149,7 @@ function GSE.ScanMacrosForErrors()
       end
     end
   end
+  GSE.Print(L["Finished scanning for errors.  If no other messages then no errors were found."])
 end
 
 

@@ -2,8 +2,10 @@ local L = LibStub("AceLocale-3.0"):NewLocale("BloodShieldTracker", "deDE", false
 
 if not L then return end
 
-L["Absorbed/Total Shields/Percent:"] = "Absorbiert/Alle Schilde/Prozent"
-L["AppliedSoundDesc"] = "Sound der abgespielt wird, wenn ein Blutschild gewirkt wird."
+L["Absorbed/Total Shields/Percent:"] = "Absorbiert/Schilde Gesamt/Prozent:"
+L["All"] = "Alle"
+L["Anchor"] = "Anker"
+L["AppliedSoundDesc"] = "Sound der abgespielt wird, wenn Blutschild gewirkt wird."
 L["Bar Color"] = "Balkenfarbe"
 L["Bar Depleted Color"] = "Leere Balkenfarbe"
 L["BarTexture_OptionDesc"] = "Textur für den Statusbalken."
@@ -102,4 +104,7 @@ L["Thick Outline"] = "Dicke Umrandung"
 L["Time Remaining"] = "Verbleibende Zeit"
 L["TimePosition_OptionDesc"] = "Position der verbleibenden Zeit auf dem Balken."
 L["Total Data"] = "Alle Daten"
+L["Tukui"] = true
 L["Width"] = "Breite"
+L["Zero"] = "Null"
+

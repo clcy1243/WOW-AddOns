@@ -90,6 +90,8 @@ function GSE.SetDefaultOptions()
   GSEOptions.CreateGlobalButtons = false
   GSEOptions.HideLoginMessage = false
   GSEOptions.DebugPrintModConditionsOnKeyPress = false
+  GSEOptions.showGSEUsers = false
+  GSEOptions.showGSEoocqueue = true
 
   GSE.resetMacroResetModifiers()
 end
@@ -114,3 +116,4 @@ GSE.PrintAvailable = false
 GSE.StandardAddInPacks = {}
 GSE.UsedSequences = {}
 GSE.SequencesExec = {}
+GSE.UnsavedOptions["PartyUsers"]={}

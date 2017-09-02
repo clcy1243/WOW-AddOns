@@ -1,6 +1,10 @@
---	23:54 04.08.2017
+--	22:22 27.08.2017
 
 --[[
+3885
+* 7.3.0 Update
+* Saving log: added options for difficulties
+
 3880
 * Note: added custom Weak Auras event for updating note: "EXRT_NOTE_UPDATE"
 * Fight log: minor fixes (powers gain, report for named mobs (KJ for ex.))
@@ -11,7 +15,7 @@
 ]]
 local GlobalAddonName, ExRT = ...
 
-ExRT.V = 3880
+ExRT.V = 3885
 ExRT.T = "R"
 
 ExRT.OnUpdate = {}		--> таймеры, OnUpdate функции

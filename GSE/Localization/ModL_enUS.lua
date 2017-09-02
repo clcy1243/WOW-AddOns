@@ -207,9 +207,6 @@ L["This will display debug messages for the GS-E Ingame Transmission and transfe
 -- New Strings 1.4
 L["Use Head Item in KeyRelease"] = true
 L["Incorporate the Head slot into the KeyRelease. This is the equivalent of /use [combat] 1 in a KeyRelease."] = true
-L["GS-E: Left Click to open the Sequence Editor"] = true
-L["GS-E: Middle Click to open the Transmission Interface"] = true
-L["GS-E: Right Click to open the Sequence Debugger"] = true
 L["Sequence Debugger"] = true
 L["Gnome Sequencer: Sequence Debugger. Monitor the Execution of your Macro"] = true
 L["Output"] = true
@@ -359,3 +356,28 @@ L["Error found in version %i of %s."] = true
 L["To correct this either delete the version via the GSE Editor or enter the following command to delete this macro totally.  %s/run GSE.DeleteSequence (%i, %s)%s"] = true
 L["/gs checkmacrosforerrors|r will loop through your macros and check for corrupt macro versions.  This will then show how to correct these issues."] = true
 L["By setting this value the Sequence Editor will show every macro for your class.  Turning this off will only show the class macros for your current specialisation."] = true
+
+-- GSE 2.1.04
+L["Macro found by the name %sWW%s. Rename this macro to a different name to be able to use it.  WOW has a hidden button called WW that is executed instead of this macro."] = true
+
+-- GSE 2.1.05
+L["GSE has a LibDataBroker (LDB) data feed.  List Other GSE Users and their version when in a group on the tooltip to this feed."] = true
+L["Show GSE Users in LDB"] = true
+L["Show OOC Queue in LDB"] = true
+L["GSE has a LibDataBroker (LDB) data feed.  Set this option to show queued Out of Combat events in the tooltip."] = true
+L["GSE Users"] = true
+L["There are no events in out of combat queue"] = true
+L["There are %i events in out of combat queue"] = true
+L["GSE Version: %s"] = true
+L["GSE: Left Click to open the Sequence Editor"] = true
+L["GSE: Middle Click to open the Transmission Interface"] = true
+L["GSE: Right Click to open the Sequence Debugger"] = true
+L["Finished scanning for errors.  If no other messages then no errors were found."] = true
+L["UpdateSequence"] = "Update Sequence"
+L["Replace"] = true
+L["openviewer"] = "Open Viewer"
+L["CheckMacroCreated"] = "Check Macro Created"
+L["Paused"] = true
+L["Running"] = true
+L["Paused - In Combat"]  = true
+L["The GSE Out of Combat queue is %s"] = true

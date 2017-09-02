@@ -7,9 +7,16 @@ local ThreatPlates = NAMESPACE.ThreatPlates
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
 ---------------------------------------------------------------------------------------------------
+local pairs = pairs
+
 local DEBUG = ThreatPlates.DEBUG
 local SetStyle = TidyPlatesThreat.SetStyle
 
+ThreatPlatesWidgets = {}
+ThreatPlatesWidgets.list = {}
+local ThreatPlatesWidgets = ThreatPlatesWidgets
+
+---------------------------------------------------------------------------------------------------
 -- Information about widget layering, from highest to lowest
 --    +2: combo points
 -- 		+1: auras
@@ -20,11 +27,6 @@ local SetStyle = TidyPlatesThreat.SetStyle
 --  lower frame: healthbar -> health border, threat border, highlight (like healborder)
 -- Current state:
 --   name text is layered above combo point widget
-
-ThreatPlatesWidgets = {}
-ThreatPlatesWidgets.list = {}
-
----------------------------------------------------------------------------------------------------
 
 local function DummyFalse() return false end
 
@@ -66,9 +68,9 @@ local function OnInitialize(plate, theme)
     --		end
 
     for name,v in pairs(ThreatPlatesWidgets.list) do
-      if v.enabled() then
-        local widget = widget_list[name]
+      local widget = widget_list[name]
 
+      if v.enabled() then
         if not widget then
           widget = v.create(plate) -- UpdateConfig should/must be called in create()
           --widget.TP_Widget = true -- mark ThreatPlates widgets
@@ -76,11 +78,11 @@ local function OnInitialize(plate, theme)
         else
           if widget.UpdateConfig then widget:UpdateConfig() end
         end
-      else
-        HideWidget(widget_list, name)
+      elseif widget then
+        widget:Hide()
+        widget_list[name] = nil -- deleted the disabled widget, is that what we want? no re-using it later ...
       end
     end
-
   end
 end
 
@@ -115,12 +117,12 @@ local function OnUpdate(plate, unit)
 
   local widget_list = plate.widgets
   for name,v in pairs(ThreatPlatesWidgets.list) do
+    local widget = widget_list[name]
+
     local show_healthbar_view = v.enabled()
     local show_headline_view = v.EnabledInHeadlineView()
 
     if show_healthbar_view or show_headline_view then
-      local widget = widget_list[name]
-
       -- Because widgets can be disabled anytime, it is not guaranteed that it exists after OnInitialize
       if not widget then
         widget = v.create(plate)
@@ -131,7 +133,6 @@ local function OnUpdate(plate, unit)
       if style == "NameOnly" or style == "NameOnly-Unique" then
         if show_headline_view then
           if not v.isContext then
-            unit.TP_Style = style
             widget:Update(unit)
             if unit.isTarget then	plate:SetFrameStrata("LOW") else plate:SetFrameStrata("BACKGROUND")	end
           end
@@ -143,15 +144,15 @@ local function OnUpdate(plate, unit)
       elseif show_healthbar_view then -- any other style
         -- context means that widget is only relevant for target (or mouse-over)
         if not v.isContext then
-          unit.TP_Style = style
           widget:Update(unit)
           if unit.isTarget then	plate:SetFrameStrata("LOW") else plate:SetFrameStrata("BACKGROUND") end
         end
       else
         widget:Hide()
       end
-    else
-      HideWidget(widget_list, name)
+    elseif widget then
+      widget:Hide()
+      widget_list[name] = nil -- deleted the disabled widget, is that what we want? no re-using it later ...
     end
   end
 end
@@ -163,12 +164,12 @@ local function OnContextUpdate(plate, unit)
 
   local widget_list = plate.widgets
   for name,v in pairs(ThreatPlatesWidgets.list) do
+    local widget = widget_list[name]
+
     local show_healthbar_view = v.enabled()
     local show_headline_view = v.EnabledInHeadlineView()
 
     if show_healthbar_view or show_headline_view then
-      local widget = widget_list[name]
-
       -- Because widgets can be disabled anytime, it is not guaranteed that it exists after OnInitialize
       if not widget then
         widget = v.create(plate)
@@ -178,7 +179,6 @@ local function OnContextUpdate(plate, unit)
       local style = SetStyle(unit)
       if style == "NameOnly" or style == "NameOnly-Unique" then
         if show_headline_view then
-          unit.TP_Style = style
           widget:UpdateContext(unit)
           if unit.isTarget then	plate:SetFrameStrata("LOW") else plate:SetFrameStrata("BACKGROUND") end
         else
@@ -187,14 +187,14 @@ local function OnContextUpdate(plate, unit)
       elseif style == "etotem" or style == "empty" then
         widget:Hide()
       elseif show_healthbar_view then -- any other style
-        unit.TP_Style = style
         widget:UpdateContext(unit)
         if unit.isTarget then	plate:SetFrameStrata("LOW") else plate:SetFrameStrata("BACKGROUND") end
       else
         widget:Hide()
       end
-    else
-      HideWidget(widget_list, name)
+    elseif widget then
+      widget:Hide()
+      widget_list[name] = nil -- deleted the disabled widget, is that what we want? no re-using it later ...
     end
   end
 end

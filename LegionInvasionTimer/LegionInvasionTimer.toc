@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: LegionInvasionTimer
 ## Author: Funkydude
 ## Notes: Shows the Legion invasion timer.
@@ -13,7 +13,7 @@
 ## Notes-ptBR: Mostra o timer da invasão da legião.
 ## Notes-ruRU: Показывает время и место вторжений Легиона.
 ## SavedVariables: legionTimerDB
-## Version: v7.2.11
+## Version: v7.3.0
 ## X-Category: Miscellaneous
 ## X-License: All Rights Reserved: You are free to fork and modify on GitHub, please ask us about anything else.
 ## X-Curse-Project-ID: 101625

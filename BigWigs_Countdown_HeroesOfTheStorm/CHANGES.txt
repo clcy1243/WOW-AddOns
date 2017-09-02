@@ -1,24 +1,47 @@
-tag c8454aed6205756accc3aef5950c881151857a54 1.1.2
+tag 9b6cf0ca1dd2c6e917b467adef8c81704a8ebb07 1.1.3
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Fri Jun 2 02:04:21 2017 -0500
+Date:	Tue Aug 29 21:29:50 2017 -0500
 
-Tagging as 1.1.2
+Tagging as 1.1.3
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-commit d31ba2aeb0715ca3a11e37e1d95b4583a9fef267
+iQIcBAABCAAGBQJZpiMfAAoJEPlfCSXcNecUx6IQAIvxOGuqhzBPm7Ky1CG3a90l
+cBK2SQsJEWl98q8NLBFkpBbPPREfp+VWUtHb4EiC+gI6jkHLEDAf7nuHUDHjyXqJ
+doUpqIYSH2NNWYw7Z4jdv4LbedErqORA2W3PQc/dFhYbJOdtIbldI4RJih2pWmum
+wP5yJ6wYTmSLCb4w0A7/P7ncULFQEnLTME75Kx0248mQ8o6cjLz3eKq8hBDDCXBx
+NrsJoCPU/C6ehc2bW/Fth609RS8zip5gQsPdQtowy+qtBnEWB+tyr5bjVBrEF16H
+DqgMXfvvD6OOtxOrgMYoLFH8cmDtyNgXi6Q0TknxkgybRtg1I//EjufLN6JtfAcq
+tAEKKhjSDDRQbZHUONa5PHkePP9eSFcwZYy1hCMh9lJTc362o+WN1lRc1eK1pgvt
+wZBWoMxlX5WdOxZj2K6UJDW/lz1Evub6fas+fY2R83kZyM3tPSlBvf/iJi96LoRH
+QFYSVWNJz7utsNYrjceb5subF2tsfX1UkmG4oEL2WAV36Wc/VRetdSc7uyGcoJtF
+N0mPrPI38ieNytdWLdcrstl0Sx7MzpRjLlw4nzJKV60w/GqHb0PoGFF4s1j4AOEw
+4p0MwRnRLFspizegpYiz1xwMNfYjjQYPQDuguI/ZxvdXraOEKn2ZnCE6kEf4UifT
+jKQtvyjsp49r/7fJIK3y
+=rm1V
+-----END PGP SIGNATURE-----
+
+commit 84e7c583a9f61dde1823f19de126ca351a98c2b4
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Fri May 26 20:24:58 2017 -0500
+Date:   Tue Aug 29 20:57:20 2017 -0500
 
-    Add D.Va and Genji
+    Update TOC for 7.3
 
-commit ae6f5193c9dcd340401534c7ce7dd302b9d2b705
+commit 0c4bc54ab2a18fcd90b528733309c7a8710c0a13
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Sun Apr 30 13:35:50 2017 -0500
+Date:   Tue Aug 29 20:32:49 2017 -0500
 
-    Add Butcher (nonverbal)
+    Add Jaina and Kel'Thuzad
 
-commit df1e51c1cb850c66450876a3471226ceb0283924
+commit 209542d83c5f439d0dc4e2ac6964ab1e82c6c9ba
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Tue Apr 25 17:22:31 2017 -0500
+Date:   Mon Jul 31 23:09:57 2017 -0500
 
-    Update README.md
+    Localize all the things! Drop WowAce localization.
+
+commit bea317cba90aa03fe815f5f3c137eff688c78bae
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Mon Jul 31 21:08:43 2017 -0500
+
+    Add Garrosh
 

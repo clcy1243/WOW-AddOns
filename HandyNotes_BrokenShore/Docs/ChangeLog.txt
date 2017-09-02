@@ -1,7 +1,16 @@
-$Id: ChangeLog.txt 70 2017-07-02 14:53:21Z arith $
+$Id: ChangeLog.txt 79 2017-08-31 14:53:46Z arith $
 
 Revision History:
 =================
+
+* v1.21 (Aug. 31, 2017)
+-----------------------
+- Lib Update: LibUIDropDownMenu
+
+* v1.20 (Aug. 30, 2017)
+-----------------------
+- ToC update to support WoW 7.3.0
+- Lib Update: LibUIDropDownMenu, LibBabble-SubZone-3.0
 
 * v1.19 (Jul. 02, 2017)
 -----------------------

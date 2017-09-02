@@ -6,7 +6,7 @@
  local LSM = LibStub("LibSharedMedia-3.0")
  local self, GSA, PlaySoundFile = GladiatorlosSA, GladiatorlosSA, PlaySoundFile
  local GSA_TEXT = "|cff69CCF0GladiatorlosSA2|r (|cffFFF569/gsa|r)"
- local GSA_VERSION = "|cffFF7D0A v1.16 |r(|cFF00FF967.2.0 Legion|r)"
+ local GSA_VERSION = "|cffFF7D0A v1.16.2 |r(|cFF00FF967.3 Legion|r)"
  local GSA_AUTHOR = " "
  local gsadb
  local soundz,sourcetype,sourceuid,desttype,destuid = {},{},{},{},{}
@@ -232,7 +232,7 @@
 		type = 'execute',
 		func = function() 
 		self:OnOptionCreate() 
-			bliz_options.args.load.disabled = true 
+			bliz_options.args.load.disabled = true
 			GameTooltip:Hide() 
 			--fix for in 5.3 BLZOptionsFrame can't refresh on load
 			InterfaceOptionsFrame:Hide() 
@@ -486,10 +486,12 @@
 -- play drinking in arena
  local DRINK_SPELL, REFRESHMENT_SPELL, FOOD_SPELL = GetSpellInfo(104270), GetSpellInfo(167152), GetSpellInfo(5006), GetSpellInfo(138292)
  function GladiatorlosSA:UNIT_AURA(event,uid)
+ 
+ 	local _,currentZoneType = IsInInstance()
 
 	if uid:find("arena") and gsadb.drinking then
 	-- if gsadb.drinking then
-		if UnitAura(uid,DRINK_SPELL) or UnitAura(uid,REFRESHMENT_SPELL) or UnitAura(uid,FOOD_SPELL) then
+		if (UnitAura(uid,DRINK_SPELL) or UnitAura(uid,REFRESHMENT_SPELL) or UnitAura(uid,FOOD_SPELL)) and currentZoneType == "arena" then
 
 			local genderZ
 			if gsadb.genderVoice then

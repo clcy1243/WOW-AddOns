@@ -1,3 +1,21 @@
+local sounds = {} 
+for k, v in pairs(SOUNDKIT) do 
+    sounds[strlower(k:gsub("_",""))] = v 
+end 
+
+--HACK 
+local BlizPlaySound = PlaySound 
+function PlaySound(name, ...) 
+    if (tonumber(name)) then 
+        BlizPlaySound(name, ...) 
+    else 
+        name = strlower(name) 
+        if (sounds[name]) then 
+            BlizPlaySound(sounds[name]) 
+        end 
+    end 
+end
+
 local function defaultcvar()
 
     -- 截圖品質(10最高)

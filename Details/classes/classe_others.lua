@@ -230,10 +230,11 @@ function _detalhes:ToolTipDead (instancia, morte, esta_barra, keydown)
 					end
 				else
 					--> heal
-					GameCooltip:AddLine ("" .. _cstr ("%.1f", time - hora_da_morte) .. "s " .. spellname .. " (|cFFC6B0D9" .. source .. "|r)", "+" .. _detalhes:ToK (amount) .. " (" .. hp .. "%)", 1, "white", "white")
-					GameCooltip:AddIcon (spellicon)
-					GameCooltip:AddStatusBar (hp, 1, "green", true) --, backgroud_bar_heal
-					
+					if (amount > _detalhes.deathlog_healingdone_min) then
+						GameCooltip:AddLine ("" .. _cstr ("%.1f", time - hora_da_morte) .. "s " .. spellname .. " (|cFFC6B0D9" .. source .. "|r)", "+" .. _detalhes:ToK (amount) .. " (" .. hp .. "%)", 1, "white", "white")
+						GameCooltip:AddIcon (spellicon)
+						GameCooltip:AddStatusBar (hp, 1, "green", true) --, backgroud_bar_heal
+					end
 				end
 				
 			elseif (type (evtype) == "number") then
@@ -391,20 +392,25 @@ function atributo_misc:ReportSingleDeadLine (morte, instancia)
 			end
 			
 		elseif (not evento [1] and type (evento [1]) == "boolean") then --> heal
-			local elapsed = _cstr ("%.1f", evento [4] - time_of_death) .."s"
-			local spelllink = GetSpellLink (evento [2])
-			local source = _detalhes:GetOnlyName (evento [6])
-			local spellname, _, spellicon = _GetSpellInfo (evento [2])
+		
 			local amount = evento [3]
-			local hp = _math_floor (evento [5] / max_health * 100)
-			if (hp > 100) then 
-				hp = 100
-			end
+			
+			if (amount > _detalhes.deathlog_healingdone_min) then
+				local elapsed = _cstr ("%.1f", evento [4] - time_of_death) .."s"
+				local spelllink = GetSpellLink (evento [2])
+				local source = _detalhes:GetOnlyName (evento [6])
+				local spellname, _, spellicon = _GetSpellInfo (evento [2])
+				
+				local hp = _math_floor (evento [5] / max_health * 100)
+				if (hp > 100) then 
+					hp = 100
+				end
 
-			if (_detalhes.report_heal_links) then
-				tinsert (report_array, {elapsed .. " ", spelllink, " (" .. source .. ")", "+" .. _detalhes:ToK (amount) .. " (" .. hp .. "%) "})
-			else
-				tinsert (report_array, {elapsed .. " ", spellname, " (" .. source .. ")", "+" .. _detalhes:ToK (amount) .. " (" .. hp .. "%) "})
+				if (_detalhes.report_heal_links) then
+					tinsert (report_array, {elapsed .. " ", spelllink, " (" .. source .. ")", "+" .. _detalhes:ToK (amount) .. " (" .. hp .. "%) "})
+				else
+					tinsert (report_array, {elapsed .. " ", spellname, " (" .. source .. ")", "+" .. _detalhes:ToK (amount) .. " (" .. hp .. "%) "})
+				end
 			end
 			
 		elseif (type (evento [1]) == "number" and evento [1] == 4) then --> debuff

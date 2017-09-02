@@ -113,6 +113,7 @@ _You should learn these, then **sell or destroy duplicates** from your inventory
 * Ultrasafe Transporter - Gadgetzan 23489
 * Ultrasafe Transporter - Toshley's Station 36955
 * Wormhole Centrifuge 112059
+* Wormhole Generator: Argus 151652
 * Wormhole Generator: Northrend 48933
 * Wormhole Generator: Pandaria 87215
 * Tome of Town Portal 142542

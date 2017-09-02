@@ -128,3 +128,4 @@ L["Use Aura"] = "Aura"
 L["UseAura_OptionDesc"] = "Alterna si la barra del Escudo de Sangre utiliza el aura o los datos de registro de combate"
 L["Verbose"] = "Informacion detallada"
 L["Width"] = "Ancho"
+

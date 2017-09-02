@@ -1,4 +1,10 @@
 ------------------------------------------------------------------------
+r28 | mysticalos@icloud.com | 2017-08-29 03:58:46 -0500 (Tue, 29 Aug 2017) | 1 line
+Changed paths:
+   M /trunk/DBM-Archaeology.toc
+
+Bump TOCs
+------------------------------------------------------------------------
 r27 | mysticalos@icloud.com | 2017-03-28 04:17:37 -0500 (Tue, 28 Mar 2017) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc

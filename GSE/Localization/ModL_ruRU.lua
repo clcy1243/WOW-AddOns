@@ -62,7 +62,7 @@ L["Actions"] = "Действия"
 -- L["Addin Version %s contained versions for the following macros:"] = ""
 L["Alt Keys."] = "Клавиши Alt."
 L["Any Alt Key"] = "Любая Клавиша Alt"
-L["Any Control Key"] = "Любая Клавиша Ctrl"
+L["Any Control Key"] = "Любая Клавиша Ctrl "
 L["Any Shift Key"] = "Любая Клавиша Shift"
 L["Are you sure you want to delete %s?  This will delete the macro and all versions.  This action cannot be undone."] = "Вы действительно хотите удалить %s? Это приведет к удалению макроса и всех его версий. Это действие нельзя отменить."
 L["As GS-E is updated, there may be left over macros that no longer relate to sequences.  This will check for these automatically on logout.  Alternatively this check can be run via /gs cleanorphans"] = "После обновления GS-E, могут остаться макросы, которые больше не относятся к последовательностям. Проверка будет происходить автоматически при выходе. Также такая проверка может быть проведена через /gs cleanorphans "
@@ -78,11 +78,11 @@ L["Belt"] = "Пояс"
 --Translation missing 
 -- L["Blizzard Functions Colour"] = ""
 L["By setting the default Icon for all macros to be the QuestionMark, the macro button on your toolbar will change every key hit."] = "Иконка макроса на панели действий будет изменяться после каждого нажатия клавиши, по умолчанию для всех макросов установлен значок QuestionMark."
---Translation missing 
--- L["By setting this value the Sequence Editor will show every macro for every class."] = ""
---Translation missing 
--- L["By setting this value the Sequence Editor will show every macro for your class.  Turning this off will only show the class macros for your current specialisation."] = ""
+L["By setting this value the Sequence Editor will show every macro for every class."] = "Установив это значение, Sequence Editor покажет каждый макрос для каждого класса."
+L["By setting this value the Sequence Editor will show every macro for your class.  Turning this off will only show the class macros for your current specialisation."] = "Установив это значение, Sequence Editor отобразит каждый макрос для вашего класса. Если вы отключите это, будут отображаться только макросы класса для вашей текущей специализации."
 L["Cancel"] = "Отменить"
+--Translation missing 
+-- L["CheckMacroCreated"] = ""
 L["Choose Language"] = "Выберите Язык"
 --Translation missing 
 -- L["Classwide Macro"] = ""
@@ -145,10 +145,11 @@ L["Enable Mod Debug Mode"] = "Включите Режим Отладки"
 --Translation missing 
 -- L["Error found in version %i of %s."] = ""
 L["Export"] = "Экспорт"
---Translation missing 
--- L["Export a Sequence"] = ""
+L["Export a Sequence"] = "Экспорт последовательности"
 --Translation missing 
 -- L["Filter Macro Selection"] = ""
+--Translation missing 
+-- L["Finished scanning for errors.  If no other messages then no errors were found."] = ""
 --Translation missing 
 -- L["FYou cannot delete this version of a sequence.  This version will be reloaded as it is contained in "] = ""
 L["Gameplay Options"] = "Игровые Параметры"
@@ -178,6 +179,10 @@ L["Gnome Sequencer: Sequence Viewer"] = "Gnome Sequencer: просмотр По�
 L["GSE"] = "GSE"
 L["GSE allows plugins to load Macro Collections as plugins.  You can reload a collection by pressing the button below."] = "GSE allows plugins to load Macro Collections as plugins.  Вы можете перезагрузить коллекцию, нажав на кнопку ниже."
 L["GS-E can save all macros or only those versions that you have created locally.  Turning this off will cache all macros in your WTF\\GS-Core.lua variables file but will increase load times and potentially cause colissions."] = "GS-E может сохранить все макросы или только те версии, которые были созданы локально. При отключении будут записываться все макросы в WTF\\GS-Core.lua, но увеличит время загрузки и потенциально вызывать противоречия."
+--Translation missing 
+-- L["GSE has a LibDataBroker (LDB) data feed.  List Other GSE Users and their version when in a group on the tooltip to this feed."] = ""
+--Translation missing 
+-- L["GSE has a LibDataBroker (LDB) data feed.  Set this option to show queued Out of Combat events in the tooltip."] = ""
 L["GSE is a complete rewrite of that addon that allows you create a sequence of macros to be executed at the push of a button."] = "GSE - это полная перезапись этой модификации, которая позволяет вам создать последовательность макросов выполняющаяся одним нажатием кнопки."
 --Translation missing 
 -- L["GSE is out of date. You can download the newest version from https://mods.curse.com/addons/wow/gnomesequencer-enhanced."] = ""
@@ -185,16 +190,26 @@ L["GSE is a complete rewrite of that addon that allows you create a sequence of 
 -- L["GSE Macro"] = ""
 L["GS-E Plugins"] = "GS-E Плагины"
 --Translation missing 
+-- L["GSE Users"] = ""
+--Translation missing 
+-- L["GSE Version: %s"] = ""
+--Translation missing 
+-- L["GSE: Left Click to open the Sequence Editor"] = ""
+--Translation missing 
 -- L["GS-E: Left Click to open the Sequence Editor"] = ""
 --Translation missing 
+-- L["GSE: Middle Click to open the Transmission Interface"] = ""
+--Translation missing 
 -- L["GS-E: Middle Click to open the Transmission Interface"] = ""
+--Translation missing 
+-- L["GSE: Right Click to open the Sequence Debugger"] = ""
 --Translation missing 
 -- L["GS-E: Right Click to open the Sequence Debugger"] = ""
 L["Head"] = "Голова"
 --Translation missing 
 -- L["Help Colour"] = ""
 L["Help Information"] = "Справочная информация"
-L["Help Link"] = "Ссылка справки"
+L["Help Link"] = "Ссылка для справки"
 L["Help URL"] = "URL справка"
 L["Heroic"] = "Героический режим"
 L["Hide Login Message"] = "Скрыть Сообщение Входа"
@@ -204,8 +219,7 @@ L["Hides the message that GSE is loaded."] = "Скрывает сообщени�
 --Translation missing 
 -- L["If you load Gnome Sequencer - Enhanced and the Sequence Editor and want to create new macros from scratch, this will enable a first cut sequenced template that you can load into the editor as a starting point.  This enables a Hello World macro called Draik01.  You will need to do a /console reloadui after this for this to take effect."] = ""
 L["Import"] = "Импорт"
---Translation missing 
--- L["Import Macro from Forums"] = ""
+L["Import Macro from Forums"] = "Импорт макроса с форумов"
 --Translation missing 
 -- L["Imported new sequence "] = ""
 --Translation missing 
@@ -249,9 +263,10 @@ L["Left Shift Key"] = "Левая клавиша Shift "
 --Translation missing 
 -- L["Macro Collection to Import."] = ""
 --Translation missing 
--- L["Macro Icon"] = ""
+-- L["Macro found by the name %sWW%s. Rename this macro to a different name to be able to use it.  WOW has a hidden button called WW that is executed instead of this macro."] = ""
 --Translation missing 
--- L["Macro Import Successful."] = ""
+-- L["Macro Icon"] = ""
+L["Macro Import Successful."] = "Успешное импортирование макроса."
 L["Macro Reset"] = "Сброс Макро"
 --Translation missing 
 -- L["Macro unable to be imported."] = ""
@@ -285,6 +300,8 @@ L["No"] = "Нет"
 -- L["Normal Colour"] = ""
 --Translation missing 
 -- L["Only Save Local Macros"] = ""
+--Translation missing 
+-- L["openviewer"] = ""
 L["Options"] = "Параметры"
 --Translation missing 
 -- L["Options have been reset to defaults."] = ""
@@ -293,6 +310,10 @@ L["Options"] = "Параметры"
 --Translation missing 
 -- L["Output the action for each button press to verify StepFunction and spell availability."] = ""
 L["Pause"] = "Пауза"
+--Translation missing 
+-- L["Paused"] = ""
+--Translation missing 
+-- L["Paused - In Combat"] = ""
 --Translation missing 
 -- L["Picks a Custom Colour for emphasis."] = ""
 --Translation missing 
@@ -353,11 +374,12 @@ L["Record Macro"] = "Запись Макроса"
 --Translation missing 
 -- L["Registered Addons"] = ""
 --Translation missing 
+-- L["Replace"] = ""
+--Translation missing 
 -- L["Require Target to use"] = ""
 L["Reset Macro when out of combat"] = "Сбросить Макрос при выходе из боя"
 L["Resets"] = "Сбросы"
---Translation missing 
--- L["Resets macros back to the initial state when out of combat."] = ""
+L["Resets macros back to the initial state when out of combat."] = "Сбрасывает макросы обратно в исходное состояние, когда они находятся вне боя."
 L["Resume"] = "Продолжить"
 L["Right Alt Key"] = "Правая клавиша Alt"
 L["Right Control Key"] = "Правая клавиша Control"
@@ -365,6 +387,8 @@ L["Right Mouse Button"] = "Правая кнопка мыши"
 L["Right Shift Key"] = "Правая клавиша Shift"
 L["Ring 1"] = "Кольцо1"
 L["Ring 2"] = "Кольцо2"
+--Translation missing 
+-- L["Running"] = ""
 L["Save"] = "Сохранить"
 --Translation missing 
 -- L["Seed Initial Macro"] = ""
@@ -392,11 +416,14 @@ L["Sequential (1 2 3 4)"] = "Последовательно (1 2 3 4)"
 --Translation missing 
 -- L["Set Default Icon QuestionMark"] = ""
 L["Shift Keys."] = "Клавиши Shift."
---Translation missing 
--- L["Show All Macros in Editor"] = ""
-L["Show Class Macros in Editor"] = "Показывать в Редакторе Макросы Класса "
+L["Show All Macros in Editor"] = "Показать Все макросы в редакторе"
+L["Show Class Macros in Editor"] = "Показать макросы класса в редакторе"
 --Translation missing 
 -- L["Show Global Macros in Editor"] = ""
+--Translation missing 
+-- L["Show GSE Users in LDB"] = ""
+--Translation missing 
+-- L["Show OOC Queue in LDB"] = ""
 --Translation missing 
 -- L["Source Language "] = ""
 --Translation missing 
@@ -427,6 +454,8 @@ L["Target"] = "Цель"
 --Translation missing 
 -- L["The Custom StepFunction Specified is not recognised and has been ignored."] = ""
 --Translation missing 
+-- L["The GSE Out of Combat queue is %s"] = ""
+--Translation missing 
 -- L["The Macro Translator will translate an English sequence to your local language for execution.  It can also be used to translate a sequence into a different language.  It is also used for syntax based colour markup of Sequences in the editor."] = ""
 --Translation missing 
 -- L["The Sample Macros have been reloaded."] = ""
@@ -434,6 +463,10 @@ L["Target"] = "Цель"
 -- L["The Sequence Editor can attempt to parse the Sequences, KeyPress and KeyRelease in realtime.  This is still experimental so can be turned off."] = ""
 --Translation missing 
 -- L["The Sequence Editor is an addon for GnomeSequencer-Enhanced that allows you to view and edit Sequences in game.  Type "] = ""
+--Translation missing 
+-- L["There are %i events in out of combat queue"] = ""
+--Translation missing 
+-- L["There are no events in out of combat queue"] = ""
 --Translation missing 
 -- L["There are No Macros Loaded for this class.  Would you like to load the Sample Macro?"] = ""
 --Translation missing 
@@ -445,8 +478,7 @@ L["These options combine to allow you to reset a macro while it is running.  The
 -- L["This function will update macro stubs to support listening to the options below.  This is required to be completed 1 time per character."] = ""
 --Translation missing 
 -- L["This is a small addon that allows you create a sequence of macros to be executed at the push of a button."] = ""
---Translation missing 
--- L["This is the only version of this macro.  Delete the entire macro to delete this version."] = ""
+L["This is the only version of this macro.  Delete the entire macro to delete this version."] = "Это единственная версия этого макроса. Удалите весь макрос, чтобы удалить эту версию."
 --Translation missing 
 -- L["This option clears errors and stack traces ingame.  This is the equivalent of /run UIErrorsFrame:Clear() in a KeyRelease.  Turning this on will trigger a Scam warning about running custom scripts."] = ""
 L["This option dumps extra trace information to your chat window to help troubleshoot problems with the mod"] = "Этот параметр выводит дополнительную информацию трассировки в окне чата, чтобы помочь устранить проблемы"
@@ -454,10 +486,8 @@ L["This option dumps extra trace information to your chat window to help trouble
 -- L["This option hide error sounds like \"That is out of range\" from being played while you are hitting a GS Macro.  This is the equivalent of /console Sound_EnableErrorSpeech lines within a Sequence.  Turning this on will trigger a Scam warning about running custom scripts."] = ""
 --Translation missing 
 -- L["This option hides text error popups and dialogs and stack traces ingame.  This is the equivalent of /script UIErrorsFrame:Hide() in a KeyRelease.  Turning this on will trigger a Scam warning about running custom scripts."] = ""
---Translation missing 
--- L["This option prevents macros firing unless you have a target. Helps reduce mistaken targeting of other mobs/groups when your target dies."] = ""
---Translation missing 
--- L["This Sequence was exported from GSE %s."] = ""
+L["This option prevents macros firing unless you have a target. Helps reduce mistaken targeting of other mobs/groups when your target dies."] = "Этот параметр предотвращает запуск макросов, если у вас нет цели. Помогает уменьшить ошибочное нацеливание на других мобов/групп, когда ваша цель умирает."
+L["This Sequence was exported from GSE %s."] = "Эта последовательность была экспортирована из GSE %s."
 --Translation missing 
 -- L["This shows the Global Macros available as well as those for your class."] = ""
 --Translation missing 
@@ -493,6 +523,8 @@ L["Update"] = "Обновить"
 -- L["Update Macro Stubs"] = ""
 --Translation missing 
 -- L["Update Macro Stubs."] = ""
+--Translation missing 
+-- L["UpdateSequence"] = ""
 L["Updating due to new version."] = "Обновление в связи с новой версией."
 L["Use"] = "Использовать"
 --Translation missing 

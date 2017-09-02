@@ -61,6 +61,8 @@ L["By setting the default Icon for all macros to be the QuestionMark, the macro 
 L["By setting this value the Sequence Editor will show every macro for every class."] = "勾选此项,插件将显示全部职业的全部宏."
 L["By setting this value the Sequence Editor will show every macro for your class.  Turning this off will only show the class macros for your current specialisation."] = "勾选此项,序列编辑器将显示职业的全部专精的宏.否则只显示当前专精的宏."
 L["Cancel"] = "撤销/取消"
+--Translation missing 
+-- L["CheckMacroCreated"] = ""
 L["Choose Language"] = "选择语言"
 L["Classwide Macro"] = "职业通用宏"
 L["Clear"] = "清除"
@@ -107,6 +109,8 @@ L["Error found in version %i of %s."] = "版本 %i 在序列 %s 中被发现错�
 L["Export"] = "导出"
 L["Export a Sequence"] = "导出序列"
 L["Filter Macro Selection"] = "宏过滤选择器"
+--Translation missing 
+-- L["Finished scanning for errors.  If no other messages then no errors were found."] = ""
 L["FYou cannot delete this version of a sequence.  This version will be reloaded as it is contained in "] = "F你不能删除此版本的序列.这个版本将被重新加载,因为它包含在 "
 L["Gameplay Options"] = "游戏选项"
 L["General"] = "常规"
@@ -125,12 +129,26 @@ L["GnomeSequencer-Enhanced loaded.|r  Type "] = "GnomeSequencer-增强 加载.|r
 L["GSE"] = "GSE"
 L["GSE allows plugins to load Macro Collections as plugins.  You can reload a collection by pressing the button below."] = "GSE允许插件加载宏整合包作为插件. 你可以按下面的按钮重新加载整合包."
 L["GS-E can save all macros or only those versions that you have created locally.  Turning this off will cache all macros in your WTF\\GS-Core.lua variables file but will increase load times and potentially cause colissions."] = "GS-E可以保存所有的宏或只有那些你所创建的本地版本.关闭这个功能会在你的WTF \\ gs-core.lua变量文件缓存所有宏,但会增加加载时间,并有可能引起冲突."
+--Translation missing 
+-- L["GSE has a LibDataBroker (LDB) data feed.  List Other GSE Users and their version when in a group on the tooltip to this feed."] = ""
+--Translation missing 
+-- L["GSE has a LibDataBroker (LDB) data feed.  Set this option to show queued Out of Combat events in the tooltip."] = ""
 L["GSE is a complete rewrite of that addon that allows you create a sequence of macros to be executed at the push of a button."] = "GSE是这个插件的完整的重写.这允许你创建一个宏的序列,在按下按钮时执行."
 L["GSE is out of date. You can download the newest version from https://mods.curse.com/addons/wow/gnomesequencer-enhanced."] = "GSE 已过期. 你可以在  https://mods.curse.com/addons/wow/gnomesequencer-enhanced 下载新版本."
 L["GSE Macro"] = "GSE 宏"
 L["GS-E Plugins"] = "GS-E 插件"
+--Translation missing 
+-- L["GSE Users"] = ""
+--Translation missing 
+-- L["GSE Version: %s"] = ""
+--Translation missing 
+-- L["GSE: Left Click to open the Sequence Editor"] = ""
 L["GS-E: Left Click to open the Sequence Editor"] = "GS-E: 左键单击以打开序列编辑器"
+--Translation missing 
+-- L["GSE: Middle Click to open the Transmission Interface"] = ""
 L["GS-E: Middle Click to open the Transmission Interface"] = "GS-E: 中键单击以打开传输界面"
+--Translation missing 
+-- L["GSE: Right Click to open the Sequence Debugger"] = ""
 L["GS-E: Right Click to open the Sequence Debugger"] = "GS-E: 右键单击以打开序列调试器"
 L["Head"] = "头部"
 L["Help Colour"] = "帮助颜色"
@@ -168,6 +186,8 @@ L["Like a /castsequence macro, it cycles through a series of commands when the b
 L["Load"] = "读取"
 L["Load Sequence"] = "读取序列"
 L["Macro Collection to Import."] = "宏集合导入."
+--Translation missing 
+-- L["Macro found by the name %sWW%s. Rename this macro to a different name to be able to use it.  WOW has a hidden button called WW that is executed instead of this macro."] = ""
 L["Macro Icon"] = "宏图标"
 L["Macro Import Successful."] = "宏导入成功."
 L["Macro Reset"] = "宏重置"
@@ -191,11 +211,17 @@ L["No Help Information Available"] = "没有帮助信息可用"
 L["No Sequences present so none displayed in the list."] = "当前没有序列,因此列表中无内容."
 L["Normal Colour"] = "通常颜色"
 L["Only Save Local Macros"] = "仅保存本地宏"
+--Translation missing 
+-- L["openviewer"] = ""
 L["Options"] = "设置"
 L["Options have been reset to defaults."] = "设置已被重置为默认值."
 L["Output"] = "导出"
 L["Output the action for each button press to verify StepFunction and spell availability."] = "输出按钮按下后的每个的动作以验证步骤方法和法术的可用性."
 L["Pause"] = "暂停"
+--Translation missing 
+-- L["Paused"] = ""
+--Translation missing 
+-- L["Paused - In Combat"] = ""
 L["Picks a Custom Colour for emphasis."] = "拾取一个颜色给强调."
 L["Picks a Custom Colour for the Author."] = "拾取一个颜色给作者."
 L["Picks a Custom Colour for the Commands."] = "拾取一个颜色给命令."
@@ -228,6 +254,8 @@ L["Received Sequence "] = "接收序列 "
 L["Record"] = "记录"
 L["Record Macro"] = "记录宏"
 L["Registered Addons"] = "注册插件"
+--Translation missing 
+-- L["Replace"] = ""
 L["Require Target to use"] = "需要使用目标"
 L["Reset Macro when out of combat"] = "当离开战斗时重置宏"
 L["Resets"] = "重置"
@@ -239,6 +267,8 @@ L["Right Mouse Button"] = "鼠标右键"
 L["Right Shift Key"] = "右Shift键"
 L["Ring 1"] = "戒指 1"
 L["Ring 2"] = "戒指 2"
+--Translation missing 
+-- L["Running"] = ""
 L["Save"] = "保存"
 L["Seed Initial Macro"] = "种子初始宏"
 L["Select Other Version"] = "选择其他版本"
@@ -259,6 +289,10 @@ L["Shift Keys."] = "Shift键."
 L["Show All Macros in Editor"] = "在编辑器显示全部宏"
 L["Show Class Macros in Editor"] = "在编辑器显示职业宏"
 L["Show Global Macros in Editor"] = "在编辑器显示全局宏"
+--Translation missing 
+-- L["Show GSE Users in LDB"] = ""
+--Translation missing 
+-- L["Show OOC Queue in LDB"] = ""
 L["Source Language "] = "源语言 "
 L["Specialisation / Class ID"] = "专精 / 职业 ID"
 L["Specialization Specific Macro"] = "专精特定宏"
@@ -275,10 +309,16 @@ L["Target"] = "目标"
 L["Target language "] = "目标语言 "
 L["The command "] = "命令 "
 L["The Custom StepFunction Specified is not recognised and has been ignored."] = "指定的自定义步骤方法无法识别,并已被忽略."
+--Translation missing 
+-- L["The GSE Out of Combat queue is %s"] = ""
 L["The Macro Translator will translate an English sequence to your local language for execution.  It can also be used to translate a sequence into a different language.  It is also used for syntax based colour markup of Sequences in the editor."] = "宏翻译器将英语序列翻译成你的本地语言以供执行. 它也可以用于将序列翻译成不同的语言. 同时可用于编辑器中基于语法的颜色标记."
 L["The Sample Macros have been reloaded."] = "示例宏已重新加载."
 L["The Sequence Editor can attempt to parse the Sequences, KeyPress and KeyRelease in realtime.  This is still experimental so can be turned off."] = "序列编辑器可以尝试实时解析序列,按键按下/释放.这仍然是实验功能所以可以关闭."
 L["The Sequence Editor is an addon for GnomeSequencer-Enhanced that allows you to view and edit Sequences in game.  Type "] = "序列编辑器是 GnomeSequencer-增强 的插件,允许你在游戏中查看和编辑序列.  输入 "
+--Translation missing 
+-- L["There are %i events in out of combat queue"] = ""
+--Translation missing 
+-- L["There are no events in out of combat queue"] = ""
 L["There are No Macros Loaded for this class.  Would you like to load the Sample Macro?"] = "这个职业没有任何宏. 你要加载示例宏吗?"
 L["There is an issue with sequence %s.  It has not been loaded to prevent the mod from failing."] = "序列%s存在错误. 它没有被加载,以防止模组出错."
 L["These options combine to allow you to reset a macro while it is running.  These options are Cumulative ie they add to each other.  Options Like LeftClick and RightClick won't work together very well."] = "这些选项组合允许你在运行宏时重置宏.这些选项是累加的.类似同时选择左键单击和右键单击,无法很好的协作."
@@ -311,6 +351,8 @@ L["Unknown Colour"] = "未知颜色"
 L["Update"] = "更新"
 L["Update Macro Stubs"] = "升级宏存根"
 L["Update Macro Stubs."] = "升级宏存根."
+--Translation missing 
+-- L["UpdateSequence"] = ""
 L["Updating due to new version."] = "更新至新版本."
 L["Use"] = "使用"
 L["Use Belt Item in KeyRelease"] = "使用腰部物品在释放按键"

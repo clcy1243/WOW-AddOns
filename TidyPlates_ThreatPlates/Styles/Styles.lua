@@ -11,6 +11,7 @@ local UnitIsOtherPlayersPet = UnitIsOtherPlayersPet
 local UnitIsBattlePet = UnitIsBattlePet
 local IsInInstance = IsInInstance
 
+local TidyPlatesThreat = TidyPlatesThreat
 local TOTEMS = ThreatPlates.TOTEMS
 local GetUnitVisibility = ThreatPlates.GetUnitVisibility
 local FixUpdateUnitCondition = ThreatPlates.FixUpdateUnitCondition
@@ -226,7 +227,7 @@ local function SetStyle(unit)
       if unique_setting.showNameplate then
         style = "unique"
       elseif unique_setting.ShowHeadlineView then
-        style = "NameOnly-Unique"
+        style = (db.HeadlineView.ON and "NameOnly-Unique") or "unique"
       end
     elseif unit_type == "Totem" then
       local unit_name = unit.name
@@ -263,6 +264,8 @@ local function SetStyle(unit)
     end
   end
 
+  unit.TP_Style = style
+  unit.TP_UniqueSetting = unique_setting
   return style, unique_setting
 end
 

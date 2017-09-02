@@ -38,8 +38,6 @@ local keybindHandlers = {
 	
 	["AllDisplaysToggle"] = function(settings) -- Toggle the entire display via keybind or slash command (will override individual components' settings, but not overwrite them)
 		
-		-- TODO: This should be done via GUI module?
-		TotalAP.Controllers.ToggleGUI()
 		TotalAP.Debug("Toggled display manually - individual components are unaffected, but won't be checked for as long as this is active")
 		settings.enabled = not settings.enabled;
 		
@@ -116,7 +114,7 @@ local function KeybindHandler(action, isUserInput)
 		
 	
 	-- Always update displays to make sure any changes will be displayed immediately (if possible/not locked)
-	TotalAP.Controllers.RenderGUI() 
+	if not InCombatLockdown() and not UnitAffectingCombat("player") then TotalAP.Controllers.RenderGUI()  end -- Check for combat to avoid taint if display is toggled while in combat
 	
 end
 

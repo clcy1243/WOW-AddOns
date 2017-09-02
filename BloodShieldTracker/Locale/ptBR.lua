@@ -142,3 +142,4 @@ L["Usage Min - Max / Avg:"] = "Uso Mín- Máx / Média:"
 L["Use Aura"] = "Usar Aura"
 L["UseAura_OptionDesc"] = "Ativar se a Barra de Escudo de Sangue usa a aura ou os dados do registro de combate."
 L["Width"] = "Largura"
+

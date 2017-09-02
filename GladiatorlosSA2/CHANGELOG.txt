@@ -1,3 +1,14 @@
+- version 1.16.2
+
+General
+* Compatibility fix for 7.3.
+===============================================
+- version 1.16.1
+
+General
+* Fixed the Drinking alert announcing in battlegrounds whenever any player regardless of faction that is in possession of a PvP objective (WSG flag, etc) begins drinking. Oddly specific bugs are fun to squash.
+* ToC bump for 7.3.
+===============================================
 - version 1.16
 
 General

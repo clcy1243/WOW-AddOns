@@ -125,6 +125,9 @@ local function CreateNew(self)
 	local fqcn = TotalAP.Utils.GetFQCN()
 	
 	
+	-- References to view elements (TODO: Add the remaining ones here and remove ugly workaround/hooking to access elements that weren't defined prior to the current element)
+	local ProgressBarsFrame
+	
 	-- Anchor frame: Parent of all displays and buttons (used to toggle the entire addon, as well as move its displays)
 	local AnchorFrameContainer = TotalAP.GUI.BackgroundFrame:CreateNew("_DefaultView_AnchorFrame")
 	local AnchorFrame = AnchorFrameContainer:GetFrameObject()
@@ -664,6 +667,7 @@ local function CreateNew(self)
 			
 			-- Hide when:
 			hideFrame = (hideFrame
+			or not settings.specIcons.enabled -- Spec icons have been disabled
 			or TotalAP.Cache.IsSpecIgnored(spec) -- Assigned spec is being ignored
 			or GetNumSpecializations() < self:GetAssignedSpec() -- Class doesn't have as many specs
 			)
@@ -676,7 +680,9 @@ local function CreateNew(self)
 			local specOffset = (displaySpec - 1) * (barHeight + 2 * barInset + hSpace)-- This offset is to move each spec into its correct place (from the top)
 			local glueOffset = ((barHeight + 2 * barInset) - (specIconSize + 2 * specIconBorderWidth)) / 2 -- This offset makes sure the spec icons are always next to the progress bars
 			local alignmentOffset = GetDelta(AnchorFrame:GetHeight()) -- This offset is for repositioning them according to the /ap alignment-X setting
-			self:SetRelativePosition(maxButtonSize + vSpace + barWidth + 2 * barInset + vSpace, - ( barHeight + 2 * barInset + hSpace + specOffset + glueOffset + alignmentOffset))
+			local hiddenProgressBarsOffset = 0 -- If progress bars are hidden, move spec icons in their place
+			if not ProgressBarsFrame:IsShown() then hiddenProgressBarsOffset = barWidth + 2 * barInset + vSpace end -- TODO: function to calculate GUI element positions (can be unique to each view, allowing customisation for different ones without changing the main view code?) This would remove all the duplicate code and allow settings to change views more easily
+			self:SetRelativePosition(maxButtonSize + vSpace + barWidth + 2 * barInset + vSpace - hiddenProgressBarsOffset, - ( barHeight + 2 * barInset + hSpace + specOffset + glueOffset + alignmentOffset))
 			
 		end
 		
@@ -908,7 +914,7 @@ local function CreateNew(self)
 	
 	
 	local ProgressBarsFrameContainer = TotalAP.GUI.BackgroundFrame:CreateNew("_DefaultView_ProgressBarsFrame", "_DefaultView_AnchorFrame")
-	local ProgressBarsFrame = ProgressBarsFrameContainer:GetFrameObject()
+	ProgressBarsFrame = ProgressBarsFrameContainer:GetFrameObject()
 	do -- ProgressBarsFrame
 	 
 		-- Layout and visuals
@@ -917,6 +923,14 @@ local function CreateNew(self)
 
 		-- Player interaction		
 		ProgressBarsFrameContainer.Update = function(self)
+		
+			local hideFrame = false
+			hideFrame = (hideFrame or
+				not settings.infoFrame.enabled -- Bars are diabled via settings (TODO: infoFrame no longer exists -> rename settings?)
+			)
+			
+			self:SetEnabled(not hideFrame)
+			if hideFrame then return end
 		
 			local delta, combinedBarsHeight = GetDelta(AnchorFrame:GetHeight())
 			self:SetRelativePosition(maxButtonSize + vSpace, - ( barHeight + 2 * barInset + hSpace) - delta)
@@ -936,7 +950,6 @@ local function CreateNew(self)
 	local ProgressBar3 = ProgressBar3Container:GetFrameObject()
 	local ProgressBar4Container = TotalAP.GUI.ProgressBar:CreateNew("_DefaultView_ProgressBar4", "_DefaultView_ProgressBarsFrame")
 	local ProgressBar4 = ProgressBar4Container:GetFrameObject()
-	
 	do -- ProgressBars
 	
 		-- Layout and visuals

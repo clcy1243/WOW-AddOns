@@ -412,6 +412,12 @@
 --			Adds the ability to handle artifact levels which are required for some newer quests.
 --		089	Corrects problem where garrison NPC building prerequisites was causing a Lua error.
 --			Updates some quest/NPC information.
+--		090	Updates some quest/NPC information.
+--			Supports quests requiring paragon reputations.
+--			Supports the Argus continent being introduced in 7.3.
+--		091	Updates some quest/NPC information.
+--			Updates the Interface to 70300.
+--			Adds Argus zones to treasure looting.
 --
 --	Known Issues
 --
@@ -491,7 +497,7 @@ local GetSpellTabInfo					= GetSpellTabInfo
 local GetText							= GetText
 local GetTime							= GetTime
 local GetTitleText						= GetTitleText
-local InCombatLockdown					= InCombatLockdown
+--local InCombatLockdown					= InCombatLockdown
 local IsQuestFlaggedCompleted			= IsQuestFlaggedCompleted
 local OpenCalendar						= OpenCalendar
 local QueryQuestsCompleted				= QueryQuestsCompleted					-- QueryQuestsCompleted is special because in modern environments we define it ourselves
@@ -795,6 +801,7 @@ experimental = false,	-- currently this implementation does not reduce memory si
 		continentPandaria = 6,
 		continentDraenor = 7,
 		continentLegion = 8,
+		continentArgus = 9,
 		currentlyProcessingStatus = {},
 		currentlyVerifying = false,
 		currentMortalIssues = {},
@@ -811,7 +818,8 @@ experimental = false,	-- currently this implementation does not reduce memory si
 			['ACHIEVEMENT_EARNED'] = function(self, frame, arg1)
 				local achievementNumber = tonumber(arg1)
 				if nil ~= achievementNumber and nil ~= self.questStatusCache['A'][achievementNumber] then
-					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+					if not self.inCombat or not GrailDatabase.delayEvents then
 						self:_StatusCodeInvalidate(self.questStatusCache['A'][achievementNumber])
 						self:_NPCLocationInvalidate(self.npcStatusCache['A'][achievementNumber])
 					else
@@ -845,6 +853,7 @@ experimental = false,	-- currently this implementation does not reduce memory si
 					self.existsWoD = (self.blizzardRelease >= 18505)
 					self.existsLegion = (self.blizzardRelease >= 21531 and strsub(self.blizzardVersion, 1, 2) == "7.")
 					self.exists72 = (self.blizzardRelease >= 23578)
+					self.exists73 = (self.blizzardRelease >= 24563 and strsub(self.blizzardVersion, 1, 3) == "7.3")
 					--	The next two are only here in case an external addon is making use of this information already.
 					self.inWoD = self.existsWoD
 					self.inLegion = self.existsLegion
@@ -1136,6 +1145,7 @@ experimental = false,	-- currently this implementation does not reduce memory si
 					if self.existsPandaria then tinsert(self.continentMapIds, 862) end	-- 862 Pandaria
 					if self.existsWoD then tinsert(self.continentMapIds, 962) end	-- 962 Draenor
 					if self.existsLegion then tinsert(self.continentMapIds, 1007) end	-- 1007 Broken Isle
+					if self.exists73 then tinsert(self.continentMapIds, 1184) end	-- 1184 Argus
 					self.continentIndexMapping = {}		-- reverse mapping so we can get the old concept of continent index from the now current mapIds
 					for i = 1, #(self.continentMapIds) do
 						self.continentIndexMapping[self.continentMapIds[i]] = i
@@ -1321,7 +1331,8 @@ experimental = false,	-- currently this implementation does not reduce memory si
 					--	needs to be queried and that means the return result will not happen before we compare.
 					if self.existsPandaria then
 						self:RegisterSlashOption("cb", "|cFF00FF00cb|r => compares the latest server status quest list to the backup copy, and makes the backup become current", function()
-							if not InCombatLockdown() then
+--							if not InCombatLockdown() then
+							if not self.inCombat then
 								print("|cFFFFFF00Grail|r initiating server database query")
 								QueryQuestsCompleted()
 								self:_ProcessServerCompare()
@@ -1354,6 +1365,8 @@ frame:RegisterEvent("ARTIFACT_MAX_RANKS_UPDATE")
 					frame:RegisterEvent("LOOT_OPENED")		-- support for Timeless Isle chests
 					frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 					frame:RegisterEvent("PLAYER_LEVEL_UP")	-- needed for quest status caching
+					frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+					frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 					frame:RegisterEvent("QUEST_ACCEPTED")
 					frame:RegisterEvent("QUEST_COMPLETE")
 					if self.existsWoD then
@@ -1390,7 +1403,8 @@ frame:RegisterEvent("ARTIFACT_MAX_RANKS_UPDATE")
 
 			['BAG_UPDATE'] = function(self, frame, bagId)
 				if bagId ~= -2 and bagId < 5 then		-- a normal bag that is not the special (-2) backpack
-					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+					if not self.inCombat or not GrailDatabase.delayEvents then
 						self:_CoalesceDelayedNotification("Bags", self.delayBagUpdate)
 					else
 						self:_RegisterDelayedEvent(frame, { 'BAG_UPDATE' } )
@@ -1417,7 +1431,8 @@ frame:RegisterEvent("ARTIFACT_MAX_RANKS_UPDATE")
 			end,
 
 			['CHAT_MSG_COMBAT_FACTION_CHANGE'] = function(self, frame, message)
-				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+				if not self.inCombat or not GrailDatabase.delayEvents then
 					self:_HandleEventChatMsgCombatFactionChange(message)
 				else
 					self:_RegisterDelayedEvent(frame, { 'CHAT_MSG_COMBAT_FACTION_CHANGE' } )
@@ -1425,7 +1440,8 @@ frame:RegisterEvent("ARTIFACT_MAX_RANKS_UPDATE")
 			end,
 
 			['CHAT_MSG_SKILL'] = function(self, frame)
-				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+				if not self.inCombat or not GrailDatabase.delayEvents then
 					self:_HandleEventChatMsgSkill()
 				else
 					self:_RegisterDelayedEvent(frame, { 'CHAT_MSG_SKILL' } )
@@ -1445,7 +1461,8 @@ frame:RegisterEvent("ARTIFACT_MAX_RANKS_UPDATE")
 
 			['GARRISON_BUILDING_ACTIVATED'] = function(self, frame, plotId, buildingId)
 if GrailDatabase.debug then print("GARRISON_BUILDING_ACTIVATED "..plotId.." "..buildingId) end
-				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+				if not self.inCombat or not GrailDatabase.delayEvents then
 					self:_HandleEventGarrisonBuildingActivated(buildingId)
 				else
 					self:_RegisterDelayedEvent(frame, { 'GARRISON_BUILDING_ACTIVATED', buildingId })
@@ -1454,7 +1471,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_ACTIVATED "..plotId.." "..b
 
 			['GARRISON_BUILDING_REMOVED'] = function(self, frame, plotId, buildingId)
 if GrailDatabase.debug then print("GARRISON_BUILDING_REMOVED "..plotId.." "..buildingId) end
-				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+				if not self.inCombat or not GrailDatabase.delayEvents then
 					self:_HandleEventGarrisonBuildingActivated(buildingId)
 				else
 					self:_RegisterDelayedEvent(frame, { 'GARRISON_BUILDING_REMOVED', buildingId })
@@ -1463,7 +1481,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_REMOVED "..plotId.." "..bui
 
 			['GARRISON_BUILDING_UPDATE'] = function(self, frame, buildingId)
 if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
-				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+				if not self.inCombat or not GrailDatabase.delayEvents then
 					self:_HandleEventGarrisonBuildingUpdate(buildingId)
 				else
 					self:_RegisterDelayedEvent(frame, { 'GARRISON_BUILDING_UPDATE', buildingId })
@@ -1501,12 +1520,17 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			['LOOT_CLOSED'] = function(self, frame, ...)
 				local currentMapAreaId = GetCurrentMapAreaID()
 				if self.zonesForLootingTreasure[currentMapAreaId] then
-					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+					if not self.inCombat or not GrailDatabase.delayEvents then
 						self:_HandleEventLootClosed()
 					else
 						self:_RegisterDelayedEvent(frame, { 'LOOT_CLOSED' } )
 					end
 				end
+			end,
+
+			['PLAYER_REGEN_DISABLED'] = function(self, frame, ...)
+				self.inCombat = true
 			end,
 
 			-- When the player is in combat and an event is processed that would normally
@@ -1515,6 +1539,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			-- in combat and can have the deferred work done.  When all the deferred work
 			-- is done, PLAYER_REGEN_ENABLED is unregistered.
 			['PLAYER_REGEN_ENABLED'] = function(self, frame)
+				self.inCombat = nil
 				local t, type
 				while (0 < self.delayedEventsCount) do
 					t = self.delayedEvents[1]
@@ -1560,9 +1585,9 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 						break
 					end
 				end
-				if 0 == self.delayedEventsCount then
-					frame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-				end
+--				if 0 == self.delayedEventsCount then
+--					frame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+--				end
 			end,
 
 			['PLAYER_ENTERING_WORLD'] = function(self, frame)
@@ -1577,7 +1602,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			-- will not return the new level.
 			['PLAYER_LEVEL_UP'] = function(self, frame, newLevel)
 				self.levelingLevel = tonumber(newLevel)
-				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+				if not self.inCombat or not GrailDatabase.delayEvents then
 					self:_HandleEventPlayerLevelUp()
 				else
 					self:_RegisterDelayedEvent(frame, { 'PLAYER_LEVEL_UP' } )
@@ -1835,7 +1861,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			end,
 
 			['SKILL_LINES_CHANGED'] = function(self, frame)
-				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--				if not InCombatLockdown() or not GrailDatabase.delayEvents then
+				if not self.inCombat or not GrailDatabase.delayEvents then
 					self:_HandleEventSkillLinesChanged()
 				else
 					self:_RegisterDelayedEvent(frame, { 'SKILL_LINES_CHANGED' } )
@@ -1869,7 +1896,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 							self.spellsToHandle[spellId] = nil
 						end
 					end
-					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+					if not self.inCombat or not GrailDatabase.delayEvents then
 						for i = 1, #spellsToNuke do
 							self:_StatusCodeInvalidate(self.questStatusCache['B'][spellsToNuke[i]])
 							self:_StatusCodeInvalidate(self.questStatusCache['Y'][spellsToNuke[i]])
@@ -1884,7 +1912,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 
 			['UNIT_QUEST_LOG_CHANGED'] = function(self, frame, arg1)
 				if arg1 == "player" then
-					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--					if not InCombatLockdown() or not GrailDatabase.delayEvents then
+					if not self.inCombat or not GrailDatabase.delayEvents then
 						self:_PostDelayedNotification("QuestLogChange", 0, 0.5)
 					else
 						self:_RegisterDelayedEvent(frame, { 'UNIT_QUEST_LOG_CHANGED' } )
@@ -1906,7 +1935,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 					end
 					self:_MarkQuestInDatabase(spellId, GrailDatabasePlayer["spellsCast"])
 					if nil ~= self.questStatusCache and nil ~= self.questStatusCache['Z'] then
-						if not InCombatLockdown() or not GrailDatabase.delayEvents then
+--						if not InCombatLockdown() or not GrailDatabase.delayEvents then
+						if not self.inCombat or not GrailDatabase.delayEvents then
 							self:_StatusCodeInvalidate(self.questStatusCache['Z'][spellId])
 							self:_NPCLocationInvalidate(self.npcStatusCache['Z'][spellId])
 						else
@@ -2255,7 +2285,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			[4] = { 1158, 1173, 1135, 1171, 1174, 1178, 1172, 1177, 1204, },
 			[5] = { 1216, 1351, 1270, 1277, 1275, 1283, 1282, 1228, 1281, 1269, 1279, 1243, 1273, 1358, 1276, 1271, 1242, 1278, 1302, 1341, 1337, 1345, 1272, 1280, 1352, 1357, 1353, 1359, 1375, 1376, 1387, 1388, 1435, 1492, },
 			[6] = { 1445, 1515, 1520, 1679, 1681, 1682, 1708, 1710, 1711, 1731, 1732, 1733, 1735, 1736, 1737, 1738, 1739, 1740, 1741, 1847, 1848, 1849, 1850, },
-			[7] = { 1815, 1828, 1859, 1860, 1862, 1883, 1888, 1894, 1899, 1900, 1919, 1947, 1948, 1975, 1984, 1989, 2045, },
+			[7] = { 1815, 1828, 1859, 1860, 1862, 1883, 1888, 1894, 1899, 1900, 1919, 1947, 1948, 1975, 1984, 1989, 2018, 2045, 2097, 2098, 2099, 2100, 2101, 2102, 2135, 2165, 2170, },
 			},
 
 		-- These reputations use the friendship names instead of normal reputation names
@@ -2291,6 +2321,8 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 									[69649] = 7006650, [71661] = 7008662, [77549] = 7014550, [81499] = 7018500,
 									--	And now for Nightfallen
 									[46749] = 5001750, [58999] = 6008000, [69999] = 7007000,
+									--	And now for Paragon reputations
+									[93999] = 8010000,
 									},
 
 		--	The keys are the actual faction values used by Blizzard converted into a 3-character hexidecimal value.
@@ -2470,7 +2502,17 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			["7B7"] = "Conjurer Margoss",
 			["7C0"] = "The First Responders",
 			["7C5"] = "Moon Guard",
+			["7E2"] = "Talon's Vengeance",
 			["7FD"] = "Armies of Legionfall",
+			["831"] = "Ilyssia of the Waters",
+			["832"] = "Keeper Raynae",
+			["833"] = "Akule Riverhorn",
+			["834"] = "Corbyn",
+			["835"] = "Sha'leth",
+			["836"] = "Impus",
+			["857"] = "Chromie",
+			["875"] = "Army of the Light",
+			["87A"] = "Argussian Reach",
 			},
 
 		reputationMappingFaction = {
@@ -2648,7 +2690,17 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			["7B7"] = "Neutral",
 			["7C0"] = "Neutral",
 			["7C5"] = "Neutral",
+			["7E2"] = "Neutral",
 			["7FD"] = "Neutral",
+			["831"] = "Neutral",
+			["832"] = "Neutral",
+			["833"] = "Neutral",
+			["834"] = "Neutral",
+			["835"] = "Neutral",
+			["836"] = "Neutral",
+			["857"] = "Neutral",
+			["875"] = "Neutral",
+			["87A"] = "Neutral",
 			},
 
 		slashCommandOptions = {},
@@ -2687,6 +2739,9 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			[1033] = true, -- Suramar
 			[1080] = true, -- Thunder Totem village in HighMountain
 			[1096] = true, -- Eye of Azshara
+			[1135] = true, -- Krokuun
+			[1170] = true, -- Mac'Aree
+			[1171] = true, -- Antoran Wastes
 			},
 
 		---
@@ -2833,7 +2888,7 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			self.invalidateControl[self.invalidateGroupCurrentWorldQuests] = {}
 --			self.availableWorldQuests = {}
 			local currentMap = GetCurrentMapAreaID()
-			local mapIdsForWorldQuests = { 1014, 1015, 1017, 1018, 1021, 1024, 1033, 1096, }
+			local mapIdsForWorldQuests = { 1014, 1015, 1017, 1018, 1021, 1024, 1033, 1096, 1135, 1171, }
 			for _, mapId in pairs(mapIdsForWorldQuests) do
 				SetMapByID(mapId)
 				local tasks = C_TaskQuest.GetQuestsForPlayerByMapID(mapId)
@@ -2915,6 +2970,12 @@ if GrailDatabase.debug then print("GARRISON_BUILDING_UPDATE ", buildingId) end
 			end
 			if 1021 == mapId then
 				pCodeToAdd = pCodeToAdd .. '+46734'
+			end
+			if 1135 == mapId then
+				pCodeToAdd = pCodeToAdd .. '+47743'
+			end
+			if 1171 == mapId then
+				pCodeToAdd = pCodeToAdd .. '+48199'
 			end
 			if nil ~= typeModifier then
 				typeValue = typeValue + typeModifier
@@ -8327,9 +8388,9 @@ if GrailDatabase.debug then print("Marking OEC quest complete", oecCodes[i]) end
 				local originalCount = self.delayedEventsCount
 				self.delayedEventsCount = self.delayedEventsCount + 1
 				self.delayedEvents[self.delayedEventsCount] = delayTable
-				if 0 == originalCount and 1 == self.delayedEventsCount then		-- what we added is the first in the list...therefore, register for the event to take things out of the table
-					frame:RegisterEvent("PLAYER_REGEN_ENABLED")
-				end
+--				if 0 == originalCount and 1 == self.delayedEventsCount then		-- what we added is the first in the list...therefore, register for the event to take things out of the table
+--					frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+--				end
 			end
 		end,
 
@@ -8451,6 +8512,14 @@ if factionId == nil then print("Rep nil issue:", reputationName, reputationId, r
 				local name, description, standingId, barMin, barMax, barValue = GetFactionInfoByID(factionId)
 				if name then
 					actualEarnedValue = barValue + 42000	-- the reputationValue is stored with 42000 added to it so we do not have to deal with negative numbers, so we normalize here
+					if self.exists72 then
+						if C_Reputation.IsFactionParagon(factionId) then
+							local paraValue, paraThreshold, paraQuestId, paraRewardPending = C_Reputation.GetFactionParagonInfo(factionId)
+							if paraValue and paraThreshold then
+								actualEarnedValue = actualEarnedValue + paraValue - paraThreshold
+							end
+						end
+					end
 					retval = (actualEarnedValue > reputationValue)
 				end
 			end

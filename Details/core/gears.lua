@@ -1294,15 +1294,59 @@ function _detalhes.storage:GetEncounterData (diff, encounter_id, guild)
 	return t
 end
 
+local create_storage_tables = function()
+	--> get the storage table
+	local db = DetailsDataStorage
+	
+	if (not db and _detalhes.CreateStorageDB) then
+		db = _detalhes:CreateStorageDB()
+		if (not db) then
+			return
+		end
+	elseif (not db) then
+		return
+	end
+	
+	return db
+end
+
 function _detalhes.ScheduleLoadStorage()
 	if (InCombatLockdown() or UnitAffectingCombat ("player")) then
+		if (_detalhes.debug) then
+			print ("|cFFFFFF00Details! storage scheduled to load (player in combat).")
+		end
 		_detalhes.schedule_storage_load = true
+		return
 	else
 		if (not IsAddOnLoaded ("Details_DataStorage")) then
-			LoadAddOn ("Details_DataStorage")
-			_detalhes.schedule_storage_load = nil
+			local loaded, reason = LoadAddOn ("Details_DataStorage")
+			if (not loaded) then
+				if (_detalhes.debug) then
+					print ("|cFFFFFF00Details! Storage|r: can't load storage, may be the addon is disabled.")
+				end
+				return
+			end
+			
+			create_storage_tables()
 		end
 	end
+	
+	if (IsAddOnLoaded ("Details_DataStorage")) then
+		_detalhes.schedule_storage_load = nil
+		_detalhes.StorageLoaded = true
+		if (_detalhes.debug) then
+			print ("|cFFFFFF00Details! storage loaded.")
+		end
+	else
+		if (_detalhes.debug) then
+			print ("|cFFFFFF00Details! fail to load storage, scheduled once again.")
+		end
+		_detalhes.schedule_storage_load = true
+	end
+end
+
+function _detalhes.GetStorage()
+	return DetailsDataStorage
 end
 
 function _detalhes.OpenStorage()
@@ -1310,7 +1354,6 @@ function _detalhes.OpenStorage()
 
 	--> check if the storage is already loaded
 	if (not IsAddOnLoaded ("Details_DataStorage")) then
-
 		--> can't open it during combat
 		if (InCombatLockdown() or UnitAffectingCombat ("player")) then
 			if (_detalhes.debug) then
@@ -1327,17 +1370,11 @@ function _detalhes.OpenStorage()
 			return
 		end
 		
-		--> get the storage table
-		local db = DetailsDataStorage
+		local db = create_storage_tables()
 		
-		if (not db and _detalhes.CreateStorageDB) then
-			db = _detalhes:CreateStorageDB()
-			if (not db) then
-				return
-			end
-		elseif (not db) then
-			return
-		end		
+		if (db and IsAddOnLoaded ("Details_DataStorage")) then
+			_detalhes.StorageLoaded = true
+		end
 		
 		return DetailsDataStorage
 	else

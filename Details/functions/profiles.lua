@@ -1121,6 +1121,10 @@ local default_player_data = {
 			enabled = true,
 			channel = "SELF",
 		},
+		announce_damagerecord = {
+			enabled = true,
+			channel = "SELF",
+		},
 	--> benchmark
 		benchmark_db = {
 			frame = {},
@@ -1197,6 +1201,8 @@ local default_global_data = {
 		encounter_spell_pool = {},
 	--> aura creation frame libwindow
 		createauraframe = {},
+	--> min health done on the death report
+		deathlog_healingdone_min = 10000,
 		
 	-- important auras
 	--[=[

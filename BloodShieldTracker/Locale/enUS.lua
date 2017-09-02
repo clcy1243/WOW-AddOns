@@ -262,3 +262,4 @@ L["Y Offset"] = true
 L["YOffset_Desc"] = "Y offset from the center of the screen."
 L["YOffsetAnchor_Desc"] = "The Y offset of the bar point from the anchor point."
 L["Zero"] = true
+

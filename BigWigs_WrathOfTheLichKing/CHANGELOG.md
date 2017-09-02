@@ -1,6 +1,7 @@
 # BigWigs [Wrath of the Lich King]
 
-## [v7.2.1](https://github.com/BigWigsMods/BigWigs_WrathOfTheLichKing/tree/v7.2.1) (2017-05-01) [](#top)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_WrathOfTheLichKing/compare/v7.2.0...v7.2.1)
+## [v7.3.0](https://github.com/BigWigsMods/BigWigs_WrathOfTheLichKing/tree/v7.3.0) (2017-08-30)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_WrathOfTheLichKing/compare/v7.2.1...v7.3.0)
 
-- Coliseum/Beasts: Fix wrong boss names (#4)  
+- bump toc  
+- Update koKR for toc (#5)  

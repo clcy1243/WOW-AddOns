@@ -40,3 +40,4 @@ L["Text Format"] = "文字格式"
 L["Toggle config mode"] = "切換設置模式"
 L["Toggle the minimap button"] = "切換小地圖按鈕"
 L["Total Data"] = "總計資料"
+

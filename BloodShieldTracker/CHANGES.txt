@@ -1,15 +1,12 @@
-tag 23cc7375d4f4b03bbfa78a9ec05cc40f460f6833 7.2.1
+tag 0b3113a3f6db78cfa42008bc0f680e475b1569d0 7.3.0
 Author:	Talryn <git@talryn.sent.com>
-Date:	Thu Mar 30 01:41:24 2017 -0400
+Date:	Tue Aug 29 15:28:20 2017 -0400
 
-Tag as 7.2.1.
+Tag as 7.3.0.
 
-commit c74904f824ac4bec020df33e5ac3ff2f99d4ac7f
+commit fd80d9af16eb9a7aa7ff9e45426a24e6a21bc770
 Author: Talryn <git@talryn.sent.com>
-Date:   Wed Mar 29 03:36:43 2017 -0400
+Date:   Tue Aug 29 14:45:08 2017 -0400
 
-    Haemostasis, Carrion Feast.
-    * Add Haemostasis to Estimate Bar.
-    * Add Carrion Feast to Estimate Bar.
-    * Fix addon.Print to be addon:Print.
+    Update TOC to 7.3.
 

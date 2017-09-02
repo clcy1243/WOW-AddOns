@@ -67,6 +67,8 @@ function Hekili:GetDefaults()
             
             blacklist = {
             },
+            trinkets = {
+            },
             clashes = {
             },
             
@@ -796,7 +798,7 @@ ns.newDisplayOption = function( key )
                             local list = display and display.precombatAPL
                             
                             if list then
-                                ns.lib.AceConfigDialog:SelectGroup( "Hekili", 'actionLists', 'L'..list )
+                                LibStub( "AceConfigDialog-3.0" ):SelectGroup( "Hekili", 'actionLists', 'L'..list )
                             end
                         end,
                         disabled = function( info )
@@ -849,7 +851,7 @@ ns.newDisplayOption = function( key )
                             local list = display and display.defaultAPL
                             
                             if list then
-                                ns.lib.AceConfigDialog:SelectGroup( "Hekili", 'actionLists', 'L'..list )
+                                LibStub( "AceConfigDialog-3.0" ):SelectGroup( "Hekili", 'actionLists', 'L'..list )
                             end
                         end,
                         disabled = function( info )
@@ -1191,7 +1193,7 @@ ns.newDisplayOption = function( key )
                             ns.refreshOptions()
                             ns.loadScripts()
                             ns.buildUI()
-                            ns.lib.AceConfigDialog:SelectGroup( "Hekili", 'displays' )
+                            LibStub( "AceConfigDialog-3.0" ):SelectGroup( "Hekili", 'displays' )
                         end
                     },
                 },
@@ -1309,7 +1311,7 @@ ns.newDisplayOption = function( key )
                         name = 'Icon Spacing',
                         desc = "Select the number of pixels to skip between icons in this display.",
                         min = -10,
-                        max = 50,
+                        max = 500,
                         step = 1,
                         order = 12,
                         width = 'full'
@@ -1332,7 +1334,7 @@ ns.newDisplayOption = function( key )
                         desc = "Select the font to use on all icons in this display.",
                         dialogControl = 'LSM30_Font',
                         order = 31,
-                        values = ns.lib.SharedMedia:HashTable("font"), -- pull in your font list from LSM
+                        values = LibStub( "LibSharedMedia-3.0" ):HashTable("font"), -- pull in your font list from LSM
                     },
                     primaryFontSize = {
                         type = 'range',
@@ -1442,7 +1444,7 @@ ns.newDisplayOption = function( key )
                         desc = "If enabled and SpellFlash (or SpellFlashCore) is installed, the addon will cause the action buttons for recommended abilities to flash.",
                         order = 11,
                         hidden = function( info, val )
-                            return ns.lib.SpellFlash == nil
+                            return not ( SpellFlash or SpellFlashCore )
                         end,
                         width = 'full'
                     },
@@ -1455,7 +1457,7 @@ ns.newDisplayOption = function( key )
                             local id = tonumber( info[2]:match( "^D(%d+)" ) )
                             local display = id and Hekili.DB.profile.displays[ id ]
                             
-                            return ns.lib.SpellFlash == nil or not display or not display.spellFlash
+                            return ( SpellFlash or SpellFlashCore ) or not display or not display.spellFlash
                         end,
                         width = 'full'
                     },
@@ -1468,7 +1470,7 @@ ns.newDisplayOption = function( key )
                             local id = tonumber( info[2]:match( "^D(%d+)" ) )
                             local display = id and Hekili.DB.profile.displays[ id ]
                             
-                            return ns.lib.SpellFlash == nil or not display or not display.spellFlash
+                            return ( SpellFlash or SpellFlashCore ) or not display or not display.spellFlash
                         end,
                     },
                     
@@ -1509,7 +1511,7 @@ ns.newDisplayOption = function( key )
                                 desc = "Select the font to use for keybindings.",
                                 dialogControl = 'LSM30_Font',
                                 order = 5,
-                                values = ns.lib.SharedMedia:HashTable("font"), -- pull in your font list from LSM
+                                values = LibStub( "LibSharedMedia-3.0" ):HashTable("font"), -- pull in your font list from LSM
                                 width = 'full',
                             },
                             kbFontStyle = {
@@ -1629,7 +1631,7 @@ ns.newDisplayOption = function( key )
                                 desc = "Select the font to use for keybindings.",
                                 dialogControl = 'LSM30_Font',
                                 order = 5,
-                                values = ns.lib.SharedMedia:HashTable("font"), -- pull in your font list from LSM
+                                values = LibStub( "LibSharedMedia-3.0" ):HashTable("font"), -- pull in your font list from LSM
                                 width = 'full',
                             },
                             captionFontStyle = {
@@ -1827,7 +1829,7 @@ ns.newDisplayOption = function( key )
                                 desc = "Select the font to use for the target count.",
                                 dialogControl = 'LSM30_Font',
                                 order = 1,
-                                values = ns.lib.SharedMedia:HashTable("font"), -- pull in your font list from LSM
+                                values = LibStub( "LibSharedMedia-3.0" ):HashTable("font"), -- pull in your font list from LSM
                                 width = 'full',
                             },
                             targetFontStyle = {
@@ -2034,7 +2036,7 @@ ns.newDisplayOption = function( key )
                                 desc = "Select the font to use for the aura information.",
                                 dialogControl = 'LSM30_Font',
                                 order = 9,
-                                values = ns.lib.SharedMedia:HashTable("font"), -- pull in your font list from LSM
+                                values = LibStub( "LibSharedMedia-3.0" ):HashTable("font"), -- pull in your font list from LSM
                                 width = 'full',
                             },
                             auraFontStyle = {
@@ -2832,7 +2834,7 @@ ns.newActionListOption = function( index )
                     table.remove( Hekili.DB.profile.actionLists, actIdx )
                     ns.loadScripts()
                     ns.refreshOptions()
-                    ns.lib.AceConfigDialog:SelectGroup( "Hekili", "actionLists" )
+                    LibStub( "AceConfigDialog-3.0" ):SelectGroup( "Hekili", "actionLists" )
                     
                 end
             }
@@ -3366,7 +3368,7 @@ ns.newActionOption = function( aList, index )
                     local actIdx = tonumber( match( actKey, "^A(%d+)" ) )
                     
                     -- Will need to be more elaborate later.
-                    ns.lib.AceConfigDialog:SelectGroup("Hekili", 'actionLists', listKey )
+                    LibStub( "AceConfigDialog-3.0" ):SelectGroup("Hekili", 'actionLists', listKey )
                     table.remove( Hekili.DB.profile.actionLists[ listIdx ].Actions, actIdx )
                     Hekili.Options.args.actionLists.args[ listKey ].args[ actKey ] = nil
                     ns.loadScripts()
@@ -3541,7 +3543,7 @@ ns.ClassSettings = function ()
 
         option.args.exclusions.args[ 'clash_' ..v ] = {
             type = 'range',
-            name = 'Clash ' .. k,
+            name = 'Clash: ' .. k,
             desc = "If set above zero, the addon will pretend " .. k .. " has come off cooldown this much sooner than it actually has.",
             width = "double",
             min = 0,
@@ -3551,6 +3553,49 @@ ns.ClassSettings = function ()
         }
         i = i + 1
 
+    end
+    
+    return option
+    
+end
+
+
+ns.TrinketSettings = function ()
+    
+    local option = {
+        type = 'group',
+        name = "Trinket Settings",
+        order = 21,
+        args = {
+            heading = {
+                type = 'description',
+                name = "These settings apply to trinkets that are executed via the [Use Items] action in your action lists.  Instead of " ..
+                    "manually editing your action lists, you can enable/disable specific trinkets or require a minimum or maximum number of " ..
+                    "enemies before allowing the trinket to be used.\n\n" ..
+                    "If your action list has a specific entry for a certain trinket with specific criteria, you will likely want to disable " ..
+                    "the trinket here.",
+                order = 1,
+                width = "full",
+            }
+        },
+    }
+
+    local trinkets = Hekili.DB.profile.trinkets
+
+    for i, setting in pairs( class.itemSettings ) do
+        option.args[ setting.key ] = {
+            type = "group",
+            name = " ",
+            order = 10 + i,
+            inline = true,
+            args = setting.options
+        }
+
+        trinkets[ setting.key ] = trinkets[ setting.key ] or {
+            disabled = false,
+            minimum = 1,
+            maximum = 0
+        }
     end
     
     return option
@@ -3842,6 +3887,7 @@ ns.SimulationCraftImporter = function ()
                                     action.MaximumTargets = entry.MaximumTargets
                                     action.CheckMovement = entry.CheckMovement or false
                                     action.Moving = entry.Moving
+
                                     if action.Ability == 'variable' then
                                         action.ModVarName = entry.ModName or ''
                                         action.ModName = ''
@@ -3861,15 +3907,23 @@ ns.SimulationCraftImporter = function ()
                                 else
                                     action.Indicator = "none"
                                 end ]]
+
+                                    action.Script = entry.Script
                                     
                                     if ability.toggle then
-                                        if entry.Script and entry.Script:len() > 0 then
-                                            action.Script = 'toggle.' .. ability.toggle .. ' & ( ' .. entry.Script .. ' )'
+                                        if action.Script and action.Script:len() > 0 then
+                                            action.Script = 'toggle.' .. ability.toggle .. ' & ( ' .. action.Script .. ' )'
                                         else
                                             action.Script = 'toggle.' .. ability.toggle
                                         end
-                                    else
-                                        action.Script = entry.Script
+                                    end
+
+                                    if entry.PctHealth then
+                                        if action.Script and action.Script:len() > 0 then
+                                            action.Script = 'health.pct < ' .. entry.PctHealth .. ' & ( ' .. action.Script .. ' )'
+                                        else
+                                            action.Script = 'health.pct < ' .. entry.PctHealth
+                                        end
                                     end
                                     
                                     if entry.Ability == 'heroism' or entry.Ability == 'bloodlust' then
@@ -4469,7 +4523,7 @@ function Hekili:GetOptions()
                         desc = "Select the font to use in the Notification panel.",
                         dialogControl = 'LSM30_Font',
                         order = 7,
-                        values = ns.lib.SharedMedia:HashTable("font"), -- pull in your font list from LSM
+                        values = LibStub( "LibSharedMedia-3.0" ):HashTable("font"), -- pull in your font list from LSM
                     },
                     ['Notification Font Size'] = {
                         type = 'range',
@@ -5629,13 +5683,15 @@ ns.refreshOptions = function()
     end
     
     for i,v in ipairs(Hekili.DB.profile.actionLists) do
-        local listKey = 'L' .. i
-        Hekili.Options.args.actionLists.args[ listKey ] = ns.newActionListOption( i )
-        
-        if v.Actions then
-            for a,_ in ipairs( v.Actions ) do
-                local actKey = 'A' .. a
-                Hekili.Options.args.actionLists.args[ listKey ].args[ actKey ] = ns.newActionOption( i, a )
+        if not v.Hidden then
+            local listKey = 'L' .. i
+            Hekili.Options.args.actionLists.args[ listKey ] = ns.newActionListOption( i )
+            
+            if v.Actions then
+                for a,_ in ipairs( v.Actions ) do
+                    local actKey = 'A' .. a
+                    Hekili.Options.args.actionLists.args[ listKey ].args[ actKey ] = ns.newActionOption( i, a )
+                end
             end
         end
     end
@@ -5646,6 +5702,7 @@ ns.refreshOptions = function()
     
     Hekili.Options.args.class = nil
     Hekili.Options.args.class = ns.ClassSettings()
+    Hekili.Options.args.trinkets = ns.TrinketSettings()
     
     -- Until I feel like making this better at managing memory.
     collectgarbage()
@@ -5672,6 +5729,12 @@ function Hekili:GetOption( info, input )
             return profile.blacklist[ option ]
 
         end
+
+    elseif category == 'trinkets' then
+        local subcategory = info[2]
+
+        if profile.trinkets[ subcategory ] ~= nil then return profile.trinkets[ subcategory ][ option ] end
+        return
         
     elseif category == 'notifs' then
         if option == 'Notification X' or option == 'Notification Y' then
@@ -5871,6 +5934,12 @@ function Hekili:SetOption( info, input, ... )
         end
         
         return
+
+    elseif category == 'trinkets' then
+        subcategory = info[2]
+
+        profile.trinkets[ subcategory ] = profile.trinkets[ subcategory ] or {}
+        profile.trinkets[ subcategory ][ option ] = input
         
     elseif category == 'notifs' then
         profile[ option ] = input
@@ -6267,7 +6336,7 @@ function Hekili:SetOption( info, input, ... )
     if ns.UI.Minimap then ns.UI.Minimap:RefreshDataText() end
     
     if Select then
-        ns.lib.AceConfigDialog:SelectGroup( "Hekili", category, info[2], Select )
+        LibStub( "AceConfigDialog-3.0" ):SelectGroup( "Hekili", category, info[2], Select )
     end
     
 end
@@ -6839,6 +6908,10 @@ local function sanitize( segment, i, line, warnings )
         i = i:gsub( "|", "||" )
     end
     
+    i, times = i:gsub( "debuff%.judgment%.up", "judgment_override" )
+    if times > 0 then
+        table.insert( warnings, "Line " .. line .. ": Replaced 'debuff.judgment.up' with 'judgment_override' (" .. times .. "x)." )
+    end
     
     i, times = i:gsub( "desired_targets", "1" )
     if times > 0 then
@@ -6883,6 +6956,11 @@ local function sanitize( segment, i, line, warnings )
     i, times = i:gsub( "rune%.([a-z0-9_]+)", "runes.%1")
     if times > 0 then
         table.insert( warnings, "Line " .. line .. ": Replaced 'rune.X' with 'runes.X' (" .. times .. "x)." )
+    end
+
+    i, times = i:gsub( "cooldown%.strike%.", "cooldown.stormstrike." )
+    if times > 0 then
+        table.insert( warnings, "Line " .. line .. ": Replaced 'cooldown.strike' with 'cooldown.stormstrike' (" .. times .. "x)." )
     end
     
     --[[ i, times = i:gsub( "spell_targets%.[a-zA-Z0-9_]+", "active_enemies" )
@@ -7307,6 +7385,12 @@ local function storeModifier( entry, key, value )
         
     elseif key == 'target_if' then
         entry.TargetIf = value
+
+    elseif key == 'pct_health' then
+        entry.PctHealth = value
+
+    elseif key == 'interval' then
+        entry.Interval = value
         
     end
     
@@ -7365,7 +7449,8 @@ function Hekili:ImportSimulationCraftActionList( str, enemies )
             end
             table.insert( warnings, "Line " .. line .. ": Replaced unsupported '" .. token .. "' with '" .. enemies .. "' (" .. times .. "x)." )
         end
-        
+
+
         if i:sub(1, 13) == 'fists_of_fury' then
             for token in i:gmatch( "energy.time_to_max>cast_time" ) do
                 local times = 0
@@ -7395,8 +7480,8 @@ function Hekili:ImportSimulationCraftActionList( str, enemies )
             if a == 1 then
                 local ability = str:trim()
                 
-                if ability and ( ability == 'use_item' or class.abilities[ ability ] ) then
-                    result.Ability = ability
+                if ability and ( ability == 'use_item' or class.abilities[ ability ] ) then                   
+                    result.Ability = class.abilities[ ability ] and class.abilities[ ability ].key or ability
                 elseif not ignore_actions[ ability ] then
                     table.insert( warnings, "Line " .. line .. ": Unsupported action '" .. ability .. "'." )
                 end

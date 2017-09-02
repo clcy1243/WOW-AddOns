@@ -158,3 +158,4 @@ L["UseAura_OptionDesc"] = "如果使用血盾栏的光环或战斗记录之间�
 L["Verbose"] = "详细"
 L["Width"] = "宽度"
 L["Zero"] = "0"
+

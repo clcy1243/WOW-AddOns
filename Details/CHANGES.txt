@@ -1,4 +1,32 @@
 ------------------------------------------------------------------------
+r13 | Tercioo | 2017-08-29 15:18:29 -0500 (Tue, 29 Aug 2017) | 1 line
+Changed paths:
+   M /trunk/boot.lua
+
+- ingame changelog is important too.
+------------------------------------------------------------------------
+r12 | Tercioo | 2017-08-29 15:03:11 -0500 (Tue, 29 Aug 2017) | 2 lines
+Changed paths:
+   M /trunk/Details.toc
+   M /trunk/boot.lua
+   M /trunk/core/gears.lua
+   M /trunk/core/parser.lua
+   M /trunk/functions/profiles.lua
+   M /trunk/functions/slash.lua
+   M /trunk/gumps/janela_principal.lua
+
+- Added a message on boss pull telling the player record on the boss.
+- ToC 7.3.
+------------------------------------------------------------------------
+r11 | Tercioo | 2017-08-21 19:09:24 -0500 (Mon, 21 Aug 2017) | 1 line
+Changed paths:
+   M /trunk/boot.lua
+   M /trunk/classes/classe_others.lua
+   M /trunk/functions/profiles.lua
+   M /trunk/functions/slash.lua
+
+- Added (for tests) healing done cap for death log. Use /run Details.deathlog_healingdone_min = 10000.
+------------------------------------------------------------------------
 r10 | Tercioo | 2017-08-17 10:55:35 -0500 (Thu, 17 Aug 2017) | 1 line
 Changed paths:
    M /trunk/boot.lua

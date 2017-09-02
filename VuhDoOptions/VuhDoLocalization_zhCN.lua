@@ -1,7 +1,5 @@
 if (GetLocale() ~= "zhCN") then
 	return;
-else
-	return;
 end
 -- New Options
 -- @EXACT = false

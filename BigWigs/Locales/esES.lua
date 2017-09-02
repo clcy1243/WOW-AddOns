@@ -1,7 +1,7 @@
 local L = BigWigsAPI:NewLocale("BigWigs", "esES") or BigWigsAPI:NewLocale("BigWigs", "esMX")
 if not L then return end
 
-L.getNewRelease = "Tu BigWigs está desfasado (/bwv) pero puedes actualizarlo fácilmente con el cliente de Curse. También puedes actualizarlo manualmente desde curse.com o wowinterface.com."
+L.getNewRelease = "Tu BigWigs está desfasado (/bwv) pero puedes actualizarlo fácilmente con el cliente de Twitch. También puedes actualizarlo manualmente desde curse.com o wowinterface.com."
 L.warnTwoReleases = "Tu BigWigs está 2 versiones desfasado! Tu versión puede tener fallos, faltarle características, o temporizadores incorrectos. Es muy recomendable que lo actualices."
 L.warnSeveralReleases = "|cffff0000Tu BigWigs está desfasado %d actualizaciones!! Te recomendamos MUCHÍSIMO que lo actualices cuanto antes para prevenir problemas de sincronización con otros jugadores!|r"
 
@@ -32,7 +32,6 @@ L.BAR_desc = "Las barras serán mostradas en el momento apropiado. Si esta habil
 L.berserk = "Rabia"
 L.berserk_desc = "Muestra un contador que avisa cuando el jefe entrará en rabia"
 L.best = "El mejor:"
-L.blizzRestrictionsConfig = "Debido a las restricciones de Blizzard la configuración debe abrirse primero fuera de combate, antes se podia acceder en combate."
 L.chatMessages = "Chat frame messages"
 L.chatMessagesDesc = "Todos los mensajes de salida de BigWigs a la ventana de chat por defecto en adición a los ajustes mostrados"
 L.colors = "Colores"

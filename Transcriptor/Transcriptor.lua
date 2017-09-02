@@ -1,6 +1,6 @@
 
 local Transcriptor = {}
-local version = "v7.2.9"
+local version = "v7.3.1"
 if version:find("@", nil, true) then
 	version = "repo"
 end

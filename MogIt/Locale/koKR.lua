@@ -133,3 +133,4 @@ L["Width"] = "너비"
 L["Wishlist"] = "찜목록"
 L["Wishlist profile"] = "찜목록 프로필"
 L["You have this item."] = "이 아이템을 가지고 있습니다."
+

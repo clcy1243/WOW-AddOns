@@ -110,3 +110,4 @@ L["URL website"] = "URL del sito web"
 L["Wishlist"] = "Lista dei desideri"
 L["Wishlist profile"] = "Profilo della lista dei desideri"
 L["You have this item."] = "Possiedi questo oggetto"
+

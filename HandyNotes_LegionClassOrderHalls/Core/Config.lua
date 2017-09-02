@@ -1,4 +1,4 @@
--- $Id: Config.lua 67 2017-06-18 11:25:51Z arith $
+-- $Id: Config.lua 73 2017-08-29 18:29:07Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -161,7 +161,7 @@ config.options = {
 					type = "toggle",
 					name = L["Show note"],
 					desc = L["Show the node's additional notes when it's available."],
-					order = 40,
+					order = 11,
 				},
 				unhide = {
 					type = "execute",

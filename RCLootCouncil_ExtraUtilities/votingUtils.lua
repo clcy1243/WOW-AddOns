@@ -4,6 +4,7 @@
 -- votingUtils.lua	Adds extra columns for the default voting frame
 
 --[[ TODO:
+   - Bonus rolls should be saved in loot history
 
 ]]
 
@@ -39,6 +40,7 @@ function EU:OnInitialize()
             ep =              { enabled = false, pos = 13, width = 40, func = self.SetCellEP, name = "EP"},
             gp =              { enabled = false, pos = 14, width = 40, func = self.SetCellGP, name = "GP"},
             pr =              { enabled = false, pos = 15, width = 40, func = self.SetCellPR, name = "PR"},
+         --   rcscore =         { enabked = false, pos = 16, width = 50, func = self.SetCellRCScore, name = "RC Score"},
          },
          normalColumns = {
             class =  { enabled = true, name = LE.Class, width = 20},
@@ -123,14 +125,20 @@ function EU:OnInitialize()
       }
    }
    -- The order of which the new cols appear in the advanced options
-   self.optionsColOrder = {"pawn", "traits","upgrades","sockets",--[["setPieces",]] "titanforged","legendaries","ilvlUpgrade", "spec","bonus","ep","gp","pr","guildNotes"}
+   self.optionsColOrder = {"pawn", "traits","upgrades","sockets",--[["setPieces",]] "titanforged","legendaries","ilvlUpgrade", "spec","bonus","ep","gp","pr","guildNotes",}-- "rcscore"}
    -- The order of which the normal cols appear ANYWHERE in the options
    self.optionsNormalColOrder = {"class","name","rank","role","response","ilvl","diff","gear1","gear2","votes","vote","note","roll"}
 
    addon.db:RegisterNamespace("ExtraUtilities", self.defaults)
    self.db = addon.db:GetNamespace("ExtraUtilities").profile
    self:Enable()
-   addon:CustomChatCmd(self, "OpenOptions", "EU", "eu")
+
+   -- This changes in rclc v2.5
+   if addon:VersionCompare(addon.version, "2.5.0") then
+      addon:CustomChatCmd(self, "OpenOptions", "EU", "eu")
+   else
+      addon:CustomChatCmd(self, "OpenOptions","- eu - Opens the ExtraUtilities options window", "EU", "eu")
+   end
    self:RegisterEvent("BONUS_ROLL_RESULT")
 end
 
@@ -198,6 +206,7 @@ function EU:OnDisable()
    -- Reset cols
    self.votingFrame.scrollCols = self.originalCols
    self:UnregisterAllComm()
+   self:UnregisterAllEvents()
 end
 
 function EU:OnCommReceived(prefix, serializedMsg, distri, sender)
@@ -220,13 +229,11 @@ function EU:OnCommReceived(prefix, serializedMsg, distri, sender)
             for k, v in pairs(data) do
                playerData[name][k] = v
             end
-            if lootTable and playerData[name].bonusReference then
-               if playerData[name].bonusReference ~= lootTable[1].link then
-                  -- The bonus data belongs to an earlier session
-                  playerData[name].bonusType = nil
-                  playerData[name].bonusLink = nil
-                  playerData[name].bonusReference = nil
-               end
+            if playerData[name].bonusReference and playerData[name].bonusReference ~= addon.bossName then
+               -- The bonus data belongs to an earlier session
+               playerData[name].bonusType = nil
+               playerData[name].bonusLink = nil
+               playerData[name].bonusReference = nil
             end
             self.votingFrame:Update()
 
@@ -238,7 +245,7 @@ function EU:OnCommReceived(prefix, serializedMsg, distri, sender)
             if not playerData[name] then playerData[name] = {} end
             playerData[name].bonusType = type
             playerData[name].bonusLink = link
-            playerData[name].bonusReference = lootTable and lootTable[1].link
+            playerData[name].bonusReference = addon.bossName
             self.votingFrame:Update()
 
          elseif command == "candidates" then
@@ -315,6 +322,10 @@ function EU:HandleExternalRequirements()
       self.db.columns.gp.enabled = false
       self.db.columns.pr.enabled = false
    end
+   -- RCScore
+   -- if self.db.columns.rcscore.enabled and not (Details or Recount or Skada) then
+   --    self.db.columns.rcscore.enabled = false
+   -- end
 end
 
 --- Adds or removes a column based on its name in self.db.columns/normalColumns
@@ -522,6 +533,21 @@ function EU:UpdateGuildInfo()
       guildInfo[name] = {note, officernote}
    end
 end
+
+-- A 10 value gradient going from 1-3: red ->4-7: yellow -> 8-10: green
+local colorGradient = {
+   [0] = {0.7, 0.7,0.7}, -- 0 #b2b2b2
+   {0.7, 0, 0},      -- 1  #b20000
+   {0.6, 0.1, 0},    -- 2  #991900
+   {0.6, 0.2, 0},    -- 3  #993300
+   {0.6, 0.4, 0},    -- 4  #996600
+   {1,1,0},          -- 5  #ffff00
+   {1, 1, 0},        -- 6  #ffff00
+   {0.8,1,0},        -- 7  #ccff00
+   {0.5,1,0},        -- 8  #7fff00
+   {0.3,1,0},        -- 9  #4cff00
+   {0,1,0},          -- 10 #00ff00
+}
 
 -- Returns a Pawn score calculated based on the select scale in the EU options
 -- mathcing the class and spec
@@ -770,4 +796,95 @@ function EU.SetCellPR(rowFrame, frame, data, cols, row, realrow, column, fShow, 
     end
     frame.text:SetText(string.format("%.4f", pr))
     data[realrow].cols[column].value = pr or 0
+end
+
+-- Max percentile: (MOD(ilvl,893)/3+1)*101068+614274
+local function getDPSRCScore(dps, ilvl)
+   return 100 * dps / ((ilvl % 893 / 3 + 1) * 101068 + 614274)
+end
+
+-- Max averaged percentile: (MOD(ilvl,893)/3+1)*86183+531928
+local function getDPSRCScore2(dps, ilvl)
+   return 100 * dps / ((ilvl % 893 / 3 + 1) * 86183 + 531928)
+end
+
+-- Max averaged percentile: (MOD(ilvl,893)/3+1)*60007+209101
+local function getTankRCScore(dps, ilvl)
+   return 100 * dps / ((ilvl % 893 / 3 + 1) * 60007 + 209101)
+end
+
+-- Max averaged percentile:(MOD(ilvl,893)/3+1)*70234+376532
+local function getHealerRCScore(hps, ilvl)
+   return 100 * hps / ((ilvl % 893 / 3 + 1) * 70234 + 376532)
+end
+
+local function getDPSFromLastFight(role, name)
+   local dps = 0
+   if Details then
+      local combat = Details:GetCurrentCombat()
+      if combat then
+         if role == "HEALER" then
+            -- look for hps
+            local healingActor = combat:GetActor (DETAILS_ATTRIBUTE_HEAL, Ambiguate(name, "short"))
+            dps = healingActor and (healingActor.total / healingActor:Tempo()) or 0
+         else -- Look for dps
+            local damageActor = combat:GetActor (DETAILS_ATTRIBUTE_DAMAGE, Ambiguate(name, "short"))
+            dps = damageActor and (damageActor.total / damageActor:Tempo()) or 0
+         end
+      end
+   elseif Recount then
+      addon:Debug("Has Recount, not implemented")
+      -- TODO
+      if role == "HEALER" then
+         -- look for hps
+
+      else -- Look for dps
+
+      end
+   elseif Skada then
+      addon:Debug("Has Skada, not implemented")
+      -- TODO
+      if role == "HEALER" then
+         -- look for hps
+
+      else -- Look for dps
+
+      end
+   else
+      addon:Debug("No Damage meter installed?!")
+   end
+   return dps
+end
+
+function EU.SetCellRCScore(rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
+   local name = data[realrow].name
+   local ilvl = EU.votingFrame:GetCandidateData(session, name, "ilvl")
+   -- check if ilvl is availble
+   if ilvl and ilvl ~= "" then
+      -- Now check if we've already stored the score
+      local score = EU.votingFrame:GetCandidateData(session, name, "RCScore")
+      if not score then -- Calculate it
+         local role = EU.votingFrame:GetCandidateData(session, name, "role")
+         local dps = getDPSFromLastFight(role, name)
+         addon:Debug("Role, dps:", role, dps)
+         if role == "DAMAGER" or role == "NONE" then
+            score = getDPSRCScore2(dps, ilvl)
+         elseif role == "TANK" then
+            score = getTankRCScore(dps, ilvl)
+         elseif role == "HEALER" then
+            score = getHealerRCScore(dps, ilvl)
+         else
+            return addon:DebugLog("No valid role in SetCellRCScore", name, role)
+         end
+         addon:Debug("RCScore:", name, score)
+         -- Store the score
+         EU.votingFrame:SetCandidateData(session, name, "RCScore", score)
+      end
+      data[realrow].cols[column].value = score or 0
+      frame.text:SetText(addon.round(score,0) .. "%")
+      frame.text:SetTextColor(unpack(colorGradient[math.ceil(score / 10)]))
+   else -- Clear it
+      frame.text:SetText("")
+      data[realrow].cols[column].value = 0
+   end
 end

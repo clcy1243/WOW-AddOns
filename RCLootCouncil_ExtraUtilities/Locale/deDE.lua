@@ -6,14 +6,12 @@ if not L then return end
 
 --Translation missing 
 -- L["Accept Pawn"] = ""
---Translation missing 
--- L["Advanced"] = ""
+L["Advanced"] = "Erweitert"
 L["Artifact Traits"] = "Artefaktboni"
 L["Bonus"] = true
 L["Bonus Rolls"] = "Bonuswürfe"
 L["Class"] = "Klasse"
---Translation missing 
--- L["column_width_desc"] = ""
+L["column_width_desc"] = "Wähle die Breite der Spalte %s."
 L["Extra Utilities Columns"] = "Zusätzliche Hilfsspalten"
 L["extra_util_desc"] = [=[RCLootCouncil - Extra Utilities |cFF87CEFAv %s |r.
 Hinweis: Diese Einstellungen werden nicht mit der Gruppe geteilt, daher kann jedes Ratsmitglied andere Einstellungen haben.]=]
@@ -25,8 +23,7 @@ L["ilvl Upg."] = "GS-Aufw."
 L["ilvl Upgrades"] = "GS-Aufwertungen"
 L["Legendaries"] = "Legendäre Ggst."
 L["Officer Note"] = "Offiziersnotiz"
---Translation missing 
--- L["Open Voting Frame"] = ""
+L["Open Voting Frame"] = "Abstimmungsfenster öffnen"
 --Translation missing 
 -- L["opt_acceptPawn_desc"] = ""
 --Translation missing 

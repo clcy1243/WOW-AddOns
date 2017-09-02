@@ -102,7 +102,7 @@ L["WQGF_QUEST_COMPLETE_LEAVE_DIALOG"] = [=[Vous avez terminé la quête.
 Souhaitez-vous quitter le groupe ?]=]
 L["WQGF_QUEST_COMPLETE_LEAVE_OR_DELIST_DIALOG"] = [=[Vous avez terminé la quête.
 
-Souhaitez-vous quitter le groupe ou le désinscrire de l'outil recherche de groupe ?"]=]
+Souhaitez-vous quitter le groupe ou le désinscrire de l'outil recherche de groupe ?]=]
 L["WQGF_RAID_MODE_WARNING"] = "|c0000ffffATTENTION:|c00ffffff Ce groupe est en mode raid, ce qui signifie que vous ne serez pas en mesure d'effectuer des quêtes et expéditions. Vous devriez demander au chef de groupe de revenir en mode Groupe si cela est possible. Le retour en mode Groupe sera automatiquement effectué si vous devenez le chef de groupe."
 L["WQGF_REFRESH_TOOLTIP"] = "Trouver un autre groupe"
 L["WQGF_SEARCH_OR_CREATE_GROUP"] = "Rechercher ou créer un groupe"

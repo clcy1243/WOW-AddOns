@@ -1,10 +1,10 @@
-## Interface: 70200 
-## Version: 0f7e14c
+## Interface: 70300 
+## Version: f0e2476
 ## Title: Hekili
 ## Author: Hekili
 ## Notes: Priority helper for Shamans, Paladins, Monks, and Hunters with support for in-game modifications.
 ## SavedVariables: HekiliDB
-## OptionalDeps: LibArtifactData-1.0, Masque, SpellFlash, SpellFlashCore, WeakAuras
+## OptionalDeps: LibArtifactData-1.0, BrewmasterTools, Masque, SpellFlash, SpellFlashCore, WeakAuras
 
 embeds.xml
 

@@ -1,8 +1,8 @@
 # BigWigs +Transcriptor
 
-## [v7.2.3](https://github.com/BigWigsMods/BigWigs_Transcriptor/tree/v7.2.3) (2017-08-12)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Transcriptor/compare/v7.2.2...v7.2.3)
+## [v7.3.0](https://github.com/BigWigsMods/BigWigs_Transcriptor/tree/v7.3.0) (2017-08-30)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Transcriptor/compare/v7.2.3...v7.3.0)
 
-- Add option to only log in raids  
-- Tweak options loading  
-- Handle the new Transcriptor TIMERS format  
+- Update TOC for 7.3  
+- Tweaks  
+- Fix cast counts and show the npc id  

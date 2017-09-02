@@ -1,7 +1,7 @@
 local L = BigWigsAPI:NewLocale("BigWigs", "zhTW")
 if not L then return end
 
-L.getNewRelease = "你的 BigWigs 已過期（/bwv）但是可以使用 Curse 客戶端簡單升級。另外，也可以從 curse.com 或 wowinterface.com 手動升級。"
+L.getNewRelease = "你的 BigWigs 已過期（/bwv）但是可以使用 Twitch 客戶端簡單升級。另外，也可以從 curse.com 或 wowinterface.com 手動升級。"
 L.warnTwoReleases = "你的 BigWigs 已過期2個發行版！你的版本可能有錯誤，功能缺失或不正確的計時器。所以強烈建議你升級。"
 L.warnSeveralReleases = "|cffff0000你的 BigWigs 已過期%d發行版！！我們「強烈」建議你更新，以防止把問題同步給其他玩家！|r"
 
@@ -33,7 +33,6 @@ L.BAR_desc = "在適當時會為首領技能顯示計時條。如果你想隱藏
 L.berserk = "狂暴"
 L.berserk_desc = "為首領狂暴顯示計時條及警報。"
 L.best = "最快："
-L.blizzRestrictionsConfig = "由於暴雪的限制，要打開選項配置需要離開戰鬥，或是在戰鬥之前。"
 L.chatMessages = "聊天框體訊息"
 L.chatMessagesDesc = "除了顯示設定，輸出所有 BigWigs 訊息到預設聊天框體。"
 L.colors = "顏色"

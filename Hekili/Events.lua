@@ -8,10 +8,6 @@ local class = ns.class
 local state = ns.state
 local TTD = ns.TTD
 
--- local Artifact = ns.lib.LegionArtifacts
-local AD = ns.lib.ArtifactData
-local RC = ns.lib.RangeCheck
-
 local formatKey = ns.formatKey
 local getSpecializationInfo = ns.getSpecializationInfo
 local getSpecializationKey = ns.getSpecializationKey
@@ -19,10 +15,10 @@ local getSpecializationKey = ns.getSpecializationKey
 local abs = math.abs
 local lower, match, upper = string.lower, string.match, string.upper
 
+
 -- Abandoning AceEvent in favor of darkend's solution from:
 -- http://andydote.co.uk/2014/11/23/good-design-in-warcraft-addons.html
 -- This should be a bit friendlier for our modules.
-
 
 local events = CreateFrame( "Frame" )
 local handlers = {}
@@ -34,6 +30,8 @@ ns.displayUpdates = {}
 local lastRefresh = {}
 local lastRecount = 0
 local displayUpdates = ns.displayUpdates
+local lastDisplay = 0
+
 
 function ns.StartEventHandler()
 
@@ -60,23 +58,24 @@ function ns.StartEventHandler()
     events:SetScript( "OnUpdate", function( self, elapsed )
         local now = GetTime()
 
-        if now - lastRecount >= 0.1 then
+        if now - lastRecount >= 0.05 then
             ns.recountTargets()
+            lastRecount = now
         end
 
         local updatePeriod = state.combat == 0 and 1 or 0.2
 
-        local forced = false
+        local numDisplays = #Hekili.DB.profile.displays
 
-        for i = 1, #Hekili.DB.profile.displays do
-            if not displayUpdates[i] then 
-                Hekili:ProcessHooks( i )
-                lastRefresh[i] = now
+        for i = 1, numDisplays do
+            local index = lastDisplay + i
+            index = index > numDisplays and index - numDisplays or index
 
-            elseif ( not lastRefresh[i] or now - lastRefresh[i] >= updatePeriod ) then
-                Hekili:ProcessHooks( i )
-                lastRefresh[i] = now
-
+            if ns.visible.display[ index ] and ( not displayUpdates[ index ] or ( not lastRefresh[ index ] or now - lastRefresh[ index ] >= updatePeriod ) ) then 
+                Hekili:ProcessHooks( index )
+                lastRefresh[ index ] = now
+                lastDisplay = index
+                break
             end
         end
 
@@ -156,6 +155,43 @@ end
 
 RegisterEvent( "UPDATE_BINDINGS", function () ns.refreshBindings() end )
 RegisterEvent( "DISPLAY_SIZE_CHANGED", function () ns.buildUI() end )
+
+
+local itemAuditComplete = false
+
+function ns.auditItemNames()
+
+    local options = Hekili.Options.args.trinkets.args
+    local failure = false
+
+    for key, ability in pairs( class.abilities ) do
+        if ability.recheck_name then
+            local _, name = GetItemInfo( ability.item )
+
+            if name then
+                ability.name = name
+                ability.texture = nil
+                ability.elem.name = name
+                ability.elem.texture = select( 10, GetItemInfo( ability.item ) )
+
+                class.abilities[ name ] = ability
+                class.searchAbilities[ ability.key ] = format( "|T%s:0|t %s", ( ability.texture or 'Interface\\ICONS\\Spell_Nature_BloodLust' ), name )
+                ability.recheck_name = nil
+            else
+                failure = true
+            end
+        end
+    end
+
+    if failure then
+        C_Timer.After( 1, ns.auditItemNames )
+    else
+        ns.ReadKeybindings()
+        itemAuditComplete = true
+    end
+end
+
+
 RegisterEvent( "PLAYER_ENTERING_WORLD", function ()
     ns.specializationChanged()
     ns.checkImports()
@@ -164,15 +200,7 @@ RegisterEvent( "PLAYER_ENTERING_WORLD", function ()
     ns.convertDisplays()
     ns.buildUI()
 
-    for key, ability in pairs( class.abilities ) do
-        if ability.recheck_name then
-            ability.name = GetItemInfo( ability.item )
-            ability.texture = select( 10, GetItemInfo( ability.item ) )
-            ability.recheck_name = nil
-            class.abilities[ ability.name ] = ability
-        end
-    end
-
+    ns.auditItemNames()
 end )
 
 RegisterEvent( "ACTIVE_TALENT_GROUP_CHANGED", function ()
@@ -227,10 +255,9 @@ ns.updateTalents = function ()
     end
 
     for item, specs in pairs( class.talentLegendary ) do
-        if item and state.equipped[ item ] then
-            local tal = specs[ state.spec.key ]
-
-            if tal and rawget( state.talent, tal ) then
+        local tal = specs[ state.spec.key ]
+        if state.equipped[ item ] and tal then
+            if rawget( state.talent, tal ) then
                 state.talent[ tal ].enabled = true
                 state.talent[ tal ].i_enabled = 1
             else state.talent[ tal ] = {
@@ -256,6 +283,7 @@ local artifactInitialized = false
 function ns.updateArtifact()
 
     local artifact = state.artifact
+    local AD = LibStub( "LibArtifactData-1.0h" )
 
     for k in pairs( artifact ) do
         artifact[ k ].rank = 0
@@ -277,6 +305,8 @@ function ns.updateArtifact()
         else
             C_Timer.After( 3, ns.updateArtifact )
         end
+    else
+        C_Timer.After( 3, ns.updateArtifact )
     end
 
 end
@@ -321,7 +351,7 @@ local gearInitialized = false
 ns.updateGear = function ()
 
     for thing in pairs( state.set_bonus ) do
-        state.set_bonus[ thing ] = nil
+        state.set_bonus[ thing ] = 0
     end
 
     for set, items in pairs( class.gearsets ) do
@@ -333,13 +363,11 @@ ns.updateGear = function ()
         end
     end
 
-    ns.Tooltip:SetOwner( UIParent, "ANCHOR_NONE")
-    ns.Tooltip:ClearLines()
-
+    local ItemBuffs = LibStub( "LibItemBuffs-1.0", true )
     local T1 = GetInventoryItemID( "player", 13 )
-    
-    if T1 then
-        local t1buff = ns.lib.LibItemBuffs:GetItemBuffs( T1 )
+
+    if ItemBuffs and T1 then
+        local t1buff = ItemBuffs:GetItemBuffs( T1 )
         
         if type(t1buff) == 'table' then t1buff = t1buff[1] end
         
@@ -351,8 +379,8 @@ ns.updateGear = function ()
     
     local T2 = GetInventoryItemID( "player", 14 )
     
-    if T2 then
-        local t2buff = ns.lib.LibItemBuffs:GetItemBuffs( T2 )
+    if ItemBuffs and T2 then
+        local t2buff = ItemBuffs:GetItemBuffs( T2 )
         
         if type(t2buff) == 'table' then t2buff = t2buff[1] end
         
@@ -360,9 +388,7 @@ ns.updateGear = function ()
         state.trinket.t2.id = T2
     else
         state.trinket.t2.id = 0
-    end    
-
-    ns.Tooltip:Hide()
+    end
 
     for i = 1, 19 do
         local item = GetInventoryItemID( 'player', i )
@@ -373,7 +399,6 @@ ns.updateGear = function ()
             if key then
                 key = formatKey( key )
                 state.set_bonus[ key ] = 1
-                state.set_bonus[ item ] = 1
                 gearInitialized = true
             end
         end
@@ -497,6 +522,7 @@ local function spellcastEvents( event, unit, spell, _, _, spellID )
         -- If we have a hostile target, we'll assume we're waiting for them to get hit.
         if UnitExists( 'target' ) and not UnitIsFriend( 'player', 'target' ) then
             -- Let's presume that the target is at max range.
+            local RC = LibStub( "LibRangeCheck-2.0" )
             local _, range = RC:GetRange( 'target' )
 
             if range then
@@ -893,8 +919,8 @@ local function StoreKeybindInfo( key, aType, id )
         ability = sID and class.abilities[ sID ] and class.abilities[ sID ].key
     
     elseif aType == "item" then
-        local name = GetItemInfo( id )
-        ability = class.abilities[ name ] and class.abilities[ name ].key or "unknown"
+        ability = select( 2, GetItemInfo( id ) )
+        ability = class.abilities[ ability ] and class.abilities[ ability ].key
 
     end
 

@@ -130,6 +130,7 @@ local toys = {
 	23489,		-- Ultrasafe Transporter - Gadgetzan
 	36955,		-- Ultrasafe Transporter - Toshley's Station
 	112059,		-- Wormhole Centrifuge
+	151652,		-- Wormhole Generator: Argus
 	48933,		-- Wormhole Generator: Northrend
 	87215,		-- Wormhole Generator: Pandaria
 	142542,		-- Tome of Town Portal (Diablo 3 event)

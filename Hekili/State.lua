@@ -10,7 +10,8 @@ local formatKey = ns.formatKey
 local getSpecializationID = ns.getSpecializationID
 local round, roundUp = ns.round, ns.roundUp
 local safeMin, safeMax = ns.safeMin, ns.safeMax
-local tableCopy = ns.tableCopy
+local tCopy = ns.tableCopy
+local tSort = table.sort
 
 
 local PTR = ns.PTR
@@ -173,24 +174,14 @@ state.trinket = {
 }
 state.trinket.proc = state.trinket.stat
 
---[[ Future Multi-Target Handling:
-state.unitDB = {
-    IDs = {},
-    plates = {},
-    
-    debuff = {},
-    health = {},
-    dot = {},
-} ]]
-
-    state.using_apl = setmetatable( {}, {
+state.using_apl = setmetatable( {}, {
     __index = function( t, k )
         return false
     end
 } )
 
 
-    state.role = setmetatable( {}, {
+state.role = setmetatable( {}, {
     __index = function( t, k )
         return false
     end
@@ -204,6 +195,7 @@ local mt_no_trinket_stacking_stat = {
 
 local mt_no_trinket_stat = {
 }
+
 
 local mt_no_trinket = {
     __index = function( t, k )
@@ -259,11 +251,6 @@ local mt_trinket_any_stat = {
 }
 
 setmetatable( state.trinket.stat, mt_trinket_any_stat )
-
-
-
-
-
 
 
 local mt_trinket = {
@@ -715,12 +702,166 @@ end
 state.setDistance = setDistance
 
 
+-- Resource Modeling!
+local events = {}
+local remains = {}
+
+local function resourceModelSort( a, b )
+    return b == nil or ( a.next < b.next )
+end
+
+
+local FORECAST_DURATION = 15
+
+local function forecastResources( resource )
+
+    -- Forecasts the next 10s of resources.
+    local models = class.regenModel
+
+    table.wipe( events )
+    table.wipe( remains )
+
+    if resource then
+        remains[ resource ] = FORECAST_DURATION
+        table.wipe( state[ resource ].times )
+        table.wipe( state[ resource ].values )
+        state[ resource ].fcount = 0
+    else
+        for k, v in pairs( class.resources ) do
+            remains[ k ] = FORECAST_DURATION
+            table.wipe( state[ k ].times )
+            table.wipe( state[ k ].values )
+            state[ k ].fcount = 0
+        end
+    end
+
+    local now = state.now + state.offset
+
+    if models then
+        for k, v in pairs( models ) do
+            if  ( not resource  or v.resource == resource ) and
+                ( not v.spec    or state.spec[ v.spec ] ) and
+                ( not v.equip   or state.equipped[ v.equip ] ) and 
+                ( not v.talent  or state.talent[ v.talent ].enabled ) and
+                ( not v.aura    or state.buff[ v.aura ].up ) and
+                ( not v.setting or state.settings[ v.setting ] ) then
+
+                local r = state[ v.resource ]
+
+                local l = v.last()
+                local i = ( type( v.interval ) == 'number' and v.interval or ( type( v.interval ) == 'function' and v.interval( now, r.actual ) or ( type( v.interval ) == 'string' and state[ v.interval ] or 0 ) ) )
+
+                v.next = l + i
+                v.name = k
+
+                if r.fcount == 0 then
+                    r.forecast[1] = r.forecast[1] or {}
+                    r.forecast[1].t = now
+                    r.forecast[1].v = r.actual
+                    r.fcount = 1
+                end
+
+                if v.next >= 0 then
+                    table.insert( events, v )
+                end
+            end
+        end
+    end
+
+    tSort( events, resourceModelSort )
+
+    local finish = now + FORECAST_DURATION
+
+    local prev = now
+    local iter = 0
+
+    while( #events > 0 and now <= finish and iter < 20 ) do
+        local e = events[1]
+        local r = state[ e.resource ]
+        iter = iter + 1
+
+        if e.next > finish or not r then
+            table.remove( events, 1 )
+
+        else
+            now = e.next
+            local bonus = r.regen * ( now - prev )
+
+            if ( e.stop and e.stop( r.forecast[ r.fcount ].v ) ) or ( e.aura and state.buff[ e.aura ].expires < now ) then
+                table.remove( events, 1 )
+               
+                local v = max( 0, min( r.max, r.forecast[ r.fcount ].v + bonus ) )
+                local idx
+
+                if r.forecast[ r.fcount ].t == now then
+                    -- Reuse the last one.
+                    idx = r.fcount
+                else
+                    idx = r.fcount + 1
+                end
+
+                r.forecast[ idx ] = r.forecast[ idx ] or {}
+                r.forecast[ idx ].t = now
+                r.forecast[ idx ].v = v
+                r.fcount = idx
+            else
+                prev = now
+
+                local val = r.fcount > 0 and r.forecast[ r.fcount ].v or r.actual
+
+                local v = max( 0, min( r.max, val + bonus + ( type( e.value ) == 'number' and e.value or e.value( now ) ) ) )
+                local idx
+
+                if r.forecast[ r.fcount ].t == now then
+                    -- Reuse the last one.
+                    idx = r.fcount
+                else
+                    idx = r.fcount + 1
+                end
+
+                r.forecast[ idx ] = r.forecast[ idx ] or {}
+                r.forecast[ idx ].t = now
+                r.forecast[ idx ].v = v
+                r.fcount = idx
+
+                -- interval() takes the last tick and the current value to remember the next step.
+                local step = type( e.interval ) == 'number' and e.interval or ( type( e.interval ) == 'function' and e.interval( now, val ) or ( type( e.interval ) == 'string' and state[ e.interval ] or 0 ) )
+
+                remains[ e.resource ] = finish - e.next
+                e.next = e.next + step
+
+                if e.next > finish or step < 0 then
+                    table.remove( events, 1 )
+                end
+            end
+        end
+
+        if #events > 1 then tSort( events, resourceModelSort ) end
+    end
+
+    for k, v in pairs( remains ) do
+        local r = state[ k ]
+        local val = r.fcount > 0 and r.forecast[ r.fcount ].v or r.actual
+        local idx = r.fcount + 1
+
+        r.forecast[ idx ] = r.forecast[ idx ] or {}
+        r.forecast[ idx ].t = finish
+        r.forecast[ idx ].v = min( r.max, val + ( v * r.regen ) )
+        r.fcount = idx
+    end
+end
+ns.forecastResources = forecastResources
+
+
 local function gain( amount, resource, overcap )
     
-    if overcap then state[ resource ].actual = state[ resource ].actual + amount
-    else state[ resource ].actual = min( state[ resource ].max, state[ resource ].actual + amount ) end
-    
+    -- 080217:  Update actual value to reflect current value + change, this means the forecasted values are used (and then need updated).
+    if overcap then state[ resource ].actual = state[ resource ].current + amount
+    else state[ resource ].actual = min( state[ resource ].max, state[ resource ].current + amount ) end
+
     ns.callHook( 'gain', amount, resource, overcap )
+
+    if amount ~= 0 then forecastResources( resource ) end
 
 end
 state.gain = gain
@@ -728,8 +869,11 @@ state.gain = gain
 
 local function spend( amount, resource )
     
+    -- 080217:  Update actual value to reflect current value + change, this means the forecasted values are used (and then need updated).
     state[ resource ].actual = max( 0, state[ resource ].actual - amount )
     ns.callHook( 'spend', amount, resource )
+
+    if amount ~= 0 then forecastResources( resource ) end    
     
 end
 state.spend = spend
@@ -809,6 +953,11 @@ local mt_state = {
         elseif k == 'ranged' then
             return false
             
+        elseif k == 'wait_for_gcd' then 
+            -- For specs that have to weave a lot off off GCD stuff.
+            -- i.e., Frost DK.
+            return false
+
         elseif k == 'query_time' then
             return t.now + t.offset + t.delay
             
@@ -880,7 +1029,7 @@ local mt_state = {
             return max( t.gcd, class.abilities[ t.this_action ].cast )
             
         elseif k == 'gcd' then
-            local gcdType = class.abilities[ t.this_action ].gcdType
+            local gcdType = t.this_action and class.abilities[ t.this_action ] and class.abilities[ t.this_action ].gcdType or "spell"
             if gcdType == 'totem' then return 1.0 end
             return max( 0.75, 1.5 * t.haste )
             
@@ -1051,6 +1200,9 @@ local mt_stat = {
             
         elseif k == 'maximum_health' then
             return UnitHealthMax('player')
+
+        elseif k == 'health_pct' then
+            return UnitHealth( 'player' ) / UnitHealthMax( 'player' )
             
         elseif k == 'mana' then
             return Hekili.State.mana and Hekili.State.mana.current or 0
@@ -1302,6 +1454,8 @@ local mt_settings = {
             return metafunctions.settings[ k ]()
         elseif Hekili.DB.profile[ 'Class Option: '..k ] ~= nil then
             return Hekili.DB.profile[ 'Class Option: '..k ]
+        elseif Hekili.DB.profile.trinkets[ state.this_action ] ~= nil then
+            return Hekili.DB.profile.trinkets[ state.this_action ][ k ]
         end
         
         return
@@ -1374,7 +1528,7 @@ local mt_target = {
             local ability = state.this_action and class.abilities[ state.this_action ]
             
             if ability then
-                return ( not state.target.exists or ns.lib.SpellRange.IsSpellInRange( ability.id, 'target' ) )
+                return ( not state.target.exists or LibStub( "SpellRange-1.0" ).IsSpellInRange( ability.id, 'target' ) )
             end
             
             return true
@@ -1416,7 +1570,7 @@ local mt_target = {
             return ( t.minR >= tonumber( minR ) and t.maxR <= tonumber( maxR ) )
             
         elseif k == 'minR' then
-            local minR = ns.lib.RangeCheck:GetRange( 'target' )
+            local minR = LibStub( "LibRangeCheck-2.0" ):GetRange( 'target' )
             if minR then
                 rawset( t, k, minR )
                 return t[k]
@@ -1424,7 +1578,7 @@ local mt_target = {
             return 5
             
         elseif k == 'maxR' then
-            local maxR = select( 2, ns.lib.RangeCheck:GetRange( 'target' ) )
+            local maxR = select( 2, LibStub( "LibRangeCheck-2.0" ):GetRange( 'target' ) )
             if maxR then
                 rawset( t, k, maxR )
                 return t[k]
@@ -1476,10 +1630,10 @@ local mt_default_cooldown = {
             local start, duration = GetSpellCooldown( id )
             local true_duration = duration
             
-            if class.abilities[ t.key ].toggle and not state.toggle[ class.abilities[ t.key ].toggle ] then
+            --[[ if class.abilities[ t.key ].toggle and not state.toggle[ class.abilities[ t.key ].toggle ] then
                 start = state.now
-                duration = 3600
-            end
+                duration = 0
+            end ]]
             
             if t.key == 'ascendance' and state.buff.ascendance.up then
                 start = state.buff.ascendance.expires - class.auras.ascendance.duration
@@ -1494,13 +1648,13 @@ local mt_default_cooldown = {
                     
                 else
                     start = state.now
-                    duration = 3600
+                    duration = 0
                     
                 end
                 
             elseif not ns.isKnown( t.id ) then
                 start = state.now
-                duration = 3600
+                duration = 0
             
             end
             
@@ -1512,12 +1666,12 @@ local mt_default_cooldown = {
             if class.abilities[ t.key ].charges then
                 local charges, maxCharges, start, duration = GetSpellCharges( t.id )
                 
-                if class.abilities[ t.key ].toggle and not state.toggle[ class.abilities[ t.key ].toggle ] then
+                --[[ if class.abilities[ t.key ].toggle and not state.toggle[ class.abilities[ t.key ].toggle ] then
                     charges = 1
                     maxCharges = 1
                     start = state.now
-                    duration = 3600
-                end
+                    duration = 0
+                end ]]
                 
                 t.charge = charges or 1
                 t.recharge = duration or class.abilities[ t.key ].recharge
@@ -1758,7 +1912,7 @@ local mt_cooldowns = {
                 
             else
                 start = state.now
-                duration = 3600
+                duration = 0
                 
             end
 
@@ -1777,7 +1931,7 @@ local mt_cooldowns = {
 
         elseif not ns.isKnown( ability ) then
             start = state.now
-            duration = 3600
+            duration = 0
         end
         
         if start then
@@ -1954,6 +2108,7 @@ local mt_resource = {
             if t.regen ~= 0 then
                 return max( 0, min( t.max, t.actual + ( t.regen * state.delay ) ) )
             end
+
             return t.actual
             
         elseif k == 'deficit' then
@@ -2897,154 +3052,7 @@ local function scrapeUnitAuras( unit )
 end
 
 
--- Resource Modeling!
-local events = {}
-local remains = {}
-
-local function resourceModelSort( a, b )
-    return b == nil or ( a.next < b.next )
-end
-
-
-local FORECAST_DURATION = 15
-
-local function forecastResources()
-    -- Forecasts the next 10s of resources.
-    if state.delay > 0 then print( "WARNING: FORECASTING RESOURCES WITH DELAY ABOVE ZERO!", state.delay ) end
-    local models = class.regenModel
-
-    table.wipe( events )
-    table.wipe( remains )
-
-    for k, v in pairs( class.resources ) do
-        remains[ k ] = FORECAST_DURATION
-        table.wipe( state[ k ].forecast )
-        table.wipe( state[ k ].times )
-        table.wipe( state[ k ].values )
-        state[ k ].fcount = 0
-    end
-
-    local now = state.now + state.offset
-
-    if models then
-        for k, v in pairs( models ) do
-            if  ( not v.spec    or state.spec[ v.spec ] ) and
-                ( not v.equip   or state.equipped[ v.equip ] ) and 
-                ( not v.talent  or state.talent[ v.talent ].enabled ) and
-                ( not v.aura    or state.buff[ v.aura ].up ) and
-                ( not v.setting or state.settings[ v.setting ] ) then
-
-                local r = state[ v.resource ]
-
-                local l = v.last()
-                local i = ( type( v.interval ) == 'number' and v.interval or ( type( v.interval ) == 'function' and v.interval( now, r.actual ) or ( type( v.interval ) == 'string' and state[ v.interval ] or 0 ) ) )
-
-                v.next = v.last() + ( type( v.interval ) == 'number' and v.interval or ( type( v.interval ) == 'function' and v.interval( now, r.actual ) or ( type( v.interval ) == 'string' and state[ v.interval ] or 0 ) ) )
-                v.name = k
-
-                if r.fcount == 0 then
-                    r.forecast[1] = r.forecast[1] or {}
-                    r.forecast[1].t = now
-                    r.forecast[1].v = r.actual
-                    r.fcount = 1
-                end
-
-                if v.next >= 0 then
-                    table.insert( events, v )
-                end
-            end
-        end
-    end
-
-    table.sort( events, resourceModelSort )
-
-    local finish = now + FORECAST_DURATION
-
-    local prev = now
-    local iter = 0
-
-    while( #events > 0 and now <= finish and iter < 20 ) do
-        local e = events[1]
-        local r = state[ e.resource ]
-        iter = iter + 1
-
-        if e.next > finish or not r then
-            table.remove( events, 1 )
-
-        else
-            now = e.next
-            local bonus = r.regen * ( now - prev )
-
-            if ( e.stop and e.stop( r.forecast[ r.fcount ].v ) ) or ( e.aura and state.buff[ e.aura ].expires < now ) then
-                table.remove( events, 1 )
-               
-                local v = max( 0, min( r.max, r.forecast[ r.fcount ].v + bonus ) )
-                local idx
-
-                if r.forecast[ r.fcount ].t == now then
-                    -- Reuse the last one.
-                    idx = r.fcount
-                else
-                    idx = r.fcount + 1
-                end
-
-                r.forecast[ idx ] = r.forecast[ idx ] or {}
-                r.forecast[ idx ].t = now
-                r.forecast[ idx ].v = v
-                r.fcount = idx
-            else
-                prev = now
-
-                local val = r.fcount > 0 and r.forecast[ r.fcount ].v or r.actual
-
-                local v = max( 0, min( r.max, val + bonus + ( type( e.value ) == 'number' and e.value or e.value( now ) ) ) )
-                local idx
-
-                if r.forecast[ r.fcount ].t == now then
-                    -- Reuse the last one.
-                    idx = r.fcount
-                else
-                    idx = r.fcount + 1
-                end
-
-                r.forecast[ idx ] = r.forecast[ idx ] or {}
-                r.forecast[ idx ].t = now
-                r.forecast[ idx ].v = v
-                r.fcount = idx
-
-                -- interval() takes the last tick and the current value to remember the next step.
-                local step = type( e.interval ) == 'number' and e.interval or ( type( e.interval ) == 'function' and e.interval( now, val ) or ( type( e.interval ) == 'string' and state[ e.interval ] or 0 ) )
-
-                remains[ e.resource ] = finish - e.next
-                e.next = e.next + step
-
-                if e.next > finish or step < 0 then
-                    table.remove( events, 1 )
-                end
-            end
-        end
-
-        if #events > 1 then table.sort( events, resourceModelSort ) end
-    end
-
-    for k, v in pairs( remains ) do
-        local r = state[ k ]
-        local val = r.fcount > 0 and r.forecast[ r.fcount ].v or r.actual
-        local idx = r.fcount + 1
-
-        r.forecast[ idx ] = r.forecast[ idx ] or {}
-        r.forecast[ idx ].t = finish
-        r.forecast[ idx ].v = min( r.max, val + ( v * r.regen ) )
-        r.fcount = idx
-    end
-end
-ns.forecastResources = forecastResources
-
-
-
-local function modelResources( time )
-
-    -- print( format( "Model resources over by %.2fs.", time ) )
+--[[ local function modelResources( time )
 
     if time <= 0 then return end
 
@@ -3057,6 +3065,8 @@ local function modelResources( time )
 
     for k, v in pairs( class.resources ) do
         remains[ k ] = time
+        table.wipe( state[ k ].times )
+        table.wipe( state[ k ].values )
     end
 
     for k, v in pairs( models ) do
@@ -3078,7 +3088,7 @@ local function modelResources( time )
     end
 
     -- Sort the table in chronological order.
-    table.sort( events, resourceModelSort )
+    tSort( events, resourceModelSort )
 
     -- Start from time = 0; currently assuming modelResource() will be called after the clock is advanced.
 
@@ -3127,20 +3137,34 @@ local function modelResources( time )
             end
         end
 
-        if #events > 1 then table.sort( events, resourceModelSort ) end
+        if #events > 1 then tSort( events, resourceModelSort ) end
     end
 
     -- Regen any remaining resources.
     for k, v in pairs( remains ) do
-        state[ k ].actual = min( state[ k ].max, state[ k ].actual + ( v * state[ k ].regen ) )
+        local r = state[ k ]
+
+        if r.regen and r.regen > 0 then
+            r.actual = min( r.max, r.actual + ( v * r.regen ) )
+        end
+
+        table.wipe( r.times )
+        table.wipe( r.values )
+    end
+end ]]
+
+
+function state.putTrinketsOnCD( val )
+    val = val or 10
+
+    for k, _ in pairs( class.items ) do
+        setCooldown( k, max( val, state.cooldown[ k ].remains ) )
     end
 end
 
 
 function state.reset( dispID )
     
-    -- print( "Reset." )
-
     state.now = GetTime()
     state.offset = 0
     state.delay = 0
@@ -3351,7 +3375,11 @@ function state.reset( dispID )
 
         end
 
+        if res.reset then res.reset() end
+
     end
+
+    forecastResources()
    
     state.health = rawget( state, 'health' ) or setmetatable( { resource = 'health' }, mt_resource )
     state.health.actual = UnitHealth( 'player' )
@@ -3430,11 +3458,7 @@ function state.reset( dispID )
     
     if delay > 0 then
         state.advance( delay )
-    else
-        forecastResources()
     end
-
-    forecastResources()
     
 end
 
@@ -3448,7 +3472,7 @@ function state.advance( time )
     end
     
     time = ns.callHook( 'advance', time ) or time
-    time = roundUp( time, 3 )
+    -- time = roundUp( time, 3 )
     
     state.delay = 0
     
@@ -3483,10 +3507,7 @@ function state.advance( time )
         state.offset = saved_offset
     end
 
-    if class.regenModel then
-        modelResources( time )
-    
-    else
+    if not class.regenModel then
         for k in pairs( class.resources ) do
             local resource = state[ k ]
 
@@ -3498,7 +3519,7 @@ function state.advance( time )
         end
     end
 
-    forecastResources()
+    -- forecastResources()
 
     state.offset = state.offset + time
 
@@ -3561,23 +3582,21 @@ ns.spendResources = function( ability )
     
     -- First, spend resources.
     if action.spend ~= nil then
-        local spend, resource
+        local cost, resource
         
         if type( action.spend ) == 'number' then
-            spend = action.spend
+            cost = action.spend
             resource = action.spend_type or class.primaryResource
         elseif type( action.spend ) == 'function' then
-            spend, resource = action.spend()
+            cost, resource = action.spend()
         end
         
-        if spend > 0 and spend < 1 then
-            spend = ( spend * state[ resource ].max )
+        if cost > 0 and cost < 1 then
+            cost = ( cost * state[ resource ].max )
         end
         
-        if spend ~= 0 then
-            state[ resource ].actual = min( max(0, state[ resource ].actual - spend ), state[ resource ].max )
-            ns.callHook( "spendResources", spend, resource )
-            forecastResources()
+        if cost ~= 0 then
+            state.spend( cost, resource )            
         end
     end
 
@@ -3636,25 +3655,24 @@ _G.isKnown = ns.isKnown
 
 -- Filter out non-resource driven issues with abilities.
 ns.isUsable = function( spell )
-    
+
     local ability = class.abilities[ spell ]
     
     if not ability then return true end
 
-    if ability.item then
-        return state.equipped[ ability.item ]
+    if ability.item and not state.equipped[ ability.item ] then
+        return false
+    end
 
-    else
-        if state.rangefilter and UnitExists( 'target' ) and ns.lib.SpellRange.IsSpellInRange( ability.id, 'target' ) == 0 then
-            return false
-        end
-    
-        if ability.usable ~= nil then
-            if type( ability.usable ) == 'number' then 
-                return IsUsableSpell( ability.usable )
-            elseif type( ability.usable ) == 'function' then
-                return ability.usable()
-            end
+    if state.rangefilter and UnitExists( 'target' ) and LibStub( "SpellRange-1.0" ).IsSpellInRange( ability.id, 'target' ) == 0 then
+        return false
+    end
+
+    if ability.usable ~= nil then
+        if type( ability.usable ) == 'number' then 
+            return IsUsableSpell( ability.usable )
+        elseif type( ability.usable ) == 'function' then
+            return ability.usable()
         end
     end
     
@@ -3717,7 +3735,7 @@ function ns.timeToReady( action )
     local now = state.now + state.offset
     
     -- Need to ignore the wait for this part.
-    local wait = max( state.cooldown.global_cooldown.remains, state.cooldown[ action ].remains )
+    local wait = state.cooldown[ action ].remains -- max( state.cooldown.global_cooldown.remains, state.cooldown[ action ].remains )
     
     wait = ns.callHook( "timeToReady", wait, action )
     
@@ -3751,9 +3769,7 @@ function ns.timeToReady( action )
 
     if state.script.entry then
         wait = ns.checkTimeScript( state.script.entry, wait, spend, resource ) or wait
-    end
-
-   
+    end  
     
     -- cacheTTR[ action ] = wait
     return wait   

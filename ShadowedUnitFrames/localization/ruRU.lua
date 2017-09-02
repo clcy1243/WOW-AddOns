@@ -15,6 +15,7 @@ L["Absolute incoming heal value, if 10,000 healing is incoming it will show 10,0
 L["Add"] = "Добавить"
 L["Add new tag"] = "Добавить новый тег"
 L["Add new text"] = "Добавить новый текст"
+L["Add Tags"] = "Добавить метки"
 L["Adds %s to the list of units to be modified when you change values in this tab."] = "При изменении значения в данной вкладке добавляет %s в список фреймов, подлежащих модификации."
 L["Adds a bar indicating how much time is left on your ghoul timer, only used if you do not have a permanent ghoul."] = "Добавляет полосу, отображающую сколько времени осталось до исчезновения вурдалака; используется только если у вас нет постоянного вурдалака."
 L["Adds a bar indicating how much time is left on your mushrooms."] = "Добавляет полосу, показывающую, сколько осталось времени до исчезновения грибов."

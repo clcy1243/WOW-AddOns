@@ -78,6 +78,8 @@ L["By setting the default Icon for all macros to be the QuestionMark, the macro 
 --Translation missing 
 -- L["By setting this value the Sequence Editor will show every macro for your class.  Turning this off will only show the class macros for your current specialisation."] = ""
 L["Cancel"] = "Abbrechen"
+--Translation missing 
+-- L["CheckMacroCreated"] = ""
 L["Choose Language"] = "Wähle die Sprache"
 L["Classwide Macro"] = "Klassenweites Makro"
 L["Clear"] = "Löschen"
@@ -142,6 +144,8 @@ L["Export"] = "Exportieren"
 L["Export a Sequence"] = "Sequenz Exportieren"
 L["Filter Macro Selection"] = "Makroauswahl filtern"
 --Translation missing 
+-- L["Finished scanning for errors.  If no other messages then no errors were found."] = ""
+--Translation missing 
 -- L["FYou cannot delete this version of a sequence.  This version will be reloaded as it is contained in "] = ""
 --Translation missing 
 -- L["Gameplay Options"] = ""
@@ -175,13 +179,27 @@ L["GSE"] = "GSE"
 --Translation missing 
 -- L["GS-E can save all macros or only those versions that you have created locally.  Turning this off will cache all macros in your WTF\\GS-Core.lua variables file but will increase load times and potentially cause colissions."] = ""
 --Translation missing 
+-- L["GSE has a LibDataBroker (LDB) data feed.  List Other GSE Users and their version when in a group on the tooltip to this feed."] = ""
+--Translation missing 
+-- L["GSE has a LibDataBroker (LDB) data feed.  Set this option to show queued Out of Combat events in the tooltip."] = ""
+--Translation missing 
 -- L["GSE is a complete rewrite of that addon that allows you create a sequence of macros to be executed at the push of a button."] = ""
 L["GSE is out of date. You can download the newest version from https://mods.curse.com/addons/wow/gnomesequencer-enhanced."] = "GSE ist veraltet. Du kannst die neuste Version hier https://mods.curse.com/addons/wow/gnomesequencer-enhanced herunterladen."
 L["GSE Macro"] = "GSE Makro"
 L["GS-E Plugins"] = "GS-E Plugins"
+--Translation missing 
+-- L["GSE Users"] = ""
+--Translation missing 
+-- L["GSE Version: %s"] = ""
+--Translation missing 
+-- L["GSE: Left Click to open the Sequence Editor"] = ""
 L["GS-E: Left Click to open the Sequence Editor"] = "GS-E: Linksklick um den Sequenz Editor zu öffnen."
 --Translation missing 
+-- L["GSE: Middle Click to open the Transmission Interface"] = ""
+--Translation missing 
 -- L["GS-E: Middle Click to open the Transmission Interface"] = ""
+--Translation missing 
+-- L["GSE: Right Click to open the Sequence Debugger"] = ""
 --Translation missing 
 -- L["GS-E: Right Click to open the Sequence Debugger"] = ""
 L["Head"] = "Kopf"
@@ -232,6 +250,8 @@ L["Load"] = "Laden"
 L["Load Sequence"] = "Lade Sequenz"
 --Translation missing 
 -- L["Macro Collection to Import."] = ""
+--Translation missing 
+-- L["Macro found by the name %sWW%s. Rename this macro to a different name to be able to use it.  WOW has a hidden button called WW that is executed instead of this macro."] = ""
 L["Macro Icon"] = "Makrobild "
 L["Macro Import Successful."] = "Import des Makros erfolgreich."
 L["Macro Reset"] = "Makro zurücksetzen"
@@ -260,12 +280,18 @@ L["No Help Information Available"] = "Keine Hilfe verfügbar"
 --Translation missing 
 -- L["Normal Colour"] = ""
 L["Only Save Local Macros"] = "Nur lokale Makros speichern"
+--Translation missing 
+-- L["openviewer"] = ""
 L["Options"] = "Optionen"
 L["Options have been reset to defaults."] = "Die Optionen wurden auf Standardeinstellungen zurückgesetzt."
 L["Output"] = "Ausgabe"
 --Translation missing 
 -- L["Output the action for each button press to verify StepFunction and spell availability."] = ""
 L["Pause"] = "Pause"
+--Translation missing 
+-- L["Paused"] = ""
+--Translation missing 
+-- L["Paused - In Combat"] = ""
 --Translation missing 
 -- L["Picks a Custom Colour for emphasis."] = ""
 --Translation missing 
@@ -320,6 +346,8 @@ L["Record"] = "aufnehmen"
 L["Record Macro"] = "Makro aufnehmen"
 L["Registered Addons"] = "Registrierte Addons"
 --Translation missing 
+-- L["Replace"] = ""
+--Translation missing 
 -- L["Require Target to use"] = ""
 L["Reset Macro when out of combat"] = "Setzt das Makro außerhalb des Kampfes zurück"
 L["Resets"] = "zurücksetzen"
@@ -332,6 +360,8 @@ L["Right Mouse Button"] = "Rechte Maustaste"
 L["Right Shift Key"] = "Rechte Umschalttaste"
 L["Ring 1"] = "Ring 1"
 L["Ring 2"] = "Ring 2"
+--Translation missing 
+-- L["Running"] = ""
 L["Save"] = "speichern"
 --Translation missing 
 -- L["Seed Initial Macro"] = ""
@@ -356,6 +386,10 @@ L["Shift Keys."] = "Umschalttasten."
 L["Show All Macros in Editor"] = "Zeige alle Makros im Editor"
 L["Show Class Macros in Editor"] = "Zeige Klassenmakros im Editor"
 L["Show Global Macros in Editor"] = "Zeige allgemeine Makros im Editor"
+--Translation missing 
+-- L["Show GSE Users in LDB"] = ""
+--Translation missing 
+-- L["Show OOC Queue in LDB"] = ""
 --Translation missing 
 -- L["Source Language "] = ""
 L["Specialisation / Class ID"] = "Spezialisierung / Class ID"
@@ -382,6 +416,8 @@ L["The command "] = "Der Befehl"
 --Translation missing 
 -- L["The Custom StepFunction Specified is not recognised and has been ignored."] = ""
 --Translation missing 
+-- L["The GSE Out of Combat queue is %s"] = ""
+--Translation missing 
 -- L["The Macro Translator will translate an English sequence to your local language for execution.  It can also be used to translate a sequence into a different language.  It is also used for syntax based colour markup of Sequences in the editor."] = ""
 --Translation missing 
 -- L["The Sample Macros have been reloaded."] = ""
@@ -389,6 +425,10 @@ L["The command "] = "Der Befehl"
 -- L["The Sequence Editor can attempt to parse the Sequences, KeyPress and KeyRelease in realtime.  This is still experimental so can be turned off."] = ""
 --Translation missing 
 -- L["The Sequence Editor is an addon for GnomeSequencer-Enhanced that allows you to view and edit Sequences in game.  Type "] = ""
+--Translation missing 
+-- L["There are %i events in out of combat queue"] = ""
+--Translation missing 
+-- L["There are no events in out of combat queue"] = ""
 --Translation missing 
 -- L["There are No Macros Loaded for this class.  Would you like to load the Sample Macro?"] = ""
 --Translation missing 
@@ -439,6 +479,8 @@ L["Update"] = "Aktualisieren"
 -- L["Update Macro Stubs"] = ""
 --Translation missing 
 -- L["Update Macro Stubs."] = ""
+--Translation missing 
+-- L["UpdateSequence"] = ""
 L["Updating due to new version."] = "Aktualisierung nötig wegen einer neuen Version"
 L["Use"] = "Benutze"
 L["Use Belt Item in KeyRelease"] = "Benutze den Gürtel in KeyRelease"

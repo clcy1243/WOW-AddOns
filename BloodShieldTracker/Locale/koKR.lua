@@ -71,3 +71,4 @@ L["Toggle config mode"] = "설정 모드 여닫기"
 L["Toggle the minimap button"] = "미니맵 단추 여닫기"
 L["Use Aura"] = "오라 사용"
 L["Width"] = "너비"
+

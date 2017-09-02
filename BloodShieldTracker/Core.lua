@@ -28,7 +28,7 @@ local function cleanupVersion(version)
 end
 
 addon.addonTitle = _G.GetAddOnMetadata(ADDON_NAME,"Title")
-addon.addonVersion = cleanupVersion("7.2.1")
+addon.addonVersion = cleanupVersion("7.3.0")
 
 addon.CURRENT_BUILD, addon.CURRENT_INTERNAL, 
     addon.CURRENT_BUILD_DATE, addon.CURRENT_UI_VERSION = _G.GetBuildInfo()

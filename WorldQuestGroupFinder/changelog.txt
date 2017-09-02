@@ -1,4 +1,8 @@
-﻿0.26.3 (25/06/2017)
+﻿0.27
+- New TOC for 7.3
+- Localizations updated
+
+0.26.3 (25/06/2017)
 - Fix for error at login 
 - Localizations updated
 

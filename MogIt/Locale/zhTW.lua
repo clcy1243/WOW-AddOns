@@ -133,3 +133,4 @@ L["Width"] = "寬度"
 L["Wishlist"] = "願望清單"
 L["Wishlist profile"] = "願望清單設定檔"
 L["You have this item."] = "你有這件物品。"
+

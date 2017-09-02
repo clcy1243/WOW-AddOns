@@ -7,16 +7,13 @@ local Statics = GSE.Static
 
 local GSold = false
 local L = GSE.L
-local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+
 local AceGUI = LibStub("AceGUI-3.0")
 local Completing = LibStub("AceGUI-3.0-Completing-EditBox")
 local libS = LibStub:GetLibrary("AceSerializer-3.0")
 local libC = LibStub:GetLibrary("LibCompress")
 local libCE = libC:GetAddonEncodeTable()
-local LibQTip = LibStub('LibQTip-1.0')
-local LibSharedMedia = LibStub('LibSharedMedia-3.0')
 
-local dataobj = ldb:NewDataObject(L["GSE"] .." ".. L["GnomeSequencer-Enhanced"], {type = "data source", text = "/gse"})
 
 local transauthor = GetUnitName("player", true) .. '@' .. GetRealmName()
 local transauthorlen = string.len(transauthor)
@@ -127,6 +124,7 @@ function GSE:OnCommReceived(prefix, message, distribution, sender)
       if not GSold then
         performVersionCheck(t.Version)
       end
+      GSE.storeSender(sender, t.Version)
     elseif t.Command == "GS-E_TRANSMITSEQUENCE" then
       if sender ~= GetUnitName("player", true) then
         ReceiveSequence(t.ClassID, t.SequenceName, t.Sequence, sender)
@@ -138,74 +136,35 @@ function GSE:OnCommReceived(prefix, message, distribution, sender)
   end
 end
 
+function GSE.storeSender(sender, senderversion)
+  if GSE.isEmpty(GSE.UnsavedOptions["PartyUsers"]) then
+    GSE.UnsavedOptions["PartyUsers"] = {}
+  end
+  GSE.UnsavedOptions["PartyUsers"][sender] = senderversion
+end
 
 local function sendVersionCheck()
-  if not GSold then
-    local _, instanceType = IsInInstance()
-    local t = {}
-    t.Command = "GS-E_VERSIONCHK"
-    t.Version = GSE.VersionString
-    GSSendMessage(t)
-  end
+  local _, instanceType = IsInInstance()
+  local t = {}
+  t.Command = "GS-E_VERSIONCHK"
+  t.Version = GSE.VersionString
+  GSSendMessage(t)
 end
 
 function GSE:GROUP_ROSTER_UPDATE(...)
   sendVersionCheck()
+  for k,v in pairs(GSE.UnsavedOptions["PartyUsers"]) do
+    if not (UnitInParty(k) or UnitInRaid(k)) then
+      -- Take them out of the list
+      GSE.UnsavedOptions["PartyUsers"][k] = nil
+    end
+
+  end
 end
 
 
 GSE:RegisterComm("GSE")
 GSE:RegisterEvent("GROUP_ROSTER_UPDATE")
-local baseFont = CreateFont("baseFont")
-
--- CHeck for ElvUI
-if GSE.isEmpty(ElvUI) then
-  baseFont:SetFont(GameTooltipText:GetFont(), 10)
-elseif LibSharedMedia:IsValid('font', ElvUI[1].db.general.font) then
-  baseFont:SetFont(LibSharedMedia:Fetch('font', ElvUI[1].db.general.font), 10)
-else
-  baseFont:SetFont(GameTooltipText:GetFont(), 10)
-end
-
-function dataobj:OnEnter()
-  -- Acquire a tooltip with 3 columns, respectively aligned to left, center and right
-  --local tooltip = LibQTip:Acquire("GSSE", 3, "LEFT", "CENTER", "RIGHT")
-  local tooltip = LibQTip:Acquire("GSSE", 1,"CENTER")
-  self.tooltip = tooltip
-
-  tooltip:Clear()
-  tooltip:SetFont(baseFont)
-  --tooltip:SetHeaderFont(red17font)
-  tooltip:AddLine(L["GS-E: Left Click to open the Sequence Editor"])
-  tooltip:AddLine(L["GS-E: Middle Click to open the Transmission Interface"])
-  tooltip:AddLine(L["GS-E: Right Click to open the Sequence Debugger"])
-
-  -- Use smart anchoring code to anchor the tooltip to our frame
-  tooltip:SmartAnchorTo(self)
-
-  -- Show it, et voil� !
-  tooltip:Show()
-end
-
-function dataobj:OnLeave()
-  -- Release the tooltip
-  LibQTip:Release(self.tooltip)
-  self.tooltip = nil
-end
-
--- function dataobj:OnTooltipShow()
---
--- end
-
-function dataobj:OnClick(button)
-  if button == "LeftButton" then
-    GSE.GUIShowViewer()
-  elseif button == "MiddleButton" then
-    GSE.GUIShowTransmissionGui()
-  elseif button == "RightButton" then
-    GSDebugFrame:Show()
-  end
-end
 
 local transSequencevalue = ""
 

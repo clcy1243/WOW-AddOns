@@ -19,7 +19,7 @@ L.already_registered = "|cffff0000ATENÇÃO:|r |cff00ff00%s|r (|cffffff00%s|r) j
 L.officialRelease = "Você está executando uma versão oficial do BigWigs %s (%s)"
 L.alphaRelease = "Você está executando uma versão ALPHA do BigWigs %s (%s)"
 L.sourceCheckout = "Você está executando uma cópia de código do BigWigs %s diretamente do repositório."
-L.getNewRelease = "Seu BigWigs está desatualizado (/bwv) mas você pode facilmente atualizá-lo usando o Curse Client. Como alternativa, você pode atualizar manualmente em curse.com ou wowinterface.com."
+L.getNewRelease = "Seu BigWigs está desatualizado (/bwv) mas você pode facilmente atualizá-lo usando o Twitch Client. Como alternativa, você pode atualizar manualmente em curse.com ou wowinterface.com."
 L.warnTwoReleases = "Seu BigWigs está 2 versões desatualizado! Sua versão provavelmente contém bugs, faltam funcionalidades, ou possui contadores incorretos. É extremamente recomendado uma atualização."
 L.warnSeveralReleases = "|cffff0000Seu BigWigs está %d versões desatualizado!! Nós recomendamos EXTREMAMENTE a atualização para prevenir problemas de sincronização com outros jogadores!|r"
 
@@ -34,8 +34,6 @@ L.outOfDate = "Desatualizado:"
 L.dbmUsers = "Usuários do DBM:"
 L.noBossMod = "Sem mod de chefes:"
 L.offline = "Desconectado"
-
-L.blizzRestrictionsConfig = "Devido as restrições da Blizzard, as configurações precisam ser abertas fora de combate antes de poder ser acessadas em combate."
 
 L.missingAddOn = "Por favor, note que esta zona requer o |cFF436EEE%s|r plugin para os contadores serem exibidos."
 L.disabledAddOn = "Você desabilitou o addOn |cFF436EEE%s|r, contadores não serão exibidos."

@@ -1,4 +1,4 @@
-﻿local Libra = LibStub("Libra")
+local Libra = LibStub("Libra")
 local Type, Version = "AceDBControls", 4
 if Libra:GetModuleVersion(Type) >= Version then return end
 

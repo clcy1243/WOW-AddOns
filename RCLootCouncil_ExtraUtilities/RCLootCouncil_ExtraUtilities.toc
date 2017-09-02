@@ -1,8 +1,8 @@
 ## Author: Potdisc
-## Interface: 70200
+## Interface: 70300
 ## Notes: An RCLootCouncil module for more advanced utilities.
 ## Title: RCLootCouncil - Extra Utilities
-## Version: 0.5.0
+## Version: 0.5.2
 ## Dependencies: RCLootCouncil
 
 Locale\Locales.xml

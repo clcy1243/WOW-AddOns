@@ -1,7 +1,16 @@
-$Id: ChangeLog.txt 30 2017-07-19 09:59:37Z arith $
+$Id: ChangeLog.txt 37 2017-08-31 14:39:25Z arith $
 
 Revision History:
 =================
+
+* v1.11 (Aug. 31, 2017)
+-----------------------
+- Lib Update: LibUIDropDownMenu
+
+* v1.10 (Aug. 29, 2017)
+-----------------------
+- ToC update to support WoW 7.3.0
+- Lib Update: LibUIDropDownMenu
 
 * v1.09 (Jul. 19, 2017)
 -----------------------
