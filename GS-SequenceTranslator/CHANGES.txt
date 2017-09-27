@@ -1,0 +1,212 @@
+commit efaa9e79511a41c88de9cdcbdc0471380211a667
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Dec 8 13:52:52 2016 +1030
+
+    Travis Fix
+
+commit 94c06a07bb77c8638d269241c99e632a4cbd26f1
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Dec 8 12:54:20 2016 +1030
+
+    Travis Fix
+
+commit 56a71b5569aad55c516931337932a7522ef2e0a2
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Dec 8 12:38:23 2016 +1030
+
+    GSE 2.0 Changes
+
+commit ffdd223da5c6f6120e28dbe244664d2d4c32041e
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Wed Oct 26 04:21:48 2016 +1030
+
+    7.1 TOC Changes
+
+commit a23d0571af4718adcfe176c71920b70bca0bc285
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Mon Oct 24 13:01:07 2016 +1030
+
+    Language Files Updates
+
+commit 0e27c21cc33d7a6b645153e62dfa5cd27bfc856b
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Sun Sep 11 20:55:30 2016 +0930
+
+    Translation updates for TimothyLuke/GnomeSequence-Enhanced#77
+
+commit 45ccd829e5868ef8659a05a88c145623170fcdcd
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Tue Sep 6 17:01:31 2016 +0930
+
+    1.3.1 updates
+
+commit 12103841299795742b9a85e845e1d5c79082fd9b
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Mon Aug 22 14:57:13 2016 +0930
+
+    Changes for 1.3
+
+commit 080f520e17e48b6c393dc5ad5e7c92ab6128f1cf
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 18 15:48:10 2016 +0930
+
+    Fix Build failure
+
+commit 6734e986328cd44195ca5c2abb460e5d006a83ed
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Tue Aug 16 16:35:24 2016 +0930
+
+    Fixzes for 1.2.2
+
+commit 89df6eb5420dde1de0317688990aa0b6ae22d42c
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Mon Aug 15 17:51:48 2016 +0930
+
+    TimothyLuke/GnomeSequencer-Enhanced#37
+
+commit 9393e585323628362ea55b478767b7e1c1e2e990
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Fri Aug 12 07:52:31 2016 +0930
+
+    Refactor for TimothyLuke/GnomeSequencer-Enhanced#35 TimothyLuke/GnomeSequencer-Enhanced#22
+
+commit 88634309262d114411fba43c9c05503d0fa3f789
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 11 21:46:10 2016 +0930
+
+    Updates to languages
+
+commit 88634309262d114411fba43c9c05503d0fa3f789
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 11 21:46:10 2016 +0930
+
+    Updates to languages
+
+commit 2ce3eaae86fe2781b0c0c829ab19277523fb3282
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 11 12:25:32 2016 +0930
+
+    Link to Travis Output
+
+commit d32e3a1abb1ab032131d798c1f70b6e022551ee7
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 11 12:18:38 2016 +0930
+
+    Unittesting
+
+commit d74e5af4a4d986e389a02df1590698dfeb8f8548
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 11 12:05:42 2016 +0930
+
+    Getting ready for integration of engine into SequenceEditor
+
+commit 1b4b561945bf7c50b678fcc63c0166febd0259ab
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Tue Aug 9 12:10:18 2016 +0930
+
+    Updates for zhCN
+
+commit 3a1e5056cb0517179256989b6d802543e4dc03f0
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Tue Aug 9 08:07:05 2016 +0930
+
+    znCN support
+
+commit cd8f5ec3bddf3157823142aad3420b70072d745a
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Mon Aug 8 11:17:15 2016 +0930
+
+    Refactor isempty()
+    
+    TimothyLuke/GnomeSequencer-Enhanced#31
+
+commit e6932a7c581e07d107e97a4752a5551f0136c3bd
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Fri Aug 5 21:40:28 2016 +0930
+
+    1.1.5
+
+commit d8a70b9745548e0812c3da732de89db52f268c43
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Fri Aug 5 21:38:08 2016 +0930
+
+    TimothyLuke/GnomeSequencer-Enhanced#10
+
+commit 001af8d2cd644f476f4b6ee65c76de90a720a7ad
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Fri Aug 5 17:57:09 2016 +0930
+
+    #2 one more build to go
+
+commit 728cc84a1b4e7f43d31bf9f00466e3345b485d71
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Fri Aug 5 14:18:43 2016 +0930
+
+    #2 even more stuff.
+
+commit 450514e63f0965eafab1eb8647be516626032b4e
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Fri Aug 5 08:25:48 2016 +0930
+
+    More for #2
+
+commit de0b1e88d4e751badcf79f41d07358241370adde
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 4 13:46:16 2016 +0930
+
+    #2 cleanup
+
+commit 8879456dcff3765cb16dc3786f5ea8ae4932678f
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 4 13:40:33 2016 +0930
+
+    #2 see what ID's are missing from the master set.
+
+commit ca3dd7ad8e678cba9deb3d78ffc6aca6ef04195d
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 4 11:48:53 2016 +0930
+
+    #2 Export untranslated terms.
+
+commit ac50f1a5579dbcd13c7324091747f31c21193eeb
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Thu Aug 4 08:08:07 2016 +0930
+
+    #2 still missing Growl
+
+commit 10bdfa3abff21fc03240a6d255d4d17c7c2c292f
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Wed Aug 3 21:50:56 2016 +0930
+
+    Travis
+
+commit 7c56f77312fc61941050b01e6b83c35327bc8376
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Wed Aug 3 21:40:47 2016 +0930
+
+    #2 Code clean.  Some spells missing
+
+commit d122a6a8e0eec136f23a40e3ea4183479abbb364
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Sun Jul 31 19:24:40 2016 +0930
+
+    Fix for #1 to create 1.1.4b
+
+commit e084b5ed7fe52e86d49efb9328b5d809a4bd8bac
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Sun Jul 31 17:58:27 2016 +0930
+
+    toc
+
+commit 45041c247260165e64757baeb7ad854f92bf3a8b
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Sun Jul 31 17:57:04 2016 +0930
+
+    1.1.4a
+
+commit 6e9eb69c363ac26cfcd3024b5a3549a4b8cefa8e
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Sun Jul 31 17:05:37 2016 +0930
+
+    Version 1.1.4 moved from GnomeSequencer-Enhanced
+

@@ -553,6 +553,10 @@ L["STRING_OPTIONS_ALPHAMOD_ANCHOR"] = "Modificadores de opacidad:"
 -- L["STRING_OPTIONS_ALWAYS_USE"] = ""
 --Translation missing 
 -- L["STRING_OPTIONS_ALWAYS_USE_DESC"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_ALWAYSSHOWPLAYERS"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"] = ""
 L["STRING_OPTIONS_ANCHOR"] = "Lado"
 --Translation missing 
 -- L["STRING_OPTIONS_ANIMATEBARS"] = ""
@@ -812,6 +816,10 @@ L["STRING_OPTIONS_DATACOLLECT_ANCHOR"] = "Tipos de datos:"
 -- L["STRING_OPTIONS_DEATHLIMIT"] = ""
 --Translation missing 
 -- L["STRING_OPTIONS_DEATHLIMIT_DESC"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = ""
 L["STRING_OPTIONS_DESATURATE_MENU"] = "Desaturar menú"
 L["STRING_OPTIONS_DESATURATE_MENU_DESC"] = "Mostrar los iconos en el menú en blanco y negro."
 --Translation missing 
@@ -1039,10 +1047,6 @@ L["STRING_OPTIONS_OVERALL_ALL"] = "Todos segmentos"
 L["STRING_OPTIONS_OVERALL_ALL_DESC"] = "Todos segmentos se inclyen en los datos globales."
 L["STRING_OPTIONS_OVERALL_ANCHOR"] = "Datos globales:"
 --Translation missing 
--- L["STRING_OPTIONS_OVERALL_CHALLENGE"] = ""
---Translation missing 
--- L["STRING_OPTIONS_OVERALL_CHALLENGE_DESC"] = ""
---Translation missing 
 -- L["STRING_OPTIONS_OVERALL_DUNGEONBOSS"] = ""
 --Translation missing 
 -- L["STRING_OPTIONS_OVERALL_DUNGEONBOSS_DESC"] = ""
@@ -1054,6 +1058,10 @@ L["STRING_OPTIONS_OVERALL_ANCHOR"] = "Datos globales:"
 -- L["STRING_OPTIONS_OVERALL_LOGOFF"] = ""
 --Translation missing 
 -- L["STRING_OPTIONS_OVERALL_LOGOFF_DESC"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_OVERALL_MYTHICPLUS"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_OVERALL_MYTHICPLUS_DESC"] = ""
 --Translation missing 
 -- L["STRING_OPTIONS_OVERALL_NEWBOSS"] = ""
 --Translation missing 
@@ -1813,11 +1821,22 @@ L["STRING_SEGMENT_ENEMY"] = "Enemigo"
 L["STRING_SEGMENT_LOWER"] = "segmento"
 L["STRING_SEGMENT_OVERALL"] = "Datos globales"
 L["STRING_SEGMENT_START"] = "Iniciar"
-L["STRING_SEGMENT_TIME"] = "Tiempo"
 --Translation missing 
 -- L["STRING_SEGMENT_TRASH"] = ""
 --Translation missing 
 -- L["STRING_SEGMENTS"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_BOSS"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_COMBATTIME"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_OVERALL"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TOTALTIME"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TRASH"] = ""
 --Translation missing 
 -- L["STRING_SHIELD_HEAL"] = ""
 --Translation missing 

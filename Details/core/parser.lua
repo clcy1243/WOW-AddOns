@@ -309,7 +309,7 @@
 	--> early checks and fixes
 
 		if (who_serial == "") then
-			if (who_flags and _bit_band (who_flags, OBJECT_TYPE_PETS) ~= 0) then --> ï¿½ um pet
+			if (who_flags and _bit_band (who_flags, OBJECT_TYPE_PETS) ~= 0) then --> é um pet
 				--> pets must have a serial
 				return
 			end
@@ -426,7 +426,7 @@
 					(not _detalhes.in_group and who_flags and _bit_band (who_flags, AFFILIATION_GROUP) ~= 0)
 				)
 			) then 
-				--> nï¿½o entra em combate se for DOT
+				--> não entra em combate se for DOT
 				if (_detalhes.encounter_table.id and _detalhes.encounter_table ["start"] >= _GetTime() - 3 and _detalhes.announce_firsthit.enabled) then
 					local link
 					if (spellid <= 10) then
@@ -443,7 +443,7 @@
 				end
 				_detalhes:EntrarEmCombate (who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags)
 			else
-				--> entrar em combate se for dot e for do jogador e o ultimo combate ter sido a mais de 10 segundos atrï¿½s
+				--> entrar em combate se for dot e for do jogador e o ultimo combate ter sido a mais de 10 segundos atrás
 				if (token == "SPELL_PERIODIC_DAMAGE" and who_name == _detalhes.playername) then
 					--> ignora burning rush se o jogador estiver fora de combate
 					if (spellid == 111400) then
@@ -471,17 +471,17 @@
 		
 			este_jogador, meu_dono, who_name = _current_damage_container:PegarCombatente (who_serial, who_name, who_flags, true)
 			
-			if (meu_dono) then --> ï¿½ um pet
+			if (meu_dono) then --> é um pet
 				if (who_serial ~= "") then
 					damage_cache_pets [who_serial] = este_jogador
 					damage_cache_petsOwners [who_serial] = meu_dono
 				end
-				--conferir se o dono jï¿½ esta no cache
+				--conferir se o dono já esta no cache
 				if (not damage_cache [meu_dono.serial] and meu_dono.serial ~= "") then
 					damage_cache [meu_dono.serial] = meu_dono
 				end
 			else
-				if (who_flags) then --> ter certeza que nï¿½o ï¿½ um pet
+				if (who_flags) then --> ter certeza que não é um pet
 					if (who_serial ~= "") then
 						damage_cache [who_serial] = este_jogador
 					else
@@ -498,7 +498,7 @@
 			end
 			
 		elseif (meu_dono) then
-			--> ï¿½ um pet
+			--> é um pet
 			who_name = who_name .. " <" .. meu_dono.nome .. ">"
 		end
 		
@@ -514,18 +514,18 @@
 					damage_cache_pets [alvo_serial] = jogador_alvo
 					damage_cache_petsOwners [alvo_serial] = alvo_dono
 				end
-				--conferir se o dono jï¿½ esta no cache
+				--conferir se o dono já esta no cache
 				if (not damage_cache [alvo_dono.serial] and alvo_dono.serial ~= "") then
 					damage_cache [alvo_dono.serial] = alvo_dono
 				end
 			else
-				if (alvo_flags and alvo_serial ~= "") then --> ter certeza que nï¿½o ï¿½ um pet
+				if (alvo_flags and alvo_serial ~= "") then --> ter certeza que não é um pet
 					damage_cache [alvo_serial] = jogador_alvo
 				end
 			end
 		
 		elseif (alvo_dono) then
-			--> ï¿½ um pet
+			--> é um pet
 			alvo_name = alvo_name .. " <" .. alvo_dono.nome .. ">"
 		
 		end
@@ -702,8 +702,8 @@
 				return
 			end
 
-			--> record death log (o erro era o pet, nï¿½o tinha tabela entï¿½o dava erro)
-			if (este_jogador.grupo) then --> se tiver ele nï¿½o adiciona o evento lï¿½ em cima
+			--> record death log (o erro era o pet, não tinha tabela então dava erro)
+			if (este_jogador.grupo) then --> se tiver ele não adiciona o evento lá em cima
 				local t = last_events_cache [alvo_name]
 				
 				if (not t) then
@@ -819,17 +819,17 @@
 			
 			if (not este_jogador) then --> pode ser um desconhecido ou um pet
 				este_jogador, meu_dono, who_name = _current_damage_container:PegarCombatente (who_serial, who_name, who_flags, true)
-				if (meu_dono) then --> ï¿½ um pet
+				if (meu_dono) then --> é um pet
 					if (who_serial ~= "") then
 						damage_cache_pets [who_serial] = este_jogador
 						damage_cache_petsOwners [who_serial] = meu_dono
 					end
-					--conferir se o dono jï¿½ esta no cache
+					--conferir se o dono já esta no cache
 					if (not damage_cache [meu_dono.serial] and meu_dono.serial ~= "") then
 						damage_cache [meu_dono.serial] = meu_dono
 					end
 				else
-					if (who_flags) then --> ter certeza que nï¿½o ï¿½ um pet
+					if (who_flags) then --> ter certeza que não é um pet
 						if (who_serial ~= "") then
 							damage_cache [who_serial] = este_jogador
 						else
@@ -846,7 +846,7 @@
 				end
 				
 			elseif (meu_dono) then
-				--> ï¿½ um pet
+				--> é um pet
 				who_name = who_name .. " <" .. meu_dono.nome .. ">"
 			end
 		
@@ -960,17 +960,17 @@
 		
 			este_jogador, meu_dono, who_name = _current_damage_container:PegarCombatente (who_serial, who_name, who_flags, true)
 			
-			if (meu_dono) then --> ï¿½ um pet
+			if (meu_dono) then --> é um pet
 				if (who_serial ~= "") then
 					damage_cache_pets [who_serial] = este_jogador
 					damage_cache_petsOwners [who_serial] = meu_dono
 				end
-				--conferir se o dono jï¿½ esta no cache
+				--conferir se o dono já esta no cache
 				if (not damage_cache [meu_dono.serial] and meu_dono.serial ~= "") then
 					damage_cache [meu_dono.serial] = meu_dono
 				end
 			else
-				if (who_flags) then --> ter certeza que nï¿½o ï¿½ um pet
+				if (who_flags) then --> ter certeza que não é um pet
 					if (who_serial ~= "") then
 						damage_cache [who_serial] = este_jogador
 					else
@@ -987,7 +987,7 @@
 			end
 			
 		elseif (meu_dono) then
-			--> ï¿½ um pet
+			--> é um pet
 			who_name = who_name .. " <" .. meu_dono.nome .. ">"
 		end
 		
@@ -1003,18 +1003,18 @@
 					damage_cache_pets [alvo_serial] = jogador_alvo
 					damage_cache_petsOwners [alvo_serial] = alvo_dono
 				end
-				--conferir se o dono jï¿½ esta no cache
+				--conferir se o dono já esta no cache
 				if (not damage_cache [alvo_dono.serial] and alvo_dono.serial ~= "") then
 					damage_cache [alvo_dono.serial] = alvo_dono
 				end
 			else
-				if (alvo_flags and alvo_serial ~= "") then --> ter certeza que nï¿½o ï¿½ um pet
+				if (alvo_flags and alvo_serial ~= "") then --> ter certeza que não é um pet
 					damage_cache [alvo_serial] = jogador_alvo
 				end
 			end
 		
 		elseif (alvo_dono) then
-			--> ï¿½ um pet
+			--> é um pet
 			alvo_name = alvo_name .. " <" .. alvo_dono.nome .. ">"
 		end
 		
@@ -1063,7 +1063,7 @@
 	end
 
 	function parser:rangemissed (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spelltype, missType, isOffHand, amountMissed) --, isOffHand, amountMissed, arg1
-		return parser:missed (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, 2, "Tiro-Automï¿½tico", 00000001, missType, isOffHand, amountMissed) --, isOffHand, amountMissed, arg1
+		return parser:missed (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, 2, "Tiro-Automático", 00000001, missType, isOffHand, amountMissed) --, isOffHand, amountMissed, arg1
 	end
 
 	-- ~miss
@@ -1212,7 +1212,7 @@
 	
 		--> pet summon another pet
 		local sou_pet = container_pets [who_serial]
-		if (sou_pet) then --> okey, ja ï¿½ um pet
+		if (sou_pet) then --> okey, ja é um pet
 			who_name, who_serial, who_flags = sou_pet[1], sou_pet[2], sou_pet[3]
 		end
 		
@@ -1272,7 +1272,7 @@
 	
 		--> check invalid serial against pets
 		if (who_serial == "") then
-			if (who_flags and _bit_band (who_flags, OBJECT_TYPE_PETS) ~= 0) then --> ï¿½ um pet
+			if (who_flags and _bit_band (who_flags, OBJECT_TYPE_PETS) ~= 0) then --> é um pet
 				return
 			end
 		end
@@ -1309,7 +1309,7 @@
 		local este_jogador, meu_dono = healing_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_heal_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono and who_flags) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono and who_flags) then --> se não for um pet, adicionar no cache
 				healing_cache [who_name] = este_jogador
 			end
 		end
@@ -1348,10 +1348,10 @@
 		1 toekn SPELL_HEAL_ABSORBED 
 		2 time 1493837437.157 
 		3 who serial Player-3209-0514A56A 
-		4 who name Bombadï¿½o 
+		4 who name Bombadão 
 		5 who flags 1297 
 		6 alvo serial Player-3209-0514A56A 
-		7 alvo name Bombadï¿½o 
+		7 alvo name Bombadão 
 		8 alvo flags 1297
 		9 alvo flags2 0
 		10 spellid 116888 
@@ -1359,29 +1359,29 @@
 		12 school 12
 		
 		13 GUID - Player-3209-0514A56A 
-		14 PLAYERNAME - Bombadï¿½o 
+		14 PLAYERNAME - Bombadão 
 		15 FLAGS 1297
 		16 FLAGS2 0
 		17 SPELLID 116888
 		18 SPELLNAME Healing Potion 
 		19 ? 1
 		20 ? 2677
-		primeiro actor ï¿½ o quem comandou o absorb
-		o segundo ï¿½ a vitima seguido da magia que o primeiro actor usou pra o absorb
-		o terceiro ï¿½ a vitima com a magia que ela usou e foi absorvida
+		primeiro actor é o quem comandou o absorb
+		o segundo é a vitima seguido da magia que o primeiro actor usou pra o absorb
+		o terceiro é a vitima com a magia que ela usou e foi absorvida
 		5/3 11:54:58.346  SPELL_HEAL_ABSORBED,
 		Player-3209-051429E9,"Mephisstoo-Azralon",0x10548,0x0,Player-3209-05144527,"Keyspell-Azralon",0x511,0x0,223929,"Necrotic Wound",0x28,Player-3209-05144527,"Keyspell-Azralon",0x511,0x0,188016,"Ancient Healing Potion",0x1,254466		
 		
 		--heal pot spellID: 28495 - heal 2841
 
-		1 SPELL_HEAL_ABSORBED 2 1493837944.856 3 Player-3209-0514A56A 4 Bombadï¿½o 5 1297 6 Player-3209-0514A56A 7 Bombadï¿½o 8 1297 9 0 10 116888 11 Shroud of Purgatory 12 32 13 Player-3209-0514A56A 14 Bombadï¿½o 15 1297 16 0 17 116888 18 Healing Potion 19 1 20 1860 21 nil 22 nil 23 nil 24 nil 25 nil 26 nil 27 nil	
+		1 SPELL_HEAL_ABSORBED 2 1493837944.856 3 Player-3209-0514A56A 4 Bombadão 5 1297 6 Player-3209-0514A56A 7 Bombadão 8 1297 9 0 10 116888 11 Shroud of Purgatory 12 32 13 Player-3209-0514A56A 14 Bombadão 15 1297 16 0 17 116888 18 Healing Potion 19 1 20 1860 21 nil 22 nil 23 nil 24 nil 25 nil 26 nil 27 nil	
 	
-		1 SPELL_HEAL_ABSORBED 2 1493839447.257 3 Player-3209-0514A56A 4 Bombadï¿½o 5 1297 6 Player-3209-0514A56A 7 Bombadï¿½o 8 1297 9 0 10 nil 11 nil 12 nil 13 Player-3209-05DE3E42 14 Yakumile 15 1298 16 0 17 116888 18 Holy Word: Serenity 19 2 20 2690 21 nil 22 nil 		
+		1 SPELL_HEAL_ABSORBED 2 1493839447.257 3 Player-3209-0514A56A 4 Bombadão 5 1297 6 Player-3209-0514A56A 7 Bombadão 8 1297 9 0 10 nil 11 nil 12 nil 13 Player-3209-05DE3E42 14 Yakumile 15 1298 16 0 17 116888 18 Holy Word: Serenity 19 2 20 2690 21 nil 22 nil 		
 
-		1 SPELL_HEAL_ABSORBED 2 1493840761.019 3 Player-3209-0514A56A 4 Bombadï¿½o 5 1297 6 Player-3209-0514A56A 7 Bombadï¿½o 8 1297 9 0 10 nil 11 nil 12 nil 13 Player-57-06AB4689 14 Yakumile 15 1298 16 0 17 116888 18 Circle of Healing 19 2 20 673 21 nil 22 nil 23 nil 24 nil 25 nil 26 nil 27 nil
+		1 SPELL_HEAL_ABSORBED 2 1493840761.019 3 Player-3209-0514A56A 4 Bombadão 5 1297 6 Player-3209-0514A56A 7 Bombadão 8 1297 9 0 10 nil 11 nil 12 nil 13 Player-57-06AB4689 14 Yakumile 15 1298 16 0 17 116888 18 Circle of Healing 19 2 20 673 21 nil 22 nil 23 nil 24 nil 25 nil 26 nil 27 nil
 		
-oken: SPELL_HEAL_ABSORBED ime: 1493841853.862 |whoserial: Player-3209-0514A56A |whoname: Bombadï¿½o |whoflags: 1297 |alvoserial: Player-3209-0514A56A |alvoname: Bombadï¿½o |alvoflags 1297 |alvoflags2: 0 |spellidAbsorb: 116888 |spellnameABsorb Shroud of Purgatory |spellschoolAbsorb 32 |serialhealer: Player-3209-0514A56A 
-ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |spellnameHeal: Healing Potion ypeHeal: 1 |amountDenied: 870		
+oken: SPELL_HEAL_ABSORBED ime: 1493841853.862 |whoserial: Player-3209-0514A56A |whoname: Bombadão |whoflags: 1297 |alvoserial: Player-3209-0514A56A |alvoname: Bombadão |alvoflags 1297 |alvoflags2: 0 |spellidAbsorb: 116888 |spellnameABsorb Shroud of Purgatory |spellschoolAbsorb 32 |serialhealer: Player-3209-0514A56A 
+ameHealer: Bombadão |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |spellnameHeal: Healing Potion ypeHeal: 1 |amountDenied: 870		
 		
 --]]	
 	end
@@ -1423,7 +1423,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 			end
 		end
 		
-		--> chamar a funï¿½ï¿½o de cura pra contar a cura
+		--> chamar a função de cura pra contar a cura
 		return parser:heal (token, time, owner_serial, owner_name, owner_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, shieldid, shieldname, shieldtype, amount, 0, 0, nil, true)
 		
 	end
@@ -1440,7 +1440,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 	
 		--> check invalid serial against pets
 		if (who_serial == "") then
-			if (who_flags and _bit_band (who_flags, OBJECT_TYPE_PETS) ~= 0) then --> ï¿½ um pet
+			if (who_flags and _bit_band (who_flags, OBJECT_TYPE_PETS) ~= 0) then --> é um pet
 				return
 			end
 			--who_serial = nil
@@ -1485,7 +1485,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 		local este_jogador, meu_dono = healing_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_heal_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono and who_flags) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono and who_flags) then --> se não for um pet, adicionar no cache
 				healing_cache [who_name] = este_jogador
 			end
 		end
@@ -1654,7 +1654,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 		local este_jogador, meu_dono = healing_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_heal_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono and who_flags) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono and who_flags) then --> se não for um pet, adicionar no cache
 				healing_cache [who_name] = este_jogador
 			end
 		end
@@ -1802,7 +1802,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 						--> call record debuffs uptime
 						parser:add_debuff_uptime (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, "DEBUFF_UPTIME_IN")
 	
-					elseif (raid_members_cache [alvo_serial] and not raid_members_cache [who_serial]) then --> alvo ï¿½ da raide e who ï¿½ alguem de fora da raide
+					elseif (raid_members_cache [alvo_serial] and not raid_members_cache [who_serial]) then --> alvo é da raide e who é alguem de fora da raide
 						parser:add_bad_debuff_uptime (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spellschool, "DEBUFF_UPTIME_IN")
 					end
 				end
@@ -1889,7 +1889,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 		local este_jogador, meu_dono = misc_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_misc_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono) then --> se não for um pet, adicionar no cache
 				misc_cache [who_name] = este_jogador
 			end
 		end
@@ -1987,11 +1987,11 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 					if (escudo [alvo_name] and escudo [alvo_name][spellid] and escudo [alvo_name][spellid][who_name]) then
 
 						if (ignored_overheal [spellid]) then
-							escudo [alvo_name][spellid][who_name] = amount -- refresh jï¿½ vem o valor atualizado
+							escudo [alvo_name][spellid][who_name] = amount -- refresh já vem o valor atualizado
 							return
 						end
 						
-						--escudo antigo ï¿½ dropado, novo ï¿½ posto
+						--escudo antigo é dropado, novo é posto
 						local overheal = escudo [alvo_name][spellid][who_name]
 						escudo [alvo_name][spellid][who_name] = amount
 						
@@ -2007,7 +2007,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 							--return parser:heal (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, spellid, spellname, nil, _math_ceil (absorb), _math_ceil (overheal), 0, 0, nil, true)
 						--end
 					else
-						-- escudo nï¿½o encontrado :(
+						-- escudo não encontrado :(
 					end
 
 			------------------------------------------------------------------------------------------------
@@ -2043,7 +2043,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 					if (raid_members_cache [who_serial]) then
 						--> call record debuffs uptime
 						parser:add_debuff_uptime (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, "DEBUFF_UPTIME_REFRESH")
-					elseif (raid_members_cache [alvo_serial] and not raid_members_cache [who_serial]) then --> alvo ï¿½ da raide e o caster ï¿½ inimigo
+					elseif (raid_members_cache [alvo_serial] and not raid_members_cache [who_serial]) then --> alvo é da raide e o caster é inimigo
 						parser:add_bad_debuff_uptime (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spellschool, "DEBUFF_UPTIME_REFRESH", amount)
 					end
 				end
@@ -2139,7 +2139,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 				if (absorb_spell_list [spellid] and _recording_healing) then
 					if (escudo [alvo_name] and escudo [alvo_name][spellid] and escudo [alvo_name][spellid][who_name]) then
 						if (amount) then
-							-- o amount ï¿½ o que sobrou do escudo
+							-- o amount é o que sobrou do escudo
 							
 							local overheal = escudo [alvo_name][spellid][who_name]
 							escudo [alvo_name][spellid][who_name] = 0
@@ -2158,7 +2158,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 							
 							--escudo [alvo_name][spellid][who_name] = nil
 							
-							--return parser:heal (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, spellid, spellname, nil, _math_ceil (absorb), _math_ceil (overheal), 0, 0, nil, true) --> ï¿½ltimo parametro IS_SHIELD
+							--return parser:heal (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, spellid, spellname, nil, _math_ceil (absorb), _math_ceil (overheal), 0, 0, nil, true) --> último parametro IS_SHIELD
 						end
 						escudo [alvo_name][spellid][who_name] = 0
 					end
@@ -2189,7 +2189,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 					if (raid_members_cache [who_serial]) then
 						--> call record debuffs uptime
 						parser:add_debuff_uptime (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, "DEBUFF_UPTIME_OUT")
-					elseif (raid_members_cache [alvo_serial] and not raid_members_cache [who_serial]) then --> alvo ï¿½ da raide e o caster ï¿½ inimigo
+					elseif (raid_members_cache [alvo_serial] and not raid_members_cache [who_serial]) then --> alvo é da raide e o caster é inimigo
 						parser:add_bad_debuff_uptime (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spellschool, "DEBUFF_UPTIME_OUT")
 					end
 				end
@@ -2247,7 +2247,7 @@ ameHealer: Bombadï¿½o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 		
 		------------------------------------------------------------------------------------------------
 		--> get actors
-			--> nome do debuff serï¿½ usado para armazenar o nome do ator
+			--> nome do debuff será usado para armazenar o nome do ator
 			local este_jogador = misc_cache [spellname]
 			if (not este_jogador) then --> pode ser um desconhecido ou um pet
 				este_jogador = _current_misc_container:PegarCombatente (who_serial, spellname, who_flags, true)
@@ -2658,7 +2658,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			if (meu_dono) then
 				meu_dono.powertype = powertype
 			end
-			if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono) then --> se não for um pet, adicionar no cache
 				energy_cache [who_name] = este_jogador
 			end
 		end
@@ -2749,7 +2749,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		local este_jogador, meu_dono = misc_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_misc_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono) then --> se não for um pet, adicionar no cache
 				misc_cache [who_name] = este_jogador
 			end
 		end
@@ -2779,7 +2779,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 				local damage_actor = damage_cache [who_serial]
 				if (not damage_actor) then --> pode ser um desconhecido ou um pet
 					damage_actor = _current_damage_container:PegarCombatente (who_serial, who_name, who_flags, true)
-					if (who_flags) then --> se nï¿½o for um pet, adicionar no cache
+					if (who_flags) then --> se não for um pet, adicionar no cache
 						damage_cache [who_serial] = damage_actor
 					end
 				end
@@ -2858,7 +2858,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		local este_jogador, meu_dono = misc_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_misc_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono) then --> se não for um pet, adicionar no cache
 				misc_cache [who_name] = este_jogador
 			end
 		end
@@ -2963,7 +2963,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		local este_jogador = misc_cache [who_name]
 		if (not este_jogador) then
 			este_jogador, meu_dono, who_name = _current_misc_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono) then --> se não for um pet, adicionar no cache
 				misc_cache [who_name] = este_jogador
 			end
 		end
@@ -3021,7 +3021,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 	------------------------------------------------------------------------------------------------
 	--> early checks and fixes
 		
-		--> esta dando erro onde o nome ï¿½ NIL, fazendo um fix para isso
+		--> esta dando erro onde o nome é NIL, fazendo um fix para isso
 		if (not who_name) then
 			who_name = "[*] "..extraSpellName
 		end
@@ -3036,7 +3036,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		local este_jogador, meu_dono = misc_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_misc_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono) then --> se não for um pet, adicionar no cache
 				misc_cache [who_name] = este_jogador
 			end
 		end
@@ -3045,7 +3045,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 	--> build containers on the fly
 
 		if (not este_jogador.dispell) then
-			--> constrï¿½i aqui a tabela dele
+			--> constrói aqui a tabela dele
 			este_jogador.dispell = _detalhes:GetOrderNumber (who_name)
 			este_jogador.dispell_targets = {}
 			este_jogador.dispell_spells = container_habilidades:NovoContainer (container_misc)
@@ -3123,7 +3123,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		local este_jogador, meu_dono = misc_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_misc_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono) then --> se não for um pet, adicionar no cache
 				misc_cache [who_name] = este_jogador
 			end
 		end
@@ -3155,7 +3155,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		
 		--> add battle ress
 		if (_UnitAffectingCombat (who_name)) then 
-			--> procura a ï¿½ltima morte do alvo na tabela do combate:
+			--> procura a última morte do alvo na tabela do combate:
 			for i = 1, #_current_combat.last_events_tables do 
 				if (_current_combat.last_events_tables [i] [3] == alvo_name) then
 
@@ -3236,7 +3236,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		local este_jogador, meu_dono = misc_cache [who_name]
 		if (not este_jogador) then --> pode ser um desconhecido ou um pet
 			este_jogador, meu_dono, who_name = _current_misc_container:PegarCombatente (who_serial, who_name, who_flags, true)
-			if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+			if (not meu_dono) then --> se não for um pet, adicionar no cache
 				misc_cache [who_name] = este_jogador
 			end
 		end
@@ -3245,7 +3245,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 	--> build containers on the fly
 		
 		if (not este_jogador.cc_break) then
-			--> constrï¿½i aqui a tabela dele
+			--> constrói aqui a tabela dele
 			este_jogador.cc_break = _detalhes:GetOrderNumber (who_name)
 			este_jogador.cc_break_targets = {}
 			este_jogador.cc_break_spells = container_habilidades:NovoContainer (container_misc)
@@ -3343,11 +3343,11 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 				_current_total [4].dead = _current_total [4].dead + 1
 				_current_gtotal [4].dead = _current_gtotal [4].dead + 1
 				
-				--> main actor no container de misc que irï¿½ armazenar a morte
+				--> main actor no container de misc que irá armazenar a morte
 				local este_jogador, meu_dono = misc_cache [alvo_name]
 				if (not este_jogador) then --> pode ser um desconhecido ou um pet
 					este_jogador, meu_dono, who_name = _current_misc_container:PegarCombatente (alvo_serial, alvo_name, alvo_flags, true)
-					if (not meu_dono) then --> se nï¿½o for um pet, adicionar no cache
+					if (not meu_dono) then --> se não for um pet, adicionar no cache
 						misc_cache [alvo_name] = este_jogador
 					end
 				end
@@ -4111,10 +4111,15 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		if (_detalhes.debug) then
 			_detalhes:Msg ("(debug) |cFFFFFF00ENCOUNTER_START|r event triggered.")
 		end
-	
+		
 		_detalhes.latest_ENCOUNTER_END = _detalhes.latest_ENCOUNTER_END or 0
 		if (_detalhes.latest_ENCOUNTER_END + 10 > _GetTime()) then
 			return
+		end
+
+		--> leave the current combat when the encounter start, if is doing a mythic plus dungeons, check if the options alows to create a dedicated segment for the boss fight
+		if ((_in_combat and not _detalhes.tabela_vigente.is_boss) and (not _detalhes.MythicPlus.Started or _detalhes.mythic_plus.boss_dedicated_segment)) then
+			_detalhes:SairDoCombate()
 		end
 		
 		local encounterID, encounterName, difficultyID, raidSize = _select (1, ...)
@@ -4123,23 +4128,14 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			_detalhes.WhoAggroTimer = C_Timer.NewTimer (0.5, who_aggro)
 		end
 		
-		if (IsInGuild() and _detalhes.announce_damagerecord.enabled and _detalhes.StorageLoaded) then
+		if (IsInGuild() and IsInRaid() and _detalhes.announce_damagerecord.enabled and _detalhes.StorageLoaded) then
 			_detalhes.TellDamageRecord = C_Timer.NewTimer (0.6, _detalhes.PrintEncounterRecord)
 			_detalhes.TellDamageRecord.Boss = encounterID
 			_detalhes.TellDamageRecord.Diff = difficultyID
 		end
-	
-		--print ("START", encounterID, encounterName, difficultyID, raidSize)
-		
+
 		_current_encounter_id = encounterID
-	
-		if (_in_combat and not _detalhes.tabela_vigente.is_boss) then
-			_detalhes:SairDoCombate()
-			--_detalhes:Msg ("encounter against|cFFFFFF00", encounterName, "|rbegan, GL HF!")
-		else
-			--_detalhes:Msg ("encounter against|cFFFFC000", encounterName, "|rbegan, GL HF!")
-		end
-	
+		
 		local dbm_mod, dbm_time = _detalhes.encounter_table.DBM_Mod, _detalhes.encounter_table.DBM_ModTime
 		_table_wipe (_detalhes.encounter_table)
 		
@@ -4160,7 +4156,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		_detalhes.encounter_table.zone = zoneName
 		_detalhes.encounter_table.mapid = zoneMapID
 		
-		if (dbm_mod and dbm_time == time()) then --pode ser time() ï¿½ usado no start pra saber se foi no mesmo segundo.
+		if (dbm_mod and dbm_time == time()) then --pode ser time() é usado no start pra saber se foi no mesmo segundo.
 			_detalhes.encounter_table.DBM_Mod = dbm_mod
 		end
 		
@@ -4188,7 +4184,10 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			_detalhes.encounter_table.index = boss_index
 		end
 		
-		parser:Handle3rdPartyBuffs_OnEncounterStart()
+		if (not _detalhes.MythicPlus.Started or (_detalhes.MythicPlus.Started and not _in_combat)) then
+			parser:Handle3rdPartyBuffs_OnEncounterStart()
+		end
+		
 	end
 	
 	function _detalhes.parser_functions:ENCOUNTER_END (...)
@@ -4199,7 +4198,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		
 		_current_encounter_id = nil
 		
-		if (_detalhes.zone_type == "party") then
+		local _, instanceType = GetInstanceInfo() --> let's make sure it isn't a dungeon
+		if (_detalhes.zone_type == "party" or instanceType == "party") then
 			if (_detalhes.debug) then
 				_detalhes:Msg ("(debug) the zone type is 'party', ignoring ENCOUNTER_END.")
 			end
@@ -4280,6 +4280,21 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		if (not _IsInGroup() and not IsInRaid()) then	
 			_detalhes.tabela_vigente.playing_solo = true
 			_detalhes:SairDoCombate()
+		end
+		
+		if (_detalhes.schedule_mythicdungeon_trash_merge) then
+			_detalhes.schedule_mythicdungeon_trash_merge = nil
+			DetailsMythicPlusFrame.MergeTrashCleanup (true)
+		end
+		
+		if (_detalhes.schedule_mythicdungeon_endtrash_merge) then
+			_detalhes.schedule_mythicdungeon_endtrash_merge = nil
+			DetailsMythicPlusFrame.MergeRemainingTrashAfterAllBossesDone()
+		end
+		
+		if (_detalhes.schedule_mythicdungeon_overallrun_merge) then
+			_detalhes.schedule_mythicdungeon_overallrun_merge = nil
+			DetailsMythicPlusFrame.MergeSegmentsOnEnd()
 		end
 		
 		--> aqui, tentativa de fazer o timer da janela do Solo funcionar corretamente:
@@ -4427,16 +4442,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			_detalhes:Msg ("(debug) found a timer.")
 		end
 	
-		local name, groupType, _, difficult = GetInstanceInfo()
-		if (groupType == "party" and difficult == "Mythic Keystone" and _detalhes.overall_clear_newchallenge) then
-			_detalhes.historico:resetar_overall()
-			if (_detalhes.debug) then
-				_detalhes:Msg ("(debug) timer is for a mythic+ dungeon, overall has been reseted.")
-			end
-		end
-		
 		--if (C_Scenario.IsChallengeMode() and _detalhes.overall_clear_newchallenge) then
---		if (_detalhes.overall_clear_newchallenge) then --C_Scenario.IsChallengeMode() and  parece que nï¿½o existe mais
+--		if (_detalhes.overall_clear_newchallenge) then --C_Scenario.IsChallengeMode() and  parece que não existe mais
 --			_detalhes.historico:resetar_overall()
 --			if (_detalhes.debug) then
 --				_detalhes:Msg ("(debug) timer is a challenge mode start.")

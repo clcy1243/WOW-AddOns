@@ -53,6 +53,16 @@
 		return self.data_inicio, self.data_fim
 	end
 	
+	--set the combat date
+	function combate:SetDate (started, ended)
+		if (started and type (started) == "string") then
+			self.data_inicio = started
+		end
+		if (ended and type (ended) == "string") then
+			self.data_fim = ended
+		end		
+	end
+	
 	--return data for charts
 	function combate:GetTimeData (name)
 		return self.TimeData [name]
@@ -88,6 +98,24 @@
 	
 	function combate:GetPvPInfo()
 		return self.is_pvp
+	end
+	
+	function combate:GetMythicDungeonInfo()
+		return self.is_mythic_dungeon
+	end
+
+	function combate:GetMythicDungeonTrashInfo()
+		return self.is_mythic_dungeon_trash
+	end
+	
+	function combate:IsMythicDungeon()
+		local is_segment = self.is_mythic_dungeon_segment
+		local run_id = self.is_mythic_dungeon_run_id
+		return is_segment, run_id
+	end
+	
+	function combate:IsMythicDungeonOverall()
+		return self.is_mythic_dungeon and self.is_mythic_dungeon.OverallSegment
 	end
 	
 	function combate:GetArenaInfo()
@@ -229,19 +257,19 @@
 		
 		--> try discover if is a pvp combat
 		local who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags = ...
-		if (who_serial) then --> aqui irï¿½ identificar o boss ou o oponente
+		if (who_serial) then --> aqui irá identificar o boss ou o oponente
 			if (alvo_name and _bit_band (alvo_flags, REACTION_HOSTILE) ~= 0) then --> tentando pegar o inimigo pelo alvo
 				esta_tabela.contra = alvo_name
 				if (_bit_band (alvo_flags, CONTROL_PLAYER) ~= 0) then
-					esta_tabela.pvp = true --> o alvo ï¿½ da facï¿½ï¿½o oposta ou foi dado mind control
+					esta_tabela.pvp = true --> o alvo é da facção oposta ou foi dado mind control
 				end
-			elseif (who_name and _bit_band (who_flags, REACTION_HOSTILE) ~= 0) then --> tentando pegar o inimigo pelo who caso o mob ï¿½ quem deu o primeiro hit
+			elseif (who_name and _bit_band (who_flags, REACTION_HOSTILE) ~= 0) then --> tentando pegar o inimigo pelo who caso o mob é quem deu o primeiro hit
 				esta_tabela.contra = who_name
 				if (_bit_band (who_flags, CONTROL_PLAYER) ~= 0) then
-					esta_tabela.pvp = true --> o who ï¿½ da facï¿½ï¿½o oposta ou foi dado mind control
+					esta_tabela.pvp = true --> o who é da facção oposta ou foi dado mind control
 				end
 			else
-				esta_tabela.pvp = true --> se ambos sï¿½o friendly, seria isso um PVP entre jogadores da mesma facï¿½ï¿½o?
+				esta_tabela.pvp = true --> se ambos são friendly, seria isso um PVP entre jogadores da mesma facção?
 			end
 		end
 
@@ -272,7 +300,7 @@
 		--> Skill cache (not used)
 		esta_tabela.CombatSkillCache = {}
 
-		-- a tabela sem o tempo de inicio ï¿½ a tabela descartavel do inicio do addon
+		-- a tabela sem o tempo de inicio é a tabela descartavel do inicio do addon
 		if (iniciada) then
 			--esta_tabela.start_time = _tempo
 			esta_tabela.start_time = _GetTime()
@@ -282,14 +310,14 @@
 			esta_tabela.end_time = nil
 		end
 
-		-- o container irï¿½ armazenar as classes de dano -- cria um novo container de indexes de seriais de jogadores --parï¿½metro 1 classe armazenada no container, parï¿½metro 2 = flag da classe
+		-- o container irá armazenar as classes de dano -- cria um novo container de indexes de seriais de jogadores --parâmetro 1 classe armazenada no container, parâmetro 2 = flag da classe
 		esta_tabela[1].need_refresh = true
 		esta_tabela[2].need_refresh = true
 		esta_tabela[3].need_refresh = true
 		esta_tabela[4].need_refresh = true
 		esta_tabela[5].need_refresh = true
 		
-		if (_tabela_overall) then --> link ï¿½ a tabela de combate do overall
+		if (_tabela_overall) then --> link é a tabela de combate do overall
 			esta_tabela[1].shadow = _tabela_overall[1]
 			esta_tabela[2].shadow = _tabela_overall[2]
 			esta_tabela[3].shadow = _tabela_overall[3]
@@ -361,7 +389,7 @@
 		return t
 	end
 
-	--trava o tempo dos jogadores apï¿½s o tï¿½rmino do combate.
+	--trava o tempo dos jogadores após o término do combate.
 	function combate:TravarTempos()
 		if (self [1]) then
 			for _, jogador in _ipairs (self [1]._ActorTable) do --> damage
@@ -500,19 +528,23 @@
 	combate.__add = function (combate1, combate2)
 
 		local all_containers = {combate2 [class_type_dano]._ActorTable, combate2 [class_type_cura]._ActorTable, combate2 [class_type_e_energy]._ActorTable, combate2 [class_type_misc]._ActorTable}
+		local custom_combat
+		if (combate1 ~= _detalhes.tabela_overall) then
+			custom_combat = combate1
+		end
 		
 		for class_type, actor_container in ipairs (all_containers) do
 			for _, actor in ipairs (actor_container) do
 				local shadow
 				
 				if (class_type == class_type_dano) then
-					shadow = _detalhes.atributo_damage:r_connect_shadow (actor, true)
+					shadow = _detalhes.atributo_damage:r_connect_shadow (actor, true, custom_combat)
 				elseif (class_type == class_type_cura) then
-					shadow = _detalhes.atributo_heal:r_connect_shadow (actor, true)
+					shadow = _detalhes.atributo_heal:r_connect_shadow (actor, true, custom_combat)
 				elseif (class_type == class_type_e_energy) then
-					shadow = _detalhes.atributo_energy:r_connect_shadow (actor, true)
+					shadow = _detalhes.atributo_energy:r_connect_shadow (actor, true, custom_combat)
 				elseif (class_type == class_type_misc) then
-					shadow = _detalhes.atributo_misc:r_connect_shadow (actor, true)
+					shadow = _detalhes.atributo_misc:r_connect_shadow (actor, true, custom_combat)
 				end
 				
 				shadow.boss_fight_component = actor.boss_fight_component

@@ -1000,6 +1000,7 @@ local default_profile = {
 		force_activity_time_pvp = true,
 		death_tooltip_width = 300,
 		override_spellids = true,
+		all_players_are_group = false,
 	
 	--> skins
 		standard_skin = false,
@@ -1057,7 +1058,7 @@ local default_profile = {
 
 _detalhes.default_profile = default_profile
 
--- aqui fica as propriedades do jogador que nï¿½o serï¿½o armazenadas no profile
+-- aqui fica as propriedades do jogador que não serão armazenadas no profile
 local default_player_data = {
 
 	--> force all fonts to have this outline
@@ -1073,6 +1074,7 @@ local default_player_data = {
 		combat_counter = 0,
 		last_instance_id = 0,
 		last_instance_time = 0,
+		mythic_dungeon_id = 0,
 	--> nicktag cache
 		nick_tag_cache = {},
 		ignore_nicktag = false,
@@ -1129,6 +1131,11 @@ local default_player_data = {
 		benchmark_db = {
 			frame = {},
 			
+		},
+	--> rank
+		rank_window = {
+			last_difficulty = 15,
+			last_raid = "",
 		},
 }
 
@@ -1202,7 +1209,18 @@ local default_global_data = {
 	--> aura creation frame libwindow
 		createauraframe = {},
 	--> min health done on the death report
-		deathlog_healingdone_min = 10000,
+		deathlog_healingdone_min = 1,
+		
+	--> mythic plus config
+		mythic_plus = {
+			always_in_combat = false, --
+			merge_boss_trash = true, --
+			delete_trash_after_merge = true, --
+			--merge_boss_with_trash = false, --this won't be used
+			boss_dedicated_segment = true, --
+			make_overall_when_done = true, --
+			make_overall_boss_only = false, --
+		},
 		
 	-- important auras
 	--[=[

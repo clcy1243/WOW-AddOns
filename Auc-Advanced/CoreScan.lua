@@ -1,7 +1,7 @@
 --[[
 	Auctioneer
-	Version: 7.4.5714 (TasmanianThylacine)
-	Revision: $Id: CoreScan.lua 5709 2017-02-16 16:40:23Z brykrys $
+	Version: 7.5.5724 (TasmanianThylacine)
+	Revision: $Id: CoreScan.lua 5718 2017-08-01 18:43:08Z brykrys $
 	URL: http://auctioneeraddon.com/
 
 	This is an addon for World of Warcraft that adds statistical history to the auction data that is collected
@@ -195,8 +195,8 @@ function private.LoadScanData()
 			private.FallbackScanData = reason
 		else
 			private.loadingScanData = "block" -- prevents re-entry to this function during the LoadAddOn call
-			load, reason = LoadAddOn("Auc-ScanData")
-			if load then
+			local loaded, reason = LoadAddOn("Auc-ScanData")
+			if loaded then
 				private.loadingScanData = "loading"
 			elseif reason then
 				private.loadingScanData = "fallback"
@@ -236,6 +236,8 @@ function private.LoadScanData()
 			serverKey = ResolveServerKey(serverKey)
 			if serverKey == Resources.ServerKey then
 				return scandata
+			else
+				return nil, "No Fallback Data"
 			end
 		end
 		-- fallback message
@@ -268,8 +270,11 @@ function private.GetScanData(serverKey)
 		local newfunc = private.LoadScanData()
 		if newfunc then
 			return newfunc(serverKey)
+		else
+			return nil, "Stub Loader Still Loading"
 		end
 	end
+	return nil, "Stub Loader Failed"
 end
 
 -- AucAdvanced.Scan.ClearScanData(serverKey)
@@ -980,8 +985,18 @@ local Commitfunction = function()
 	end
 
 	local serverKey = Resources.ServerKey
-	local scandata = private.GetScanData(serverKey)
-	assert(scandata, "Critical error: scandata does not exist for serverKey "..serverKey)
+	local scandata, reason = private.GetScanData(serverKey)
+	if not scandata then
+		-- Critical Error Diagnostics
+		local scandatatext = "Unloaded"
+		local scanmodule = AucAdvanced.Modules.Util.ScanData
+		if scanmodule and scanmodule.GetAddOnInfo then
+			local ready, version = scanmodule.GetAddOnInfo()
+			scandatatext = strjoin(" ", "Loaded", tostringall(ready, version))
+		end
+		error(format("Critical error: scandata does not exist for serverKey %s\nReason = %s\nAuc-ScanData = %s\nFallback = %s , %s",
+			tostringall(serverKey, reason, scandatatext, private.FallbackScanData, private.loadingScanData)))
+	end
 	local now = time()
 	if get("scancommit.progressbar") then
 		lib.ProgressBars("CommitProgressBar", 0, true)
@@ -998,6 +1013,43 @@ local Commitfunction = function()
 	local unresolvedCount = 0
 	local dirtyCount, undirtyCount, expiredCount, corruptCount, matchedCount = 0, 0, 0, 0, 0
 	local filterDeleteCount, earlyDeleteCount, expiredDeleteCount, corruptDeleteCount = 0, 0, 0, 0
+
+	local printSummary, scanSize = false, ""
+	scanSize = TempcurQuery.qryinfo.scanSize
+	if scanSize=="Full" then
+		printSummary = get("scandata.summaryonfull");
+	elseif scanSize=="Partial" then
+		printSummary = get("scandata.summaryonpartial")
+	else -- scanSize=="Micro"
+		printSummary = get("scandata.summaryonmicro")
+	end
+	if (wasEndPagesOnly) then
+		scanSize = "TailScan-"..scanSize
+		printSummary = get("scandata.summaryonpartial") -- todo: do we want a separate "summary on end pages only" option?
+	elseif (TempcurQuery.qryinfo.nosummary) then
+		printSummary = false
+		scanSize = "NoSum-"..scanSize
+	end
+
+	local processors = {}
+	local modules = AucAdvanced.GetAllModules("AuctionFilter", "Filter")
+	for pos, engineLib in ipairs(modules) do
+		if (not processors.Filter) then processors.Filter = {} end
+		local x = {}
+		x.Name = engineLib.GetName()
+		x.Func = engineLib.AuctionFilter
+		tinsert(processors.Filter, x)
+	end
+	modules = AucAdvanced.GetAllModules("ScanProcessors")
+	for pos, engineLib in ipairs(modules) do
+		for op, func in pairs(engineLib.ScanProcessors) do
+			if (not processors[op]) then processors[op] = {} end
+			local x = {}
+			x.Name = engineLib.GetName()
+			x.Func = func
+			tinsert(processors[op], x)
+		end
+	end
 
 	do --[[ *** Stage 1 : pre-process the new scan ]]--
 		lib.ProgressBars("CommitProgressBar", 100*progresscounter/progresstotal, true, "Auctioneer: Processing Stage 1")
@@ -1172,6 +1224,25 @@ local Commitfunction = function()
 		end
 	end --[[ of Stage 1 ]]--
 
+	-- Send ScanProcessor message "begin"
+	-- This was previously sent before Stage 3, but has been moved to before Stage 2
+	-- (this means matchCount can no longer be included)
+	coroutine.yield()
+	local querySizeInfo = {
+		wasIncomplete = wasIncomplete,
+		wasGetAll = wasGetAll,
+		scanStarted = scanStarted,
+		wasUnrestricted = wasUnrestricted,
+		wasEarlyTerm = wasEarlyTerm,
+		hadGetError = hadGetError,
+		wasEndPagesOnly = wasEndPagesOnly,
+		Query = TempcurCommit.Query,
+		scanCount = scanCount,
+		printSummary = printSummary,
+		FallbackScanData = private.FallbackScanData,
+	}
+	processBeginEndStats(processors, "begin", querySizeInfo, nil)
+
 	--[[ *** Stage 2 : Pre-process image table : Mark all matching auctions as DIRTY, and build a LookUpTable *** ]]--
 	lib.ProgressBars("CommitProgressBar", 100*progresscounter/progresstotal, true, "Auctioneer: Processing Stage 2")
 	coroutine.yield() -- yield to allow updated bar to display
@@ -1230,57 +1301,6 @@ local Commitfunction = function()
 	lib.ProgressBars("CommitProgressBar", 100*progresscounter/progresstotal, true, "Auctioneer: Processing Stage 3")
 	coroutine.yield()
 
-	local processors = {}
-	local modules = AucAdvanced.GetAllModules("AuctionFilter", "Filter")
-	for pos, engineLib in ipairs(modules) do
-		if (not processors.Filter) then processors.Filter = {} end
-		local x = {}
-		x.Name = engineLib.GetName()
-		x.Func = engineLib.AuctionFilter
-		tinsert(processors.Filter, x)
-	end
-	modules = AucAdvanced.GetAllModules("ScanProcessors")
-	for pos, engineLib in ipairs(modules) do
-		for op, func in pairs(engineLib.ScanProcessors) do
-			if (not processors[op]) then processors[op] = {} end
-			local x = {}
-			x.Name = engineLib.GetName()
-			x.Func = func
-			tinsert(processors[op], x)
-		end
-	end
-
-	local printSummary, scanSize = false, ""
-	scanSize = TempcurQuery.qryinfo.scanSize
-	if scanSize=="Full" then
-		printSummary = get("scandata.summaryonfull");
-	elseif scanSize=="Partial" then
-		printSummary = get("scandata.summaryonpartial")
-	else -- scanSize=="Micro"
-		printSummary = get("scandata.summaryonmicro")
-	end
-	if (wasEndPagesOnly) then
-		scanSize = "TailScan-"..scanSize
-		printSummary = get("scandata.summaryonpartial") -- todo: do we want a separate "summary on end pages only" option?
-	elseif (TempcurQuery.qryinfo.nosummary) then
-		printSummary = false
-		scanSize = "NoSum-"..scanSize
-	end
-
-	local querySizeInfo = { }
-	querySizeInfo.wasIncomplete = wasIncomplete
-	querySizeInfo.wasGetAll = wasGetAll
-	querySizeInfo.scanStarted = scanStarted
-	querySizeInfo.wasUnrestricted = wasUnrestricted
-	querySizeInfo.wasEarlyTerm = wasEarlyTerm
-	querySizeInfo.hadGetError = hadGetError
-	querySizeInfo.wasEndPagesOnly = wasEndPagesOnly
-	querySizeInfo.Query = TempcurCommit.Query
-	querySizeInfo.matchCount = dirtyCount
-	querySizeInfo.scanCount = scanCount
-	querySizeInfo.printSummary = printSummary
-	querySizeInfo.FallbackScanData = private.FallbackScanData
-
 	local maskNotDirtyUnseen = bitnot(bitor(Const.FLAG_DIRTY, Const.FLAG_UNSEEN)) -- only calculate mask for clearing these flags once
 	local messageCreate = private.FallbackScanData and "fallbackcreate" or "create"
 
@@ -1294,9 +1314,6 @@ local Commitfunction = function()
 		garbageinterval = 10000
 	end
 
-	processBeginEndStats(processors, "begin", querySizeInfo, nil)
-
-	coroutine.yield()
 	nextPause = debugprofilestop() + processingTime
 	lastTime = time()
 	for index, data in ipairs(TempcurScan) do
@@ -3300,5 +3317,5 @@ function internal.Scan.NotifyOwnedListUpdated()
 --	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Advanced/CoreScan.lua $", "$Rev: 5709 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.5/Auc-Advanced/CoreScan.lua $", "$Rev: 5718 $")
 AucAdvanced.CoreFileCheckOut("CoreScan")

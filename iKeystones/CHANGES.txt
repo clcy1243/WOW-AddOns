@@ -1,24 +1,12 @@
-tag 45d40f03f117958a7bc6326e275183afbca97e26 v1.40
+tag 84887f55b627f369939f9f8182219c209453e740 v1.41
 Author:	Jesse Manelius <jessemanelius@gmail.com>
-Date:	Wed Jul 5 03:34:39 2017 +0300
+Date:	Mon Sep 18 23:15:18 2017 +0300
 
-tagging as v1.40
+tagging as v1.41
 
-commit 8e1ea7ad739f6dbd8b64913efdce506b0bb707b2
+commit 57650a4b790588db8665182fed066f79bc394314
 Author: Jesse Manelius <jessemanelius@gmail.com>
-Date:   Wed Jul 5 03:34:16 2017 +0300
+Date:   Mon Sep 18 23:14:56 2017 +0300
 
-    update version number
-
-commit d6128e980a2f2a4df8cf79dfe7590a103bf1584c
-Author: Jesse Manelius <jessemanelius@gmail.com>
-Date:   Wed Jul 5 03:33:49 2017 +0300
-
-    update weekly chest reward ilvls
-
-commit 0a3199ad638f48ee0b7ed4e327e4126f01ec8a42
-Author: Jesse Manelius <jessemanelius@gmail.com>
-Date:   Thu Jun 15 22:03:31 2017 +0300
-
-    pushing right version is hard.
+    update for 7.3
 

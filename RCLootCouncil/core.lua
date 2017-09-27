@@ -46,6 +46,8 @@ local unregisterGuildEvent = false
 local player_relogged = true -- Determines if we potentially need data from the ML due to /rl
 local lootTable = {}
 
+local IsPartyLFG = IsPartyLFG
+
 function RCLootCouncil:OnInitialize()
 	--IDEA Consider if we want everything on self, or just whatever modules could need.
   	self.version = GetAddOnMetadata("RCLootCouncil", "Version")
@@ -539,9 +541,9 @@ function RCLootCouncil:SendCommand(target, command, ...)
 
 	if target == "group" then
 		if IsInRaid() then -- Raid
-			self:SendCommMessage("RCLootCouncil", toSend, "RAID")
+			self:SendCommMessage("RCLootCouncil", toSend, IsPartyLFG() and "INSTANCE_CHAT" or "RAID")
 		elseif IsInGroup() then -- Party
-			self:SendCommMessage("RCLootCouncil", toSend, "PARTY")
+			self:SendCommMessage("RCLootCouncil", toSend, IsPartyLFG() and "INSTANCE_CHAT" or "PARTY")
 		else--if self.testMode then -- Alone (testing)
 			self:SendCommMessage("RCLootCouncil", toSend, "WHISPER", self.playerName)
 		end
@@ -551,7 +553,7 @@ function RCLootCouncil:SendCommand(target, command, ...)
 
 	else
 		if self:UnitIsUnit(target,"player") then -- If target == "player"
-			self:SendCommMessage("RCLootCouncil", toSend, "WHISPER", self.playerName, "BULK", self.Print, "test")
+			self:SendCommMessage("RCLootCouncil", toSend, "WHISPER", self.playerName)
 		else
 			-- We cannot send "WHISPER" to a crossrealm player
 			if target:find("-") then
@@ -562,7 +564,7 @@ function RCLootCouncil:SendCommand(target, command, ...)
 					-- See "RCLootCouncil:HandleXRealmComms()" for more info
 					toSend = self:Serialize("xrealm", {target, command, ...})
 					if GetNumGroupMembers() > 0 then -- We're in a group
-						self:SendCommMessage("RCLootCouncil", toSend, "RAID")
+						self:SendCommMessage("RCLootCouncil", toSend, IsPartyLFG() and "INSTANCE_CHAT" or "RAID")
 					else -- We're not, probably a guild verTest
 						self:SendCommMessage("RCLootCouncil", toSend, "GUILD")
 					end
@@ -613,6 +615,8 @@ function RCLootCouncil:OnCommReceived(prefix, serializedMsg, distri, sender)
 					for ses, v in ipairs(lootTable) do
 						local iName = GetItemInfo(v.link)
 						if not iName then self:Debug(v.link); cached = false end
+						local subType = select(7, GetItemInfo(v.link))
+						if subType then v.subType = subType end -- subType should use user localization instead of master looter localization.
 					end
 					if not cached then
 						self:Debug("Some items wasn't cached, delaying loot by 1 sec")
@@ -1004,13 +1008,12 @@ local subTypeLookup = {
 }
 
 function RCLootCouncil:LocalizeSubTypes()
-	if self.db.global.localizedSubTypes.created then return end -- We only need to create it once
+	if self.db.global.localizedSubTypes.created == GetLocale() then return end -- We only need to create it once, if game locale is the same as stored locale.
 	-- Get the item info
 	for _, item in pairs(subTypeLookup) do
 		GetItemInfo(item)
 	end
 	self.db.global.localizedSubTypes = {} -- reset
-	self.db.global.localizedSubTypes.created = true
 	for name, item in pairs(subTypeLookup) do
 		local sType = select(7, GetItemInfo(item))
 		if sType then
@@ -1023,6 +1026,7 @@ function RCLootCouncil:LocalizeSubTypes()
 			return
 		end
 	end
+	self.db.global.localizedSubTypes.created = GetLocale() -- Only mark this as created after everything is done.
 end
 
 function RCLootCouncil:IsItemBoE(item)
@@ -1328,7 +1332,7 @@ end
 --- Returns statistics for use in various detailed views.
 -- @return A table formatted as:
 --[[ @usage lootDBStatistics[candidate_name] = {
-	[item#] = { -- This should be 5 at most
+	[item#] = { -- 5 latest items won
 		[1] = lootWon,
 		[2] = formatted response string,
 		[3] = {color}, --see color format in self.responses

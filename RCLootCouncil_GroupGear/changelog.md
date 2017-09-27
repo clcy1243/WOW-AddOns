@@ -1,3 +1,16 @@
+### v1.3.0
+---
+* **Highlights**
+* You can now choose to highlight items that are missing enchants and gems.
+* It's enabled by default - click the hourglass icon to toggle.
+
+* Gear icons now shows automatically once the data is available.
+* Clicking the Guild or Group button will now show everyone in that category.
+* A explanation text will show instead of gear if data couldn't be gathered.
+
+* *Sorting by gear now works as intended*
+* *Average ilvl no longer includes people without data.*
+
 ### v1.2.5
 ---
 * Updated .toc for 7.3.

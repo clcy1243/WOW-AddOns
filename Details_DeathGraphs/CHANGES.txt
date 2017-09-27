@@ -1,7 +1,8 @@
-changeset:   64:52837534af1e
-tag:         v64-release
+changeset:   66:4fdb44b9caa2
+tag:         v7.
+tag:         v7.3.0.066
 user:        Tercio
-date:        Fri Aug 11 16:21:06 2017 -0300
-summary:     - major revamp on the death log for current encounter.
+date:        Sat Sep 02 12:27:47 2017 -0300
+summary:     - ToC Update.
 
 

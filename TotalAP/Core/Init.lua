@@ -24,6 +24,9 @@ if not TotalAP then return end
 
 -- Shared local variables (usually those used by logic AND display, or different modules) -> Shared by means of the addon Table
 TotalAP.versionString = GetAddOnMetadata("TotalAP", "Version")
+--[===[@debug@
+TotalAP.versionString = "Development"
+--@end-debug@]===]
 
 -- Core modules
 TotalAP.ArtifactInterface = {}
@@ -46,6 +49,9 @@ TotalAP.Utils = {}
 TotalAP.L = LibStub("AceLocale-3.0"):GetLocale("TotalAP", false)
 
 -- Volatile data storage (caches) -- TODO: Deprecated, store directly in SavedVars
+TotalAP.artifactCache = { -- Re-introduced because I am too lazy to save it in the actual Cache (requires tests etc. to be updated to make sure it doesn't break stuff); this will do even if it isn't saved across sessions
+	artifactKnowledgeLevel = 0
+}
 TotalAP.bankCache = {
 
 	inBankAP = 0,
@@ -56,6 +62,7 @@ TotalAP.inventoryCache = {
 
 	inBagsAP = 0,
 	numItems = 0,
+	numTomes = 0,
 	foundTome = false,
 
 	displayItem = {

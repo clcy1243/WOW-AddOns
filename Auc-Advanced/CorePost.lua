@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 7.4.5714 (TasmanianThylacine)
+	Version: 7.5.5724 (TasmanianThylacine)
 	Revision: $Id: CorePost.lua 5691 2016-12-18 15:49:59Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -1425,5 +1425,5 @@ private.Prompt.DragBottom:SetScript("OnMouseDown", DragStart)
 private.Prompt.DragBottom:SetScript("OnMouseUp", DragStop)
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Advanced/CorePost.lua $", "$Rev: 5691 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.5/Auc-Advanced/CorePost.lua $", "$Rev: 5691 $")
 AucAdvanced.CoreFileCheckOut("CorePost")

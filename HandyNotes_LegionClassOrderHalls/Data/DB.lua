@@ -1,4 +1,4 @@
--- $Id: DB.lua 70 2017-06-21 17:55:46Z arith $
+-- $Id: DB.lua 86 2017-09-10 17:19:53Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -421,5 +421,39 @@ DB.points = {
 		[23524158] = { portal=true, L["Portal"], class="DRUID" }, -- Mount Hyjal
 		[84317124] = { portal=true, L["Portal"], class="DRUID" }, -- Duskwood
 		[89884473] = { portal=true, L["Portal"], class="DRUID" }, -- The Hinterlands
-	}
+	},
+	-- The Vindicaar
+	["ArgusExodar3"] = { -- Antoran Wastes
+		[62656402] = { others=true, dungeonLevel=5, label=L["Vindicator Jaelaana <Army of the Light Emissary>"], npc=127120, },
+		[56312878] = { others=true, dungeonLevel=5, label=L["Toraan the Revered <Argussian Reach Emissary>"], npc=127151, },
+		[31995648] = { beacon=true, dungeonLevel=5, label=L["Navigation Console"], npc=123139, icon="beacon", },
+		[33935591] = { portal=true, dungeonLevel=6, label=format(L["Portal to %s"], BZ["Dalaran"]), },
+		[46755120] = { others=true, dungeonLevel=6, label=L["Vindicaar Matrix Core"], },
+		[61675913] = { others=true, dungeonLevel=6, label=L["Thaumaturge Vashreen <Purveyor of Exquisite Furnishings>"], npc=121589, },
+		[55242658] = { mission=true, dungeonLevel=6, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS, },
+		[49405614] = { others=true, dungeonLevel=6, label=L["Archmage Khadgar"], npc=128245 },
+		[63114275] = { others=true, dungeonLevel=6, label=L["Artificer Shela'na"], npc=126389 },
+	},
+	["ArgusExodar"] = { -- Krokuun
+		[43347398] = { others=true, dungeonLevel=1, label=L["Vindicator Jaelaana <Army of the Light Emissary>"], npc=127120, },
+		[68135697] = { others=true, dungeonLevel=1, label=L["Toraan the Revered <Argussian Reach Emissary>"], npc=127151, },
+		[42292228] = { beacon=true, dungeonLevel=1, label=L["Navigation Console"], npc=123139, icon="beacon", },
+		[43412527] = { portal=true, dungeonLevel=2, label=format(L["Portal to %s"], BZ["Dalaran"]), },
+		[49604520] = { others=true, dungeonLevel=2, label=L["Vindicaar Matrix Core"], },
+		[46427163] = { others=true, dungeonLevel=2, label=L["Thaumaturge Vashreen <Purveyor of Exquisite Furnishings>"], npc=121589, },
+		[69545435] = { mission=true, dungeonLevel=2, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS, },
+		[46265119] = { others=true, dungeonLevel=2, label=L["Archmage Khadgar"], npc=128245 },
+		[59167095] = { others=true, dungeonLevel=2, label=L["Artificer Shela'na"], npc=126389 },
+	},
+	["ArgusExodar2"] = { -- Mac'Aree
+		[43406712] = { others=true, dungeonLevel=3, label=L["Vindicator Jaelaana <Army of the Light Emissary>"], npc=127120, },
+		[66565887] = { others=true, dungeonLevel=3, label=L["Toraan the Revered <Argussian Reach Emissary>"], npc=127151, },
+		[48792307] = { beacon=true, dungeonLevel=3, label=L["Navigation Console"], npc=123139, icon="beacon", },
+		[49382535] = { portal=true, dungeonLevel=4, label=format(L["Portal to %s"], BZ["Dalaran"]), },
+		[52054441] = { others=true, dungeonLevel=4, label=L["Vindicaar Matrix Core"], },
+		[46196602] = { others=true, dungeonLevel=4, label=L["Thaumaturge Vashreen <Purveyor of Exquisite Furnishings>"], npc=121589, },
+		[68085715] = { mission=true, dungeonLevel=4, label=ADVENTURE_MAP_TITLE, note=ORDER_HALL_MISSIONS, },
+		[48554832] = { others=true, dungeonLevel=4, label=L["Archmage Khadgar"], npc=128245 },
+		[57276849] = { others=true, dungeonLevel=4, label=L["Artificer Shela'na"], npc=126389 },
+	},
 }

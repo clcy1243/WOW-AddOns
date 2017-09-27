@@ -2,7 +2,7 @@
 ## Title: AdiBags Legion Filters
 ## Notes: Adds filters for Legion items to AdiBags
 ## Author: Selvanis@Uldum
-## Version: 1.6
+## Version: 1.6.7
 ## Dependencies: AdiBags
 Localization.lua
 data\ItemTables.lua
@@ -12,5 +12,5 @@ Artifact_Power_Plugin.lua
 Artifact_Power_Currency.lua
 #@debug@
 # data\!zArtifactPowerPreParse.lua
-# data\DevToos.lua
+# data\DevTools.lua
 #@end-debug@

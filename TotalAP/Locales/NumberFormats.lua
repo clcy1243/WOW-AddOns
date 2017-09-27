@@ -105,6 +105,44 @@ local localeNumberFormats = {
 	 
 	-- esES: Spanish (Spain)
 	["esES"] = {	
+		["thousandsSeparator"] = " ",
+		["decimalSeparator"] = ",",
+		["leadingSpace"] = " ",
+		["trailingSpace"] = " ",
+		["unitsTable"] = {
+				[1] = {
+					["millón"] = 1000000
+				},
+				[2] = {
+					["mil millones"] =  1000000000
+				},
+				[3] = {
+					["millones"] = 1000000
+				},
+		},
+		["unitsShort"] = {
+			[1] = {
+				["divisor"] = 1000000000,
+				["unitString"] = " bil.",
+				["numDigits"] = 1,
+			},
+			
+			[2] = {
+				["divisor"] = 1000000,
+				["unitString"] = " mil.",
+				["numDigits"] = 1,
+			},
+			
+			[3] = {
+				["divisor"] = 1000,
+				["unitString"] = "K",
+				["numDigits"] = 1,
+			}
+		}
+	},
+
+	-- esES: Spanish (Mexico & Latin America)
+	["esMX"] = {	
 		["thousandsSeparator"] = ",",
 		["decimalSeparator"] = ".",
 		["leadingSpace"] = " ",
@@ -140,7 +178,8 @@ local localeNumberFormats = {
 			}
 		}
 	},
-
+	
+	
 	-- frFR: French (France)
 	["frFR"] = {	
 		["thousandsSeparator"] = " ",
@@ -225,31 +264,31 @@ local localeNumberFormats = {
 		["trailingSpace"] = "",
 		["unitsTable"] = {
 			[1] = {
-				["만의"] = 10000,
+				["만"] = 10000,
 			},
 			[2] = {
-				["억의"] = 100000000,
+				["억"] = 100000000,
 			},
 			[3] = {
-				["조의"] = 1000000000000,
+				["조"] = 1000000000000,
 			},
 		},
 		["unitsShort"] = {
 			[1] = {
 				["divisor"] = 1000000000000,
-				["unitString"] = "조의",
+				["unitString"] = "조",
 				["numDigits"] = 2,
 			},
 			
 			[2] = {
 				["divisor"] = 100000000,
-				["unitString"] = "억의",
+				["unitString"] = "억",
 				["numDigits"] = 2,
 			},
 			
 			[3] = {
 				["divisor"] = 10000,
-				["unitString"] = "만의",
+				["unitString"] = "만",
 				["numDigits"] = 2,
 			}
 		}
@@ -257,7 +296,7 @@ local localeNumberFormats = {
 
 	-- ptBR: Portuguese (Brazil)
 	["ptBR"] = {	
-		["thousandsSeparator"] = ",",
+		["thousandsSeparator"] = ",", -- TODO: Seems to also use "." ingame!? This is not going to end well...
 		["decimalSeparator"] = ".",
 		["leadingSpace"] = " ",
 		["trailingSpace"] = " ",
@@ -299,7 +338,7 @@ local localeNumberFormats = {
 	-- ruRU: Russian (Russia) 
 	["ruRU"] = {	
 		["thousandsSeparator"] = " ",
-		["decimalSeparator"] = ".",
+		["decimalSeparator"] = ",",
 		["leadingSpace"] = " ",
 		["trailingSpace"] = " ",
 		["unitsTable"] = {
@@ -408,8 +447,6 @@ local localeNumberFormats = {
 
  -- enGB: English (United Kingdom) - enGB clients return enUS
 localeNumberFormats["enGB"] = localeNumberFormats["enUS"] -- Not sure if necessary, but it's better to be safe than sorry (in case enGB is indexed... which does seems unlikely due to the enGB client returning enUS via GetLocale())
--- enMX: Spanish (Mexico) - should use similar format to Spanish (Spain).... Should.... Ihopethisisntwrong :P
-localeNumberFormats["esMX"] = localeNumberFormats["esES"]
 
 
 -- Returns number format for nonstandard locales (ease of use)

@@ -61,7 +61,7 @@ local function keep(self,event,timestamp,eventtype,hideCaster,srcGUID, srcName, 
 		local p =(1 - data[dstName].DOT/data[dstName].POOL) --未出池伤害
 		local p1 = math.floor(p*1000)/10
 		if p1<minPurified then 
-			report(dstName.."未出池伤害："..p1.."%,请增加活血！",false) 
+			-- report(dstName.."未出池伤害："..p1.."%,请增加活血！",false) 
 		end 
 		data[dstName]=CreateTable()
 	end	

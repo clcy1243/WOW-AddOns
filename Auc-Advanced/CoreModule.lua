@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 7.4.5714 (TasmanianThylacine)
+	Version: 7.5.5724 (TasmanianThylacine)
 	Revision: $Id: CoreModule.lua 5670 2016-09-03 11:59:41Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -155,5 +155,5 @@ function lib.CoreModuleOnLoad(addon)
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Advanced/CoreModule.lua $", "$Rev: 5670 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.5/Auc-Advanced/CoreModule.lua $", "$Rev: 5670 $")
 AucAdvanced.CoreFileCheckOut("CoreModule")

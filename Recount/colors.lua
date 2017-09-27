@@ -1,6 +1,6 @@
 local Recount = _G.Recount
 
-local revision = tonumber(string.sub("$Revision: 1429 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1441 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -340,7 +340,7 @@ function Colors:EditColor(Branch, Name, Attach)
 	Cur_Name = Name
 
 	ColorPickerFrame:Hide()
-	PlaySound("igMainMenuOptionCheckBoxOn")
+	PlaySound(856)
 	local r, g, b = ColorPickerFrame:GetColorRGB()
 
 	local c = Colors:GetColor(Branch, Name)

@@ -1,4 +1,4 @@
--- $Id: Config.lua 73 2017-08-29 18:29:07Z arith $
+-- $Id: Config.lua 80 2017-09-10 12:27:35Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -135,6 +135,12 @@ config.options = {
 					type = "toggle",
 					name = L["Un-researched"],
 					desc = L["Show all workorder NPCs' locations even the corresponding order hall advancement has not been researched."],
+					order = 31,
+				},
+				show_beacon = {
+					type = "toggle",
+					name = L["Navigation Console"],
+					desc = L["Show Navigation Console's location in the Vindicaar."],
 					order = 31,
 				},
 				show_others = {

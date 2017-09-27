@@ -1,6 +1,6 @@
 --[[
 	Auctioneer - StatPurchased
-	Version: 7.4.5714 (TasmanianThylacine)
+	Version: 7.5.5724 (TasmanianThylacine)
 	Revision: $Id: StatPurchased.lua 5555 2015-04-14 14:00:00Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -734,4 +734,4 @@ function lib.ChangeServerKey(oldKey, newKey)
 	end
 end
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Stat-Purchased/StatPurchased.lua $", "$Rev: 5555 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.5/Auc-Stat-Purchased/StatPurchased.lua $", "$Rev: 5555 $")

@@ -1,10 +1,14 @@
 ------------------------------------------------------------------------
-r599 | Allara | 2017-07-17 11:45:17 -0500 (Mon, 17 Jul 2017) | 1 line
+r604 | Allara | 2017-09-07 13:27:59 -0500 (Thu, 07 Sep 2017) | 4 lines
 Changed paths:
+   M /trunk/.pkgmeta
    M /trunk/Core.lua
-   M /trunk/Locales.lua
-   M /trunk/Options_Defaults.lua
+   M /trunk/Modules/Options/Rarity_Options.toc
+   M /trunk/Rarity.toc
 
-- Added Abyss Worm, Blight Boar Microphone, Nightmare Whelpling (thanks Urtgard!)
+- TOC update for 7.3
+- Fix the packager issues that were leading to bad externals (one symptom was a strange merge issue in the ptBR translation of LibBabble-Subzone)
+- This is a packager test
+- 7.3 content to follow in a future update
 ------------------------------------------------------------------------
 

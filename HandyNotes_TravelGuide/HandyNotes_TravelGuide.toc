@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 #@non-debug@
 ## Title: HandyNotes - Travel Guide
 ## Notes: Shows the boat and portal locations in major zones
@@ -8,11 +8,11 @@
 # ## Notes: Shows the boat and portal locations in major zones
 #@end-debug@
 ## Author: Varnzeck
-## Version: v1.5
+## Version: v1.6
 ## RequiredDeps: HandyNotes
 ## DefaultState: enabled
 ## SavedVariables: HandyNotes_TravelGuideDB
-## X-Date: 2017-06-12
+## X-Date: 2017-09-01
 ## X-Category: Map
 
 Libs\Libs.xml

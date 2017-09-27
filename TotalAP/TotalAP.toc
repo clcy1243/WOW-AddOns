@@ -1,5 +1,5 @@
-## Interface: 70200
-## Version: 1.5.0 (r25-beta-4)
+## Interface: 70300
+## Version: 1.5.2 (r26-beta-4)
 ## Author: Cakechart
 
 ## Title: TotalAP - Artifact Power Tracker
@@ -14,8 +14,8 @@
 ## LoadOnDemand: 0
 ## SavedVariables: TotalArtifactPowerSettings, TotalArtifactPowerCache
 
-## X-Revision: r25-beta-4
-## X-Date: 2017-08-23T13:27:41Z
+## X-Revision: r26-beta-4
+## X-Date: 2017-09-08T21:40:06Z
 ## X-License: GPL3
 ## X-Embeds: LibStub, AceAddon-3.0, AceConsole-3.0, AceDB-3.0, AceEvent-3.0, AceLocale-3.0
 ## X-Website: http://www.curse.com/addons/wow/totalap

@@ -409,6 +409,9 @@ L["STRING_OPTIONS_ADVANCED"] = "Erweitert"
 L["STRING_OPTIONS_ALPHAMOD_ANCHOR"] = "Automatisch Verbergen:"
 L["STRING_OPTIONS_ALWAYS_USE"] = "Bei allen Charakteren benutzen"
 L["STRING_OPTIONS_ALWAYS_USE_DESC"] = "Wenn aktiviert, nutzen alle Charaktere das ausgewählte Profil. Andernfalls erscheint eine Anzeige, in der nach einem zu benutzenden Profil gefragt wird."
+L["STRING_OPTIONS_ALWAYSSHOWPLAYERS"] = "Alle Spieler anzeigen"
+--Translation missing 
+-- L["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"] = ""
 L["STRING_OPTIONS_ANCHOR"] = "Seite"
 L["STRING_OPTIONS_ANIMATEBARS"] = "Balken animieren"
 L["STRING_OPTIONS_ANIMATEBARS_DESC"] = "Aktiviert Animationen für alle Balken."
@@ -651,6 +654,10 @@ L["STRING_OPTIONS_DEATHLIMIT"] = "Todesereignisanzahl"
 L["STRING_OPTIONS_DEATHLIMIT_DESC"] = [=[Stelle die Anzahl an Ereignissen für die Todesanzeige ein.
 
 |cFFFFFF00Wichtig|r: Wird nach der Änderung nur auf neue Tode angewendet.]=]
+--Translation missing 
+-- L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = ""
 L["STRING_OPTIONS_DESATURATE_MENU"] = "Entfärbt"
 L["STRING_OPTIONS_DESATURATE_MENU_DESC"] = "Aktiviert: Alle Symbole der Werkzeugleiste werden schwarz-weiß."
 L["STRING_OPTIONS_DISABLE_ALLDISPLAYSWINDOW"] = "Das Menü 'Alle Anzeigen' deaktivieren"
@@ -834,14 +841,16 @@ L["STRING_OPTIONS_OPEN_TEXT_EDITOR"] = "Texteditor öffnen"
 L["STRING_OPTIONS_OVERALL_ALL"] = "Alle Segmente"
 L["STRING_OPTIONS_OVERALL_ALL_DESC"] = "Alle Segmente werden den Gesamtdaten hinzugefügt."
 L["STRING_OPTIONS_OVERALL_ANCHOR"] = "Gesamtdaten:"
-L["STRING_OPTIONS_OVERALL_CHALLENGE"] = "Im Herausforderungsmodus löschen"
-L["STRING_OPTIONS_OVERALL_CHALLENGE_DESC"] = "Aktiviert: Die Gesamtdaten werden automatisch bei Beginn eines Dungeons im Herausforderungsmodus gelöscht."
 L["STRING_OPTIONS_OVERALL_DUNGEONBOSS"] = "Dungeonbosse"
 L["STRING_OPTIONS_OVERALL_DUNGEONBOSS_DESC"] = "Segmente mit Dungeonbossen werden den Gesamtdaten hinzugefügt."
 L["STRING_OPTIONS_OVERALL_DUNGEONCLEAN"] = "Dungeon-Trash"
 L["STRING_OPTIONS_OVERALL_DUNGEONCLEAN_DESC"] = "Segmente mit abgräumtem Dungeon-Trash werden den Gesamtdaten zugefügt."
 L["STRING_OPTIONS_OVERALL_LOGOFF"] = "Beim Ausloggen löschen"
 L["STRING_OPTIONS_OVERALL_LOGOFF_DESC"] = "Aktiviert: Die Gesamtdaten werden automatisch beim Ausloggen des Charakters gelöscht."
+--Translation missing 
+-- L["STRING_OPTIONS_OVERALL_MYTHICPLUS"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_OVERALL_MYTHICPLUS_DESC"] = ""
 L["STRING_OPTIONS_OVERALL_NEWBOSS"] = "Bei neuem Boss löschen"
 L["STRING_OPTIONS_OVERALL_NEWBOSS_DESC"] = "Aktiviert: Die Gesamtdaten werden automatisch bei einem neuen Boss gelöscht."
 L["STRING_OPTIONS_OVERALL_RAIDBOSS"] = "Schlachtzugsbosse"
@@ -1421,8 +1430,7 @@ L["STRING_PLUGINOPTIONS_TEXTSIZE"] = "Schriftgröße"
 L["STRING_PLUGINOPTIONS_TEXTSTYLE"] = "Schriftart"
 L["STRING_QUERY_INSPECT"] = "Talente und Gegenstandsstufe abfragen."
 L["STRING_QUERY_INSPECT_FAIL1"] = "keine Abfrage im Kampf möglich."
---Translation missing 
--- L["STRING_QUERY_INSPECT_REFRESH"] = ""
+L["STRING_QUERY_INSPECT_REFRESH"] = "Aktualisierung benötigt"
 L["STRING_RAID_WIDE"] = "[*] Schlachtzugsweite Abklingzeiten"
 L["STRING_RAIDCHECK_PLUGIN_DESC"] = "Zeigt innerhalb von Schlachtzugsinstanzen ein Symbol auf der Details!-Titelleiste, das Fläschchen-, Essen- und Voraustrank-Nutzung anzeigt."
 L["STRING_RAIDCHECK_PLUGIN_NAME"] = "Raid-Nachprüfung"
@@ -1482,9 +1490,20 @@ L["STRING_SEGMENT_ENEMY"] = "Gegner"
 L["STRING_SEGMENT_LOWER"] = "Segment"
 L["STRING_SEGMENT_OVERALL"] = "Gesamtdaten"
 L["STRING_SEGMENT_START"] = "Start"
-L["STRING_SEGMENT_TIME"] = "Dauer"
 L["STRING_SEGMENT_TRASH"] = "Trash abgräumt"
 L["STRING_SEGMENTS"] = "Segmente"
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_BOSS"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_COMBATTIME"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_OVERALL"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TOTALTIME"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TRASH"] = ""
 L["STRING_SHIELD_HEAL"] = "verhindert"
 L["STRING_SHIELD_OVERHEAL"] = "Vergeudet"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "Rechtsklick, um zu schließen"

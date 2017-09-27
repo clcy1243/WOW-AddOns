@@ -1,7 +1,19 @@
-$Id: ChangeLog.txt 78 2017-08-31 14:52:46Z arith $
+$Id: ChangeLog.txt 86 2017-09-10 17:19:53Z arith $
 
 Revision History:
 =================
+
+* v1.25 (Sep. 11, 2017)
+-----------------------
+- Added Mac'Aree
+
+* v1.24 (Sep. 10, 2017)
+-----------------------
+- Fixed ToC libraries loading
+
+* v1.23 (Sep. 10, 2017)
+-----------------------
+- Added the Vindicaar
 
 * v1.22 (Aug. 31, 2017)
 -----------------------

@@ -235,8 +235,40 @@ do
 		end
 	end
 	--> return the icon for the raid instance
-	function _detalhes:GetRaidIcon (mapid)
-		return _detalhes.EncounterInformation [mapid] and _detalhes.EncounterInformation [mapid].icon
+	function _detalhes:GetRaidIcon (mapid, ejID, instanceType)
+		local raidIcon = _detalhes.EncounterInformation [mapid] and _detalhes.EncounterInformation [mapid].icon
+		if (raidIcon) then
+			return raidIcon
+		end
+		
+		if (ejID and ejID ~= 0) then
+			local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = EJ_GetInstanceInfo (ejID)
+			if (name) then
+				if (instanceType == "party") then
+					return loreImage --bgImage
+				elseif (instanceType == "raid") then
+					return loreImage
+				end
+			end
+		end
+		
+		return nil
+	end
+	
+	function _detalhes:GetBossIndex (mapid, encounterCLID, encounterEJID, encounterName)
+		local raidInfo = _detalhes.EncounterInformation [mapid]
+		if (raidInfo) then
+			local index = raidInfo.encounter_ids2 [encounterCLID] or raidInfo.encounter_ids [encounterEJID]
+			if (not index) then
+				for i = 1, #raidInfo.boss_names do
+					if (raidInfo.boss_names [i] == encounterName) then
+						index = i
+						break
+					end
+				end
+			end
+			return index
+		end
 	end
 	
 	--> return the boss icon
@@ -249,15 +281,25 @@ do
 	end
 	
 	--> return the boss portrit
-	function _detalhes:GetBossPortrait (mapid, bossindex)
+	function _detalhes:GetBossPortrait (mapid, bossindex, encounterName, ejID)
 		if (mapid and bossindex) then
-			--print (_detalhes.EncounterInformation [mapid])
-			--print (_detalhes.EncounterInformation [mapid] and _detalhes.EncounterInformation [mapid].encounters)
-			--print (_detalhes.EncounterInformation [mapid] and _detalhes.EncounterInformation [mapid].encounters and _detalhes.EncounterInformation [mapid].encounters [bossindex])
-			return _detalhes.EncounterInformation [mapid] and _detalhes.EncounterInformation [mapid].encounters [bossindex] and _detalhes.EncounterInformation [mapid].encounters [bossindex].portrait
-		else
-			return false
+			local haveIcon = _detalhes.EncounterInformation [mapid] and _detalhes.EncounterInformation [mapid].encounters [bossindex] and _detalhes.EncounterInformation [mapid].encounters [bossindex].portrait
+			if (haveIcon) then
+				return haveIcon
+			end
 		end
+		
+		if (encounterName and ejID and ejID ~= 0) then
+			local index, name, description, encounterID, rootSectionID, link = _detalhes:GetEncounterInfoFromEncounterName (ejID, encounterName)
+			if (index and name and encounterID) then
+				local id, name, description, displayInfo, iconImage = EJ_GetCreatureInfo (1, encounterID)
+				if (iconImage) then
+					return iconImage
+				end
+			end
+		end
+		
+		return nil
 	end
 	
 	--> return a list with names of adds and bosses

@@ -60,7 +60,7 @@
 
 						    ----o----(||)----oo----(||)----o----
 
-							    v2.09 29th March 2017
+							  v2.10 3rd September 2017
 						    Copyright (C) Taraezor / Chris Birch
 
 						    ----o----(||)----oo----(||)----o----
@@ -89,7 +89,7 @@ local tostring = tostring
 local CheckInteractDistance = CheckInteractDistance
 local IsControlKeyDown = IsControlKeyDown
 local IsItemInRange = IsItemInRange
-local PlaySoundKitID = PlaySoundKitID
+local PlaySound = PlaySound
 local StopSound = StopSound
 local UnitCanAssist = UnitCanAssist
 local UnitExists = UnitExists
@@ -584,9 +584,9 @@ SlashCmdList[ "HardYards" ] = function( options )
 		else
 			local soundSelection = random( 2 )
 			if ( soundSelection == 1 ) then
-				_, soundkitHandle = PlaySoundKitID( 14952 )		-- Northrend Transport Music
+				_, soundkitHandle = PlaySound( 14952 )		-- Northrend Transport Music
 			else
-				_, soundkitHandle = PlaySoundKitID( 12800 )		-- Howling Fjord
+				_, soundkitHandle = PlaySound( 12800 )		-- Howling Fjord
 			end
 		end
 	end

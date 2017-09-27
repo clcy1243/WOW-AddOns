@@ -783,7 +783,7 @@ do
 							end
 						end
 						
-					else --> alguma tabela do histï¿½rico
+					else --> alguma tabela do histórico
 					
 						if (child.options.segmentType == 1) then
 							child.text:SetText (Loc ["STRING_FIGHTNUMBER"] .. child.instance.segmento)

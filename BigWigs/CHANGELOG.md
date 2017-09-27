@@ -1,6 +1,11 @@
 # BigWigs
 
-## [v71.2](https://github.com/BigWigsMods/BigWigs/tree/v71.2) (2017-08-31)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v71.1...v71.2)
+## [v73](https://github.com/BigWigsMods/BigWigs/tree/v73) (2017-09-21)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v72.1...v73)
 
-- TombOfSargeras/Sasszine: Fix our Devouring Maw warnings as of 7.3 with the removal of spell 232745 from the combat log.  
+- bump version  
+- add replacement prints for countdown addons  
+- Plugins/BossBlock: block L'uras death cinematic in Seat of the Triumvirate. (#387)  
+- ArgusInvasionPoints/Sotanathor: Update tank debuff warning and fixes  
+- ArgusInvasionPoints/Sotanathor: Add new worldboss  
+- ArgusInvasionPoints/Folnuna: Add Say and Personal warning to Slumbering Gasp  

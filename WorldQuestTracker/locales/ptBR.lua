@@ -10,17 +10,16 @@ L["S_ERROR_NOTLOADEDYET"] = "Esta missão não foi carregada ainda, por favor ag
 L["S_FLYMAP_SHOWTRACKEDONLY"] = "Apenas Rastreadas"
 L["S_FLYMAP_SHOWTRACKEDONLY_DESC"] = "Mostrar apenas missões que estão sendo rastreadas."
 L["S_FLYMAP_SHOWWORLDQUESTS"] = "Mostrar Missões Mundiais"
---Translation missing 
--- L["S_GROUPFINDER_ACTIONS_CANCEL_APPLICATIONS"] = ""
+L["S_GROUPFINDER_ACTIONS_CANCEL_APPLICATIONS"] = "clique para cancelar aplicações..."
 L["S_GROUPFINDER_ACTIONS_CANCELING"] = "cancelando..."
 L["S_GROUPFINDER_ACTIONS_CREATE"] = [=[nenhum grupo encontrado?
 clique para criar um]=]
---Translation missing 
--- L["S_GROUPFINDER_ACTIONS_CREATE_DIRECT"] = ""
+L["S_GROUPFINDER_ACTIONS_CREATE_DIRECT"] = "criar grupo"
 L["S_GROUPFINDER_ACTIONS_LEAVEASK"] = "Sair do grupo?"
 L["S_GROUPFINDER_ACTIONS_LEAVINGIN"] = "Saindo do grupo em (clique para sair agora):"
 L["S_GROUPFINDER_ACTIONS_RETRYSEARCH"] = "repetir busca"
 L["S_GROUPFINDER_ACTIONS_SEARCH"] = "clique para iniciar busca por grupos"
+L["S_GROUPFINDER_ACTIONS_SEARCH_RARENPC"] = "procurar por grupo para este raro"
 L["S_GROUPFINDER_ACTIONS_SEARCH_TOOLTIP"] = "Entre em um grupo que está fazendo esta missão"
 L["S_GROUPFINDER_ACTIONS_SEARCHING"] = "buscando..."
 L["S_GROUPFINDER_ACTIONS_SEARCHMORE"] = "clique para buscar por mais jogadores para o grupo"
@@ -29,7 +28,9 @@ L["S_GROUPFINDER_ACTIONS_UNAPPLY1"] = "clique para remover a aplicação e criar
 L["S_GROUPFINDER_ACTIONS_UNLIST"] = "clique para deslistar o seu grupo"
 L["S_GROUPFINDER_ACTIONS_UNLISTING"] = "deslistando..."
 L["S_GROUPFINDER_ACTIONS_WAITING"] = "esperando..."
+L["S_GROUPFINDER_AUTOOPEN_RARENPC_TARGETED"] = "Abrir ao Selecionar um Raro"
 L["S_GROUPFINDER_ENABLED"] = "Abrir esta janela automaticamente em uma nova missão"
+L["S_GROUPFINDER_INVASION_ENABLED"] = "Abrir Automaticamente em um Ponto de Invasão"
 L["S_GROUPFINDER_LEAVEOPTIONS"] = "Opções de sair do grupo"
 L["S_GROUPFINDER_LEAVEOPTIONS_AFTERX"] = "Sair Depois de X Segundos"
 L["S_GROUPFINDER_LEAVEOPTIONS_ASKX"] = "Não sair automaticamente, apenas perguntar durante X segundos"
@@ -110,6 +111,22 @@ L["S_QUESTTYPE_PROFESSION"] = "Profissão"
 L["S_QUESTTYPE_PVP"] = "JxJ"
 L["S_QUESTTYPE_RESOURCE"] = "Recursos"
 L["S_QUESTTYPE_TRADESKILL"] = "Materiais"
+--Translation missing 
+-- L["S_RAREFINDER_ADDFROMPREMADE"] = ""
+L["S_RAREFINDER_NPC_NOTREGISTERED"] = "monstro raro não registrado no banco de dados"
+L["S_RAREFINDER_OPTIONS_ENGLISHSEARCH"] = "Procurar Usando Nomes em Inglês"
+L["S_RAREFINDER_OPTIONS_SHOWICONS"] = "Mostrar Ícones para Raros Ativos"
+--Translation missing 
+-- L["S_RAREFINDER_SOUND_ALWAYSPLAY"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_SOUND_ENABLED"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_SOUNDWARNING"] = ""
+L["S_RAREFINDER_TITLE"] = "Procura  de Raros"
+L["S_RAREFINDER_TOOLTIP_REMOVE"] = "Remover"
+L["S_RAREFINDER_TOOLTIP_SEACHREALM"] = "Procurar em outros reinos"
+L["S_RAREFINDER_TOOLTIP_SPOTTEDBY"] = "Visto Por"
+L["S_RAREFINDER_TOOLTIP_TIMEAGO"] = "minutos atrás"
 L["S_SHAREPANEL_THANKS"] = "Obrigado por compartilhar World Quest Tracker!\\nEnvie este link aos seus amigos no Facebook, Twitter, Itamarati."
 L["S_SHAREPANEL_TITLE"] = "Só os Loucos Sabem!"
 L["S_SUMMARYPANEL_EXPIRED"] = "EXPIRADA"
@@ -129,5 +146,7 @@ L["S_TUTORIAL_REWARD"] = "indica o prêmio a receber (equipamento, ouro, poder d
 L["S_TUTORIAL_TIMELEFT"] = "indica o tempo restante (+4 horas, +90 minutos, +30 minutos, menos de 30 minutos)."
 L["S_TUTORIAL_WORLDMAPBUTTON"] = "Este botão mostra o mapa das Ilhas Partidas."
 L["S_UNKNOWNQUEST"] = "Missão desconhecida"
+--Translation missing 
+-- L["S_WORLDMAP_TOOGLEQUESTS"] = ""
 L["S_WORLDQUESTS"] = "Missões Mundiais"
 

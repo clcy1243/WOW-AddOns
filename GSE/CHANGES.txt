@@ -1,58 +1,16 @@
-lightweight tag 59b2f2bf104c28f74f2d63487fec60293dfc96d3 2.1.07
-Author:	TimothyLuke <timothy@minahan.net>
-Date:	Thu Aug 31 11:46:14 2017 +0930
+lightweight tag 3603369ff482afd414c2fd6d153aca5f2c682ab1 GSE_2.2.00
+Author:	Timothy Minahan <timothy@minahan.net>
+Date:	Tue Sep 5 18:06:13 2017 +0930
 
-commit 59b2f2bf104c28f74f2d63487fec60293dfc96d3
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Thu Aug 31 11:46:14 2017 +0930
-
-    TOC change to 2.1.07
-
-commit 92b0ac304fc2465bc2b9f0ebdac83d6e75549bd5
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Thu Aug 31 11:35:54 2017 +0930
-
-    COrrect test #346
-
-commit 9cef819ca88a202f3454a96962ef5b57503dc505
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Thu Aug 31 11:30:32 2017 +0930
-
-    more debugging #346
-
-commit 63986cf2cabdf30e6246d2408002c5031f6f2bc4
+commit 3603369ff482afd414c2fd6d153aca5f2c682ab1
 Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Aug 31 09:16:28 2017 +0930
+Date:   Tue Sep 5 18:06:13 2017 +0930
 
-    Next test for #346
+    Temporary fix for #352
 
-commit 21d52e6d8d21ae104cf61ae4b3feff537d709be5
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Thu Aug 31 09:05:06 2017 +0930
+commit 15bf594a7b45d8bd552ecddc204c3c2716d3f683
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Tue Sep 5 18:02:15 2017 +0930
 
-    testing #346
-
-commit 4f6b9e5a2f57f0617a51d6c67d1a389f6ef1d671
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Thu Aug 31 08:51:51 2017 +0930
-
-    More Debugging in GSE.CloneMacroVersion(macroversion) #346
-
-commit 319e1f6fedf5756aee0b3f44692daf9609a735ab
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Thu Aug 31 08:46:03 2017 +0930
-
-    unit test update #346
-
-commit 2da5cba46e53714dfddaba3cd77005c851b4a6b0
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Thu Aug 31 08:40:22 2017 +0930
-
-    CloneSequence Unit test for #346
-
-commit 2c371707f606e82086b37eb5d0d04f2c689813ef
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Wed Aug 30 09:56:10 2017 +0930
-
-    Fix for #347
+    Party Tooltip #351
 

@@ -699,12 +699,14 @@ function OiLvLInspect_Update()
 	else
 		for Value = 1, 17 do 
 		--for Key, Value in pairs(InspectItems) do
-			local Key = InspectItems[Value]
-			local ItemLink = GetInventoryItemLink(InspectFrame.unit, Value)
-			local Slot = getglobal(Key.."Stock");
-    
-			if Slot and Value ~= 4 then
-				Slot:Hide();
+			if InspectFrame.unit and Value then
+				local Key = InspectItems[Value]
+				local ItemLink = GetInventoryItemLink(InspectFrame.unit, Value)
+				local Slot = getglobal(Key.."Stock");
+		
+				if Slot and Value ~= 4 then
+					Slot:Hide();
+				end
 			end
 		end	
 	end

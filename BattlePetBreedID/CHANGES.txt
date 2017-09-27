@@ -1,19 +1,7 @@
-changeset:   153:a82fb619bcf3
-tag:         v1.11.0
+changeset:   157:9b773513ef16
+tag:         v1.11.2
 user:        MMOSimca
-date:        Thu Aug 31 00:48:43 2017 -0400
-summary:     Added breed data for tons of new pets, including most of Patch 7.3.0, Twilight, and Igneous Flameling.
-
-
-changeset:   152:c27d082b7aea
-user:        MMOSimca
-date:        Thu Aug 31 00:47:36 2017 -0400
-summary:     Updated TOC for Patch 7.3.0.
-
-
-changeset:   151:72eec69c5976
-user:        MMOSimca
-date:        Thu Aug 31 00:47:18 2017 -0400
-summary:     Fixed a bug that could occur when using addons that let you see a preview of your bank.
+date:        Wed Sep 13 14:54:23 2017 -0400
+summary:     Added stat and breed data for Shadow. Added breed data for Felclaw Marsuul.
 
 

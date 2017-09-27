@@ -1417,7 +1417,7 @@ function SlashCmdList.DETAILS (msg, editbox)
 						--refresh the animation list
 							f:UpdateAnimationList()
 							
-							--esconde o painel de config de animaï¿½ï¿½es
+							--esconde o painel de config de animações
 							
 						
 						--show the config frame
@@ -1431,7 +1431,7 @@ function SlashCmdList.DETAILS (msg, editbox)
 				for i = 1, 20 do
 					--todo: a funcao para quando clicar nele, ele abre o painel para editar a textura
 					--carrega os parametros do main frame e da fill nos campos
-					--o fill nos campos ï¿½ automatico, basta informar a fonte/source
+					--o fill nos campos é automatico, basta informar a fonte/source
 					
 					local b = FW:CreateButton (f, f.EditWidget, 100, 20, "-- x -- x --", i)
 					b:SetPoint (10, -80 + (i*-20) + menuYOffset)

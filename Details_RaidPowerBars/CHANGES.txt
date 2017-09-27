@@ -1,7 +1,7 @@
-changeset:   34:f865d094fdaa
-tag:         v1.8-release
+changeset:   36:e44f736cf85a
+tag:         v7.3.0.036
 user:        Tercio
-date:        Wed Jul 05 15:35:38 2017 -0300
-summary:     - plugin description and tracking phrases are now localized.
+date:        Sat Sep 02 12:41:01 2017 -0300
+summary:     - ToC Update for 7.3.
 
 

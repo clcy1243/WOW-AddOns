@@ -1,14 +1,14 @@
-tag f530193f0c1655afe00dd3be94dfbcccfa0b3b4d 1.6
+tag d41ea3201b37487ed001a5e6532798f8fcc900d1 1.6.7
 Author:	legowxelab2z8 <legowxelab2z8@Gmail.com>
-Date:	Thu Aug 31 22:06:22 2017 -0700
+Date:	Fri Sep 15 20:09:06 2017 -0700
 
-Update for WoW Patch 7.3
+Champion Follower Tokens
 
-commit 58ecd28f2cb9ce5524ae377c878d4f4023ce86e8
+commit d98e864dbc143147a6de17b47fd6aec286f283e4
 Author: legowxelab2z8 <legowxelab2z8@Gmail.com>
-Date:   Thu Aug 31 22:05:28 2017 -0700
+Date:   Fri Sep 15 20:08:48 2017 -0700
 
-    ArtifactPowerTable Update
+    Champion Follower Tokens
     
-    A new Tooltip Scan of artifact power for patch 7.3
+    Added manual override of spellIDs that have the effect text "to accompany your Champions on missions" scraped from wowhead.  These items use a spell effect of server side script so there is no way to find these items by spell effect.
 

@@ -16,6 +16,7 @@ L["Rare Fish"] = true
 L["Fish Bait"] = true --The Combined Bait and Rare Fish container
 L["Reputation"] = REPUTATION or true
 L["Broken Shore"] = GetMapNameByID(1021) --Broken Shore
+L["Legendary Equipment"] = true
 --Option Strings
 L['Create a section for Artifact Power items.'] = true
 L['Create a section for Ancient Mana items.'] = true
@@ -31,6 +32,7 @@ L["Merge Bait and Fish"] = true
 L['Put Fish Bait and Rare Fish in one section.'] = true
 L['Create a section for Reputation items.'] = true
 L['Create a section for Broken Shore items.'] = true
+L['Create a section for Legendary Equipment.'] = true
 --Artifact Power Plugin
 L["Artifact Power Values"] = true
 L["NumberScaleFactors"] = {
@@ -88,14 +90,15 @@ elseif locale == 'koKR' then
 	L["Put items from Legion in their own sections."] = "군단의 아이템을 해당 섹션에 넣습니다."
 	--Container Names
 	L["Artifact Power"] = ARTIFACT_POWER or "유물력"
-	L["Ancient Mana"] = GetCurrencyInfo(1155) or "고대 마나"
+	L["Ancient Mana"] = "고대 마나"
 	L["Champion Upgrades"] = "용사 강화"
 	L["Champion Equipment"] = "용사 장비"
 	L["Bait"] = "미끼"
 	L["Rare Fish"] = "희귀 물고기"
 	L["Fish Bait"] = "물고기 미끼"
 	L["Reputation"] = REPUTATION or "평판"
-	L["Broken Shore"] = GetMapNameByID(1021) --부서진 해변
+	L["Broken Shore"] = "부서진 해변"
+	L["Legendary Equipment"] = "전설 장비"
 	--Option Strings
 	L['Create a section for Artifact Power items.'] = "유물력 아이템 섹션을 만듭니다."
 	L['Create a section for Ancient Mana items.'] = "고대 마나 아이템 섹션을 만듭니다."
@@ -111,6 +114,7 @@ elseif locale == 'koKR' then
 	L['Put Fish Bait and Rare Fish in one section.'] = "물고기 미끼와 희귀 물고기를 하나의 섹션에 넣습니다."
 	L['Create a section for Reputation items.'] = "평판 아이템 섹션을 만듭니다."
 	L['Create a section for Broken Shore items.'] = "부서진 해변 아이템 섹션을 만듭니다."
+	L['Create a section for Legendary Equipment.'] = "전설 장비 아이템 섹션을 만듭니다."
 	--Artifact Power Plugin
 	L["Artifact Power Values"] = "유물력 수치"
 	L["NumberScaleFactors"] = {

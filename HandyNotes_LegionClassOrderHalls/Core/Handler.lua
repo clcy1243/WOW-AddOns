@@ -1,4 +1,4 @@
--- $Id: Handler.lua 73 2017-08-29 18:29:07Z arith $
+-- $Id: Handler.lua 80 2017-09-10 12:27:35Z arith $
 -----------------------------------------------------------------------
 -- Upvalued Lua API.
 -----------------------------------------------------------------------
@@ -54,7 +54,7 @@ local function work_out_texture(point)
 	if (point.quartermaster) then icon_key = "repair" end
 	if (point.classUpgrade) then icon_key = "class" end
 	if (point.artifact and point.class) then icon_key = point.class end
-	if (point.portal) then icon_key = "portal" end
+	if (point.portal and not point.icon) then icon_key = "portal" end
 	if (point.flight) then icon_key = "flight" end
 	if (point.lightsHeart) then icon_key = "lightsHeart" end
 
@@ -64,7 +64,11 @@ local function work_out_texture(point)
 		return private.constants.icon_texture[point.type]
 	-- use the icon specified in point data
 	elseif (point.icon) then
-		return point.icon
+		if (private.constants.icon_texture[point.icon]) then
+			return private.constants.icon_texture[point.icon]
+		else
+			return point.icon
+		end
 	else
 		return private.constants.defaultIcon
 	end
@@ -287,6 +291,7 @@ do
 		if (point.others 	and not profile.show_others) then return false; end
 		if (point.recruiter 	and not profile.show_recruiter) then return false; end
 		if (point.sealOrder 	and not profile.show_sealOrder) then return false; end
+		if (point.beacon 	and not profile.show_beacon) then return false; end
 
 		if (point.talent and not profile.show_alltalents and not isTalentResearched(point.talent)) then return false; end
 		return true

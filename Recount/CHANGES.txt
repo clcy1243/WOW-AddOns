@@ -1,8 +1,8 @@
 ------------------------------------------------------------------------
-r1438 | Resike | 2017-08-18 12:33:14 -0500 (Fri, 18 Aug 2017) | 1 line
+r1443 | Resike | 2017-09-03 10:45:16 -0500 (Sun, 03 Sep 2017) | 1 line
 Changed paths:
    M /trunk/Recount.lua
 
-- Fixed an event handler issue for pet battles.
+- Force a library update.
 ------------------------------------------------------------------------
 

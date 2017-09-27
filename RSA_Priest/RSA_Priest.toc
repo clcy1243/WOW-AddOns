@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: RSA [|c57FFFFFFPriest|r]
 ## Notes: RSA Priest Module. This is needed to announce Priest Spells.
 ## Author: Raeli, Jenneth, Xadurk

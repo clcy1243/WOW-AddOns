@@ -419,6 +419,10 @@ L["STRING_OPTIONS_ADVANCED"] = "進階"
 L["STRING_OPTIONS_ALPHAMOD_ANCHOR"] = "自動隱藏:"
 L["STRING_OPTIONS_ALWAYS_USE"] = "使用在所有角色"
 L["STRING_OPTIONS_ALWAYS_USE_DESC"] = "當啟用後，所有角色會使用此選擇的設定檔，否則，會顯示一個詢問要使用哪個設定檔的面板。"
+--Translation missing 
+-- L["STRING_OPTIONS_ALWAYSSHOWPLAYERS"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"] = ""
 L["STRING_OPTIONS_ANCHOR"] = "側"
 L["STRING_OPTIONS_ANIMATEBARS"] = "動畫計量條"
 L["STRING_OPTIONS_ANIMATEBARS_DESC"] = "套用動畫到所有計量條"
@@ -660,6 +664,10 @@ L["STRING_OPTIONS_DEATHLIMIT"] = "死亡事件數量"
 L["STRING_OPTIONS_DEATHLIMIT_DESC"] = [=[設定死亡顯示的事件數量。
 
 |cFFFFFF00重要|r: 只套用在變更過後新的死亡。]=]
+--Translation missing 
+-- L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = ""
 L["STRING_OPTIONS_DESATURATE_MENU"] = "降低飽和度"
 L["STRING_OPTIONS_DESATURATE_MENU_DESC"] = "啟用這個選項，所有工具列上的選單圖標會變成黑跟白"
 L["STRING_OPTIONS_DISABLE_ALLDISPLAYSWINDOW"] = [=[關閉'全部顯示'選單
@@ -914,10 +922,6 @@ L["STRING_OPTIONS_NICKNAME_DESC"] = [=[給你自己設定一個暱稱。
 --Translation missing 
 -- L["STRING_OPTIONS_OVERALL_ANCHOR"] = ""
 --Translation missing 
--- L["STRING_OPTIONS_OVERALL_CHALLENGE"] = ""
---Translation missing 
--- L["STRING_OPTIONS_OVERALL_CHALLENGE_DESC"] = ""
---Translation missing 
 -- L["STRING_OPTIONS_OVERALL_DUNGEONBOSS"] = ""
 --Translation missing 
 -- L["STRING_OPTIONS_OVERALL_DUNGEONBOSS_DESC"] = ""
@@ -929,6 +933,10 @@ L["STRING_OPTIONS_NICKNAME_DESC"] = [=[給你自己設定一個暱稱。
 -- L["STRING_OPTIONS_OVERALL_LOGOFF"] = ""
 --Translation missing 
 -- L["STRING_OPTIONS_OVERALL_LOGOFF_DESC"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_OVERALL_MYTHICPLUS"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_OVERALL_MYTHICPLUS_DESC"] = ""
 --Translation missing 
 -- L["STRING_OPTIONS_OVERALL_NEWBOSS"] = ""
 --Translation missing 
@@ -1943,11 +1951,21 @@ L["STRING_RAIDCHECK_PLUGIN_NAME"] = "團隊確認"
 --Translation missing 
 -- L["STRING_SEGMENT_START"] = ""
 --Translation missing 
--- L["STRING_SEGMENT_TIME"] = ""
---Translation missing 
 -- L["STRING_SEGMENT_TRASH"] = ""
 --Translation missing 
 -- L["STRING_SEGMENTS"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_BOSS"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_COMBATTIME"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_OVERALL"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TOTALTIME"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TRASH"] = ""
 --Translation missing 
 -- L["STRING_SHIELD_HEAL"] = ""
 --Translation missing 

@@ -1,4 +1,146 @@
 ------------------------------------------------------------------------
+r22 | Tercioo | 2017-09-15 18:49:09 -0500 (Fri, 15 Sep 2017) | 2 lines
+Changed paths:
+   M /trunk/boot.lua
+   M /trunk/gumps/janela_principal.lua
+   M /trunk/plugins/Details_EncounterDetails/Details_EncounterDetails.lua
+
+- Fixed an issue on opening the segments menu.
+- Fixed the tooltip description on damage taken from enemy spells on Encounter Plugin.
+------------------------------------------------------------------------
+r21 | Tercioo | 2017-09-14 10:58:37 -0500 (Thu, 14 Sep 2017) | 2 lines
+Changed paths:
+   M /trunk/boot.lua
+   M /trunk/classes/classe_instancia.lua
+   M /trunk/core/parser.lua
+   M /trunk/gumps/janela_options.lua
+   M /trunk/gumps/janela_principal.lua
+   M /trunk/startup.lua
+
+- Fixed mythic+ report data not showing the segment name correctly.
+- Fixed segments menu sometimes not opening.
+------------------------------------------------------------------------
+r20 | Tercioo | 2017-09-10 20:41:35 -0500 (Sun, 10 Sep 2017) | 5 lines
+Changed paths:
+   M /trunk/boot.lua
+   M /trunk/classes/classe_combate.lua
+   M /trunk/core/control.lua
+   M /trunk/core/parser.lua
+   M /trunk/functions/boss.lua
+   M /trunk/functions/profiles.lua
+   M /trunk/functions/skins.lua
+   M /trunk/gumps/janela_principal.lua
+   M /trunk/startup.lua
+
+- During mythic dungeons, the trash segments will be merged into a new segment at the end of the boss encounter (instead of merging on the fly while cleaning up).
+- Skins where alpha icons for specs aren't used, use 'bar start after icon'.
+- API: added combat:GetMythicDungeonTrashInfo() returns a table with information.
+- API changed combat:IsMythicDungeon() now returns if is any type of mythic dungeon segment and the run id.
+- API: changed Details.GetRaidIcon() now return loreImage for party and raid.
+------------------------------------------------------------------------
+r19 | Tercioo | 2017-09-09 14:10:07 -0500 (Sat, 09 Sep 2017) | 3 lines
+Changed paths:
+   M /trunk/boot.lua
+   M /trunk/core/control.lua
+   M /trunk/core/parser.lua
+   M /trunk/core/util.lua
+   M /trunk/functions/profiles.lua
+   M /trunk/gumps/janela_options.lua
+   M /trunk/startup.lua
+
+- Added options table for mythic plus dungeon stuff.
+- Combat detection should check if the mythic plus stuff is enabled on the profile settings.
+- Unregistered mythic+ events (testers should enable the events on command line).
+------------------------------------------------------------------------
+r18 | Tercioo | 2017-09-08 14:29:32 -0500 (Fri, 08 Sep 2017) | 1 line
+Changed paths:
+   M /trunk/plugins/Details_3DModelsPaths/Details_3DModelsPaths.toc
+   M /trunk/plugins/Details_DataStorage/Details_DataStorage.toc
+   M /trunk/plugins/Details_DmgRank/Details_DmgRank.toc
+   M /trunk/plugins/Details_DpsTuning/Details_DpsTuning.toc
+   M /trunk/plugins/Details_EncounterDetails/Details_EncounterDetails.toc
+   M /trunk/plugins/Details_RaidCheck/Details_RaidCheck.toc
+   M /trunk/plugins/Details_RaidInfo-EmeraldNightmare/Details_RaidInfo-EmeraldNightmare.toc
+   M /trunk/plugins/Details_RaidInfo-Nighthold/Details_RaidInfo-Nighthold.toc
+   M /trunk/plugins/Details_RaidInfo-TombOfSargeras/Details_RaidInfo-TombOfSargeras.toc
+   M /trunk/plugins/Details_RaidInfo-TrialOfValor/Details_RaidInfo-TrialOfValor.toc
+   M /trunk/plugins/Details_Streamer/Details_Streamer.toc
+   M /trunk/plugins/Details_TimeAttack/Details_TimeAttack.toc
+   M /trunk/plugins/Details_TinyThreat/Details_TinyThreat.toc
+   M /trunk/plugins/Details_Vanguard/Details_Vanguard.toc
+
+- forgot to update the .ToC of the built in plugins.
+------------------------------------------------------------------------
+r17 | Tercioo | 2017-09-08 10:49:29 -0500 (Fri, 08 Sep 2017) | 8 lines
+Changed paths:
+   M /trunk/boot.lua
+   M /trunk/functions/skins.lua
+   M /trunk/startup.lua
+
+- Mythic+ dungeons won't delete trash segments, instead they will be added to the boss fight.
+- At the end of a mythic+ run all segments will be added to a new segment representing the overall of the run.
+- API: added combat:GetMythicDungeonInfo(), combat:IsMythicDungeon(), combat:IsMythicDungeonOverall()
+- API: added Details:UnpackMythicDungeonInfo (mythic_dungeon_info)
+- API: new parameters on Details:GetRaidIcon (mapid, ejID, instanceType)
+- API: new parameters on Details:GetBossPortrait (mapid, bossindex, encounterName, ejID)
+More information on API txts at the root folder.
+
+------------------------------------------------------------------------
+r16 | Tercioo | 2017-09-07 19:05:59 -0500 (Thu, 07 Sep 2017) | 2 lines
+Changed paths:
+   M /trunk/classes/container_combatentes.lua
+   M /trunk/gumps/janela_principal.lua
+   M /trunk/startup.lua
+
+- adding the immersion stuff, inside invasion players should see all players on the damage done window.
+- fixed lua erros on the spec icon tooltip, again.
+------------------------------------------------------------------------
+r15 | Tercioo | 2017-09-06 19:45:44 -0500 (Wed, 06 Sep 2017) | 7 lines
+Changed paths:
+   M /trunk/API.txt
+   M /trunk/boot.lua
+   M /trunk/classes/classe_combate.lua
+   M /trunk/classes/classe_damage.lua
+   M /trunk/classes/classe_energy.lua
+   M /trunk/classes/classe_heal.lua
+   M /trunk/classes/classe_others.lua
+   M /trunk/classes/container_combatentes.lua
+   M /trunk/core/control.lua
+   M /trunk/core/parser.lua
+   M /trunk/core/util.lua
+   M /trunk/core/windows.lua
+   M /trunk/functions/boss.lua
+   M /trunk/functions/playerclass.lua
+   M /trunk/functions/profiles.lua
+   M /trunk/functions/slash.lua
+   M /trunk/gumps/janela_principal.lua
+   M /trunk/images/icons.tga
+   M /trunk/startup.lua
+
+- Mythic+ dungeons won't delete trash segments, instead they will be added to the boss fight.
+- At the end of a mythic+ run all segments will be added to a new segment representing the overall of the run.
+- API: added combat:GetMythicDungeonInfo(), combat:IsMythicDungeon(), combat:IsMythicDungeonOverall()
+- API: added Details:UnpackMythicDungeonInfo (mythic_dungeon_info)
+- API: new parameters on Details:GetRaidIcon (mapid, ejID, instanceType)
+- API: new parameters on Details:GetBossPortrait (mapid, bossindex, encounterName, ejID)
+More information on API txts at the root folder.
+------------------------------------------------------------------------
+r14 | Tercioo | 2017-09-04 14:48:14 -0500 (Mon, 04 Sep 2017) | 4 lines
+Changed paths:
+   M /trunk/Libs/AceComm-3.0/AceComm-3.0.lua
+   M /trunk/boot.lua
+   M /trunk/classes/container_combatentes.lua
+   M /trunk/functions/playerclass.lua
+   M /trunk/functions/profiles.lua
+   M /trunk/functions/spells.lua
+   M /trunk/gumps/janela_options.lua
+   M /trunk/gumps/janela_principal.lua
+
+- Added an option to always show all players when using the standard mode. Option under PvP/PvE bracket on the options panel.
+- Added a setting to exclude healing done lines from the death log below a certain healing amount. This options is also under PvP/PvE bracket.
+- Improved the class and spec detection, it should almost always detect correctly now.
+- Fixed an issue when clicking on the spec icon on the player bar when outside a raid instance.
+------------------------------------------------------------------------
 r13 | Tercioo | 2017-08-29 15:18:29 -0500 (Tue, 29 Aug 2017) | 1 line
 Changed paths:
    M /trunk/boot.lua

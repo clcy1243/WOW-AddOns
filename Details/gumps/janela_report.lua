@@ -213,7 +213,7 @@ local _UIParent = UIParent --> wow api locals
 		
 		_detalhes.last_report_id = id
 		
-		--> trabalha com as opï¿½ï¿½es:
+		--> trabalha com as opções:
 		if (options and options._no_current) then
 			_G ["Details_Report_CB_1"]:Disable()
 			_G ["Details_Report_CB_1Text"]:SetTextColor (.5, .5, .5, 1)
@@ -1053,7 +1053,7 @@ local function cria_drop_down (este_gump)
 				_detalhes.last_report_id = nil
 			end)
 	
-		--> botï¿½o de fechar
+		--> botão de fechar
 		window.fechar = CreateFrame ("Button", nil, window, "UIPanelCloseButton")
 		window.fechar:SetScript ("OnClick", function()
 			gump:Fade (window, 1)

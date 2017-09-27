@@ -1,11 +1,3 @@
-
-if GetAddOnEnableState(UnitName("player"), "BigWigs_Voice_HeroesOfTheStorm") > 0 then
-	C_Timer.After(7, function()
-		print("|cFF33FF99BigWigs_Voice_HeroesOfTheStorm|r has been renamed to |cFF33FF99BigWigs_Countdown_HeroesOfTheStorm|r and you seem to have both addons enabled! Please remove the old |cFF33FF99BigWigs_Voice_HeroesOfTheStorm|r folder from your Interface/AddOns folder to ensure you're using the correct version.")
-	end)
-	return
-end
-
 -- luacheck: globals BigWigs BigWigs3DB BigWigsAPI BigWigsLoader
 
 local _, ns = ...
@@ -14,15 +6,7 @@ local _, ns = ...
 -- Locale
 --
 
-local L = {}
-L.title = "Countdown: Heroes of the Storm"
-L.language = "Language"
-L.locale_warning = "You've changed your language! Normally only one set of voices is used, but each language you change to will remain listed until you reload your UI."
--- varies for asian locales
-L.heroes = "Heroes of the Storm"
-L.key = "%s: %s: %s"
-L.key_short = "%s: %s"
-ns.L = L
+local L = ns.L
 
 -------------------------------------------------------------------------------
 -- Locals
@@ -41,6 +25,10 @@ local localeMap = {
 	zhCN = "简体中文",
 	zhTW = "繁體中文",
 }
+local defaultLocale = GetLocale()
+if not localeMap[defaultLocale] then
+	defaultLocale = "enUS"
+end
 
 local loaded = {}
 
@@ -67,9 +55,8 @@ function ns.RegisterPlugin(event)
 	local plugin = BigWigs:NewPlugin("HeroesVoices")
 	if not plugin then return end
 
-	local locale = GetLocale()
 	plugin.defaultDB = {
-		locale = localeMap[locale] and locale or "enUS"
+		locale = defaultLocale
 	}
 
 	plugin.subPanelOptions = {
@@ -115,8 +102,6 @@ function ns.RegisterPlugin(event)
 		self:RegisterMessage("BigWigs_ProfileUpdate", profileUpdate)
 		profileUpdate()
 	end
-
-	ns.RegisterVoices()
 
 	-- Force initialization since the addon is already loaded
 	BigWigs.ADDON_LOADED()
@@ -182,7 +167,7 @@ local announcers = {
 }
 
 function ns.RegisterVoices()
-	local locale = db.locale or "enUS"
+	local locale = db.locale or defaultLocale
 	if loaded[locale] then return end
 
 	loaded[locale] = true
@@ -217,3 +202,5 @@ function ns.RegisterVoices()
 		})
 	end
 end
+
+ns.RegisterVoices()

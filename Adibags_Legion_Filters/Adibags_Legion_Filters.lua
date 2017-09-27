@@ -31,6 +31,8 @@ legionFilter.uiDesc = L["Put items from Legion in their own sections."]
 function legionFilter:Filter(slotData)
    for tableName,tableDescription in pairs(tableToContainer) do
       if legionFilter.db.profile[tableName] then --option for the table is enabled
+         if not slotData.itemId then DebugPrint("slot data has no item id") return end
+         if not AddonTable.ItemTables[tableName] then DebugPrint("Missing table " .. tableName) return end
          if AddonTable.ItemTables[tableName][slotData.itemId] then
             return tableDescription
          end
@@ -49,6 +51,13 @@ function legionFilter:Filter(slotData)
          return L["Artifact Power"]
       end
    end
+   --Legendary Equipment
+   if legionFilter.db.profile["LegendaryEquipment"] then
+      local _,_,quality,_,itemMinLevel = GetItemInfo(slotData.itemId)
+      if (quality == LE_ITEM_QUALITY_LEGENDARY and IsEquippableItem(slotData.itemId) and itemMinLevel >= 101) then
+         return L["Legendary Equipment"]
+      end
+   end
 end
 
 function legionFilter:OnInitialize()
@@ -64,6 +73,7 @@ function legionFilter:OnInitialize()
       MergeFishBait = true,
       Reputation = true,
       BrokenShore = true,
+      LegendaryEquipment = true,
       }})
    if self.db.profile.MergeChampionItems then
       tableToContainer["ChampionEquipment"] = L["Champion Upgrades"] --Remap to champion upgrade section
@@ -169,6 +179,12 @@ function legionFilter:GetOptions()
          desc = L['Create a section for Broken Shore items.'],
          type = 'toggle',
          order = 70,
+      },
+      LegendaryEquipment = {
+         name = L["Legendary Equipment"],
+         desc = L['Create a section for Legendary Equipment.'],
+         type = 'toggle',
+         order = 80,
       },
    }, AdiBags:GetOptionHandler(self, true)
 end

@@ -175,7 +175,7 @@
 			return
 		else	
 			if (flag) then
-				--> conferir se o jogador ï¿½ um player
+				--> conferir se o jogador é um player
 				if (_bit_band (flag, OBJECT_TYPE_PLAYER) ~= 0) then
 					novo_objeto.classe = "UNGROUPPLAYER"
 					return
@@ -184,8 +184,9 @@
 					return
 				end
 			end
+			
 			novo_objeto.classe = "UNKNOW"
-			return
+			return true
 		end
 	end
 
@@ -194,13 +195,19 @@
 
 		if (flag) then
 
-			--> ï¿½ um player
+			--> é um player
 			if (_bit_band (flag, OBJECT_TYPE_PLAYER) ~= 0) then
 			
 				if (not _detalhes.ignore_nicktag) then
 					novo_objeto.displayName = _detalhes:GetNickname (serial, false, true) --> serial, default, silent
 				end
 				if (not novo_objeto.displayName) then
+					if (_detalhes.remove_realm_from_name) then
+						novo_objeto.displayName = nome:gsub (("%-.*"), "")
+					else
+						novo_objeto.displayName = nome
+					end				
+					--[=[
 				
 					if (_IsInInstance() and _detalhes.remove_realm_from_name) then
 						novo_objeto.displayName = nome:gsub (("%-.*"), "")
@@ -211,6 +218,11 @@
 					else
 						novo_objeto.displayName = nome
 					end
+					--]=]
+				end
+				
+				if (_detalhes.all_players_are_group or _detalhes.immersion_enabled) then
+					novo_objeto.grupo = true
 				end
 				
 				if ((_bit_band (flag, IS_GROUP_OBJECT) ~= 0 and novo_objeto.classe ~= "UNKNOW" and novo_objeto.classe ~= "UNGROUPPLAYER") or _detalhes:IsInCache (serial)) then
@@ -284,7 +296,7 @@
 					novo_objeto.grupo = true
 				end
 			
-			--> ï¿½ um pet
+			--> é um pet
 			elseif (dono_do_pet) then 
 				novo_objeto.owner = dono_do_pet
 				novo_objeto.ownerName = dono_do_pet.nome
@@ -311,7 +323,7 @@
 				end
 			end
 			
-			--> ï¿½ inimigo
+			--> é inimigo
 			if (_bit_band (flag, REACTION_HOSTILE) ~= 0) then 
 				if (_bit_band (flag, OBJECT_TYPE_PLAYER) == 0 and _bit_band (flag, OBJECT_TYPE_PETGUARDIAN) == 0) then
 					novo_objeto.monster = true
@@ -429,11 +441,11 @@
 			--print (nome, flag)
 		--end
 	
-		--> verifica se ï¿½ um pet, se for confere se tem o nome do dono, se nï¿½o tiver, precisa por
+		--> verifica se é um pet, se for confere se tem o nome do dono, se não tiver, precisa por
 		local dono_do_pet
 		serial = serial or "ns"
 		
-		if (container_pets [serial]) then --> ï¿½ um pet reconhecido
+		if (container_pets [serial]) then --> é um pet reconhecido
 			--[[statistics]]-- _detalhes.statistics.container_pet_calls = _detalhes.statistics.container_pet_calls + 1
 			
 			local nome_dele, dono_nome, dono_serial, dono_flag = _detalhes.tabela_pets:PegaDono (serial, nome, flag)
@@ -442,7 +454,7 @@
 				dono_do_pet = self:PegarCombatente (dono_serial, dono_nome, dono_flag, true)
 			end
 			
-		elseif (not pet_blacklist [serial]) then --> verifica se ï¿½ um pet
+		elseif (not pet_blacklist [serial]) then --> verifica se é um pet
 		
 			pet_blacklist [serial] = true
 		
@@ -463,7 +475,7 @@
 		if (index) then
 			return self._ActorTable [index], dono_do_pet, nome
 		
-		--> nï¿½o achou, criar
+		--> não achou, criar
 		elseif (criar) then
 	
 			local novo_objeto = self.funcao_de_criacao (_, serial, nome)
@@ -486,7 +498,8 @@
 
 			if (self.tipo == container_damage) then --> CONTAINER DAMAGE
 
-				get_actor_class (novo_objeto, nome, flag, serial)
+				local shouldScanOnce = get_actor_class (novo_objeto, nome, flag, serial)
+				
 				read_actor_flag (novo_objeto, dono_do_pet, serial, flag, nome, "damage")
 				
 				if (dono_do_pet) then
@@ -505,9 +518,13 @@
 					end
 					
 					--> try to guess his class
-					if (self.shadow) then --> nï¿½o executar 2x
+					if (self.shadow) then --> não executar 2x
 						_detalhes:ScheduleTimer ("GuessClass", 1, {novo_objeto, self, 1})
 					end
+					
+				elseif (shouldScanOnce) then
+					
+					
 				end
 				
 				if (novo_objeto.isTank) then
@@ -516,7 +533,7 @@
 				
 			elseif (self.tipo == container_heal) then --> CONTAINER HEALING
 				
-				get_actor_class (novo_objeto, nome, flag, serial)
+				local shouldScanOnce = get_actor_class (novo_objeto, nome, flag, serial)
 				read_actor_flag (novo_objeto, dono_do_pet, serial, flag, nome, "heal")
 				
 				if (dono_do_pet) then
@@ -535,7 +552,7 @@
 					end
 					
 					--> try to guess his class
-					if (self.shadow) then --> nï¿½o executar 2x
+					if (self.shadow) then --> não executar 2x
 						_detalhes:ScheduleTimer ("GuessClass", 1, {novo_objeto, self, 1})
 					end
 				end
@@ -543,7 +560,7 @@
 				
 			elseif (self.tipo == container_energy) then --> CONTAINER ENERGY
 				
-				get_actor_class (novo_objeto, nome, flag, serial)
+				local shouldScanOnce = get_actor_class (novo_objeto, nome, flag, serial)
 				read_actor_flag (novo_objeto, dono_do_pet, serial, flag, nome, "energy")
 				
 				if (dono_do_pet) then
@@ -556,14 +573,14 @@
 					end
 					
 					--> try to guess his class
-					if (self.shadow) then --> nï¿½o executar 2x
+					if (self.shadow) then --> não executar 2x
 						_detalhes:ScheduleTimer ("GuessClass", 1, {novo_objeto, self, 1})
 					end
 				end
 				
 			elseif (self.tipo == container_misc) then --> CONTAINER MISC
 				
-				get_actor_class (novo_objeto, nome, flag, serial)
+				local shouldScanOnce = get_actor_class (novo_objeto, nome, flag, serial)
 				read_actor_flag (novo_objeto, dono_do_pet, serial, flag, nome, "misc")
 				
 				--local teste_classe = 
@@ -578,7 +595,7 @@
 					end
 					
 					--> try to guess his class
-					if (self.shadow) then --> nï¿½o executar 2x
+					if (self.shadow) then --> não executar 2x
 						_detalhes:ScheduleTimer ("GuessClass", 1, {novo_objeto, self, 1})
 					end
 				end
@@ -603,7 +620,7 @@
 				
 			elseif (self.tipo == container_friendlyfire) then --> CONTAINER FRIENDLY FIRE
 				
-				get_actor_class (novo_objeto, nome, serial)
+				local shouldScanOnce = get_actor_class (novo_objeto, nome, serial)
 
 			end
 		
@@ -689,7 +706,7 @@
 		end
 	end
 
-	--> chama a funï¿½ï¿½o para ser executada em todos os atores
+	--> chama a função para ser executada em todos os atores
 	function container_combatentes:ActorCallFunction (funcao, ...)
 		for index, actor in _ipairs (self._ActorTable) do
 			funcao (nil, actor, ...)
@@ -721,7 +738,7 @@
 	end
 
 	function _detalhes.refresh:r_container_combatentes (container, shadow)
-		--> reconstrï¿½i meta e indexes
+		--> reconstrói meta e indexes
 			_setmetatable (container, _detalhes.container_combatentes)
 			container.__index = _detalhes.container_combatentes
 			container.funcao_de_criacao = container_combatentes:FuncaoDeCriacao (container.tipo)

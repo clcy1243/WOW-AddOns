@@ -75,6 +75,7 @@ L["Toggle icon and text display for artifact power progress"] = "切換顯示神
 L["Toggle login message on load"] = "切換登入時的訊息"
 L["Toggle short summary of the tooltip information as an additional display next to the action button"] = "切換滑鼠提示資訊顯示為簡短總計，和按鈕旁的文字相同。"
 L["Toggle spell overlay notification (glow effect) when new traits are available"] = "切換新特質解鎖時的法術提醒（發光效果）"
+L["Toggle text display next to the action button"] = "切換顯示動作按鈕旁的文字"
 L["Toggle the secondary progress bar"] = "切換顯示第二進度條"
 L["Toggle tooltip display for artifact power items"] = "切換顯示神兵之力物品的滑鼠提示"
 L["Toggle visibility in combat"] = "切換戰鬥中顯示"

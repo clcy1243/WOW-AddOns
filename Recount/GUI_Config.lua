@@ -6,7 +6,7 @@ local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("Recount")
 local BC = {} -- = LibStub("LibBabble-Class-3.0"):GetLookupTable()
 
-local revision = tonumber(string.sub("$Revision: 1431 $", 12, -3))
+local revision = tonumber(string.sub("$Revision: 1440 $", 12, -3))
 if Recount.Version < revision then
 	Recount.Version = revision
 end
@@ -2114,6 +2114,7 @@ function me:LoadConfig()
 
 	me.MiscOptions.GlobalData:SetChecked(Recount.db.profile.GlobalDataCollect)
 	me.MiscOptions.HideCollect:SetChecked(Recount.db.profile.HideCollect)
+	me.MiscOptions.HidePetBattle:SetChecked(Recount.db.profile.HidePetBattle)
 	me.DeletionOptions.SegmentBosses:SetChecked(Recount.db.profile.SegmentBosses)
 
 	for k, v in pairs(ZoneLabels) do

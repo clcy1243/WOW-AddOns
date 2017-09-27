@@ -1,10 +1,4 @@
-<<<<<<< .mine
-## Interface: 70100
-||||||| .r76
-﻿## Interface: 70100
-=======
-﻿## Interface: 70200
->>>>>>> .r78
+## Interface: 70200
 
 ## Title: Lib: Compress
 ## Notes: Compression and Decompression library

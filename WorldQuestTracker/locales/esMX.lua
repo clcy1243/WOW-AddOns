@@ -27,6 +27,8 @@ L["S_FLYMAP_SHOWWORLDQUESTS"] = "Mostrar misiones de mundo"
 --Translation missing 
 -- L["S_GROUPFINDER_ACTIONS_SEARCH"] = ""
 --Translation missing 
+-- L["S_GROUPFINDER_ACTIONS_SEARCH_RARENPC"] = ""
+--Translation missing 
 -- L["S_GROUPFINDER_ACTIONS_SEARCH_TOOLTIP"] = ""
 --Translation missing 
 -- L["S_GROUPFINDER_ACTIONS_SEARCHING"] = ""
@@ -43,7 +45,11 @@ L["S_FLYMAP_SHOWWORLDQUESTS"] = "Mostrar misiones de mundo"
 --Translation missing 
 -- L["S_GROUPFINDER_ACTIONS_WAITING"] = ""
 --Translation missing 
+-- L["S_GROUPFINDER_AUTOOPEN_RARENPC_TARGETED"] = ""
+--Translation missing 
 -- L["S_GROUPFINDER_ENABLED"] = ""
+--Translation missing 
+-- L["S_GROUPFINDER_INVASION_ENABLED"] = ""
 --Translation missing 
 -- L["S_GROUPFINDER_LEAVEOPTIONS"] = ""
 --Translation missing 
@@ -139,6 +145,30 @@ L["S_QUESTTYPE_PROFESSION"] = "Profesión"
 L["S_QUESTTYPE_PVP"] = "JcJ"
 L["S_QUESTTYPE_RESOURCE"] = "Recursos"
 L["S_QUESTTYPE_TRADESKILL"] = "Habilidad comercial"
+--Translation missing 
+-- L["S_RAREFINDER_ADDFROMPREMADE"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_NPC_NOTREGISTERED"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_OPTIONS_ENGLISHSEARCH"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_OPTIONS_SHOWICONS"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_SOUND_ALWAYSPLAY"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_SOUND_ENABLED"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_SOUNDWARNING"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_TITLE"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_TOOLTIP_REMOVE"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_TOOLTIP_SEACHREALM"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_TOOLTIP_SPOTTEDBY"] = ""
+--Translation missing 
+-- L["S_RAREFINDER_TOOLTIP_TIMEAGO"] = ""
 L["S_SHAREPANEL_THANKS"] = [=[¡Gracias por compartir World Quest Tracker!
 Enviar nuestro enlace a tus amigos de Facebook, Twitter o la Casa Blanca.]=]
 L["S_SHAREPANEL_TITLE"] = "For All Those About to Rock!"
@@ -159,5 +189,7 @@ L["S_TUTORIAL_REWARD"] = "indica la recompensa (equipo, oro, poder de artefacto,
 L["S_TUTORIAL_TIMELEFT"] = "indica el tiempo que queda (+4 horas, +90 minutos, +30 minutos, menos de 30 minutos)"
 L["S_TUTORIAL_WORLDMAPBUTTON"] = "Este botón lo llevara al mapa de las Islas quebradas."
 L["S_UNKNOWNQUEST"] = "Misión desconocida"
+--Translation missing 
+-- L["S_WORLDMAP_TOOGLEQUESTS"] = ""
 L["S_WORLDQUESTS"] = "Misiones de mundo"
 

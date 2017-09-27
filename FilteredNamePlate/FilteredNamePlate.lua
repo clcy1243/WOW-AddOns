@@ -50,7 +50,7 @@ local function registerMyEvents(self, event, ...)
 			elseif localename == "zhTW" then
 				thisname = "魔化炸彈"
 			elseif localname == "ruRU" then
-				thisname = "Желч"
+				thisname = "Взрывчатка Скверны"
 			end
 			table.insert(Fnp_ONameList, thisname)
 		end
@@ -58,6 +58,7 @@ local function registerMyEvents(self, event, ...)
 		if Fnp_FNameList == nil then
 			Fnp_FNameList = {}
 		end
+		-- version 6.1.1 added & help to reset the error Struct of Fnnp_SavedScaleList
 		if Fnp_MyVersion == nil or Fnp_SavedScaleList == nil then
 			Fnp_SavedScaleList = nil
 			Fnp_SavedScaleList = {
@@ -72,11 +73,9 @@ local function registerMyEvents(self, event, ...)
 		if Fnp_MyVersion == nil then
 			Fnp_MyVersion = FNP_LOCALE_TEXT.FNP_VERSION
 		end
-
-		--- old -> v6.1.1
-		Fnp_CurVersion = nil
-		--- v6.1.1 -> new
-		if Fnp_MyVersion ~= nil and Fnp_MyVersion < FNP_LOCALE_TEXT.FNP_VERSION then
+		Fnp_CurVersion = nil -- 短期内不删除
+		if Fnp_MyVersion ~= nil and Fnp_MyVersion ~= FNP_LOCALE_TEXT.FNP_VERSION then
+			FilteredNamePlate:ChangedSavedScaleList(Fnp_OtherNPFlag)
 			Fnp_MyVersion = FNP_LOCALE_TEXT.FNP_VERSION
 		end
 		-----*** inited **}
@@ -143,6 +142,9 @@ local HideAFrame = {
 		if frame.ouf then
 			if frame.ouf.Name then
 				frame.ouf.Name:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.small_name_font, FilteredNamePlate.curScaleList.fontFlag)
+			end
+			if frame.ouf.Level then
+				frame.ouf.Level:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.small_name_font, FilteredNamePlate.curScaleList.fontFlag)
 			end
 			if frame.ouf.Health then frame.ouf.Health:Hide() end
 		end
@@ -229,16 +231,20 @@ local ShowAFrame = {
 	[3] = function(frame, isOnlyShowSpellCast, restore, isOnlyUnit)
 		if frame and frame.ouf then
 			if restore == true then
+				frame.ouf.Level:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.NAME_FONT, FilteredNamePlate.curScaleList.fontFlag)
 				frame.ouf.Name:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.NAME_FONT, FilteredNamePlate.curScaleList.fontFlag)
 				frame.ouf.Health:Show()
 			elseif isOnlyShowSpellCast == false then
 				frame.ouf.Health:Show()
 				if isOnlyUnit then
+					frame.ouf.Level:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.only_name_font, FilteredNamePlate.curScaleList.fontFlag)
 					frame.ouf.Name:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.only_name_font, FilteredNamePlate.curScaleList.fontFlag)
 				else
+					frame.ouf.Level:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.normal_name_font, FilteredNamePlate.curScaleList.fontFlag)
 					frame.ouf.Name:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.normal_name_font, FilteredNamePlate.curScaleList.fontFlag)
 				end
 			else
+				frame.ouf.Level:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.mid_name_font, FilteredNamePlate.curScaleList.fontFlag)
 				frame.ouf.Name:SetFont(FilteredNamePlate.curScaleList.fontFace, FilteredNamePlate.curScaleList.mid_name_font, FilteredNamePlate.curScaleList.fontFlag)
 			end
 		end
@@ -409,18 +415,23 @@ local function actionUnitRemovedForce(unitid)
 	-- if AllInfos and AllInfos[unitid] then
 	--	AllInfos[unitid].inSee = false -- #ALLMYINFOS#
 	-- end
-	local curOnlyMatch = isMatchedNameList(Fnp_ONameList, UnitName(unitid))
+	local removedName = UnitName(unitid)
+	local curOnlyMatch = isMatchedNameList(Fnp_ONameList, removedName)
+
 	if curOnlyMatch == true then
 		-- 移除单位是需要仅显的,而此时肯定已经仅显,
 		--于是我们判断剩余的是否还含有,如果还有就什么也不动.如果没有了,就恢复显示
 		local matched = false
-		local name = ""
 		for _, frame in pairs(GetNamePlates()) do
 			local foundUnit = (frame.namePlateUnitToken or (frame.UnitFrame and frame.UnitFrame.unit)) or (frame.unitFrame and frame.unitFrame.unit)
+			local name
 			if foundUnit then
-				matched = isMatchedNameList(Fnp_ONameList, GetUnitName(foundUnit))
-				if matched == true then
-					return --have & return
+				name = GetUnitName(foundUnit)
+				if name ~= removedName or foundUnit ~= unitid then
+					matched = isMatchedNameList(Fnp_ONameList, GetUnitName(foundUnit))
+					if matched == true then
+						return --have & return
+					end
 				end
 			end
 		end
@@ -448,7 +459,7 @@ local function actionUnitAdded(self, event, ...)
 	end
 
 	if SetupFlag == 0 then
-		local inited = FilteredNamePlate:initScaleValues(curNpFlag, false) -- 第一次
+		local inited = FilteredNamePlate:initScaleValues(curNpFlag, Fnp_OtherNPFlag) -- 第一次
 		if inited == false then
 			SetupFlag = 10 -- 错误永不再用，直到重载
 			print(L.FNP_PRINT_ERROR_UITYPE)

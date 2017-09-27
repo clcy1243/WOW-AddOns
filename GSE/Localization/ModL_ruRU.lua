@@ -193,18 +193,12 @@ L["GS-E Plugins"] = "GS-E Плагины"
 -- L["GSE Users"] = ""
 --Translation missing 
 -- L["GSE Version: %s"] = ""
---Translation missing 
--- L["GSE: Left Click to open the Sequence Editor"] = ""
---Translation missing 
--- L["GS-E: Left Click to open the Sequence Editor"] = ""
---Translation missing 
--- L["GSE: Middle Click to open the Transmission Interface"] = ""
---Translation missing 
--- L["GS-E: Middle Click to open the Transmission Interface"] = ""
---Translation missing 
--- L["GSE: Right Click to open the Sequence Debugger"] = ""
---Translation missing 
--- L["GS-E: Right Click to open the Sequence Debugger"] = ""
+L["GSE: Left Click to open the Sequence Editor"] = "GSE: ЛКМ для открытия Редактора Последовательности"
+L["GS-E: Left Click to open the Sequence Editor"] = "GS-E: ЛКМ для открытия Редактора Последовательности"
+L["GSE: Middle Click to open the Transmission Interface"] = "GSE: СКМ для открытия интерфейса передачи"
+L["GS-E: Middle Click to open the Transmission Interface"] = "GS-E: СКМ для открытия интерфейса передачи"
+L["GSE: Right Click to open the Sequence Debugger"] = "GSE: ПКМ для открытия окна отладки"
+L["GS-E: Right Click to open the Sequence Debugger"] = "GS-E: ПКМ для открытия окна отладки"
 L["Head"] = "Голова"
 --Translation missing 
 -- L["Help Colour"] = ""

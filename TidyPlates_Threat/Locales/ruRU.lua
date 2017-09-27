@@ -34,10 +34,14 @@ L["Additional Adjustments"] = "Additional Adjustments"
 L["Additional Toggles"] = "Additional Toggles"
 L["All Auras"] = "All Auras"
 L["All Auras (Mine)"] = "All Auras (Mine)"
+--Translation missing 
+-- L["Allied"] = ""
 L["Allow Marked HP Coloring"] = "Allow Marked HP Coloring"
 L["Allow raid marked hp color settings instead of a custom hp setting if the nameplate has a raid mark."] = "Allow raid marked hp color settings instead of a custom hp setting if the nameplate has a raid mark."
 L["Alpha"] = "Прозрачность"
 L["Alpha Settings"] = "Настройки прозрачности"
+--Translation missing 
+-- L["Always Show Auras"] = ""
 L["Amount Text"] = "Amount Text"
 L["Amount Text Formatting"] = "Amount Text Formatting"
 L["Anchor"] = "Anchor"
@@ -72,6 +76,8 @@ L["Custom Nameplates"] = "Настраиваемые индикаторы"
 L["Custom Scale"] = "Custom Scale"
 L["Custom Settings"] = "Custom Settings"
 L["Darnavan"] = ""
+--Translation missing 
+-- L["Decimals"] = ""
 L["Deficit Text"] = "Deficit Text"
 L["Deformed Fanatic"] = "Deformed Fanatic"
 L["Disable Custom Alpha"] = "Disable Custom Alpha"
@@ -83,6 +89,8 @@ L["Disables threat feedback from elite mobs."] = "Disables threat feedback from 
 L["Disables threat feedback from mobs you're currently not in combat with."] = "Disables threat feedback from mobs you're currently not in combat with."
 L["Disables threat feedback from neutral mobs regardless of boss or elite levels."] = "Disables threat feedback from neutral mobs regardless of boss or elite levels."
 L["Disables threat feedback from normal mobs."] = "Disables threat feedback from normal mobs."
+--Translation missing 
+-- L["Disables threat feedback from tapped mobs regardless of boss or elite levels."] = ""
 L["Disabling this will turn off any all icons without harming custom settings per nameplate."] = "Disabling this will turn off any all icons without harming custom settings per nameplate."
 L["Display health amount text."] = "Display health amount text."
 L["Display health percentage text."] = "Display health percentage text."
@@ -99,6 +107,8 @@ L["Enable"] = "Включено"
 L["Enable Adjustments"] = "Enable Adjustments"
 L["Enable Alpha Threat"] = "Enable Alpha Threat"
 L["Enable Blizzard 'On-Target' Fading"] = "Enable Blizzard 'On-Target' Fading"
+--Translation missing 
+-- L["Enable Class Colors"] = ""
 L["Enable Coloring"] = "Enable Coloring"
 L["Enable Custom Colors"] = "Enable Custom Colors"
 L["Enable Elite Icon"] = "Включить иконку элиты"
@@ -112,6 +122,8 @@ L["Enable nameplates to change alpha depending on the levels you set below."] = 
 L["Enable nameplates to change scale depending on the levels you set below."] = "Enable nameplates to change scale depending on the levels you set below."
 L["Enable Raid Mark Icon"] = "Включить рейдовые метки"
 L["Enable Raid Marked HP colors"] = "Enable Raid Marked HP colors"
+--Translation missing 
+-- L["Enable Reaction Colors"] = ""
 L["Enable Scale Threat"] = "Enable Scale Threat"
 L["Enable Shadow"] = "Включить тень"
 L["Enable Skull Icon"] = "Включить иконку черепа"
@@ -140,8 +152,14 @@ L["Font Size"] = "Размер шрифта"
 L["Font Style"] = "Стиль шрифта"
 L["Friendly"] = "Союзники"
 L["Friendly Color"] = "Friendly Color"
+--Translation missing 
+-- L["Friendly NPC"] = ""
+--Translation missing 
+-- L["Friendly Player"] = ""
 L["Gas Cloud"] = "Gas Cloud"
 L["General Settings"] = "Основные настройки"
+--Translation missing 
+-- L["Guardian"] = ""
 L["Health Coloring"] = "Health Coloring"
 L["Health Text"] = "Текст здоровья"
 L["Healthbar"] = "Полоса здоровья"
@@ -149,8 +167,18 @@ L["Hide Healthbars"] = "Скрыть полосу здоровья"
 L["Hiding"] = "Скрытие"
 L["High Threat"] = "Высокая угроза"
 L["Horizontal Align"] = "Горизонтальное выравнивание"
+--Translation missing 
+-- L["Horizontal spacing"] = ""
 L["Icon"] = "Иконка"
+--Translation missing 
+-- L["Icon height"] = ""
+--Translation missing 
+-- L["Icon lines"] = ""
 L["Icon Size"] = "Размер иконки"
+--Translation missing 
+-- L["Icon width"] = ""
+--Translation missing 
+-- L["Icons on a line"] = ""
 L["Ignore Marked Targets"] = "Ignore Marked Targets"
 L["Immortal Guardian"] = "Immortal Guardian"
 L["Interruptable Casts"] = "Interruptable Casts"
@@ -174,14 +202,22 @@ L["Living Inferno"] = "Living Inferno"
 L["Low Threat"] = "Низкая угроза"
 L["Marked Immortal Guardian"] = "Marked Immortal Guardian"
 L["Marked Targets"] = "Marked Targets"
+--Translation missing 
+-- L["Max Distance Nameplate Visibility"] = ""
 L["Max HP Text"] = "Max HP Text"
 L["Medium Threat"] = "Средняя угроза"
+--Translation missing 
+-- L["Mini Mob NPC"] = ""
 L["Mode"] = "Mode"
 L["Mouseover"] = "Mouseover"
 L["Muddy Crawfish"] = "Muddy Crawfish"
+--Translation missing 
+-- L["Name"] = ""
 L["Name Text"] = "Текст имени"
 L["Nameplate Settings"] = "Настройки индикаторов"
 L["Neutral Color"] = "Neutral Color"
+--Translation missing 
+-- L["Neutral NPC"] = ""
 L["No"] = "Нет"
 L["No Outline, Monochrome"] = "No Outline, Monochrome"
 L["No target found."] = "No target found."
@@ -196,19 +232,29 @@ L["Onyxian Whelp"] = "Onyxian Whelp"
 L["Open Blizzard Settings"] = "Открыть настройки Blizzard"
 L["Open Config"] = "Open Config"
 L["Options"] = "Настройки"
+--Translation missing 
+-- L["Other tank"] = ""
 L["Outline"] = "Outline"
 L["Outline, Monochrome"] = "Outline, Monochrome"
+--Translation missing 
+-- L["Override alpha settings"] = ""
 L["Paste"] = "Paste"
 L["Pasted!"] = "Pasted!"
 L["Percent Text"] = "Percent Text"
+--Translation missing 
+-- L["Pet"] = ""
 L["Placement"] = "Расположение"
 L["Player spec change detected"] = "Обнаружена смена специализации игрока"
 L["Presences"] = "Presences"
 L["Preview"] = "Предварительный осмотр"
 L["Primary Spec"] = "Primary Spec"
+--Translation missing 
+-- L["Quest Icons"] = ""
 L["Raging Spirit"] = "Raging Spirit"
 L["Raid Mark HP Color"] = "Raid Mark HP Color"
 L["Raid Marks"] = "Рейдовые метки"
+--Translation missing 
+-- L["Reaction Colors"] = ""
 L["Reanimated Adherent"] = "Reanimated Adherent"
 L["Reanimated Fanatic"] = "Reanimated Fanatic"
 L["Restore Defaults"] = "Restore Defaults"
@@ -246,12 +292,26 @@ L["Show Friendly Guardians"] = "Показать защитников союзн
 L["Show Friendly Pets"] = "Показать прислужников союзников"
 L["Show Friendly Totems"] = "Показать тотемы союзников"
 L["Show Friends"] = "Показать друзей"
+--Translation missing 
+-- L["Show Guild"] = ""
+--Translation missing 
+-- L["Show icon border"] = ""
 L["Show Nameplate"] = "Показать индикатор"
 L["Show Neutral"] = "Show Neutral"
 L["Show Neutral Threat"] = "Show Neutral Threat"
 L["Show Non-Combat Threat"] = "Ignore Non-Combat Threat"
 L["Show Normal"] = "Show Normal"
 L["Show Normal Threat"] = "Show Normal Threat"
+--Translation missing 
+-- L["Show radial cooldown"] = ""
+--Translation missing 
+-- L["Show Role"] = ""
+--Translation missing 
+-- L["Show Tagged"] = ""
+--Translation missing 
+-- L["Show Tapped"] = ""
+--Translation missing 
+-- L["Show Tapped Threat"] = ""
 L["Show Threat Glow"] = "Show Threat Glow"
 L["Size"] = "Размер"
 L["Sizing"] = "Sizing"
@@ -263,16 +323,24 @@ L["Spirit Wolf"] = "Spirit Wolf"
 L["Stances"] = "Stances"
 L["Style"] = "Стиль"
 L["Subtitle"] = "Подзаголовок"
+--Translation missing 
+-- L["Tagged Color"] = ""
 L["Tanked Widget"] = "Tanked Targets"
+--Translation missing 
+-- L["Tapped"] = ""
 L["Target Highlight"] = "Target Highlight"
 L["Target Only"] = "Target Only"
 L["Text at Full HP"] = "Text at Full HP"
 L["Text Boundaries"] = "Text Boundaries"
 L["Text Bounds and Sizing"] = "Text Bounds and Sizing"
 L["Text Height"] = "Text Height"
+--Translation missing 
+-- L["Text Only Style"] = ""
 L["Text Width"] = "Text Width"
 L["Texture"] = "Текстура"
 L["Textures"] = "Текстуры"
+--Translation missing 
+-- L["Textures are reversed for tanking role."] = ""
 L["These options are for the textures shown on nameplates at various threat levels."] = "These options are for the textures shown on nameplates at various threat levels."
 L["Thick Outline"] = "Thick Outline"
 L["Thick Outline, Monochrome"] = "Thick Outline, Monochrome"
@@ -283,6 +351,8 @@ L["This widget will display a small shield or dagger that will indicate if the n
 L["This widget will display auras that match your filtering on your target nameplate and others you recently moused over."] = "This widget will display auras that match your filtering on your target nameplate and others you recently moused over."
 L["This widget will display class icons on nameplate with the settings you set below."] = "This widget will display class icons on nameplate with the settings you set below."
 L["This widget will display combo points on your target nameplate."] = "Этот виджет показывает серию приемов на индикаторе текущей цели."
+--Translation missing 
+-- L["This widget will display quest icons on nameplates that are quest objectives."] = ""
 L["This will allow you to add additional scaling changes to specific mob types."] = "This will allow you to add additional scaling changes to specific mob types."
 L["This will allow you to disabled threat art on marked targets."] = "This will allow you to disabled threat art on marked targets."
 L["This will format text to a simpler format using M or K for millions and thousands. Disabling this will show exact HP amounts."] = "This will format text to a simpler format using M or K for millions and thousands. Disabling this will show exact HP amounts."
@@ -292,6 +362,10 @@ L["This will toggle the aura widget to only show for your current target."] = "T
 L["Threat Colors"] = "Цвета угрозы"
 L["Threat Line"] = "Threat Line"
 L["Threat System"] = "Система угрозы"
+--Translation missing 
+-- L["Toggle the display of a border around the icon."] = ""
+--Translation missing 
+-- L["Toggle the display of a radial cooldown over the icon."] = ""
 L["Toggles"] = "Toggles"
 L["Toggling"] = "Toggling"
 L["Totem Alpha"] = "Прозрачность тотема"
@@ -300,14 +374,22 @@ L["Totem Scale"] = "Масштаб тотема"
 L["Treant"] = "Treant"
 L["Truncate Text"] = "Truncate Text"
 L["Type direct icon texture path using '\\' to separate directory folders, or use a spellid."] = "Type direct icon texture path using '\\' to separate directory folders, or use a spellid."
+--Translation missing 
+-- L["Type each spell name on a new line."] = ""
 L["Undetermined"] = "Undetermined"
 L["Uninterruptable Casts"] = "Uninterruptable Casts"
+--Translation missing 
+-- L["Unit Type"] = ""
 L["unknown"] = "неизвестно"
 L["Use Custom Settings"] = "Use Custom Settings"
 L["Use Target's Name"] = "Use Target's Name"
+--Translation missing 
+-- L["Use the alpha set below for text only style."] = ""
 L["Val'kyr Shadowguard"] = "Val'kyr Shadowguard"
 L["Venomous Snake"] = "Venomous Snake"
 L["Vertical Align"] = "Вертикальное выравнивание"
+--Translation missing 
+-- L["Vertical spacing"] = ""
 L["Viper"] = "Viper"
 L["Volatile Ooze"] = "Volatile Ooze"
 L["Water Elemental"] = "Water Elemental"
@@ -321,3 +403,4 @@ L["Y"] = "Y"
 L["Yes"] = "Да"
 L["you are now in your "] = "you are now in your "
 L["You can access the "] = "You can access the "
+

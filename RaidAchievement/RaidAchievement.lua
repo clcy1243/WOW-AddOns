@@ -6,7 +6,7 @@ if GetLocale()=="deDE" or GetLocale()=="ruRU" or GetLocale()=="zhTW" or GetLocal
 end
 
 
-	raversion=7.209
+	raversion=7.300
 	local raverstiptext="alpha"
 	if string.len(raversion)==6 then
 		raverstiptext="beta"
@@ -2345,9 +2345,8 @@ local _, month, day, year = CalendarGetDate()
 if (year==2017 and (month==8 or month==9) and (day>22 and day<31) and raannouncerun4==0 and (psDoNotShowOtherAnnounces==nil or (psDoNotShowOtherAnnounces and psDoNotShowOtherAnnounces==0)) and math.random(1,100)>70) then
 	local text=""
 	--text="|cff00ff00RaidAchievement|r > I got WoW for my 20 years birthday, |cff00ff00today I celebrate 30|r. I created PS and RA addons 8 years ago, hope you use and like them :) They got more than |cff00ff0010 mln downloads|r and I raised just 1200 euro in 8 years with the bigger one of 300$. Now, addon is dying as I don't play for last 5 years, if you want to help: http://www.phoenixstyle.com/ also you can find more info about me and Italy where I live :)"
-	text="|cff00ff00NEW ADDON|r > sorry for the delay with updates. I am working now on awesome addons for Facebook. |cff00ff00if you are administator of fan/business page in Facebook|r you will love my programs, check them here: https://www.fblikeinviter.com/"
 	
-	out (text)
+	--out (text)
 	
 	raannouncerun4=1
 	psDoNotShowOtherAnnounces=1

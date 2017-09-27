@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 7.4.5714 (TasmanianThylacine)
+	Version: 7.5.5724 (TasmanianThylacine)
 	Revision: $Id: CoreManifest.lua 5697 2017-01-10 19:55:02Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -87,7 +87,7 @@ end
 lib.CoreFileCheckIn("CoreManifest") -- check CoreManifest in as early as possible
 
 -- Version checking
-lib.Version="7.4.5714";
+lib.Version="7.5.5724";
 if lib.Version:byte(1) == 60 then -- 60 = '<'
 	lib.Version = DEV_VERSION
 end
@@ -280,5 +280,5 @@ function lib.ValidateInstall()
 end
 
 
-lib.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Advanced/CoreManifest.lua $", "$Rev: 5697 $")
+lib.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.5/Auc-Advanced/CoreManifest.lua $", "$Rev: 5697 $")
 lib.CoreFileCheckOut("CoreManifest")

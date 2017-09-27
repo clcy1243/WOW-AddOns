@@ -32,7 +32,7 @@ local timeToReady = ns.timeToReady
 local trim = string.trim
 
 local mt_resource = ns.metatables.mt_resource
-local ToggleDropDownMenu = Lib_ToggleDropDownMenu
+local ToggleDropDownMenu = L_ToggleDropDownMenu
 
 local updatedDisplays = {}
 
@@ -198,10 +198,10 @@ function Hekili:OnInitialize()
                 if button == "RightButton" then ns.StartConfiguration()
                 else
                     if not hookOnce then 
-                        hooksecurefunc("Lib_UIDropDownMenu_InitializeHelper", function(frame)
-                            for i = 1, LIB_UIDROPDOWNMENU_MAXLEVELS do
-                                if _G["Lib_DropDownList"..i.."Backdrop"].SetTemplate then _G["Lib_DropDownList"..i.."Backdrop"]:SetTemplate( "Transparent" ) end
-                                if _G["Lib_DropDownList"..i.."MenuBackdrop"].SetTemplate then _G["Lib_DropDownList"..i.."MenuBackdrop"]:SetTemplate( "Transparent" ) end
+                        hooksecurefunc("L_UIDropDownMenu_InitializeHelper", function(frame)
+                            for i = 1, L_UIDROPDOWNMENU_MAXLEVELS do
+                                if _G["L_DropDownList"..i.."Backdrop"].SetTemplate then _G["L_DropDownList"..i.."Backdrop"]:SetTemplate( "Transparent" ) end
+                                if _G["L_DropDownList"..i.."MenuBackdrop"].SetTemplate then _G["L_DropDownList"..i.."MenuBackdrop"]:SetTemplate( "Transparent" ) end
                             end
                         end )
                         hookOnce = true
@@ -2461,7 +2461,7 @@ function Hekili:ProcessHooks( dispID, solo )
                             chosen_action, state.delay, chosen_clash, chosen_depth = predicted_action, 0, predicted_clash, predicted_depth
 
                             if debug then self:Debug( "No better recommendation found within 2 GCDs; using the prediction engine's recommendation.\n" ..
-                                "Selected action [ %s ] at +%.2fs.", chosen_action, state.offset ) end
+                                "Selected action [ %s ] at +%.2fs.", chosen_action or "NO ACTION FOUND", state.offset ) end
                         end
 
                     end

@@ -407,6 +407,10 @@ L["STRING_OPTIONS_ADVANCED"] = "进阶"
 L["STRING_OPTIONS_ALPHAMOD_ANCHOR"] = "自动隐藏:"
 L["STRING_OPTIONS_ALWAYS_USE"] = "所有角色通用"
 L["STRING_OPTIONS_ALWAYS_USE_DESC"] = "当启用时，所有角色都使用选择的配置，否则， 将显示一个面板供选择"
+--Translation missing 
+-- L["STRING_OPTIONS_ALWAYSSHOWPLAYERS"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"] = ""
 L["STRING_OPTIONS_ANCHOR"] = "侧"
 L["STRING_OPTIONS_ANIMATEBARS"] = "动画计量条"
 L["STRING_OPTIONS_ANIMATEBARS_DESC"] = "启用所有动画计量条"
@@ -660,6 +664,10 @@ L["STRING_OPTIONS_DATACHARTTITLE_DESC"] = "该面板使您能够创建定制的�
 L["STRING_OPTIONS_DATACOLLECT_ANCHOR"] = "数据类型:"
 L["STRING_OPTIONS_DEATHLIMIT"] = "死亡事件数额"
 L["STRING_OPTIONS_DEATHLIMIT_DESC"] = "设置要在死亡显示器上显示事件的数量。"
+--Translation missing 
+-- L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = ""
 L["STRING_OPTIONS_DESATURATE_MENU"] = "降低饱和度"
 L["STRING_OPTIONS_DESATURATE_MENU_DESC"] = "启用该选项，所有的工具栏上的菜单图标变成黑色和白色。"
 L["STRING_OPTIONS_DISABLE_ALLDISPLAYSWINDOW"] = "禁用\"全部显示\"窗口"
@@ -850,14 +858,16 @@ L["STRING_OPTIONS_OPEN_TEXT_EDITOR"] = "打开文本编辑器"
 L["STRING_OPTIONS_OVERALL_ALL"] = "所有片段"
 L["STRING_OPTIONS_OVERALL_ALL_DESC"] = "所有片段被添加到总体数据。"
 L["STRING_OPTIONS_OVERALL_ANCHOR"] = "总体数据:"
-L["STRING_OPTIONS_OVERALL_CHALLENGE"] = "清除在挑战模式"
-L["STRING_OPTIONS_OVERALL_CHALLENGE_DESC"] = "When enabled, overall data is automatically wiped when a new challenge mode run begins."
 L["STRING_OPTIONS_OVERALL_DUNGEONBOSS"] = "地下城 Bosses"
 L["STRING_OPTIONS_OVERALL_DUNGEONBOSS_DESC"] = "地下城boss片段被添加到总体数据。"
 L["STRING_OPTIONS_OVERALL_DUNGEONCLEAN"] = "地下城小怪"
 L["STRING_OPTIONS_OVERALL_DUNGEONCLEAN_DESC"] = "地下城清理小怪片段被添加到总体数据"
 L["STRING_OPTIONS_OVERALL_LOGOFF"] = "清除注销"
 L["STRING_OPTIONS_OVERALL_LOGOFF_DESC"] = "当启用时，总体数据将自动被清除当你退到角色界面。"
+--Translation missing 
+-- L["STRING_OPTIONS_OVERALL_MYTHICPLUS"] = ""
+--Translation missing 
+-- L["STRING_OPTIONS_OVERALL_MYTHICPLUS_DESC"] = ""
 L["STRING_OPTIONS_OVERALL_NEWBOSS"] = "新BOSS时清除"
 L["STRING_OPTIONS_OVERALL_NEWBOSS_DESC"] = "当启用时，总数据时将自动被清除当遭遇不同的地下城首领。"
 L["STRING_OPTIONS_OVERALL_RAIDBOSS"] = "地下城首领"
@@ -1526,9 +1536,20 @@ L["STRING_SEGMENT_ENEMY"] = "敌对"
 L["STRING_SEGMENT_LOWER"] = "片段"
 L["STRING_SEGMENT_OVERALL"] = "总体数据"
 L["STRING_SEGMENT_START"] = "开始"
-L["STRING_SEGMENT_TIME"] = "时间"
 L["STRING_SEGMENT_TRASH"] = "垃圾清理"
 L["STRING_SEGMENTS"] = "段落"
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_BOSS"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_COMBATTIME"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_OVERALL"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TOTALTIME"] = ""
+--Translation missing 
+-- L["STRING_SEGMENTS_LIST_TRASH"] = ""
 L["STRING_SHIELD_HEAL"] = "盾治疗"
 L["STRING_SHIELD_OVERHEAL"] = "盾过量治疗"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "右键点击关闭"

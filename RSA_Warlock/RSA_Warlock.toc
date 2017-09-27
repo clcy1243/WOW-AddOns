@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: RSA [|c608245abWarlock|r]
 ## Notes: RSA Warlock Module. This is needed to announce Warlock Spells.
 ## Author: Raeli, Jenneth, Xadurk

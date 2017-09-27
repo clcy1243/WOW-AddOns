@@ -1,3 +1,122 @@
+commit c1a1db26055f1657bf134f62135867eaface09e2
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Sep 24 14:45:29 2017 -0400
+
+    Re-embed my mangled LibArtifactData.
+
+commit c0a4588ae3069b0456afee5b8e601f9716e1f6c5
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Sep 24 12:08:36 2017 -0400
+
+    Wake up, Curse.
+
+commit e7d0ca51f8c6a40d8f3aaaaf43d2ed0c554911cb
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Sep 24 11:43:52 2017 -0400
+
+    Drop LAD from .pkgmeta...
+
+commit 792c103666ecc1dbcb5ac257a25088464a6a1527
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Sep 24 11:41:36 2017 -0400
+
+    Don't embed LibArtifactData since I use my dumb modified version.
+    
+    May also fix packaging bug from CurseForge.
+
+commit 999d6e5f0d61724fb16f53104644c490e92e1182
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Sep 24 11:28:53 2017 -0400
+
+    Update embeds.xml.
+
+commit fac9a6cc916bf2cdd8cc7bfb5c24a404769b7f44
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Sep 24 11:25:27 2017 -0400
+
+    Actually update OptionalDeps.
+
+commit a8ed46ba0289133b36f444a354f0b46cd9589a1f
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Sep 24 11:25:15 2017 -0400
+
+    Update OptionalDeps.
+
+commit e7e3a609314f684b8d1cbbe8dc6e475f52d828fe
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Sun Sep 24 11:18:42 2017 -0400
+
+    Update .gitignore.
+
+commit 39422543e946e7813957ed3ce91630eceb3d290d
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Wed Sep 20 16:54:54 2017 -0400
+
+    Retribution
+    
+    Fix for "TV spam" when people disable the Wake of Ashes / Artifact
+    Ability recommendation.  The APL recommends spending TV even w/o
+    Judgment up if Wake of Ashes is off CD or coming off CD soon.  The APL
+    will now only make this recommendation if you're allowing the addon to
+    recommend WoA.
+
+commit 2b87f369ef6cc117aa0895b3ea6e27aa9199ad52
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Fri Sep 15 20:50:29 2017 -0400
+
+    Cleanups, APL stuff...
+    
+    Monk APLs, fixed 4pc set bonus check.
+    Remove ST Fury setting for Enhancement Shamans; it is obsolete.
+
+commit f6b919e145d05664c6c7e2520e10ce84b2a0f1fe
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Tue Sep 5 12:36:05 2017 -0400
+
+    Don't force refresh when the number of targets changes...
+    
+    I suspect this is where the CPU-intensiveness gets out of hand for WW.
+
+commit 300a54920e4dcc1cc6a55b6d0d781d2cb5317f97
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Tue Sep 5 12:31:46 2017 -0400
+
+    Elemental, test-fix for redundant Flame Shocking.
+    
+    BrM, fix for, you know, not working (IV Default will now call IV APLs).
+
+commit 9a0f811a18d53338f3d6f1249a0af862d99ff1be
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Fri Sep 1 18:51:09 2017 -0400
+
+    Fix Doom Winds desync logic to only apply to Ascendance builds...
+
+commit e7c12b706f666e180cd71bb2e90fd70261dc9c0b
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Fri Sep 1 13:21:54 2017 -0400
+
+    Fix Specter of Betrayal in Ret CDs APL.
+
+commit 7484913f7bbf4aa32a663b982aaea4ba791f3819
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Fri Sep 1 09:33:52 2017 -0400
+
+    Switch to Lib_UI
+
+commit d9ed920d1c1c87e23f851deee62341783502478c
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Fri Sep 1 09:22:32 2017 -0400
+
+    Support new Unholy DK APL logic for Outbreak.
+    
+    PTR flag is now when the client version is not 7.3.0.
+
+commit 668978f9ecd4df09b9963f4e220ad51ff1ee836f
+Author: Hekili <Hekili@users.noreply.github.com>
+Date:   Fri Sep 1 08:50:20 2017 -0400
+
+    Force Paladins to refresh their action lists, in case they didn't.
+
 commit f0e2476e3b53e041e0feda31a907f6688e6759ef
 Author: Hekili <Hekili@users.noreply.github.com>
 Date:   Tue Aug 29 22:20:30 2017 -0400
@@ -1108,191 +1227,4 @@ Author: Hekili <Hekili@users.noreply.github.com>
 Date:   Sun Apr 2 13:36:11 2017 -0400
 
     Manually include LibArtifactData-1.0 (as LibArtifactData-1.0h) because Curse won't package the new one.
-
-commit f149f59b9f5fc9bac36d97bf11386344bf397ac1
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sun Apr 2 13:17:15 2017 -0400
-
-    Try updated LibArtifactData-1.0...
-
-commit 63bc63c64e7ed83edb44af328200faf070d93e70
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sun Apr 2 13:11:38 2017 -0400
-
-    Fixes, Tweaks, Refinements
-    
-    + Added a system to force one-time changes to
-    displays/profiles/action-lists.  This enables me to fix settings without
-    pushing people to reset their whole profiles.  Example usage here will
-    be that I'm going to turn off 'Debug' mode because it uses a lot of CPU
-    for folks who aren't actually debugging.
-    o Added Spell ID for Lashing Flames because duhhh.
-    
-    + Added simplified Mode Visibility to displays.  This basically makes it
-    easier to quickly decide whether a display is a "Primary" or "AOE"
-    display (like how I make them) with regard to both target detection and
-    visibility.  This includes a fix that makes it so the two-display,
-    ST/AOE mode only happens under the right circumstances.  Your experience
-    with the addon may change.
-    + Refinements made to which events are tracked and which force updates.
-    + Minor tweaks to default Paladin/Shaman displays.
-
-commit b34cd76afd034e20b6300a0e62463ca576db9119
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Thu Mar 30 21:13:48 2017 -0400
-
-    Update helper system.
-    
-    + When I screw things up, I can set up one-time profile patches now.
-    The addon will now make a good faith effort to fix up your APL hooks
-    under the new system.  Once.
-    + Forcing Debug mode off one time only.  Shouldn't have it on by
-    default.
-    + Really, really don't do unnecessary data crunching with Debug mode
-    off.
-    + More tweaks to forced addon updates based on events.
-
-commit e90f9b4223215634af9efd99b19d35e79ff37d9f
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Wed Mar 29 16:25:05 2017 -0400
-
-    Ascendance is 15 seconds.  Adjust forced updates.
-
-commit f1cfb1dfb0c641684644b39d6504cab1dacee672
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Tue Mar 28 23:27:41 2017 -0400
-
-    7.2:  Force update on CLEU: SPELL_CAST_START/SUCCESS rather than UNIT_SPELLCAST_START/SUCCEEDED.
-
-commit b092925522e93f7dc841c85d1d410671679ba3f4
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Tue Mar 28 18:41:56 2017 -0400
-
-    7.2:  Update some PTR data to live.
-
-commit 49d6017332d1d05f0ff9d0908205b2ef4a9daf0c
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Tue Mar 28 18:40:03 2017 -0400
-
-    7.2:  Update Paladin Defaults
-
-commit 3bf3cce2818118cc4a356d93bb3cb9c1461c352f
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Tue Mar 28 18:29:44 2017 -0400
-
-    7.2:  So much stuff.
-    
-    This update note is objectively bad.
-
-commit de640f1f8ced7fc6463ab6a9335c96d6ba723c7a
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sat Mar 18 23:30:31 2017 -0400
-
-    ALPHA:  Try event-driven (with 0.05 ICD) updates instead of interval updates.
-    
-    + Add resource.time_to_XX calculation.
-
-commit 5cbec630ff5d800987bd91140db622507f6d752e
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sat Mar 18 10:52:15 2017 -0400
-
-    Fixes for run_action_list, call_action_list, ...
-    
-    o When an action list's criteria is checked, it will not use padded
-    criteria (i.e., recheck in 0.1s, half-GCD, etc.) because this has caused
-    the addon to test inferior action lists before their criteria are met
-    (blocking higher priority lists).
-    o Added 0.05s of padding to regenerated resource prediction time.  Wew
-    lads!
-
-commit 218a68f4bdca3a9c745e9c1e012e41eb4d74d3c0
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Tue Mar 14 00:22:14 2017 -0400
-
-    Improved Debugging, Incremental Fixes
-    
-    + The debug system will now allow you to generate a text-log of its
-    decision-making process for clearer debugging.  There will be some
-    iterating on this.
-    + The 'Pause' key will generate a snapshot that can be viewed through
-    /hekili.  The 'Pause' key can be set to *just* take a snapshot instead
-    of freezing the display.
-    + Energy/Focus abilities default to a CPU-intensive decision-making
-    process to help offset issues with resource regeneration.  This can be
-    disabled by checking "Low Impact Mode" under general settings.
-    
-    + Added 'Fatigued' to the list of Bloodlust-blocking auras.
-
-commit 33b10ee32a612e0aa8b745f507d36dec4c02207a
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Mon Feb 27 00:24:55 2017 -0500
-
-    FIXES
-    
-    o Reset the delay after advance to the cast time of a selected action
-    (failing to do so could cause distortions in the predicted game state,
-    i.e. if the addon had a delay of 0.5s to refresh a buff that was falling
-    off in 0.75s, when the addon advanced 0.5s then tried to update, it
-    would result in checking buff duration at 0.5s + 0.5s and the buff would
-    already be down).  Discussing time offsets is a pain in the ass and I
-    understand why Murozond would want to destroy the timeline.
-    o Time Script and Conditions debugging will have more accurate and
-    useful information.
-    o Added 'time_to_max_charges' attribute to cooldowns.
-    o Removed an error() call that just annoyed me; it should've known
-    better than to mess with me.
-    o Removed more tick-based regen stuff, just using time seems to work
-    better.
-
-commit 08b86c4d6376002b929da7e210b2cc3cf11b7d90
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sat Feb 25 18:20:32 2017 -0500
-
-    Debug Info, Resource Ticks
-    
-    o Fix for debug tooltip; show the amount of resources when an entry is
-    recommended.
-    o Turn off tick-based resource regeneration prediction for a bit.
-
-commit 369dcbaf04526c4afe68f1a4674cbf235092eecc
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Sat Feb 25 01:31:14 2017 -0500
-
-    Pet stuff, channel stuff.
-
-commit 8800504c77628b000c1da9fc225ab6f0f9d0fd26
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Fri Feb 24 22:42:10 2017 -0500
-
-    Display Updates, Forced Updates, Remove Rounding
-    
-    o Display Updates will happen more frequently (even if the
-    recommendations haven't been refreshed).  This helps text timers work
-    properly.
-    o Talent-swapping and cooldown toggling will force immediate
-    recommendation updates.
-    o Remove a lot of rounding that wasn't needed after the refresh bug was
-    found.
-
-commit 18efb2692f835c0438045b91098bdebb740d34ad
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Mon Feb 20 13:08:53 2017 -0500
-
-    Masque Fixes
-    
-    + The addon should properly update Masque textures for modularized specs
-    (Monks, Hunters).
-    + If you disable Masque, the icon texture should return to the right
-    size (P.S. HOW DARE YOU RESIZE MY ICON TEXTURES, MASQUE).
-
-commit 7f17cd43524ddf6954995779f31aefd1723aeeec
-Author: Hekili <Hekili@users.noreply.github.com>
-Date:   Mon Feb 20 11:51:50 2017 -0500
-
-    Range-check and Judgment
-    
-    + Add 'range' value to abilities; when set, the range-coloring will use
-    the specified spellID instead of the action spellID for range-checking.
-    + Use range on Hand of Reckoning for Judgment since IsSpellInRange()
-    returns bad data for Judgment.
 

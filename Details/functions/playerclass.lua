@@ -115,7 +115,7 @@ do
 			return false
 		end
 		
-		if (Actor.spells) then --> correcao pros containers misc, precisa pegar os diferentes tipos de containers de  lï¿½
+		if (Actor.spells) then --> correcao pros containers misc, precisa pegar os diferentes tipos de containers de  lá
 			for spellid, _ in _pairs (Actor.spells._ActorTable) do 
 				local class = _detalhes.ClassSpellList [spellid]
 				if (class) then
@@ -149,7 +149,7 @@ do
 		end
 		
 		local class = _detalhes:GetClass (Actor.nome)
-		if (class) then
+		if (class and class ~= "UNKNOW") then
 			Actor.classe = class
 			Actor.need_refresh = true
 			Actor.guessing_class = nil
@@ -212,6 +212,7 @@ do
 						_detalhes.cached_specs [Actor.serial] = spec
 					
 						Actor.spec = spec
+						Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
 						Actor.guessing_spec = nil
 						
 						if (container) then
@@ -236,6 +237,7 @@ do
 							_detalhes.cached_specs [Actor.serial] = spec
 						
 							Actor.spec = spec
+							Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
 							
 							if (container) then
 								container.need_refresh = true
@@ -267,6 +269,7 @@ do
 										_detalhes.cached_specs [Actor.serial] = spec
 									
 										Actor.spec = spec
+										Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
 										
 										if (container) then
 											container.need_refresh = true
@@ -307,6 +310,8 @@ do
 		local spec = _detalhes.cached_specs [Actor.serial]
 		if (spec) then
 			Actor.spec = spec
+			Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
+			
 			Actor.guessing_spec = nil
 			
 			if (container) then
@@ -332,6 +337,8 @@ do
 						_detalhes.cached_specs [Actor.serial] = spec
 					
 						Actor.spec = spec
+						Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
+						
 						Actor.guessing_spec = nil
 						
 						if (container) then
@@ -347,13 +354,14 @@ do
 					end
 				end
 			else
-				if (Actor.spells) then --> correcao pros containers misc, precisa pegar os diferentes tipos de containers de  lï¿½
+				if (Actor.spells) then --> correcao pros containers misc, precisa pegar os diferentes tipos de containers de  lá
 					for spellid, _ in _pairs (Actor.spells._ActorTable) do 
 						local spec = SpecSpellList [spellid]
 						if (spec) then
 							_detalhes.cached_specs [Actor.serial] = spec
 						
 							Actor.spec = spec
+							Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
 							Actor.guessing_spec = nil
 							
 							if (container) then
@@ -372,13 +380,14 @@ do
 			end
 		else
 			
-			if (Actor.spells) then --> correcao pros containers misc, precisa pegar os diferentes tipos de containers de  lï¿½
+			if (Actor.spells) then --> correcao pros containers misc, precisa pegar os diferentes tipos de containers de  lá
 				for spellid, _ in _pairs (Actor.spells._ActorTable) do 
 					local spec = SpecSpellList [spellid]
 					if (spec) then
 						_detalhes.cached_specs [Actor.serial] = spec
 					
 						Actor.spec = spec
+						Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
 						Actor.guessing_spec = nil
 						
 						if (container) then
@@ -410,6 +419,7 @@ do
 							_detalhes.cached_specs [Actor.serial] = spec
 						
 							Actor.spec = spec
+							Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
 							Actor.guessing_spec = nil
 							
 							if (container) then
@@ -434,6 +444,7 @@ do
 			_detalhes.cached_specs [Actor.serial] = spec
 		
 			Actor.spec = spec
+			Actor.classe = _detalhes.SpecIDToClass [spec] or Actor.classe
 			Actor.need_refresh = true
 			Actor.guessing_spec = nil
 			

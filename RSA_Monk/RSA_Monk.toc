@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: RSA [|c5500DBBDMonk|r]
 ## Notes: RSA Monk Module. This is needed to announce Monk Spells.
 ## Author: Raeli, Jenneth, Xadurk

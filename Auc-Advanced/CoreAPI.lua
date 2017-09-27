@@ -1,6 +1,6 @@
 --[[
 	Auctioneer Advanced
-	Version: 7.4.5714 (TasmanianThylacine)
+	Version: 7.5.5724 (TasmanianThylacine)
 	Revision: $Id: CoreAPI.lua 5698 2017-01-10 19:57:32Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -1557,5 +1557,5 @@ do
 end
 
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Advanced/CoreAPI.lua $", "$Rev: 5698 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.5/Auc-Advanced/CoreAPI.lua $", "$Rev: 5698 $")
 AucAdvanced.CoreFileCheckOut("CoreAPI")

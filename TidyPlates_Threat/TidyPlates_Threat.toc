@@ -1,7 +1,7 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: Tidy Plates: Threat
 ## Notes: Threat reactive nameplates for TidyPlates.
-## Version: v1.31
+## Version: v1.32
 ## Author: iceeagle
 ## RequiredDeps: TidyPlates, TidyPlatesWidgets
 ## OptionalDeps: Ace3, LibSharedMedia-3.0

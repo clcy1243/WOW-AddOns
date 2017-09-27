@@ -1,12 +1,12 @@
-tag 62bbf26fab97b2ba187ed3160ca9e50c858196c5 v70100-1.0.0
+tag 1e579ba56c902fab50ec19a88cd1110435318bd0 v70300-1.0.1
 Author:	Jim Whitehead <jnwhiteh@gmail.com>
-Date:	Fri Jan 27 11:42:16 2017 +0100
+Date:	Sun Sep 24 09:15:04 2017 +0200
 
-Tagging v70100-1.0.0
+Tagging v70300-1.0.1
 
-commit 37ab40d742d5317cf9f257f9a3af3f1d6e275d2a
+commit d0fabe12ca5fa8e807945e9821031852e371c7db
 Author: Jim Whitehead <jnwhiteh@gmail.com>
-Date:   Fri Jan 27 09:10:47 2017 +0100
+Date:   Sun Sep 24 09:14:49 2017 +0200
 
-    Update for 7.1
+    Fix constant names
 

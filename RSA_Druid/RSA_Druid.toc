@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: RSA [|c52FF7D0ADruid|r]
 ## Notes: RSA Druid Module. This is needed to announce Druid Spells.
 ## Author: Raeli, Jenneth, Xadurk

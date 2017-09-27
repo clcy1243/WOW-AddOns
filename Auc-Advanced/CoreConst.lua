@@ -1,6 +1,6 @@
 --[[
 	Auctioneer
-	Version: 7.4.5714 (TasmanianThylacine)
+	Version: 7.5.5724 (TasmanianThylacine)
 	Revision: $Id: CoreConst.lua 5693 2016-12-22 23:00:47Z brykrys $
 	URL: http://auctioneeraddon.com/
 
@@ -243,5 +243,5 @@ end
 -- ### todo: keep checking this conversion is correct, otherwise will have to hard-code lookup table
 lib.AC_PetType2SubClassID = {GetAuctionItemSubClasses(LE_ITEM_CLASS_BATTLEPET)}
 
-AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.4/Auc-Advanced/CoreConst.lua $", "$Rev: 5693 $")
+AucAdvanced.RegisterRevision("$URL: http://svn.norganna.org/auctioneer/branches/7.5/Auc-Advanced/CoreConst.lua $", "$Rev: 5693 $")
 AucAdvanced.CoreFileCheckOut("CoreConst")

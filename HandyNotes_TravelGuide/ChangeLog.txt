@@ -1,6 +1,10 @@
 Revision History:
 =================
 
+* v1.6 (Sep 01, 2017)
+-----------------------
+-updated for 7.3
+
 * v1.5 (June 12, 2017)
 -----------------------
 - added Stormwind portal to Ashran

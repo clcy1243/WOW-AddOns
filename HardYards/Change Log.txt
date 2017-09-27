@@ -1,3 +1,7 @@
+== v2.10 - 3rd September 2017
+* TOC version bump for Patch 7.3 Shadows of Argus
+* PlaySoundKitID removed as of Patch 7.3.0. Replaced by PlaySound
+
 == v2.09 - 29th March 2017
 * Patch 7.2 Update
 

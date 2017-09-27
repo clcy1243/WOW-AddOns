@@ -1391,6 +1391,88 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		
 		instance:InstanceAlert ("Boss Defeated! Show Ranking", icon, 10, func, true)
 	
+	elseif (msg == "merge") then
+		
+		--> at this point, details! should not be in combat
+		if (_detalhes.in_combat) then
+			_detalhes:Msg ("already in combat, closing current segment.")
+			_detalhes:SairDoCombate()
+		end
+		
+		--> create a new combat to be the overall for the mythic run
+		_detalhes:EntrarEmCombate()
+		
+		--> get the current combat just created and the table with all past segments
+		local newCombat = _detalhes:GetCurrentCombat()
+		local segmentHistory = _detalhes:GetCombatSegments()
+		local totalTime = 0
+		local startDate, endDate = "", ""
+		local lastSegment
+		local segmentsAdded = 0
+		
+		--> add all boss segments from this run to this new segment
+		for i = 1, 25 do
+			local pastCombat = segmentHistory [i]
+			if (pastCombat and pastCombat ~= newCombat) then
+				newCombat = newCombat + pastCombat
+				totalTime = totalTime + pastCombat:GetCombatTime()
+				if (i == 1) then
+					local _, endedDate = pastCombat:GetDate()
+					endDate = endedDate
+				end
+				lastSegment = pastCombat
+				segmentsAdded = segmentsAdded + 1
+			end
+		end
+		
+		if (lastSegment) then
+			startDate = lastSegment:GetDate()
+		end
+		
+		_detalhes:Msg ("done merging " .. segmentsAdded .. " segments.")
+
+		--[[ --mythic+ debug
+		--> tag the segment as mythic overall segment
+		newCombat.is_mythic_dungeon = {
+			MapID = _detalhes.MythicPlus.Dungeon,
+			StartedAt = _detalhes.MythicPlus.StartedAt, --the start of the run
+			EndedAt = _detalhes.MythicPlus.EndedAt, --the end of the run
+			SegmentID = "overall", --segment number within the dungeon
+			--EncounterID = encounterID,
+			--EncounterName = encounterName,
+			RunID = _detalhes.MythicPlus.RunID,
+			OverallSegment = true,
+		}
+		--]]
+		
+		--> set some data
+		newCombat:SetStartTime (GetTime() - totalTime)
+		newCombat:SetEndTime (GetTime())
+		
+		newCombat.data_inicio = startDate
+		newCombat.data_fim = endDate
+		
+		--> immediatly finishes the segment just started
+		_detalhes:SairDoCombate()
+		
+		--> cleanup the past segments table
+		for i = 25, 1, -1 do
+			local pastCombat = segmentHistory [i]
+			if (pastCombat and pastCombat ~= newCombat) then
+				wipe (pastCombat)
+				segmentHistory [i] = nil
+			end
+		end
+		
+		--> clear memory
+		collectgarbage()		
+
+		_detalhes:InstanciaCallFunction (_detalhes.gump.Fade, "in", nil, "barras")
+		_detalhes:InstanciaCallFunction (_detalhes.AtualizaSegmentos)
+		_detalhes:InstanciaCallFunction (_detalhes.AtualizaSoloMode_AfertReset)
+		_detalhes:InstanciaCallFunction (_detalhes.ResetaGump)
+		_detalhes:AtualizaGumpPrincipal (-1, true)
+	
 	elseif (msg == "record") then	
 			
 			

@@ -1,7 +1,7 @@
-changeset:   69:4405baea1bdd
-tag:         v69-release
+changeset:   71:806f49c9d485
+tag:         v7.3.0.071
 user:        Tercio
-date:        Fri Aug 11 12:55:46 2017 -0300
-summary:     - debuffs are now selected by default instead of cooldowns.
+date:        Sat Sep 02 12:33:59 2017 -0300
+summary:     - ToC Update to wow 7.3.
 
 

@@ -23,5 +23,4 @@ cfg.oilvlcachesw = true; -- enable cache
 cfg.oilvlaltclickroll = true; -- alt click roll
 cfg.oilvlautoscan = true; -- auto scan ilvl
 cfg.oilvlsamefaction = false; -- show ilvl of target for same faction only
-cfg.oilvlcombatcanscan = false; -- scan item level even during combat
 cfg.oilvlbagilvl = true; -- show item level of gear in bag
