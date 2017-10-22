@@ -92,36 +92,15 @@ function EU:OptionsTable()
                         type = "toggle",
                         desc = LE["opt_bonusRoll_desc"],
                      },
-                     ep = {
-                        name = "EP",
-                        order = 11,
-                        type = "toggle",
-                        desc = LE["opt_ep_desc"],
-                        tristate = true,
-                     },
-                     gp = {
-                        name = "GP",
-                        order = 12,
-                        type = "toggle",
-                        desc = LE["opt_gp_desc"],
-                        tristate = true,
-                     },
-                     pr = {
-                        name = "PR",
-                        order = 13,
-                        type = "toggle",
-                        desc = LE["opt_pr_desc"],
-                        tristate = true,
-                     },
                      guildNotes = {
                         name = LE["Guild Notes"],
-                        order = 14,
+                        order = 11,
                         type = "toggle",
                         desc = LE["opt_guildNotes_desc"],
                      },
                      -- rcscore = {
                      --    name = "RC Score",
-                     --    order = 15,
+                     --    order = 12,
                      --    type = "toggle",
                      --    desc = "A performance metric based on hps/dps and item levels.",
                      --    tristate = true,
@@ -191,6 +170,14 @@ function EU:OptionsTable()
                         desc = LE["opt_ilvldecimals_desc"],
                         get = function() return addon_db.iLvlDecimal end,
                         set = function(_, val) addon_db.iLvlDecimal = val end,
+                     },
+                     bonusRollsHistory = {
+                        name = LE["Bonus Rolls to History"],
+                        order = 2,
+                        type = "toggle",
+                        desc = LE["opt_bonusRollHistory_desc"],
+                        get = function() return self.db.bonusRollsHistory end,
+                        set = function() self.db.bonusRollsHistory = not self.db.bonusRollsHistory end,
                      },
                   },
                }
@@ -335,6 +322,7 @@ function EU:OptionsTable()
          set = function(info, txt)
             entry.pos = tonumber(txt)
             self:UpdateColumnPosition(name, tonumber(txt))
+            self:StripTextures()
          end,
       }
       -- Width
@@ -351,6 +339,7 @@ function EU:OptionsTable()
          set = function(_, val)
             entry.width = val
             self:UpdateColumnWidth(name, val)
+            self:StripTextures()
          end,
       }
    end
@@ -370,6 +359,7 @@ function EU:OptionsTable()
          set = function(info, txt)
             entry.pos = tonumber(txt)
             self:UpdateColumnPosition(name, tonumber(txt))
+            self:StripTextures()
          end,
       }
       options.args.widthOptions.args.columns.args[name.."Width"] = {
@@ -385,6 +375,7 @@ function EU:OptionsTable()
          set = function(_, val)
             entry.width = val
             self:UpdateColumnWidth(name, val)
+            self:StripTextures()
          end,
       }
    end
@@ -402,8 +393,6 @@ function EU:ColSet(info, val)
          if not PawnVersion then return addon:Print(info.option.name, LE["opt_addon_requirement"]) end
       elseif info[#info] == "rcscore" then
          if not (Details or Recount or Skada) then return addon:Print("A damage meter", LE["opt_addon_requirement"]) end
-      else
-         if not EPGP then return addon:Print("EPGP", LE["opt_addon_requirement"]) end
       end
    end
    -- v0.5.0: we can't use val anymore as we have tristates, so just invert stuff
@@ -417,8 +406,6 @@ function EU:ColGet(info)
          if not PawnVersion then return nil end
       elseif info[#info] == "rcscore" then
          if not (Details or Recount or Skada) then return nil end
-      else
-         if not EPGP then return nil end
       end
    end
    return self.db.columns[info[#info]].enabled

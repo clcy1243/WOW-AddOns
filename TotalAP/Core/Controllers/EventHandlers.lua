@@ -180,10 +180,25 @@ local function ScanArtifact()
 	end
 	
 	local aUI = C_ArtifactUI
+	
+	if not aUI then -- Can't get valid info -> Skip this scan (usually occurs once when logging in)
+		TotalAP.Debug("ScanArtifact() -> Skipping this update because C_ArtifactUI is not available (yet)")
+		return
+	end
+	
 	local unspentAP = select(5, aUI.GetEquippedArtifactInfo())
 	local numTraitsPurchased = select(6, aUI.GetEquippedArtifactInfo())
 	local artifactTier = select(13, aUI.GetEquippedArtifactInfo())
 	local artifactKnowledge = aUI.GetArtifactKnowledgeLevel()
+	
+	-- TODO: Ugly workaround for the issues reported after 7.3 hit - needs more investigation: Why does it happen, and when? Seems entirely random so far, but it might be due to some changes made in 7.3 that I am unaware of...
+	if type(artifactTier) == "number" and artifactTier > 3 then -- This can't be right -> Replace it with tier = 2 for the time being (AFAIK there's no tier 3, and tier 1 is applied automatically after reaching 35 traits?)
+		artifactTier = (numTraitsPurchased >= 35 and 2) or 1 -- Tiers upgrade automatically upon purchasing all the original traits
+		--[===[@debug@
+		-- Add obvious notification in case it ever happens while testing... so far it hasn't, though :/
+		TotalAP.ChatMsg("Cache/artifactTier has become corrupted -> Workaround was applied. How did this happen!? Must... investigate...")
+		--@end-debug@]===]
+	end
 	
 	-- Update the Cache (stored in SavedVars)
 	TotalAP.Cache.SetUnspentAP(unspentAP)
@@ -342,6 +357,7 @@ local function OnUnitVehicleEnter(...)
 	local unit = args[2]
 	
 	TotalAP.Debug("OnUnitVehicleEnter triggered for unit = " .. tostring(unit))
+	if unit ~= "player" then return end
 	isPlayerUsingVehicle = true
 	
 	-- Update GUI to show/hide displays when necessary
@@ -356,6 +372,7 @@ local function OnUnitVehicleExit(...)
 	local unit = args[2]
 	
 	TotalAP.Debug("OnUnitVehicleExit triggered for unit = " .. tostring(unit))
+	if unit ~= "player" then return end
 	isPlayerUsingVehicle = false
 	
 	-- Update GUI to show/hide displays when necessary

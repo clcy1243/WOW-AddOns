@@ -1,14 +1,12 @@
 ------------------------------------------------------------------------
-r604 | Allara | 2017-09-07 13:27:59 -0500 (Thu, 07 Sep 2017) | 4 lines
+r606 | Allara | 2017-09-27 11:36:10 -0500 (Wed, 27 Sep 2017) | 3 lines
 Changed paths:
-   M /trunk/.pkgmeta
    M /trunk/Core.lua
-   M /trunk/Modules/Options/Rarity_Options.toc
-   M /trunk/Rarity.toc
+   M /trunk/Locales.lua
+   M /trunk/Options_Defaults.lua
 
-- TOC update for 7.3
-- Fix the packager issues that were leading to bad externals (one symptom was a strange merge issue in the ptBR translation of LibBabble-Subzone)
-- This is a packager test
-- 7.3 content to follow in a future update
+- Disgusting Oozeling: Added Swamp of Sorrows to the zone list
+- Added Wondrous Wisdomball, Model D1-BB-L3R, Thistleleaf Adventurer, Environeer Bert, Thistleleaf Adventurer, Warmage Silva, Sylvia Hartshorn, Experiment-In-A-Jar, Shadowy Pile of Bones, Rough-Hewn Remote, Severed Tentacle, Puddle of Black Liquid, Elementium Back Plate, Vibrating Stone, Fandral's Pet Carrier, Cinderweb Egg, Smoldering Treat, Odd Twilight Egg, Twilight Summoning Portal, Lesser Circle of Binding, Zephyr's Call, Breezy Essence, Pilfered Sweeper (thanks, Urtgard!)
+- No items in Rarity are marked as repeatable out of the box now
 ------------------------------------------------------------------------
 

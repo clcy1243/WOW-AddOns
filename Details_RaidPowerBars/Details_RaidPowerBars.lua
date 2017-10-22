@@ -29,7 +29,7 @@ local RaidPowerBarsFrame = RaidPowerBars.Frame
 
 RaidPowerBars:SetPluginDescription (Loc ["STRING_PLUGIN_DESC"])
 
-RaidPowerBars.version_string = "v1.8"
+RaidPowerBars.version_string = "v1.9"
 local TrackingDebuff = false
 
 local function CreatePluginFrames (data)
@@ -151,7 +151,7 @@ local function CreatePluginFrames (data)
 	
 	local target = nil
 	local timer = 0
-	local interval = 0.5
+	local interval = 0.3
 	
 	function RaidPowerBars:SizeChanged()
 

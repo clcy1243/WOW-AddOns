@@ -1,8 +1,8 @@
 ------------------------------------------------------------------------
-r56 | nagboy@gmail.com | 2017-09-23 17:38:46 -0500 (Sat, 23 Sep 2017) | 1 line
+r58 | nagboy@gmail.com | 2017-10-01 09:00:12 -0500 (Sun, 01 Oct 2017) | 1 line
 Changed paths:
    M /trunk/HandyNotes_DungeonLocations.lua
 
-Added Seat of the Triumvirate and Antorus, The Burning Throne.  Also changed the criteria for showing the Broken Isles nodes.
+Fixed Show on Continents option for Broken Isles
 ------------------------------------------------------------------------
 

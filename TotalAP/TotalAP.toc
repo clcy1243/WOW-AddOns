@@ -1,5 +1,5 @@
 ## Interface: 70300
-## Version: 1.5.2 (r26-beta-4)
+## Version: 1.5.5 (r27)
 ## Author: Cakechart
 
 ## Title: TotalAP - Artifact Power Tracker
@@ -8,14 +8,15 @@
 
 ## Notes: Summarizes and displays artifact power-related information in a variety of ways
 ## Notes-deDE: Fasst artefaktmachtbezogene Informationen zusammen und zeigt sie auf verschiedene Weise an.
+## Notes-zhCN: 只要按一个键或按钮就能使用背包中所有的神器能量、显示每个专精的神器能量进度。供多种方式显示神器能量相关的资讯和统计摘要。
 ## Notes-zhTW: 只要按一個鍵或按鈕就能使用背包中所有的神兵之力、顯示每個專精的神兵之力進度。供多種方式顯示神兵之力相關的資訊和統計摘要。
 
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: TotalArtifactPowerSettings, TotalArtifactPowerCache
 
-## X-Revision: r26-beta-4
-## X-Date: 2017-09-08T21:40:06Z
+## X-Revision: r27
+## X-Date: 2017-10-17T2:21:33Z
 ## X-License: GPL3
 ## X-Embeds: LibStub, AceAddon-3.0, AceConsole-3.0, AceDB-3.0, AceEvent-3.0, AceLocale-3.0
 ## X-Website: http://www.curse.com/addons/wow/totalap
@@ -37,6 +38,7 @@ DB\Init.lua
 DB\Artifacts.lua
 DB\ItemEffects.lua
 #DB\UnderlightAngler.lua
+DB\RelicTraits.lua
 DB\ResearchTomes.lua
 
 ## Localization - needs to be loaded before the initialisation routine ##

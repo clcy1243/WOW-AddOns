@@ -1,7 +1,7 @@
-changeset:   71:806f49c9d485
-tag:         v7.3.0.071
+changeset:   73:2915b167c979
+tag:         v7.3.0.073
 user:        Tercio
-date:        Sat Sep 02 12:33:59 2017 -0300
-summary:     - ToC Update to wow 7.3.
+date:        Sat Oct 21 13:59:53 2017 -0200
+summary:     - Fixed debuff soulbind on Desolate Host encounter not showing on the timeline.
 
 

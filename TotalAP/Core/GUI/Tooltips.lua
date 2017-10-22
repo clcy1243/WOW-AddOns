@@ -80,6 +80,22 @@ local function ArtifactKnowledgeTooltipFunction(self, button, hide)
 		
 	end
      
+	 	-- Display recommendations for artifact traits if enabled
+	local settings = TotalAP.Settings.GetReference()
+	if settings.tooltip.showRelicRecommendations then
+		GameTooltip:AddLine("\n" .. L["Recommended Relics"] .. ":")
+		local relicRecommendations = TotalAP.DB.GetRecommendedRelicTraits(nil, specID)
+		
+		for priority, entry in ipairs(relicRecommendations) do -- Display list item in tooltip
+		
+			local name = GetSpellInfo(entry.spellID)
+			local texturePath = "Interface\\Icons\\" .. entry.icon
+			GameTooltip:AddLine(format("\124T%s:18\124t %s", texturePath, name), 1, 1, 1) -- TODO: Tooltip setting to change the size (via AceConfig later)
+			
+		end
+	
+	end
+	 
 	if knowledgeLevel > 0 then -- AK was cached
 		 
 		if maxAttainableKnowledgeLevel > knowledgeLevel then -- Display maximum available AK level (counting usable tomes but not shipments that haven't been picked up -- TODO: Maybe they should be counted, too? But then they can't immediately be used and would have to be picked up first)
@@ -93,7 +109,7 @@ local function ArtifactKnowledgeTooltipFunction(self, button, hide)
 	if maxKnowledgeLevel > knowledgeLevel and shipmentsReady ~= nil and maxKnowledgeLevel > maxAttainableKnowledgeLevel then -- Research isn't maxed yet
 		
 		if shipmentsReady > 0 then -- Shipments are available -> Display current work order progress
-			GameTooltip:AddLine(format(L["Shipments ready for pickup: %d/%d"], shipmentsReady, shipmentsTotal))
+			--GameTooltip:AddLine(format(L["Shipments ready for pickup: %d/%d"], shipmentsReady, shipmentsTotal)) -> Disabled in 7.3. I doubt they'll come back, but who knows... leaving code here for now
 		end
 		
 		if (not shipmentsTotal or shipmentsReady == shipmentsTotal) and maxKnowledgeLevel > (knowledgeLevel + shipmentsReady) then -- More work orders could be queued, and available Research Notes aren't enough to reach the maximum level -> Show reminder
@@ -108,6 +124,7 @@ local function ArtifactKnowledgeTooltipFunction(self, button, hide)
 	if timeLeft and timeLeftString then
 		GameTooltip:AddLine(format(L["Next in: %s"],  timeLeftString))
 	end
+	
 	
 	if hide then
 		GameTooltip:Hide()
@@ -218,13 +235,16 @@ local function ActionButtonTooltipFunction(self, button, hide)
 		
 		
 				-- Display AP summary
-				if TotalAP.inventoryCache.numItems > 1 and settings.tooltip.showNumItems then
+				if TotalAP.inventoryCache.numItems > 1 and settings.tooltip.showNumItems then -- Show tooltip for X items
 					self:AddLine(format("\n" .. L["%s Artifact Power in bags (%d items)"], TotalAP.Utils.FormatShort(TotalAP.inventoryCache.inBagsAP, true, settings.numberFormat), TotalAP.inventoryCache.numItems), 230/255, 204/255, 128/255);
 				else
-					self:AddLine(format("\n" .. L["%s Artifact Power in bags"], TotalAP.Utils.FormatShort(TotalAP.inventoryCache.inBagsAP, true, settings.numberFormat)) , 230/255, 204/255, 128/255);
+					if TotalAP.inventoryCache.numItems > 0 then -- Show tooltip for 1 item
+					self:AddLine(format("\n" .. L["%s Artifact Power in bags"], TotalAP.Utils.FormatShort(TotalAP.inventoryCache.inBagsAP, true, settings.numberFormat)) , 230/255, 204/255, 128/255)
+					end
+					-- Implied: else -> don't show "0 items in bags" as it makes no sense
 				end
 				
-				-- TODO: Bank summary
+				-- Bank summary
 				if settings.scanBank and settings.tooltip.showNumItems then -- Display bank summary as well
 					
 					if TotalAP.bankCache.numItems > 1 then
@@ -243,14 +263,23 @@ local function ActionButtonTooltipFunction(self, button, hide)
 						-- Recalculate progress percentage and number of available traits before actually showing the tooltip
 						local numTraitsAvailable = TotalAP.ArtifactInterface.GetNumAvailableTraits()
 						local artifactProgressPercent = TotalAP.ArtifactInterface.GetArtifactProgressPercent() -- TODO. Is this necessary to display in tooltips, now that the progress bar tooltip is available?
-							
+						
+						-- Calculate how much of the current level the item would give
+						
+						-- Extract AP amount (after AK) from the description
+						local spellID = TotalAP.DB.GetItemSpellEffect(tooltipItemID) 
+						local spellDescription = GetSpellDescription(spellID) -- Always contains the AP number, as only AP tokens are in the LUT 
+						local artifactPowerValue = TotalAP.Scanner.ParseSpellDesc(spellDescription)
+						local percentOfCurrentLevel = TotalAP.ArtifactInterface.GetProgressForValue(artifactPowerValue)
+						
 						-- Display progress in tooltip
 						if numTraitsAvailable > 1 then -- several new traits are available
 							self:AddLine(format(L["%d new traits available - Use AP now to level up!"], numTraitsAvailable), 0/255, 255/255, 0/255);
 						elseif numTraitsAvailable > 0 then -- exactly one new is trait available
 							self:AddLine(format(L["New trait available - Use AP now to level up!"]), 0/255, 255/255, 0/255);
 						else -- No traits available - too bad :(
-							self:AddLine(format(L["Progress towards next trait: %d%%"], artifactProgressPercent));
+							self:AddLine(format(L["Progress towards next trait: %d%%"], artifactProgressPercent))
+							self:AddLine(format(L["This item will add: %s%%"], ((percentOfCurrentLevel > 100 and ">") or "") .. min(100, math.floor(percentOfCurrentLevel + 0.5))))
 						end
 				end
 			end

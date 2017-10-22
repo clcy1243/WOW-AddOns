@@ -1,7 +1,0 @@
-## Interface: 70100
-## Title: TinyFilmEffect
-## Notes: TinyFilmEffect
-## Author: M
-## Version: 7.0.0
-
-TinyFilmEffect.lua

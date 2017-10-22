@@ -4,6 +4,7 @@ for k, v in pairs(SOUNDKIT) do
 end 
 
 --HACK 
+--[[
 local BlizPlaySound = PlaySound 
 function PlaySound(name, ...) 
     if (tonumber(name)) then 
@@ -15,6 +16,7 @@ function PlaySound(name, ...)
         end 
     end 
 end
+]]
 
 local function defaultcvar()
 

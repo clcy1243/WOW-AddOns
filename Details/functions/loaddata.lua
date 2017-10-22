@@ -228,7 +228,7 @@ function _detalhes:LoadCombatTables()
 				local historico_UM = _detalhes.tabela_historico.tabelas[1]
 				
 				if (historico_UM) then
-					_detalhes.tabela_vigente = historico_UM --> significa que elas eram a mesma tabela, então aqui elas se tornam a mesma tabela
+					_detalhes.tabela_vigente = historico_UM --> significa que elas eram a mesma tabela, entï¿½o aqui elas se tornam a mesma tabela
 				else
 					_detalhes.tabela_vigente = _detalhes.combate:NovaTabela (_, _detalhes.tabela_overall)
 				end
@@ -317,6 +317,8 @@ function _detalhes:LoadConfig()
 			if (not _detalhes_database.last_version or _detalhes_database.last_version ~= _detalhes.userversion) then
 				_detalhes.is_version_first_run = true
 			end
+			--_detalhes.is_version_first_run = true
+			--_detalhes_database.last_realversion = 126
 			
 	--> profile
 	
@@ -344,7 +346,7 @@ function _detalhes:LoadConfig()
 		--> character first run
 			if (_detalhes_database.active_profile == "") then
 				_detalhes.character_first_run = true
-				--> é a primeira vez que este character usa profiles,  precisa copiar as keys existentes
+				--> ï¿½ a primeira vez que este character usa profiles,  precisa copiar as keys existentes
 				local current_profile_name = _detalhes:GetCurrentProfileName()
 				_detalhes:GetProfile (current_profile_name, true)
 				_detalhes:SaveProfileSpecial()

@@ -1,6 +1,17 @@
 ------------------------------------------------------------------------
-## TotalAP v1.5.2 - Recent changes (3 releases)
+## TotalAP v1.5.5 - Recent changes (3 releases)
 ------------------------------------------------------------------------
+
+r27:
+	Added relic recommendations to tooltip (based on icy-veins.com - don't take them for gospel). These can be toggled with the newly-introduced /ap relics slash command
+
+	The item tooltip now also displays the percentage that an an artifact power item will add to the currently equipped artifact (experimental)
+	
+	Fixed missing space between ActionButton and its text - it seems to have gone AWOL, but now it's back
+	Fixed item tooltip to no longer display that "0 items" are in the player's inventory when there aren't any. It's true, but not very useful...
+	Fixed /ap autohide command, which was broken by the recently implemented anti-taint measures. The display should once again hide if this is enabled
+	Fixed a glitch with the vehicle StateIcon that resulted in it showing and hiding at seemingly random times
+	
 
 r26:
 	Added partial translation for the Korean (koKR) locale - Since this is still incomplete (~58% done), any help is welcome!
@@ -16,6 +27,7 @@ r26:
 	Fixed number format for the Korean (koKR) locale
 	Fixed number format for the Spanish (esES and esMX) locales
 	Added some workarounds that should (hopefully) prevent the remaining taint issues
+	Added a workaround for the invalid artifact tier issues (this is currently being investigated further)
 	
 
 r25:
@@ -28,13 +40,3 @@ r25:
 	Fixed an issue where changing specializations would not re-scan the player's artifact as intended and update the display accordingly
 
 	
-r24:
-	
-	Artifact Research Notes and similar items (catch-up tomes for alts) will now be ignored for players that haven't reached level 110 yet
-
-	Fixed an issue that could prevent the displays from being dragged to the very bottom of the player's interface
-	Fixed an issue where dropping from an instance group could cause the detection of ignored specs to fail temporarily
-	Fixed a minor graphics glitch pertaining to the buttonText, manifesting only when AP items were stored in the bank
-	Fixed the broken /ap reset slash command (caused by the changes made to saved variables handling in r23)
-	
-

@@ -1331,11 +1331,11 @@ do
 		endurance_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Mounts-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
 		endurance_button:SetTextColor ("orange")
 		
-		--> overall
-		local overall_button = framework:NewButton (f, _, "$parentModeOverallButton", "ModeOverallButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_OVERALL, nil, nil, "Overall", 1, options_button_template)
-		overall_button:SetPoint ("bottomleft", endurance_button, "bottomright", 5, 0)
-		overall_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Spellbook-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
-		overall_button:SetTextColor ("orange")
+		--> overall ~overall
+		--local overall_button = framework:NewButton (f, _, "$parentModeOverallButton", "ModeOverallButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_OVERALL, nil, nil, "Overall", 1, options_button_template)
+		--overall_button:SetPoint ("bottomleft", endurance_button, "bottomright", 5, 0)
+		--overall_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Spellbook-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
+		--overall_button:SetTextColor ("orange")
 
 		--> highlight buttons when the mouse hoverover // change the color of button for the current selected module
 		local all_buttons = {current_encounter_button, timeline_button, overall_button, endurance_button}

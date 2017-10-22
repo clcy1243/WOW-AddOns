@@ -234,14 +234,20 @@ function _detalhes:ApplyProfile (profile_name, nosave, is_copy)
 
 	--> update profile keys before go
 		for key, value in pairs (_detalhes.default_profile) do 
+			--> the entire key doesn't exist
 			if (profile [key] == nil) then
 				if (type (value) == "table") then
 					profile [key] = table_deepcopy (_detalhes.default_profile [key])
 				else
 					profile [key] = value
 				end
-				
+			
+			--> the key exist and is a table, check for missing values on sub tables
 			elseif (type (value) == "table") then
+				--> deploy only copy non existing data
+				_detalhes.table.deploy (profile [key], value)
+				
+			--[=[
 				for key2, value2 in pairs (value) do 
 					if (profile [key] [key2] == nil) then
 						if (type (value2) == "table") then
@@ -251,7 +257,7 @@ function _detalhes:ApplyProfile (profile_name, nosave, is_copy)
 						end
 					end
 				end
-				
+			--]=]
 			end
 		end
 		
@@ -542,6 +548,15 @@ function _detalhes:ApplyProfile (profile_name, nosave, is_copy)
 		
 		--> update the numerical system
 		_detalhes:SelectNumericalSystem()
+		
+		--> refresh the update interval
+		_detalhes:RefreshUpdater()
+		
+		--> refresh animation functions
+		_detalhes:RefreshAnimationFunctions()
+		
+		--> refresh broadcaster tools
+		_detalhes:LoadFramesForBroadcastTools()
 
 	if (_detalhes.initializing) then
 		_detalhes.profile_loaded = true
@@ -864,14 +879,14 @@ local default_profile = {
 				0.23, -- [3]
 			},
 			["ARENA_GREEN"] = {
-				0.1, -- [1]
-				0.85, -- [2]
-				0.1, -- [3]
+				0.4, -- [1]
+				1, -- [2]
+				0.4, -- [3]
 			},
 			["ARENA_YELLOW"] = {
-				0.90, -- [1]
-				0.90, -- [2]
-				0, -- [3]
+				1, -- [1]
+				1, -- [2]
+				0.25, -- [3]
 			},
 			["NEUTRAL"] = {
 				1, -- [1]
@@ -942,6 +957,10 @@ local default_profile = {
 	
 	--> performance
 		use_row_animations = false,
+		animation_speed = 33,
+		animation_speed_triggertravel = 5,
+		animation_speed_mintravel = 0.45,
+		animation_speed_maxtravel = 3,
 		animate_scroll = false,
 		use_scroll = false,
 		scroll_speed = 2,
@@ -1013,7 +1032,64 @@ local default_profile = {
 			tab_name = "",
 			single_window = false,
 		},
+	
+	--> broadcaster options
+		broadcaster_enabled = false,
 		
+	--> event tracker
+		event_tracker = {
+			frame = {
+				locked = false,
+				width = 250,
+				height = 300,
+				backdrop_color = {0, 0, 0, 0.2},
+				show_title = true,
+				strata = "LOW",
+			},
+			options_frame = {},
+			enabled = false,
+			font_size = 10,
+			font_color = {1, 1, 1, 1},
+			font_shadow = "NONE",
+			font_face = "Friz Quadrata TT",
+			line_height = 16,
+			line_texture = "Details Serenity",
+			line_color = {.1, .1, .1, 0.3},
+		},
+		
+	--> current damage
+		current_dps_meter = {
+			frame = {
+				locked = false,
+				width = 220,
+				height = 65,
+				backdrop_color = {0, 0, 0, 0.2},
+				show_title = false,
+				strata = "LOW",
+			},
+			options_frame = {},
+			enabled = false,
+			arena_enabled = true,
+			mythic_dungeon_enabled = true,
+			font_size = 18,
+			font_color = {1, 1, 1, 1},
+			font_shadow = "NONE",
+			font_face = "Friz Quadrata TT",
+			update_interval = 0.10,
+			sample_size = 5, --in seconds
+		},
+		
+	--> streamer
+--	_detalhes.streamer_config.
+		streamer_config = {
+			reset_spec_cache = false,
+			disable_mythic_dungeon = false,
+			no_alerts = false,
+			quick_detection = false,
+			faster_updates = false,
+			use_animation_accel = false,
+		},
+	
 	--> tooltip
 		tooltip = {
 			fontface = "Friz Quadrata TT", 
@@ -1058,7 +1134,7 @@ local default_profile = {
 
 _detalhes.default_profile = default_profile
 
--- aqui fica as propriedades do jogador que não serão armazenadas no profile
+-- aqui fica as propriedades do jogador que nï¿½o serï¿½o armazenadas no profile
 local default_player_data = {
 
 	--> force all fonts to have this outline
@@ -1075,6 +1151,17 @@ local default_player_data = {
 		last_instance_id = 0,
 		last_instance_time = 0,
 		mythic_dungeon_id = 0,
+		mythic_dungeon_currentsaved = {
+			started = false,
+			run_id = 0,
+			dungeon_name = "",
+			dungeon_zone_id = 0,
+			started_at = 0,
+			segment_id = 0,
+			level = 0,
+			ej_id = 0,
+			previous_boss_killed_at = 0,
+		},
 	--> nicktag cache
 		nick_tag_cache = {},
 		ignore_nicktag = false,
@@ -1292,6 +1379,11 @@ local default_global_data = {
 _detalhes.default_global_data = default_global_data
 
 function _detalhes:GetTutorialCVar (key, default)
+	--> is disabling all popups from the streamer options
+	if (_detalhes.streamer_config.no_alerts) then
+		return true
+	end
+	
 	local value = _detalhes.tutorial [key]
 	if (value == nil and default) then
 		_detalhes.tutorial [key] = default
@@ -1335,4 +1427,70 @@ function _detalhes:SaveProfileSpecial()
 
 	--> end
 		return profile
+end
+
+--> save things for the mythic dungeon run
+function _detalhes:SaveState_CurrentMythicDungeonRun (runID, zoneName, zoneID, startAt, segmentID, level, ejID, latestBossAt)
+	local savedTable = _detalhes.mythic_dungeon_currentsaved
+	savedTable.started = true
+	savedTable.run_id = runID
+	savedTable.dungeon_name = zoneName
+	savedTable.dungeon_zone_id = zoneID
+	savedTable.started_at = startAt
+	savedTable.segment_id = segmentID
+	savedTable.level = level
+	savedTable.ej_id = ejID
+	savedTable.previous_boss_killed_at = latestBossAt
+end
+
+function _detalhes:UpdateState_CurrentMythicDungeonRun (stillOngoing, segmentID, latestBossAt)
+	local savedTable = _detalhes.mythic_dungeon_currentsaved
+	
+	if (not stillOngoing) then
+		savedTable.started = false
+	end
+	
+	if (segmentID) then
+		savedTable.segment_id = segmentID
+	end
+	
+	if (latestBossAt) then
+		savedTable.previous_boss_killed_at = latestBossAt
+	end
+end
+
+function _detalhes:RestoreState_CurrentMythicDungeonRun()
+	local savedTable = _detalhes.mythic_dungeon_currentsaved
+	local mythicLevel = C_ChallengeMode.GetActiveKeystoneInfo()
+	local zoneName, _, _, _, _, _, _, currentZoneID = GetInstanceInfo()
+	local ejID = EJ_GetCurrentInstance()
+
+	--> is there a saved state for the dungeon?
+	if (savedTable.started) then
+		--> player are within the same zone?
+		if (zoneName == savedTable.dungeon_name and currentZoneID == savedTable.dungeon_zone_id) then
+			--> is there a mythic run ongoing and the level is the same as the saved state?
+			if (mythicLevel and mythicLevel == savedTable.level) then
+				--> restore the state
+				_detalhes.MythicPlus.Started = true
+				_detalhes.MythicPlus.DungeonName = zoneName
+				_detalhes.MythicPlus.DungeonID = currentZoneID
+				_detalhes.MythicPlus.StartedAt = savedTable.started_at
+				_detalhes.MythicPlus.SegmentID = savedTable.segment_id
+				_detalhes.MythicPlus.Level = mythicLevel
+				_detalhes.MythicPlus.ejID = ejID
+				_detalhes.MythicPlus.PreviousBossKilledAt = savedTable.previous_boss_killed_at
+				_detalhes.MythicPlus.IsRestoredState = true
+				DetailsMythicPlusFrame.IsDoingMythicDungeon = true
+				
+				C_Timer.After (2, function()
+					_detalhes:SendEvent ("COMBAT_MYTHICDUNGEON_START")
+				end)
+				return
+			end
+		end
+		
+		--> mythic run is over
+		savedTable.started = false
+	end
 end

@@ -29,7 +29,7 @@ local _is_in_combat = false
 
 TimeLine:SetPluginDescription (Loc ["STRING_PLUGIN_DESC"])
 
-TimeLine.version_string = "v3.10"
+TimeLine.version_string = "v3.20"
 
 local menu_wallpaper_tex = {.6, 0.1, 0, 0.64453125}
 local menu_wallpaper_color = {1, 1, 1, 0.15}
@@ -1226,78 +1226,89 @@ end
 function TimeLine:AuraOn (time, _, _, who_serial, who_name, who_flags, _, target_serial, target_name, target_flags, _, spellid, spellname, spelltype, auratype, amount)
 	if (auratype == "DEBUFF") then
 
-		if (_bit_band (target_flags, 0x00000400) ~= 0 and _bit_band (who_flags, 0x00000060) ~= 0) then
-			local player_table = TimeLine.debuff_temp_table [target_name]
-			if (not player_table) then
-				player_table = {}
-				TimeLine.debuff_temp_table [target_name] = player_table
+		--> is the target a player?
+		if (_bit_band (target_flags, 0x00000400) ~= 0) then
+			--> is the source an enemy?
+			if (_bit_band (who_flags, 0x00000060) ~= 0 or (not who_serial or not who_name)) then
+				local player_table = TimeLine.debuff_temp_table [target_name]
+				if (not player_table) then
+					player_table = {}
+					TimeLine.debuff_temp_table [target_name] = player_table
+				end
+				
+				local spell_table = player_table [spellid]
+				if (not spell_table) then
+					spell_table = {}
+					spell_table.source = who_name or "[*] " .. spellname
+					player_table [spellid] = spell_table
+				end
+				
+				if (spell_table.active) then
+					return
+				end
+				
+				--array
+				tinsert (spell_table, _combat_object:GetCombatTime())
+				--hash
+				spell_table.active = true
 			end
-			
-			local spell_table = player_table [spellid]
-			if (not spell_table) then
-				spell_table = {}
-				spell_table.source = who_name or "[*] " .. spellname
-				player_table [spellid] = spell_table
-			end
-			
-			if (spell_table.active) then
-				return
-			end
-			
-			--array
-			tinsert (spell_table, _combat_object:GetCombatTime())
-			--hash
-			spell_table.active = true
 		end
 	end
 end
 
 function TimeLine:AuraOff (time, _, _, who_serial, who_name, who_flags, _, target_serial, target_name, target_flags, _, spellid, spellname, spelltype, auratype, amount)
 	if (auratype == "DEBUFF") then
-		if (_bit_band (target_flags, 0x00000400) ~= 0 and _bit_band (who_flags, 0x00000060) ~= 0) then
-			local player_table = TimeLine.debuff_temp_table [target_name]
-			if (not player_table) then
-				return
+		--> is the target a player?
+		if (_bit_band (target_flags, 0x00000400) ~= 0) then
+			--> is the source an enemy?
+			if (_bit_band (who_flags, 0x00000060) ~= 0 or (not who_serial or not who_name)) then
+				local player_table = TimeLine.debuff_temp_table [target_name]
+				if (not player_table) then
+					return
+				end
+				
+				local spell_table = player_table [spellid]
+				if (not spell_table) then
+					return
+				end
+				
+				if (not spell_table.active) then
+					return
+				end
+				
+				--array
+				tinsert (spell_table, _combat_object:GetCombatTime())
+				--hash
+				spell_table.active = false
 			end
-			
-			local spell_table = player_table [spellid]
-			if (not spell_table) then
-				return
-			end
-			
-			if (not spell_table.active) then
-				return
-			end
-			
-			--array
-			tinsert (spell_table, _combat_object:GetCombatTime())
-			--hash
-			spell_table.active = false
 		end
 	end
 end
 
 function TimeLine:AuraSwap (time, _, _, who_serial, who_name, who_flags, _, target_serial, target_name, target_flags, _, spellid, spellname, spelltype, auratype, amount)
 	if (auratype == "DEBUFF" or auratype == "BUFF") then
-		--> is player, neutral or enemy?
-		if (_bit_band (target_flags, 0x00000400) ~= 0 and _bit_band (who_flags, 0x00000060) ~= 0) then
-			local player_table = TimeLine.debuff_temp_table [target_name]
-			if (not player_table) then
-				return
+		--> is the target a player?
+		if (_bit_band (target_flags, 0x00000400) ~= 0) then
+			--> is the source an enemy?
+			if (_bit_band (who_flags, 0x00000060) ~= 0 or (not who_serial or not who_name)) then
+				local player_table = TimeLine.debuff_temp_table [target_name]
+				if (not player_table) then
+					return
+				end
+				
+				local spell_table = player_table [spellid]
+				if (not spell_table) then
+					return
+				end
+				
+				spell_table.active = not spell_table.active
+				
+				--array
+				--won't add, since we are just toggling
+				--tinsert (spell_table, _combat_object:GetCombatTime())
+				--hash
+				--spell_table.active = false
 			end
-			
-			local spell_table = player_table [spellid]
-			if (not spell_table) then
-				return
-			end
-			
-			spell_table.active = not spell_table.active
-			
-			--array
-			--won't add, since we are just toggling
-			--tinsert (spell_table, _combat_object:GetCombatTime())
-			--hash
-			--spell_table.active = false
 		end
 	end
 end

@@ -264,7 +264,7 @@ local function CreateNew(self)
 		-- Script handlers	
 		AnchorFrame:SetScript("OnMouseDown", function(self) -- Show background if user pressed drag modifier to indicate the display can be dragged
 			
-			if IsAltKeyDown() then -- Make background visible
+			if IsAltKeyDown() and not InCombatLockdown() then -- Make background visible
 				
 				AnchorFrameContainer:SetBackdropAlpha(0.5)
 				AnchorFrameContainer:Render()
@@ -494,7 +494,7 @@ local function CreateNew(self)
 			-- Set current item to button
 			ActionButton.icon:SetTexture(TotalAP.inventoryCache.displayItem.texture)
 			local itemName = GetItemInfo(TotalAP.inventoryCache.displayItem.link) or ""
-			if itemName ~= "" and not InCombatLockdown() and not UnitAffectingCombat("player")then -- Item is cached and can be used (this can fail upon logging in, in which case the item must be set with the next update instead)
+			if itemName ~= "" then -- Item is cached and can be used (this can fail upon logging in, in which case the item must be set with the next update instead)
 			
 				ActionButton:SetAttribute("type", "item")
 				ActionButton:SetAttribute("item", itemName)
@@ -512,11 +512,8 @@ local function CreateNew(self)
 				GameTooltip:SetHyperlink(TotalAP.inventoryCache.displayItem.link)
 			end
 			
-			if not InCombatLockdown() and not UnitAffectingCombat("player") then -- Flash action button (TODO: Un-taint this if necessary after GUI rework by copying the code)
-
-				self:SetFlashing(flashButton)
-				
-			end
+			-- Flash action button
+			self:SetFlashing(flashButton)
 			
 			-- Resize and reposition
 			local w, h = ActionButton:GetWidth(), ActionButton:GetHeight()
@@ -533,15 +530,17 @@ local function CreateNew(self)
 			if IsAltKeyDown() then -- Make background visible
 				
 				AnchorFrameContainer:SetBackdropAlpha(0.5)
-				AnchorFrameContainer:Render()
-				
+				if not InCombatLockdown() then
+					AnchorFrameContainer:Render()
+				end
 			end
 			
 			if IsShiftKeyDown() then -- Make ActionButton background visible
 		
 				ActionButtonFrameContainer:SetBackdropAlpha(0.5)
-				ActionButtonFrameContainer:Render()
-		
+				if not InCombatLockdown() then
+					ActionButtonFrameContainer:Render()
+				end
 			end
 		
 		end)
@@ -549,7 +548,10 @@ local function CreateNew(self)
 		ActionButton:SetScript("OnMouseUp", function(self) -- Hide background
 
 			ActionButtonFrameContainer:SetBackdropAlpha(0)
-			ActionButtonFrameContainer:Render()
+			
+			if not InCombatLockdown() then
+				ActionButtonFrameContainer:Render()
+			end
 			
 		end)
 		
@@ -572,7 +574,7 @@ local function CreateNew(self)
 			
 		ActionButton:SetScript("OnHide", function(self) -- (to clear the set item when hiding the button)
 		
-			if not InCombatLockdown() and not UnitAffectingCombat("player") then
+			if not InCombatLockdown() and not UnitAffectingCombat("player") then -- Don't reset attributes just yet -> TODO: Is this really necessary? Should actually be triggered BEFORE combat begins?
 				self:SetAttribute("type", nil)
 				self:SetAttribute("item", nil)
 			end
@@ -592,8 +594,9 @@ local function CreateNew(self)
 				self.isSizing = true
 				-- Show background frame (max size) while dragging
 				ActionButtonFrameContainer:SetBackdropAlpha(0.5)
-				ActionButtonFrameContainer:Render()
-				
+				if not InCombatLockdown() then
+					ActionButtonFrameContainer:Render()
+				end
 			end
 				
 		end)
@@ -645,9 +648,8 @@ local function CreateNew(self)
 		ActionButtonTextContainer:SetTextAlignment("center")
 		ActionButtonTextContainer.Update = function(self) -- TODO: More options to change the displayed text format - planned once advanced config is implemented via AceConfig
 		
-			local offset = max(hSpace, (maxButtonSize - ActionButton:GetHeight()) / 2 - hSpace) -- Keep at least hSpace pixels between the two elements
-			ActionButtonTextContainer:SetRelativePosition(0, - hSpace + offset)
-		
+			local offset = max(hSpace, (maxButtonSize - ActionButton:GetHeight()) / 2 - hSpace) -- This offset moves the text alongside the button if it changes size
+			ActionButtonTextContainer:SetRelativePosition(0, - hSpace + offset - 5) -- Always keep 5 pixels of space between the two visible elements so that the text remains readable
 			local text = ""
 			
 			if settings.actionButton.showText and not TotalAP.inventoryCache.foundTome and TotalAP.inventoryCache.numItems > 0 then -- Display current item's AP value as text (if enabled)
@@ -816,12 +818,8 @@ local function CreateNew(self)
 			) and settings.specIcons.showGlowEffect -- BUT: Only flash if glow effect is enabled
 			and not TotalAP.ArtifactInterface.IsArtifactMaxed(numTraitsPurchased, artifactTier) -- AND only if the artifact is not maxed yet
 		
-			if not InCombatLockdown() then -- Flash spec icon button (TODO: Un-taint this if necessary after GUI rework by copying the code)
-			
-				-- TODO: Check for persisting taint issues
-				self:SetFlashing(flashButton)
-				
-			end
+			-- Flash spec icon button
+			self:SetFlashing(flashButton)
 			
 		end
 		

@@ -11,7 +11,7 @@ local FilterSize	= 20
 local RampUp		= 5
 local RampDown		= 10
 
-Recount.Version = tonumber(string.sub("$Revision: 1443 $", 12, -3))
+Recount.Version = tonumber(string.sub("$Revision: 1445 $", 12, -3))
 
 
 local _G = _G
@@ -1830,13 +1830,16 @@ end
 function Recount:PetBattleUpdate()
 	if Recount.db.profile.HidePetBattle and C_PetBattles.IsInBattle() and Recount.MainWindow:IsShown() then
 		Recount.MainWindow:Hide()
+
+		Recount.MainWindow.wasHidden = true
 	else
-		if Recount.db.profile.HidePetBattle and not Recount.MainWindow:IsShown() then
+		if Recount.db.profile.HidePetBattle and not Recount.MainWindow:IsShown() and Recount.MainWindow.wasHidden then
 			Recount.MainWindow:Show()
+
+			Recount.MainWindow.wasHidden = nil
 		end
 	end
 
-	Recount:UpdateZoneGroupFilter()
 	Recount:RefreshMainWindow()
 end
 

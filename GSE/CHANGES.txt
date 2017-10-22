@@ -1,16 +1,22 @@
-lightweight tag 3603369ff482afd414c2fd6d153aca5f2c682ab1 GSE_2.2.00
+lightweight tag 5419c497e0f8763088a669588a2e15e42a664737 GSE_2.2.02
 Author:	Timothy Minahan <timothy@minahan.net>
-Date:	Tue Sep 5 18:06:13 2017 +0930
+Date:	Sat Oct 7 22:38:09 2017 +1030
 
-commit 3603369ff482afd414c2fd6d153aca5f2c682ab1
+commit 5419c497e0f8763088a669588a2e15e42a664737
 Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Sep 5 18:06:13 2017 +0930
+Date:   Sat Oct 7 22:38:09 2017 +1030
 
-    Temporary fix for #352
+    2.2.02 Toc Updates
 
-commit 15bf594a7b45d8bd552ecddc204c3c2716d3f683
+commit 187ca256525aef782d7811286df5784714532576
 Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Sep 5 18:02:15 2017 +0930
+Date:   Sat Oct 7 22:37:19 2017 +1030
 
-    Party Tooltip #351
+    Code cleanup for #361
+
+commit 04240b95221ede993d1ed135f206de1b2a1f5427
+Author: Timothy Minahan <timothy@minahan.net>
+Date:   Sat Oct 7 10:42:44 2017 +1030
+
+    Travis Compilation Warning Code Fix
 

@@ -1,0 +1,18 @@
+tag c94a4024d967d6281bfb99f905924f0759e69cce 2017-09-03-release
+Author:	AlexFolland <lexlexlex@gmail.com>
+Date:	Sun Sep 3 20:47:54 2017 -0700
+
+2017-09-03-release
+
+commit d25725b9b01055d5fb43b49750b0acec3efbe2f4
+Author: AlexFolland <lexlexlex@gmail.com>
+Date:   Sun Sep 3 20:47:12 2017 -0700
+
+    compatibility fix for conversions like MainMenu -> MAINMENU and SpellBook -> SPELLBOOK, written by Jan Teriete
+
+commit 834ca02c9109f79fcf2c820d9641f6eb497d70a0
+Author: AlexFolland <lexlexlex@gmail.com>
+Date:   Thu Aug 31 17:26:04 2017 -0700
+
+    remove unnecessary escape character
+

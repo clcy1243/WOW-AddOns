@@ -1,8 +1,0 @@
-## Interface: 70200
-## Title: TinyRoster
-## Notes: TinyRoster
-## Author: M
-## Version: 7.2.0
-## SavedVariables: TinyRosterDB
-
-TinyRoster.lua

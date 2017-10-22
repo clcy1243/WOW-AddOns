@@ -138,10 +138,16 @@
 	function combate:GetCombatName (try_find)
 		if (self.is_pvp) then
 			return self.is_pvp.name
+			
 		elseif (self.is_boss) then
 			return self.is_boss.encounter
+			
+		elseif (self.is_mythic_dungeon_trash) then
+			return self.is_mythic_dungeon_trash.ZoneName .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")"
+			
 		elseif (_rawget (self, "is_trash")) then
 			return Loc ["STRING_SEGMENT_TRASH"]
+			
 		else
 			if (self.enemy) then
 				return self.enemy
@@ -151,6 +157,92 @@
 			end
 		end
 		return Loc ["STRING_UNKNOW"]
+	end
+	
+	--enum segments type
+	
+	DETAILS_SEGMENTTYPE_GENERIC = 0
+	
+	DETAILS_SEGMENTTYPE_OVERALL = 1
+	
+	DETAILS_SEGMENTTYPE_DUNGEON_TRASH = 5
+	DETAILS_SEGMENTTYPE_DUNGEON_BOSS = 6
+	
+	DETAILS_SEGMENTTYPE_RAID_TRASH = 7
+	DETAILS_SEGMENTTYPE_RAID_BOSS = 8
+	
+	DETAILS_SEGMENTTYPE_MYTHICDUNGEON_GENERIC = 10
+	DETAILS_SEGMENTTYPE_MYTHICDUNGEON_TRASH = 11
+	DETAILS_SEGMENTTYPE_MYTHICDUNGEON_OVERALL = 12
+	DETAILS_SEGMENTTYPE_MYTHICDUNGEON_TRASHOVERALL = 13
+	DETAILS_SEGMENTTYPE_MYTHICDUNGEON_BOSS = 14
+	
+	DETAILS_SEGMENTTYPE_PVP_ARENA = 20
+	DETAILS_SEGMENTTYPE_PVP_BATTLEGROUND = 21
+
+	function combate:GetCombatType()
+		--> mythic dungeon
+		local isMythicDungeon = is_mythic_dungeon_segment
+		if (isMythicDungeon) then
+			local isMythicDungeonTrash = self.is_mythic_dungeon_trash
+			if (isMythicDungeonTrash) then
+				return DETAILS_SEGMENTTYPE_MYTHICDUNGEON_TRASH
+			else
+				local isMythicDungeonOverall = self.is_mythic_dungeon and self.is_mythic_dungeon.OverallSegment
+				local isMythicDungeonTrashOverall = self.is_mythic_dungeon and self.is_mythic_dungeon.TrashOverallSegment
+				if (isMythicDungeonOverall) then
+					return DETAILS_SEGMENTTYPE_MYTHICDUNGEON_OVERALL
+				elseif (isMythicDungeonTrashOverall) then
+					return DETAILS_SEGMENTTYPE_MYTHICDUNGEON_TRASHOVERALL
+				end
+				
+				local bossEncounter =  self.is_boss
+				if (bossEncounter) then
+					return DETAILS_SEGMENTTYPE_MYTHICDUNGEON_BOSS
+				end
+				
+				return DETAILS_SEGMENTTYPE_MYTHICDUNGEON_GENERIC
+			end
+		end
+		
+		--> arena
+		local arenaInfo = self.is_arena
+		if (arenaInfo) then
+			return DETAILS_SEGMENTTYPE_PVP_ARENA
+		end
+		
+		--> battleground
+		local battlegroundInfo = self.is_pvp
+		if (battlegroundInfo) then
+			return DETAILS_SEGMENTTYPE_PVP_BATTLEGROUND
+		end
+		
+		--> dungeon or raid
+		local instanceType = self.instance_type
+		
+		if (instanceType == "party") then
+			local bossEncounter =  self.is_boss
+			if (bossEncounter) then
+				return DETAILS_SEGMENTTYPE_DUNGEON_BOSS
+			else
+				return DETAILS_SEGMENTTYPE_DUNGEON_TRASH
+			end
+			
+		elseif (instanceType == "raid") then
+			local bossEncounter =  self.is_boss
+			if (bossEncounter) then
+				return DETAILS_SEGMENTTYPE_RAID_BOSS
+			else
+				return DETAILS_SEGMENTTYPE_RAID_TRASH
+			end
+		end
+		
+		--> overall data
+		if (self == _detalhes.tabela_overall) then
+			return DETAILS_SEGMENTTYPE_OVERALL
+		end
+		
+		return DETAILS_SEGMENTTYPE_GENERIC
 	end
 
 	--return a numeric table with all actors on the specific containter
@@ -257,19 +349,19 @@
 		
 		--> try discover if is a pvp combat
 		local who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags = ...
-		if (who_serial) then --> aqui irá identificar o boss ou o oponente
+		if (who_serial) then --> aqui irï¿½ identificar o boss ou o oponente
 			if (alvo_name and _bit_band (alvo_flags, REACTION_HOSTILE) ~= 0) then --> tentando pegar o inimigo pelo alvo
 				esta_tabela.contra = alvo_name
 				if (_bit_band (alvo_flags, CONTROL_PLAYER) ~= 0) then
-					esta_tabela.pvp = true --> o alvo é da facção oposta ou foi dado mind control
+					esta_tabela.pvp = true --> o alvo ï¿½ da facï¿½ï¿½o oposta ou foi dado mind control
 				end
-			elseif (who_name and _bit_band (who_flags, REACTION_HOSTILE) ~= 0) then --> tentando pegar o inimigo pelo who caso o mob é quem deu o primeiro hit
+			elseif (who_name and _bit_band (who_flags, REACTION_HOSTILE) ~= 0) then --> tentando pegar o inimigo pelo who caso o mob ï¿½ quem deu o primeiro hit
 				esta_tabela.contra = who_name
 				if (_bit_band (who_flags, CONTROL_PLAYER) ~= 0) then
-					esta_tabela.pvp = true --> o who é da facção oposta ou foi dado mind control
+					esta_tabela.pvp = true --> o who ï¿½ da facï¿½ï¿½o oposta ou foi dado mind control
 				end
 			else
-				esta_tabela.pvp = true --> se ambos são friendly, seria isso um PVP entre jogadores da mesma facção?
+				esta_tabela.pvp = true --> se ambos sï¿½o friendly, seria isso um PVP entre jogadores da mesma facï¿½ï¿½o?
 			end
 		end
 
@@ -300,7 +392,7 @@
 		--> Skill cache (not used)
 		esta_tabela.CombatSkillCache = {}
 
-		-- a tabela sem o tempo de inicio é a tabela descartavel do inicio do addon
+		-- a tabela sem o tempo de inicio ï¿½ a tabela descartavel do inicio do addon
 		if (iniciada) then
 			--esta_tabela.start_time = _tempo
 			esta_tabela.start_time = _GetTime()
@@ -310,14 +402,14 @@
 			esta_tabela.end_time = nil
 		end
 
-		-- o container irá armazenar as classes de dano -- cria um novo container de indexes de seriais de jogadores --parâmetro 1 classe armazenada no container, parâmetro 2 = flag da classe
+		-- o container irï¿½ armazenar as classes de dano -- cria um novo container de indexes de seriais de jogadores --parï¿½metro 1 classe armazenada no container, parï¿½metro 2 = flag da classe
 		esta_tabela[1].need_refresh = true
 		esta_tabela[2].need_refresh = true
 		esta_tabela[3].need_refresh = true
 		esta_tabela[4].need_refresh = true
 		esta_tabela[5].need_refresh = true
 		
-		if (_tabela_overall) then --> link é a tabela de combate do overall
+		if (_tabela_overall) then --> link ï¿½ a tabela de combate do overall
 			esta_tabela[1].shadow = _tabela_overall[1]
 			esta_tabela[2].shadow = _tabela_overall[2]
 			esta_tabela[3].shadow = _tabela_overall[3]
@@ -389,7 +481,7 @@
 		return t
 	end
 
-	--trava o tempo dos jogadores após o término do combate.
+	--trava o tempo dos jogadores apï¿½s o tï¿½rmino do combate.
 	function combate:TravarTempos()
 		if (self [1]) then
 			for _, jogador in _ipairs (self [1]._ActorTable) do --> damage

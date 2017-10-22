@@ -117,11 +117,11 @@ do
 		[171746] = 103, -- Claws of Shirvallah
 		[22570] = 103, -- Maim
 		[16974] = 103, -- Predatory Swiftness
-		[106785] = 103, -- Swipe
-		[1079] = 103, -- Rip
+		--[106785] = 103, -- Swipe
+		--[1079] = 103, -- Rip
 		[52610] = 103, -- Savage Roar
 		[5217] = 103, -- Tiger's Fury
-		[1822] = 103, -- Rake
+		--[1822] = 103, -- Rake
 		
 		-- Guardian Druid:
 		[155835] = 104, -- Bristling Fur
@@ -135,14 +135,14 @@ do
 		
 		-- Restoration Druid:
 
-		[145518] = 105, -- Genesis
+		[145518] = 105, -- Genesis --no exists
 		[145205] = 105, -- Wild Mushroom
 		[48438] = 105, -- Wild Growth
 		[740] = 105, -- Tranquility
 		[102342] = 105, -- Ironbark
 		[33763] = 105, -- Lifebloom
 		[88423] = 105, -- Nature's Cure
-		[8936] = 105, -- Regrowth
+		--[8936] = 105, -- Regrowth -overlap
 		[18562] = 105, -- Swiftmend
 		
 		-- Beast Mastery Hunter:
@@ -228,14 +228,14 @@ do
 		
 		-- Holy Paladin:
 		[156910] = 65, -- Beacon of Faith
-		[157007] = 65, -- Beacon of Insight
+		[157007] = 65, -- Beacon of Insight --nao existe mais
 		[85222] = 65, -- Light of Dawn
 		[31821] = 65, -- Devotion Aura
 		[82326] = 65, -- Holy Light
-		[148039] = 65, -- Sacred Shield
+		[148039] = 65, -- Sacred Shield --nao existe mais
 		[53563] = 65, -- Beacon of Light
-		[82327] = 65, -- Holy Radiance
-		[2812] = 65, -- Denounce
+		[82327] = 65, -- Holy Radiance --nao existe mais
+		[2812] = 65, -- Denounce --nao existe mais
 		[20473] = 65, -- Holy Shock
 		
 		-- Protection Paladin:
@@ -1572,6 +1572,34 @@ do
 			--[29842]	=	"WARRIOR", --undribled wrath
 	}
 	
+	_detalhes.HardCrowdControlSpells = {
+		--> death knight
+		
+		--> deamon hunter
+		
+		--> druid
+		[33786] 	= true, -- Cyclone
+		
+		--> hunter
+		
+		--> mage
+		
+		--> monk
+		
+		--> paladin
+		
+		--> priest
+		
+		--> rogue
+		
+		--> shaman
+		
+		--> warlock
+		
+		--> warrior
+		
+	}
+	
 	-- updated on 25/04/2015 (@Tonyleila - WoWInterface)
 	_detalhes.CrowdControlSpells = {
 
@@ -1748,7 +1776,7 @@ do
 			[116849]	=	true, --Life Cocoon (mistweaver)
 			[115295]	=	true, --Guard (brewmaster)
 			--[118604]	=	true, --Guard (brewmaster)
-			[145051]	=	true, --Proteção de Niuzao 
+			[145051]	=	true, --Proteï¿½ï¿½o de Niuzao 
 			[145056]	=	true, --
 			[145441]	=	true, --2P T16
 			[145439]	=	true, --2P T16
@@ -1786,7 +1814,7 @@ do
 		[48743] = {120, 0, 1}, --Death Pact
 		[51052] = {120, 3, 0}, --Anti-Magic Zone
 		[152279] = {120, 6}, -- "Breath of Sindragosa"
-		[48982] = {30, 0, 1}, -- "Blood Täp"
+		[48982] = {30, 0, 1}, -- "Blood Tï¿½p"
 		
 		--["DRUID"] = {},
 		[740] = {480, 8, 0}, --Tranquility

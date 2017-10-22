@@ -56,7 +56,7 @@ local string_reverse = string.reverse
 -------------------------------------------------------------------------------
 
 -- Use standard SI suffixes at the end of shortened numbers.
-local SI_SUFFIXES = { "k", "M", "G", "T" }
+local SI_SUFFIXES = { "k", "W", "G", "T" }
 
 -- Use Blizzard localized value to separate numbers if available.
 local LARGE_NUMBER_SEPERATOR = LARGE_NUMBER_SEPERATOR
@@ -149,7 +149,7 @@ local function ShortenNumber(number, precision)
  if (not number) then return 0 end
  if (number >= 1e12) then return string_format(precisionFormatter, number / 1e12) .. SI_SUFFIXES[4] end
  if (number >= 1e9) then return string_format(precisionFormatter, number / 1e9) .. SI_SUFFIXES[3] end
- if (number >= 1e6) then return string_format(precisionFormatter, number / 1e6) .. SI_SUFFIXES[2] end
+ if (number >= 1e4) then return string_format(precisionFormatter, number / 1e4) .. SI_SUFFIXES[2] end
  if (number >= 1000) then return string_format(precisionFormatter, number / 1000) .. SI_SUFFIXES[1] end
  return number
 end

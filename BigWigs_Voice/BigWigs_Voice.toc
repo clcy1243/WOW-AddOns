@@ -1,13 +1,13 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: BigWigs |cffff0000+|r|cffffffffVoice|r
-## Version: v7.2.5
+## Version: v7.3.0
 ## Notes: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
 ## Notes-zhCN: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
 ## Notes-zhTW: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
 ## Notes-deDE: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
 ## Notes-frFR: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
 ## Notes-itIT: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
-## Notes-koKR: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
+## Notes-koKR: 우두머리 능력에 대하여 텍스트 음성 변환 소리를 재생하는 BigWigs 플러그인입니다.
 ## Notes-ruRU: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
 ## Notes-ptBR: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.
 ## Notes-esES: A plugin for BigWigs that will play Text-To-Speech sounds for boss abilities.

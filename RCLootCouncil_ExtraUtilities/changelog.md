@@ -1,3 +1,11 @@
+### v0.6.0
+---
+* **EPGP**
+* EPGP support has been removed. Use [RCLootCouncil - EPGP](https://mods.curse.com/addons/wow/269161-rclootcouncil-epgp) for that.
+
+* You can now save all bonus rolls to the loot history.
+* All textures/buttons now updates on the fly when changing column positions.
+
 ### v0.5.2
 ---
 * Updated .toc for 7.3.

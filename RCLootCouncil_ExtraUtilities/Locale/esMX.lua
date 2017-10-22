@@ -15,6 +15,8 @@ if not L then return end
 --Translation missing 
 -- L["Bonus Rolls"] = ""
 --Translation missing 
+-- L["Bonus Rolls to History"] = ""
+--Translation missing 
 -- L["Class"] = ""
 --Translation missing 
 -- L["column_width_desc"] = ""
@@ -50,6 +52,8 @@ if not L then return end
 -- L["opt_advReset_desc"] = ""
 --Translation missing 
 -- L["opt_bonusRoll_desc"] = ""
+--Translation missing 
+-- L["opt_bonusRollHistory_desc"] = ""
 --Translation missing 
 -- L["opt_ep_desc"] = ""
 --Translation missing 

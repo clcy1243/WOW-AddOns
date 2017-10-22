@@ -10,6 +10,8 @@ L["Advanced"] = "Erweitert"
 L["Artifact Traits"] = "Artefaktboni"
 L["Bonus"] = true
 L["Bonus Rolls"] = "Bonuswürfe"
+--Translation missing 
+-- L["Bonus Rolls to History"] = ""
 L["Class"] = "Klasse"
 L["column_width_desc"] = "Wähle die Breite der Spalte %s."
 L["Extra Utilities Columns"] = "Zusätzliche Hilfsspalten"
@@ -33,6 +35,8 @@ L["Open Voting Frame"] = "Abstimmungsfenster öffnen"
 --Translation missing 
 -- L["opt_advReset_desc"] = ""
 L["opt_bonusRoll_desc"] = "Aktiviert eine Spalte, die die Bonuswürfe eines Kandidaten anzeigt, falls es welche gibt."
+--Translation missing 
+-- L["opt_bonusRollHistory_desc"] = ""
 --Translation missing 
 -- L["opt_ep_desc"] = ""
 L["opt_forged_desc"] = "Aktiviert eine Spalte, die anzeigt, wie viele titan- und kriegsgeschmiedete Gegenstände der Kandidat angelegt hat."

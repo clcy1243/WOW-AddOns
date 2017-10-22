@@ -4,8 +4,6 @@
 -- votingUtils.lua	Adds extra columns for the default voting frame
 
 --[[ TODO:
-   - Bonus rolls should be saved in loot history
-
 ]]
 
 local addon = LibStub("AceAddon-3.0"):GetAddon("RCLootCouncil")
@@ -18,11 +16,12 @@ local playerData = {} -- Table containing all EU data received, format playerDat
 local lootTable = {}
 local session = 0
 local guildInfo = {}
+local debugPawn = false
+local debugRCScore = false
 
 function EU:OnInitialize()
    self:RegisterComm("RCLootCouncil")
    self.version = GetAddOnMetadata("RCLootCouncil_ExtraUtilities", "Version")
-
    self.defaults = {
       profile = {
          columns = {
@@ -37,10 +36,7 @@ function EU:OnInitialize()
             spec =            { enabled = false, pos = 1,  width = 20, func = self.SetCellSpecIcon, name = ""},
             bonus =           { enabled = false, pos = 100, width = 40, func = self.SetCellBonusRoll, name = LE["Bonus"]},
             guildNotes =      { enabled = false, pos = -1, width = 45, func = self.SetCellGuildNote, name = LE["GuildNote"]},
-            ep =              { enabled = false, pos = 13, width = 40, func = self.SetCellEP, name = "EP"},
-            gp =              { enabled = false, pos = 14, width = 40, func = self.SetCellGP, name = "GP"},
-            pr =              { enabled = false, pos = 15, width = 40, func = self.SetCellPR, name = "PR"},
-         --   rcscore =         { enabked = false, pos = 16, width = 50, func = self.SetCellRCScore, name = "RC Score"},
+            --rcscore =         { enabked = false, pos = 16, width = 50, func = self.SetCellRCScore, name = "RC Score"},
          },
          normalColumns = {
             class =  { enabled = true, name = LE.Class, width = 20},
@@ -58,6 +54,7 @@ function EU:OnInitialize()
             vote =   { enabled = "", name = L.Vote, width = 60},
             note =   { enabled = "", name = L.Notes, width = 40},
          },
+         bonusRollsHistory = false,
          acceptPawn = true, -- Allow Pawn scores sent from candidates
          pawnNormalMode = false, -- Scoring mode, % or normal
          pawn = { -- Default Pawn scales
@@ -125,7 +122,7 @@ function EU:OnInitialize()
       }
    }
    -- The order of which the new cols appear in the advanced options
-   self.optionsColOrder = {"pawn", "traits","upgrades","sockets",--[["setPieces",]] "titanforged","legendaries","ilvlUpgrade", "spec","bonus","ep","gp","pr","guildNotes",}-- "rcscore"}
+   self.optionsColOrder = {"pawn", "traits","upgrades","sockets",--[["setPieces",]] "titanforged","legendaries","ilvlUpgrade", "spec","bonus","guildNotes"}--,"rcscore"}
    -- The order of which the normal cols appear ANYWHERE in the options
    self.optionsNormalColOrder = {"class","name","rank","role","response","ilvl","diff","gear1","gear2","votes","vote","note","roll"}
 
@@ -153,6 +150,7 @@ end
 
 function EU:OnEnable()
    addon:DebugLog("Using ExtraUtilities", self.version)
+   addon.db.profile.responses["BONUSROLL"] = { color = {1,0.8,0,1},	sort = 510,		text = LE["Bonus Rolls"],}
    -- Get the voting frame
    self.votingFrame = addon:GetActiveModule("votingframe")
    -- Crap a copy of the cols
@@ -247,6 +245,9 @@ function EU:OnCommReceived(prefix, serializedMsg, distri, sender)
             playerData[name].bonusLink = link
             playerData[name].bonusReference = addon.bossName
             self.votingFrame:Update()
+            if self.db.bonusRollsHistory and addon.isMasterLooter and type == "item" then
+               addon:GetActiveModule("masterlooter"):TrackAndLogLoot(name,link,"BONUSROLL", addon.bossName,0)
+            end
 
          elseif command == "candidates" then
             self:QueueInspects(unpack(data))
@@ -255,7 +256,6 @@ function EU:OnCommReceived(prefix, serializedMsg, distri, sender)
    end
 end
 
--- TODO
 function EU:BONUS_ROLL_RESULT(event, rewardType, rewardLink, ...)--rewardQuantity, rewardSpecID)
    addon:SendCommand("group", "EUBonusRoll", addon.playerName, rewardType, rewardLink)
    --addon:Debug("BONUS_ROLL_RESULT", rewardType, rewardLink, rewardQuantity, rewardSpecID)
@@ -315,12 +315,6 @@ function EU:HandleExternalRequirements()
    -- Pawn
    if self.db.columns.pawn.enabled and not PawnVersion then
       self.db.columns.pawn.enabled = false
-   end
-   -- EPGP
-   if not EPGP and (self.db.columns.ep.enabled or self.db.columns.gp.enabled or self.db.columns.pr.enabled) then
-      self.db.columns.ep.enabled = false
-      self.db.columns.gp.enabled = false
-      self.db.columns.pr.enabled = false
    end
    -- RCScore
    -- if self.db.columns.rcscore.enabled and not (Details or Recount or Skada) then
@@ -534,6 +528,21 @@ function EU:UpdateGuildInfo()
    end
 end
 
+function EU:StripTextures()
+   if not self.votingFrame.frame:IsVisible() then return end
+   for k,v in ipairs(self.votingFrame.scrollCols) do
+      for row = 1, self.votingFrame.frame.st.displayRows do
+         local frame = self.votingFrame.frame.st.rows[row].cols[k]
+         frame:SetNormalTexture("")
+         frame.text:SetTextColor(1,1,1,1)
+         if frame.voteBtn then frame.voteBtn:Hide(); frame.voteBtn = nil end
+         if frame.noteBtn then frame.noteBtn:Hide(); frame.noteBtn = nil end
+         if frame.bonusBtn then frame.bonusBtn:Hide(); frame.bonusBtn = nil end
+      end
+   end
+   self.votingFrame.frame.st:Refresh()
+end
+
 -- A 10 value gradient going from 1-3: red ->4-7: yellow -> 8-10: green
 local colorGradient = {
    [0] = {0.7, 0.7,0.7}, -- 0 #b2b2b2
@@ -552,7 +561,7 @@ local colorGradient = {
 -- Returns a Pawn score calculated based on the select scale in the EU options
 -- mathcing the class and spec
 function EU:GetPawnScore(link, class, spec)
-   addon:Debug("GetPawnScore", link, class, spec)
+   if debugPawn then addon:Debug("GetPawnScore", link, class, spec) end
    local item = PawnGetItemData(link)
    if not (item and class and spec) then
       return --addon:Debug("Error in :GetPawnScore", link, item, class, spec)
@@ -773,31 +782,6 @@ function EU.SetCellGuildNote(rowFrame, frame, data, cols, row, realrow, column, 
    frame.noteBtn = f
 end
 
-function EU.SetCellEP(rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
-    local name = data[realrow].name
-    local ep = EPGP:GetEPGP(name)
-    frame.text:SetText(ep or 0)
-    data[realrow].cols[column].value = ep or 0
-end
-
-function EU.SetCellGP(rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
-    local name = data[realrow].name
-    local _, gp = EPGP:GetEPGP(name)
-    frame.text:SetText(gp or 0)
-    data[realrow].cols[column].value = gp or 0
-end
-
-function EU.SetCellPR(rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
-    local name = data[realrow].name
-    local ep, gp = EPGP:GetEPGP(name)
-    local pr = 0
-    if ep and gp then
-        pr = ep / gp
-    end
-    frame.text:SetText(string.format("%.4f", pr))
-    data[realrow].cols[column].value = pr or 0
-end
-
 -- Max percentile: (MOD(ilvl,893)/3+1)*101068+614274
 local function getDPSRCScore(dps, ilvl)
    return 100 * dps / ((ilvl % 893 / 3 + 1) * 101068 + 614274)
@@ -866,7 +850,7 @@ function EU.SetCellRCScore(rowFrame, frame, data, cols, row, realrow, column, fS
       if not score then -- Calculate it
          local role = EU.votingFrame:GetCandidateData(session, name, "role")
          local dps = getDPSFromLastFight(role, name)
-         addon:Debug("Role, dps:", role, dps)
+         if debugRCScore then addon:Debug("Role, dps:", role, dps) end
          if role == "DAMAGER" or role == "NONE" then
             score = getDPSRCScore2(dps, ilvl)
          elseif role == "TANK" then
@@ -876,7 +860,7 @@ function EU.SetCellRCScore(rowFrame, frame, data, cols, row, realrow, column, fS
          else
             return addon:DebugLog("No valid role in SetCellRCScore", name, role)
          end
-         addon:Debug("RCScore:", name, score)
+         if debugRCScore then addon:Debug("RCScore:", name, score) end
          -- Store the score
          EU.votingFrame:SetCandidateData(session, name, "RCScore", score)
       end

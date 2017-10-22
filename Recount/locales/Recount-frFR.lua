@@ -23,8 +23,7 @@ L["Arcane"] = "Arcanes"
 L["Arenas"] = "Arènes"
 --Translation missing 
 -- L["Astral Power Abilities"] = "Astral Power Abilities"
---Translation missing 
--- L["Astral Power Gained"] = "Astral Power Gained"
+L["Astral Power Gained"] = "Puissance astrale générée"
 --Translation missing 
 -- L["Astral Power Sources"] = "Astral Power Sources"
 L["Attack Name"] = "Nom de l'attaque"
@@ -144,8 +143,7 @@ L["Frost"] = "Givre"
 L["Frostfire"] = "Givrefeu"
 --Translation missing 
 -- L["Fury Abilities"] = "Fury Abilities"
---Translation missing 
--- L["Fury Gained"] = "Fury Gained"
+L["Fury Gained"] = "Fureur gagnée"
 --Translation missing 
 -- L["Fury Sources"] = "Fury Sources"
 L["Gained"] = "Gagné"
@@ -173,8 +171,7 @@ L["Heals"] = "Soins"
 L["Health"] = "Vie"
 L["Hide"] = "Cacher"
 L["Hide When Not Collecting"] = "Cacher si aucune récolte"
---Translation missing 
--- L["Hide While In Pet Battle"] = "Hide While In Pet Battle"
+L["Hide While In Pet Battle"] = "Cacher lors des batailles de mascottes"
 L["Hides the main window"] = "Cacher la fenêtre principale"
 L["Hit"] = "Touche"
 L["Holy"] = "Sacré"
@@ -204,8 +201,7 @@ L["Lock"] = "Verrouiller"
 L["Lock Windows"] = "Verrouiller les fenêtres"
 --Translation missing 
 -- L["Maelstorm Abilities"] = "Maelstorm Abilities"
---Translation missing 
--- L["Maelstorm Gained"] = "Maelstorm Gained"
+L["Maelstorm Gained"] = "Maelström gagné"
 --Translation missing 
 -- L["Maelstorm Sources"] = "Maelstorm Sources"
 L["Main"] = "Principal"
@@ -256,8 +252,7 @@ L["Overhealing"] = "Soins en excès"
 L["Overhealing Done"] = "Soins en excès"
 --Translation missing 
 -- L["Pain Abilities"] = "Pain Abilities"
---Translation missing 
--- L["Pain Gained"] = "Pain Gained"
+L["Pain Gained"] = "Souffrance gagnée"
 --Translation missing 
 -- L["Pain Sources"] = "Pain Sources"
 L["Parry"] = "Parade"

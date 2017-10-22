@@ -1,11 +1,14 @@
 # BigWigs
 
-## [v73](https://github.com/BigWigsMods/BigWigs/tree/v73) (2017-09-21)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v72.1...v73)
+## [v75](https://github.com/BigWigsMods/BigWigs/tree/v75) (2017-10-14)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v74...v75)
 
 - bump version  
-- add replacement prints for countdown addons  
-- Plugins/BossBlock: block L'uras death cinematic in Seat of the Triumvirate. (#387)  
-- ArgusInvasionPoints/Sotanathor: Update tank debuff warning and fixes  
-- ArgusInvasionPoints/Sotanathor: Add new worldboss  
-- ArgusInvasionPoints/Folnuna: Add Say and Personal warning to Slumbering Gasp  
+- Antorus/Argus: Full boss module  
+- TombOfSargeras/MaidenofVigilance: Slightly adjust Blowback timer  
+- Antorus/Kingaroth: Timer and warning updates  
+- Antorus/CovenofShivarra: Prepare mythic warnings  
+- Antorus/Eonar: Update boss module (Need Heroic and below timer/wave data!)  
+- ArgusInvasionPoints/Occularus: Finalize boss module  
+- ArgusInvasionPoints/Meto: Fix throttle  
+- ArgusInvasionPoints/Occularus: Prepare final Invasion boss  

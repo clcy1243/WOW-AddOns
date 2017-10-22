@@ -418,6 +418,7 @@ local function CreatePluginFunctions()
 									tremove (d, 1)
 								end
 								
+								--[[ overall has been removed, no need to capture data for it
 								tinsert (player_table.deaths, 1, {
 									d, --death table (last events)
 									t.last_cooldown or false, --last coioldown
@@ -428,13 +429,14 @@ local function CreatePluginFunctions()
 									class, --player class
 									(combat.is_boss.try_number or 0) --combat counter
 								})
+								--]]
 								
 								--> store overall
 								local d_stored = 0
 								local time_of_death = t[2]
 								
+								--[[ overall has been removed, no need to capture data for it
 								for i = #t[1], 1, -1 do 
-								
 									local damage_event = t[1][i]
 
 									if (type (damage_event [1]) == "boolean" and damage_event [1]) then
@@ -455,38 +457,41 @@ local function CreatePluginFunctions()
 										end
 									end
 								end
+								--]]
+								
 							end --if deaths_stored < max_deaths
 
 							--> store endurance
-							if (i <= max_endurance) then
-								local player_table = DeathGraphs:GetPlayerTable (endurance_table, t[3])
-								
-								if (endurance_failed [t[3]]) then
-									player_table.points = player_table.points + 80
-								else
-									player_table.points = player_table.points + 90
+								if (i <= max_endurance) then
+									local player_table = DeathGraphs:GetPlayerTable (endurance_table, t[3])
+									
+									if (endurance_failed [t[3]]) then
+										player_table.points = player_table.points + 80
+									else
+										player_table.points = player_table.points + 90
+									end
+									
+									player_table.encounters = player_table.encounters + 1
+									
+									local last_hit = DeathGraphs:GetLastHit (t[1])
+									tinsert (player_table.deaths, {combat.is_boss.try_number or 0, t.dead_at, last_hit})
+									endurance_failed [t[3]] = true
 								end
-								
-								player_table.encounters = player_table.encounters + 1
-								
-								local last_hit = DeathGraphs:GetLastHit (t[1])
-								tinsert (player_table.deaths, {combat.is_boss.try_number or 0, t.dead_at, last_hit})
-								endurance_failed [t[3]] = true
-							end
 							
 							--> timeline storage
-							if (i <= max_timeline_deaths) then
-								--playername, playerclass, deathtime, deathcombattime, deathtimestring, playermaxhealth, deathevents, lastcooldown
-								--combat time
-								local TimeAt = floor (deathcombattime)
-								--add to the table
-								timeline_boss.deaths [TimeAt] = timeline_boss.deaths [TimeAt] or {}
-								tinsert (timeline_boss.deaths [TimeAt], timenow)
-							end
+								if (i <= max_timeline_deaths) then
+									--playername, playerclass, deathtime, deathcombattime, deathtimestring, playermaxhealth, deathevents, lastcooldown
+									--combat time
+									local TimeAt = floor (deathcombattime)
+									--add to the table
+									timeline_boss.deaths [TimeAt] = timeline_boss.deaths [TimeAt] or {}
+									tinsert (timeline_boss.deaths [TimeAt], timenow)
+								end
 							
-							if (i > max_endurance and deaths_stored >= max_deaths and i > max_timeline_deaths) then
-								break
-							end
+							--> everything is on max
+								if (i > max_endurance and deaths_stored >= max_deaths and i > max_timeline_deaths) then
+									break
+								end
 							
 						end --loop
 					end --combat time > 40
@@ -541,6 +546,7 @@ local build_options_panel = function()
 	options_frame:SetHeight (260)
 	
 	local menu = {
+	--[=[
 		{
 			type = "range",
 			get = function() return DeathGraphs.db.deaths_threshold end,
@@ -551,6 +557,7 @@ local build_options_panel = function()
 			desc = Loc ["STRING_OVERALL_DEATHS_THRESHOLD_DESC"],
 			name = Loc ["STRING_OVERALL_DEATHS_THRESHOLD"],
 		},
+	--]=]
 		{
 			type = "range",
 			get = function() return DeathGraphs.db.endurance_threshold end,

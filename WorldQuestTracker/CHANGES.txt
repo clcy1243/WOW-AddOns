@@ -1,7 +1,7 @@
-changeset:   245:08fed12c22bd
-tag:         a7.3.0.245-alpha
+changeset:   257:5f650be8d10f
+tag:         v7.3.0.257-release
 user:        Tercio
-date:        Tue Sep 19 10:32:46 2017 -0300
-summary:     - Added a button for options under the interface menu.
+date:        Sun Oct 15 09:23:43 2017 -0200
+summary:     - Ticket #556: attempt to fix an issue started on latest update for portuguese localization.
 
 

@@ -1,8 +1,7 @@
-changeset:   66:4fdb44b9caa2
-tag:         v7.
-tag:         v7.3.0.066
+changeset:   69:fb22264bb145
+tag:         v7.3.0.068
 user:        Tercio
-date:        Sat Sep 02 12:27:47 2017 -0300
-summary:     - ToC Update.
+date:        Sat Oct 21 13:34:13 2017 -0200
+summary:     - Removed overall deaths feature.
 
 
