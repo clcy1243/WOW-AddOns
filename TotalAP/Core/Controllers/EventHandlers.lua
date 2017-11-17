@@ -24,6 +24,8 @@
 local addonName, TotalAP = ...
 if not TotalAP then return end
 
+-- Upvalues
+local UnitInVehicle = UnitInVehicle
 
 -- State indicators (to detect transitions)
 local eventStates = {}
@@ -120,6 +122,8 @@ local function ScanInventory(scanBank)
 						displayItem.isToken = isToken
 						displayItem.isTome = isTome
 						displayItem.artifactPowerValue = artifactPowerValue
+						displayItem.bag = bag
+						displayItem.slot = slot
 						
 					end
 				
@@ -219,6 +223,12 @@ local function UpdateGUI()
 	eventStates.isPlayerEngagedInCombat = isPlayerEngagedInCombat
 	eventStates.isPetBattleInProgress = isPetBattleInProgress
 	eventStates.hasPlayerLostControl = hasPlayerLostControl
+	
+	local testState = UnitInVehicle("player")
+	if testState ~= eventStates.isPlayerUsingVehicle then -- This can happen because there are some ways to "exit" vehicles that don't trigger the appropriate event... Before, this would bug the display or hide it
+		TotalAP.Debug("Resetting isPlayerUsingVehicle state flag since a mismatch in vehicle states was detected")
+		eventStates.isPlayerUsingVehicle = testState
+	end
 	
 	-- Force update, using the most recent available information to render the GUI
 	TotalAP.Controllers.RenderGUI()

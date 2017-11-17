@@ -18,7 +18,7 @@ function EU:OptionsTable()
             type = "description",
          },
          general = {
-            name = L.General,
+            name = _G.GENERAL,
             order = 1,
             type = "group",
             args = {
@@ -111,7 +111,7 @@ function EU:OptionsTable()
                         type = "header",
                      },
                      reset = {
-                        name = L["Reset to default"],
+                        name = _G.RESET_TO_DEFAULT,
                         order = -1,
                         --width = "full",
                         type = "execute",
@@ -140,7 +140,7 @@ function EU:OptionsTable()
                         type = "header",
                      },
                      reset = {
-                        name = L["Reset to default"],
+                        name = _G.RESET_TO_DEFAULT,
                         order = -1,
                         --width = "full",
                         type = "execute",
@@ -244,7 +244,7 @@ function EU:OptionsTable()
                      reset = {
                         order = 2,
                         type = "execute",
-                        name = L["Reset to default"],
+                        name = _G.RESET_TO_DEFAULT,
                         desc = LE["opt_advReset_desc"],
                         confirm = true,
                         func = function()

@@ -39,14 +39,24 @@ local function UpdateSettings(frame)
   if db.ON then
     frame.Icon:SetTexture(path..db.theme)
     frame.Icon:SetVertexColor(db.r, db.g, db.b, db.a)
+
+    if db.theme == "default" or db.theme == "squarethin" then
+      frame.Icon:SetDrawLayer("OVERLAY", -7)
+    else
+      frame.Icon:SetDrawLayer("OVERLAY", 7)
+    end
+
     frame:Show()
+    frame.Icon:Show()
   else
     frame:_Hide()
+    frame.Icon:Hide()
   end
 end
 
 local function UpdateWidgetFrame(frame, unit)
   frame:Show()
+  frame.Icon:Show()
 end
 
 -- Context
@@ -65,6 +75,7 @@ local function UpdateWidgetContext(frame, unit)
 		UpdateWidgetFrame(frame, unit)
 	else
 		frame:_Hide()
+    frame.Icon:Hide()
 	end
 	--------------------------------------
 	-- End Custom Code
@@ -85,11 +96,15 @@ local function CreateWidgetFrame(parent)
 
 	-- Custom Code III
 	--------------------------------------
-	frame:SetFrameLevel(parent.visual.healthbar:GetFrameLevel())
+	-- framelevel of Target Highlight must be the same as visual.target (target highlight of TidyPlates)
+  -- that is: extended.healthbar.textFrame, texture target (BACKGROUND)
+	frame:SetFrameLevel(parent:GetFrameLevel())
 	frame:SetSize(256, 64)
 	frame:SetPoint("CENTER", parent, "CENTER")
-	frame.Icon = frame:CreateTexture(nil, "OVERLAY")
-	frame.Icon:SetAllPoints(frame)
+
+  frame.Icon = parent.visual.name:GetParent():CreateTexture(nil, "OVERLAY")
+  frame.Icon:SetAllPoints(frame)
+  frame.Icon:Hide()
 
   UpdateSettings(frame)
   frame.UpdateConfig = UpdateSettings
@@ -100,7 +115,12 @@ local function CreateWidgetFrame(parent)
 	frame.UpdateContext = UpdateWidgetContext
 	frame.Update = UpdateWidgetFrame
 	frame._Hide = frame.Hide
-	frame.Hide = function() ClearWidgetContext(frame); frame:_Hide() end
+	-- Have to add frame.Icon:Hide() also here as the frame is no longer the parent of the icon since a fix to widget layering
+	frame.Hide = function()
+		ClearWidgetContext(frame)
+		frame.Icon:Hide()
+		frame:_Hide()
+	end
 
 	return frame
 end

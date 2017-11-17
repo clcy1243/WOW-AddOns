@@ -60,9 +60,9 @@ local function DummyFunction() return end
 -- Define the Menu for Threat Modes
 TidyPlatesHubDefaults.ThreatWarningMode = "Auto"
 TidyPlatesHubMenus.ThreatWarningModes = {
-					{ text = "Auto (Color Swap)", value = "Auto",} ,
-					{ text = "Tank", value = "Tank",} ,
-					{ text = "DPS/Healer", value = "DPS",} ,
+					{ text = "自动(交换颜色)", value = "Auto",} ,
+					{ text = "坦克", value = "Tank",} ,
+					{ text = "输出或治疗", value = "DPS",} ,
 					}
 
 local NormalGrey = {r = .65, g = .65, b = .65, a = .4}

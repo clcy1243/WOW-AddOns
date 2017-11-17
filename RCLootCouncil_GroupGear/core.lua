@@ -12,10 +12,10 @@ local num_display_gear = 16
 
 local scrollCols = {
    { name = "",         width = 20,  DoCellUpdate = addon.SetCellClassIcon,},                          -- class icon
-   { name = L["Name"],  width = 120},                                                                  -- Player name
+   { name = _G.NAME,  width = 120},                                                                  -- Player name
 --   { name = L["Rank"],  width = 95},                                                                 -- guild Rank
-   { name = L["ilvl"],  width = 55,  align = "CENTER"},                                                -- ilvl
-   { name = "A. traits",width = 55,  align = "CENTER"},                                                -- # of artifact traits
+   { name = _G.ITEM_LEVEL_ABBR,  width = 55,  align = "CENTER"},                                                -- ilvl
+   { name = "A. traits",width = 60,  align = "CENTER"},                                                -- # of artifact traits
    { name = "Gear",     width = ROW_HEIGHT * num_display_gear + num_display_gear, align = "CENTER",sortnext = 3 },   -- Gear
    { name = "",         width = 20,  DoCellUpdate = GroupGear.SetCellRefresh,},                        -- Refresh icon
 }
@@ -103,7 +103,7 @@ function GroupGear:IsShown()
 end
 
 function GroupGear:QueryGroup()
-   if addon.candidates then -- just use this
+   if addon.candidates and addon.candidates[addon.playerName] then -- just use this
       for name, data in pairs(addon.candidates) do
          self:AddEntry(name, data.class, data.rank)
       end
@@ -253,17 +253,17 @@ function GroupGear:GetFrame()
    f.rows = {}
 	f.st = st
 
-   local b1 = addon:CreateButton(L["Guild"], f.content)
+   local b1 = addon:CreateButton(_G.GUILD, f.content)
    b1:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 10, 10)
    b1:SetScript("OnClick", function() self:Query("guild") end)
    f.groupButton = b1
 
-   local b2 = addon:CreateButton(L["Group"], f.content)
+   local b2 = addon:CreateButton(_G.GROUP, f.content)
    b2:SetPoint("LEFT", b1, "RIGHT", 10, 0)
    b2:SetScript("OnClick", function() self:Query("group") end)
    f.guildButton = b2
 
-   local b3 = addon:CreateButton(L.Close, f.content)
+   local b3 = addon:CreateButton(_G.CLOSE, f.content)
    b3:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, 10)
    b3:SetScript("OnClick", function() self:Hide() end)
    f.closeButton = b3

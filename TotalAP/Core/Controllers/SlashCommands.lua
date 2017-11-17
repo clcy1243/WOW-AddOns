@@ -48,13 +48,16 @@ local slashCommands = {
 	["glow"] = L["Toggle spell overlay notification (glow effect) when new traits are available"],
 	["buttontext"] = L["Toggle text display next to the action button"],
 	["scanbank"] = L["Include items stored in the bank and show an additional progress bar for them"],
+	["ranks"] = L["Toggle additional display of the weapon's rank next to the icons"],
+	
+	["stateicons"] = L["Toggle icons to indicate when artifact power items can't be used"],
 	
 	["hide"] = L["Toggle all displays (will override the individual display's settings)"],
 	["button"] = L["Toggle button visibility (tooltip visibility is unaffected)"],
 	["bars"] = L["Toggle bar display for artifact power progress"],
 	["minibar"] = L["Toggle the secondary progress bar"],
 	["tooltip"] = L["Toggle tooltip display for artifact power items"],
-	["icons"] = L["Toggle icon and text display for artifact power progress"],
+	["specicons"] = L["Toggle icon and text display for artifact power progress"],
 	
 	["numberformat"] = L["Switches between international and localised number formats for textual output"],
 	
@@ -205,6 +208,30 @@ local slashHandlers = {
 
 	end,
 	
+	["ranks"] = function(settings) -- Toggle an additional display of artifact rank next to the spec icons
+		
+		if settings.specIcons.showNumTraits then
+			TotalAP.ChatMsg(L["Artifact rank is now hidden."]);
+		else
+			TotalAP.ChatMsg(L["Artifact rank is now shown."]);
+		end
+		
+	settings.specIcons.showNumTraits = not settings.specIcons.showNumTraits;
+
+	end,
+	
+	["stateicons"] = function(settings) -- Toggle the icons that indicate AP can't be used due to being in combat, on a flight path, in a vehicle, or in a pet battle
+		
+		if settings.stateIcons.enabled then
+			TotalAP.ChatMsg(L["State icons are now hidden."]);
+		else
+			TotalAP.ChatMsg(L["State icons are now shown."]);
+		end
+		
+	settings.stateIcons.enabled = not settings.stateIcons.enabled;
+
+	end,
+	
 	["numberformat"] = function(settings) -- Switch between internation and localised number formats
 	
 		if settings.numberFormat == "legacy" then -- use localised number format
@@ -256,8 +283,8 @@ local slashHandlers = {
 		--RestoreDefaultSettings();
 		TotalAP.ChatMsg(L["Default settings loaded."]);
 		-- TODO: Run UnignoreAllSpecs() also?
-		TotalAPAnchorFrame:ClearAllPoints();
-		TotalAPAnchorFrame:SetPoint("CENTER", UIParent, "CENTER");
+		TotalAP_DefaultView_AnchorFrame:ClearAllPoints(); -- TODO: Support other views (if I ever get around to adding them...)
+		TotalAP_DefaultView_AnchorFrame:SetPoint("CENTER", UIParent, "CENTER");
 
 	end,
 	

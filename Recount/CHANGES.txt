@@ -1,9 +1,10 @@
 ------------------------------------------------------------------------
-r1445 | Resike | 2017-10-06 05:37:55 -0500 (Fri, 06 Oct 2017) | 1 line
+r1447 | Resike | 2017-11-10 14:50:11 -0600 (Fri, 10 Nov 2017) | 3 lines
 Changed paths:
-   M /trunk/Recount.lua
-   M /trunk/zonefilters.lua
+   M /trunk/GUI_Detail.lua
 
-- Fixed pet battle visibility issues.
+- Force an update.
+- Minor changes.
+
 ------------------------------------------------------------------------
 

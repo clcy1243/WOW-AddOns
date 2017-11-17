@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("TwinEmpsAQ", "DBM-AQ40", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 596 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 627 $"):sub(12, -3))
 mod:SetCreatureID(15276, 15275)
 mod:SetEncounterID(715)
 mod:SetModelID(15778)
@@ -15,15 +15,16 @@ mod:RegisterEvents(
 	"SPELL_CAST_SUCCESS 802 804"
 )
 
+--Audio countdown for teleport? if precise enough
 local warnTeleport			= mod:NewSpellAnnounce(800, 3)
 local warnExplodeBug		= mod:NewSpellAnnounce(804, 2, nil, false)
 local warnMutateBug			= mod:NewSpellAnnounce(802, 2, nil, false)
 
-local timerTeleport			= mod:NewNextTimer(30, 800)
-local timerExplodeBugCD		= mod:NewCDTimer(8, 804, nil, false)
-local timerMutateBugCD		= mod:NewCDTimer(11, 802, nil, false)
+local timerTeleport			= mod:NewNextTimer(30, 800, nil, nil, nil, 6)
+local timerExplodeBugCD		= mod:NewCDTimer(8, 804, nil, false, nil, 1)
+local timerMutateBugCD		= mod:NewCDTimer(11, 802, nil, false, nil, 1)
 
-local berserkTimer	=	mod:NewBerserkTimer(900)
+local berserkTimer			= mod:NewBerserkTimer(900)
 
 function mod:OnCombatStart(delay)
 	berserkTimer:Start()

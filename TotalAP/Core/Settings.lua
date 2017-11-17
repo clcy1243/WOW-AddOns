@@ -38,9 +38,13 @@ local defaultSettings =	{
 		verbose = true,
 		showLoginMessage = true,
 		enabled = true,		-- This controls the entire display, but NOT the individual parts (which will be hidden, but their settings won't be overridden)
-		autoHide = true,
+		autoHide = false,
 		numberFormat = GetLocale(),
 		scanBank = true,
+		
+		stateIcons = {
+			enabled = true,
+		},
 		
 		-- Display options for the action button
 		actionButton = {
@@ -58,6 +62,7 @@ local defaultSettings =	{
 			size = 18,
 			border = 1,
 			inset = 1,
+			showNumTraits = true,
 		},
 		
 		-- Controls what information is displayed in the tooltip
@@ -65,7 +70,7 @@ local defaultSettings =	{
 			enabled = true, 
 			showProgressReport = true,
 			showNumItems = true,
-			showRelicRecommendations = true,
+			showRelicRecommendations = false,
 		},
 		
 		-- Display options for the bar displays
@@ -228,6 +233,7 @@ local validators = {
 	["specIcons.inset"] = IsNumber,
 	["specIcons.showGlowEffect"] = IsBoolean,
 	["specIcons.size"] = IsNumber,
+	["specIcons.showNumTraits"] = IsBoolean,
 	
 	["tooltip"] = IsTable,
 	["tooltip.enabled"] = IsBoolean,
@@ -235,6 +241,8 @@ local validators = {
 	["tooltip.showProgressReport"] = IsBoolean,
 	["tooltip.showRelicRecommendations"] = IsBoolean,
 	
+	["stateIcons"] = IsTable,
+	["stateIcons.enabled"] = IsBoolean,
 }	
 
 

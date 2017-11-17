@@ -1,7 +1,10 @@
-local BLOODTRADER_NPCID = 115264
-local BLOOD_ITEMID = 124124
-local BLOODTRADER_CACHE_INDEX = 1
-local RESOURCES_CURRENCYID = 1220
+local NPCID_BLOODTRADER = 115264
+local NPCID_PRIMALTRADER = 129674
+local ITEMID_BLOOD = 124124
+local ITEMID_PRIMAL = 151568
+local INDEX_BLOODTRADER_CACHE = 1
+local INDEX_BLOODTRADER_BIGCACHE = 2
+local CURRENCYID_RESOURCES = 1220
 
 -- helper function to check if we are interacting with the blood trader npc
 local function IsBloodTrader()
@@ -9,8 +12,13 @@ local function IsBloodTrader()
   if not guid then return end
   local _, _, _, _, _, npcid = strsplit("-", guid)
   if not npcid then return end
-  if tonumber(npcid) ~= BLOODTRADER_NPCID then return end
-  return true
+  npcid = tonumber(npcid)
+  if npcid == NPCID_BLOODTRADER or npcid == NPCID_PRIMALTRADER then return npcid end
+end
+
+-- helper function to check if merchant item index is a cache
+local function IsCache(index)
+   if index == INDEX_BLOODTRADER_CACHE or index == INDEX_BLOODTRADER_BIGCACHE then return true end
 end
 
 
@@ -22,13 +30,15 @@ end
 --local oldMerchantFrame_UpdateCurrencies = MerchantFrame_UpdateCurrencies
 MerchantFrame_UpdateCurrencies = function()
   local currencies = { GetMerchantCurrencies() }
-  if IsBloodTrader() then
-    currencies = { -BLOOD_ITEMID, RESOURCES_CURRENCYID }
+  if IsBloodTrader() == NPCID_BLOODTRADER then
+    currencies = { -ITEMID_BLOOD, CURRENCYID_RESOURCES }
+  elseif IsBloodTrader() == NPCID_PRIMALTRADER then
+    currencies = { -ITEMID_PRIMAL }
   end
   
   if ( #currencies == 0 ) then  -- common case
     MerchantFrame:UnregisterEvent("CURRENCY_DISPLAY_UPDATE")
-    MerchantFrame:UnregisterEvent("BAG_UPDATE")
+    MerchantFrame:UnregisterEvent("BAG_UPDATE") -- updates in case items shown as currency changes
     MerchantMoneyFrame:SetPoint("BOTTOMRIGHT", -4, 8)
     MerchantMoneyFrame:Show()
     MerchantExtraCurrencyInset:Hide()
@@ -176,38 +186,20 @@ end
 local oldMerchantItemButton_OnModifiedClick = MerchantItemButton_OnModifiedClick
 MerchantItemButton_OnModifiedClick = function(self, button, ...)
   -- ignore if not blood trader or on buyback tab
-  if not IsBloodTrader() or MerchantFrame.selectedTab ~= 1 then return oldMerchantItemButton_OnModifiedClick(self, button, ...) end
+  if IsBloodTrader() ~= NPCID_BLOODTRADER or MerchantFrame.selectedTab ~= 1 then return oldMerchantItemButton_OnModifiedClick(self, button, ...) end
 
   if ( HandleModifiedItemClick(GetMerchantItemLink(self:GetID())) ) then
     return
   end
   if ( IsModifiedClick("SPLITSTACK")) then
     local maxStack = GetMerchantItemMaxStack(self:GetID())
-    -- if buying resource caches, max out at free bag space
-    if self:GetID() == BLOODTRADER_CACHE_INDEX then maxStack = MainMenuBarBackpackButton.freeSlots end
-    
-    -- hook splitstack callback to round up stacks to next multiple of stacksize
-    if not self.oldSplitStack then
-      self.oldSplitStack = self.SplitStack
-      self.SplitStack = function(button, split, ...)
-        if not IsBloodTrader() then return button.oldSplitStack(button, split, ...) end
-
-        local _, _, _, stackCount = GetMerchantItemInfo(button:GetID())
-        local maxStack = GetMerchantItemMaxStack(button:GetID())
-        if button:GetID() == BLOODTRADER_CACHE_INDEX then maxStack = MainMenuBarBackpackButton.freeSlots end
-
-        -- round up to multiple of stack size
-        if split % stackCount ~= 0 then
-          split = min(maxStack, split + stackCount) -- stop it from going above maxStack
-          local overage = split % stackCount
-          split = split - overage
-        end
-
-        return button.oldSplitStack(button, split, ...)
-      end
+    -- if buying resource caches, max out at free bag space or 10, whichever is first
+    if IsCache(self:GetID()) then
+      maxStack = min(10, MainMenuBarBackpackButton.freeSlots)
+      OpenStackSplitFrame(maxStack, self, "BOTTOMLEFT", "TOPLEFT")
+    else
+      return oldMerchantItemButton_OnModifiedClick(self, button, ...)
     end
-    
-    OpenStackSplitFrame(maxStack, self, "BOTTOMLEFT", "TOPLEFT")
   end
 end
 
@@ -215,9 +207,9 @@ end
 -- this is easier if we hook BuyMerchantItem
 local oldBuyMerchantItem = BuyMerchantItem
 BuyMerchantItem = function(index, amount, ...)
-  if not IsBloodTrader() or index ~= BLOODTRADER_CACHE_INDEX or amount == 1 or not amount then return oldBuyMerchantItem(index, amount, ...) end
+  if IsBloodTrader() ~= NPCID_BLOODTRADER or not IsCache(index) or amount == 1 or not amount then return oldBuyMerchantItem(index, amount, ...) end
   
-  amount = min(amount, MainMenuBarBackpackButton.freeSlots)
+  amount = min(amount, min(10, MainMenuBarBackpackButton.freeSlots))
   while amount > 0 do
     oldBuyMerchantItem(index, 1)
     oldBuyMerchantItem(0, 0) -- slight delay to prevent "item is busy" errors

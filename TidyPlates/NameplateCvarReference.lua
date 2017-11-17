@@ -1,6 +1,7 @@
 local cvarlist = {
 	["nameplateShowFriends"] = { prettyName = UNIT_NAMEPLATES_SHOW_FRIENDS, description = OPTION_TOOLTIP_UNIT_NAMEPLATES_SHOW_FRIENDS, type = "boolean" },
 	["nameplateShowFriendlyPets"] = { prettyName = UNIT_NAMEPLATES_SHOW_FRIENDLY_PETS, description = OPTION_TOOLTIP_UNIT_NAMEPLATES_SHOW_FRIENDLY_PETS, type = "boolean" },
+	["nameplateShowFriendlyNPCs"] = { prettyName = UNIT_NAMEPLATES_SHOW_FRIENDLY_NPCS, description = OPTION_TOOLTIP_UNIT_NAMEPLATES_SHOW_FRIENDLY_NPCS, type = "boolean" },
 	["nameplateShowFriendlyGuardians"] = { prettyName = UNIT_NAMEPLATES_SHOW_FRIENDLY_GUARDIANS, description = OPTION_TOOLTIP_UNIT_NAMEPLATES_SHOW_FRIENDLY_GUARDIANS, type = "boolean" },
 	["nameplateShowFriendlyTotems"] = { prettyName = UNIT_NAMEPLATES_SHOW_FRIENDLY_TOTEMS, description = OPTION_TOOLTIP_UNIT_NAMEPLATES_SHOW_FRIENDLY_TOTEMS, type = "boolean" },
 	["nameplateShowEnemies"] = { prettyName = UNIT_NAMEPLATES_SHOW_ENEMIES, description = OPTION_TOOLTIP_UNIT_NAMEPLATES_SHOW_ENEMIES, type = "boolean" },

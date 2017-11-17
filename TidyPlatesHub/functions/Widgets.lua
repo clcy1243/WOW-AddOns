@@ -16,16 +16,16 @@ local CreateTotemIconWidget = WidgetLib.CreateTotemIconWidget
 
 TidyPlatesHubDefaults.WidgetsRangeMode = 1
 TidyPlatesHubMenus.RangeModes = {
-				{ text = "9 yards"} ,
-				{ text = "15 yards" } ,
-				{ text = "28 yards" } ,
-				{ text = "40 yards" } ,
+				{ text = "9码"} ,
+				{ text = "15码" } ,
+				{ text = "28码" } ,
+				{ text = "40码" } ,
 			}
 
 TidyPlatesHubDefaults.WidgetsDebuffStyle = 1
 TidyPlatesHubMenus.DebuffStyles = {
-				{ text = "Wide",  } ,
-				{ text = "Compact (May require UI reload to take effect)",  } ,
+				{ text = "宽松",  } ,
+				{ text = "紧凑(重载UI生效)",  } ,
 			}
 
 ------------------------------------------------------------------------------

@@ -1,4 +1,35 @@
 ------------------------------------------------------
+8.5.5 (works with TidyPlates 6.18.11)
+------------------------------------------------------
+* Fixed a bug where the target highlight was shown in headline view.
+* Fixed a bug where the option to force healthbar view on the current target could only be changed when headline view was enabled.
+
+------------------------------------------------------
+8.5.4 (works with TidyPlates 6.18.11)
+------------------------------------------------------
+* Fixed a bug with layering of the target highlight (e.g.,  threat glow covered the target highlight) [Comment #568, email].
+* Fixed a bug where changes to the placement of several icons were not applied until reloading the UI.
+* Fixed a bug in the options dialog where preview images where not updated after changing the active profile.
+* Changed defaults for Target and No Target scale again to more reasonable values.
+* Updated localizations for zhTW (Traditional Chinese, thanks to gaspy10).
+
+------------------------------------------------------
+8.5.3 (works with TidyPlates 6.18.11)
+------------------------------------------------------
+* Fixed a bug with migrating scale settings for Target and No Target (from configurations before 8.5.0) which were migrated every time a new version of ThreatPlates was installed [Ticket #141].
+* Fixed bugs in frame layers of TidyPlates and ThreatPlates nameplate elements (flickering when moving mouse over units).
+* Fixed defaults for Target and No Target scale to be 0% (instead of -100%).
+* Fixed LUA error with the nameplate castbar when a cast was started but no unit was assigned.
+* Fixed several bugs when migrating old configuration settings.
+* Fixed a wrong translations in German localization.
+
+------------------------------------------------------
+8.5.2 (works with TidyPlates 6.18.11)
+------------------------------------------------------
+* Fixed a LUA error with absorbs on character when personal resource bar is enabled.
+* Fixed a bug with custom text where "UNKOWN" was displayed for NPC units without role description.
+
+------------------------------------------------------
 8.5.1 (works with TidyPlates 6.18.11)
 ------------------------------------------------------
 * Reworked transparency (formerly alpha) and scale configuration to make the priority in which settings are applied easier to understand.

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Moam", "DBM-AQ20", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 596 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 625 $"):sub(12, -3))
 mod:SetCreatureID(15340)
 mod:SetEncounterID(720)
 mod:SetModelID(15392)
@@ -14,8 +14,8 @@ mod:RegisterEvents(
 
 local warnStoneform		= mod:NewSpellAnnounce(25685, 3)
 
-local timerStoneform	= mod:NewNextTimer(90, 25685)
-local timerStoneformDur	= mod:NewBuffActiveTimer(90, 25685)
+local timerStoneform	= mod:NewNextTimer(90, 25685, nil, nil, nil, 6)
+local timerStoneformDur	= mod:NewBuffActiveTimer(90, 25685, nil, nil, nil, 6)
 
 function mod:OnCombatStart(delay)
 	timerStoneform:Start(-delay)

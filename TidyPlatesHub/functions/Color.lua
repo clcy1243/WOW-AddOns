@@ -182,18 +182,18 @@ end
 local EnemyBarFunctions = {}
 TidyPlatesHubDefaults.EnemyBarColorMode = "ByThreat"			-- Sets the default function
 
-AddHubFunction(EnemyBarFunctions, TidyPlatesHubMenus.EnemyBarModes, ColorFunctionByThreat, "By Threat", "ByThreat")
-AddHubFunction(EnemyBarFunctions, TidyPlatesHubMenus.EnemyBarModes, ColorFunctionByReaction, "By Reaction", "ByReaction")
-AddHubFunction(EnemyBarFunctions, TidyPlatesHubMenus.EnemyBarModes, ColorFunctionByClass, "By Class", "ByClass")
-AddHubFunction(EnemyBarFunctions, TidyPlatesHubMenus.EnemyBarModes, ColorFunctionByHealth, "By Health", "ByHealth")
+AddHubFunction(EnemyBarFunctions, TidyPlatesHubMenus.EnemyBarModes, ColorFunctionByThreat, "仇恨", "ByThreat")
+AddHubFunction(EnemyBarFunctions, TidyPlatesHubMenus.EnemyBarModes, ColorFunctionByReaction, "反应", "ByReaction")
+AddHubFunction(EnemyBarFunctions, TidyPlatesHubMenus.EnemyBarModes, ColorFunctionByClass, "职业", "ByClass")
+AddHubFunction(EnemyBarFunctions, TidyPlatesHubMenus.EnemyBarModes, ColorFunctionByHealth, "血量", "ByHealth")
 
 
 local FriendlyBarFunctions = {}
 TidyPlatesHubDefaults.FriendlyBarColorMode = "ByReaction"			-- Sets the default function
 
-AddHubFunction(FriendlyBarFunctions, TidyPlatesHubMenus.FriendlyBarModes, ColorFunctionByReaction, "By Reaction", "ByReaction")
-AddHubFunction(FriendlyBarFunctions, TidyPlatesHubMenus.FriendlyBarModes, ColorFunctionByClass, "By Class", "ByClass")
-AddHubFunction(FriendlyBarFunctions, TidyPlatesHubMenus.FriendlyBarModes, ColorFunctionByHealth, "By Health", "ByHealth")
+AddHubFunction(FriendlyBarFunctions, TidyPlatesHubMenus.FriendlyBarModes, ColorFunctionByReaction, "反应", "ByReaction")
+AddHubFunction(FriendlyBarFunctions, TidyPlatesHubMenus.FriendlyBarModes, ColorFunctionByClass, "职业", "ByClass")
+AddHubFunction(FriendlyBarFunctions, TidyPlatesHubMenus.FriendlyBarModes, ColorFunctionByHealth, "血量", "ByHealth")
 
 
 
@@ -473,22 +473,22 @@ local EnemyNameColorFunctions = {}
 TidyPlatesHubMenus.EnemyNameColorModes = {}
 TidyPlatesHubDefaults.EnemyNameColorMode = "Default"
 
-AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorDefault, "White", "Default")
-AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorByClass, "By Class", "ByClass")
-AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorByThreat, "By Threat", "ByThreat")
-AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorByReaction, "By Reaction", "ByReaction")
-AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, ColorFunctionByHealth, "By Health", "ByHealth")
-AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, ColorFunctionByLevelColor, "By Level Color", "ByLevel")
-AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorBySignificance, "By Normal/Elite/Boss", "ByElite")
+AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorDefault, "白", "Default")
+AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorByClass, "职业", "ByClass")
+AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorByThreat, "仇恨", "ByThreat")
+AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorByReaction, "反应", "ByReaction")
+AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, ColorFunctionByHealth, "血量", "ByHealth")
+AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, ColorFunctionByLevelColor, "等级颜色", "ByLevel")
+AddHubFunction(EnemyNameColorFunctions, TidyPlatesHubMenus.EnemyNameColorModes, NameColorBySignificance, "普通/精英/Boss", "ByElite")
 
 local FriendlyNameColorFunctions = {}
 TidyPlatesHubMenus.FriendlyNameColorModes = {}
 TidyPlatesHubDefaults.FriendlyNameColorMode = "Default"
 
-AddHubFunction(FriendlyNameColorFunctions, TidyPlatesHubMenus.FriendlyNameColorModes, NameColorDefault, "White", "Default")
-AddHubFunction(FriendlyNameColorFunctions, TidyPlatesHubMenus.FriendlyNameColorModes, NameColorByClass, "By Class", "ByClass")
-AddHubFunction(FriendlyNameColorFunctions, TidyPlatesHubMenus.FriendlyNameColorModes, NameColorByReaction, "By Reaction", "ByReaction")
-AddHubFunction(FriendlyNameColorFunctions, TidyPlatesHubMenus.FriendlyNameColorModes, ColorFunctionByHealth, "By Health", "ByHealth")
+AddHubFunction(FriendlyNameColorFunctions, TidyPlatesHubMenus.FriendlyNameColorModes, NameColorDefault, "白", "Default")
+AddHubFunction(FriendlyNameColorFunctions, TidyPlatesHubMenus.FriendlyNameColorModes, NameColorByClass, "职业", "ByClass")
+AddHubFunction(FriendlyNameColorFunctions, TidyPlatesHubMenus.FriendlyNameColorModes, NameColorByReaction, "反应", "ByReaction")
+AddHubFunction(FriendlyNameColorFunctions, TidyPlatesHubMenus.FriendlyNameColorModes, ColorFunctionByHealth, "血量", "ByHealth")
 
 
 TidyPlatesHubDefaults.FriendlyHeadlineColor = "ByReaction"

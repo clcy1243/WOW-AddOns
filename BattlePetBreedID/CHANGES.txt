@@ -1,7 +1,7 @@
-changeset:   157:9b773513ef16
-tag:         v1.11.2
+changeset:   161:1fef19dc6186
+tag:         v1.11.4
 user:        MMOSimca
-date:        Wed Sep 13 14:54:23 2017 -0400
-summary:     Added stat and breed data for Shadow. Added breed data for Felclaw Marsuul.
+date:        Wed Oct 25 13:33:42 2017 -0400
+summary:     Fixed a minor bug with array initialization that could occur when mousing over a pet you didn't own before doing anything else.
 
 

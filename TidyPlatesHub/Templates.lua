@@ -380,7 +380,7 @@ local yellow, blue, red, orange = "|cffffff00", "|cFF5599EE", "|cFFFF1100", "|cF
 local function PasteSettings(panel)
 	local cacheName, LocalVars
 
-	print(blue.."Settings Retrieved")
+	print(blue.."设置检索")
 
 	cacheName = "SavedTemplate"
 
@@ -405,7 +405,7 @@ local function CopySettings(panel)
 --]]
 
 	cacheName = "SavedTemplate"
-	print(blue.."Settings Stored")
+	print(blue.."设置保存")
 
 	-- Get a pointer for the cache set
 	LocalVars = GetCacheSet(cacheName)
@@ -424,8 +424,8 @@ local function ResetSettings(panel)
 	else
 		SetPanelValues(panel, TidyPlatesHubDefaults)
 		OnPanelItemChange(panel)
-		print(yellow.."Resetting "..orange..panel.name..yellow.." Configuration to Default")
-		print(yellow.."Holding down "..blue.."Shift"..yellow.." while clicking "..red.."Reset"..yellow.." will clear all saved settings, cached data, and reload the user interface.")
+		print(yellow.."重置 "..orange.."Tidy Plates"..yellow.." 默认主题选择")
+		print(yellow.."按住 "..blue.."Shift"..yellow.." 同时点击 "..red.."重新配置"..yellow.." 将清除您的已保存的设置,并重新加载用户界面.")
 	end
 end
 
@@ -504,7 +504,7 @@ local function CreateInterfacePanel( objectName, panelTitle, parentFrameName)
 	local WarningFixButton = CreateFrame("Button", objectName.."WarningFixButton", panel.WarningFrame, "TidyPlatesPanelButtonTemplate")
 	WarningFixButton:SetPoint("RIGHT", -10, 0)
 	WarningFixButton:SetWidth(150)
-        WarningFixButton:SetText("Fix Problem...")
+        WarningFixButton:SetText("修复问题...")
 
 
 	-- Main Scrolled Frame
@@ -569,32 +569,32 @@ local function CreateInterfacePanel( objectName, panelTitle, parentFrameName)
 
 	-- Paste
 	local PasteThemeDataButton = CreateFrame("Button", objectName.."PasteThemeDataButton", panel, "TidyPlatesPanelButtonTemplate")
-	PasteThemeDataButton.tooltipText = "Loads settings from the stored template"
+	PasteThemeDataButton.tooltipText = "加载保存的模板"
 	PasteThemeDataButton:SetPoint("TOPRIGHT", -40, -22)
 	PasteThemeDataButton:SetWidth(110)
 	PasteThemeDataButton:SetScale(.85)
-	PasteThemeDataButton:SetText("Load Template")
+	PasteThemeDataButton:SetText("载入模板")
 
 	PasteThemeDataButton:SetScript("OnClick", function() PasteSettings(panel); end)
 
 	-- Copy
 	local CopyThemeDataButton = CreateFrame("Button", objectName.."CopyThemeDataButton", panel, "TidyPlatesPanelButtonTemplate")
-	CopyThemeDataButton.tooltipText = "Set template using current settings"
+	CopyThemeDataButton.tooltipText = "将复制的模板用于当前配置"
 	---- This feature works between matching panel types (ie. Hub/Damage to Hub/Damage)
 	CopyThemeDataButton:SetPoint("TOPRIGHT", PasteThemeDataButton, "TOPLEFT", -4, 0)
 	CopyThemeDataButton:SetWidth(110)
 	CopyThemeDataButton:SetScale(.85)
-	CopyThemeDataButton:SetText("Save Template")
+	CopyThemeDataButton:SetText("保存模板")
 
 	CopyThemeDataButton:SetScript("OnClick", function() CopySettings(panel); end)
 
 	-- Reset
 	local ReloadThemeDataButton = CreateFrame("Button", objectName.."ReloadThemeDataButton", panel, "TidyPlatesPanelButtonTemplate")
-	ReloadThemeDataButton.tooltipText = "Resets the configuration to Default.  Holding down 'Shift' will also clear saved unit data, and restart your UI."
+	ReloadThemeDataButton.tooltipText = "重置并还原成默认配置.  按住'Shift'也能清除配置并重载UI."
 	ReloadThemeDataButton:SetPoint("TOPRIGHT", CopyThemeDataButton, "TOPLEFT", -4, 0)
 	ReloadThemeDataButton:SetWidth(60)
 	ReloadThemeDataButton:SetScale(.85)
-	ReloadThemeDataButton:SetText("Reset")
+	ReloadThemeDataButton:SetText("重置")
 
 	ReloadThemeDataButton:SetScript("OnClick", function()
 		PlaySound("igMainMenuOptionCheckBoxOn"); ResetSettings(panel);
@@ -606,7 +606,7 @@ local function CreateInterfacePanel( objectName, panelTitle, parentFrameName)
 	BookmarkButton:SetPoint("TOPRIGHT", ReloadThemeDataButton, "TOPLEFT", -4, 0)
 	BookmarkButton:SetWidth(110)
 	BookmarkButton:SetScale(.85)
-	BookmarkButton:SetText("Categories")
+	BookmarkButton:SetText("类别")
 
 
 	local function OnClickBookmark(frame)
@@ -727,11 +727,11 @@ local function CreateInterfacePanel( objectName, panelTitle, parentFrameName)
      		else
 				panel.ScrollFrame:SetPoint("TOP", panel.WarningFrame, "BOTTOM", 0, -8 )     -- Warning
                 panel.WarningFrame:Show()
-                panel.Warnings.Text:SetText("It appears that you're not using a Hub-compatible Theme.")
+                panel.Warnings.Text:SetText("你目前使用着不兼容的主题.")
                 panel.Warnings.Text:SetTextColor(1, 1, 1)
                 panel.Warnings.Text:SetFont(font, 18)
 
-                WarningFixButton:SetText("Change Theme...")
+                WarningFixButton:SetText("更换主题...")
                 WarningFixButton:SetScript("OnClick", OpenTidyPlatesConfig)
             end
 

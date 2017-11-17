@@ -17,7 +17,9 @@ local lootTable = {}
 local session = 0
 local guildInfo = {}
 local debugPawn = false
-local debugRCScore = false
+local debugRCScore = true
+
+local unpack, pairs, ipairs, UnitGUID = unpack, pairs, ipairs, UnitGUID
 
 function EU:OnInitialize()
    self:RegisterComm("RCLootCouncil")
@@ -36,17 +38,17 @@ function EU:OnInitialize()
             spec =            { enabled = false, pos = 1,  width = 20, func = self.SetCellSpecIcon, name = ""},
             bonus =           { enabled = false, pos = 100, width = 40, func = self.SetCellBonusRoll, name = LE["Bonus"]},
             guildNotes =      { enabled = false, pos = -1, width = 45, func = self.SetCellGuildNote, name = LE["GuildNote"]},
-            --rcscore =         { enabked = false, pos = 16, width = 50, func = self.SetCellRCScore, name = "RC Score"},
+            rcscore =         { enabked = false, pos = 16, width = 50, func = self.SetCellRCScore, name = "RC Score"},
          },
          normalColumns = {
             class =  { enabled = true, name = LE.Class, width = 20},
-            rank =   { enabled = true, name = L.Rank, width = 95,},
-            role =   { enabled = true, name = L.Role, width = 55},
-            ilvl =   { enabled = true, name = L.ilvl, width = 45,},
+            rank =   { enabled = true, name = _G.RANK, width = 95,},
+            role =   { enabled = true, name = _G.ROLE, width = 55},
+            ilvl =   { enabled = true, name = _G.ITEM_LEVEL_ABBR, width = 45,},
             diff =   { enabled = true, name = L.Diff, width = 40},
-            roll =   { enabled = true, name = L.Roll, width = 30},
+            roll =   { enabled = true, name = _G.ROLL, width = 30},
 
-            name =   { enabled = "", name = L.Name, width = 120},
+            name =   { enabled = "", name = _G.NAME, width = 120},
             response={ enabled = "", name = L.Response, width = 240,},
             gear1 =  { enabled = "", name = L.g1, width = 20},
             gear2 =  { enabled = "", name = L.g2, width = 20},
@@ -122,7 +124,7 @@ function EU:OnInitialize()
       }
    }
    -- The order of which the new cols appear in the advanced options
-   self.optionsColOrder = {"pawn", "traits","upgrades","sockets",--[["setPieces",]] "titanforged","legendaries","ilvlUpgrade", "spec","bonus","guildNotes"}--,"rcscore"}
+   self.optionsColOrder = {"pawn", "traits","upgrades","sockets",--[["setPieces",]] "titanforged","legendaries","ilvlUpgrade", "spec","bonus","guildNotes",--[["rcscore"]]}
    -- The order of which the normal cols appear ANYWHERE in the options
    self.optionsNormalColOrder = {"class","name","rank","role","response","ilvl","diff","gear1","gear2","votes","vote","note","roll"}
 
@@ -317,9 +319,9 @@ function EU:HandleExternalRequirements()
       self.db.columns.pawn.enabled = false
    end
    -- RCScore
-   -- if self.db.columns.rcscore.enabled and not (Details or Recount or Skada) then
-   --    self.db.columns.rcscore.enabled = false
-   -- end
+   if self.db.columns.rcscore.enabled and not (Details or Recount or Skada) then
+      self.db.columns.rcscore.enabled = false
+   end
 end
 
 --- Adds or removes a column based on its name in self.db.columns/normalColumns
@@ -546,16 +548,16 @@ end
 -- A 10 value gradient going from 1-3: red ->4-7: yellow -> 8-10: green
 local colorGradient = {
    [0] = {0.7, 0.7,0.7}, -- 0 #b2b2b2
-   {0.7, 0, 0},      -- 1  #b20000
-   {0.6, 0.1, 0},    -- 2  #991900
-   {0.6, 0.2, 0},    -- 3  #993300
-   {0.6, 0.4, 0},    -- 4  #996600
-   {1,1,0},          -- 5  #ffff00
-   {1, 1, 0},        -- 6  #ffff00
-   {0.8,1,0},        -- 7  #ccff00
-   {0.5,1,0},        -- 8  #7fff00
-   {0.3,1,0},        -- 9  #4cff00
-   {0,1,0},          -- 10 #00ff00
+      {0.7, 0, 0},      -- 1  #b20000
+      {0.6, 0.1, 0},    -- 2  #991900
+      {0.6, 0.2, 0},    -- 3  #993300
+      {0.6, 0.4, 0},    -- 4  #996600
+      {1,1,0},          -- 5  #ffff00
+      {1, 1, 0},        -- 6  #ffff00
+      {0.8,1,0},        -- 7  #ccff00
+      {0.5,1,0},        -- 8  #7fff00
+      {0.3,1,0},        -- 9  #4cff00
+      {0,1,0},          -- 10 #00ff00
 }
 
 -- Returns a Pawn score calculated based on the select scale in the EU options
@@ -659,9 +661,9 @@ function EU.SetCellPawn(rowFrame, frame, data, cols, row, realrow, column, fShow
    end
    data[realrow].cols[column].value = score or 0
    if EU.db.pawnNormalMode then
-      frame.text:SetText(score and addon.round(score,1) or L["None"])
+      frame.text:SetText(score and addon.round(score,1) or _G.NONE)
    else
-      frame.text:SetText(score and (addon.round(score,1).."%") or L["None"])
+      frame.text:SetText(score and (addon.round(score,1).."%") or _G.NONE)
    end
    local color
    if EU.db.pawnNormalMode then
@@ -771,7 +773,7 @@ function EU.SetCellGuildNote(rowFrame, frame, data, cols, row, realrow, column, 
 	f:SetPoint("CENTER", frame, "CENTER")
    if guildInfo and guildInfo[name] then
       f:SetNormalTexture("Interface/BUTTONS/UI-GuildButton-PublicNote-Up.png")
-		f:SetScript("OnEnter", function() addon:CreateTooltip(L["Note"], guildInfo[name][1], " ", LE["Officer Note"], guildInfo[name][2])	end)
+		f:SetScript("OnEnter", function() addon:CreateTooltip(_G.LABEL_NOTE, guildInfo[name][1], " ", LE["Officer Note"], guildInfo[name][2])	end)
 		f:SetScript("OnLeave", function() addon:HideTooltip() end)
 		data[realrow].cols[column].value = 1 -- Set value for sorting compability
    else
@@ -802,40 +804,69 @@ local function getHealerRCScore(hps, ilvl)
    return 100 * hps / ((ilvl % 893 / 3 + 1) * 70234 + 376532)
 end
 
-local function getDPSFromLastFight(role, name)
+function EU.getDPSFromLastFight(role, name)
    local dps = 0
    if Details then
       local combat = Details:GetCurrentCombat()
       if combat then
-         if role == "HEALER" then
-            -- look for hps
-            local healingActor = combat:GetActor (DETAILS_ATTRIBUTE_HEAL, Ambiguate(name, "short"))
+         if role == "HEALER" then -- look for hps
+            local healingActor = combat:GetActor (DETAILS_ATTRIBUTE_HEAL, Ambiguate(name, "none"))
             dps = healingActor and (healingActor.total / healingActor:Tempo()) or 0
          else -- Look for dps
-            local damageActor = combat:GetActor (DETAILS_ATTRIBUTE_DAMAGE, Ambiguate(name, "short"))
+            local damageActor = combat:GetActor (DETAILS_ATTRIBUTE_DAMAGE, Ambiguate(name, "none"))
             dps = damageActor and (damageActor.total / damageActor:Tempo()) or 0
          end
       end
-   elseif Recount then
-      addon:Debug("Has Recount, not implemented")
-      -- TODO
-      if role == "HEALER" then
-         -- look for hps
-
-      else -- Look for dps
-
+      if debugRCScore then addon:Debug("Details:", dps) end
+   end
+   if Recount then
+      local data = Recount.db2.combatants[Ambiguate(name, "none")]
+      if data then
+         if role == "HEALER" then
+            _,dps = Recount:MergedPetHealingDPS(data, "LastFightData")
+         else -- Look for dps
+            _,dps = Recount:MergedPetDamageDPS(data, "LastFightData")
+         end
+      else
+         addon:Debug("No last fight in Recount for", name)
       end
-   elseif Skada then
-      addon:Debug("Has Skada, not implemented")
-      -- TODO
-      if role == "HEALER" then
-         -- look for hps
-
-      else -- Look for dps
-
+      if debugRCScore then addon:Debug("Recount:",dps) end
+   end
+   if Skada then
+      -- It seems Skada has no consistency in where its data is stored
+      local last
+      if Skada.last then -- so far so good
+         local guid = UnitGUID(Ambiguate(name, "short"))
+         if Skada.last._playeridx then
+            last = Skada.last._playeridx[guid]
+         else
+            for _,data in ipairs(Skada.last.players) do
+               if data.id == guid then
+                  last = data
+                  break
+               end
+            end
+         end
+      else
+         if #Skada.char.sets > 0 then
+            for _, data in pairs(Skada.char.sets[1].players) do
+               if addon:UnitIsUnit(data.name, name) then
+                  last = data
+                  break
+               end
+            end
+         end
       end
-   else
-      addon:Debug("No Damage meter installed?!")
+      if last then
+         if role == "HEALER" then
+            dps = last.healing / last.time or 1
+         else -- Look for dps
+            dps = last.damage / last.time or 1
+         end
+      else
+         addon:Debug("No last fight for Skada for ",name)
+      end
+      if debugRCScore then addon:Debug("Skada:",dps) end
    end
    return dps
 end
@@ -849,7 +880,7 @@ function EU.SetCellRCScore(rowFrame, frame, data, cols, row, realrow, column, fS
       local score = EU.votingFrame:GetCandidateData(session, name, "RCScore")
       if not score then -- Calculate it
          local role = EU.votingFrame:GetCandidateData(session, name, "role")
-         local dps = getDPSFromLastFight(role, name)
+         local dps = EU.getDPSFromLastFight(role, name)
          if debugRCScore then addon:Debug("Role, dps:", role, dps) end
          if role == "DAMAGER" or role == "NONE" then
             score = getDPSRCScore2(dps, ilvl)

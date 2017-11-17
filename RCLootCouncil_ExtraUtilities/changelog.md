@@ -1,3 +1,8 @@
+### v0.6.1
+---
+* Prepared for RCLootCouncil v2.7 changes.
+
+
 ### v0.6.0
 ---
 * **EPGP**
