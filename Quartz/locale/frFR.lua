@@ -48,8 +48,6 @@ L["Cast Start Side"] = "Côté de début d'incantation"
 L["Cast Time Precision"] = "Précision du temps d'incantion"
 L["Casting"] = "Lancement"
 L["Center"] = "Centre"
---Translation missing 
--- L["Center (Backdrop)"] = "Center (Backdrop)"
 L["Center (CastBar)"] = "Centrer (Barre de sort)"
 L["Change Border Style"] = "Changer le style de bordure"
 L["Change Color"] = "Changer la couleur"
