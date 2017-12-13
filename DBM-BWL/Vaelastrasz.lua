@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Vaelastrasz", "DBM-BWL", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 629 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 637 $"):sub(12, -3))
 mod:SetCreatureID(13020)
 mod:SetEncounterID(611)
 mod:SetModelID(13992)
@@ -13,7 +13,8 @@ mod:RegisterEvents(
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 23461",
-	"SPELL_AURA_APPLIED 18173"
+	"SPELL_AURA_APPLIED 18173",
+	"SPELL_AURA_REMOVED 18173"
 )
 
 local warnBreath			= mod:NewCastAnnounce(23461, 2, nil, nil, "Tank", 2)
@@ -43,6 +44,12 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			warnAdrenaline:Show(args.destName)
 		end
+	end
+end
+
+function mod:SPELL_AURA_REMOVED(args)
+	if args.spellId == 18173 then
+		timerAdrenaline:Stop(args.destName)
 	end
 end
 

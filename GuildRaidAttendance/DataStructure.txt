@@ -1,0 +1,97 @@
+|TINTERFACE\\MONEYFRAME\\UI-SILVERICON.BLP:0|t
+╔========================╗
+‖      GRA_RaidLogs      ‖
+╚========================╝
+GRA_RaidLogs = {
+	date(string) = {
+		["startTime"] = (string),
+		["attendees"] = {
+			playerName(string) = {attendance("PRESENT", "LATE"), joinTime(number)},
+		},
+		["absentees"] = {
+			playerName(string) = reason(string),
+		},
+		["details"] = {
+			-- EPGP
+			{"EP"/"GP", ep/gp, reason(string)/itemLink, {playerName...}},
+			{"PEP"/"PGP", value, reason(string), {playerName...}},
+			-- Non-EPGP (fake GP)
+			{"GP", 0, reason(string)/itemLink, {playerName}, note},
+		},
+	},
+}
+
+╔========================╗
+‖      GRA_Roster        ‖
+╚========================╝
+GRA_Roster = {
+	["playerName"] = {
+		["ilvl"] = {equipped, average},
+		["class"] = (string),
+		["att30"] = {present(number), absent(number)},
+		["att60"] = {present(number), absent(number)},
+		["att90"] = {present(number), absent(number)},
+		["attLifetime"] = {present(number), absent(number), late(number), onLeave(number)},
+		["EP"] = (number),
+		["GP"] = (number),
+	},
+}
+
+╔========================╗
+‖       GRA_Config       ‖
+╚========================╝
+GRA_Config = {
+	["raidInfo"] = {
+		["name"] = (string),
+		["EPGP"] = {baseGP, minEP, decay},
+		["startTime"] = "19:30",
+		["days"]={4,5,1,2},
+	},
+	["lastRaidDate"] = (string),
+	["startDate"] = (string),
+	["enableLootDistr"] = (boolean),
+	["replies"] = {reply1, reply2, reply3, ...},
+	["notes"] = {note1, note2, note3, ...},
+}
+
+╔========================╗
+‖      GRA_Variables     ‖
+╚========================╝
+GRA_Variables = {
+	["useAccountProfile"] = (boolean),
+	["minimalMode"] = (boolean),
+	["classFilter"] = {
+		["HUNTER"] = (boolean),
+		["WARRIOR"] = (boolean),
+		["SHAMAN"] = (boolean),
+		["MAGE"] = (boolean),
+		["PRIEST"] = (boolean),
+		["ROGUE"] = (boolean),
+		["WARLOCK"] = (boolean),
+		["DEMONHUNTER"] = (boolean),
+		["DEATHKNIGHT"] = (boolean),
+		["DRUID"] = (boolean),
+		["MONK"] = (boolean),
+		["PALADIN"] = (boolean),
+	},
+	["sortKey"] = (string),
+	["columns"] = {
+		["AR_60"] = (boolean),
+		["AR_90"] = (boolean),
+		["AR_30"] = (boolean),
+		["AR_Lifetime"] = (boolean),
+	},
+}
+
+╔========================╗
+‖     GRA_A_Variables    ‖
+╚========================╝
+GRA_A_Variables = {
+	["minimap"] = {
+		["minimapPos"] = (number),
+		["hide"] = (boolean),
+	},
+	["size"] = (string),
+	["helpViewed"] = (boolean),
+	["useGameFont"] = (boolean),
+}

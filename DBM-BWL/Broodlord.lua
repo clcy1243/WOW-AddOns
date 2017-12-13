@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Broodlord", "DBM-BWL", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 627 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 637 $"):sub(12, -3))
 mod:SetCreatureID(12017)
 mod:SetEncounterID(612)
 mod:SetModelID(14308)
@@ -9,7 +9,8 @@ mod:RegisterCombat("combat_yell", L.Pull)--L.Pull is backup for classic, since c
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS 23331 18670",
-	"SPELL_AURA_APPLIED 24573"
+	"SPELL_AURA_APPLIED 24573",
+	"SPELL_AURA_REMOVED 24573"
 )
 
 local warnBlastWave		= mod:NewSpellAnnounce(23331, 2)
@@ -34,5 +35,11 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 24573 then
 		warnMortal:Show(args.destName)
 		timerMortal:Start(args.destName)
+	end
+end
+
+function mod:SPELL_AURA_REMOVED(args)
+	if args.spellId == 24573 then
+		timerMortal:Stop(args.destName)
 	end
 end

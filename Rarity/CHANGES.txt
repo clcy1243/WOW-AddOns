@@ -1,12 +1,9 @@
 ------------------------------------------------------------------------
-r606 | Allara | 2017-09-27 11:36:10 -0500 (Wed, 27 Sep 2017) | 3 lines
+r612 | Cakechart | 2017-11-09 15:17:16 -0600 (Thu, 09 Nov 2017) | 1 line
 Changed paths:
-   M /trunk/Core.lua
    M /trunk/Locales.lua
    M /trunk/Options_Defaults.lua
 
-- Disgusting Oozeling: Added Swamp of Sorrows to the zone list
-- Added Wondrous Wisdomball, Model D1-BB-L3R, Thistleleaf Adventurer, Environeer Bert, Thistleleaf Adventurer, Warmage Silva, Sylvia Hartshorn, Experiment-In-A-Jar, Shadowy Pile of Bones, Rough-Hewn Remote, Severed Tentacle, Puddle of Black Liquid, Elementium Back Plate, Vibrating Stone, Fandral's Pet Carrier, Cinderweb Egg, Smoldering Treat, Odd Twilight Egg, Twilight Summoning Portal, Lesser Circle of Binding, Zephyr's Call, Breezy Essence, Pilfered Sweeper (thanks, Urtgard!)
-- No items in Rarity are marked as repeatable out of the box now
+- Added Argus collectibles
 ------------------------------------------------------------------------
 

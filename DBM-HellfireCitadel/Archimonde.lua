@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1438, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 13 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 21 $"):sub(12, -3))
 mod:SetCreatureID(91331)--Doomfire Spirit (92208), Hellfire Deathcaller (92740), Felborne Overfiend (93615), Dreadstalker (93616), Infernal doombringer (94412)
 mod:SetEncounterID(1799)
 mod:SetZone()
@@ -235,8 +235,15 @@ end
 local updateInfoFrame
 do
 	local lines = {}
+	local sortedLines = {}
+	local function addLine(key, value)
+		-- sort by insertion order
+		lines[key] = value
+		sortedLines[#sortedLines + 1] = key
+	end
 	updateInfoFrame = function()
 		table.wipe(lines)
+		table.wipe(sortedLines)
 		local total = 0
 		for i = 1, #felburstTargets do
 			if i == 9 then break end--It's a wipe, plus can't do more than 8 of these with icons
@@ -244,7 +251,7 @@ do
 			local uId = DBM:GetRaidUnitId(name)
 			if uId and UnitDebuff(uId, felburstDebuff) then
 				total = total + 1
-				lines[name] = i
+				addLine(name, i)
 			end
 		end
 		for i = 1, #shacklesTargets do
@@ -252,13 +259,13 @@ do
 			local uId = DBM:GetRaidUnitId(name)
 			if uId and UnitDebuff(uId, shackledDebuff) then
 				total = total + 1
-				lines[name] = i
+				addLine(name, i)
 			end
 		end
 		if total == 0 then--None found, hide infoframe because all broke
 			DBM.InfoFrame:Hide()
 		end
-		return lines
+		return lines, sortedLines
 	end
 end
 

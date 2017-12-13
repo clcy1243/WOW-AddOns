@@ -3,12 +3,9 @@ if not L then return end
 
 --Translation missing 
 -- L["STRING_BRESS"] = ""
---Translation missing 
--- L["STRING_DEATH_DESC"] = ""
---Translation missing 
--- L["STRING_DEATHS"] = ""
---Translation missing 
--- L["STRING_ENCOUNTER_MAXSEGMENTS"] = ""
+L["STRING_DEATH_DESC"] = "Показать панель, содержащую смерть игрока."
+L["STRING_DEATHS"] = "Смерти"
+L["STRING_ENCOUNTER_MAXSEGMENTS"] = "Текущая схватка макс. сегментов"
 --Translation missing 
 -- L["STRING_ENCOUNTER_MAXSEGMENTS_DESC"] = ""
 --Translation missing 
@@ -21,42 +18,28 @@ if not L then return end
 -- L["STRING_ENDURANCE_DESC"] = ""
 --Translation missing 
 -- L["STRING_FLAWLESS"] = ""
---Translation missing 
--- L["STRING_HEROIC"] = ""
---Translation missing 
--- L["STRING_HEROIC_DESC"] = ""
---Translation missing 
--- L["STRING_LATEST"] = ""
---Translation missing 
--- L["STRING_MYTHIC"] = ""
---Translation missing 
--- L["STRING_MYTHIC_DESC"] = ""
---Translation missing 
--- L["STRING_NORMAL"] = ""
---Translation missing 
--- L["STRING_NORMAL_DESC"] = ""
---Translation missing 
--- L["STRING_OPTIONS"] = ""
---Translation missing 
--- L["STRING_OVERALL_DEATHS_THRESHOLD"] = ""
+L["STRING_HEROIC"] = "Героический"
+L["STRING_HEROIC_DESC"] = "Записывает смерти, когда вы играете на героической сложности."
+L["STRING_LATEST"] = "Последний"
+L["STRING_MYTHIC"] = "Эпохальный"
+L["STRING_MYTHIC_DESC"] = "Записывает смерти, когда вы играете на эпохальной сложности."
+L["STRING_NORMAL"] = "Обычный"
+L["STRING_NORMAL_DESC"] = "Записывает смерти, когда вы играете на обычной сложности."
+L["STRING_OPTIONS"] = "Параметры"
+L["STRING_OVERALL_DEATHS_THRESHOLD"] = "Общий порог смерти"
 --Translation missing 
 -- L["STRING_OVERALL_DEATHS_THRESHOLD_DESC"] = ""
 --Translation missing 
 -- L["STRING_OVERTIME"] = ""
 --Translation missing 
 -- L["STRING_PLUGIN_DESC"] = ""
---Translation missing 
--- L["STRING_PLUGIN_NAME"] = ""
+L["STRING_PLUGIN_NAME"] = "Расширенный журнал смерти"
 --Translation missing 
 -- L["STRING_PLUGIN_WELCOME"] = ""
---Translation missing 
--- L["STRING_RAIDFINDER"] = ""
---Translation missing 
--- L["STRING_RAIDFINDER_DESC"] = ""
---Translation missing 
--- L["STRING_RESET"] = ""
---Translation missing 
--- L["STRING_SURVIVAL"] = ""
+L["STRING_RAIDFINDER"] = "Поиск рейда"
+L["STRING_RAIDFINDER_DESC"] = "Записывает смерти, когда вы играете в поиске рейда."
+L["STRING_RESET"] = "Сброс данных"
+L["STRING_SURVIVAL"] = "Выживание"
 --Translation missing 
 -- L["STRING_TIMELINE_DEATHS_THRESHOLD"] = ""
 --Translation missing 

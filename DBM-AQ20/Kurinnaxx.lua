@@ -1,15 +1,16 @@
 local mod	= DBM:NewMod("Kurinnaxx", "DBM-AQ20", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 625 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 637 $"):sub(12, -3))
 mod:SetCreatureID(15348)
 mod:SetEncounterID(718)
 mod:SetModelID(15742)
 mod:RegisterCombat("combat")
 
-mod:RegisterEvents(
+mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 25646 25656",
-	"SPELL_AURA_APPLIED_DOSE 25646"
+	"SPELL_AURA_APPLIED_DOSE 25646 25656",
+	"SPELL_AURA_REMOVED 25646"
 )
 
 local warnWound			= mod:NewStackAnnounce(25646, 3, nil, "Tank")
@@ -46,3 +47,11 @@ function mod:SPELL_AURA_APPLIED(args)
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
+
+function mod:SPELL_AURA_REMOVED(args)
+	if args.spellId == 25646 then
+		timerWound:Stop(args.destName)
+	elseif args.spellId == 25656 then
+		timerSandTrap:Stop(args.destName)
+	end	
+end

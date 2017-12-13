@@ -663,8 +663,6 @@ L["STRING_MINITUTORIAL_OPTIONS_PANEL6"] = "Selezionare qui che finestra che si d
 --Translation missing 
 -- L["STRING_MODE_OPENFORGE"] = ""
 --Translation missing 
--- L["STRING_MODE_OPENGUILDDAMAGERANK"] = ""
---Translation missing 
 -- L["STRING_MODE_PLUGINS"] = ""
 --Translation missing 
 -- L["STRING_MODE_RAID"] = ""

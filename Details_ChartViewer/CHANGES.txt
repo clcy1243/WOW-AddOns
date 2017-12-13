@@ -1,7 +1,7 @@
-changeset:   44:7a10ce3aa666
-tag:         v7.3.0.044
+changeset:   48:5c366c2479aa
+tag:         v7.3.2.048
 user:        Tercio
-date:        Sat Sep 02 12:38:32 2017 -0300
-summary:     - ToC Update.
+date:        Sat Dec 09 09:28:21 2017 -0200
+summary:     - Make the frame fit correctly inside the plugin window at Details!.
 
 

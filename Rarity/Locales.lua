@@ -1077,13 +1077,52 @@ L["Breezy Essence"] = true
 L["Pilfered Sweeper"] = true
 
 
-
-
-
-
-
-
-
+L["Lambent Mana Ray"] = true
+L["Maddened Chaosrunner"] = true
+L["Vile Fiend"] = true
+L["Crimson Slavermaw"] = true
+L["Biletooth Gnasher"] = true
+L["Acid Belcher"] = true
+L["Has a chance to drop from either %s or %s in Antoran Wastes. Each of them can be looted once per day."] = true
+L["Wrangler Kravos"] = true
+L["Skreeg the Devourer"] = true
+L["Vrax'thul"] = true
+L["Puscilla"] = true
+L["Blistermaw"] = true
+L["Houndmaster Kerrax"] = true
+L["Venomtail Skyfin"] = true
+L["Fel-Spotted Egg"] = true
+L["Dropped by the panthara rares on Argus. Has a chance to hatch into one of four Mana Ray mounts as well as one of two Skyfin pets after five days."] = true
+L["Contained in Cracked Fel-Spotted Egg, which is obtained by defeating any of the panthara rares on Argus, looting a Fel-Spotted Egg from them, and waiting five days. Each mount has a 6% chance to appear in the Cracked Fel-Spotted Egg, and each pet has a 20% chance to appear in it."] = true
+L["Scintillating Mana Ray"] = true
+L["Felglow Mana Ray"] = true
+L["Darkspore Mana Ray"] = true
+L["Vibrant Mana Ray"] = true
+L["Docile Skyfin"] = true
+L["Fel-Afflicted Skyfin"] = true
+L["Varga"] = true
+L["Naroua"] = true
+L["Sabuul"] = true
+L["Baarut the Brisk"] = true
+L["Baarut the Bloodthirsty"] = true
+L["Legion Communication Orb"] = true
+L["Doomcaster Suprax"] = true
+L["Blue Conservatory Scroll"] = true
+L["Yellow Conservatory Scroll"] = true
+L["Red Conservatory Scroll"] = true
+L["Instructor Tarahna"] = true
+L["Spire of Spite"] = true
+L["Sister Subversiva"] = true
+L["S.F.E. Interceptor"] = true
+L["Squadron Commander Vishax"] = true
+L["Micro-Artillery Controller"] = true
+L["Wrath-Lord Yarez"] = true
+L["Rebellious Imp"] = true
+L["Mother Rosula"] = true
+L["Grasping Manifestation"] = true
+L["Ataxon"] = true
+L["Uuna's Doll"] = true
+L["The Many-Faced Devourer"] = true
 
 
 --[[

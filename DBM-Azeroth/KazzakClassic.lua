@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("KazzakClassic", "DBM-Azeroth")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 633 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 636 $"):sub(12, -3))
 mod:SetCreatureID(121818)--121818 TW ID, need classic ID
 --mod:SetModelID(17887)
 mod:SetZone()
@@ -22,7 +22,7 @@ local warningShadowBoltVolley	= mod:NewSpellAnnounce(243712, 2)
 
 local specWarnMark				= mod:NewSpecialWarningMoveAway(243723, nil, nil, nil, 1, 2)
 
-local timerVoidBoltCD			= mod:NewCDTimer(41.3, 243713, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)--Iffy
+local timerVoidBoltCD			= mod:NewCDTimer(20.8, 243713, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)--Iffy
 local timerMarkCD				= mod:NewCDTimer(22.2, 243723, nil, nil, nil, 3, nil, DBM_CORE_MAGIC_ICON)
 local timerShadowBoltVolleyCD	= mod:NewCDTimer(11, 243712, nil, nil, nil, 2)
 
@@ -32,9 +32,9 @@ local voiceMark					= mod:NewVoice(243723)--runout
 
 function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then
+		timerVoidBoltCD:Start(8.3-delay)
 		timerShadowBoltVolleyCD:Start(11.5-delay)
-		timerMarkCD:Start(17.5-delay)
-		timerVoidBoltCD:Start(23-delay)
+		timerMarkCD:Start(14.1-delay)
 	end
 end
 

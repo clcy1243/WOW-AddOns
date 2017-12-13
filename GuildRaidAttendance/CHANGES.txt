@@ -1,0 +1,38 @@
+lightweight tag d2264d6a442756e72ddd407b81f8345b22ffa56a r74-release
+Author:	KevinSK <shinozakisama@live.com>
+Date:	Wed Dec 13 05:22:28 2017 +0800
+
+commit d2264d6a442756e72ddd407b81f8345b22ffa56a
+Author: KevinSK <shinozakisama@live.com>
+Date:   Wed Dec 13 05:22:28 2017 +0800
+
+    Bump up TOC
+
+commit a83344424d63f991f92c35aaa4594b66bd58720e
+Author: KevinSK <shinozakisama@live.com>
+Date:   Wed Dec 13 05:17:49 2017 +0800
+
+    Increase the speed of sending roster and logs
+
+commit dc4be07ff96bbad47150b300e19fc937683ffb9e
+Author: KevinSK <shinozakisama@live.com>
+Date:   Tue Dec 12 08:47:12 2017 +0800
+
+    Prepare for DKP
+
+commit cc62e75c2f98f60c144a529b0ee7cbd6ad0b9da4
+Author: KevinSK <shinozakisama@live.com>
+Date:   Tue Dec 12 08:12:23 2017 +0800
+
+    Fix EPGP display
+    
+    Fixed EPGP display in sheet.
+    Added "Decay Now!" button.
+    Added "Decay EPGP" popup.
+
+commit 3852cb158135830a8e19ddc973c59f1e1aced621
+Author: KevinSK <shinozakisama@live.com>
+Date:   Mon Dec 11 06:48:08 2017 +0800
+
+    Fix profile bugs
+

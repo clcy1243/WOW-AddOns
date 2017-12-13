@@ -14,6 +14,26 @@ self:Wiki([[
 == Silent mode ==
 typing /ohc silent in chat will eliminate every chat message from OrderHallCommander
 ]])
+self:RelNotes(1,5,12,[[
+Fix: lua error when both sorts were on "Original method" Thanks to Septh for noting it
+Feature: added Squires'Oath for paladins
+]])
+self:RelNotes(1,5,11,[[
+Fix: Second sort was not working if not changed at least once in the current session
+Feature: Via Options now you can disable right click for blacklisting (Sponsorized by Katmandu)
+Fix: Removes Alpha warning (was due to a curse packager bug)
+Fix: #153 now closing mission panel with ESC also closes all OHC windows
+]])
+self:RelNotes(1,5,10,[[
+Feature: Added a second level sort criteria
+Fix: LeftSide Icon are now updates as soon as mission table appears
+Feature: Added itemid 140931 (Bandit wanted poster) to quick buttons
+Feature: For reputation rewards, your current reputation with the related faction is shown
+]])
+self:RelNotes(1,5,9,[[
+Feature: added more items to side bar
+Feature: removed from followerpage and moved to sidebar some items which doesnt need to be cast on a follower
+]])
 self:RelNotes(1,5,8,[[
 Fix: 1x OrderHallCommander\missionlist.lua:469: attempt to call method 'RefreshValue' (a nil value)
 ]])

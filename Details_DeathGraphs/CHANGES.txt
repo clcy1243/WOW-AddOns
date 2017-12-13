@@ -1,7 +1,7 @@
-changeset:   69:fb22264bb145
-tag:         v7.3.0.068
+changeset:   73:a5f63a5c8425
+tag:         v7.3.2.073
 user:        Tercio
-date:        Sat Oct 21 13:34:13 2017 -0200
-summary:     - Removed overall deaths feature.
+date:        Sat Dec 09 09:31:33 2017 -0200
+summary:     - Make the frame fit correctly inside the new plugin window in Details!.
 
 

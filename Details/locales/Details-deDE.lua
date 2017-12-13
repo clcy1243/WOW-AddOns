@@ -38,8 +38,7 @@ L["STRING_ATTRIBUTE_DAMAGE_FRAGS"] = "Todesstöße"
 L["STRING_ATTRIBUTE_DAMAGE_FRIENDLYFIRE"] = "Eigenbeschuss"
 L["STRING_ATTRIBUTE_DAMAGE_TAKEN"] = "Erlittener Schaden"
 L["STRING_ATTRIBUTE_ENERGY"] = "Ressourcen"
---Translation missing 
--- L["STRING_ATTRIBUTE_ENERGY_ALTERNATEPOWER"] = ""
+L["STRING_ATTRIBUTE_ENERGY_ALTERNATEPOWER"] = "Alternative Energie"
 L["STRING_ATTRIBUTE_ENERGY_ENERGY"] = "Erzeugte Energie"
 L["STRING_ATTRIBUTE_ENERGY_MANA"] = "Wiederhergestelltes Mana"
 L["STRING_ATTRIBUTE_ENERGY_RAGE"] = "Erzeugte Wut"
@@ -359,9 +358,7 @@ L["STRING_MIRROR_IMAGE"] = "Bilder spiegeln"
 L["STRING_MISS"] = "Verfehlen"
 L["STRING_MODE_ALL"] = "Alles"
 L["STRING_MODE_GROUP"] = "Standard"
---Translation missing 
--- L["STRING_MODE_OPENFORGE"] = ""
-L["STRING_MODE_OPENGUILDDAMAGERANK"] = "Schadensrangliste"
+L["STRING_MODE_OPENFORGE"] = "Aura Formen"
 L["STRING_MODE_PLUGINS"] = "Zusatzmodule"
 L["STRING_MODE_RAID"] = "Zusatzmodule: Schlachtzug"
 L["STRING_MODE_SELF"] = "Zusatzmodule: Solospiel"
@@ -410,8 +407,7 @@ L["STRING_OPTIONS_ALPHAMOD_ANCHOR"] = "Automatisch Verbergen:"
 L["STRING_OPTIONS_ALWAYS_USE"] = "Bei allen Charakteren benutzen"
 L["STRING_OPTIONS_ALWAYS_USE_DESC"] = "Wenn aktiviert, nutzen alle Charaktere das ausgewählte Profil. Andernfalls erscheint eine Anzeige, in der nach einem zu benutzenden Profil gefragt wird."
 L["STRING_OPTIONS_ALWAYSSHOWPLAYERS"] = "Alle Spieler anzeigen"
---Translation missing 
--- L["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"] = ""
+L["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"] = "Wenn du den standardmäßigen Standardmodus verwendest, zeigt er Spieler Charaktere an, auch wenn sie nicht in einer Gruppen mit dir sind. "
 L["STRING_OPTIONS_ANCHOR"] = "Seite"
 L["STRING_OPTIONS_ANIMATEBARS"] = "Balken animieren"
 L["STRING_OPTIONS_ANIMATEBARS_DESC"] = "Aktiviert Animationen für alle Balken."
@@ -654,8 +650,7 @@ L["STRING_OPTIONS_DEATHLIMIT"] = "Todesereignisanzahl"
 L["STRING_OPTIONS_DEATHLIMIT_DESC"] = [=[Stelle die Anzahl an Ereignissen für die Todesanzeige ein.
 
 |cFFFFFF00Wichtig|r: Wird nach der Änderung nur auf neue Tode angewendet.]=]
---Translation missing 
--- L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = ""
+L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = "Todes Protokoll Mindest Heilung"
 --Translation missing 
 -- L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = ""
 L["STRING_OPTIONS_DESATURATE_MENU"] = "Entfärbt"
@@ -847,8 +842,7 @@ L["STRING_OPTIONS_OVERALL_DUNGEONCLEAN"] = "Dungeon-Trash"
 L["STRING_OPTIONS_OVERALL_DUNGEONCLEAN_DESC"] = "Segmente mit abgräumtem Dungeon-Trash werden den Gesamtdaten zugefügt."
 L["STRING_OPTIONS_OVERALL_LOGOFF"] = "Beim Ausloggen löschen"
 L["STRING_OPTIONS_OVERALL_LOGOFF_DESC"] = "Aktiviert: Die Gesamtdaten werden automatisch beim Ausloggen des Charakters gelöscht."
---Translation missing 
--- L["STRING_OPTIONS_OVERALL_MYTHICPLUS"] = ""
+L["STRING_OPTIONS_OVERALL_MYTHICPLUS"] = "Beim Start einer Mythic+ löschen"
 --Translation missing 
 -- L["STRING_OPTIONS_OVERALL_MYTHICPLUS_DESC"] = ""
 L["STRING_OPTIONS_OVERALL_NEWBOSS"] = "Bei neuem Boss löschen"
@@ -1492,16 +1486,11 @@ L["STRING_SEGMENT_OVERALL"] = "Gesamtdaten"
 L["STRING_SEGMENT_START"] = "Start"
 L["STRING_SEGMENT_TRASH"] = "Trash abgräumt"
 L["STRING_SEGMENTS"] = "Segmente"
---Translation missing 
--- L["STRING_SEGMENTS_LIST_BOSS"] = ""
---Translation missing 
--- L["STRING_SEGMENTS_LIST_COMBATTIME"] = ""
---Translation missing 
--- L["STRING_SEGMENTS_LIST_OVERALL"] = ""
---Translation missing 
--- L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = ""
---Translation missing 
--- L["STRING_SEGMENTS_LIST_TOTALTIME"] = ""
+L["STRING_SEGMENTS_LIST_BOSS"] = "Boss Kampf"
+L["STRING_SEGMENTS_LIST_COMBATTIME"] = "Kampf Zeit"
+L["STRING_SEGMENTS_LIST_OVERALL"] = "Insgesamt"
+L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "Zeit im Kampf"
+L["STRING_SEGMENTS_LIST_TOTALTIME"] = "Ins gesamte Zeit"
 --Translation missing 
 -- L["STRING_SEGMENTS_LIST_TRASH"] = ""
 L["STRING_SHIELD_HEAL"] = "verhindert"

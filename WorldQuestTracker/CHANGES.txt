@@ -1,7 +1,7 @@
-changeset:   257:5f650be8d10f
-tag:         v7.3.0.257-release
+changeset:   263:2622a9548910
+tag:         v7.3.2.263-release
 user:        Tercio
-date:        Sun Oct 15 09:23:43 2017 -0200
-summary:     - Ticket #556: attempt to fix an issue started on latest update for portuguese localization.
+date:        Sat Dec 09 11:41:05 2017 -0200
+summary:     - Back to convert to raid if the quest is an epic quest (world boss).
 
 

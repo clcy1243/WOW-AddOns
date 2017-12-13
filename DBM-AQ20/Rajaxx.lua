@@ -1,19 +1,19 @@
 local mod	= DBM:NewMod("Rajaxx", "DBM-AQ20", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 625 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 637 $"):sub(12, -3))
 mod:SetCreatureID(15341)
 mod:SetEncounterID(719)
 mod:SetModelID(15376)
 mod:RegisterCombat("combat")
 
-mod:RegisterEvents(
+mod:RegisterEvents(--An exception to not use incombat events, cause boss might not engage until after his waves
 	"SPELL_AURA_APPLIED 25471",
 	"SPELL_CAST_SUCCESS 26550 25599",
 	"CHAT_MSG_MONSTER_YELL"
 )
 
-local warnWave			= mod:NewAnnounce("WarnWave", 2)
+local warnWave			= mod:NewAnnounce("WarnWave", 2, "Interface\\Icons\\Spell_Nature_WispSplode")
 local warnOrder			= mod:NewTargetAnnounce(25471)
 local warnCloud			= mod:NewSpellAnnounce(26550)
 local warnThundercrash	= mod:NewSpellAnnounce(25599)

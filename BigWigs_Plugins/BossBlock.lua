@@ -181,6 +181,8 @@ do
 		[549] = true, -- Gul'dan kill
 		[656] = true, -- Kil'jaeden kill
 		[682] = true, -- L'uras death
+		[686] = true, -- Argus portal
+		[688] = true, -- Argus kill
 	}
 
 	function plugin:PLAY_MOVIE(_, id)
@@ -214,6 +216,10 @@ do
 		["994:3"] = true, -- Highmaul, Kargath Death
 		["1042:1"] = true, -- Maw of Souls, after Ymiron
 		["1147:6"] = true, -- Tomb of Sargeras, portal to Kil'jaeden
+		["1188:1"] = true, -- Antorus, teleportation to "The burning throne"
+		["1188:6"] = true, -- Antorus, teleportation to "The exhaust"
+		["1188:9"] = true, -- Antorus, magni portal to argus room
+		
 	}
 
 	-- Cinematic skipping hack to workaround an item (Vision of Time) that creates cinematics in Siege of Orgrimmar.

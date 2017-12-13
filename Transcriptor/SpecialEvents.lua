@@ -33,12 +33,12 @@ tbl.specialEvents = {
 		},
 
 		-- [[ Antorus, the Burning Throne ]] --
-		[248995] = { -- Jet Packs
-			[124158] = "Intermission 1", -- Imonar
-		},
-		[248194] = { -- Jet Packs
-			[124158] = "Intermission 2", -- Imonar
-		},
+		--[248995] = { -- Jet Packs
+		--	[124158] = "Intermission 1", -- Imonar
+		--},
+		--[248194] = { -- Jet Packs
+		--	[124158] = "Intermission 2", -- Imonar
+		--},
 	},
 	["SPELL_AURA_APPLIED"] = {
 		--[[ Tomb of Sargeras ]]--
@@ -53,9 +53,9 @@ tbl.specialEvents = {
 		[246965] = { -- Haywire
 			[122778] = "Annihilator Haywire", -- Annihilator (Worldbreaker)
 		},
-		[246516] = { -- Apocalypse Protocol
-			[122578] = "Construction Stage", -- Kin'garoth
-		},
+		--[246516] = { -- Apocalypse Protocol
+		--	[122578] = "Construction Stage", -- Kin'garoth
+		--},
 		[244894] = { -- Corrupt Aegis
 			[121975] = function() -- Aggramar
 				return "Intermission ".. (tbl.data[1] or 1)
@@ -75,15 +75,15 @@ tbl.specialEvents = {
 		},
 
 		-- [[ Antorus, the Burning Throne ]] --
-		[248233] = { -- Conflagration
-			[124158] = "Stage 2", -- Imonar
-		},
-		[250135] = { -- Conflagration
-			[124158] = "Stage 3", -- Imonar
-		},
-		[246516] = { -- Apocalypse Protocol
-			[122578] = "Deployment Stage", -- Kin'garoth
-		},
+		--[248233] = { -- Conflagration
+		--	[124158] = "Stage 2", -- Imonar
+		--},
+		--[250135] = { -- Conflagration
+		--	[124158] = "Stage 3", -- Imonar
+		--},
+		--[246516] = { -- Apocalypse Protocol
+		--	[122578] = "Deployment Stage", -- Kin'garoth
+		--},
 		[244894] = { -- Corrupt Aegis
 			[121975] = function() -- Aggramar
 				tbl.data[1] = (tbl.data[1] or 1) + 1
@@ -105,6 +105,15 @@ tbl.specialEvents = {
 			[122367] = "Svirax Leaving", -- Admiral Svirax (High Command)
 			[122369] = "Ishkar Leaving", -- Chief Engineer Ishkar (High Command)
 			[122333] = "Erodus Leaving", -- General Erodus (High Command)
+		},
+		[255648] = { -- Golganneth's Wrath
+			[126268] = "Stage 2", -- Golganneth (Argus the Unmaker)
+		},
+		[257645] = { -- Temporal Blast
+			[125885] = "Stage 3", -- Aman'Thul (Argus the Unmaker)
+		},
+		[256542] = { -- Reap Soul
+			[124828] = "Stage 4", -- Argus the Unmaker
 		},
 	},
 	["SPELL_CAST_SUCCESS"] = {

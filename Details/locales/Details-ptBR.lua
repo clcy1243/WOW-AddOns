@@ -404,8 +404,6 @@ L["STRING_MODE_ALL"] = "Modo: Tudo"
 L["STRING_MODE_GROUP"] = "Modo: Padrão"
 --Translation missing 
 -- L["STRING_MODE_OPENFORGE"] = ""
---Translation missing 
--- L["STRING_MODE_OPENGUILDDAMAGERANK"] = ""
 L["STRING_MODE_PLUGINS"] = "plugins"
 L["STRING_MODE_RAID"] = "Plugins: Raide"
 L["STRING_MODE_SELF"] = "Plugins: Individuais"

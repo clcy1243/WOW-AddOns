@@ -15,7 +15,7 @@ local CVF = ChartViewer.Frame
 --> desc
 ChartViewer:SetPluginDescription (Loc ["STRING_PLUGIN_DESC"])
 
-local plugin_version = "v2.8" 
+local plugin_version = "v2.81" 
 
 local function CreatePluginFrames (data)
 
@@ -24,6 +24,14 @@ local function CreatePluginFrames (data)
 	insets = {left = 1, right = 1, top = 1, bottom = 1}})
 	ChartViewerWindowFrame:SetBackdropColor (unpack (_detalhes.PluginDefaults and _detalhes.PluginDefaults.BackdropColor or {0, 0, 0, .6}))
 	ChartViewerWindowFrame:SetBackdropBorderColor (unpack (_detalhes.PluginDefaults and _detalhes.PluginDefaults.BackdropBorderColor or {0, 0, 0, 1}))
+	
+	ChartViewerWindowFrame.bg1 = ChartViewerWindowFrame:CreateTexture (nil, "background")
+	ChartViewerWindowFrame.bg1:SetTexture ([[Interface\AddOns\Details\images\background]], true)
+	ChartViewerWindowFrame.bg1:SetAlpha (0.7)
+	ChartViewerWindowFrame.bg1:SetVertexColor (0.27, 0.27, 0.27)
+	ChartViewerWindowFrame.bg1:SetVertTile (true)
+	ChartViewerWindowFrame.bg1:SetHorizTile (true)
+	ChartViewerWindowFrame.bg1:SetAllPoints()	
 
 	local c = CreateFrame ("Button", "ChartViewerWindowFrameCloseButton", ChartViewerWindowFrame, "UIPanelCloseButton")
 	c:SetWidth (20)
@@ -462,7 +470,7 @@ end
 		frame:SetToplevel (true)
 	
 		--> using details framework
-		local chart_panel = ChartViewer:GetFramework():CreateChartPanel (frame, frame:GetWidth()-20, 318)
+		local chart_panel = ChartViewer:GetFramework():CreateChartPanel (frame, frame:GetWidth()-20, frame:GetHeight()-20, "ChartViewerWindowFrameChartFrame") --318
 		chart_panel:SetPoint ("topleft", frame, "topleft", 8, -65)
 		chart_panel:SetTitle ("")
 		chart_panel:SetFrameStrata ("HIGH")
@@ -471,33 +479,33 @@ end
 		chart_panel:HideCloseButton()
 		chart_panel:RightClickClose (false)
 		
-		chart_panel:SetScript ("OnMouseDown", function (self, button)
-			if (button == "LeftButton") then
-				if (not frame.isMoving) then
-					frame.isMoving = true
-					frame:StartMoving()
+		if (not DetailsPluginContainerWindow) then
+			chart_panel:SetScript ("OnMouseDown", function (self, button)
+				if (button == "LeftButton") then
+					if (not frame.isMoving) then
+						frame.isMoving = true
+						frame:StartMoving()
+					end
+				elseif (button == "RightButton") then
+					if (not frame.isMoving) then
+						frame:Hide()
+					end
 				end
-			elseif (button == "RightButton") then
-				if (not frame.isMoving) then
-					frame:Hide()
+			end)
+			chart_panel:SetScript ("OnMouseUp", function (self, button)
+				if (button == "LeftButton" and frame.isMoving) then
+					frame.isMoving = nil
+					frame:StopMovingOrSizing()
 				end
-			end
-		end)
-		chart_panel:SetScript ("OnMouseUp", function (self, button)
-			if (button == "LeftButton" and frame.isMoving) then
-				frame.isMoving = nil
-				frame:StopMovingOrSizing()
-			end
-		end)
+			end)
+		else
+			chart_panel:EnableMouse (false)
+		end
 		
 		chart_panel:SetBackdrop({
 				edgeFile = "Interface\\DialogFrame\\UI-DialogBox-gold-Border", tile = true, tileSize = 16, edgeSize = 5,
 				insets = {left = 1, right = 1, top = 0, bottom = 1},})
-		
-		--
 
-		--
-		
 		local g = chart_panel
 		
 		g:Reset()
@@ -685,6 +693,24 @@ end
 
 ----------> Window Functions
 
+		function ChartViewer.RefreshWindow()
+			local segments = ChartViewer:GetCombatSegments()
+			
+			for i = 1, #segments do
+				local this_combat = segments [i]
+				if (this_combat.is_boss and this_combat.is_boss.index) then
+				
+					ChartViewer.current_segment = i
+					ChartViewer.segments_dropdown:Refresh()
+					ChartViewer.segments_dropdown:Select (1, true)
+					
+					break
+				end
+			end
+			
+			ChartViewer:TabRefresh()
+		end
+
 	--open window
 		function ChartViewer:OpenWindow()
 			local segments = ChartViewer:GetCombatSegments()
@@ -702,7 +728,9 @@ end
 			end
 			
 			ChartViewer:TabRefresh()
-			ChartViewerWindowFrame:Show()
+			
+			--ChartViewerWindowFrame:Show()
+			DetailsPluginContainerWindow.OpenPlugin (ChartViewer)
 		end
 		
 	
@@ -769,24 +797,26 @@ local create_segment_dropdown = function()
 	statusbar_background:SetFrameLevel (9)
 	
 	local frame = ChartViewerWindowFrame
-	statusbar_background:SetScript ("OnMouseDown", function (self, button)
-		if (button == "LeftButton") then
-			if (not frame.isMoving) then
-				frame.isMoving = true
-				frame:StartMoving()
+	if (not DetailsPluginContainerWindow) then
+		statusbar_background:SetScript ("OnMouseDown", function (self, button)
+			if (button == "LeftButton") then
+				if (not frame.isMoving) then
+					frame.isMoving = true
+					frame:StartMoving()
+				end
+			elseif (button == "RightButton") then
+				if (not frame.isMoving) then
+					frame:Hide()
+				end
 			end
-		elseif (button == "RightButton") then
-			if (not frame.isMoving) then
-				frame:Hide()
+		end)
+		statusbar_background:SetScript ("OnMouseUp", function (self, button)
+			if (button == "LeftButton" and frame.isMoving) then
+				frame.isMoving = nil
+				frame:StopMovingOrSizing()
 			end
-		end
-	end)
-	statusbar_background:SetScript ("OnMouseUp", function (self, button)
-		if (button == "LeftButton" and frame.isMoving) then
-			frame.isMoving = nil
-			frame:StopMovingOrSizing()
-		end
-	end)
+		end)
+	end
 
 	local on_segment_chosen = function (self, _, segment)
 		ChartViewer.current_segment = segment
@@ -1160,7 +1190,19 @@ function ChartViewer:OnEvent (_, event, ...)
 				
 				ChartViewer.NewTabPanel:Hide()
 				
+				--> replace the built-in frame with the outside frame
+				ChartViewer.Frame = _G.ChartViewerWindowFrame
+				
+				--> embed the plugin into the plugin window
+				if (DetailsPluginContainerWindow) then
+					DetailsPluginContainerWindow.EmbedPlugin (ChartViewer, ChartViewerWindowFrame)
+				end
+				
 				C_Timer.After (5, function()
+					--> adjust the size of the chart frame
+					local height = ChartViewerWindowFrame:GetHeight()
+					ChartViewerWindowFrameChartFrame:SetSize (ChartViewerWindowFrame:GetWidth()-20, height-100)
+				
 					ChartViewerWindowFrame:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]], tileSize = 64, tile = true})
 					ChartViewerWindowFrame:SetBackdropColor (0.2, 0.2, 0.2, .6)
 					ChartViewerWindowFrame:SetBackdropBorderColor (0, 0, 0, 1)

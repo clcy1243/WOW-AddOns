@@ -487,8 +487,6 @@ L["STRING_MODE_ALL"] = "Todos"
 L["STRING_MODE_GROUP"] = "Grupo & Banda"
 --Translation missing 
 -- L["STRING_MODE_OPENFORGE"] = ""
---Translation missing 
--- L["STRING_MODE_OPENGUILDDAMAGERANK"] = ""
 L["STRING_MODE_PLUGINS"] = "plugins"
 L["STRING_MODE_RAID"] = "Plugins: banda"
 L["STRING_MODE_SELF"] = "Plugins: sin grupo"

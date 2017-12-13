@@ -1,5 +1,47 @@
-changeset:   684:8a7fba7e847c
+changeset:   691:bfc5ab9d4df1
 tag:         tip
+user:        Tercio
+date:        Sat Dec 09 10:08:54 2017 -0200
+summary:     - Fixed an issue with the statistics sharing among guild members.
+
+
+changeset:   690:18cba0f76e41
+user:        Tercio
+date:        Fri Dec 08 18:09:20 2017 -0200
+summary:     - Fixed an issue with the statistics sharing among guild members.
+
+
+changeset:   689:deb826e20b4f
+user:        Tercio
+date:        Wed Dec 06 20:37:04 2017 -0200
+summary:     - attempt to fix the argus encounter double segments.
+
+
+changeset:   688:17b265227703
+user:        Tercio
+date:        Wed Nov 29 11:32:17 2017 -0200
+summary:     - Hotfix the issue of getting errors when login in the game.
+
+
+changeset:   687:89042076572f
+user:        Tercio
+date:        Mon Nov 27 11:54:48 2017 -0200
+summary:     - adding stuff for the new raid.
+
+
+changeset:   686:83216118b57d
+user:        Tercio
+date:        Sun Nov 26 16:31:05 2017 -0200
+summary:     - added new panel to consolidate plugins and panels from the main addon into only one frame.
+
+
+changeset:   685:39dd82ba0a0e
+user:        Tercio
+date:        Tue Nov 21 10:00:22 2017 -0200
+summary:     - removed some already fixed debug lines.
+
+
+changeset:   684:8a7fba7e847c
 user:        Tercio
 date:        Sat Oct 21 13:30:06 2017 -0200
 summary:     - Fixed an error when clicking on the spec icon.

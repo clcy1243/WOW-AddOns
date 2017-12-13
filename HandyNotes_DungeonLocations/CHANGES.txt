@@ -1,8 +1,8 @@
 ------------------------------------------------------------------------
-r58 | nagboy@gmail.com | 2017-10-01 09:00:12 -0500 (Sun, 01 Oct 2017) | 1 line
+r62 | nagboy@gmail.com | 2017-12-11 11:06:08 -0600 (Mon, 11 Dec 2017) | 1 line
 Changed paths:
    M /trunk/HandyNotes_DungeonLocations.lua
 
-Fixed Show on Continents option for Broken Isles
+Corrected lockout information for Violet Hold
 ------------------------------------------------------------------------
 

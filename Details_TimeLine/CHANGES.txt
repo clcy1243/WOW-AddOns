@@ -1,7 +1,7 @@
-changeset:   73:2915b167c979
-tag:         v7.3.0.073
+changeset:   77:e769b2448c6c
+tag:         v7.3.2.077
 user:        Tercio
-date:        Sat Oct 21 13:59:53 2017 -0200
-summary:     - Fixed debuff soulbind on Desolate Host encounter not showing on the timeline.
+date:        Fri Dec 08 19:23:30 2017 -0200
+summary:     - Fixed several frame sizes to fit correctly inside the new plugin frame on Details!.
 
 

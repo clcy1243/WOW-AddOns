@@ -1,13 +1,13 @@
 local mod	= DBM:NewMod("Ossirian", "DBM-AQ20", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 625 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 637 $"):sub(12, -3))
 mod:SetCreatureID(15339)
 mod:SetEncounterID(723)
 mod:SetModelID(15432)
 mod:RegisterCombat("combat")
 
-mod:RegisterEvents(
+mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 25176 25189 25177 25178 25180 25181 25183",
 	"SPELL_AURA_REMOVED 25189"
 )
@@ -33,6 +33,6 @@ end
 
 function mod:SPELL_AURA_REMOVED(args)
 	if args.spellId == 25189 then
-		timerCyclone:Cancel(args.destName)
+		timerCyclone:Stop(args.destName)
 	end	
 end

@@ -525,8 +525,6 @@ L["STRING_MINITUTORIAL_OPTIONS_PANEL6"] = "Sélectionnez ici quelle fenêtre vou
 --Translation missing 
 -- L["STRING_MODE_OPENFORGE"] = ""
 --Translation missing 
--- L["STRING_MODE_OPENGUILDDAMAGERANK"] = ""
---Translation missing 
 -- L["STRING_MODE_PLUGINS"] = ""
 --Translation missing 
 -- L["STRING_MODE_RAID"] = ""

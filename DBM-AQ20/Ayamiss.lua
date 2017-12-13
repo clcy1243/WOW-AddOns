@@ -1,13 +1,13 @@
 local mod	= DBM:NewMod("Ayamiss", "DBM-AQ20", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 625 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 637 $"):sub(12, -3))
 mod:SetCreatureID(15369)
 mod:SetEncounterID(722)
 mod:SetModelID(15431)
 mod:RegisterCombat("combat")
 
-mod:RegisterEvents(
+mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 25725",
 	"SPELL_AURA_REMOVED 25725",
 	"UNIT_HEALTH boss1"
@@ -33,7 +33,7 @@ end
 
 function mod:SPELL_AURA_REMOVED(args)
 	if args.spellId == 25725 then
-		timerParalyze:Stop()
+		timerParalyze:Stop(args.destName)
 	end
 end
 
