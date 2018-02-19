@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Teluur", "DBM-GarrisonInvasions")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 23 $"):sub(12, -3))
 mod:SetCreatureID(90946)
 mod:SetZone()
 
@@ -21,8 +21,6 @@ local warnSpore					= mod:NewSpellAnnounce(180825, 3)--Hidden from combat log, u
 
 local specWarnEntanglement		= mod:NewSpecialWarningDodge(180836, nil, nil, nil, 1, 2)--Dodgable. puts green swirly under random player. traps everyone there after 4 seconds. Target scanning not possible, warn everyone to check feet
 
-local voiceEntanglement			= mod:NewVoice(180836) --watchstep
-
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 180849 then
@@ -34,7 +32,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 180836 then
 		specWarnEntanglement:Show()
-		voiceEntanglement:Play("watchstep")
+		specWarnEntanglement:Play("watchstep")
 	end
 end
 

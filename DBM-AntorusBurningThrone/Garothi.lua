@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1992, "DBM-AntorusBurningThrone", nil, 946)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 16992 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 17160 $"):sub(12, -3))
 mod:SetCreatureID(122450)
 mod:SetEncounterID(2076)
 mod:SetZone()
@@ -9,7 +9,7 @@ mod:SetZone()
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7)
 mod:SetHotfixNoticeRev(16962)
 mod:SetMinSyncRevision(16962)
---mod.respawnTime = 29
+mod.respawnTime = 29
 mod:DisableRegenDetection()--Prevent false combat when fighting trash
 
 mod:RegisterCombat("combat")
@@ -18,17 +18,14 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 244969 240277",
 	"SPELL_CAST_SUCCESS 246220 244399 245294 246919 244294",
 	"SPELL_AURA_APPLIED 246220 244410 246919 246965",--246897
---	"SPELL_AURA_APPLIED_DOSE",
 	"SPELL_AURA_REMOVED 246220 244410 246919",
 --	"SPELL_PERIODIC_DAMAGE",
 --	"SPELL_PERIODIC_MISSED",
---	"UNIT_DIED",
---	"CHAT_MSG_RAID_BOSS_EMOTE",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"--Assuming cannons are unique boss unitID
 )
 
-local annihilator = EJ_GetSectionInfo(15917)
-local Decimator = EJ_GetSectionInfo(15915)
+local annihilator = DBM:EJ_GetSectionInfo(15917)
+local Decimator = DBM:EJ_GetSectionInfo(15915)
 --TODO, work in range frame to include searing barrage, for ranged
 --[[
 (ability.id = 244969 or ability.id = 240277) and type = "begincast"
@@ -46,9 +43,8 @@ local specWarnEradication				= mod:NewSpecialWarningRun(244969, nil, nil, nil, 4
 --local specWarnGTFO					= mod:NewSpecialWarningGTFO(238028, nil, nil, nil, 1, 2)
 --Decimator
 local specWarnDecimation				= mod:NewSpecialWarningMoveAway(244410, nil, nil, nil, 1, 2)
-local yellDecimation					= mod:NewFadesYell(244410)
-local specWarnDecimationStun			= mod:NewSpecialWarningYou(246919, nil, nil, nil, 1, 2)--Mythic
-local yellDecimationStun				= mod:NewFadesYell(246919)--Mythic
+local yellDecimation					= mod:NewShortYell(244410)
+local yellDecimationFades				= mod:NewShortFadesYell(244410)
 --Annihilator
 local specWarnAnnihilation				= mod:NewSpecialWarningSpell(244761, nil, nil, nil, 1, 2)
 
@@ -65,19 +61,8 @@ local timerAnnihilationCD				= mod:NewNextTimer(31.6, 244761, nil, nil, nil, 3)
 local countdownChooseCannon				= mod:NewCountdown(15, 245124)
 local countdownFelBombardment			= mod:NewCountdown("Alt20", 246220, "Tank")
 
-local voiceFelBombardment				= mod:NewVoice(246220)--runout/keepmove
-local voiceApocDrive					= mod:NewVoice(244152)--targetchange
-local voiceEradication					= mod:NewVoice(244969)--justrun
---local voiceGTFO						= mod:NewVoice(238028, nil, DBM_CORE_AUTO_VOICE4_OPTION_TEXT)--runaway
---Decimator
-local voiceDecimation					= mod:NewVoice(244410)--runout
-local voiceDecimationStun				= mod:NewVoice(246919)--targetyou
---Annihilator
-local voiceAnnihilation					= mod:NewVoice(244761)--helpsoak
-
 mod:AddSetIconOption("SetIconOnDecimation", 244410, true)
 mod:AddSetIconOption("SetIconOnBombardment", 246220, true)
---mod:AddInfoFrameOption(239154, true)
 mod:AddRangeFrameOption("7/17")
 
 mod.vb.deciminationActive = 0
@@ -88,8 +73,8 @@ mod.vb.annihilatorHaywire = false
 
 local debuffFilter
 local updateRangeFrame
+local decimination, mythicDecimination, FelBombardment = DBM:GetSpellInfo(244410), DBM:GetSpellInfo(246919), DBM:GetSpellInfo(246220)
 do
-	local decimination, mythicDecimination, FelBombardment = GetSpellInfo(244410), GetSpellInfo(246919), GetSpellInfo(246220)
 	local UnitDebuff = UnitDebuff
 	debuffFilter = function(uId)
 		if UnitDebuff(uId, decimination) or UnitDebuff(uId, mythicDecimination) or UnitDebuff(uId, FelBombardment) then
@@ -117,6 +102,7 @@ do
 end
 
 function mod:OnCombatStart(delay)
+	decimination, mythicDecimination, FelBombardment = DBM:GetSpellInfo(244410), DBM:GetSpellInfo(246919), DBM:GetSpellInfo(246220)
 	self.vb.deciminationActive = 0
 	self.vb.FelBombardmentActive = 0
 	self.vb.lastCannon = 1--Anniilator 1 decimator 2
@@ -132,27 +118,24 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
---	if self.Options.InfoFrame then
---		DBM.InfoFrame:Hide()
---	end
 end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 244969 and self:AntiSpam(5, 1) then
 		specWarnEradication:Show()
-		voiceEradication:Play("justrun")
+		specWarnEradication:Play("justrun")
 		if self:IsMythic() then
-			voiceEradication:Schedule(1.5, "keepmove")
+			specWarnEradication:ScheduleVoice(1.5, "keepmove")
 		end
 	elseif spellId == 240277 then
 		timerDecimationCD:Stop()
 		timerFelBombardmentCD:Stop()
 		countdownFelBombardment:Cancel()
+		countdownChooseCannon:Cancel()
 		timerAnnihilationCD:Stop()
 		specWarnApocDrive:Show()
-		countdownChooseCannon:Cancel()
-		voiceApocDrive:Play("targetchange")
+		specWarnApocDrive:Play("targetchange")
 		timerApocDriveCast:Start()
 	end
 end
@@ -173,7 +156,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		else
 			self.vb.lastCannon = 1--Annihilation 1 Decimation 2
 			specWarnAnnihilation:Show()
-			voiceAnnihilation:Play("helpsoak")
+			specWarnAnnihilation:Play("helpsoak")
 			countdownChooseCannon:Start(15.8)
 			if self.vb.phase == 1 or self:IsMythic() then
 				timerDecimationCD:Start(15.8)
@@ -190,12 +173,12 @@ function mod:SPELL_AURA_APPLIED(args)
 		self.vb.FelBombardmentActive = self.vb.FelBombardmentActive + 1
 		if args:IsPlayer() then
 			specWarnFelBombardment:Show()
-			voiceFelBombardment:Play("runout")
-			voiceFelBombardment:Schedule(7, "keepmove")
+			specWarnFelBombardment:Play("runout")
+			specWarnFelBombardment:ScheduleVoice(7, "keepmove")
 			yellFelBombardment:Countdown(7)
 		elseif self:IsTank() then
 			specWarnFelBombardmentTaunt:Show(args.destName)
-			voiceFelBombardment:Play("tauntboss")
+			specWarnFelBombardmentTaunt:Play("tauntboss")
 		else
 			warnFelBombardment:Show(args.destName)
 		end
@@ -203,31 +186,16 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.SetIconOnBombardment then
 			self:SetIcon(args.destName, 7, 13)
 		end
---	elseif spellId == 247159 and self:AntiSpam(5, 1) then
---		specWarnLuringDestruction:Show()
---		voiceLuringDestruction:Play("justrun")
 	elseif spellId == 244410 or spellId == 246919 then
 		self.vb.deciminationActive = self.vb.deciminationActive + 1
 		warnDecimation:CombinedShow(0.3, args.destName)
 		if args:IsPlayer() then
-			local _, _, _, _, _, _, expires = UnitDebuff("player", args.spellName)
-			local remaining
-			if expires then 
-				remaining = expires-GetTime()
+			specWarnDecimation:Show()
+			yellDecimation:Yell()
+			if spellId ~= 246919 then
+				yellDecimationFades:Countdown(5, 3)
 			end
-			if spellId == 246919 then--Mythic rules
-				specWarnDecimationStun:Show()
-				if remaining then
-					yellDecimationStun:Countdown(remaining)
-				end
-				voiceDecimationStun:Play("targetyou")
-			else
-				specWarnDecimation:Show()
-				if remaining then
-					yellDecimation:Countdown(remaining)
-				end
-				voiceDecimation:Play("runout")
-			end
+			specWarnDecimation:Play("runout")
 		end
 		if self.Options.SetIconOnDecimation then
 			self:SetIcon(args.destName, self.vb.deciminationActive)
@@ -253,8 +221,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	elseif spellId == 244410 or spellId == 246919 then
 		self.vb.deciminationActive = self.vb.deciminationActive - 1
 		if args:IsPlayer() then
-			yellDecimationStun:Cancel()
-			yellDecimation:Cancel()
+			yellDecimationFades:Cancel()
 		end
 		if self.Options.SetIconOnDecimation then
 			self:SetIcon(args.destName, 0)
@@ -267,23 +234,10 @@ end
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 228007 and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
 		specWarnGTFO:Show()
-		voiceGTFO:Play("runaway")
+		specWarnGTFO:Play("runaway")
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
-
-function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, npc, _, _, target)
-	if msg:find("spell:238502") then
-
-	end
-end
-
-function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 121193 then
-
-	end
-end
 --]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
@@ -301,8 +255,8 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		elseif self:IsMythic() then
 			timerSpecialCD:Start(22)--Random cannon
 		end
-		timerFelBombardmentCD:Start(23.3)
-		countdownFelBombardment:Start(23.3)
+		timerFelBombardmentCD:Start(23)
+		countdownFelBombardment:Start(23)
 	elseif spellId == 244150 then--Fel Bombardment
 		if self:IsMythic() then
 			timerFelBombardmentCD:Start(15.7)
@@ -315,7 +269,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		if self.vb.annihilatorHaywire and self.vb.lastCannon == 2 then 
 			self.vb.lastCannon = 1
 			specWarnAnnihilation:Show()
-			voiceAnnihilation:Play("helpsoak")
+			specWarnAnnihilation:Play("helpsoak")
 			if self.vb.phase == 1 or self:IsMythic() then
 				timerDecimationCD:Start(15.8)
 				countdownChooseCannon:Start(15.8)

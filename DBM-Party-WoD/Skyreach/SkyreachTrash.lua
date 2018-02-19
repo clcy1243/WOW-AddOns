@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("SkyreachTrash", "DBM-Party-WoD", 7)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
 --mod:SetModelID(47785)
 mod:SetZone()
 
@@ -14,16 +14,12 @@ mod:RegisterEvents(
 
 local specWarnSolarDetonation		= mod:NewSpecialWarningMoveAway(160288, nil, nil, nil, 1, 2)
 
-local voiceSolarDetonation			= mod:NewVoice(160288)
-
 mod:AddRangeFrameOption(3, 160288)--Range guessed. Maybe 5. one tooltip says 1.5 but it def seemed bigger then that. closer to 3-5
-
-mod:RemoveOption("HealthFrame")
 
 local isTrivial = mod:IsTrivial(110)
 
 mod.vb.debuffCount = 0
-local Debuff = GetSpellInfo(160288)
+local Debuff = DBM:GetSpellInfo(160288)
 local UnitDebuff = UnitDebuff
 local debuffFilter
 do
@@ -46,7 +42,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if args:IsPlayer() then
 			specWarnSolarDetonation:Show()
-			voiceSolarDetonation:Play("runout")
+			specWarnSolarDetonation:Play("runout")
 		end
 	end
 end
@@ -60,6 +56,7 @@ function mod:SPELL_AURA_REMOVED(args)
 			if self.vb.debuffCount == 0 then
 				DBM.RangeCheck:Hide()
 			else
+				Debuff = DBM:GetSpellInfo(160288)
 				if UnitDebuff("player", Debuff) then--You have debuff, show everyone
 					DBM.RangeCheck:Show(3, nil)
 				else--You do not have debuff, only show players who do

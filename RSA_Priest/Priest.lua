@@ -114,6 +114,10 @@ function RSA_Priest:OnEnable()
 			[8122] = { -- PSYCHIC SCREAM
 				profile = 'PsychicScream'
 			},
+			[205369] = { -- Mind Bomb
+			profile = 'MindBomb',
+			replacements = { TARGET = 1 }
+			},
 			[64901] = { -- SYMBOL OF HOPE
 				profile = 'SymbolOfHope'
 			},
@@ -305,7 +309,7 @@ function RSA_Priest:OnEnable()
 						RSA_PWBTimer:SetScript("OnUpdate", PWBTimer)
 					end
 				end -- POWER WORD: BARRIER
-				if spellID == 8122 then -- PSYCHIC SCREAM
+				if spellID == 8122 or spellID == 205369 then -- PSYCHIC SCREAM and Mind Bomb
 					RSA_PsychicScream = false -- announcement done in unified core
 				end -- PSYCHIC SCREAM
 			end -- IF EVENT IS SPELL_CAST_SUCCESS
@@ -346,11 +350,11 @@ function RSA_Priest:OnEnable()
 						end
 					end				
 				end
-				if spellID == 8122 and RSA_PsychicScream == false then -- PSYCHIC SCREAM
+				if (spellID == 8122 and RSA_PsychicScream == false) then -- PSYCHIC SCREAM
 					RSA_PsychicScream = true
 					spellinfo = GetSpellInfo(spellID)
 					spelllinkinfo = GetSpellLink(spellID)
-					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo,}
+					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest}
 					if RSA.db.profile.Priest.Spells.PsychicScream.Messages.End ~= "" then
 						if RSA.db.profile.Priest.Spells.PsychicScream.Local == true then
 							RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.PsychicScream.Messages.End, ".%a+.", RSA.String_Replace))
@@ -377,6 +381,37 @@ function RSA_Priest:OnEnable()
 						end
 					end
 				end -- PSYCHIC SCREAM
+				if (spellID == 226943 and RSA_PsychicScream == false) then -- Mind Bomb
+					RSA_PsychicScream = true
+					spellinfo = GetSpellInfo(spellID)
+					spelllinkinfo = GetSpellLink(spellID)
+					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo,}
+					if RSA.db.profile.Priest.Spells.MindBomb.Messages.End ~= "" then
+						if RSA.db.profile.Priest.Spells.MindBomb.Local == true then
+							RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+						end
+						if RSA.db.profile.Priest.Spells.MindBomb.Yell == true then
+							RSA.Print_Yell(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+						end
+						if RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Enabled == true then
+							RSA.Print_Channel(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Channel)
+						end
+						if RSA.db.profile.Priest.Spells.MindBomb.Say == true then
+							RSA.Print_Say(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+						end
+						if RSA.db.profile.Priest.Spells.MindBomb.SmartGroup == true then
+							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+						end
+						if RSA.db.profile.Priest.Spells.MindBomb.Party == true then
+							if RSA.db.profile.Priest.Spells.MindBomb.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
+							RSA.Print_Party(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+						end
+						if RSA.db.profile.Priest.Spells.MindBomb.Raid == true then
+							if RSA.db.profile.Priest.Spells.MindBomb.SmartGroup == true and GetNumGroupMembers() > 0 then return end
+							RSA.Print_Raid(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+						end
+					end
+				end -- Mind Bomb
 				if spellID == 15487 then -- SILENCE
 					RSA_Silenced = false -- announcement done in unified core
 				end -- SILENCE

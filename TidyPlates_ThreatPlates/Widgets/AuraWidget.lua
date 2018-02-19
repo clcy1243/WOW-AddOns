@@ -644,21 +644,21 @@ local function Disable()
 end
 
 local function enabled()
-  local active = TidyPlatesThreat.db.profile.AuraWidget.ON
+  local db = TidyPlatesThreat.db.profile.AuraWidget
 
-	if active then
-		if not isAuraEnabled then
-			Enable()
-			isAuraEnabled = true
-		end
+	if not (db.ON or db.ShowInHeadlineView) then
+    if isAuraEnabled then
+      Disable()
+      isAuraEnabled = false
+    end
 	else
-		if isAuraEnabled then
-			Disable()
-			isAuraEnabled = false
-		end
-	end
+    if not isAuraEnabled then
+      Enable()
+      isAuraEnabled = true
+    end
+  end
 
-	return active
+	return db.ON
 end
 
 local function EnabledInHeadlineView()
@@ -710,14 +710,14 @@ local function CreateBarAuraFrame(parent)
   frame:SetFrameLevel(parent:GetFrameLevel())
 
   frame.Statusbar = CreateFrame("StatusBar", nil, frame)
-  frame.Statusbar:SetFrameLevel(parent:GetFrameLevel())
+  frame:SetFrameLevel(parent:GetFrameLevel())
   frame.Statusbar:SetMinMaxValues(0, 100)
 
-  frame.Background = frame.Statusbar:CreateTexture(nil, "BACKGROUND")
+  frame.Background = frame.Statusbar:CreateTexture(nil, "BACKGROUND", 0)
   frame.Background:SetAllPoints()
 
-  frame.Icon = frame:CreateTexture(nil, "ARTWORK")
-  frame.Stacks = frame:CreateFontString(nil, "OVERLAY")
+  frame.Icon = frame:CreateTexture(nil, "OVERLAY", 1)
+  frame.Stacks = frame.Statusbar:CreateFontString(nil, "OVERLAY")
 
   frame.LabelText = frame.Statusbar:CreateFontString(nil, "OVERLAY")
   frame.LabelText:SetFont(font, db.FontSize)
@@ -752,11 +752,12 @@ local function CreateIconAuraFrame(parent)
   local frame = CreateFrame("Frame", nil, parent)
   frame:SetFrameLevel(parent:GetFrameLevel())
 
-  frame.Icon = frame:CreateTexture(nil, "ARTWORK")
-  frame.Border = frame:CreateTexture(nil, "ARTWORK")
-  frame.BorderHighlight = frame:CreateTexture(nil, "ARTWORK")
+  frame.Icon = frame:CreateTexture(nil, "ARTWORK", 0)
+  frame.Border = frame:CreateTexture(nil, "ARTWORK", 1)
+  frame.BorderHighlight = frame:CreateTexture(nil, "ARTWORK", 2)
   frame.Stacks = frame:CreateFontString(nil, "OVERLAY")
   frame.Cooldown = CreateFrame("Cooldown", nil, frame, "TidyPlatesAuraWidgetCooldown")
+  frame:SetFrameLevel(parent:GetFrameLevel())
   frame.Cooldown:SetAllPoints(frame.Icon)
   frame.Cooldown:SetReverse(true)
   frame.Cooldown:SetHideCountdownNumbers(true)
@@ -978,6 +979,12 @@ local function UpdateAuraWidgetLayout(widget_frame)
     widget_frame:SetPoint(ThreatPlates.ANCHOR_POINT_SETPOINT[db.anchor][2], widget_frame:GetParent(), ThreatPlates.ANCHOR_POINT_SETPOINT[db.anchor][1], db.x, db.y)
     widget_frame:SetSize(CONFIG_AuraWidgetWidth, CONFIG_AuraWidgetHeight)
     widget_frame:SetScale(db.scale)
+
+    if db.FrameOrder == "HEALTHBAR_AURAS" then
+      widget_frame:SetFrameLevel(widget_frame:GetParent():GetFrameLevel() + 3)
+    else
+      widget_frame:SetFrameLevel(widget_frame:GetParent():GetFrameLevel() + 9)
+    end
 
     widget_frame.last_update = GetTime()
   end
@@ -1210,7 +1217,11 @@ local function CreateAuraWidget(plate)
 
 	-- Custom Code III
 	--------------------------------------
-  --frame:SetFrameLevel(plate:GetFrameLevel())
+  if TidyPlatesThreat.db.profile.AuraWidget.FrameOrder == "HEALTHBAR_AURAS" then
+    frame:SetFrameLevel(plate:GetFrameLevel() + 3)
+  else
+    frame:SetFrameLevel(plate:GetFrameLevel() + 9)
+  end
 	frame:SetSize(128, 32)
 	frame.AuraFrames = {}
   --UpdateWidgetConfig(frame)

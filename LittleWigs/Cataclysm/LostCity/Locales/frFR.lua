@@ -1,12 +1,7 @@
 local L = BigWigs:NewBossLocale("Siamat", "frFR")
+if not L then return end
 if L then
--- LostCity/Siamat
-	L["engage_trigger"] = "Vents du Sud, levez"
-	L["phase"] = "Phase 2"
-	L["phase_desc"] = "Prévient quand Siamat va bientôt passer en phase 2."
-	L["phase_warning"] = "Phase 2 imminente !"
-	L["servant"] = "Invocation de serviteur"
-	L["servant_desc"] = "Prévient quand un Serviteur de Siamat est invoqué."
-	L["servant_message"] = "Serviteur de Siamat invoqué !"
-
+	L.engage_trigger = "Vents du Sud, levez"
+	L.servant = "Invocation de serviteur"
+	L.servant_desc = "Prévient quand un Serviteur de Siamat est invoqué."
 end

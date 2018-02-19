@@ -18,14 +18,10 @@ mod.optionHeaders = {
 -------------------------------------------------------------------------------
 --  Localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("Little Wigs: Ambassador Hellmaw", "enUS", true)
+local L = mod:GetLocale()
 if L then
-	
-	
+	L["fear_bar"] = "~Fear Cooldown"
 end
-
-L = LibStub("AceLocale-3.0"):GetLocale("Little Wigs: Ambassador Hellmaw")
-mod.locale = L
 
 -------------------------------------------------------------------------------
 --  Initialization

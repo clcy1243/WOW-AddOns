@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1162, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 25 $"):sub(12, -3))
 mod:SetCreatureID(77692)
 mod:SetEncounterID(1713)
 mod:SetZone()
@@ -34,7 +34,7 @@ local specWarnGraspingEarth			= mod:NewSpecialWarningMoveTo(157060, nil, DBM_COR
 local specWarnThunderingBlows		= mod:NewSpecialWarningSpell(157054, nil, nil, nil, 3)
 local specWarnRipplingSmash			= mod:NewSpecialWarningDodge(157592, nil, nil, nil, 2, 2)
 local specWarnStoneBreath			= mod:NewSpecialWarningCount(156852, nil, nil, nil, 2, 2)
-local specWarnSlam					= mod:NewSpecialWarningSpell(156704, "Tank")
+local specWarnSlam					= mod:NewSpecialWarningDefensive(156704, "Tank", nil, nil, 1, 2)
 local specWarnWarpedArmor			= mod:NewSpecialWarningStack(156766, nil, 2)
 local specWarnWarpedArmorOther		= mod:NewSpecialWarningTaunt(156766)
 local specWarnTremblingEarth		= mod:NewSpecialWarningCount(173917, nil, nil, nil, 2)
@@ -54,11 +54,6 @@ local berserkTimer					= mod:NewBerserkTimer(540)
 
 local countdownThunderingBlows		= mod:NewCountdown(12, 157054)
 local countdownTremblingEarth		= mod:NewCountdownFades("Alt25", 173917)
-
-local voiceGraspingEarth 			= mod:NewVoice(157060)--157060, safenow
-local voiceCallofMountain			= mod:NewVoice(158217)--Findshelter
-local voiceRipplingSmash			= mod:NewVoice(157592)
-local voiceStoneBreath	 			= mod:NewVoice(156852)
 
 mod.vb.mountainCast = 0
 mod.vb.stoneBreath = 0
@@ -98,7 +93,7 @@ function mod:SPELL_CAST_START(args)
 		timerSlamCD:Stop()
 		timerRipplingSmashCD:Stop()
 		timerWarpedArmorCD:Stop()
-		voiceGraspingEarth:Play("157060")
+		specWarnGraspingEarth:Play("157060")
 		if self:IsMythic() then
 			timerGraspingEarthCD:Start(66)
 			local remaining = timerTremblingEarthCD:GetRemaining()
@@ -124,15 +119,16 @@ function mod:SPELL_CAST_START(args)
 		else
 			timerRipplingSmashCD:Start()
 		end
-		voiceRipplingSmash:Play("shockwave")
+		specWarnRipplingSmash:Play("shockwave")
 	elseif spellId == 156704 then
 		specWarnSlam:Show()
+		specWarnSlam:Play("defensive")
 		timerSlamCD:Start()
 	elseif spellId == 158217 then--Probably not in combat log, it's scripted. Probably needs a UNIT_SPELLCAST event
 		self.vb.mountainCast = self.vb.mountainCast + 1
 		specWarnCalloftheMountain:Show(self.vb.mountainCast)
 		timerCalloftheMountain:Start()
-		voiceCallofMountain:Play("findshelter")
+		specWarnCalloftheMountain:Play("findshelter")
 		if self.vb.mountainCast == 3 then--Start timers for resume normal phase
 			timerStoneBreathCD:Start(8.7, self.vb.stoneBreath+1)--Or 12
 			timerWarpedArmorCD:Start(12.2)--12.2-17
@@ -196,9 +192,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		self.vb.stoneBreath = self.vb.stoneBreath + 1
 		specWarnStoneBreath:Show(self.vb.stoneBreath)
 		timerStoneBreathCD:Start(nil, self.vb.stoneBreath+1)
-		voiceStoneBreath:Play("breathsoon")
+		specWarnStoneBreath:Play("breathsoon")
 	elseif spellId == 157059 and args:IsPlayer() then
-		voiceGraspingEarth:Play("safenow")
+		specWarnGraspingEarth:Play("safenow")
 		self:RuneOver()
 	elseif spellId == 156861 then
 		self.vb.frenzied = true

@@ -1,21 +1,20 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Details", "esES") 
 if not L then return end 
 
-L["ABILITY_ID"] = "ID de habilitad"
+L["ABILITY_ID"] = "ID de habilidad"
 L["STRING_"] = ""
 L["STRING_ABSORBED"] = "Absorbida"
-L["STRING_ACTORFRAME_NOTHING"] = "nada para informar"
+L["STRING_ACTORFRAME_NOTHING"] = "opps, no hay nada para informar"
 L["STRING_ACTORFRAME_REPORTAT"] = "en"
 L["STRING_ACTORFRAME_REPORTOF"] = "de"
 L["STRING_ACTORFRAME_REPORTTARGETS"] = "informe de objetivos de"
-L["STRING_ACTORFRAME_REPORTTO"] = "informe de"
+L["STRING_ACTORFRAME_REPORTTO"] = "Informe para"
 L["STRING_ACTORFRAME_SPELLDETAILS"] = "Detalles de hechizos"
 L["STRING_ACTORFRAME_SPELLSOF"] = "Hechizos de"
 L["STRING_ACTORFRAME_SPELLUSED"] = "Todos hechizos usados"
 L["STRING_AGAINST"] = "contra"
-L["STRING_ALIVE"] = "Viva"
---Translation missing 
--- L["STRING_ALPHA"] = ""
+L["STRING_ALIVE"] = "Vivo"
+L["STRING_ALPHA"] = "Alpha"
 L["STRING_ANCHOR_BOTTOM"] = "Inferior"
 L["STRING_ANCHOR_BOTTOMLEFT"] = "Inferior izquierda"
 L["STRING_ANCHOR_BOTTOMRIGHT"] = "Inferior derecha"
@@ -29,62 +28,53 @@ L["STRING_ANCHOR_TOPRIGHT"] = "Superior derecha"
 L["STRING_ATACH_DESC"] = "Agrupar la ventana #%d con la ventana #%d."
 L["STRING_ATTRIBUTE_CUSTOM"] = "Personalizado"
 L["STRING_ATTRIBUTE_DAMAGE"] = "Daño"
---Translation missing 
--- L["STRING_ATTRIBUTE_DAMAGE_BYSPELL"] = ""
+L["STRING_ATTRIBUTE_DAMAGE_BYSPELL"] = "Daño recibido por cada habilidad"
 --Translation missing 
 -- L["STRING_ATTRIBUTE_DAMAGE_DEBUFFS"] = ""
-L["STRING_ATTRIBUTE_DAMAGE_DEBUFFS_REPORT"] = "Daño y tiempo arriba de debufos"
+L["STRING_ATTRIBUTE_DAMAGE_DEBUFFS_REPORT"] = "Daño y tiempo activo de perjuicios"
 L["STRING_ATTRIBUTE_DAMAGE_DONE"] = "Daño infligido"
-L["STRING_ATTRIBUTE_DAMAGE_DPS"] = "DPS"
+L["STRING_ATTRIBUTE_DAMAGE_DPS"] = "Daño por segundo"
 L["STRING_ATTRIBUTE_DAMAGE_ENEMIES"] = "Daño de Enemigos Recibido"
---Translation missing 
--- L["STRING_ATTRIBUTE_DAMAGE_ENEMIES_DONE"] = ""
+L["STRING_ATTRIBUTE_DAMAGE_ENEMIES_DONE"] = "Daño enemigo realizado"
 L["STRING_ATTRIBUTE_DAMAGE_FRAGS"] = "Matanzas"
 L["STRING_ATTRIBUTE_DAMAGE_FRIENDLYFIRE"] = "Fuego amigo"
 L["STRING_ATTRIBUTE_DAMAGE_TAKEN"] = "Daño recibido"
-L["STRING_ATTRIBUTE_ENERGY"] = "Energía"
---Translation missing 
--- L["STRING_ATTRIBUTE_ENERGY_ALTERNATEPOWER"] = ""
+L["STRING_ATTRIBUTE_ENERGY"] = "Recursos"
+L["STRING_ATTRIBUTE_ENERGY_ALTERNATEPOWER"] = "Poder alternativo"
 L["STRING_ATTRIBUTE_ENERGY_ENERGY"] = "Energía generada"
-L["STRING_ATTRIBUTE_ENERGY_MANA"] = "Mana restaurada"
+L["STRING_ATTRIBUTE_ENERGY_MANA"] = "Mana restaurado"
 L["STRING_ATTRIBUTE_ENERGY_RAGE"] = "Ira generada"
---Translation missing 
--- L["STRING_ATTRIBUTE_ENERGY_RESOURCES"] = ""
+L["STRING_ATTRIBUTE_ENERGY_RESOURCES"] = "Otros recursos"
 L["STRING_ATTRIBUTE_ENERGY_RUNEPOWER"] = "Poder runico generado"
 L["STRING_ATTRIBUTE_HEAL"] = "Sanación"
---Translation missing 
--- L["STRING_ATTRIBUTE_HEAL_ABSORBED"] = ""
+L["STRING_ATTRIBUTE_HEAL_ABSORBED"] = "Sanación absorbida"
 L["STRING_ATTRIBUTE_HEAL_DONE"] = "Sanación realizada"
-L["STRING_ATTRIBUTE_HEAL_ENEMY"] = "Curación de Enemigos"
-L["STRING_ATTRIBUTE_HEAL_HPS"] = "HPS"
-L["STRING_ATTRIBUTE_HEAL_OVERHEAL"] = "Sobrecuración (overheal)"
-L["STRING_ATTRIBUTE_HEAL_PREVENT"] = "Daño impedido"
-L["STRING_ATTRIBUTE_HEAL_TAKEN"] = "Sanación recibido"
+L["STRING_ATTRIBUTE_HEAL_ENEMY"] = "Sanación de Enemigos"
+L["STRING_ATTRIBUTE_HEAL_HPS"] = "Sanación por segundo"
+L["STRING_ATTRIBUTE_HEAL_OVERHEAL"] = "Sobresanacion"
+L["STRING_ATTRIBUTE_HEAL_PREVENT"] = "Daño prevenido"
+L["STRING_ATTRIBUTE_HEAL_TAKEN"] = "Sanación recibida"
 L["STRING_ATTRIBUTE_MISC"] = "Misceláneo"
 L["STRING_ATTRIBUTE_MISC_BUFF_UPTIME"] = "Bufos arriba"
-L["STRING_ATTRIBUTE_MISC_CCBREAK"] = "CC roto"
+L["STRING_ATTRIBUTE_MISC_CCBREAK"] = "CC interrumpidos"
 L["STRING_ATTRIBUTE_MISC_DEAD"] = "Muertes"
-L["STRING_ATTRIBUTE_MISC_DEBUFF_UPTIME"] = "Debufos arriba"
+L["STRING_ATTRIBUTE_MISC_DEBUFF_UPTIME"] = "Tiempo activos de perjuicios "
 L["STRING_ATTRIBUTE_MISC_DEFENSIVE_COOLDOWNS"] = "Reutilizaciones"
 L["STRING_ATTRIBUTE_MISC_DISPELL"] = "Disipaciones"
 L["STRING_ATTRIBUTE_MISC_INTERRUPT"] = "Interrupciones"
-L["STRING_ATTRIBUTE_MISC_RESS"] = "Res"
+L["STRING_ATTRIBUTE_MISC_RESS"] = "Resurrecion"
 L["STRING_AUTO"] = "auto"
 L["STRING_AUTOSHOT"] = "Disparo automático"
---Translation missing 
--- L["STRING_AVERAGE"] = ""
+L["STRING_AVERAGE"] = "Media"
 L["STRING_BLOCKED"] = "Bloqueado"
 L["STRING_BOTTOM"] = "inferior"
---Translation missing 
--- L["STRING_BOTTOM_TO_TOP"] = ""
---Translation missing 
--- L["STRING_CAST"] = ""
+L["STRING_BOTTOM_TO_TOP"] = "Abajo hacia arriba"
+L["STRING_CAST"] = "lanzar"
 --Translation missing 
 -- L["STRING_CAUGHT"] = ""
-L["STRING_CCBROKE"] = "CC interrumpido"
+L["STRING_CCBROKE"] = "CC removido"
 L["STRING_CENTER"] = "centro"
---Translation missing 
--- L["STRING_CENTER_UPPER"] = ""
+L["STRING_CENTER_UPPER"] = "Centro"
 L["STRING_CHANGED_TO_CURRENT"] = "Segmento cambiado al actual"
 --Translation missing 
 -- L["STRING_CHANNEL_PRINT"] = ""
@@ -107,6 +97,8 @@ L["STRING_CLOSEALL"] = "Todos las ventanas de Detalles se ocultan. Usar '/detail
 -- L["STRING_COLOR"] = ""
 L["STRING_COMMAND_LIST"] = "lista de comandos"
 L["STRING_COOLTIP_NOOPTIONS"] = "ningún opciones"
+--Translation missing 
+-- L["STRING_CREATEAURA"] = ""
 L["STRING_CRITICAL_HITS"] = "Golpes críticos"
 L["STRING_CRITICAL_ONLY"] = "crítico"
 L["STRING_CURRENT"] = "Actual"
@@ -171,10 +163,8 @@ L["STRING_CUSTOM_IMPORT_BUTTON"] = "Importir"
 L["STRING_CUSTOM_IMPORT_ERROR"] = "Importación fracasó -- cadena no valido."
 L["STRING_CUSTOM_IMPORTED"] = "La visualización se ha importado con éxito."
 L["STRING_CUSTOM_LONGNAME"] = "El nombre no puede tener más de 32 caracteres."
---Translation missing 
--- L["STRING_CUSTOM_MYSPELLS"] = ""
---Translation missing 
--- L["STRING_CUSTOM_MYSPELLS_DESC"] = ""
+L["STRING_CUSTOM_MYSPELLS"] = "Mis habilidades"
+L["STRING_CUSTOM_MYSPELLS_DESC"] = "Muestra tus habilidades en la ventana"
 L["STRING_CUSTOM_NAME"] = "Nombre:"
 L["STRING_CUSTOM_NAME_DESC"] = "Introducir un nombre para la nueva visualización personalizada."
 L["STRING_CUSTOM_NEW"] = "Crear nueva visualización"
@@ -245,10 +235,8 @@ L["STRING_FAIL_ATTACKS"] = "Ataques fracasados"
 --Translation missing 
 -- L["STRING_FEEDBACK_WOWI_DESC"] = ""
 L["STRING_FIGHTNUMBER"] = "Combate #"
---Translation missing 
--- L["STRING_FORGE_BUTTON_ALLSPELLS"] = ""
---Translation missing 
--- L["STRING_FORGE_BUTTON_ALLSPELLS_DESC"] = ""
+L["STRING_FORGE_BUTTON_ALLSPELLS"] = "Todas las habilidades"
+L["STRING_FORGE_BUTTON_ALLSPELLS_DESC"] = "Lista todas las habilidades de los jugadores y npcs"
 --Translation missing 
 -- L["STRING_FORGE_BUTTON_BWTIMERS"] = ""
 --Translation missing 
@@ -257,10 +245,8 @@ L["STRING_FIGHTNUMBER"] = "Combate #"
 -- L["STRING_FORGE_BUTTON_DBMTIMERS"] = ""
 --Translation missing 
 -- L["STRING_FORGE_BUTTON_DBMTIMERS_DESC"] = ""
---Translation missing 
--- L["STRING_FORGE_BUTTON_ENCOUNTERSPELLS"] = ""
---Translation missing 
--- L["STRING_FORGE_BUTTON_ENCOUNTERSPELLS_DESC"] = ""
+L["STRING_FORGE_BUTTON_ENCOUNTERSPELLS"] = "Habilidades de los jefes"
+L["STRING_FORGE_BUTTON_ENCOUNTERSPELLS_DESC"] = "Muestra solo las habilidades de los encuentros de bandas y mazmorras"
 --Translation missing 
 -- L["STRING_FORGE_BUTTON_ENEMIES"] = ""
 --Translation missing 
@@ -289,8 +275,7 @@ L["STRING_FIGHTNUMBER"] = "Combate #"
 -- L["STRING_FORGE_FILTER_PETNAME"] = ""
 --Translation missing 
 -- L["STRING_FORGE_FILTER_PLAYERNAME"] = ""
---Translation missing 
--- L["STRING_FORGE_FILTER_SPELLNAME"] = ""
+L["STRING_FORGE_FILTER_SPELLNAME"] = "Nombre de la habilidad"
 --Translation missing 
 -- L["STRING_FORGE_HEADER_BARTEXT"] = ""
 --Translation missing 
@@ -323,8 +308,7 @@ L["STRING_FIGHTNUMBER"] = "Combate #"
 -- L["STRING_FORGE_HEADER_OWNER"] = ""
 --Translation missing 
 -- L["STRING_FORGE_HEADER_SCHOOL"] = ""
---Translation missing 
--- L["STRING_FORGE_HEADER_SPELLID"] = ""
+L["STRING_FORGE_HEADER_SPELLID"] = "Id de habilidad"
 --Translation missing 
 -- L["STRING_FORGE_HEADER_TIMER"] = ""
 --Translation missing 
@@ -504,7 +488,7 @@ L["STRING_NEWROW"] = "esperando para actualizar..."
 -- L["STRING_NEWS_TITLE"] = ""
 L["STRING_NO"] = "No"
 L["STRING_NO_DATA"] = "Los datos ya se han limpiados."
-L["STRING_NO_SPELL"] = "No se use un hechizo."
+L["STRING_NO_SPELL"] = "No se ha usado ninguna habilidad"
 L["STRING_NO_TARGET"] = "No se encuentra un objetivo."
 L["STRING_NO_TARGET_BOX"] = "Ningún objetivos disponibles"
 L["STRING_NOCLOSED_INSTANCES"] = [=[No hay ningún ventanas cerradas.
@@ -782,8 +766,8 @@ L["STRING_OPTIONS_COMBATTWEEKS_DESC"] = "Cambiar como se funciona Detailles con 
 --Translation missing 
 -- L["STRING_OPTIONS_CONFIRM_ERASE"] = ""
 L["STRING_OPTIONS_CUSTOMSPELL_ADD"] = "Añadir hechizo"
-L["STRING_OPTIONS_CUSTOMSPELLTITLE"] = "Configuración de hechizos"
-L["STRING_OPTIONS_CUSTOMSPELLTITLE_DESC"] = "Cambiar los nombres y los iconos mostrados de hechizos."
+L["STRING_OPTIONS_CUSTOMSPELLTITLE"] = "Editar configuración de las habilidades"
+L["STRING_OPTIONS_CUSTOMSPELLTITLE_DESC"] = "Este panel te permite modificar el nombre e icono de las habilidades"
 L["STRING_OPTIONS_DATABROKER"] = "Data Broker:"
 L["STRING_OPTIONS_DATABROKER_TEXT"] = "Texto"
 --Translation missing 
@@ -1362,17 +1346,17 @@ L["STRING_OPTIONS_SKIN_SELECT"] = "Escoger un skin"
 --Translation missing 
 -- L["STRING_OPTIONS_SOCIAL_DESC"] = ""
 L["STRING_OPTIONS_SPELL_ADD"] = "Añadir"
-L["STRING_OPTIONS_SPELL_ADDICON"] = "Añadir icono: "
-L["STRING_OPTIONS_SPELL_ADDNAME"] = "Añadir nombre: "
+L["STRING_OPTIONS_SPELL_ADDICON"] = "Nuevo icono: "
+L["STRING_OPTIONS_SPELL_ADDNAME"] = "Nuevo nombre: "
 L["STRING_OPTIONS_SPELL_ADDSPELL"] = "Añadir hechizo"
 L["STRING_OPTIONS_SPELL_ADDSPELLID"] = "ID de hechizo: "
 L["STRING_OPTIONS_SPELL_CLOSE"] = "Cerrar"
 L["STRING_OPTIONS_SPELL_ICON"] = "Icono"
-L["STRING_OPTIONS_SPELL_IDERROR"] = "ID de hechizo no es valido."
+L["STRING_OPTIONS_SPELL_IDERROR"] = "ID de hechizo incorrecto"
 L["STRING_OPTIONS_SPELL_INDEX"] = "Índice"
 L["STRING_OPTIONS_SPELL_NAME"] = "Nombre"
-L["STRING_OPTIONS_SPELL_NAMEERROR"] = "Nombre no es valido."
-L["STRING_OPTIONS_SPELL_NOTFOUND"] = "Hechizo no se encuentra."
+L["STRING_OPTIONS_SPELL_NAMEERROR"] = "El nombre no es válido"
+L["STRING_OPTIONS_SPELL_NOTFOUND"] = "Hechizo no encontrado."
 L["STRING_OPTIONS_SPELL_REMOVE"] = "Eliminar"
 L["STRING_OPTIONS_SPELL_RESET"] = "Restablecer"
 L["STRING_OPTIONS_SPELL_SPELLID"] = "ID de hechizo"
@@ -1884,11 +1868,14 @@ L["STRING_SLASH_WIPECONFIG_CONFIRM"] = "Hacer clic para continuar la reinstalaci
 --Translation missing 
 -- L["STRING_SLASH_WORLDBOSS_DESC"] = ""
 L["STRING_SPELL_INTERRUPTED"] = "Hechizos interrumpidos"
+L["STRING_SPELLLIST"] = "Lista de habilidades"
 L["STRING_SPELLS"] = "Hechizos"
 --Translation missing 
 -- L["STRING_SPIRIT_LINK_TOTEM"] = ""
 --Translation missing 
 -- L["STRING_SPIRIT_LINK_TOTEM_DESC"] = ""
+--Translation missing 
+-- L["STRING_STATISTICS"] = ""
 --Translation missing 
 -- L["STRING_STATUSBAR_NOOPTIONS"] = ""
 --Translation missing 

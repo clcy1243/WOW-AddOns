@@ -1,29 +1,12 @@
-tag b0d023419e7d92f6b573ff0430c4757c642d90f4 1.0.12
+tag ad05e053c970d920f57eaa14a49e0dca1cde8d68 1.0.13
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Tue Aug 29 21:36:57 2017 -0500
+Date:	Sat Feb 17 08:42:50 2018 -0600
 
-Tagging as 1.0.12
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Tagging as 1.0.13
 
-iQIcBAABCAAGBQJZpiTJAAoJEPlfCSXcNecU0fwP/3XQeQ0Rj6m72TtyJ+FTH2c2
-8iEQPPT+O4cU6T8b/gnGdGbSVTxk/rGwGGYTx2HFWLfPajG6pRyfGLmCTMS8sz91
-nAzKEf+eQObZWwW8uAiErZONPP0Yt3PiE0TKt4CdUIl30HqfYlzWfVTzByg9DJdO
-ACVrE9S6exdGiJl3rbuPMxbHagSswefDlt6NJ23sWgc8b0OYtjehZ7+L2u7oopIP
-91V8CJ5QKiDni/spfsHL2BWc1jNypl0s4XJuDdu7QmONyhSSuMVqTUoYqn+jGV+T
-4WqVH7mavIiBkb6XTwXggyKstBMqbGpBbBssJ9LG7negj/SqaIB2X/VWbeULGoMs
-xMJ8C/fUKcjqgaj6hWsSb00HZovmcyGKwc+ncRXCoZh/tifmUKPDEzFotqrRzXdv
-H12mCLLqJ6jnX4DFvporTPUMwH0CvnXi2mU+BgGy0d+iZG91VldcTE2OQ1EeP1/g
-oZSqsuPF/RL7pjviiHmRR5urSbIB286J9OFP7tSqfqVp0S7ON5xu8d9naShHHZSK
-2G9AcOByzt2aLPwJIAY0WUi0BMbp6vuLIbSThQEM+2qrN8iFqpWPoEcnqvEruluU
-a74lYN0BoHalGuyQg/rfPCLgI2Kij17q7fu40+nYFrsPBCsrmJq0LrxaOKW+kHgA
-BWYaEd3VEhjandebZBAJ
-=BeBf
------END PGP SIGNATURE-----
-
-commit 9226266170363a906e299b5ab13ae6138592429a
+commit 35d94ecfe0b61fd326addf1519838c4548ff46d4
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Tue Aug 29 21:36:30 2017 -0500
+Date:   Sat Feb 17 08:41:44 2018 -0600
 
-    Update TOC for 7.3
+    Add Moira
 

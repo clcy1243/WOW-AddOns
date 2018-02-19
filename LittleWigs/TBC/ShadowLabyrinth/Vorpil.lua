@@ -17,14 +17,14 @@ mod.optionHeaders = {
 -------------------------------------------------------------------------------
 --  Localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("Little Wigs: Grandmaster Vorpil", "enUS", true)
+local L = mod:GetLocale()
 if L then
-	
-	
+	L["teleport"] = "Teleport"
+	L["teleport_desc"] = "Warning for when Grandmaster Vorpil will Teleport."
+	L["teleport_message"] = "Teleport!"
+	L["teleport_warning"] = "Teleport in ~5sec!"
+	L["teleport_bar"] = "~Teleport"
 end
-
-L = LibStub("AceLocale-3.0"):GetLocale("Little Wigs: Grandmaster Vorpil")
-mod.locale = L
 
 -------------------------------------------------------------------------------
 --  Initialization

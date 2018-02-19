@@ -85,6 +85,7 @@ L["STRING_CLOSEALL"] = "Alle Details!-Fenster sind geschlossen, schreibe '/detai
 L["STRING_COLOR"] = "Farbe"
 L["STRING_COMMAND_LIST"] = "Befehlsliste"
 L["STRING_COOLTIP_NOOPTIONS"] = "Keine Optionen"
+L["STRING_CREATEAURA"] = "Aura erstellen"
 L["STRING_CRITICAL_HITS"] = "Kritische Treffer"
 L["STRING_CRITICAL_ONLY"] = "kritisch"
 L["STRING_CURRENT"] = "Aktuell"
@@ -358,7 +359,7 @@ L["STRING_MIRROR_IMAGE"] = "Bilder spiegeln"
 L["STRING_MISS"] = "Verfehlen"
 L["STRING_MODE_ALL"] = "Alles"
 L["STRING_MODE_GROUP"] = "Standard"
-L["STRING_MODE_OPENFORGE"] = "Aura Formen"
+L["STRING_MODE_OPENFORGE"] = "Zauberliste"
 L["STRING_MODE_PLUGINS"] = "Zusatzmodule"
 L["STRING_MODE_RAID"] = "Zusatzmodule: Schlachtzug"
 L["STRING_MODE_SELF"] = "Zusatzmodule: Solospiel"
@@ -407,7 +408,7 @@ L["STRING_OPTIONS_ALPHAMOD_ANCHOR"] = "Automatisch Verbergen:"
 L["STRING_OPTIONS_ALWAYS_USE"] = "Bei allen Charakteren benutzen"
 L["STRING_OPTIONS_ALWAYS_USE_DESC"] = "Wenn aktiviert, nutzen alle Charaktere das ausgewählte Profil. Andernfalls erscheint eine Anzeige, in der nach einem zu benutzenden Profil gefragt wird."
 L["STRING_OPTIONS_ALWAYSSHOWPLAYERS"] = "Alle Spieler anzeigen"
-L["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"] = "Wenn du den standardmäßigen Standardmodus verwendest, zeigt er Spieler Charaktere an, auch wenn sie nicht in einer Gruppen mit dir sind. "
+L["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"] = "Wenn du den standardmäßigen Standardmodus verwendest, zeigt er Spielercharaktere an, auch wenn sie nicht in einer Gruppen mit dir sind. "
 L["STRING_OPTIONS_ANCHOR"] = "Seite"
 L["STRING_OPTIONS_ANIMATEBARS"] = "Balken animieren"
 L["STRING_OPTIONS_ANIMATEBARS_DESC"] = "Aktiviert Animationen für alle Balken."
@@ -650,7 +651,7 @@ L["STRING_OPTIONS_DEATHLIMIT"] = "Todesereignisanzahl"
 L["STRING_OPTIONS_DEATHLIMIT_DESC"] = [=[Stelle die Anzahl an Ereignissen für die Todesanzeige ein.
 
 |cFFFFFF00Wichtig|r: Wird nach der Änderung nur auf neue Tode angewendet.]=]
-L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = "Todes Protokoll Mindest Heilung"
+L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = "Mindestheilung für Todesprotokoll"
 --Translation missing 
 -- L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = ""
 L["STRING_OPTIONS_DESATURATE_MENU"] = "Entfärbt"
@@ -762,7 +763,7 @@ L["STRING_OPTIONS_MENU_ALPHA"] = "Mausinteraktion:"
 L["STRING_OPTIONS_MENU_ALPHAENABLED_DESC"] = [=[Aktiviert: Die Transparenz ändert sich automatisch, wenn der Cursor über dem Fenster schwebt und es wieder verlässt.
 
 |cFFFFFF00Wichtig|r: Diese Einstellung überschreibt die in den Fensteroptionen gewählte Fensterfarbe.]=]
-L["STRING_OPTIONS_MENU_ALPHAENTER"] = "Beim darüberschweben"
+L["STRING_OPTIONS_MENU_ALPHAENTER"] = "Beim Darüberschweben"
 L["STRING_OPTIONS_MENU_ALPHAENTER_DESC"] = "Wenn der Cursor über dem Fenster schwebt, ändert sich die Transparenz auf diesen Wert."
 L["STRING_OPTIONS_MENU_ALPHALEAVE"] = "Keine Interaktion"
 L["STRING_OPTIONS_MENU_ALPHALEAVE_DESC"] = "Wenn der Cursor nicht über dem Fenster schwebt, ändert sich die Transparenz auf diesen Wert."
@@ -1486,13 +1487,12 @@ L["STRING_SEGMENT_OVERALL"] = "Gesamtdaten"
 L["STRING_SEGMENT_START"] = "Start"
 L["STRING_SEGMENT_TRASH"] = "Trash abgräumt"
 L["STRING_SEGMENTS"] = "Segmente"
-L["STRING_SEGMENTS_LIST_BOSS"] = "Boss Kampf"
-L["STRING_SEGMENTS_LIST_COMBATTIME"] = "Kampf Zeit"
+L["STRING_SEGMENTS_LIST_BOSS"] = "Bosskampf"
+L["STRING_SEGMENTS_LIST_COMBATTIME"] = "Kampfzeit"
 L["STRING_SEGMENTS_LIST_OVERALL"] = "Insgesamt"
 L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "Zeit im Kampf"
-L["STRING_SEGMENTS_LIST_TOTALTIME"] = "Ins gesamte Zeit"
---Translation missing 
--- L["STRING_SEGMENTS_LIST_TRASH"] = ""
+L["STRING_SEGMENTS_LIST_TOTALTIME"] = "Insgesamte Zeit"
+L["STRING_SEGMENTS_LIST_TRASH"] = "Trash"
 L["STRING_SHIELD_HEAL"] = "verhindert"
 L["STRING_SHIELD_OVERHEAL"] = "Vergeudet"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "Rechtsklick, um zu schließen"
@@ -1527,6 +1527,7 @@ L["STRING_SLASH_WIPECONFIG_DESC"] = "setzt alle Einstellungen auf Standard. Nutz
 L["STRING_SLASH_WORLDBOSS"] = "Weltboss"
 L["STRING_SLASH_WORLDBOSS_DESC"] = "startet ein Makro, das dir anzeigt, welche Bosse du in dieser Woche getötet hast."
 L["STRING_SPELL_INTERRUPTED"] = "Zauber unterbrochen"
+L["STRING_SPELLLIST"] = "Zauberliste"
 L["STRING_SPELLS"] = "Zauber"
 L["STRING_SPIRIT_LINK_TOTEM"] = "Lebenspunkte-Austausch"
 L["STRING_SPIRIT_LINK_TOTEM_DESC"] = [=[Anzahl an ausgetauschten Lebenspunkten zwischen
@@ -1534,6 +1535,7 @@ Spielern in Totemreichweite.
 
 Diese Heilung wird nicht zur 
 verursachten Heilung eines Spielers gezählt.]=]
+L["STRING_STATISTICS"] = "Statistik"
 L["STRING_STATUSBAR_NOOPTIONS"] = "Dieses Widget hat keine Optionen"
 L["STRING_SWITCH_CLICKME"] = "Lesezeichen hinzufügen"
 L["STRING_SWITCH_SELECTMSG"] = "Wähle die Anzeige für Lesezeichen #%d"
@@ -1551,7 +1553,7 @@ L["STRING_TOTAL"] = "Gesamt"
 L["STRING_TRANSLATE_LANGUAGE"] = "Hilf mit bei der Details!-Übersetzung"
 L["STRING_TUTORIAL_FULLY_DELETE_WINDOW"] = [=[Du hast ein Fenster geschlossen, du kannst es jederzeit erneut öffnen.
 Um ein Fenster komplett zu löschen, gehe zu den Optionen  -> Fenster: Allgemein -> Löschen.]=]
-L["STRING_TUTORIAL_OVERALL1"] = "Anpassen der Gesamteinstellungen auf dem Options Feld. > PvE/PvP"
+L["STRING_TUTORIAL_OVERALL1"] = "Anpassen der Gesamteinstellungen auf dem Optionsmenü > PvE/PvP"
 L["STRING_UNKNOW"] = "Unbekannt"
 L["STRING_UNKNOWSPELL"] = "Unbekannter Zauber"
 L["STRING_UNLOCK"] = [=[Fenstergruppe auflösen

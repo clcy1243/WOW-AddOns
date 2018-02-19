@@ -1,4 +1,4 @@
-local Type, Version = "WeakAurasMultiLineEditBox", 30
+local Type, Version = "WeakAurasMultiLineEditBox", 31
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
@@ -79,6 +79,7 @@ end
 local function OnEditFocusLost(self)                                             -- EditBox
 	self:HighlightText(0, 0)
 	self.obj:Fire("OnEditFocusLost")
+	self.obj.scrollFrame:EnableMouseWheel(false);
 end
 
 local function OnEnter(self)                                                     -- EditBox / ScrollFrame
@@ -151,7 +152,7 @@ local function OnFrameShow(frame)
 		frame.focusOnShow = nil;
 	end
 	local self = frame.obj;
-	local option = self.userDataTable.option;
+	local option = self.userdata.option;
 	local numExtraButtons = 0;
 	if (option and option.arg and option.arg.extraFunctions) then
 		numExtraButtons = #option.arg.extraFunctions;
@@ -171,7 +172,6 @@ local function OnFrameShow(frame)
 	end
 
 	for i = numExtraButtons + 1, #self.extraButtons do
-		print("HIDING BUTTON");
 		self.extraButtons[i]:Hide();
 	end
 end
@@ -179,6 +179,7 @@ end
 local function OnEditFocusGained(frame)
 	AceGUI:SetFocus(frame.obj)
 	frame.obj:Fire("OnEditFocusGained")
+	frame.obj.scrollFrame:EnableMouseWheel(true);
 end
 
 --[[-----------------------------------------------------------------------------
@@ -186,7 +187,6 @@ Methods
 -------------------------------------------------------------------------------]]
 local methods = {
 	["OnAcquire"] = function(self)
-		self.userDataTable = {};
 		self.editBox:SetText("")
 		self:SetDisabled(false)
 		self:SetWidth(200)
@@ -284,11 +284,6 @@ local methods = {
 	["SetCursorPosition"] = function(self, ...)
 		return self.editBox:SetCursorPosition(...)
 	end,
-
-	["GetUserDataTable"] = function(self)
-		return self.userDataTable;
-	end
-
 }
 
 --[[-----------------------------------------------------------------------------
@@ -331,6 +326,7 @@ local function Constructor()
 	scrollBG:SetBackdropBorderColor(0.4, 0.4, 0.4)
 
 	local scrollFrame = CreateFrame("ScrollFrame", ("%s%dScrollFrame"):format(Type, widgetNum), frame, "UIPanelScrollFrameTemplate")
+	scrollFrame:EnableMouseWheel(false);
 
 	local scrollBar = _G[scrollFrame:GetName() .. "ScrollBar"]
 	scrollBar:ClearAllPoints()

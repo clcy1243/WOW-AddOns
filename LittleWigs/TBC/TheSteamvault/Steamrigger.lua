@@ -13,13 +13,13 @@ mod.toggleOptions = {
 -------------------------------------------------------------------------------
 --  Localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("Little Wigs: Mekgineer Steamrigger", "enUS", true)
+local L = mod:GetLocale()
 if L then
-	
-	
+	L["mech"] = "Steamrigger Mechanics"
+	L["mech_desc"] = "Warn for incoming mechanics."
+	L["mech_trigger"] = "Tune 'em up good, boys!"
+	L["mech_message"] = "Steamrigger Mechanics coming soon!"
 end
-L = LibStub("AceLocale-3.0"):GetLocale("Little Wigs: Mekgineer Steamrigger")
-mod.locale = L
 
 -------------------------------------------------------------------------------
 --  Initialization

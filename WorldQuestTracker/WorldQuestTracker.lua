@@ -342,7 +342,7 @@ local WQT_QUEST_NAMES_AND_ICONS = {
 	--[WQT_QUESTTYPE_PROFESSION] = {name = "Profession", icon = [[Interface\Garrison\MobileAppIcons]], coords = {256/1024, 384/1024, 0/1024, 128/1024}},
 	--[WQT_QUESTTYPE_PVP] = {name = "PvP", icon = [[Interface\PVPFrame\Icon-Combat]], coords = {0, 1, 0, 1}},
 	[WQT_QUESTTYPE_PVP] = {name = L["S_QUESTTYPE_PVP"], icon = [[Interface\QUESTFRAME\QuestTypeIcons]], coords = {37/128, 53/128, 19/64, 36/64}},
-	[WQT_QUESTTYPE_PETBATTLE] = {name = L["S_QUESTTYPE_PETBATTLE"], icon = [[Interface\MINIMAP\ObjectIconsAtlas]], coords = {219/512, 246/512, 478/512, 502/512}},
+	[WQT_QUESTTYPE_PETBATTLE] = {name = L["S_QUESTTYPE_PETBATTLE"], icon = [[Interface\MINIMAP\ObjectIconsAtlas]], coords = {387/512, 414/512, 378/512, 403/512}},
 	[WQT_QUESTTYPE_TRADE] = {name = L["S_QUESTTYPE_TRADESKILL"], icon = [[Interface\ICONS\INV_Blood of Sargeras]], coords = {5/64, 59/64, 5/64, 59/64}},
 }
 
@@ -448,14 +448,6 @@ WorldQuestTracker.MAPID_ARGUS = 1184
 WorldQuestTracker.MAPID_BROKENISLES = 1007
 local MAPID_BROKENISLES = 1007
 local ARROW_UPDATE_FREQUENCE = 0.016
-
-WorldQuestTracker.QUEST_COMMENTS = {
-	[42275] = {help = "'Dimensional Anchors' are green crystals on the second floor of the central build."}, --azsuna - not on my watch
-	[43963] = {help = "Kill and loot mobs around the quest location."},
-	[42108] = {help = "Use the extra button near friendly ghosty npcs."},
-	[42080] = {help = "Select eagles and use the extra button. Click on sheeps outside the town."},
-	[41701] = {help = "Kill fish inside the water. Walk on outlined garbage."},
-}
 
 WorldQuestTracker.CAVE_QUESTS = {
 	[41145] = true,
@@ -777,7 +769,7 @@ local CreatePartySharer = function()
 	WorldQuestTracker.Sharer_LastSentUpdate = 0
 	WorldQuestTracker.Sharer_LastTimer = nil --
 	
-
+	
 	
 	--> fazendo em uma funcao separada para aplicar um delay antes de envia-las
 	local SendQuests = function()
@@ -860,45 +852,6 @@ local CreatePartySharer = function()
 	WorldQuestTracker:RegisterEvent ("GROUP_ROSTER_UPDATE")
 	
 	group_changed (true)
-end
-
-
--- /run WorldQuestTrackerAddon:GetNextResearchNoteTime()
--- /run for a, b in pairs (_G) do if b == "Artifact Research Notes" then print (a,b) end end
-
---[[ by name?
-Artifact Research Notes
-Artefaktforschungsnotizen
-Notas de investigaci�n de artefactos
-Recherches sur les armes prodigieuses
-Appunti sulla Ricerca dell'Artefatto
-Anota��es de Pesquisa de Artefato
---]]
-
--- 173 shipment ID -- MAGE
--- each class hall has its own containerID for the research
--- /dump C_Garrison.GetLandingPageShipmentInfoByContainerID (173) -- MAGE
--- each 
--- ~research
-
--- /run for i=1, 500 do local _,texture,_,_,_,_,_, timeleftString=C_Garrison.GetLandingPageShipmentInfoByContainerID(i) if texture==237446 then print ("achour research, timeleft:", timeleftString) end end
-
---isnt' baing used on 7.3, should be removed?
-function WorldQuestTracker:GetNextResearchNoteTime()
-	local looseShipments = C_Garrison.GetLooseShipments (LE_GARRISON_TYPE_7_0)
-	if (looseShipments and #looseShipments > 0) then
-		for i = 1, #looseShipments do
-			local name, texture, _, ready, _, creationTime, duration, timeleftString = C_Garrison.GetLandingPageShipmentInfoByContainerID (looseShipments [i])
-			--print (looseShipments [i], name)
-			if (name and creationTime and creationTime > 0 and texture == 237446) then
-				local elapsedTime = time() - creationTime
-				local timeLeft = duration - elapsedTime
-				--print ("timeleft: ", timeLeft / 60 / 60)
-				return name, timeleftString, timeLeft, elapsedTime, ready
-				--print (name, texture, shipmentCapacity, shipmentsReady, shipmentsTotal, creationTime, duration, timeleftString)
-			end
-		end
-	end
 end
 
 function WorldQuestTracker.Debug (message, color)
@@ -2387,7 +2340,9 @@ function WorldQuestTracker.UpdateRareIcons (index, mapID)
 					
 					--widget.Texture:SetTexture ([[Interface\Scenarios\ScenarioIcon-Boss]])
 					widget.TextureCustom:SetTexture ([[Interface\MINIMAP\ObjectIconsAtlas]])
-					widget.TextureCustom:SetTexCoord (423/512, 447/512, 344/512, 367/512)
+					--widget.TextureCustom:SetTexCoord (423/512, 447/512, 344/512, 367/512) --pre 7.3.5
+					widget.TextureCustom:SetTexCoord (413/512, 438/512, 204/512, 228/512) --fix by @HyperAktiveBonusBanane at curse forge, the coords was wrong, the star icon wasn't showing up
+					
 					widget.TextureCustom:SetSize (16, 16)
 					widget.TextureCustom:Show()
 					
@@ -5528,16 +5483,14 @@ function WorldQuestTracker.CreateZoneWidget (index, name, parent) --~zone
 	button.highlight:Hide()
 	
 	button.IsTrackingGlow = supportFrame:CreateTexture(button:GetName() .. "IsTrackingGlow", "BACKGROUND", -6)
-	button.IsTrackingGlow:SetSize (44, 44)
 	button.IsTrackingGlow:SetPoint ("center", button, "center")
-	button.IsTrackingGlow:SetTexture ([[Interface\AddOns\WorldQuestTracker\media\glow_yellow_roundT]])
 	button.IsTrackingGlow:SetBlendMode ("ADD")
 	button.IsTrackingGlow:SetAlpha (1)
 	button.IsTrackingGlow:Hide()
 	button.IsTrackingGlow:SetDesaturated (nil)
 	--testing another texture
 	button.IsTrackingGlow:SetTexture ([[Interface\Calendar\EventNotificationGlow]])
-	button.IsTrackingGlow:SetSize (36, 36)
+	button.IsTrackingGlow:SetSize (31, 31)
 	
 	button.IsTrackingRareGlow = supportFrame:CreateTexture(button:GetName() .. "IsTrackingRareGlow", "BACKGROUND", -6)
 	button.IsTrackingRareGlow:SetSize (44*0.7, 44*0.7)
@@ -5545,7 +5498,7 @@ function WorldQuestTracker.CreateZoneWidget (index, name, parent) --~zone
 	button.IsTrackingRareGlow:SetTexture ([[Interface\AddOns\WorldQuestTracker\media\rare_dragon_TrackingT]])
 	--button.IsTrackingRareGlow:SetBlendMode ("ADD")
 	button.IsTrackingRareGlow:Hide()
-
+	
 	button.Shadow = supportFrame:CreateTexture(button:GetName() .. "Shadow", "BACKGROUND", -8)
 	button.Shadow:SetSize (24, 24)
 	button.Shadow:SetPoint ("center", button, "center")
@@ -6267,26 +6220,7 @@ function WorldQuestTracker.SetupWorldQuestButton (self, worldQuestType, rarity, 
 				if (isArtifact) then
 					local texture = WorldQuestTracker.GetArtifactPowerIcon (artifactPower, true) --
 					self.Texture:SetSize (16, 16)
-					--self.Texture:SetMask (nil)
 					self.Texture:SetTexture (texture)
-
-					local research_nameLoc, research_timeleftString, research_timeLeft, research_elapsedTime = WorldQuestTracker:GetNextResearchNoteTime()
-					if (research_timeLeft and research_timeLeft > 60) then
-						research_timeLeft = research_timeLeft / 60 --convert in minutes
-					end
-					
-					if (research_timeLeft and research_timeLeft < timeLeft) then
-						self.Texture:SetTexture ([[Interface\AddOns\WorldQuestTracker\media\icon_artifactpower_blue_roundT]])
-					else
-						self.Texture:SetTexture (texture)
-					end
-					
-					--if (artifactPower >= 1000) then
-					--	self.flagText:SetText (format ("%.1fK", artifactPower/1000))
-						--self.flagText:SetText (comma_value (artifactPower))
-					--else
-					--	self.flagText:SetText (artifactPower)
-					--end
 					
 					if (artifactPower >= 1000) then
 						if (artifactPower > 999999999) then -- 1B
@@ -6901,10 +6835,8 @@ hooksecurefunc ("ToggleWorldMap", function (self)
 			
 			---------------------------------------------------------
 			
-			-- ~shipment ready
+			-- ~shipment ready ~DEPRECATED -   shipment isnt used any more since 7.3
 			
-			--WorldQuestTracker:GetNextResearchNoteTime()
-			--local nameLoc, timeleftString, timeLeft, elapsedTime, shipmentsReady = WorldQuestTracker:GetNextResearchNoteTime()
 			local shipmentsReadyFrame = CreateFrame ("frame", "WorldQuestTrackerShipmentsReadyFrame", WorldMapFrame.UIElementsFrame)
 			shipmentsReadyFrame:SetPoint ("center", WorldQuestTracker.DoubleTapFrame, "center", 0, 0)
 			shipmentsReadyFrame:SetPoint ("bottom", WorldQuestTracker.DoubleTapFrame, "top", 0, 10)
@@ -8021,7 +7953,7 @@ hooksecurefunc ("ToggleWorldMap", function (self)
 				
 				local IconSize = 14
 				
-				--all tracker options
+				--all tracker options ~tracker config
 				GameCooltip:AddLine (L["S_MAPBAR_OPTIONSMENU_TRACKERCONFIG"])
 				GameCooltip:AddIcon ([[Interface\AddOns\WorldQuestTracker\media\ArrowGridT]], 1, 1, IconSize, IconSize, 944/1024, 993/1024, 272/1024, 324/1024)
 				
@@ -8071,7 +8003,7 @@ hooksecurefunc ("ToggleWorldMap", function (self)
 					GameCooltip:AddIcon ([[Interface\BUTTONS\UI-AutoCastableOverlay]], 2, 1, 16, 16, .4, .6, .4, .6)
 				end
 				GameCooltip:AddMenu (2, options_on_click, "tracker_is_movable", true)
-				
+				--locked
 				if (WorldQuestTracker.db.profile.tracker_is_movable) then
 					GameCooltip:AddLine (L["S_MAPBAR_OPTIONSMENU_TRACKERMOVABLE_LOCKED"], "", 2)
 				else
@@ -8083,6 +8015,15 @@ hooksecurefunc ("ToggleWorldMap", function (self)
 					GameCooltip:AddIcon ([[Interface\BUTTONS\UI-AutoCastableOverlay]], 2, 1, 16, 16, .4, .6, .4, .6)
 				end
 				GameCooltip:AddMenu (2, options_on_click, "tracker_is_locked", not WorldQuestTracker.db.profile.tracker_is_locked)
+				--reset pos
+				GameCooltip:AddLine ("Reset Position", "", 2)
+				GameCooltip:AddMenu (2, function()
+					options_on_click (_, _, "tracker_is_movable", false)
+					C_Timer.After (0.5, function()
+						options_on_click (_, _, "tracker_is_movable", true)
+						LibWindow.SavePosition (WorldQuestTrackerScreenPanel)
+					end)
+				end)
 				
 				--				
 				GameCooltip:AddLine ("$div", nil, 2, nil, -5, -11)
@@ -8937,13 +8878,7 @@ hooksecurefunc ("ToggleWorldMap", function (self)
 					--statusbarValue, frame, ColorR, ColorG, ColorB, ColorA, statusbarGlow, backgroundBar, barTexture
 					--print (xp, xpForNextPoint)
 				end
-				
-				local nameLoc, timeleftString, timeLeft, elapsedTime = WorldQuestTracker:GetNextResearchNoteTime()
-				if (timeleftString) then
-					GameCooltip:AddLine (nameLoc, timeleftString, 1, "white", _, 10)
-					GameCooltip:AddIcon (237446, 1, 1, 18, 18, 5/64, 59/64, 5/64, 59/64)
-				end
-				
+
 				local str = "|TInterface\\AddOns\\WorldQuestTracker\\media\\icon_artifactpower_blueT:0|t"
 				GameCooltip:AddLine (format (L["S_APOWER_DOWNVALUE"], str), "", 1, "white", _, 10)
 				
@@ -11644,16 +11579,19 @@ local create_worldmap_square = function (mapName, index)
 	
 	local trackingGlowBorder = button:CreateTexture (nil, "overlay", 1)
 	trackingGlowBorder:SetPoint ("center", button, "center")
-	trackingGlowBorder:SetTexture ([[Interface\AddOns\WorldQuestTracker\media\border_trackingT]])
-	trackingGlowBorder:SetSize (WORLDMAP_SQUARE_SIZE * 1.33, WORLDMAP_SQUARE_SIZE * 1.33)
-	trackingGlowBorder:Hide()
-	
 	trackingGlowBorder:SetTexture ([[Interface\AddOns\WorldQuestTracker\media\glow_yellow_squareT]])
 	trackingGlowBorder:SetBlendMode ("ADD")
-	--trackingGlowBorder:SetDesaturated (true)
 	trackingGlowBorder:SetSize (55, 55)
-	trackingGlowBorder:SetAlpha (.6)
+	trackingGlowBorder:SetAlpha (1)
 	trackingGlowBorder:SetDrawLayer ("BACKGROUND", -5)
+	trackingGlowBorder:Hide()
+	
+	local trackingGlowInside = button:CreateTexture (nil, "overlay", 1)
+	trackingGlowInside:SetPoint ("center", button, "center")
+	--trackingGlowInside:SetTexture ([[Interface\AddOns\WorldQuestTracker\media\border_trackingT]])
+	trackingGlowInside:SetColorTexture (1, 1, 1, .03)
+	trackingGlowInside:SetSize (WORLDMAP_SQUARE_SIZE * 0.8, WORLDMAP_SQUARE_SIZE * 0.8)
+	trackingGlowInside:Hide()
 	
 	local onStartTrackAnimation = DF:CreateAnimationHub (trackingGlowBorder, onStartClickAnimation)
 	WorldQuestTracker:CreateAnimation (onStartTrackAnimation, "Scale", 1, .12, .9, .9, 1.1, 1.1)
@@ -11832,6 +11770,7 @@ local create_worldmap_square = function (mapName, index)
 	criteriaIndicator:SetDrawLayer ("OVERLAY", 2)
 	newFlashTexture:SetDrawLayer ("OVERLAY", 7)
 	new:SetDrawLayer ("OVERLAY", 6)
+	trackingGlowInside:SetDrawLayer ("OVERLAY", 7)
 	
 	button.timeBlipRed:SetDrawLayer ("overlay", 2)
 	button.timeBlipOrange:SetDrawLayer ("overlay", 2)
@@ -11849,6 +11788,8 @@ local create_worldmap_square = function (mapName, index)
 	button.invasionBorder = invasionBorder
 	button.trackingBorder = trackingBorder
 	button.trackingGlowBorder = trackingGlowBorder
+	
+	button.trackingGlowInside = trackingGlowInside
 	
 	button.timeBlip = timeBlip
 	button.timeLeftText = timeLeftText
@@ -12291,10 +12232,6 @@ function WorldQuestTracker.UpdateWorldQuestsOnWorldMap (noCache, showFade, isQue
 	WorldQuestTracker.Cache_ShownQuestOnWorldMap [WQT_QUESTTYPE_RESOURCE] = {}
 	WorldQuestTracker.Cache_ShownQuestOnWorldMap [WQT_QUESTTYPE_APOWER] = {}
 	
-	local research_nameLoc, research_timeleftString, research_timeLeft, research_elapsedTime, shipmentsReady = WorldQuestTracker:GetNextResearchNoteTime()
-	if (research_timeLeft and research_timeLeft > 60) then
-		research_timeLeft = research_timeLeft / 60 --convert in minutes
-	end
 	local hasArtifactUnderpower
 	if (shipmentsReady and shipmentsReady > 0) then
 		--> already loaded?
@@ -12349,7 +12286,7 @@ function WorldQuestTracker.UpdateWorldQuestsOnWorldMap (noCache, showFade, isQue
 							if (isCriteria) then
 								factionAmountForEachMap [mapId] = (factionAmountForEachMap [mapId] or 0) + 1
 							end
-						
+							
 							--local widget = widgets [taskIconIndex]
 							local widget = WorldQuestTracker.GetWorldMapWidget (configTable, showTimeLeftText)
 							
@@ -12431,8 +12368,10 @@ function WorldQuestTracker.UpdateWorldQuestsOnWorldMap (noCache, showFade, isQue
 									else
 										if (WorldQuestTracker.IsQuestBeingTracked (questID)) then
 											widget.trackingGlowBorder:Show()
+											widget.trackingGlowInside:Show()
 										else
 											--widget.trackingGlowBorder:Hide()
+											widget.trackingGlowInside:Hide()
 										end
 									end									
 									
@@ -12504,8 +12443,10 @@ function WorldQuestTracker.UpdateWorldQuestsOnWorldMap (noCache, showFade, isQue
 									else
 										if (WorldQuestTracker.IsQuestBeingTracked (questID)) then
 											widget.trackingGlowBorder:Show()
+											widget.trackingGlowInside:Show()
 										else
 											widget.trackingGlowBorder:Hide()
+											widget.trackingGlowInside:Hide()
 										end
 									end
 

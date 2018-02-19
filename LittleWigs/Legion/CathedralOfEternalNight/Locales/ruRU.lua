@@ -14,11 +14,16 @@ end
 L = BigWigs:NewBossLocale("Cathedral of Eternal Night Trash", "ruRU")
 if L then
 	L.dulzak = "Дул'зак"
+	--L.wrathguard = "Wrathguard Invader"
 	L.felguard = "Страж Скверны - разрушитель"
 	L.soulmender = "Врачеватель душ адского огня"
 	L.temptress = "Искусительница адского огня"
 	L.botanist = "Присягнувшая Скверне - ботаник"
 	L.orbcaster = "Сквернолап - метательница сфер"
 	L.waglur = "Ва'глур"
+	L.scavenger = "Змееуст-барахольщик"
 	L.gazerax = "Созерцатель"
+	L.vilebark = "Ходячий гиблодрев"
+
+	--L.throw_tome = "Throw Tome" -- Common part of Throw Arcane/Frost/Silence Tome (242837/242839/242841)
 end

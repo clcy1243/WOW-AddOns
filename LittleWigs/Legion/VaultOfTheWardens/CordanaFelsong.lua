@@ -19,7 +19,7 @@ local warnedForCreepingDoom = nil
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
 	L.kick_combo = "Kick Combo"
 	L.kick_combo_desc = "{197251}\n{197250}" -- Knockdown Kick & Turn Kick
@@ -30,8 +30,8 @@ if L then
 
 	L.warmup_text = "Cordana Felsong Active"
 	L.warmup_trigger = "I have what I was after. But I stayed just so that I could put an end to you... once and for all!"
+	L.warmup_trigger_2 = "And now you fools have fallen into my trap. Let's see how you fare in the dark."
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -76,6 +76,8 @@ end
 function mod:Warmup(_, msg)
 	if msg == L.warmup_trigger then
 		self:Bar("warmup", 17, L.warmup_text, "achievement_dungeon_vaultofthewardens")
+	elseif msg == L.warmup_trigger_2 then
+		self:Bar("warmup", 4.7, L.warmup_text, "achievement_dungeon_vaultofthewardens")
 	end
 end
 

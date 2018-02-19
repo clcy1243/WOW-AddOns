@@ -24101,7 +24101,7 @@ local Priest = {
 		},
 		PsychicScream = {
 			type = "group",
-			name = GetSpellInfo(8122),
+			name = GetSpellInfo(8122), 
 			order = 25,
 			args = {
 				Title = {
@@ -24239,6 +24239,150 @@ local Priest = {
 					end,
 					set = function(info, value)
 						RSA.db.profile.Priest.Spells.PsychicScream.Messages.End = value
+					end,
+				},
+			},
+		},
+		MindBomb = {
+			type = "group",
+			name = GetSpellInfo(205369), 
+			order = 25,
+			args = {
+				Title = {
+					type = "header",
+					name = L["Announce In"],
+					order = 0,
+				},
+				Local = {
+					type = "toggle",
+					name = L["Local"], desc = L.Local_Desc,
+					order = 1,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.Local
+					end,
+					set = function (info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.Local = value
+					end,
+				},
+				CustomChannelEnabled = {
+					type = "toggle",
+					name = L["Custom Channel"], desc = L.Custom_Channel_Desc,
+					order = 3,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Enabled
+					end,
+					set = function (info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Enabled = value
+					end,
+				},
+				CustomChannelName = {
+					type = "input",
+					width = "full",
+					name = L["Channel Name"], desc = L.Channel_Name_Desc,
+					order = 4,
+					hidden = function()
+						return RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Enabled == false
+					end,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Channel
+					end,
+					set = function (info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Channel = value
+					end,
+				},
+				Raid = {
+					type = "toggle",
+					name = L["Raid"], desc = L.Raid_Desc,
+					order = 5,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.Raid
+					end,
+					set = function (info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.Raid = value
+					end,
+				},
+				Party = {
+					type = "toggle",
+					name = L["Party"], desc = L.Party_Desc,
+					order = 6,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.Party
+					end,
+					set = function (info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.Party = value
+					end,
+				},
+				SmartGroup = {
+					type = "toggle",
+					name = L["Smart Group"],
+					desc = L.Smart_Group_Desc,
+					order = 7,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.SmartGroup
+					end,
+					set = function (info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.SmartGroup = value
+					end,
+				},
+				Say = {
+					type = "toggle",
+					name = L["Say"],
+					desc = L.Say_Desc,
+					order = 8,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.Say
+					end,
+					set = function (info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.Say = value
+					end,
+				},
+				Yell = {
+					type = "toggle",
+					name = L.Yell,
+					desc = L.Yell_Desc,
+					order = 9,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.Yell
+					end,
+					set = function (info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.Yell = value
+					end,
+				},
+				---- Custom Message ----
+				Title2 = {
+					type = "header",
+					name = L["Message Settings"],
+					order = 20,
+				},
+				Description = {
+					type = "description",
+					name = L.Message_Settings_Desc .. L.MST,
+					order = 24,
+				},
+				Start = {
+					type = "input",
+					width = "full",
+					name = L["Start"],
+					desc = L.DescSpellStartCastingMessage,
+					order = 28,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.Messages.Start
+					end,
+					set = function(info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.Messages.Start = value
+					end,
+				},
+				End = {
+					type = "input",
+					width = "full",
+					name = L["End"],
+					desc = L.DescSpellEndCastingMessage,
+					order = 32,
+					get = function(info)
+						return RSA.db.profile.Priest.Spells.MindBomb.Messages.End
+					end,
+					set = function(info, value)
+						RSA.db.profile.Priest.Spells.MindBomb.Messages.End = value
 					end,
 				},
 			},

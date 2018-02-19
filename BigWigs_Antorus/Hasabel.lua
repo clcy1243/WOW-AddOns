@@ -10,7 +10,7 @@ local mod, CL = BigWigs:NewBoss("Portal Keeper Hasabel", nil, 1985, 1712)
 if not mod then return end
 mod:RegisterEnableMob(122104)
 mod.engageId = 2064
-mod.respawnTime = 33
+mod.respawnTime = 35
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -126,7 +126,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED_DOSE", "Corrupt", 245040)
 	self:Log("SPELL_CAST_SUCCESS", "CorruptSuccess", 245040)
 	self:Log("SPELL_AURA_APPLIED", "CloyingShadows", 245118)
-	self:Log("SPELL_AURA_APPLIED", "CloyingShadowsRemoved", 245118)
+	self:Log("SPELL_AURA_REMOVED", "CloyingShadowsRemoved", 245118)
 	self:Log("SPELL_AURA_APPLIED", "HungeringGloom", 245075)
 	self:Log("SPELL_AURA_REMOVED", "HungeringGloomRemoved", 245075)
 	self:Death("LordEilgarDeath", 122213)
@@ -288,8 +288,15 @@ function mod:HowlingShadows(args)
 	end
 end
 
-function mod:CatastrophicImplosion(args)
-	self:Message(args.spellId, "Important", "Alarm")
+do
+	local prev = 0
+	function mod:CatastrophicImplosion(args)
+		local t = GetTime()
+		if t-prev > 0.2 then
+			prev = t
+			self:Message(args.spellId, "Important", "Alarm")
+		end
+	end
 end
 
 do

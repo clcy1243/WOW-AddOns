@@ -1,582 +1,130 @@
-commit e02b3566c361c43921869ac603fd35ac99ef96d0
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Wed Jun 14 12:08:46 2017 +0930
+lightweight tag eb6cbc7726a9d76097a37ef2eb1912049d5ec81a 2.2.0
+Author:	Timothy Minahan <timothy@minahan.net>
+Date:	Mon Jan 15 10:47:20 2018 +1030
 
-    Travis Build Error
-
-commit f3be51ca012342f02bbe7e8dd902550a55f30dc2
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Wed Jun 14 11:53:22 2017 +0930
-
-    Beast Master Updates and 7.2.5 updates
-
-commit 33c2d28ac45b6b5b26417375e2bed03dc7b36caa
-Author: TimothyLuke <timothy@minahan.net>
-Date:   Fri May 12 12:22:49 2017 +0930
-
-    Fixed Travis line length warning and toc updates to 2.0.8
-
-commit 3750b2b73e3d8ca34103ee90a561dcf65c6d69c0
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Fri May 5 08:31:53 2017 -0700
-
-    Update DeathKnight.lua
-
-commit 1eb56400a748906b77d06a39f9471b177cc41534
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Sun Apr 16 14:06:34 2017 -0700
-
-    Update Warlock.lua
-    
-    Removed Haste version, macro cleanup
-
-commit 3750b2b73e3d8ca34103ee90a561dcf65c6d69c0
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Fri May 5 08:31:53 2017 -0700
-
-    Update DeathKnight.lua
-
-commit 1eb56400a748906b77d06a39f9471b177cc41534
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Sun Apr 16 14:06:34 2017 -0700
-
-    Update Warlock.lua
-    
-    Removed Haste version, macro cleanup
-
-commit 003b7936574d153e15c978b4152ff89042e5c970
+commit eb6cbc7726a9d76097a37ef2eb1912049d5ec81a
 Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Apr 12 17:24:43 2017 +0930
-
-    TOC updates to 2.0.7
-
-commit 954a3aed09c065c1ac38561be9529401ab16c1c3
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Apr 12 17:23:55 2017 +0930
-
-    Warlock post update changes
-
-commit 4352333b7d72792dd333d7880d0be152e4bc4208
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Tue Apr 11 20:45:28 2017 -0700
-
-    Update Warlock.lua
-    
-    Fixes
-
-commit 47283b9df0481d95d192060789185ee850ca7ee6
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Tue Apr 11 20:29:12 2017 -0700
-
-    Update DeathKnight.lua
-    
-    Not sure why it failed. Attempting again to watch the build.
-
-commit 47283b9df0481d95d192060789185ee850ca7ee6
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Tue Apr 11 20:29:12 2017 -0700
-
-    Update DeathKnight.lua
-    
-    Not sure why it failed. Attempting again to watch the build.
-
-commit 6d5e38434f99773d72472c0ba8091b5bd498538f
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Tue Apr 11 20:17:46 2017 -0700
-
-    Update DeathKnight.lua
-
-commit 4352333b7d72792dd333d7880d0be152e4bc4208
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Tue Apr 11 20:45:28 2017 -0700
-
-    Update Warlock.lua
-    
-    Fixes
-
-commit 3092b531b9ecc975fa62f56b5091ebe8d82c7249
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Tue Apr 11 20:37:49 2017 -0700
-
-    Update Warlock.lua
-    
-    Added both the refined high haste and low haste macros from the forums.
-
-commit 47283b9df0481d95d192060789185ee850ca7ee6
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Tue Apr 11 20:29:12 2017 -0700
-
-    Update DeathKnight.lua
-    
-    Not sure why it failed. Attempting again to watch the build.
-
-commit 6d5e38434f99773d72472c0ba8091b5bd498538f
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Tue Apr 11 20:17:46 2017 -0700
-
-    Update DeathKnight.lua
-
-commit 15fc0c4a6813d76a9a17bb04016052f48b14e7a8
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Fri Feb 24 19:43:36 2017 +1030
-
-    Code Cleanup
-
-commit 72c7254485a43199ae6bb2c5d00fa929e6fdbb89
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Fri Feb 17 10:12:02 2017 -0800
-
-    Update DeathKnight.lua
-    
-    Minor dps update
-
-commit 72c7254485a43199ae6bb2c5d00fa929e6fdbb89
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Fri Feb 17 10:12:02 2017 -0800
-
-    Update DeathKnight.lua
-    
-    Minor dps update
-
-commit c0ab5b5ab060204afc01436c78d409871a8c2f10
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Feb 9 14:07:35 2017 +1030
+Date:   Mon Jan 15 10:47:20 2018 +1030
 
     TOC Updates
 
-commit ff35722ac88d7319f2af8a48193a940a412e4ac5
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Feb 9 13:53:29 2017 +1030
-
-    Updates from ToxicDust
-
-commit 44e94c1e1e96b4ff30968bce528d66172ba6c7fd
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Feb 6 12:50:31 2017 +1030
-
-    Code Cleanup
-
-commit f8b04d60c22bfbc2145939ee722b0392fbe45980
+commit 1089d675e87ba43d76c0b2c3f6ed7f7f95bbd7e9
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Sun Feb 5 15:13:04 2017 -0800
-
-    Bringing everything to the same version
-
-commit 6030fd84c7ae46e27622751ec153cbca59323ad7
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Sun Feb 5 14:55:35 2017 -0800
-
-    HP tag
-
-commit f8b04d60c22bfbc2145939ee722b0392fbe45980
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Sun Feb 5 15:13:04 2017 -0800
-
-    Bringing everything to the same version
-
-commit 6030fd84c7ae46e27622751ec153cbca59323ad7
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Sun Feb 5 14:55:35 2017 -0800
-
-    HP tag
-
-commit dfaf1aace71a20def8e6cf2cfcf11f546c8b76f5
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Sun Feb 5 14:49:00 2017 -0800
-
-    Significant Unholy update
-    
-    Cut out the crit spec, mastery spec finally up to sims.
-
-commit dd278064867fa4d62423911b792cf3344a34d429
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Fri Jan 27 08:46:49 2017 +1030
-
-    2.0.4
-
-commit dd278064867fa4d62423911b792cf3344a34d429
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Fri Jan 27 08:46:49 2017 +1030
-
-    2.0.4
-
-commit dd278064867fa4d62423911b792cf3344a34d429
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Fri Jan 27 08:46:49 2017 +1030
-
-    2.0.4
-
-commit 5ee7be7ac92c25b12c63753c974d2230e307f074
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Fri Jan 27 08:46:22 2017 +1030
-
-    2.0.4
-
-commit f9c32108889b4de85e9bc61a05413eb083eb09b4
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 25 16:51:59 2017 -0800
-
-    Update DeathKnight.lua
-    
-    Updates from the forums
-
-commit 846cf26a73f7aaf53b1b9f524a91faa83f26c337
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 25 16:43:56 2017 -0800
+Date:   Sat Jan 13 14:50:46 2018 -0800
 
     Update Warlock.lua
     
-    Bug report: When exporting from GSE2, trailing spaces are introduced to the Author line. Removed to fix errors.
+    All up-to-date
 
-commit de02512e32bd525c7c784f6edb17113ef2fce471
+commit 1089d675e87ba43d76c0b2c3f6ed7f7f95bbd7e9
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 25 16:38:37 2017 -0800
+Date:   Sat Jan 13 14:50:46 2018 -0800
 
     Update Warlock.lua
     
-    Fix trailing spaces
+    All up-to-date
 
-commit 1ae4c3d7bd2d126aa85e94bf8d48f384aed0904b
+commit 1089d675e87ba43d76c0b2c3f6ed7f7f95bbd7e9
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 25 16:34:52 2017 -0800
+Date:   Sat Jan 13 14:50:46 2018 -0800
 
     Update Warlock.lua
     
-    Updates from the forums.
+    All up-to-date
 
-commit baee32313d5d88cd978fd4d5dab6dfe62e181e2f
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Jan 24 17:50:31 2017 +1030
-
-    Priest Updates
-
-commit 14c922a6dd224fdb8e54caaf12506f0d443b6cb7
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Jan 24 17:13:01 2017 +1030
-
-    Priest Macros.
-
-commit 10c80e4f0a80e7ea65625421a842a1bcbb797437
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Jan 12 09:59:41 2017 +1030
-
-    Updated warlock and Demonology
-
-commit 5fbc61c45202add5d398d721bb03d4e827958d55
+commit d6e19f5c48b356b22f2839c20a2c475032499c58
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 11 09:27:02 2017 -0800
+Date:   Sat Jan 13 14:45:19 2018 -0800
 
-    Fixes
+    Update DemonHunter.lua
     
-    Fixed failed check
+    Added HP prefixes
 
-commit 5fbc61c45202add5d398d721bb03d4e827958d55
+commit d6e19f5c48b356b22f2839c20a2c475032499c58
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 11 09:27:02 2017 -0800
+Date:   Sat Jan 13 14:45:19 2018 -0800
 
-    Fixes
+    Update DemonHunter.lua
     
-    Fixed failed check
+    Added HP prefixes
 
-commit 5fbc61c45202add5d398d721bb03d4e827958d55
+commit d6e19f5c48b356b22f2839c20a2c475032499c58
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 11 09:27:02 2017 -0800
+Date:   Sat Jan 13 14:45:19 2018 -0800
 
-    Fixes
+    Update DemonHunter.lua
     
-    Fixed failed check
+    Added HP prefixes
 
-commit 770dc728de6c257414c108068682418824157642
+commit d6e19f5c48b356b22f2839c20a2c475032499c58
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 11 09:22:33 2017 -0800
+Date:   Sat Jan 13 14:45:19 2018 -0800
+
+    Update DemonHunter.lua
+    
+    Added HP prefixes
+
+commit ec00f29aeaeb8a6186dd37d4d0ecaeca9c912ad9
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Thu Nov 16 21:30:21 2017 -0800
+
+    Unholy update, and replaced blood
+    
+    Replaced blood with one that works.
+
+commit 2c0d9bf708dd01d2071a93ac82c73b1ed09d1830
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Fri Jun 30 11:29:12 2017 -0700
+
+    Updating Warlock macros
+    
+    Updating macros for newest patch.
+
+commit 1089d675e87ba43d76c0b2c3f6ed7f7f95bbd7e9
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Sat Jan 13 14:50:46 2018 -0800
 
     Update Warlock.lua
-
-commit bb2afb892be3ed229be513c13029f6009d3ed01a
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 11 09:20:27 2017 -0800
-
-    Updated for 7.1.5
     
-    Took care not to mess with your formatting. Also took the liberty of adding Affliction (don't recall if it was nominated or accepted, and if in conflict please delete).
+    All up-to-date
 
-commit 5cc0a0e104ff90f0ee77731e7588fa97627b51c8
+commit d6e19f5c48b356b22f2839c20a2c475032499c58
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 11 09:09:31 2017 -0800
+Date:   Sat Jan 13 14:45:19 2018 -0800
 
-    Update DeathKnight.lua
-
-commit dc077901f77867c8599b11ef81a448bddbde5980
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Wed Jan 11 09:06:05 2017 -0800
-
-    Updated Unholy for 7.1.5
+    Update DemonHunter.lua
     
-    Took care not to overwrite your new format. I only inserted appropriate code between your formatting.
+    Added HP prefixes
 
-commit 678be7a009f07820ce5b20e1aa84bf3b05715e56
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Jan 11 11:57:25 2017 +1030
-
-    warning about GSE2
-
-commit 43959ce653a0f195e71ef1b1a0fb639eac865823
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Dec 21 16:27:17 2016 +1030
-
-    More Travis Fixes.
-
-commit 104fbff80b8a7f4881286cbed917187ef5500635
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Dec 21 16:19:10 2016 +1030
-
-    Travis Fixes
-
-commit 4b834acd65c5294e870feb83155b28208740ee3f
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Dec 21 12:03:29 2016 +1030
-
-    GSE2 changes
-
-commit c7d663651c14767f2b4b4201066b033b041fc7ca
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Dec 21 12:02:01 2016 +1030
-
-    GSE2.0 Changes
-
-commit f05784ac455f4f1d1aba95e34e9a9c89002b3d8b
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Dec 19 09:00:20 2016 +1030
-
-    Add EnixLHQ Demonology Warlock
-
-commit 71bbfccac35a4d469e1987e221566aadbe2877df
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Fri Dec 9 13:46:56 2016 +1030
-
-    GSE2 changes
-
-commit 939fcd807638d1aea6795f0aedd5bae2ba0370aa
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Fri Dec 9 13:43:41 2016 +1030
-
-    Fix for GSE2
-
-commit eec39d15c84b97f5596d9faee81b41c1dbbf7e1e
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Dec 8 12:22:43 2016 +1030
-
-    GSE 2.0 Changes
-
-commit 390e94ad3be7381195042198d87219332cc9c506
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Nov 1 15:56:23 2016 +1030
-
-    Typonese
-
-commit 88f140291a61c9967098db518effd603a4d072e9
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Nov 1 08:32:48 2016 +1030
-
-    Fix 1.6 Load Bug
-
-commit 91fa9759ea9e2d79b0669a1ed3f24021162b4c79
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Nov 1 07:51:16 2016 +1030
-
-    TOC increment
-
-commit 5bc7fab04063b1b2915b48f969b7f1b2dec439a9
+commit 598098c8f23e472ae47bc6b9e862428db611b826
 Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Mon Oct 31 09:07:14 2016 -0700
-
-    Update DeathKnight.lua
-
-commit 5bc7fab04063b1b2915b48f969b7f1b2dec439a9
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Mon Oct 31 09:07:14 2016 -0700
-
-    Update DeathKnight.lua
-
-commit a29577edee8beea00892c538559bb5c23c63291b
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Oct 27 09:09:24 2016 +1100
-
-    Updates for GS-E 1.5 and DeathKnight 7.1 changes
-
-commit 6b2ac1c6a914577bf5aaa2ed42b8f01c22c86564
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Oct 26 04:21:01 2016 +1030
-
-    7.1 toc changes
-
-commit 6b2ac1c6a914577bf5aaa2ed42b8f01c22c86564
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Oct 26 04:21:01 2016 +1030
-
-    7.1 toc changes
-
-commit d2e096075b2e6dd198d32cac507b9684c169c30f
-Author: EnixLHQ <brian.r.luedtke@gmail.com>
-Date:   Sun Oct 23 16:39:17 2016 -0700
+Date:   Sat Jan 13 14:42:54 2018 -0800
 
     Update DeathKnight.lua
     
-    Prepared for 7.1 buffs
+    Updated my macros, Squishy has been outdated forever so I used mine, and updated Metz's ST macro with his own. Not sure if he uses the AoE one anymore, so it's untouched.
 
-commit 162c9eaea8b3fa8ae722f2080ac22c97d2037d36
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Oct 20 11:33:56 2016 +1030
+commit 8e48dc91d9b36a929b15f73e3801b62aec879a15
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Sat Jan 13 14:37:18 2018 -0800
 
-    Suisieke Blood DK
-
-commit bdbaae0a8e0659946342d1df4c07bd99feaaf05e
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Oct 20 08:51:44 2016 +1030
-
-    John Mets Frost DK Macros
-
-commit 571ed34097dddc1b3427dd31618430bfe76c138d
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Oct 18 08:02:22 2016 +1030
-
-    more 7.1 mods
-
-commit 101e790c733358efb9ec5faf949d4624909aa042
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Oct 17 10:58:26 2016 +1030
-
-    7.1 Framework updates
-
-commit 8427e2f60025acdafe18f528b7d7d06e54a80e15
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Oct 17 08:25:05 2016 +1030
-
-    Event Framework post Login
-
-commit 0a3e5d54837794dd549e76df66ca4b8a1f8147ee
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Sun Oct 16 08:30:10 2016 +1030
-
-    Clean up post import
-
-commit cdef73eabbc601b38f1e6ef73dfabdc6cbad8f21
-Author: EnixLHQ <enixlhq@gmail.com>
-Date:   Fri Oct 14 11:00:26 2016 -0700
-
-    Update DeathKnight.lua
+    Update DemonHunter.lua
     
-    Updated macro
+    Added a couple DH macros. I do think these are the best performers, though feel free to reject or replace.
 
-commit cdef73eabbc601b38f1e6ef73dfabdc6cbad8f21
-Author: EnixLHQ <enixlhq@gmail.com>
-Date:   Fri Oct 14 11:00:26 2016 -0700
+commit ec00f29aeaeb8a6186dd37d4d0ecaeca9c912ad9
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Thu Nov 16 21:30:21 2017 -0800
 
-    Update DeathKnight.lua
+    Unholy update, and replaced blood
     
-    Updated macro
+    Replaced blood with one that works.
 
-commit 6474005a8ee1807cd9dd38021ed1b72196dde4cf
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 26 13:18:30 2016 +0930
+commit 2c0d9bf708dd01d2071a93ac82c73b1ed09d1830
+Author: EnixLHQ <brian.r.luedtke@gmail.com>
+Date:   Fri Jun 30 11:29:12 2017 -0700
 
-    Add Unholy DK Macro
-
-commit c9584cbeb83694f10798aaabf5c6d77ab1701208
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Sep 20 08:14:15 2016 +0930
-
-    typo
-
-commit 2446134e0e8018b496f862c0a278689a2879f00f
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Sep 20 08:06:32 2016 +0930
-
-    TOC and output message update
-
-commit 58370357a695cc2af47ee98edfcfb4fd33545be9
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Tue Sep 20 07:59:23 2016 +0930
-
-    Hunter updates from https://wowlazymacros.com/forums/topic/my-improved-gs-e-leveling-raiding-or-high-performance-macros/#post-33652
-
-commit d46a8be7c319840e12cc9e94fe2b91d1c1a9ac1c
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Wed Sep 14 10:21:15 2016 +0930
-
-    Adding HP_BladeFury Set of Macros from WLM Toxicdust
-
-commit 2e677ff62934198212393fbcf0f1c5c9e5d3fb08
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Sep 8 20:14:44 2016 +0930
-
-    Rocktris update for Enhst
-
-commit 264c6ba8bdf29e80fdcc7895162b24b1f4e8b425
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Thu Sep 8 09:58:31 2016 +0930
-
-    Updating Author to match WLM User
-
-commit 20cbf500c2c11e843eb84911bf2430c4314a1a6c
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 5 22:54:34 2016 +0930
-
-    Revert "Titans Thunder ability not in game."
+    Updating Warlock macros
     
-    This reverts commit c3c8e50ab3987f5e29e131ba8c30ce87acb50181.
-
-commit c3c8e50ab3987f5e29e131ba8c30ce87acb50181
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 5 17:50:40 2016 +0930
-
-    Titans Thunder ability not in game.
-
-commit 4047a3ae051b91f429f972778c1a7e711555c178
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 5 08:21:07 2016 +0930
-
-    Travis Fix
-
-commit 786c6f9683a7575ed6b3eb8c722bb41afb00ead7
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 5 08:18:27 2016 +0930
-
-    Ignore GIHUB toc when packaging.
-
-commit 5203be4ed57a994fceaad16409141ad6400596c3
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 5 08:17:46 2016 +0930
-
-    Allow straight from GIT
-
-commit f4cb3c77ffc3a45714e00a4bff5c108fefd51f22
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 5 08:15:53 2016 +0930
-
-    Travis Fix
-
-commit b4c8e0277a37e4bc0b9886b24d411dcf607bb7d9
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 5 08:13:45 2016 +0930
-
-    Readme Update
-
-commit 1f218d01d1c0a7be59503088b8cda5da2a4bda0a
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 5 08:05:11 2016 +0930
-
-    Packaging Setup
-
-commit 8981f989ab6436f01168e096d663d88d4fe1155d
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Sat Sep 3 17:35:28 2016 +0930
-
-    initial Upload and move from the GnomeSequencer-Enhanced Repository
-
-commit abeed4872a592cb764630a9b11a93a5f3f76883d
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Sat Sep 3 17:31:19 2016 +0930
-
-    Initial commit
+    Updating macros for newest patch.
 

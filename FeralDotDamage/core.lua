@@ -1068,105 +1068,161 @@ function ns:UpdateVisible(unit)
 			
 			frame.shown = false
 
-			local ind = 1
-
-			while ( true ) do
-				local guid = UnitGUID("target")
-				local name, _, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura("target", ind, "PLAYER|HARMFUL")
+			
+			if frame.spellID == fb_id then
+				local combopoints = UnitPower("player", 4)
+				local haveProc = false
 				
-				if not name then
-					break;
+				if ( ns.db.profile.icons.enable4T21 ) then
+					if UnitBuff('player', (GetSpellInfo(252752))) then
+						haveProc = true
+						
+						if not frame._enable4T2Highlight then
+							frame._enable4T2Highlight = true
+							
+							FeralDotDamage.ShowOverlayGlow(frame)
+						end
+					elseif frame._enable4T2Highlight then
+						frame._enable4T2Highlight = false
+						
+						FeralDotDamage.HideOverlayGlow(frame)
+					end
+				else	
+					if frame._enable4T2Highlight then
+						frame._enable4T2Highlight = false
+						
+						FeralDotDamage.HideOverlayGlow(frame)
+					end
 				end
 				
-				if duration and duration > 0 and expirationTime and expirationTime > GetTime() then				
-					if spellId == 210705 then
-						ns:RegisterDot(guid, 210705, expirationTime-duration, expirationTime)
+				if combopoints > 0 or haveProc then
+					frame.guid = guid
+					frame.shown = true
+
+					frame:ToggleIconDarkness(true)
+					
+					frame:SetAlpha(1)
+		
+					frame:ToggleComboPoints(combopoints)
+					
+					frame:SetIcon(nil, false)
+					
+					frame.glow:Hide()
+					frame.glow.elapsed = 0
+					
+					--[==[
+					local energy = UnitPower("player", 3)
+					
+					if energy >= 50 or haveProc then
+						frame.icon:SetVertexColor(1, 1, 1, 1)
+					elseif energy > 35 then
+						frame.icon:SetVertexColor(1, 1, 0, 1)
+					else 
+						frame.icon:SetVertexColor(1, 0.6, 0.6, 1)
+					end
+					]==]
+				end
+			else
+				local ind = 1
+
+				while ( true ) do
+					local guid = UnitGUID("target")
+					local name, _, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura("target", ind, "PLAYER|HARMFUL")
+					
+					if not name then
+						break;
 					end
 					
-					if spellId == frame.spellID then
-						local spellid = frame.spellID
-						
-						ns:RegisterDot(guid, spellid, expirationTime-duration, expirationTime)
-						
-						local cp = 0
-						
-						if dot_store[guid..spellid] then
-
-							dot_store[guid..spellid][1] = expirationTime-duration or GetTime()												-- starttime
-							dot_store[guid..spellid][2]	= expirationTime or dot_store[guid..spellid][1] + dots_info[spellid][2]		-- endtime
-							
-							cp = dot_store[guid..spellid][17]
+					if duration and duration > 0 and expirationTime and expirationTime > GetTime() then				
+						if spellId == 210705 then
+							ns:RegisterDot(guid, 210705, expirationTime-duration, expirationTime)
 						end
 						
-						frame.guid = guid
-						frame.shown = true
-
-						frame:ToggleIconDarkness(true)
-
-						frame:ToggleTicks(true)
-						
-						frame:SetAlpha(1)
-			
-						frame:ToggleComboPoints(cp)
-						
-						if frame.spellID == vzbuchka_spid then
-							local name1, _, icon1, _, _, duration1, expirationTime1, _, _, _, spellId1 = UnitBuff("player", (GetSpellInfo(210664)))
+						if spellId == frame.spellID then
+							local spellid = frame.spellID
 							
-						--	print('T', name1, duration1, (expirationTime1 and  expirationTime1-GetTime() or -1 ))
+							ns:RegisterDot(guid, spellid, expirationTime-duration, expirationTime)
 							
-							if name1 and not ns.db.profile.icons.disableIconSwap then
-								if ns.brutalSlash then
-									frame:SetIcon(GetSpellTexture(202028), false)
-								else
-									frame:SetIcon(GetSpellTexture(106785), false)
-								end						
-								frame:SetTimer(expirationTime-duration, duration)
-							else				
-								frame:SetIcon(GetSpellTexture(vzbuchka_spid), false)						
+							local cp = 0
+							
+							if dot_store[guid..spellid] then
+
+								dot_store[guid..spellid][1] = expirationTime-duration or GetTime()												-- starttime
+								dot_store[guid..spellid][2]	= expirationTime or dot_store[guid..spellid][1] + dots_info[spellid][2]		-- endtime
+								
+								cp = dot_store[guid..spellid][17]
+							end
+							
+							frame.guid = guid
+							frame.shown = true
+
+							frame:ToggleIconDarkness(true)
+
+							frame:ToggleTicks(true)
+							
+							frame:SetAlpha(1)
+				
+							frame:ToggleComboPoints(cp)
+							
+							if frame.spellID == vzbuchka_spid then
+								local name1, _, icon1, _, _, duration1, expirationTime1, _, _, _, spellId1 = UnitBuff("player", (GetSpellInfo(210664)))
+								
+							--	print('T', name1, duration1, (expirationTime1 and  expirationTime1-GetTime() or -1 ))
+								
+								if name1 and not ns.db.profile.icons.disableIconSwap then
+									if ns.brutalSlash then
+										frame:SetIcon(GetSpellTexture(202028), false)
+									else
+										frame:SetIcon(GetSpellTexture(106785), false)
+									end						
+									frame:SetTimer(expirationTime-duration, duration)
+								else				
+									frame:SetIcon(GetSpellTexture(vzbuchka_spid), false)						
+									frame:SetTimer(expirationTime-duration, duration)
+								end
+							else
+								frame:SetIcon(nil, false)
 								frame:SetTimer(expirationTime-duration, duration)
 							end
-						else
-							frame:SetIcon(nil, false)
-							frame:SetTimer(expirationTime-duration, duration)
 						end
 					end
+					
+					ind = ind + 1
 				end
 				
-				ind = ind + 1
-			end
-			
-			ind = 1
-			
-			while ( true ) do
-				local name, _, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura("player", ind, "PLAYER|HELPFUL")
+				ind = 1
 				
-				if not name then
-					break;
-				end
-				
-				if duration and duration > 0 and expirationTime and expirationTime > GetTime() then		
-					if name == frame.spellName then
-
-						local guid = UnitGUID("player")
-						local spellid = frame.spellID
-						
-						frame.shown = true
-						frame.guid = guid
-						
-						frame:ToggleTicks(false)
-						
-						frame:SetIcon(nil, false)
-						frame:SetTimer(expirationTime-duration, duration)
-						
-						frame:ToggleIconDarkness(true)
-						
-						frame:SetAlpha(1)
-						
-						frame:ToggleComboPoints(false)
+				while ( true ) do
+					local name, _, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura("player", ind, "PLAYER|HELPFUL")
+					
+					if not name then
+						break;
 					end
+					
+					if duration and duration > 0 and expirationTime and expirationTime > GetTime() then		
+						if name == frame.spellName then
+
+							local guid = UnitGUID("player")
+							local spellid = frame.spellID
+							
+							frame.shown = true
+							frame.guid = guid
+							
+							frame:ToggleTicks(false)
+							
+							frame:SetIcon(nil, false)
+							frame:SetTimer(expirationTime-duration, duration)
+							
+							frame:ToggleIconDarkness(true)
+							
+							frame:SetAlpha(1)
+							
+							frame:ToggleComboPoints(false)
+						end
+					end
+					
+					ind = ind + 1
 				end
-				
-				ind = ind + 1
 			end
 			
 			local clearCast, _, _, _, _, duration, expirationTime = UnitAura("player", clearcast_name, nil, "PLAYER|HELPFUL")
@@ -1381,9 +1437,20 @@ local function IconOnUpdateHandler(self, elapsed)
 	local curperhp = 0
 	
 	if spellid == razorvat_spid then
+		
+		local haveFBIcon = false
+		--[==[
+		for i=1, #order_spell do
+			if order_spell[i] == fb_id then
+				haveFBIcon = true
+				break
+			end
+		end
+		]==]
+			
 		curperhp = UnitHealth("target")*100/UnitHealthMax("target")
 		
-		if curperhp < 25 and parent.shown and not ns.db.profile.icons.disableIconSwap then
+		if curperhp < 25 and parent.shown and not ns.db.profile.icons.disableIconSwap and not haveFBIcon then
 			parent.icon:SetTexture(fb_texture)
 		elseif parent.shown and not ns.db.profile.icons.disableIconSwap and ns:IsAshamaneBiteAvailible(guid) then		
 			parent.icon:SetTexture(ns.customAshamaneBiteTexture)
@@ -1391,7 +1458,6 @@ local function IconOnUpdateHandler(self, elapsed)
 			parent.icon:SetTexture(razorvat_texture)
 		end
 	end
-	
 	
 	parent.statusbar:SetMinMaxValues(0, maxtime)
 	parent.statusbar:SetValue(current)

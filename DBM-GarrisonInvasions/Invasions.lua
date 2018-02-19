@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("GarrisonInvasions", "DBM-GarrisonInvasions")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
 mod:SetZone(DBM_DISABLE_ZONE_DETECTION)
 
 mod:RegisterEvents(
@@ -20,8 +20,6 @@ local specWarnBuilding			= mod:NewSpecialWarning("specWarnBuilding")
 
 --Generic
 --local timerCombatStart			= mod:NewCombatTimer(44)--rollplay for first pull
-
-mod:RemoveOption("HealthFrame")
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if not self.Options.Enabled then return end

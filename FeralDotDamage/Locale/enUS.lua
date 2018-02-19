@@ -1,6 +1,8 @@
 local L = AleaUI_GUI.GetTranslate("FeralDotDamage", "enUS", true)
 if not L then return end
 
+L["Подсвечивать иконку при проке"] = 'Glow icon on '
+
 L["Тип отображения силы дот"] = 'DoT power indicators type'
 L['Индикаторы'] = 'Indicators'
 

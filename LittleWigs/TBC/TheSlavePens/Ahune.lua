@@ -19,13 +19,16 @@ local standing = nil
 -------------------------------------------------------------------------------
 --  Localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("Little Wigs: Lord Ahune", "enUS", true)
+local L = mod:GetLocale()
 if L then
-	
-	
+	L["state"] = "State"
+	L["state_desc"] = "Display information about the state of Ahune (Submerged/Emerged)"
+	L["attack_message"] = "Ahune is Attackable"
+	L["stand_message"] = "Ahune Emerged"
+	L["stand_soon"] = "Emerge Soon"
+	L["submerge_message"] = "Ahune Submerged"
+	L["submerge_soon"] = "Submerge Soon"
 end
-L = LibStub("AceLocale-3.0"):GetLocale("Little Wigs: Lord Ahune")
-mod.locale = L
 
 -------------------------------------------------------------------------------
 --  Initialization

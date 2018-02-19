@@ -90,6 +90,8 @@ L["STRING_CLOSEALL"] = "Toutes les fenêtres de Details sont fermées. Tapez «/
 L["STRING_COLOR"] = "Couleur"
 L["STRING_COMMAND_LIST"] = "liste de commandes"
 L["STRING_COOLTIP_NOOPTIONS"] = "aucune option"
+--Translation missing 
+-- L["STRING_CREATEAURA"] = ""
 L["STRING_CRITICAL_HITS"] = "Coups Critiques"
 L["STRING_CRITICAL_ONLY"] = "critique"
 L["STRING_CURRENT"] = "Actuel"
@@ -2333,11 +2335,15 @@ L["STRING_MINITUTORIAL_OPTIONS_PANEL6"] = "Sélectionnez ici quelle fenêtre vou
 --Translation missing 
 -- L["STRING_SPELL_INTERRUPTED"] = ""
 --Translation missing 
+-- L["STRING_SPELLLIST"] = ""
+--Translation missing 
 -- L["STRING_SPELLS"] = ""
 --Translation missing 
 -- L["STRING_SPIRIT_LINK_TOTEM"] = ""
 --Translation missing 
 -- L["STRING_SPIRIT_LINK_TOTEM_DESC"] = ""
+--Translation missing 
+-- L["STRING_STATISTICS"] = ""
 --Translation missing 
 -- L["STRING_STATUSBAR_NOOPTIONS"] = ""
 --Translation missing 

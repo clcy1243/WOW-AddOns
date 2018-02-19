@@ -38,7 +38,7 @@ function EU:OnInitialize()
             spec =            { enabled = false, pos = 1,  width = 20, func = self.SetCellSpecIcon, name = ""},
             bonus =           { enabled = false, pos = 100, width = 40, func = self.SetCellBonusRoll, name = LE["Bonus"]},
             guildNotes =      { enabled = false, pos = -1, width = 45, func = self.SetCellGuildNote, name = LE["GuildNote"]},
-            rcscore =         { enabked = false, pos = 16, width = 50, func = self.SetCellRCScore, name = "RC Score"},
+            rcscore =         { enabled = false, pos = 16, width = 50, func = self.SetCellRCScore, name = "RC Score"},
          },
          normalColumns = {
             class =  { enabled = true, name = LE.Class, width = 20},
@@ -132,12 +132,13 @@ function EU:OnInitialize()
    self.db = addon.db:GetNamespace("ExtraUtilities").profile
    self:Enable()
 
-   -- This changes in rclc v2.5
-   if addon:VersionCompare(addon.version, "2.5.0") then
-      addon:CustomChatCmd(self, "OpenOptions", "EU", "eu")
-   else
+   -- Setup chat command for options
+   if addon:VersionCompare(addon.version, "2.7.6") then
       addon:CustomChatCmd(self, "OpenOptions","- eu - Opens the ExtraUtilities options window", "EU", "eu")
+   else
+      addon:ModuleChatCmd(self, "OpenOptions", nil, LE["chat_cmd_desc"], "eu", "extrautilities")
    end
+
    self:RegisterEvent("BONUS_ROLL_RESULT")
 end
 
@@ -161,9 +162,6 @@ function EU:OnEnable()
    -- Setup options
    self:OptionsTable()
 
-   -- Setup InspectHandler
-   self.InspectHandler:SetCallback("InspectReady")
-
    -- Hook SwitchSession() so we know which session we're on
    self:Hook(self.votingFrame, "SwitchSession", function(_, s) session = s end)
 
@@ -174,31 +172,11 @@ function EU:OnEnable()
          self.sortNext[v.colName] = self.votingFrame.scrollCols[v.sortNext].colName
       end
    end
-
-   -- -- Potentially remove existing columns
-   -- for colName, v in pairs(self.db.normalColumns) do
-   --    if not v.enabled then self:UpdateColumn(colName, false) end
-   -- end
-
    -- Make sure we handle external requirements
    self:HandleExternalRequirements()
-
    -- Setup our columns
    self:SetupColumns()
-   -- for colName, v in pairs(self.db.columns) do
-   --    if v.enabled then self:UpdateColumn(colName, true) end
-   -- end
-   -- -- And possibly update their widths and positions acording to our settings
-   -- -- we assume the voting frame isn't created at this point
-   -- for i, v in ipairs(self.votingFrame.scrollCols) do
-   --    if self.db.normalColumns[v.colName] then -- Check if we handle it
-   --       -- and update width
-   --       self.votingFrame.scrollCols[i].width = self.db.normalColumns[v.colName].width
-   --       if self.db.normalColumns[v.colName].pos then
-   --          self:UpdateColumnPosition(v.colName, self.db.normalColumns[v.colName].pos)
-   --       end
-   --    end
-   -- end
+
    self:UpdateGuildInfo()
 end
 
@@ -250,9 +228,6 @@ function EU:OnCommReceived(prefix, serializedMsg, distri, sender)
             if self.db.bonusRollsHistory and addon.isMasterLooter and type == "item" then
                addon:GetActiveModule("masterlooter"):TrackAndLogLoot(name,link,"BONUSROLL", addon.bossName,0)
             end
-
-         elseif command == "candidates" then
-            self:QueueInspects(unpack(data))
          end
       end
    end
@@ -279,48 +254,16 @@ function EU:BONUS_ROLL_RESULT(event, rewardType, rewardLink, ...)--rewardQuantit
    ]]
 end
 
-function EU:InspectReady(unit, type, data)
-   if type == "spec" then
-      if data then
-         if data == 0 then -- We don't want this
-            addon:Debug("Got spec = 0 for ", unit)
-            --self.InspectHandler:InspectUnit(unit, type)
-            return
-         end
-         addon:Debug("Successfully received specID for ", unit, data)
-         if not playerData[unit] then playerData[unit] = {} end
-         playerData[unit].specID = data
-      else
-         -- REVIEW Queue again?
-         addon:Debug("Didn't receive specID for ", unit, "requeuing")
-         self.InspectHandler:InspectUnit(unit, type)
-      end
-   else
-      addon:Debug("EU:InspectReady() - unknown type", type)
-   end
-end
-
-function EU:QueueInspects(candidates)
-   for name in pairs(candidates) do
-      if not (playerData[name] and playerData[name].specID) then
-         -- We're missing at least the specID, so lets try to inspect the candidate
-         if self.InspectHandler:InspectUnit(name, "spec") then
-            addon:Debug("Inspect queued on: ", name)
-         else
-            addon:Debug("Inspect failed on: ", name)
-         end
-      end
-   end
-end
-
 function EU:HandleExternalRequirements()
    -- Pawn
    if self.db.columns.pawn.enabled and not PawnVersion then
       self.db.columns.pawn.enabled = false
+      addon:Print(LE["Pawn column was disabled as Pawn isn't installed."])
    end
    -- RCScore
    if self.db.columns.rcscore.enabled and not (Details or Recount or Skada) then
       self.db.columns.rcscore.enabled = false
+      addon:Print(LE["RCScore column was disabled as no damage meter is installed."])
    end
 end
 
@@ -725,7 +668,7 @@ end
 
 function EU.SetCellSpecIcon(rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
    local name = data[realrow].name
-	local specID = playerData[name] and playerData[name].specID
+	local specID = EU.votingFrame:GetCandidateData(session, name, "specID")
    local icon
    if specID then
       icon = select(4,GetSpecializationInfoByID(specID))
@@ -877,7 +820,7 @@ function EU.SetCellRCScore(rowFrame, frame, data, cols, row, realrow, column, fS
    -- check if ilvl is availble
    if ilvl and ilvl ~= "" then
       -- Now check if we've already stored the score
-      local score = EU.votingFrame:GetCandidateData(session, name, "RCScore")
+      local score = EU.votingFrame:GetCandidateData(1, name, "RCScore")
       if not score then -- Calculate it
          local role = EU.votingFrame:GetCandidateData(session, name, "role")
          local dps = EU.getDPSFromLastFight(role, name)
@@ -893,7 +836,7 @@ function EU.SetCellRCScore(rowFrame, frame, data, cols, row, realrow, column, fS
          end
          if debugRCScore then addon:Debug("RCScore:", name, score) end
          -- Store the score
-         EU.votingFrame:SetCandidateData(session, name, "RCScore", score)
+         EU.votingFrame:SetCandidateData(1, name, "RCScore", score)
       end
       data[realrow].cols[column].value = score or 0
       frame.text:SetText(addon.round(score,0) .. "%")

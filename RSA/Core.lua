@@ -2923,6 +2923,22 @@ RSA.DefaultOptions = {
 					SmartGroup = false,
 					Say = false,
 				}, -- End
+				MindBomb = {
+					Messages = {
+						Start = "[LINK] cast on [TARGET]!",
+						End = "[LINK] faded!",
+					},
+					CustomChannel = {
+						Enabled = false,
+						Channel = "",
+					},
+					Local = false,
+					Raid = false,
+					Party = false,
+					Yell = false,
+					SmartGroup = false,
+					Say = false,
+				}, -- End
 				MindControl = {
 					Messages = {
 						Casting = "Casting [LINK] on [TARGET]!",

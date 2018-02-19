@@ -37,6 +37,9 @@ do
 			onenterbordercolor = {0, 0, 0, 1},
 		}
 		
+		framework:InstallTemplate ("button", "ADL_MENUBUTTON_TEMPLATE", {width = 160}, "DETAILS_PLUGIN_BUTTON_TEMPLATE")
+		framework:InstallTemplate ("button", "ADL_MENUBUTTON_SELECTED_TEMPLATE", {width = 160}, "DETAILS_PLUGIN_BUTTONSELECTED_TEMPLATE")
+		
 		local options_text_template = framework:GetTemplate ("font", "OPTIONS_FONT_TEMPLATE")
 		local options_dropdown_template = framework:GetTemplate ("dropdown", "OPTIONS_DROPDOWN_TEMPLATE")
 		local options_switch_template = framework:GetTemplate ("switch", "OPTIONS_CHECKBOX_TEMPLATE")
@@ -710,9 +713,35 @@ do
 		endurance_frame:SetFrameLevel (f:GetFrameLevel()+5)
 		endurance_frame:SetPoint ("topleft", enduranceFrameMenuAnchor, "topleft", 170, -45)
 		
-		endurance_frame:SetSize (718, 370)
+		endurance_frame:SetSize (718, 470)
 		endurance_frame:SetResizable (false)
 		endurance_frame:SetMovable (true)
+		
+		local CONST_ENDURANCE_BREAKLINE = 450
+		
+		--
+			local greenPercent = endurance_frame:CreateTexture (nil, "overlay")
+			greenPercent:SetColorTexture (.2, 1, .2, .7)
+			greenPercent:SetSize (6, 20)
+			greenPercent:SetPoint ("topleft", dropdown_label_rf.widget, "bottomleft", 0, -40)
+			
+			local tutorialLabel3 = framework:CreateLabel (endurance_frame)
+			tutorialLabel3:SetPoint ("topleft", greenPercent, "topright", 4, 1)
+			tutorialLabel3.text = "Good, player never was one of the first three players dead"
+			tutorialLabel3.width = 140
+			tutorialLabel3:SetJustifyV ("top")
+			
+			local redPercent = endurance_frame:CreateTexture (nil, "overlay")
+			redPercent:SetColorTexture (1, .2, .2, .7)
+			redPercent:SetSize (6, 20)
+			redPercent:SetPoint ("topleft", greenPercent, "bottomleft", 0, -20)
+			
+			local tutorialLabel4 = framework:CreateLabel (endurance_frame)
+			tutorialLabel4:SetPoint ("topleft", redPercent, "topright", 4, 1)
+			tutorialLabel4.text = "Bad, player often was one of the first three players dead"
+			tutorialLabel4.width = 140
+			tutorialLabel4:SetJustifyV ("top")
+		--		
 		
 		if (not DetailsPluginContainerWindow) then
 			endurance_frame:EnableMouse (true)
@@ -742,11 +771,6 @@ do
 		else
 			endurance_frame:EnableMouse (false)
 		end
-		--endurance_frame:SetBackdrop ({bgFile = "Interface\\AddOns\\Details\\images\\background", tile = true, tileSize = 16,
-		--edgeFile=[[Interface\AddOns\Details\images\border_2]], edgeSize=16,
-		--insets = {left = 0, right = 0, top = 0, bottom = 0}})
-		--endurance_frame:SetBackdropColor (.1, .1, .1, .2)
-		--endurance_frame:SetBackdropBorderColor (.8, .8, .8, 1)
 		
 		endurance_frame.labels = {}
 		endurance_frame:Hide()
@@ -777,7 +801,7 @@ do
 				break
 			end
 		end
-		local clear_endurance = framework:NewButton (endurance_frame, _, "$parentClearEnduranceButton", "ClearEnduranceButton", 70, mode_buttons_height, clear_endurance_func, nil, nil, nil, "Clear", 1, options_dropdown_template)
+		local clear_endurance = framework:NewButton (endurance_frame, _, "$parentClearEnduranceButton", "ClearEnduranceButton", 120, mode_buttons_height, clear_endurance_func, nil, nil, nil, "Clear", 1, options_dropdown_template)
 		clear_endurance:SetPoint ("bottomleft", endurance_frame, "topleft", 0, 9)
 
 		--> report
@@ -805,11 +829,9 @@ do
 			local use_slider = true
 			DeathGraphs:SendReportWindow (reportFunc, nil, nil, use_slider)
 		end
-		local report_endurance = framework:NewButton (endurance_frame, _, "$parentReportEnduranceButton", "ReportEnduranceButton", 70, mode_buttons_height, report_endurance_func, nil, nil, nil, "Report", 1, options_dropdown_template)
+		local report_endurance = framework:NewButton (endurance_frame, _, "$parentReportEnduranceButton", "ReportEnduranceButton", 120, mode_buttons_height, report_endurance_func, nil, nil, nil, "Report", 1, options_dropdown_template)
 		report_endurance:SetPoint ("left", clear_endurance, "right", 2, 0)
-		
-		
-		
+
 		function endurance_frame:Clear()
 			for _, label in ipairs (self.labels) do 
 				label.points:Hide()
@@ -896,7 +918,7 @@ do
 		end
 		
 		local backdrop = {bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16}
-
+		
 		function endurance_frame:SetPlayer (index, player_name, player_class, points, percent, encounters, deaths, min, max)
 			local label = self.labels [index]
 			
@@ -926,7 +948,7 @@ do
 				str2:SetPoint ("left", icon1, "right", 4, 0)
 				
 				endurance_frame.y = endurance_frame.y - 17
-				if (endurance_frame.y < -350) then
+				if (endurance_frame.y < -CONST_ENDURANCE_BREAKLINE) then
 					endurance_frame.y = endurance_frame.y_original
 					endurance_frame.x = endurance_frame.x + 220
 				end
@@ -1047,6 +1069,7 @@ do
 			if (debugmode) then
 				print (":ShowEndurance", boss)
 			end
+			
 			if (not boss) then
 				for hash, _ in pairs (DeathGraphs.endurance_database) do
 					boss = hash
@@ -1055,6 +1078,31 @@ do
 					end
 				end
 			end
+			
+			--> get the boss from the latest segment
+				local currentCombat = Details:GetCurrentCombat()
+				if (currentCombat) then
+					if (currentCombat.is_boss) then
+						--> get the map index
+						local mapID = currentCombat.is_boss.mapid
+						--> get the boss index within the raid
+						local bossIndex = Details:GetBossIndex (mapID, currentCombat.is_boss.id, nil, currentCombat.is_boss.name)
+						if (bossIndex) then
+							--> get the EJID
+							local EJID = Details.EncounterInformation [mapID] and _detalhes.EncounterInformation [mapID].encounter_ids [bossIndex]
+							if (EJID) then
+								--> if the EJID exists build the hash
+								local bossDificulty = currentCombat.is_boss.diff
+								local hash = tostring (EJID) .. tostring (bossDificulty)
+								if (hash) then
+									boss = hash
+								end
+							end
+						end
+					end
+				end
+			--
+			
 			
 			if (not boss) then
 				return
@@ -1325,22 +1373,25 @@ do
 		end
 
 		--> current encounter
-		local current_encounter_button = framework:NewButton (f, _, "$parentModeCurrentEncounterButton", "ModeCurrentEncounterButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_CURRENT, nil, nil, "Current Encounter", 1, options_button_template)
+		local current_encounter_button = framework:NewButton (f, _, "$parentModeCurrentEncounterButton", "ModeCurrentEncounterButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_CURRENT, nil, nil, "Current Encounter", 1)
 		current_encounter_button:SetPoint ("bottomleft", f, "bottomleft", 10, mode_buttons_y_pos)
+		current_encounter_button:SetTemplate (framework:GetTemplate ("button", "ADL_MENUBUTTON_TEMPLATE"))
 		current_encounter_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Raid-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
-		current_encounter_button:SetTextColor ("orange")
+		--current_encounter_button:SetTextColor ("orange")
 		
 		--> timeline
 		local timeline_button = framework:NewButton (f, _, "$parentModeTimelineButton", "ModeTimelineButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_TIMELINE, nil, nil, "Timeline", 1, options_button_template)
 		timeline_button:SetPoint ("bottomleft", current_encounter_button, "bottomright", 5, 0)
+		timeline_button:SetTemplate (framework:GetTemplate ("button", "ADL_MENUBUTTON_TEMPLATE"))
 		timeline_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Talents-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
-		timeline_button:SetTextColor ("orange")
+		--timeline_button:SetTextColor ("orange")
 		
 		--> endurance
 		local endurance_button = framework:NewButton (f, _, "$parentModeEnduranceButton", "ModeEnduranceButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_ENDURANCE, nil, nil, "Endurance", 1, options_button_template)
 		endurance_button:SetPoint ("bottomleft", timeline_button, "bottomright", 5, 0)
+		endurance_button:SetTemplate (framework:GetTemplate ("button", "ADL_MENUBUTTON_TEMPLATE"))
 		endurance_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Mounts-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
-		endurance_button:SetTextColor ("orange")
+		--endurance_button:SetTextColor ("orange")
 		
 		--> overall ~overall
 		--local overall_button = framework:NewButton (f, _, "$parentModeOverallButton", "ModeOverallButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_OVERALL, nil, nil, "Overall", 1, options_button_template)
@@ -1349,9 +1400,11 @@ do
 		--overall_button:SetTextColor ("orange")
 
 		--> highlight buttons when the mouse hoverover // change the color of button for the current selected module
-		local all_buttons = {current_encounter_button, timeline_button, overall_button, endurance_button}
+		local all_buttons = {current_encounter_button, timeline_button, endurance_button} --overall_button,
 	
 		local set_button_as_pressed = function (button)
+		
+			--[=[
 			local onenter = button.onenter_backdrop
 			local onleave = button.onleave_backdrop
 			onenter[1], onenter[2], onenter[3], onenter[4] = .8, .8, .8, 1
@@ -1369,11 +1422,15 @@ do
 				button:SetBackdropColor (onleave[1], onleave[2], onleave[3], onleave[4])
 				button:SetBackdropBorderColor (border_onleave[1], border_onleave[2], border_onleave[3], border_onleave[4])
 			end
+			--]=]
+			
+			button:SetTemplate (framework:GetTemplate ("button", "ADL_MENUBUTTON_SELECTED_TEMPLATE"))
 		end
 		
 		function DeathGraphs:RefreshButtons()
 			--> reset endurance button
 			for _, button in ipairs (all_buttons) do
+				--[=[
 				local onenter = button.onenter_backdrop
 				onenter[1], onenter[2], onenter[3], onenter[4] = .6, .6, .6, .9
 				local onleave = button.onleave_backdrop
@@ -1385,6 +1442,9 @@ do
 				
 				button:SetBackdropColor (onleave[1], onleave[2], onleave[3], onleave[4])
 				button:SetBackdropBorderColor (border_onleave[1], border_onleave[2], border_onleave[3], border_onleave[4])
+				--]=]
+				
+				button:SetTemplate (framework:GetTemplate ("button", "ADL_MENUBUTTON_TEMPLATE"))
 			end
 		
 			if (DeathGraphs.db.showing_type == 1) then --overall
@@ -1431,16 +1491,16 @@ do
 			
 		end
 		
-		local delete = framework:NewButton (f, _, "$parentDeleteButton", "DeleteButton", w, mode_buttons_height, wipe_data, nil, nil, nil, Loc ["STRING_RESET"], 1, options_button_template)
+		local delete = framework:NewButton (f, _, "$parentDeleteButton", "DeleteButton", w, mode_buttons_height, wipe_data, nil, nil, nil, Loc ["STRING_RESET"], 1, framework:GetTemplate ("button", "DETAILS_PLUGIN_BUTTON_TEMPLATE"))
 		delete:SetPoint ("bottomright", f, "bottomright", -10, 10)
 		delete:SetIcon ([[Interface\Buttons\UI-StopButton]], nil, nil, nil, {0, 1, 0, 1}, nil, nil, 2)
-		delete:SetTextColor ("orange")
+		--delete:SetTextColor ("orange")
 
 	--> configure threshold
-		local threshold_config = framework:NewButton (f, _, "$parentOptionsPanelButton", "OptionsPanelButton", w, mode_buttons_height, DeathGraphs.OpenOptionsPanel, nil, nil, nil, Loc ["STRING_OPTIONS"], 1, options_button_template)
+		local threshold_config = framework:NewButton (f, _, "$parentOptionsPanelButton", "OptionsPanelButton", w, mode_buttons_height, DeathGraphs.OpenOptionsPanel, nil, nil, nil, Loc ["STRING_OPTIONS"], 1, framework:GetTemplate ("button", "DETAILS_PLUGIN_BUTTON_TEMPLATE"))
 		threshold_config:SetPoint ("right", delete, "left", 2, 0)
 		threshold_config:SetIcon ([[Interface\Buttons\UI-OptionsButton]], nil, nil, nil, {0, 1, 0, 1}, nil, nil, 2)
-		threshold_config:SetTextColor ("orange")
+		--threshold_config:SetTextColor ("orange")
 		
 	--> refresh on open
 		function DeathGraphs:Refresh()
@@ -2556,13 +2616,11 @@ do
 			local list = {}
 			local db = DeathGraphs.graph_database
 			
-			--> hierarchy for the new graph
-			-- Database -> [Combat Hash (EncounterId + Boss Diff Id)] = {}  Hash
-			-- Combat Hash (EncounterId + Boss Diff Id) -> [SpellId] = {}  Hash
-			-- SpellId -> [Index] = {}  Numeric
-			-- Indexed -> TimeAt, time()
+			--> hierarchy for the graph
+			-- Database -> [combat hash (EncounterId + Boss Diff Id)] = DataTable hash{ }
+			-- DataTable = { .deaths = hash{},  .spells = hash{},  .ids = hash{} }
 			
-			for hash, t1 in pairs (db) do
+			for hash, infoTable in pairs (db) do
 				
 				local EI, diff = hash:match ("(%d%d%d%d.-)(%d%d)")
 				EI, diff = tonumber (EI), tonumber (diff)
@@ -2581,22 +2639,25 @@ do
 					if (not bossName) then
 						bossName = "Unknown Boss"
 					end
-
-					tinsert (list, {value = hash, label = bossName .. " (" .. diffName .. ")", onclick = OnSelectBossEncounter, icon = icon, texcoord = {L, R, T, B}})
-				end
-				
-				for spellid, t2  in pairs (t1) do
 					
-					for index, t3 in ipairs (t2) do
-						
-						local combatTime, time = unpack (t3)
-						
+					local latestTime = 0
+					local spellTable = infoTable.spells
+					
+					for spellName, spellTimers  in pairs (spellTable) do
+						for index, spell in ipairs (spellTimers) do
+							local combatTime, timeAt = unpack (spell)
+							if (timeAt > latestTime) then
+								latestTime = timeAt
+							end
+						end
 					end
 					
+					tinsert (list, {value = hash, label = bossName .. " (" .. diffName .. ")", onclick = OnSelectBossEncounter, icon = icon, texcoord = {L, R, T, B}, when = latestTime})
 				end
-				
 			end
-		
+			
+			table.sort (list, function (t1, t2) return t1.when > t2.when end)
+			
 			return list
 		end
 		
@@ -2608,7 +2669,6 @@ do
 			local currentCombat = Details:GetCurrentCombat()
 			if (currentCombat) then
 				if (currentCombat.is_boss) then
-				
 					--> get the map index
 					local mapID = currentCombat.is_boss.mapid
 					--> get the boss index within the raid
@@ -2628,7 +2688,6 @@ do
 				end
 			end
 		end
-		
 		
 		--> graph frame:
 		local graphFrame = CreateFrame ("frame", "DeathGraphsPlayerGraphicDeaths_graphFrame", deathAbilityGraph)
@@ -2657,6 +2716,25 @@ do
 		spellLinesFrame:SetPoint ("bottomright", graphFrame, "bottomleft")
 		spellLinesFrame:SetWidth (160)
 		spellLinesFrame:SetFrameLevel (graphFrame:GetFrameLevel()+1)
+		
+		--> tutorial text
+		local whiteLine = graphFrame:CreateTexture (nil, "overlay")
+		whiteLine:SetColorTexture (1, 1, 1, .7)
+		whiteLine:SetSize (6, 20)		
+		whiteLine:SetPoint ("topleft", deathAbilityGraph, "topleft", 0, -55)		
+		
+		local tutorialLabel1 = framework:CreateLabel (graphFrame)
+		tutorialLabel1:SetPoint ("left", whiteLine, "right", 4, 1)
+		tutorialLabel1.text = "White vertical lines are\noccurences of deaths during tries"
+		
+		local redBlock = graphFrame:CreateTexture (nil, "overlay")
+		redBlock:SetColorTexture (1, .2, .2, .7)
+		redBlock:SetSize (6, 20)
+		redBlock:SetPoint ("topleft", deathAbilityGraph, "topleft", 0, -85)		
+		
+		local tutorialLabel2 = framework:CreateLabel (graphFrame)
+		tutorialLabel2:SetPoint ("left", redBlock, "right", 4, 1)
+		tutorialLabel2.text = "Red squares are occurences\nof enemy spells"
 		
 		local y = -100
 		graphFrame.SpellsLines = {}

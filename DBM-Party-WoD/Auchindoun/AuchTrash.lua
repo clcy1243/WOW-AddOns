@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("AuchTrash", "DBM-Party-WoD", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
 --mod:SetModelID(47785)
 mod:SetZone()
 
@@ -19,8 +19,6 @@ local specWarnVoidShell				= mod:NewSpecialWarningDispel(160312, "MagicDispeller
 local specWarnVoidMending			= mod:NewSpecialWarningInterrupt(154623)
 local specWarnFelStomp				= mod:NewSpecialWarningDodge(157173, "Tank")
 local specWarnArbitersHammer		= mod:NewSpecialWarningInterrupt(157797)
-
-mod:RemoveOption("HealthFrame")
 
 local isTrivial = mod:IsTrivial(110)
 

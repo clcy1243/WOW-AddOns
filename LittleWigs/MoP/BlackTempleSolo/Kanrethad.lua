@@ -11,14 +11,16 @@ mod:RegisterEnableMob(69964, 70052) -- Kanrethad Ebonlocke, Demonic Soulwell
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
+	L.name = "Kanrethad Ebonlocke"
+
 	L.summons = "Summons"
 	L.debuffs = "Debuffs"
+
 	L.start_say = "BEHOLD" -- BEHOLD! I have truly mastered the fel energies of this world! The demonic power I now command... It is indescribable, unlimited, OMNIPOTENT!
 	L.win_say = "Jubeka" -- Jubeka?! What are you...?!
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -35,6 +37,10 @@ function mod:GetOptions()
 		[138561] = L.debuffs,
 		[138559] = "general",
 	}
+end
+
+function mod:OnRegister()
+	self.displayName = L.name
 end
 
 function mod:VerifyEnable(unit, mobId)

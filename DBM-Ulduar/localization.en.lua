@@ -321,8 +321,6 @@ L:SetOptionLocalization{
 	TimeToPhase3			= "Show timer for Phase 3",
 	TimeToPhase4			= "Show timer for Phase 4",
 	MagneticCore			= "Announce Magnetic Core looters",
-	HealthFramePhase4		= "Show health frame in Phase 4",
-	AutoChangeLootToFFA		= "Switch loot mode to Free for All in Phase 3",
 	WarnBombSpawn			= "Show warning for Bomb Bots",
 	TimerHardmode			= "Show timer for hard mode",
 	RangeFrame				= "Show range frame in Phase 1 (6 yards)",
@@ -336,9 +334,6 @@ L:SetMiscLocalization{
 	MobPhase3		= "Aerial Command Unit",
 	YellPull		= "We haven't much time, friends! You're going to help me test out my latest and greatest creation. Now, before you change your minds, remember that you kind of owe it to me after the mess you made with the XT-002.",	
 	YellHardPull	= "Self-destruct sequence initiated.",
-	YellPhase2		= "WONDERFUL! Positively marvelous results! Hull integrity at 98.9 percent! Barely a dent! Moving right along.",
-	YellPhase3		= "Thank you, friends! Your efforts have yielded some fantastic data! Now, where did I put-- oh, there it is.",
-	YellPhase4		= "Preliminary testing phase complete. Now comes the true test!",
 	LootMsg			= "([^%s]+).*Hitem:(%d+)"
 }
 
@@ -399,7 +394,6 @@ L:SetOptionLocalization{
 	specWarnBrainPortalSoon			= "Show special warning for next Brain Portal",
 	NextPortal						= "Show timer for next Brain Portal",
 	SetIconOnFervorTarget			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(63138),
-	ShowSaraHealth					= "Show health frame for Sara in Phase 1 (must be targeted or focused by at least one raid member)",
 	SetIconOnBrainLinkTarget		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(63802)
 }
 

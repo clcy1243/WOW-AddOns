@@ -85,6 +85,8 @@ L["STRING_CLOSEALL"] = "所有的 Details 窗口都关闭了, 输入 '/details s
 L["STRING_COLOR"] = "颜色"
 L["STRING_COMMAND_LIST"] = "命令列表"
 L["STRING_COOLTIP_NOOPTIONS"] = "无选项"
+--Translation missing 
+-- L["STRING_CREATEAURA"] = ""
 L["STRING_CRITICAL_HITS"] = "致命一击"
 L["STRING_CRITICAL_ONLY"] = "致命"
 L["STRING_CURRENT"] = "当前"
@@ -1585,9 +1587,13 @@ L["STRING_SLASH_WIPECONFIG_DESC"] = "设置所有配置为默认设置，如果D
 L["STRING_SLASH_WORLDBOSS"] = "世界BOSS"
 L["STRING_SLASH_WORLDBOSS_DESC"] = "运行一个宏来显示本周你已经击杀过哪些BOSS。"
 L["STRING_SPELL_INTERRUPTED"] = "法术打断"
+--Translation missing 
+-- L["STRING_SPELLLIST"] = ""
 L["STRING_SPELLS"] = "法术"
 L["STRING_SPIRIT_LINK_TOTEM"] = "血量交换"
 L["STRING_SPIRIT_LINK_TOTEM_DESC"] = "在图腾范围内玩家之间血量的交换数额"
+--Translation missing 
+-- L["STRING_STATISTICS"] = ""
 L["STRING_STATUSBAR_NOOPTIONS"] = "这个插件没有选项。"
 L["STRING_SWITCH_CLICKME"] = "添加书签"
 L["STRING_SWITCH_SELECTMSG"] = "设置这个展示为书签 #%d."

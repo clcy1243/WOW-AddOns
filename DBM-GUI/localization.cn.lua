@@ -2,7 +2,7 @@
 -- yleaf(yaroot@gmail.com)
 -- sunlcy@NGA
 -- Mini Dragon(projecteurs@gmail.com)
--- Last update: Oct 08 2016, 03:05 UTC@15334
+-- Last update: 2018/02/02
 
 if GetLocale() ~= "zhCN" then return end
 if not DBM_GUI_Translations then DBM_GUI_Translations = {} end
@@ -13,8 +13,8 @@ L.MainFrame 				= "Deadly Boss Mods"
 
 L.TranslationByPrefix		= "翻译:"
 L.TranslationBy 			= "Mini_Dragon(Brilla@金色平原) 原翻译：Diablohu & yleaf & sunlcy"
-L.Website					= "拜访我们的论坛|cFF73C2FBwww.deadlybossmods.com|r. 在Twitter上关注 @deadlybossmods 或 @MysticalOS"
-L.WebsiteButton				= "论坛"
+L.Website					= "拜访我们的Discord |cFF73C2FBhttps://discord.gg/deadlybossmods|r. 在Twitter上关注 @deadlybossmods 或 @MysticalOS"
+L.WebsiteButton				= "Discord"
 
 L.OTabBosses				= "模块"
 L.OTabOptions				= "选项"
@@ -51,6 +51,7 @@ L.Statistic_Kills			= "击杀:"
 L.Statistic_Wipes			= "失败:"
 L.Statistic_Incompletes		= "未完成:"
 L.Statistic_BestKill		= "最好成绩:"
+L.Statistic_BestRank		= "最高评级:"
 
 -- Tab: General Options
 L.General 					= "DBM核心综合设置"
@@ -59,7 +60,7 @@ L.UseSoundChannel			= "设置DBM使用的声道"
 L.UseMasterChannel			= "主声道"
 L.UseDialogChannel			= "对话声道"
 L.UseSFXChannel				= "音效声道"
-L.Latency_Text				= "设定启用同步功能的最高延迟阈值：%d"
+L.Latency_Text				= "设定团队之间DBM最高延迟阈值：%d"
 
 L.ModelOptions				= "3D模型选项"
 L.EnableModels				= "在首领选项中启用3D模型"
@@ -200,21 +201,6 @@ L.SpecialWarnSound3			= "针对非常重要事件(灭团点)的特殊警报播�
 L.SpecialWarnSound4			= "特殊警报: 快跑啊 小女孩"
 L.SpecialWarnSound5			= "使用自定义注记特殊警报的声音"
 
--- Tab: Heads Up Display Frame
-L.Panel_HUD					= "抬头显示设置(HUD)"
-L.Area_HUDOptions			= "HUD 选项"
-L.HUDColorOverride			= "全局HUD颜色"
-L.HUDSizeOverride			= "全局HUD大小"
-L.HUDAlphaOverride			= "全局HUD透明度"
-L.HUDTextureOverride		= "全局HUD材质 (当团队标记作为材质时不适用)"
-L.HUDColorSelect			= "HUD 颜色 %d"
-L.HUDTextureSelect1			= "选择主要HUD材质"
-L.HUDTextureSelect2			= "选择次要HUD材质"
-L.HUDTextureSelect3			= "选择第三HUD材质"
-L.HUDTextureSelect4			= "选择'跑向'HUD材质"
-L.HUDSizeSlider				= "圆环半径 %0.1f."
-L.HUDAlphaSlider			= "透明度: %0.1f"
-
 -- Tab: Spoken Alerts Frame
 L.Panel_SpokenAlerts		= "语音警告"
 L.Area_VoiceSelection		= "语音选择"
@@ -230,29 +216,30 @@ L.SWFDefaultOnly			= "当特殊警报使用默认声音时(允许自定义语音
 L.SWFAll					= "当特殊警报使用任何默认声音时"
 L.SpecWarn_AlwaysVoice		= "总是播放所有语音警告(覆盖Boss特定的选项,建议指挥使用)"
 --TODO, maybe add URLS right to GUI panel on where to acquire 3rd party voice packs?
-
--- Tab: HealthFrame
-L.Panel_HPFrame				= "生命值框体"
-L.Area_HPFrame				= "生命值框体选项"
-L.HP_Enabled				= "总是显示生命值框体（无论该首领的相关设置如何）"
-L.HP_GrowUpwards			= "向上扩展"
-L.HP_ShowDemo				= "显示框体"
-L.BarWidth					= "计量条宽度: %d"
+L.Area_GetVEM				= "获取夏一可语音包(普通话最新)"
+L.VEMDownload				= "|cFF73C2FBhttps://wow.curseforge.com/projects/dbm-voicepack-yike|r"
+L.Area_BrowseOtherVP		= "获取其他语音包"
+L.BrowseOtherVPs			= "|cFF73C2FBhttps://wow.curseforge.com/search?search=dbm+voice|r"
+L.Area_BrowseOtherCT		= "获取其他倒计时语音包"
+L.BrowseOtherCTs			= "|cFF73C2FBhttps://wow.curseforge.com/search?search=dbm+count+pack|r"
 
 -- Tab: Global Filter
 L.Panel_SpamFilter			= "DBM全局过滤"
 L.Area_SpamFilter_Outgoing	= "DBM全局过滤设置"
 L.SpamBlockNoShowAnnounce	= "不显示警报或播放警报音效"
+L.SpamBlockNoShowTgtAnnounce= "不显示针对目标类型的警报或播放警报音效(上面那个优先级比这个高)"
 L.SpamBlockNoSpecWarn		= "不要显示特殊特殊警报和特殊警报音效"
-L.SpamBlockNoShowTimers		= "不显示计时器"
-L.SpamBlockNoSetIcon		= "不设定标记在目标上"
+L.SpamBlockNoShowTimers		= "不显示DBM原装计时条"
+L.SpamBlockNoShowUTimers	= "不显示用户自定生成的计时条"
+L.SpamBlockNoSetIcon		= "不在目标上设定标记"
 L.SpamBlockNoRangeFrame		= "不显示距离雷达框体"
 L.SpamBlockNoInfoFrame		= "不显示信息框体"
 L.SpamBlockNoHudMap			= "不显示HudMap"
-L.SpamBlockNoHealthFrame	= "不显示生命值监视器"
-L.SpamBlockNoCountdowns		= "不要播放倒数语音"
+L.SpamBlockNoNameplate		= "不要显示姓名面板高亮"
+L.SpamBlockNoCountdowns		= "不要播放倒计时语音"
 L.SpamBlockNoYells			= "不要再战斗中大喊我中了..."
 L.SpamBlockNoNoteSync		= "不接受别人分享的自定义注记"
+L.SpamBlockNoReminders		= "不显示任何登陆, 过期信息(不推荐)"
 
 L.Area_Restore				= "DBM战斗结束重置设置"
 L.SpamBlockNoIconRestore	= "当战斗结束后不保存团队标记状态并重置"

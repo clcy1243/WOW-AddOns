@@ -11,14 +11,12 @@ mod.toggleOptions = {"summon"}
 -------------------------------------------------------------------------------
 --  Localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("Little Wigs: Darkweaver Syth", "enUS", true)
+local L = mod:GetLocale()
 if L then
-	
-	
+	L["summon"] = "Summon Elementals"
+	L["summon_desc"] = "Warn for Summoned Elementals"
+	L["summon_message"] = "Elementals Summoned!"
 end
-
-L = LibStub("AceLocale-3.0"):GetLocale("Little Wigs: Darkweaver Syth")
-mod.locale = L
 
 -------------------------------------------------------------------------------
 --  Initialization

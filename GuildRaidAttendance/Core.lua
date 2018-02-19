@@ -58,8 +58,8 @@ gra.sizes = {
 		-- button_main = {100, 20},
 		-- button_track = {60, 22},
 		-- button_close = {16, 16},
-		grid_name = 75,
-		grid_others = 45,
+		grid_name = 95,
+		grid_others = 50,
 		grid_dates = 30,
 		mainFrame = {620, 400},
 	},
@@ -279,6 +279,12 @@ function frame:ADDON_LOADED(arg1)
 		-- help viewed
 		if type(GRA_A_Variables["helpViewed"]) ~= "boolean" then GRA_A_Variables["helpViewed"] = false end
 
+		-- scale
+		if type(GRA_A_Variables["scaleFactor"]) ~= "number" then GRA_A_Variables["scaleFactor"] = 1 end
+		if GRA_A_Variables["scaleFactor"] ~= 1 then
+			GRA:SetScale(GRA_A_Variables["scaleFactor"])
+		end
+
 		-- size
 		if type(GRA_A_Variables["size"]) ~= "string" then GRA_A_Variables["size"] = "normal" end
 		if GRA_A_Variables["size"] ~= "normal" then
@@ -298,26 +304,14 @@ function frame:ADDON_LOADED(arg1)
 		if type(_G[GRA_R_Config]["raidInfo"]) ~= "table" then
 			_G[GRA_R_Config]["raidInfo"] = {
 				["EPGP"] = {100, 0, 10},
+				["DKP"] = 0,
 				["days"] = {gra.RAID_LOCKOUTS_RESET},
 				["startTime"] = "19:30",
-				["lastDecayed"] = GRA:GetLockoutsResetDate(),
+				["endTime"] = "23:00",
+				["system"] = "",
 			}
 		end
 
-		-- previous version, TODO: delete
-		if type(_G[GRA_R_Config]["raidInfo"]["startTime"]) ~= "string" then
-			_G[GRA_R_Config]["raidInfo"]["startTime"] = _G[GRA_R_Config]["raidInfo"]["deadline"]
-			_G[GRA_R_Config]["raidInfo"] = GRA:RemoveElementsByKeys(_G[GRA_R_Config]["raidInfo"], {"deadline"})
-		end
-
-		-- if type(_G[GRA_R_Config]["useEPGP"]) ~= "boolean" then _G[GRA_R_Config]["useEPGP"] = false end
-		if type(_G[GRA_R_Config]["system"]) ~= "string" then _G[GRA_R_Config]["system"] = "" end
-		-- previous version
-		if _G[GRA_R_Config]["useEPGP"] then
-			_G[GRA_R_Config]["system"] = "EPGP"
-			_G[GRA_R_Config] = GRA:RemoveElementsByKeys(_G[GRA_R_Config], {"useEPGP"})
-		end
-		
 		-- disable minimal mode by default
 		if type(GRA_Variables["minimalMode"]) ~= "boolean" then GRA_Variables["minimalMode"] = false end
 		
@@ -333,8 +327,6 @@ function frame:ADDON_LOADED(arg1)
 
 		-- sort
 		if type(GRA_Variables["sortKey"]) ~= "string" then GRA_Variables["sortKey"] = "name" end
-		-- class filter
-		if type(GRA_Variables["classFilter"]) ~= "table" then GRA_Variables["classFilter"] = {["WARRIOR"]=true, ["HUNTER"]=true, ["SHAMAN"]=true, ["MONK"]=true, ["ROGUE"]=true, ["MAGE"]=true, ["DRUID"]=true, ["DEATHKNIGHT"]=true, ["PALADIN"]=true, ["WARLOCK"]=true, ["PRIEST"]=true, ["DEMONHUNTER"]=true} end
 
 		if type(_G[GRA_R_Config]["startDate"]) ~= "string" then _G[GRA_R_Config]["startDate"] = GRA:GetLockoutsResetDate() end -- this lockouts reset day
 		-- GRA:Debug("startDate: " .. _G[GRA_R_Config]["startDate"])
@@ -406,9 +398,19 @@ function SlashCmdList.GUILDRAIDATTENDANCE(msg, editbox)
 			icon:Show("GuildRaidAttendance")
 		end
 	elseif command == "resetposition" then
+		gra.mainFrame:Hide()
 		gra.mainFrame:ClearAllPoints()
 		gra.mainFrame:SetPoint("CENTER")
 		gra.mainFrame:Show()
+	elseif command == "resetscale" then
+		GRA_A_Variables["scaleFactor"] = 1
+		GRA:SetScale(1)
+		gra.mainFrame:Hide()
+		gra.mainFrame:ClearAllPoints()
+		gra.mainFrame:SetPoint("CENTER")
+		gra.mainFrame:Show()
+	elseif command == "resetsize" then
+		-- TODO:
 	elseif command == "loot" then
 		gra.distributionFrame:Show()
 	--[===[@debug@
@@ -435,5 +437,7 @@ function SlashCmdList.GUILDRAIDATTENDANCE(msg, editbox)
 		rest = tonumber(rest)
 		GRA_FONT_TEXT:SetFont(GRA_FONT_TEXT:GetFont(), rest or 11)
 	--@end-debug@]===]
+	else
+		GRA:Print(gra.colors.firebrick.s .. "Unknown command.")
 	end
 end

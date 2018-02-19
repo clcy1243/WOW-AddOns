@@ -50,7 +50,6 @@ local function OnRosterReceived()
     if rosterAccepted and rosterReceived and receivedRoster then
         _G[GRA_R_Roster] = receivedRoster[1]
         _G[GRA_R_Config]["raidInfo"] = receivedRoster[2]
-        _G[GRA_R_Config]["system"] = receivedRoster[3]
 
         GRA:FireEvent("GRA_R_DONE")
         wipe(receivedRoster)
@@ -63,7 +62,7 @@ function GRA:SendRosterToRaid()
     sendRosterPopup = nil
     gra.sending = true
 
-    local encoded = TableToString({_G[GRA_R_Roster], _G[GRA_R_Config]["raidInfo"], _G[GRA_R_Config]["system"]})
+    local encoded = TableToString({_G[GRA_R_Roster], _G[GRA_R_Config]["raidInfo"]})
     UpdateSendChannel()
     -- send roster
     Comm:SendCommMessage("GRA_R_SEND", encoded, sendChannel, nil, "BULK", function(arg, done, total)
@@ -129,6 +128,7 @@ end)
 local receiveLogsPopup, sendLogsPopup, logsAccepted, logsReceived, receivedLogs
 local dates
 local function OnLogsReceived()
+    -- TODO: version mismatch warning
     if logsAccepted and logsReceived and receivedLogs then
         for d, tbl in pairs(receivedLogs[1]) do
             _G[GRA_R_RaidLogs][d] = tbl
@@ -250,7 +250,7 @@ end)
 -----------------------------------------
 -- popup message
 -----------------------------------------
-function GRA:SendEPGPMsg(msgType, name, value, reason)
+function GRA:SendEntryMsg(msgType, name, value, reason)
     if UnitIsConnected(GRA:GetShortName(name)) then
         Comm:SendCommMessage("GRA_MSG", "|cff80FF00" .. msgType .. ":|r " .. value
         .. "  |cff80FF00" .. L["Reason"] .. ":|r " .. reason, "WHISPER", name, "ALERT")

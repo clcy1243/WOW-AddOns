@@ -51,10 +51,12 @@ local function CreatePluginFrames (data)
 		
 		elseif (event == "SHOW") then
 			if (not ChartViewerWindowFrame.OptionsButton) then
-				local options = ChartViewer:GetFramework():NewButton (ChartViewerWindowFrame, nil, "$parentOptionsButton", "OptionsButton", 86, 16, ChartViewer.OpenOptionsPanel, nil, nil, nil, "Options")
+				local options = ChartViewer:GetFramework():NewButton (ChartViewerWindowFrame, nil, "$parentOptionsButton", "OptionsButton", 120, 20, ChartViewer.OpenOptionsPanel, nil, nil, nil, "Options")
 				options:SetTextColor (1, 0.93, 0.74)
 				options:SetIcon ([[Interface\Buttons\UI-OptionsButton]], 14, 14, nil, {0, 1, 0, 1}, nil, 3)
-				options:SetPoint ("bottomleft", ChartViewer.NewTabButton, "topleft", 0, 0)
+				options:SetPoint ("left", ChartViewer.NewTabButton, "right", 4, 0)
+				options:SetTemplate (ChartViewer:GetFramework():GetTemplate ("button", "DETAILS_PLUGIN_BUTTON_TEMPLATE"))
+				options:SetFrameLevel (10)
 			end
 			
 			ChartViewer:RefreshScale()
@@ -171,6 +173,33 @@ function ChartViewer:CheckFor_CreateNewTabForCombat()
 end
 		
 ----------> Tabs
+	local titlecase = function (first, rest)
+		return first:upper()..rest:lower()
+	end
+	
+	--tab on enter
+	function ChartViewer:TabOnEnter (tab)
+			GameTooltip:SetOwner (tab, "ANCHOR_TOPLEFT")
+			local tabObject = DETAILS_PLUGIN_CHART_VIEWER:GetTab (tab.index)
+			GameTooltip:AddLine (tabObject.name)
+			GameTooltip:AddLine (tabObject.segment_type == 1 and "Current Segment" or "Last 5 Segments")
+			GameTooltip:AddLine (" ")
+			
+			local chartData = tabObject.data
+			if (chartData:find ("MULTICHARTS~")) then --multichart
+				chartData = chartData:gsub ("MULTICHARTS~", "")
+				chartData = chartData:gsub ("~", ", ")
+				
+			elseif (chartData:find ("_")) then --preset
+				chartData = chartData:gsub ("_", " ")
+				chartData = chartData:gsub ("(%a)([%w_']*)", titlecase)
+				chartData = chartData:gsub ("Preset", "Preset:")
+			end
+			
+			GameTooltip:AddDoubleLine ("Chart:", chartData)
+			GameTooltip:Show()
+			tab.CloseButton:SetNormalTexture ("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
+	end	
 		
 	--new tab
 		ChartViewer.tab_prototype = {name = Loc ["STRING_NEWTAB"], segment_type = 1, data = "", texture = "line", version = "v2.0"}
@@ -330,6 +359,7 @@ end
 			--cleanup default scripts
 			frame:SetScript ("OnDoubleClick", nil)
 			frame:SetScript ("OnDragStart", nil)
+			frame:SetAlpha (0.8)
 			return frame
 		end
 		function ChartViewer:TabHideNotUsedFrames()
@@ -527,7 +557,7 @@ end
 					ChartViewer.segments_dropdown:Select (1, true)
 				end
 			end
-		
+			
 			local current_tab = ChartViewer:TabGetCurrent()
 			
 			local capture_name = current_tab.data
@@ -685,7 +715,7 @@ end
 					local line_name = chart [4]
 					local texture = chart [5]
 					
-					g:AddLine (chart_data, chart_color, line_name, combat_time, texture, "SMA")
+					g:AddLine (chart_data, chart_color, line_name, combat_time, texture) --, "SMA"
 				end
 			end
 			
@@ -840,11 +870,12 @@ local create_segment_dropdown = function()
 	end
 	
 	local segments_string = ChartViewer:GetFramework():CreateLabel (ChartViewerWindowFrame, "Segment:", nil, nil, "GameFontNormal")
-	segments_string:SetPoint ("bottomleft", frame, "bottomleft", 10, 10)
+	segments_string:SetPoint ("bottomleft", frame, "bottomleft", 8, 12)
 	
 	local segments_dropdown = ChartViewer:GetFramework():CreateDropDown (ChartViewerWindowFrame, build_segments_menu, 1, 150, 20)
 	segments_dropdown:SetPoint ("left", segments_string, "right", 2, 0)
 	segments_dropdown:SetFrameLevel (10)
+	segments_dropdown:SetTemplate (_detalhes.gump:GetTemplate ("dropdown", "OPTIONS_DROPDOWN_TEMPLATE"))
 	ChartViewer.segments_dropdown = segments_dropdown
 end
 
@@ -865,26 +896,29 @@ local create_delete_button = function (f, name)
 end
 	
 local create_add_tab_button = function()
-	
 	local fw = ChartViewer:GetFramework()
 	
-	local button = fw:CreateButton (ChartViewerWindowFrame, ChartViewer.OpenAddTabPanel, 86, 16, "Add Chart")
+	local button = fw:CreateButton (ChartViewerWindowFrame, ChartViewer.OpenAddTabPanel, 120, 20, "Add Chart")
 	button:SetTextColor (1, 0.93, 0.74)
-	--button:SetIcon ([[Interface\Buttons\UI-OptionsButton]], 14, 14, nil, {0, 1, 0, 1}, nil, 3)
 	button:SetIcon ([[Interface\PaperDollInfoFrame\Character-Plus]], 14, 14, nil, {0, 1, 0, 1}, nil, 3)
-	button:SetPoint ("topright", ChartViewerWindowFrame, "topright", -30, -45)
-	
+	button:SetTemplate (ChartViewer:GetFramework():GetTemplate ("button", "DETAILS_PLUGIN_BUTTON_TEMPLATE"))
+	button:SetFrameLevel (10)
+
+	button:SetPoint ("left", ChartViewer.segments_dropdown, "right", 4, 0)
 	ChartViewer.NewTabButton = button
-	
 end
 local create_add_tab_panel = function()
-
+	
 	local fw = ChartViewer:GetFramework()
 	
-	local panel = fw:CreatePanel (ChartViewerWindowFrame, 225, 180, {bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 16,
+	local panel = fw:CreatePanel (ChartViewerWindowFrame, 260, 180, {bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 16,
 	insets = {left = 0, right = 0, top = 0, bottom = 0}, edgeFile = [[Interface\DialogFrame\UI-DialogBox-Border]], edgeSize = 10})
 	ChartViewer.NewTabPanel = panel
-
+	
+	panel:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]], tileSize = 64, tile = true})
+	panel:SetBackdropColor (0.2, 0.2, 0.2, .6)
+	panel:SetBackdropBorderColor (0, 0, 0, 1)	
+	
 	panel:SetPoint ("center", ChartViewerWindowFrame, "center")
 	
 	panel:SetFrameStrata ("FULLSCREEN")
@@ -1008,7 +1042,7 @@ local create_add_tab_panel = function()
 		local texture_dropdown = fw:CreateDropDown (panel, texture_options_func, 1, 150, 20)
 		texture_dropdown:SetPoint ("left", texture_label, "right", 2, 0)
 		ChartViewer.texture_dropdown = texture_dropdown
-	
+		
 		local internal_options = {
 			["MULTICHARTS~Your Team Damage~Enemy Team Damage"] = {colors = {["Your Team Damage"] = {1, 1, 1}, ["Enemy Team Damage"] = {1, 0.6, 0.2}}, iType = "arena-DAMAGER", name = "Arena Damage"},
 			["MULTICHARTS~Your Team Healing~Enemy Team Healing"] = {colors = {["Your Team Healing"] = {1, 1, 1}, ["Enemy Team Healing"] = {1, 0.6, 0.2}}, iType = "arena-HEALER", name = "Arena Heal"},
@@ -1182,9 +1216,9 @@ function ChartViewer:OnEvent (_, event, ...)
 				_G._detalhes:RegisterEvent (ChartViewer, "COMBAT_CHARTTABLES_CREATING")
 				_G._detalhes:RegisterEvent (ChartViewer, "COMBAT_CHARTTABLES_CREATED")
 				
+				create_segment_dropdown()
 				create_add_tab_panel()
 				create_add_tab_button()
-				create_segment_dropdown()
 				
 				ChartViewer.current_segment = 1
 				

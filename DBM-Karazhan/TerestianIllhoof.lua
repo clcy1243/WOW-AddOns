@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("TerestianIllhoof", "DBM-Karazhan")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 631 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 647 $"):sub(12, -3))
 mod:SetCreatureID(15688)
 mod:SetEncounterID(657)
 mod:SetModelID(11343)
@@ -11,8 +11,7 @@ mod:RegisterCombat("combat", 15688)
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 30115 30065",
 	"SPELL_AURA_REMOVED 30115",
-	"SPELL_CAST_SUCCESS 30066",
-	"UNIT_DIED"
+	"SPELL_CAST_SUCCESS 30066"
 )
 
 local warningWeakened	= mod:NewTargetAnnounce(30065, 2)
@@ -28,22 +27,17 @@ local timerSacrificeCD	= mod:NewNextTimer(43, 30115, nil, nil, nil, 1)
 
 local berserkTimer		= mod:NewBerserkTimer(600)
 
-local voiceSacrifice	= mod:NewVoice(30115)--targetyou
-
 function mod:OnCombatStart(delay)
 	berserkTimer:Start(-delay)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 30115 then
-		if DBM.BossHealth:IsShown() then
-			DBM.BossHealth:AddBoss(17248, L.DChains)
-		end
 		timerSacrifice:Start(args.destName)
 		timerSacrificeCD:Start()
 		if args:IsPlayer() then
 			specWarnSacrifice:Show()
-			voiceSacrifice:Play("targetyou")
+			specWarnSacrifice:Play("targetyou")
 			yellSacrifice:Yell()
 		else
 			warningSacrifice:Show(args.destName)
@@ -63,17 +57,5 @@ end
 function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 30066 then
 		warningImp:Show()
-		if DBM.BossHealth:IsShown() then
-			DBM.BossHealth:AddBoss(17229, L.Kilrek)
-		end
-	end
-end
-
-function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 17229 and DBM.BossHealth:IsShown() then--Kil'rek
-		DBM.BossHealth:RemoveBoss(cid)
-	elseif cid == 17248 and DBM.BossHealth:IsShown() then--Demon Chains
-		DBM.BossHealth:RemoveBoss(cid)
 	end
 end

@@ -87,6 +87,7 @@ L["STRING_CLOSEALL"] = "All windows are closed, you may type '/details show' to 
 L["STRING_COLOR"] = "Color"
 L["STRING_COMMAND_LIST"] = "command list"
 L["STRING_COOLTIP_NOOPTIONS"] = "no options"
+L["STRING_CREATEAURA"] = "Create Aura"
 L["STRING_CRITICAL_HITS"] = "Critical Hits"
 L["STRING_CRITICAL_ONLY"] = "critical"
 L["STRING_CURRENT"] = "Current"
@@ -358,7 +359,7 @@ L["STRING_MIRROR_IMAGE"] = "Mirror Image"
 L["STRING_MISS"] = "Miss"
 L["STRING_MODE_ALL"] = "Everything"
 L["STRING_MODE_GROUP"] = "Standard"
-L["STRING_MODE_OPENFORGE"] = "Aura Forge"
+L["STRING_MODE_OPENFORGE"] = "Spell List"
 L["STRING_MODE_PLUGINS"] = "plugins"
 L["STRING_MODE_RAID"] = "Plugins: Raid"
 L["STRING_MODE_SELF"] = "Plugins: Solo Play"
@@ -1533,6 +1534,7 @@ L["STRING_SLASH_WIPECONFIG_DESC"] = "set all configurations to default, use this
 L["STRING_SLASH_WORLDBOSS"] = "worldboss"
 L["STRING_SLASH_WORLDBOSS_DESC"] = "run a macro showing which boss you killed this week."
 L["STRING_SPELL_INTERRUPTED"] = "Spells interrupted"
+L["STRING_SPELLLIST"] = "Spell List"
 L["STRING_SPELLS"] = "Spells"
 L["STRING_SPIRIT_LINK_TOTEM"] = "Health Exchange"
 L["STRING_SPIRIT_LINK_TOTEM_DESC"] = [=[Amount of health exchanged between
@@ -1540,6 +1542,7 @@ players inside the totem's circle.
 
 This healing isn't added on the
 player's healing done total.]=]
+L["STRING_STATISTICS"] = "Statistics"
 L["STRING_STATUSBAR_NOOPTIONS"] = "This widget doesn't have options."
 L["STRING_SWITCH_CLICKME"] = "add bookmark"
 L["STRING_SWITCH_SELECTMSG"] = "Select the display for Bookmark #%d."

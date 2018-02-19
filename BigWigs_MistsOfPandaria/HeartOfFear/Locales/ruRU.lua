@@ -3,9 +3,10 @@ if not L then return end
 if L then
 	L.engage_yell = "Богиня избрала нас для выражения своей божественной воли нашими голосами смертных. Мы лишь орудия в ее руках."
 
+	L.force = "{-6427} (AoE импульс)"
 	L.force_message = "AoE импульс"
 
-	L.attenuation = EJ_GetSectionInfo(6426)
+	L.attenuation = -6426
 	L.attenuation_bar = "Кольца... танцуем!"
 	L.attenuation_message = "%s Танцуем %s"
 	L.echo = "|c001cc986Эхо|r"
@@ -41,7 +42,7 @@ L = BigWigs:NewBossLocale("Wind Lord Mel'jarak", "ruRU")
 if L then
 	L.spear_removed = "Ваше Пронзающее копье снялось!"
 
-	L.mending_desc = "|cFFFF0000ВНИМАНИЕ: Будет показываться таймер только для вашего 'фокуса', так как все Зар'тики - боевые лекари имеют разное время восстановления способности.|r "
+	L.mending_desc = "|cFFFF0000ВНИМАНИЕ: Будет показываться таймер только для вашего 'фокуса', так как все Зар'тики - боевые лекари имеют разное время восстановления способности.|r {-6306}"
 	L.mending_warning = "Ваш фокус произносит Лечение!"
 	L.mending_bar = "Фокус: Лечение"
 end

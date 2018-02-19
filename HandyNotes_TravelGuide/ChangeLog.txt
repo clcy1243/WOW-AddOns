@@ -1,9 +1,16 @@
 Revision History:
 =================
 
+* v1.7 (Feb 11, 2018)
+-----------------------
+- updated for 7.3.5
+- fixed spelling errors and inaccurate database links
+- added portal and zeppelin coordinates to Orgrimmar, Thunder Bluff, Undercity, and connected zones
+- added various Horde portals
+
 * v1.6 (Sep 01, 2017)
 -----------------------
--updated for 7.3
+- updated for 7.3
 
 * v1.5 (June 12, 2017)
 -----------------------
@@ -26,11 +33,11 @@ Revision History:
 
 * v1.1 (May 13, 2017)
 -----------------------
-- Added placeholders for Horde zeplins and portals
+- Added placeholders for Horde zeppelins and portals
 
 * v1.0 (May 12, 2017)
 -----------------------
 - Added Alliance and neutral boat locations in Azeroth
 - Added portals in Stormwind, Ironforge, Darnassus, Exodar, Shattrath, Vale of Eternal Blossoms, Dalaran-Northrend, and Dalaran-Broken Isles 
 - Added portals in non major zones (Mount Hyjal, Deepholm, Tol Barad)
-- Created links for zeplins and faction air vehicles
+- Created links for zeppelins and faction air vehicles

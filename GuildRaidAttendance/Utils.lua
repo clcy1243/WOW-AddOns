@@ -239,6 +239,75 @@ function GRA:GetLocalizedClassName(class)
 	return classTable[class]
 end
 
+gra.mainAlt = {}
+function GRA:UpdateMainAlt()
+	wipe(gra.mainAlt)
+	for n, t in pairs(_G[GRA_R_Roster]) do
+		if t["altOf"] then
+			if not gra.mainAlt[t["altOf"]] then gra.mainAlt[t["altOf"]] = {} end
+			table.insert(gra.mainAlt[t["altOf"]], n)
+		end
+	end
+end
+
+function GRA:IsAlt(n)
+	if _G[GRA_R_Roster][n] and _G[GRA_R_Roster][n]["altOf"] then
+		return _G[GRA_R_Roster][n]["altOf"]
+	end
+end
+
+function GRA:GetAttendeesAndAbsentees(d, filterMainAlt)
+	local attendees, absentees = {}, {}
+	for n, t in pairs(_G[GRA_R_RaidLogs][d]["attendances"]) do
+		if t[3] then
+			table.insert(attendees, n)
+		else -- ABSENT or ONLEAVE
+			table.insert(absentees, n)
+		end
+	end
+
+	if filterMainAlt then
+		-- process main-alt
+		for i = #attendees, 1, -1 do
+			local n = attendees[i]
+			if _G[GRA_R_Roster][n] and _G[GRA_R_Roster][n]["altOf"] then
+				if GRA:GetIndex(attendees, _G[GRA_R_Roster][n]["altOf"]) then
+					-- main already exists in attendees, remove it
+					table.remove(attendees, i)
+				else
+					-- convert to main!
+					attendees[i] = _G[GRA_R_Roster][n]["altOf"]
+				end
+			end
+		end
+
+		for i = #absentees, 1, -1 do
+			local n = absentees[i]
+			if _G[GRA_R_Roster][n] and _G[GRA_R_Roster][n]["altOf"] then -- is alt
+				if GRA:GetIndex(absentees, _G[GRA_R_Roster][n]["altOf"]) then
+					-- main already exists in absentees, remove it
+					table.remove(absentees, i)
+				else
+					if tContains(attendees, _G[GRA_R_Roster][n]["altOf"]) then
+						-- main exists in attendees, remove it from absentees
+						table.remove(absentees, i)
+					else
+						-- convert to main!
+						absentees[i] = _G[GRA_R_Roster][n]["altOf"]
+					end
+				end
+			else -- is main
+				if tContains(attendees, n) then
+					-- main exists in attendees, remove it from absentees
+					table.remove(absentees, i)
+				end
+			end
+		end
+	end
+
+	return attendees, absentees
+end
+
 -- d: date string/number, "20170321" or 20170321
 function GRA:DateToWeekday(d)
 	local year = string.sub(d, 1, 4)
@@ -269,9 +338,10 @@ end
 function GRA:Date()
 	local sec = time()
 	-- local t = date("*t", sec)
-	local year, month, day =  date("%Y", sec), date("%m", sec), date("%d", sec)
-	local hour, minute = date("%H", sec), date("%M", sec)
-	return year..month..day, hour..":"..minute
+	-- local year, month, day =  date("%Y", sec), date("%m", sec), date("%d", sec)
+	-- local hour, minute = date("%H", sec), date("%M", sec)
+	-- return year..month..day, hour..":"..minute
+	return date("%Y%m%d", sec), date("%H:%M", sec)
 end
 
 -- get lockout reset day of this "week", init _G[GRA_R_Config]["startDate"]
@@ -295,7 +365,7 @@ function GRA:NextDate(d, offset)
 	local month = string.sub(d, 5, 6)
 	local day = string.sub(d, 7, 8) + offset
 	local sec = time({["year"]=year, ["month"]=month, ["day"]=day})
-	return date("%Y", sec)..date("%m", sec)..date("%d", sec)
+	return date("%Y%m%d", sec)
 end
 
 -- 2017033112:30
@@ -314,35 +384,75 @@ end
 
 function GRA:SecondsToTime(s)
 	s = tonumber(s)
-	local hour, minute = date("%H", s), date("%M", s)
-	return hour..":"..minute
+	return date("%H:%M", s)
 end
 
+-- time, seconds
 function GRA:GetRaidStartTime(d)
-	if _G[GRA_R_RaidLogs][d]["startTime"] then
-		return _G[GRA_R_RaidLogs][d]["startTime"]
+	if d then
+		if _G[GRA_R_RaidLogs][d]["startTime"] then -- has startTime
+			return GRA:SecondsToTime(_G[GRA_R_RaidLogs][d]["startTime"]), _G[GRA_R_RaidLogs][d]["startTime"]
+		else
+			return _G[GRA_R_Config]["raidInfo"]["startTime"], GRA:DateToTime(d .. _G[GRA_R_Config]["raidInfo"]["startTime"], true)
+		end
 	else
 		return _G[GRA_R_Config]["raidInfo"]["startTime"]
 	end
 end
 
-function GRA:IsLate(joinTime, startTime)
-	if joinTime <= GRA:DateToTime(startTime, true) then
-		return "PRESENT"
+function GRA:GetRaidEndTime(d)
+	if d then
+		if _G[GRA_R_RaidLogs][d]["endTime"] then -- has endTime
+			return GRA:SecondsToTime(_G[GRA_R_RaidLogs][d]["endTime"]), _G[GRA_R_RaidLogs][d]["endTime"]
+		else
+			return _G[GRA_R_Config]["raidInfo"]["endTime"], GRA:DateToTime(d .. _G[GRA_R_Config]["raidInfo"]["endTime"], true)
+		end
 	else
-		return "LATE"
+		return _G[GRA_R_Config]["raidInfo"]["endTime"]
 	end
-	-- local h1,m1 = strsplit(":", joinTime)
-	-- local h2,m2 = strsplit(":", startTime)
-	-- return tonumber(h1..m1) > tonumber(h2..m2)
 end
 
--- update attendances when start time changed
+function GRA:CheckAttendanceStatus(joinTime, startTime, leaveTime, endTime)
+	if joinTime and startTime and (joinTime > startTime) then
+		return "PARTLY" -- no need to check leaveTime
+	end
+
+	if leaveTime and endTime and (leaveTime < endTime) then
+		return "PARTLY"
+	end
+
+	return "PRESENT"
+end
+
+-- 出勤率使用出勤分钟数计算
+function GRA:GetAttendanceRate(d, name)
+	if _G[GRA_R_RaidLogs][d]["attendances"][name] then
+		if _G[GRA_R_RaidLogs][d]["attendances"][name][1] == "PRESENT" then
+			return 1
+		elseif _G[GRA_R_RaidLogs][d]["attendances"][name][1] == "PARTLY" then
+			local startTime = select(2, GRA:GetRaidStartTime(d))
+			local endTime = select(2, GRA:GetRaidEndTime(d))
+			local joinTime = _G[GRA_R_RaidLogs][d]["attendances"][name][3]
+			local leaveTime = _G[GRA_R_RaidLogs][d]["attendances"][name][4] or endTime -- 没有退队的成员可能没有leaveTime
+
+			joinTime = math.max(startTime, joinTime)
+			leaveTime = math.min(endTime, leaveTime)
+			
+			return math.ceil((leaveTime - joinTime) / 60) / math.ceil((endTime - startTime) / 60)
+		else
+			return 0
+		end
+	end
+end
+
+-- update attendances when raid hours changed
 function GRA:UpdateAttendance(d)
 	if d then
-		-- start time changed for this day
-		for n, t in pairs(_G[GRA_R_RaidLogs][d]["attendees"]) do
-			t[1] = GRA:IsLate(t[2], d .. (_G[GRA_R_RaidLogs][d]["startTime"] or _G[GRA_R_Config]["raidInfo"]["startTime"]))
+		-- start/end time changed for this day
+		for n, t in pairs(_G[GRA_R_RaidLogs][d]["attendances"]) do
+			if t[3] then -- PRESENT or PARTLY
+				t[1] = GRA:CheckAttendanceStatus(t[3], select(2, GRA:GetRaidStartTime(d)), t[4], select(2, GRA:GetRaidEndTime(d)))
+			end
 		end
 	else
 		-- global start time changed, only check date without start time

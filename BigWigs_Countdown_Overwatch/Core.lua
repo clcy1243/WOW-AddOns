@@ -19,6 +19,7 @@ local heroes = {
 	"McCree",
 	"Mei",
 	"Mercy",
+	"Moira",
 	"Orisa",
 	"Pharah",
 	"Reaper",

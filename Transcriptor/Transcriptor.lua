@@ -1,6 +1,6 @@
 
 local Transcriptor = {}
-local version = "v7.3.2"
+local version = "v7.3.3"
 if version:find("@", nil, true) then
 	version = "repo"
 end
@@ -29,7 +29,7 @@ local compareAuraApplied = nil
 local compareStartTime = nil
 local collectPlayerAuras = nil
 local shouldLogFlags = false
-local inEncounter, blockingRelease = false, false
+local inEncounter, blockingRelease, limitingRes = false, false, false
 local wowVersion, buildRevision, _, buildTOC = GetBuildInfo() -- Note that both returns here are strings, not numbers.
 local mineOrPartyOrRaid = 7 -- COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID
 
@@ -42,9 +42,10 @@ local date = date
 local debugprofilestop, wipe = debugprofilestop, wipe
 local print = print
 
-local C_Scenario = C_Scenario
+local C_Scenario, C_DeathInfo_GetSelfResurrectOptions = C_Scenario, C_DeathInfo.GetSelfResurrectOptions
 local RegisterAddonMessagePrefix = RegisterAddonMessagePrefix
-local IsEncounterInProgress, IsEncounterSuppressingRelease, IsAltKeyDown, EJ_GetEncounterInfo, EJ_GetSectionInfo = IsEncounterInProgress, IsEncounterSuppressingRelease, IsAltKeyDown, EJ_GetEncounterInfo, EJ_GetSectionInfo
+local IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease = IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease
+local IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal_GetSectionInfo = IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal.GetSectionInfo
 local UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo = UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo
 local UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification = UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification
 local UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth, UnitHealthMax = UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth, UnitHealthMax
@@ -140,8 +141,9 @@ end
 function GetSectionID(name)
 	name = name:lower()
 	for i=1,15000 do
-		local fetchedName = EJ_GetSectionInfo(i)
-		if fetchedName then
+		local tbl = C_EncounterJournal_GetSectionInfo(i)
+		if tbl then
+			local fetchedName = tbl.title
 			local lowerFetchedName = fetchedName:lower()
 			if find(lowerFetchedName, name, nil, true) then
 				print(fetchedName..": "..i)
@@ -576,7 +578,7 @@ do
 		["SPELL_AURA_REMOVED_DOSE"] = true,
 		["SPELL_CAST_START"] = true,
 		["SPELL_SUMMON"] = true,
-		--"<87.10 17:55:03> [CLEU] SPELL_AURA_BROKEN_SPELL#Creature-0-3771-1676-28425-118022-000004A6B5#Infernal Chaosbringer#Player-XXX#XXX#115191#Stealth#242906#Immolation Aura", -- [148]
+		--"<87.10 17:55:03> [CLEU] SPELL_AURA_BROKEN_SPELL#Creature-0-3771-1676-28425-118022-000004A6B5#Infernal Chaosbringer#Player-XYZ#XYZ#115191#Stealth#242906#Immolation Aura", -- [148]
 		--"<498.56 22:02:38> [CLEU] SPELL_AURA_BROKEN_SPELL#Creature-0-3895-1676-10786-106551-00008631CC-TSGuardian#Hati#Creature-0-3895-1676-10786-120697-000086306F#Worshiper of Elune#206961#Tremble Before Me#118459#Beast Cleave", -- [8039]
 		--["SPELL_AURA_BROKEN_SPELL"] = true,
 	}
@@ -607,12 +609,18 @@ do
 	}
 	local guardian = 8192 -- COMBATLOG_OBJECT_TYPE_GUARDIAN
 	local dmgCache, dmgPrdcCache = {}, {}
+	local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 	-- Note some things we are trying to avoid filtering:
 	-- BRF/Kagraz - Player damage with no source "SPELL_DAMAGE##nil#Player-GUID#PLAYER#154938#Molten Torrent#"
 	-- HFC/Socrethar - Player cast on friendly vehicle "SPELL_CAST_SUCCESS#Player-GUID#PLAYER#Vehicle-0-3151-1448-8853-90296-00001D943C#Soulbound Construct#190466#Incomplete Binding"
 	-- HFC/Zakuun - Player boss debuff cast on self "SPELL_AURA_APPLIED#Player-GUID#PLAYER#Player-GUID#PLAYER#189030#Befouled#DEBUFF#"
 	-- ToS/Sisters - Boss pet marked as guardian "SPELL_CAST_SUCCESS#Creature-0-3895-1676-10786-119205-0000063360#Moontalon##nil#236697#Deathly Screech"
 	function sh.COMBAT_LOG_EVENT_UNFILTERED(timeStamp, event, caster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, _, extraSpellId, amount)
+		-- XXX 8.0
+		if CombatLogGetCurrentEventInfo then
+			timeStamp, event, caster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, _, extraSpellId, amount = CombatLogGetCurrentEventInfo()
+		end
+
 		if badEvents[event] or
 		   (event == "UNIT_DIED" and band(destFlags, mineOrPartyOrRaid) ~= 0 and band(destFlags, guardian) == guardian) or -- Guardian deaths, player deaths can explain debuff removal
 		   (sourceName and badPlayerEvents[event] and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
@@ -1155,6 +1163,30 @@ eventFrame:SetScript("OnUpdate", function()
 		if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
 		tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterSuppressingRelease()] false", t, time))
 	end
+	if not limitingRes and IsEncounterLimitingResurrections() then
+		limitingRes = true
+		local stop = debugprofilestop() / 1000
+		local t = stop - logStartTime
+		local time = date("%H:%M:%S")
+		local tbl = C_DeathInfo_GetSelfResurrectOptions()
+		if tbl and tbl[1] then
+			currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IsEncounterLimitingResurrections()] true {%s}", t, time, tbl[1].name)
+			if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
+			tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterLimitingResurrections()] true {%s}", t, time, tbl[1].name))
+		else
+			currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IsEncounterLimitingResurrections()] true", t, time)
+			if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
+			tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterLimitingResurrections()] true", t, time))
+		end
+	elseif limitingRes and not IsEncounterLimitingResurrections() then
+		limitingRes = false
+		local stop = debugprofilestop() / 1000
+		local t = stop - logStartTime
+		local time = date("%H:%M:%S")
+		currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IsEncounterLimitingResurrections()] false", t, time)
+		if type(currentLog.COMBAT) ~= "table" then currentLog.COMBAT = {} end
+		tinsert(currentLog.COMBAT, format("<%.2f %s> [IsEncounterLimitingResurrections()] false", t, time))
+	end
 end)
 
 --------------------------------------------------------------------------------
@@ -1378,16 +1410,34 @@ function Transcriptor:StopLog(silent)
 								str = format("%s = pull:%.1f", n, t/1000)
 							else
 								if type(list[i]) == "table" then
-									str = format("%s, %s", str, list[i][2])
+									if type(list[i-1]) == "number" then
+										local t = list[i][1]-list[i-1]
+										str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+									elseif type(list[i-1]) == "table" then
+										local t = list[i][1]-list[i-1][1]
+										str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+									else
+										str = format("%s, %s", str, list[i][2])
+									end
 								else
 									if type(list[i-1]) == "table" then
 										if type(list[i-2]) == "table" then
 											if type(list[i-3]) == "table" then
-												local tStage = list[i] - list[i-1][1]
-												local tStagePrevious = list[i] - list[i-2][1]
-												local tStagePreviousMore = list[i] - list[i-3][1]
-												local t = list[i] - list[i-4]
-												str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+												if type(list[i-4]) == "table" then
+													local counter = 5
+													while type(list[i-counter]) == "table" do
+														counter = counter + 1
+													end
+													local tStage = list[i] - list[i-1][1]
+													local t = list[i] - list[i-counter]
+													str = format("%s, TooManyStages/%.1f/%.1f", str, tStage/1000, t/1000)
+												else
+													local tStage = list[i] - list[i-1][1]
+													local tStagePrevious = list[i] - list[i-2][1]
+													local tStagePreviousMore = list[i] - list[i-3][1]
+													local t = list[i] - list[i-4]
+													str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+												end
 											else
 												local tStage = list[i] - list[i-1][1]
 												local tStagePrevious = list[i] - list[i-2][1]
@@ -1423,16 +1473,34 @@ function Transcriptor:StopLog(silent)
 								str = format("%s = pull:%.1f", n, t/1000)
 							else
 								if type(list[i]) == "table" then
-									str = format("%s, %s", str, list[i][2])
+									if type(list[i-1]) == "number" then
+										local t = list[i][1]-list[i-1]
+										str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+									elseif type(list[i-1]) == "table" then
+										local t = list[i][1]-list[i-1][1]
+										str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+									else
+										str = format("%s, %s", str, list[i][2])
+									end
 								else
 									if type(list[i-1]) == "table" then
 										if type(list[i-2]) == "table" then
 											if type(list[i-3]) == "table" then
-												local tStage = list[i] - list[i-1][1]
-												local tStagePrevious = list[i] - list[i-2][1]
-												local tStagePreviousMore = list[i] - list[i-3][1]
-												local t = list[i] - list[i-4]
-												str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+												if type(list[i-4]) == "table" then
+													local counter = 5
+													while type(list[i-counter]) == "table" do
+														counter = counter + 1
+													end
+													local tStage = list[i] - list[i-1][1]
+													local t = list[i] - list[i-counter]
+													str = format("%s, TooManyStages/%.1f/%.1f", str, tStage/1000, t/1000)
+												else
+													local tStage = list[i] - list[i-1][1]
+													local tStagePrevious = list[i] - list[i-2][1]
+													local tStagePreviousMore = list[i] - list[i-3][1]
+													local t = list[i] - list[i-4]
+													str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+												end
 											else
 												local tStage = list[i] - list[i-1][1]
 												local tStagePrevious = list[i] - list[i-2][1]
@@ -1468,16 +1536,34 @@ function Transcriptor:StopLog(silent)
 								str = format("%s = pull:%.1f", n, t/1000)
 							else
 								if type(list[i]) == "table" then
-									str = format("%s, %s", str, list[i][2])
+									if type(list[i-1]) == "number" then
+										local t = list[i][1]-list[i-1]
+										str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+									elseif type(list[i-1]) == "table" then
+										local t = list[i][1]-list[i-1][1]
+										str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+									else
+										str = format("%s, %s", str, list[i][2])
+									end
 								else
 									if type(list[i-1]) == "table" then
 										if type(list[i-2]) == "table" then
 											if type(list[i-3]) == "table" then
-												local tStage = list[i] - list[i-1][1]
-												local tStagePrevious = list[i] - list[i-2][1]
-												local tStagePreviousMore = list[i] - list[i-3][1]
-												local t = list[i] - list[i-4]
-												str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+												if type(list[i-4]) == "table" then
+													local counter = 5
+													while type(list[i-counter]) == "table" do
+														counter = counter + 1
+													end
+													local tStage = list[i] - list[i-1][1]
+													local t = list[i] - list[i-counter]
+													str = format("%s, TooManyStages/%.1f/%.1f", str, tStage/1000, t/1000)
+												else
+													local tStage = list[i] - list[i-1][1]
+													local tStagePrevious = list[i] - list[i-2][1]
+													local tStagePreviousMore = list[i] - list[i-3][1]
+													local t = list[i] - list[i-4]
+													str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+												end
 											else
 												local tStage = list[i] - list[i-1][1]
 												local tStagePrevious = list[i] - list[i-2][1]
@@ -1514,16 +1600,34 @@ function Transcriptor:StopLog(silent)
 									str = format("%s = pull:%.1f", n, t/1000)
 								else
 									if type(list[i]) == "table" then
-										str = format("%s, %s", str, list[i][2])
+										if type(list[i-1]) == "number" then
+											local t = list[i][1]-list[i-1]
+											str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+										elseif type(list[i-1]) == "table" then
+											local t = list[i][1]-list[i-1][1]
+											str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+										else
+											str = format("%s, %s", str, list[i][2])
+										end
 									else
 										if type(list[i-1]) == "table" then
 											if type(list[i-2]) == "table" then
 												if type(list[i-3]) == "table" then
-													local tStage = list[i] - list[i-1][1]
-													local tStagePrevious = list[i] - list[i-2][1]
-													local tStagePreviousMore = list[i] - list[i-3][1]
-													local t = list[i] - list[i-4]
-													str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+													if type(list[i-4]) == "table" then
+														local counter = 5
+														while type(list[i-counter]) == "table" do
+															counter = counter + 1
+														end
+														local tStage = list[i] - list[i-1][1]
+														local t = list[i] - list[i-counter]
+														str = format("%s, TooManyStages/%.1f/%.1f", str, tStage/1000, t/1000)
+													else
+														local tStage = list[i] - list[i-1][1]
+														local tStagePrevious = list[i] - list[i-2][1]
+														local tStagePreviousMore = list[i] - list[i-3][1]
+														local t = list[i] - list[i-4]
+														str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+													end
 												else
 													local tStage = list[i] - list[i-1][1]
 													local tStagePrevious = list[i] - list[i-2][1]

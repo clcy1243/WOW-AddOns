@@ -1,7 +1,7 @@
 ## Interface: 70300
 ## Title: BigWigs |cffff7f3f+|r|cffffffffCountdown: Overwatch|r
 ## Author: Neb
-## Version: 1.0.12
+## Version: 1.0.13
 ## Dependencies: BigWigs
 
 Core.lua

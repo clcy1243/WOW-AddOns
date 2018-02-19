@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Ignis", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 247 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 251 $"):sub(12, -3))
 mod:SetCreatureID(33118)
 mod:SetEncounterID(1136)
 mod:SetModelID(29185)
@@ -24,9 +24,7 @@ local timerFlameJetsCast		= mod:NewCastTimer(2.7, 63472)
 local timerFlameJetsCooldown	= mod:NewCDTimer(35, 63472, nil, nil, nil, 2)
 local timerScorchCooldown		= mod:NewNextTimer(25, 63473, nil, nil, nil, 5)
 local timerSlagPot				= mod:NewTargetTimer(10, 63477, nil, nil, nil, 3)
-local timerAchieve				= mod:NewAchievementTimer(240, 2930, "TimerSpeedKill")
-
-local voiceFlameJetsCast		= mod:NewVoice(63472, "SpellCaster")--stopcast
+local timerAchieve				= mod:NewAchievementTimer(240, 2930)
 
 mod:AddBoolOption("SlagPotIcon", false)
 
@@ -39,7 +37,7 @@ function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(62680, 63472) then		-- Flame Jets
 		timerFlameJetsCast:Start()
 		warnFlameJetsCast:Show()
-		voiceFlameJetsCast:Play("stopcast")
+		warnFlameJetsCast:Play("stopcast")
 		timerFlameJetsCooldown:Start()
 	end
 end

@@ -1,24 +1,8 @@
 local L = BigWigs:NewBossLocale("Erudax", "zhCN")
+if not L then return end
 if L then
--- GrimBatol/Erudax
-	L["summon"] = "召唤无面守护者"
-	L["summon_desc"] = "当埃鲁达克召唤召唤无面守护者时发出警报。"
-	L["summon_message"] = ">无面守护者< 已被召唤！"
-	L["summon_trigger"] = "%s召唤"
-
-end
-
-L = BigWigs:NewBossLocale("Drahga Shadowburner", "zhCN")
-if L then
--- GrimBatol/Drahga
-	L["summon_message"] = "已增援！"
-	L["summon_trigger"] = "%s开始施放"
-
-end
-
-L = BigWigs:NewBossLocale("Forgemaster Throngus", "zhCN")
-if L then
--- GrimBatol/Forgemaster
-	L["roar_message"] = "%d层 惊魂咆哮"
-
+	L.summon = "召唤无面腐蚀者"
+	L.summon_desc = "当埃鲁达克召唤无面腐蚀者时发出警报。"
+	L.summon_message = "无面腐蚀者"
+	L.summon_trigger = "%s召唤了一个"
 end

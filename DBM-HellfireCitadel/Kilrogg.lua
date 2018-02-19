@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1396, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
 mod:SetCreatureID(90378)
 mod:SetEncounterID(1786)
 mod:SetZone()
@@ -30,7 +30,7 @@ local warnShreddedArmor				= mod:NewStackAnnounce(180200, 4, nil, "Tank|Healer")
 local warnHeartseeker				= mod:NewTargetAnnounce(180372, 4)
 local warnVisionofDeath				= mod:NewTargetAnnounce(181488, 2)--The targets that got picked
 --Adds
-local warnBloodthirster				= mod:NewSpellAnnounce("ej11266", 3, 131150)
+local warnBloodthirster				= mod:NewSpellAnnounce("ej11266", 3, 131150, nil, nil, nil, nil, 2)
 
 --Boss
 local specWarnShred					= mod:NewSpecialWarningDefensive(180199, nil, nil, nil, 3, 2)--Block, or get debuff
@@ -65,28 +65,19 @@ local countdownVisionofDeathCD		= mod:NewCountdown(75, 181488, "Tank")
 local countdownShred				= mod:NewCountdown("Alt17", 180199, "Tank")
 local countdownVisionofDeath		= mod:NewCountdownFades("Alt60", 181488)
 
-local voiceShred					= mod:NewVoice(180199)--defensive
-local voiceSavageStrikes			= mod:NewVoice(180163)--defensive
-local voiceHeartSeeker				= mod:NewVoice(180372)--runout
-local voiceDeathThroes				= mod:NewVoice(180224)--aesoon
-local voiceBloodGlob				= mod:NewVoice(180459)--180459
-local voiceFelBloodGlob				= mod:NewVoice(180413)--180199 (wrong spellID for voice do to my mistake)
-local voiceBloodthirster			= mod:NewVoice("ej11266", "Dps", nil, 2)--ej11266
-local voiceHulkingTerror			= mod:NewVoice("ej11269", "Tank", nil, 2)--ej11269
-local voiceRendingHowl				= mod:NewVoice(183917, "HasInterrupt")
-
 mod:AddInfoFrameOption("ej11280")
 
 mod.vb.berserkerCount = 0
 mod.vb.deathThrowsCount = 0
 mod.vb.visionsCount = 0
 local UnitExists, UnitGUID, UnitDetailedThreatSituation = UnitExists, UnitGUID, UnitDetailedThreatSituation
-local felCorruption = GetSpellInfo(182159)
-local Bloodthirster = EJ_GetSectionInfo(11266)
+local felCorruption = DBM:GetSpellInfo(182159)
+local Bloodthirster = DBM:EJ_GetSectionInfo(11266)
 local AddsSeen = {}
 local HowlByGUID = {}--Not syncable, but keeps separate count for each add cleanly
 
 function mod:OnCombatStart(delay)
+	felCorruption = DBM:GetSpellInfo(182159)
 	table.wipe(HowlByGUID)
 	self.vb.berserkerCount = 0
 	self.vb.deathThrowsCount = 0
@@ -121,14 +112,14 @@ function mod:SPELL_CAST_START(args)
 			local bossUnitID = "boss"..i
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
 				specWarnShred:Show()--Show warning only to the tank he's on, not both tanks, avoid confusion
-				voiceShred:Play("defensive")
+				specWarnShred:Play("defensive")
 				break
 			end
 		end
 	elseif spellId == 180224 then
 		self.vb.deathThrowsCount = self.vb.deathThrowsCount + 1
 		specWarnDeathThroes:Show(self.vb.deathThrowsCount)
-		voiceDeathThroes:Play("aesoon")
+		specWarnDeathThroes:Play("aesoon")
 		timerDeathThroesCD:Start(nil, self.vb.deathThrowsCount+1)
 	elseif spellId == 182428 then
 		self.vb.visionsCount = self.vb.visionsCount + 1
@@ -141,7 +132,7 @@ function mod:SPELL_CAST_START(args)
 			local bossUnitID = "boss"..i
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
 				specWarnSavageStrikes:Show()--Show warning only to the tank he's on, not both tanks, avoid confusion
-				voiceSavageStrikes:Play("defensive")
+				specWarnSavageStrikes:Play("defensive")
 				break
 			end
 		end
@@ -152,17 +143,17 @@ function mod:SPELL_CAST_START(args)
 		if self:CheckInterruptFilter(args.sourceGUID) then
 			specWarnRendingHowl:Show(args.sourceName, count)
 			if count == 1 then
-				voiceRendingHowl:Play("kick1r")
+				specWarnRendingHowl:Play("kick1r")
 			elseif count == 2 then
-				voiceRendingHowl:Play("kick2r")
+				specWarnRendingHowl:Play("kick2r")
 			elseif count == 3 then
-				voiceRendingHowl:Play("kick3r")
+				specWarnRendingHowl:Play("kick3r")
 			elseif count == 4 then
-				voiceRendingHowl:Play("kick4r")
+				specWarnRendingHowl:Play("kick4r")
 			elseif count == 5 then
-				voiceRendingHowl:Play("kick5r")
+				specWarnRendingHowl:Play("kick5r")
 			else
-				voiceRendingHowl:Play("kickcast")
+				specWarnRendingHowl:Play("kickcast")
 			end
 		end
 		timerRendingHowlCD:Start(args.sourceGUID)
@@ -173,10 +164,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 180410 and self:AntiSpam(2, 2) then--Blood Globule
 		specWarnBloodGlob:Show()
-		voiceBloodGlob:Play("180459")
+		specWarnBloodGlob:Play("180459")
 	elseif spellId == 180413 and self:AntiSpam(2, 3) then--Fel Blood Globule
 		specWarnFelBloodGlob:Show()
-		voiceFelBloodGlob:Play("180199")
+		specWarnFelBloodGlob:Play("180199")
 	end
 end
 
@@ -189,9 +180,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnHeartSeeker:Show()
 			yellHeartSeeker:Yell()
-			voiceHeartSeeker:Play("runout")
+			specWarnHeartSeeker:Play("runout")
 		elseif self:IsMelee() and self:AntiSpam(2, 4) then
-			voiceHeartSeeker:Play("farfromline")
+			specWarnHeartSeeker:Play("farfromline")
 		end
 	elseif spellId == 181488 then
 		warnVisionofDeath:CombinedShow(0.5, args.destName)
@@ -239,7 +230,7 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 				else
 					warnBloodthirster:Show()
 				end
-				voiceBloodthirster:Play("ej11266")
+				warnBloodthirster:Play("ej11266")
 			end
 		end
 	end
@@ -250,7 +241,7 @@ end
 function mod:RAID_BOSS_EMOTE(msg, npc)
 	if npc == Bloodthirster then
 		specWarnHulkingTerror:Show()
-		voiceHulkingTerror:Play("ej11269")
+		specWarnHulkingTerror:Play("ej11269")
 	end
 end
 

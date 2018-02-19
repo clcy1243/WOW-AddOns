@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Drogan", "DBM-GarrisonInvasions")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 23 $"):sub(12, -3))
 mod:SetCreatureID(90841)
 mod:SetZone()
 
@@ -18,8 +18,6 @@ local warnChainGrasp			= mod:NewTargetAnnounce(180880, 3)
 
 local specWarnChainGrasp		= mod:NewSpecialWarningYou(180880, nil, nil, nil, 1, 5)--Persists for 30 seconds or until you get 30 yards from boss, whichever first.
 
-local voiceChainGrasp			= mod:NewVoice(180880)--180880 (Break chain)
-
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 180882 then
@@ -32,7 +30,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if spellId == 180880 then
 		if args:IsPlayer() then
 			specWarnChainGrasp:Show()
-			voiceChainGrasp:Play("180880")
+			specWarnChainGrasp:Play("180880")
 		else
 			warnChainGrasp:Show(args.destName)
 		end

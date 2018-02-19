@@ -11,7 +11,7 @@
 ## Title-zhCN: BigWigs |cffff7f3f+|r|cffffffff倒数：风暴英雄|r
 ## Title-zhTW: BigWigs |cffff7f3f+|r|cffffffff倒數：暴雪英霸|r
 ## Author: Neb
-## Version: 1.1.4
+## Version: 1.1.6
 ## Dependencies: BigWigs
 
 Locales.lua

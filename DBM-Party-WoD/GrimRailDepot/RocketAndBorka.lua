@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1138, "DBM-Party-WoD", 3, 536)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
 mod:SetCreatureID(77803, 77816)
 mod:SetEncounterID(1715)
 mod:SetZone()
@@ -14,8 +14,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 163947",
 	"UNIT_DIED"
 )
-
-mod:SetBossHealthInfo(77803, 77816)
 
 local warnVX18B					= mod:NewCountAnnounce(162500, 2)--Cast twice, 3rd cast is X2101, then repeats
 local warnX2101AMissile			= mod:NewSpellAnnounce(162407, 4)
@@ -33,9 +31,7 @@ local timerSlamCD				= mod:NewCDTimer(15, 162617, nil, "SpellCaster")
 local timerSlam					= mod:NewCastTimer(1.5, 162617, nil, "SpellCaster")
 local timerRecovering			= mod:NewBuffActiveTimer(6, 163947)
 
-local voiceSlam					= mod:NewVoice(162617, "SpellCaster")
-
-local rocketsName = EJ_GetSectionInfo(9430)
+local rocketsName = DBM:EJ_GetSectionInfo(9430)
 local borkaID = nil
 mod.vb.VXCast = 0
 mod.vb.SlamCast = 0
@@ -88,7 +84,7 @@ function mod:SPELL_CAST_START(args)
 		self.vb.SlamCast = self.vb.SlamCast + 1
 		specWarnSlam:Show()
 		timerSlam:Start()
-		voiceSlam:Play("stopcast")
+		specWarnSlam:Play("stopcast")
 		if self.vb.SlamCast == 2 then
 			timerSlamCD:Start(30)
 		else

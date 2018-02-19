@@ -408,7 +408,7 @@ L["No items to display! Either you've obtained every item, or you have\none or m
 
 
 -- Sources
-L[""] = true
+-- L[""] = true -> This seems pointless and breaks the import feature on WowAce, therefore I disabled it. I left it here because I really don't understand why it has been added and kept around for almost 4 years, so...eh ¯\_(ツ)_/¯
 L["This was a guaranteed drop for players who defeated the encounter when it was current"] = true
 L["Players have a personal loot chance to obtain this item."] = true
 L["All players can participate in killing this world boss once per week, regardless of faction"] = true
@@ -435,7 +435,7 @@ L["Mythic 5-player instance"] = true
 L["Timewalker 5-player instance"] = true
 
 
-L["Dropped by Yogg-Saron in Ulduar (25-player) with no Keepers assisting"] = true
+L["Dropped by Yogg-Saron in Ulduar with no Keepers assisting"] = true
 L["Dropped by Malygos in The Eye of Eternity (any raid size)"] = true
 L["Dropped by Koralon the Flame Watcher, Emalon the Storm Watcher, Archavon the Stone Watcher, and Toravon the Ice Watcher in Vault of Archavon (any raid size)."] = true
 L["Contained in Cracked Egg, which is obtained by becoming Revered with The Oracles, purchasing a Mysterious Egg from their reputation vendor, and waiting three days. The mount has a 5% chance to appear in the Cracked Egg."] = true
@@ -1083,7 +1083,7 @@ L["Vile Fiend"] = true
 L["Crimson Slavermaw"] = true
 L["Biletooth Gnasher"] = true
 L["Acid Belcher"] = true
-L["Has a chance to drop from either %s or %s in Antoran Wastes. Each of them can be looted once per day."] = true
+L["Has a chance to drop from either %s or %s on Argus. Each can be looted once per day."] = true
 L["Wrangler Kravos"] = true
 L["Skreeg the Devourer"] = true
 L["Vrax'thul"] = true
@@ -1123,6 +1123,32 @@ L["Grasping Manifestation"] = true
 L["Ataxon"] = true
 L["Uuna's Doll"] = true
 L["The Many-Faced Devourer"] = true
+
+
+L["Antoran Charhound"] = true
+L["Sightless Eye"] = true
+L["Rezira the Seer"] = true
+
+
+L["Pond Nettle"] = true
+L["Avenging Felcrusher"] = true
+L["Blessed Felcrusher"] = true
+L["Glorious Felcrusher"] = true
+L["Holy Lightsphere"] = true
+L["Barrier Generator"] = true
+L["Vigilant Thanos"] = true
+L["Vigilant Kuro"] = true
+
+
+L["Stormforged Vrykul Horn"] = true
+L["Golden Hearthstone Card: Lord Jaraxxus"] = true
+L["Crashin' Thrashin' Flamer Controller"] = true
+L["Crashin' Thrashin' Shredder Controller"] = true
+L["Disposable Winter Veil Suits"] = true
+L["Red Wooden Sled"] = true
+
+L["Big Red Raygun"] = true
+L["Doctor Weavil"] = true
 
 
 --[[

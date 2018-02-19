@@ -19,7 +19,7 @@ gra.raidLogsFrame = raidLogsFrame
 -----------------------------------------
 local titleFrame = CreateFrame("Frame", nil, raidLogsFrame)
 titleFrame:SetPoint("TOPLEFT")
-titleFrame:SetPoint("BOTTOMRIGHT", raidLogsFrame, "TOPRIGHT", 0, -17)
+titleFrame:SetPoint("BOTTOMRIGHT", raidLogsFrame, "TOPRIGHT", 0, -16)
 
 local titleText = titleFrame:CreateFontString(nil, "OVERLAY", "GRA_FONT_SMALL")
 titleText:SetPoint("LEFT", 5, 0)
@@ -31,7 +31,9 @@ attendanceEditorBtn:SetScript("OnClick", function()
 	gra.configFrame:Hide()
 	gra.importFrame:Hide()
 	gra.epgpOptionsFrame:Hide()
+	gra.dkpOptionsFrame:Hide()
 	gra.rosterEditorFrame:Hide()
+	gra.appearanceFrame:Hide()
 	GRA:ShowAttendanceEditor(sortedDates[selected], dates[sortedDates[selected]])
 end)
 
@@ -133,8 +135,6 @@ local deleteRaidLogBtn = GRA:CreateButton(statusFrame, L["Delete Raid Log"], "bl
 	L["Delete Raid Log"],
 	L["Delete selected raid logs."],
 	L["Select multiple logs with the Ctrl and Shift keys."])
--- deleteRaidLogBtn:SetPoint("LEFT", newRaidLogBtn, "RIGHT", 5, 0)
--- deleteRaidLogBtn:Hide()
 deleteRaidLogBtn:SetScript("OnClick", function()
 	local text = L["Delete selected raid logs?"]
 	if gra.isAdmin then
@@ -159,12 +159,16 @@ local recordLootBtn = GRA:CreateButton(statusFrame, L["Record Loot"], "blue", {1
 recordLootBtn:SetPoint("BOTTOMRIGHT")
 recordLootBtn:Hide()
 recordLootBtn:SetScript("OnClick", function()
-	local d = sortedDates[selected]
-	if not d then return end
-	GRA:ShowRecordLootFrame(d, nil, nil, nil, _G[GRA_R_RaidLogs][d]["attendees"])
+	if gra.recordLootFrame:IsShown() then
+		gra.recordLootFrame:Hide()
+	else
+		local d = sortedDates[selected]
+		if not d then return end
+		GRA:ShowRecordLootFrame(d, nil, nil, nil)
+	end
 end)
 
--- EPGP
+-- EPGP/DKP penalize
 local penalizeBtn = GRA:CreateButton(statusFrame, L["Penalize"], "Penalize", {70, 20})
 penalizeBtn:SetPoint("BOTTOMRIGHT")
 penalizeBtn:SetScript("OnClick", function()
@@ -173,54 +177,73 @@ penalizeBtn:SetScript("OnClick", function()
 	else
 		local d = sortedDates[selected]
 		if not d then return end
-		GRA:ShowPenalizeFrame(d, nil, nil, nil, nil, _G[GRA_R_RaidLogs][d]["attendees"], _G[GRA_R_RaidLogs][d]["absentees"])
+		GRA:ShowPenalizeFrame(d, nil, nil, nil, nil)
 	end
 end)
 penalizeBtn:Hide()
 
-local gpCreditBtn = GRA:CreateButton(statusFrame, L["GP Credit"], "GP", {70, 20})
-gpCreditBtn:SetPoint("RIGHT", penalizeBtn, "LEFT", 1, 0)
-gpCreditBtn:SetScript("OnClick", function()
-	if gra.gpCreditFrame:IsShown() then
-		gra.gpCreditFrame:Hide()
+local creditBtn = GRA:CreateButton(statusFrame, "XX Credit", "Credit", {70, 20})
+creditBtn:SetPoint("RIGHT", penalizeBtn, "LEFT", 1, 0)
+creditBtn:SetScript("OnClick", function()
+	if gra.creditFrame:IsShown() then
+		gra.creditFrame:Hide()
 	else
 		local d = sortedDates[selected]
 		if not d then return end
-		GRA:ShowGPCreditFrame(d, nil, nil, nil, _G[GRA_R_RaidLogs][d]["attendees"])
+		GRA:ShowCreditFrame(d, nil, nil, nil, nil)
 	end
 end)
-gpCreditBtn:Hide()
+creditBtn:Hide()
 
-local epAwardBtn = GRA:CreateButton(statusFrame, L["EP Award"], "EP", {70, 20})
-epAwardBtn:SetPoint("RIGHT", gpCreditBtn, "LEFT", 1, 0)
-epAwardBtn:SetScript("OnClick", function()
-	if gra.epAwardFrame:IsShown() then
-		gra.epAwardFrame:Hide()
+local awardBtn = GRA:CreateButton(statusFrame, "XX Award", "Award", {70, 20})
+awardBtn:SetPoint("RIGHT", creditBtn, "LEFT", 1, 0)
+awardBtn:SetScript("OnClick", function()
+	if gra.awardFrame:IsShown() then
+		gra.awardFrame:Hide()
 	else
 		local d = sortedDates[selected]
 		if not d then return end
-		GRA:ShowEPAwardFrame(d, nil, nil, nil, _G[GRA_R_RaidLogs][d]["attendees"], _G[GRA_R_RaidLogs][d]["absentees"])
+		GRA:ShowAwardFrame(d, nil, nil, nil)
 	end
 end)
-epAwardBtn:Hide()
+awardBtn:Hide()
 
 -----------------------------------------
 -- show raid info
 -----------------------------------------
-local function ShowRaidSummary(d)
-	local t = _G[GRA_R_RaidLogs][d]
-	local attendees, absentees = "", ""
-	for n, tbl in pairs(t["attendees"]) do
-		attendees = attendees .. GRA:GetClassColoredName(n) .. " "
+local function SortByClass(a, b)
+	local classA = _G[GRA_R_Roster][a] and GRA:GetIndex(gra.CLASS_ORDER, _G[GRA_R_Roster][a]["class"]) or "99"
+	local classB = _G[GRA_R_Roster][b] and GRA:GetIndex(gra.CLASS_ORDER, _G[GRA_R_Roster][b]["class"]) or "99"
+	if classA ~= classB then
+		return 	classA < classB
+	else
+		return a < b
 	end
-	for n, tbl in pairs(t["absentees"]) do
-		absentees = absentees .. GRA:GetClassColoredName(n) .. " "
-	end
-	attendeesText:SetText("|cff80FF00" .. L["Attendees"] .. "(" .. GRA:Getn(t["attendees"]) .. "): " .. attendees)
-	absenteesText:SetText("|cff80FF00" .. L["Absentees"] .. "(" .. GRA:Getn(t["absentees"]) .. "): " .. absentees)
 end
 
-local tooltip = GRA:CreateTooltip("GRA_RaidLogsTooltip")
+local function ShowRaidSummary(d)
+	local t = _G[GRA_R_RaidLogs][d]
+	local attendeesString, absenteesString = "", ""
+
+	-- fill table
+	local attendees, absentees = GRA:GetAttendeesAndAbsentees(d, true)
+	-- sort by class
+	table.sort(attendees, function(a, b) return SortByClass(a, b) end)
+	table.sort(absentees, function(a, b) return SortByClass(a, b) end)
+
+	for _, n in pairs(attendees) do
+		attendeesString = attendeesString .. GRA:GetClassColoredName(n) .. " "
+	end
+	for _, n in pairs(absentees) do
+		absenteesString = absenteesString .. GRA:GetClassColoredName(n) .. " "
+	end
+	attendeesText:SetText("|cff80FF00" .. L["Attendees"] .. "(" .. GRA:Getn(attendees) .. "): " .. attendeesString)
+	absenteesText:SetText("|cff80FF00" .. L["Absentees"] .. "(" .. GRA:Getn(absentees) .. "): " .. absenteesString)
+
+	wipe(attendees)
+	wipe(absentees)
+end
+
 local function ShowRaidDetails(d)
 	detailsFrame.scrollFrame:ClearContent()
 	
@@ -231,10 +254,12 @@ local function ShowRaidDetails(d)
 	for k, detail in pairs(t["details"]) do
 		local b
 		
-		if _G[GRA_R_Config]["system"] == "EPGP" then
+		if _G[GRA_R_Config]["raidInfo"]["system"] == "EPGP" then
 			b = GRA:CreateDetailButton(detailsFrame.scrollFrame.content, detail)
-		elseif detail[1] == "GP" then
-			b = GRA:CreateDetailButton_NonEPGP(detailsFrame.scrollFrame.content, detail)
+		elseif _G[GRA_R_Config]["raidInfo"]["system"] == "DKP" then
+			b = GRA:CreateDetailButton_DKP(detailsFrame.scrollFrame.content, detail)
+		else -- loot council
+			b = GRA:CreateDetailButton_LC(detailsFrame.scrollFrame.content, detail)
 		end
 		
 		if b then
@@ -248,51 +273,55 @@ local function ShowRaidDetails(d)
 			last = b
 			table.insert(details, b)
 
-			-- tooltip
+			-- GRA_Tooltip
 			b:HookScript("OnEnter", function()
-				if detail[1] == "GP" then
+				if detail[1] == "GP" or detail[1] == "DKP_C" then
 					if string.find(detail[3], "|Hitem") then
-						tooltip:SetOwner(b, "ANCHOR_NONE")
-						tooltip:SetPoint("RIGHT", b, "LEFT", -2, 0)
-						tooltip:SetHyperlink(detail[3])
-						-- tooltip:SetPoint("TOPLEFT", header, "TOPRIGHT", 5, 0)
+						GRA_Tooltip:SetOwner(b, "ANCHOR_NONE")
+						GRA_Tooltip:SetPoint("RIGHT", b, "LEFT", -2, 0)
+						GRA_Tooltip:SetHyperlink(detail[3])
 					else
-						tooltip:Hide()
+						GRA_Tooltip:Hide()
 					end
-				else -- EP or Penalize
+				else -- EP or DKP_A or Penalize
 					if b.playerText:IsTruncated() then
-						tooltip:SetOwner(b, "ANCHOR_NONE")
-						tooltip:SetPoint("RIGHT", b, "LEFT", -2, 0)
+						GRA_Tooltip:SetOwner(b, "ANCHOR_NONE")
+						GRA_Tooltip:SetPoint("RIGHT", b, "LEFT", -2, 0)
 						if detail[1] == "EP" then
-							tooltip:AddLine(L["EP Award"])
+							GRA_Tooltip:AddLine(L["EP Award"] .. " (" .. #detail[4] .. ")")
+						elseif detail[1] == "DKP_A" then
+							GRA_Tooltip:AddLine(L["DKP Award"] .. " (" .. #detail[4] .. ")")
 						else
-							tooltip:AddLine(L["Penalize"])
+							GRA_Tooltip:AddLine(L["Penalize"] .. " (" .. #detail[4] .. ")")
 						end
-						-- for _, name in pairs(detail[4]) do
 						for i = 1, #detail[4], 2 do
-							tooltip:AddDoubleLine(GRA:GetClassColoredName(detail[4][i]), GRA:GetClassColoredName(detail[4][i+1]))
+							GRA_Tooltip:AddDoubleLine(GRA:GetClassColoredName(detail[4][i]), GRA:GetClassColoredName(detail[4][i+1]))
 						end
-						tooltip:Show()
+						GRA_Tooltip:Show()
 					end
 				end
 			end)
 
 			b:HookScript("OnLeave", function()
-				tooltip:Hide()
+				GRA_Tooltip:Hide()
 			end)
 
 			if gra.isAdmin then
 				b.deleteBtn:Show()
-				if _G[GRA_R_Config]["system"] == "EPGP" then
-					b.playerText:SetPoint("RIGHT", -25, 0)
+				if _G[GRA_R_Config]["raidInfo"]["system"] == "EPGP" then
+					if detail[1] == "GP" then
+						b.noteText:SetPoint("RIGHT", -25, 0)
+					else
+						b.playerText:SetPoint("RIGHT", -25, 0)
+					end
 
 					-- delete detail entry
 					b.deleteBtn:SetScript("OnClick", function()
-						local confirm = GRA:CreateConfirmBox(detailsFrame, 200, gra.colors.firebrick.s .. L["Delete this entry and undo changes to EP/GP?"] .. "|r\n" 
+						local confirm = GRA:CreateConfirmBox(detailsFrame, 200, gra.colors.firebrick.s .. L["Delete this entry and undo changes to %s?"]:format("EP/GP") .. "|r\n" 
 						.. detail[3] .. ": " .. detail[2] .. " " .. (string.find(detail[1], "EP") and "EP" or "GP")
 						, function()
 							if string.find(detail[1], "P") == 1 then
-								GRA:UndoPenalize(d, k)
+								GRA:UndoPenalizeEPGP(d, k)
 							else
 								GRA:UndoEPGP(d, k)
 							end
@@ -305,24 +334,30 @@ local function ShowRaidDetails(d)
 					-- modify detail entry
 					b:SetScript("OnClick", function()
 						if detail[1] == "EP" then
-							GRA:ShowEPAwardFrame(d, detail[3], detail[2], detail[4], t["attendees"], t["absentees"], k)
+							GRA:ShowAwardFrame(d, detail[3], detail[2], detail[4], k)
 						elseif detail[1] == "GP" then
-							GRA:ShowGPCreditFrame(d, detail[3], detail[2], detail[4], t["attendees"], k)
-						else -- penalize
-							GRA:ShowPenalizeFrame(d, detail[1], detail[3], detail[2], detail[4], t["attendees"], t["absentees"], k)
+							GRA:ShowCreditFrame(d, detail[3], detail[2], detail[4], detail[5], k)
+						else -- PGP/PEP
+							GRA:ShowPenalizeFrame(d, detail[1], detail[3], detail[2], detail[4], k)
 						end
 					end)
-				else
-					b.noteText:SetPoint("RIGHT", -25, 0)
+				elseif _G[GRA_R_Config]["raidInfo"]["system"] == "DKP" then
+					if detail[1] == "DKP_C" then
+						b.noteText:SetPoint("RIGHT", -25, 0)
+					else
+						b.playerText:SetPoint("RIGHT", -25, 0)
+					end
+
 					-- delete detail entry
 					b.deleteBtn:SetScript("OnClick", function()
-						local confirm = GRA:CreateConfirmBox(detailsFrame, 200, gra.colors.firebrick.s .. L["Delete this entry?"] .. "|r\n" 
-						.. detail[3] .. " " .. GRA:GetClassColoredName(detail[4])
+						local confirm = GRA:CreateConfirmBox(detailsFrame, 200, gra.colors.firebrick.s .. L["Delete this entry and undo changes to %s?"]:format("DKP") .. "|r\n" 
+						.. detail[3] .. ": " .. detail[2] .. " DKP"
 						, function()
-							-- delete from logs
-							table.remove(_G[GRA_R_RaidLogs][d]["details"], k)
-							-- fake GRA_EPGP_UNDO event, refresh sheet by date
-							GRA:FireEvent("GRA_EPGP_UNDO", d)
+							if detail[1] == "DKP_P" then
+								GRA:UndoPenalizeDKP(d, k)
+							else
+								GRA:UndoDKP(d, k)
+							end
 							ShowRaidDetails(d)
 							detailsFrame.scrollFrame:ResetScroll()
 						end, true)
@@ -331,7 +366,34 @@ local function ShowRaidDetails(d)
 
 					-- modify detail entry
 					b:SetScript("OnClick", function()
-						GRA:ShowRecordLootFrame(d, detail[3], detail[5], detail[4], t["attendees"], k)
+						if detail[1] == "DKP_A" then
+							GRA:ShowAwardFrame(d, detail[3], detail[2], detail[4], k)
+						elseif detail[1] == "DKP_C" then
+							GRA:ShowCreditFrame(d, detail[3], -detail[2], detail[4], detail[5], k)
+						else -- DKP_P
+							GRA:ShowPenalizeFrame(d, detail[1], detail[3], detail[2], detail[4], k)
+						end
+					end)
+				else -- loot council
+					b.noteText:SetPoint("RIGHT", -25, 0)
+					-- delete detail entry
+					b.deleteBtn:SetScript("OnClick", function()
+						local confirm = GRA:CreateConfirmBox(detailsFrame, 200, gra.colors.firebrick.s .. L["Delete this entry?"] .. "|r\n" 
+						.. detail[3] .. " " .. GRA:GetClassColoredName(detail[4])
+						, function()
+							-- delete from logs
+							table.remove(_G[GRA_R_RaidLogs][d]["details"], k)
+							-- fake GRA_ENTRY_UNDO event, refresh sheet by date
+							GRA:FireEvent("GRA_ENTRY_UNDO", d)
+							ShowRaidDetails(d)
+							detailsFrame.scrollFrame:ResetScroll()
+						end, true)
+						confirm:SetPoint("CENTER")
+					end)
+
+					-- modify detail entry
+					b:SetScript("OnClick", function()
+						GRA:ShowRecordLootFrame(d, detail[3], detail[5], detail[4], k)
 					end)
 				end
 			end
@@ -352,8 +414,8 @@ local function RefreshAndScroll()
 	end)
 end
 
-GRA:RegisterEvent("GRA_EPGP", "RaidLogs_EPGPRefresh", RefreshAndScroll)
-GRA:RegisterEvent("GRA_EPGP_MODIFY", "RaidLogs_EPGPRefresh", Refresh)
+GRA:RegisterEvent("GRA_ENTRY", "RaidLogs_EPGPRefresh", RefreshAndScroll)
+GRA:RegisterEvent("GRA_ENTRY_MODIFY", "RaidLogs_EPGPRefresh", Refresh)
 GRA:RegisterEvent("GRA_SYSTEM", "RaidLogs_EPGPRefresh", Refresh)
 
 -----------------------------------------
@@ -421,7 +483,7 @@ local function LoadDateList()
 
 					titleText:SetText("|cff80FF00" .. L["Raids: "] .. "|r" .. GRA:Getn(_G[GRA_R_RaidLogs])
 						.. "    |cff80FF00" .. L["Current: "] .. "|r" .. date("%x", GRA:DateToTime(sortedDates[selected]))
-						.. "    |cff80FF00" .. L["Raid Start Time"] .. ":|r " .. GRA:GetRaidStartTime(d))
+						.. "    |cff80FF00" .. L["Raid Hours"] .. ":|r " .. GRA:GetRaidStartTime(d) .. " - " ..  GRA:GetRaidEndTime(d))
 				end
 			end)
 		end
@@ -545,6 +607,15 @@ GRA:RegisterEvent("GRA_LOGS_DEL", "RaidLogsFrame_RaidLogsDeleted", function(dele
 	UpdateList()
 end)
 
+GRA:RegisterEvent("GRA_RH_UPDATE", "RaidLogsFrame_RaidHoursUpdate", function(d)
+	if not init then return end
+
+	d = sortedDates[selected] -- set to current selected
+	titleText:SetText("|cff80FF00" .. L["Raids: "] .. "|r" .. GRA:Getn(_G[GRA_R_RaidLogs])
+		.. "    |cff80FF00" .. L["Current: "] .. "|r" .. date("%x", GRA:DateToTime(d))
+		.. "    |cff80FF00" .. L["Raid Hours"] .. ":|r " .. GRA:GetRaidStartTime(d) .. " - " ..  GRA:GetRaidEndTime(d))
+end)
+
 -----------------------------------------
 -- permission
 -----------------------------------------
@@ -556,9 +627,17 @@ GRA:RegisterEvent("GRA_PERMISSION", "RaidLogsFrame_CheckPermissions", function(i
 		deleteRaidLogBtn:SetPoint("LEFT", newRaidLogBtn, "RIGHT", 5, 0)
 		attendanceEditorBtn:Show()
 
-		if _G[GRA_R_Config]["system"] == "EPGP" then
-			gpCreditBtn:Show()
-			epAwardBtn:Show()
+		if _G[GRA_R_Config]["raidInfo"]["system"] == "EPGP" then
+			creditBtn:SetText(L["GP Credit"])
+			creditBtn:Show()
+			awardBtn:SetText(L["EP Award"])
+			awardBtn:Show()
+			penalizeBtn:Show()
+		elseif _G[GRA_R_Config]["raidInfo"]["system"] == "DKP" then
+			creditBtn:SetText(L["DKP Credit"])
+			creditBtn:Show()
+			awardBtn:SetText(L["DKP Award"])
+			awardBtn:Show()
 			penalizeBtn:Show()
 		else
 			recordLootBtn:Show()
@@ -577,14 +656,23 @@ GRA:RegisterEvent("GRA_SYSTEM", "RaidLogsFrame_SystemChanged", function(system)
 	-- admin only
 	if not gra.isAdmin then return end
 	if system == "EPGP" then
-		gpCreditBtn:Show()
-		epAwardBtn:Show()
+		creditBtn:SetText(L["GP Credit"])
+		creditBtn:Show()
+		awardBtn:SetText(L["EP Award"])
+		awardBtn:Show()
+		penalizeBtn:Show()
+		recordLootBtn:Hide()
+	elseif system == "DKP" then
+		creditBtn:SetText(L["DKP Credit"])
+		creditBtn:Show()
+		awardBtn:SetText(L["DKP Award"])
+		awardBtn:Show()
 		penalizeBtn:Show()
 		recordLootBtn:Hide()
 	else
 		recordLootBtn:Show()
-		gpCreditBtn:Hide()
-		epAwardBtn:Hide()
+		creditBtn:Hide()
+		awardBtn:Hide()
 		penalizeBtn:Hide()
 	end
 end)
@@ -609,8 +697,8 @@ function raidLogsFrame:Resize()
 	sendToRaidBtn:SetSize(unpack(gra.size.button_main))
 	newRaidLogBtn:SetSize(unpack(gra.size.button_main))
 	deleteRaidLogBtn:SetSize(unpack(gra.size.button_main))
-	epAwardBtn:SetSize(unpack(gra.size.button_raidLogs))
-	gpCreditBtn:SetSize(unpack(gra.size.button_raidLogs))
+	awardBtn:SetSize(unpack(gra.size.button_raidLogs))
+	creditBtn:SetSize(unpack(gra.size.button_raidLogs))
 	penalizeBtn:SetSize(unpack(gra.size.button_raidLogs))
 	recordLootBtn:SetSize(unpack(gra.size.button_raidLogs))
 	-- list

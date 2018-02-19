@@ -1,6 +1,8 @@
 local _, Simulationcraft = ...
 
 Simulationcraft = LibStub("AceAddon-3.0"):NewAddon(Simulationcraft, "Simulationcraft", "AceConsole-3.0", "AceEvent-3.0")
+ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
+LibRealmInfo = LibStub("LibRealmInfo")
 
 local OFFSET_ITEM_ID = 1
 local OFFSET_ENCHANT_ID = 2
@@ -79,6 +81,21 @@ local function GetItemSplit(itemLink)
   return itemSplit
 end
 
+-- char size for utf8 strings
+local function chsize(char)
+  if not char then
+      return 0
+  elseif char > 240 then
+      return 4
+  elseif char > 225 then
+      return 3
+  elseif char > 192 then
+      return 2
+  else
+      return 1
+  end
+end
+
 -- SimC tokenize function
 local function tokenize(str)
   str = str or ""
@@ -89,15 +106,21 @@ local function tokenize(str)
   -- keep stuff we want, dumpster everything else
   local s = ""
   for i=1,str:len() do
+    local b = str:byte(i)
     -- keep digits 0-9
-    if str:byte(i) >= 48 and str:byte(i) <= 57 then
+    if b >= 48 and b <= 57 then
       s = s .. str:sub(i,i)
       -- keep lowercase letters
-    elseif str:byte(i) >= 97 and str:byte(i) <= 122 then
+    elseif b >= 97 and b <= 122 then
       s = s .. str:sub(i,i)
       -- keep %, +, ., _
-    elseif str:byte(i)==37 or str:byte(i)==43 or str:byte(i)==46 or str:byte(i)==95 then
+    elseif b == 37 or b == 43 or b == 46 or b == 95 then
       s = s .. str:sub(i,i)
+      -- save all multibyte chars
+    elseif chsize(b) > 1 then
+      local offset = chsize(b) - 1
+      s = s .. str:sub(i, i + offset)
+      i = i + offset
     end
   end
   -- strip trailing spaces
@@ -191,12 +214,12 @@ function Simulationcraft:OpenArtifact()
     return false, false, 0
   end
 
-  if not select(1, IsUsableItem(itemId)) then
-    if not artifactFrameOpen then
-      HideUIPanel(ArtifactFrame)
-    end
-    return false, false, 0
-  end
+  -- if not select(1, IsUsableItem(itemId)) then
+  --   if not artifactFrameOpen then
+  --     HideUIPanel(ArtifactFrame)
+  --   end
+  --   return false, false, 0
+  -- end
 
   local mhId = select(1, GetInventoryItemID("player", GetInventorySlotInfo("MainHandSlot")))
   local ohId = select(1, GetInventoryItemID("player", GetInventorySlotInfo("SecondaryHandSlot")))
@@ -486,18 +509,24 @@ function Simulationcraft:GetBagItemStrings()
             -- Default bank slots (the innate ones, not ones from bags-in-the-bank) are weird
             -- slot starts at 39, I believe that is based on some older location values
             -- GetContainerItemInfo uses a 0-based slot index
-            -- So take the slot from the unpack and subtract 39 to get the right index for GetContainerItemInfo
+            -- So take the slot from the unpack and subtract 39 to get the right index for GetContainerItemInfo.
+            -- 2018/01/17 - Change magic number to 47 to account for new backpack slots. Not sure why it went up by 8
+            -- instead of 4, possible blizz is leaving the door open to more expansion in the future?
             container = BANK_CONTAINER
-            slot = slot - 39
+            slot = slot - 47
           end
           _, _, _, _, _, _, itemLink, _, _, itemId = GetContainerItemInfo(container, slot)
           if itemLink then
             local name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice = GetItemInfo(itemLink)
+
+            -- get correct level for scaling gear
+            local level = ItemUpgradeInfo:GetUpgradedItemLevel(link) or 0
+
             -- find all equippable, non-artifact items
             if IsEquippableItem(itemLink) and quality ~= 6 then
               bagItems[#bagItems + 1] = {
                 string = GetItemStringFromItemLink(slotNum, itemLink, false),
-                name = name .. ' (' .. iLevel .. ')'
+                name = name .. ' (' .. level .. ')'
               }
             end
           end
@@ -511,12 +540,23 @@ end
 
 -- This is the workhorse function that constructs the profile
 function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
+  -- addon metadata
+  local versionComment = '# SimC Addon ' .. GetAddOnMetadata('Simulationcraft', 'Version')
+
   -- Basic player info
+  local _, realmName, _, _, _, _, region, _, _, realmLatinName, _ = LibRealmInfo:GetRealmInfoByUnit('player')
+
   local playerName = UnitName('player')
   local _, playerClass = UnitClass('player')
   local playerLevel = UnitLevel('player')
-  local playerRealm = GetRealmName()
-  local playerRegion = regionString[GetCurrentRegion()]
+
+  -- Try Latin name for Russian servers first, then realm name from LibRealmInfo, then Realm Name from the game
+  -- Latin name for Russian servers as most APIs use the latin name, not the cyrillic name
+  local playerRealm = realmLatinName or realmName or GetRealmName()
+
+  -- Try region from LibRealmInfo first, then use default API
+  -- Default API can be wrong for region-switching players
+  local playerRegion = region or regionString[GetCurrentRegion()]
 
   -- Race info
   local _, playerRace = UnitRace('player')
@@ -578,7 +618,9 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
   local playerCrucible = self:GetCrucibleString()
 
   -- Build the output string for the player (not including gear)
-  local simulationcraftProfile = player .. '\n'
+  local simulationcraftProfile = versionComment .. '\n'
+  simulationcraftProfile = simulationcraftProfile .. '\n'
+  simulationcraftProfile = simulationcraftProfile .. player .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerLevel .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerRace .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerRegion .. '\n'
@@ -631,4 +673,7 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
   SimcCopyFrameScrollText:Show()
   SimcCopyFrameScrollText:SetText(simulationcraftProfile)
   SimcCopyFrameScrollText:HighlightText()
+  SimcCopyFrameScrollText:SetScript("OnEscapePressed", function(self)
+    SimcCopyFrame:Hide()
+  end)
 end

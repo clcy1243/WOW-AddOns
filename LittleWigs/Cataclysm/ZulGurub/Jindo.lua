@@ -1,12 +1,12 @@
 -------------------------------------------------------------------------------
 --  Module Declaration
 
-local mod = BigWigs:NewBoss("Jin'do the Godbreaker", 793)
+local mod, CL = BigWigs:NewBoss("Jin'do the Godbreaker", 793)
 if not mod then return end
 mod.partyContent = true
 mod:RegisterEnableMob(52148)
 mod.toggleOptions = {
-	"phase",
+	"stages",
 	97172, -- Shadows of Hakkar
 	97417, -- Brittle Barrier
 	{97597, "ICON", "FLASHSHAKE"}, -- Spirit Warrior's Gaze
@@ -23,16 +23,10 @@ local barrier = 3
 -------------------------------------------------------------------------------
 --  Localization
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
-
--- ZulGurub/Jindo
 	L["barrier_down_message"] = "Barrier %d down!"
-	L["phase"] = "Phase"
-	L["phase_desc"] = "Warn for phase changes."
-
 end
-L = mod:GetLocale()
 
 -------------------------------------------------------------------------------
 --  Initialization
@@ -78,7 +72,7 @@ end
 function mod:Phase2(_, spellId)
 	if not phase2 then
 		phase2 = true
-		self:Message("phase", LibStub("AceLocale-3.0"):GetLocale("Big Wigs: Common")["phase"]:format(2), "Important", spellId, "Long")
+		self:Message("stages", CL.phase:format(2), "Important", spellId, "Long")
 	end
 end
 

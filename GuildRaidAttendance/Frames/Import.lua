@@ -234,8 +234,8 @@ importBtn:SetScript("OnClick", function()
 		if t.checked then  -- show this player
 			if LGN:IsInGuild(n) then
 				-- create new
-				if _G[GRA_R_Config]["system"] == "EPGP" then
-					-- read EPGP
+				if _G[GRA_R_Config]["raidInfo"]["system"] == "EPGP" then
+					-- retrieve EPGP
 					local note = LGN:GetOfficerNote(n)
 					if note then
 						local ep, gp = string.split(",", note)
@@ -246,11 +246,25 @@ importBtn:SetScript("OnClick", function()
 							gp = 0
 							LGN:SetOfficerNote(n, "0,0")
 						end
-						_G[GRA_R_Roster][n] = {["class"]=t.class, ["EP"]=ep, ["GP"]=gp}
+						_G[GRA_R_Roster][n] = {["class"]=t.class, ["role"]="DPS", ["EP"]=ep, ["GP"]=gp}
 					end
-				else
-					-- don't use EPGP
-					_G[GRA_R_Roster][n] = {["class"]=t.class}
+				elseif _G[GRA_R_Config]["raidInfo"]["system"] == "DKP" then
+					-- retrieve DKP
+					local note = LGN:GetOfficerNote(n)
+					if note then
+						local current, spent, total = string.split(",", note)
+						current, spent, total = tonumber(current), tonumber(spent), tonumber(total)
+						-- make sure dkp has been initialized
+						if not current or not spent or not total then
+							current = 0
+							spent = 0
+							total = 0
+							LGN:SetOfficerNote(n, "0,0,0")
+						end
+						_G[GRA_R_Roster][n] = {["class"]=t.class, ["role"]="DPS", ["DKP_Current"]=current, ["DKP_Spent"]=spent, ["DKP_Total"]=total}
+					end
+				else -- loot council
+					_G[GRA_R_Roster][n] = {["class"]=t.class, ["role"]="DPS"}
 				end
 			else
 				GRA:Print(L["Failed to import player %s, it's not in your guild."]:format(GRA:GetClassColoredName(n, t.class)))

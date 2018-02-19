@@ -33,29 +33,29 @@ if L then
 
 	L.target_only = "|cFFFF0000This warning only shows for the boss you're targeting.|r "
 
-	L.combo, L.combo_desc = EJ_GetSectionInfo(5672)
+	L.combo = -5672
+	L.combo_desc = L.target_only .. "{-5672}"
 	L.combo_message = "%s: Combo soon!"
 
-	L.arc, L.arc_desc = EJ_GetSectionInfo(5673)
+	L.arc = -5673
+	L.arc_desc = L.target_only .. "{-5673}"
 	L.arc_icon = 116835
 
-	L.rage, L.rage_desc = EJ_GetSectionInfo(5678)
+	L.rage, L.rage_desc = -5678, -5678
 	L.rage_icon = 38771 -- rage like icon
 
-	L.strength, L.strength_desc = EJ_GetSectionInfo(5677)
+	L.strength, L.strength_desc = -5677, -5677
 	L.strength_icon = 80471 -- strength like icon
 
-	L.courage, L.courage_desc = EJ_GetSectionInfo(5676)
+	L.courage, L.courage_desc = -5676, -5676
 	L.courage_icon = 126030 -- shield like icon
 
-	L.titan_spark = EJ_GetSectionInfo(5674)
+	L.titan_spark = -5674
 
-	L.bosses, L.bosses_desc = EJ_GetSectionInfo(5726)
+	L.bosses, L.bosses_desc = -5726, -5726
 	L.bosses_icon = "achievement_moguraid_06"
 end
 L = mod:GetLocale()
-L.combo_desc = L.target_only .. L.combo_desc
-L.arc_desc = L.target_only .. L.arc_desc
 
 --------------------------------------------------------------------------------
 -- Initialization

@@ -1,9 +1,20 @@
 # LittleWigs
 
-## [v7.3.1](https://github.com/BigWigsMods/LittleWigs/tree/v7.3.1) (2017-09-11)
-[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v7.3.0...v7.3.1)
+## [v7.3.11](https://github.com/BigWigsMods/LittleWigs/tree/v7.3.11) (2018-02-17)
+[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v7.3.10...v7.3.11)
 
-- Remove load blockers  
-- TheArcway/Trash: add Eredar Chaosbringer spells (#109)  
-- Fix mage tower name in UI.  
-- Halls Of Valor and Vaults Of Wardens translation. (ruRU) (#108)  
+- WotLK: added Trash modules for 4 dungeons (mostly CC) (#198)  
+- WotLK/Gundrak: warnings for avoidable damage, cleanups (#200)  
+- WotLK/UtgardePinnacle/Skadi: use modern API to detect the encounter, print the target of "Whirlwind" and also warn when taking damage from it (#199)  
+- zhCN update (#196)  
+- WotLK/TheNexus/Telestra: added a message for "Critter", cleanups (#197)  
+- CourtOfStars/Locales: fixes (#195)  
+- EyeOfAzshara/Trash: added a warning for "Thundering Stomp" and made the message for "Polymorph: Fish" shorter (#191)  
+-  DarkheartThicket/Trash: added a warning for "Nightmare Toxin", fixed "Blood Bomb" (#192)  
+- CourtOfStars/AdvisorMelandrus: added a warmup timer (#194)  
+-  Karazhan/Moroes: added a warning for "Healing Stream", warn healers about "Coat Check" after it becomes dispellable (#193)  
+- TheArcway/Trash: do not warn about warlock-controlled NPCs casting "Brand of the Legion", fixed TargetMessage calls not playing sounds (#188)  
+- Karazhan/Nightbane: use SayCountdown instead of manual ScheduleTimer calls (#189)  
+- Karazhan/Moroes: warn when Mana Drain is being casted rather than when it's already applied (#190)  
+- Update ruRU.lua (#187)  
+- update zhCN. (#186)  

@@ -23,21 +23,19 @@ local firstKorthikStrikeDone = nil
 
 local L = mod:NewLocale("enUS", true)
 if L then
-	L.recklessness, L.recklessness_desc = EJ_GetSectionInfo(6331)
+	L.recklessness = -6331
+	L.recklessness_desc = ("%s\n{-6331}\n\n%s\n{-6555}"):format(CL.normal, CL.heroic) -- Same spell name with different EJ entries for normal/heroic
 	L.recklessness_icon = 125873
 
 	L.spear_removed = "Your Impaling Spear was removed!"
 
-	L.mending = EJ_GetSectionInfo(6306)
-	L.mending_desc = "|cFFFF0000WARNING: Only the timer for your 'focus' target will show because all Zar'thik Battle-Menders have separate heal cooldowns.|r "
+	L.mending = -6306
+	L.mending_desc = "|cFFFF0000WARNING: Only the timer for your 'focus' target will show because all Zar'thik Battle-Menders have separate heal cooldowns.|r {-6306}"
 	L.mending_warning = "Your focus is casting Mending!"
 	L.mending_bar = "Focus: Mending"
 	L.mending_icon = 122193
 end
 L = mod:GetLocale()
---same spell name with different EJ entries for normal/heroic
-L.recklessness_desc = ("%s\n\n(%s) %s"):format(L.recklessness_desc, CL.heroic, select(2, EJ_GetSectionInfo(6555)))
-L.mending_desc = L.mending_desc .. select(2, EJ_GetSectionInfo(6306))
 
 --------------------------------------------------------------------------------
 -- Initialization

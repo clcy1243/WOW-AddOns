@@ -5,6 +5,15 @@
 	local _detalhes = _G._detalhes
 	DETAILSPLUGIN_ALWAYSENABLED = 0x1
 	
+	--> consts
+		local CONST_PLUGINWINDOW_MENU_WIDTH = 150
+		local CONST_PLUGINWINDOW_MENU_HEIGHT = 22
+		local CONST_PLUGINWINDOW_MENU_X = -5
+		local CONST_PLUGINWINDOW_MENU_Y = -26
+		local CONST_PLUGINWINDOW_WIDTH = 925
+		local CONST_PLUGINWINDOW_HEIGHT = 600
+	
+	
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> details api functions
 	function _detalhes:GetPlugin (PAN) --plugin absolute name
@@ -431,14 +440,16 @@
 	
 		f:Hide()
 		
+
+		
 		--> members
-			f.MenuX = -5
-			f.MenuY = -26
-			f.MenuButtonWidth = 150
-			f.MenuButtonHeight = 20
+			f.MenuX = CONST_PLUGINWINDOW_MENU_X
+			f.MenuY = CONST_PLUGINWINDOW_MENU_Y
+			f.MenuButtonWidth = CONST_PLUGINWINDOW_MENU_WIDTH
+			f.MenuButtonHeight = CONST_PLUGINWINDOW_MENU_HEIGHT
+			f.FrameWidth = CONST_PLUGINWINDOW_WIDTH
+			f.FrameHeight = CONST_PLUGINWINDOW_HEIGHT
 			f.TitleHeight = 20
-			f.FrameWidth = 925
-			f.FrameHeight = 600
 			
 			--> store button references for the left menu
 			f.MenuButtons = {}
@@ -472,7 +483,8 @@
 			bigdogRow:SetHeight (20)
 			bigdogRow:SetColorTexture (.5, .5, .5, .1)
 			bigdogRow:Hide()
-
+			
+			--
 		--> plugins menu title bar
 			local titlebar_plugins = CreateFrame ("frame", nil, menuBackground)
 			titlebar_plugins:SetPoint ("topleft", menuBackground, "topleft", 2, -3)
@@ -499,7 +511,16 @@
 		
 		--> scripts
 			f:SetScript ("OnShow", function()
-				
+				--check if the window isn't out of screen
+				C_Timer.After (1, function()
+					local right = f:GetRight()
+					if (right and right > GetScreenWidth() + 500) then
+						f:ClearAllPoints()
+						f:SetPoint ("center", UIParent, "center", 0, 0)
+						LibWindow.SavePosition (f)
+						_detalhes:Msg ("detected options panel out of screen, position has reset")
+					end
+				end)
 			end)
 			
 			f:SetScript ("OnHide", function()
@@ -519,21 +540,7 @@
 				end
 			end
 		
-		--> templates
-			_detalhes.gump:InstallTemplate ("button", "DETAILS_PLUGINPANEL_BUTTON_TEMPLATE", 
-				{
-					backdrop = {edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true},
-					backdropcolor = {0, 0, 0, .5},
-					backdropbordercolor = {0, 0, 0, 1},
-				}
-			)
-			_detalhes.gump:InstallTemplate ("button", "DETAILS_PLUGINPANEL_BUTTONSELECTED_TEMPLATE", 
-				{
-					backdrop = {edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true},
-					backdropcolor = {0, 0, 0, .5},
-					backdropbordercolor = {1, 1, 0, 1},
-				}
-			)
+
 		
 		function f.OnMenuClick (_, _, pluginAbsName, callRefresh)
 
@@ -608,7 +615,7 @@
 			newButton.textsize = 10
 			
 			--> set icon
-			newButton:SetIcon (pluginObject.__icon)
+			newButton:SetIcon (pluginObject.__icon, nil, nil, nil, pluginObject.__iconcoords, pluginObject.__iconcolor, 4)
 			
 			--> add it to menu table
 			tinsert (f.MenuButtons, newButton)
@@ -651,7 +658,9 @@
 			
 			--> sort buttons alphabetically, put utilities at the end
 			table.sort (f.MenuButtons, function (t1, t2)
-				if (t1.IsUtility) then
+				if (t1.IsUtility and t2.IsUtility) then
+					return t1.PluginName < t2.PluginName
+				elseif (t1.IsUtility) then
 					return false
 				elseif (t2.IsUtility) then
 					return true

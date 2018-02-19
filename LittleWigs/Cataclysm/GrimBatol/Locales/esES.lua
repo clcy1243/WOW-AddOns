@@ -1,24 +1,8 @@
-local L = BigWigs:NewBossLocale("Erudax", "esES")
+local L = BigWigs:NewBossLocale("Erudax", "esES") or BigWigs:NewBossLocale("Erudax", "esMX")
+if not L then return end
 if L then
--- GrimBatol/Erudax
-	L["summon"] = "Invocar Guardián ignoto"
-	L["summon_desc"] = "Avisar cuando Erudax invoca un Guardián ignoto"
-	L["summon_message"] = "Aparece un Guardián ignoto"
-	L["summon_trigger"] = "%s invoca un"
-
-end
-
-L = BigWigs:NewBossLocale("Drahga Shadowburner", "esES")
-if L then
--- GrimBatol/Drahga
-	L["summon_message"] = "¡Aparece un add!"
-	L["summon_trigger"] = "%s invoca un"
-
-end
-
-L = BigWigs:NewBossLocale("Forgemaster Throngus", "esES")
-if L then
--- GrimBatol/Forgemaster
-	L["roar_message"] = "%dx Ruge"
-
+	--L.summon = "Summon Faceless Guardian"
+	--L.summon_desc = "Warn when Erudax summons a Faceless Guardian"
+	--L.summon_message = "Faceless Guardian Summoned"
+	--L.summon_trigger = "%s summons a"
 end

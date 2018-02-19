@@ -163,6 +163,9 @@
 	local SPELLID_PALADIN_GBOM_AURA = 203528
 	local SPELLID_PALADIN_GBOM_DAMAGE = 205729
 	
+	--> ignore warlock life tap, since it's bugged
+	local SPELLID_WARLOCK_LIFETAP = 1454
+	
 	local SPELLNAME_SHAMAN_SLASH = GetSpellInfo (195222)
 	local SPELLNAME_PALADIN_GBOM = GetSpellInfo (203528)
 	
@@ -1402,7 +1405,7 @@ ameHealer: Bombad�o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 		if (not shieldname) then
 			owner_serial, owner_name, owner_flags, owner_flags2, shieldid, shieldname, shieldtype, amount = spellid, spellname, spellschool, owner_serial, owner_name, owner_flags, owner_flags2, shieldid
 		end
-		
+	
 		if (ignored_shields [shieldid]) then
 			return
 		
@@ -1438,7 +1441,7 @@ ameHealer: Bombad�o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 	end
 
 	function parser:heal (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spelltype, amount, overhealing, absorbed, critical, is_shield)
-	
+
 	------------------------------------------------------------------------------------------------
 	--> early checks and fixes
 	
@@ -2154,7 +2157,8 @@ ameHealer: Bombad�o |flagsHealer: 1297 |flagsHealer2: 0 |spellidHeal: 116888 |
 							escudo [alvo_name][spellid][who_name] = 0
 
 							if (overheal and overheal > 0) then
-								return parser:heal (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, nil, 0, _math_ceil (overheal), 0, 0, nil, true)
+								--> removing the nil at the end before true for is_shield, I have no documentation change about it, not sure the reason why it was addded
+								return parser:heal (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, nil, 0, _math_ceil (overheal), 0, 0, true) --0, 0, nil, true
 							else
 								return
 							end
@@ -2631,6 +2635,11 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		elseif (not alvo_name) then
 			return
 		end
+		
+		--> ignore warlock life tap
+		if (spellid == SPELLID_WARLOCK_LIFETAP) then
+			return
+		end
 
 	------------------------------------------------------------------------------------------------
 	--> check if is energy or resource
@@ -2655,8 +2664,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 --Player-3208-0A085522,"Licelystiri-Nemesis",0x511,0x0,
 --Player-3208-0A085522,"Licelystiri-Nemesis",0x511,0x0,
 --162243,"Demon's Bite",0x1,Player-3208-0A085522,0000000000000000,233158,242700,3555,662,17,70,100,0,1030.46,3134.93,660,28,0,17,100		
-		
-	------------------------------------------------------------------------------------------------
+	
+------------------------------------------------------------------------------------------------
 	--> get actors
 
 		--> main actor
@@ -4969,6 +4978,11 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 
 	function _detalhes:GetAllActors (_combat, _actorname)
 		return _detalhes:GetActor (_combat, 1, _actorname), _detalhes:GetActor (_combat, 2, _actorname), _detalhes:GetActor (_combat, 3, _actorname), _detalhes:GetActor (_combat, 4, _actorname)
+	end
+	
+	--> get player
+	function _detalhes:GetPlayer (_actorname, _combat, _attribute)
+		return _detalhes:GetActor (_combat, _attribute, _actorname)
 	end
 	
 	--> get an actor

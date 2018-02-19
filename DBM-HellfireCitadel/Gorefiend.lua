@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1372, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 8 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
 mod:SetCreatureID(90199)
 mod:SetEncounterID(1783)
 mod:SetZone()
@@ -63,13 +63,6 @@ local timerCrushingDarkness				= mod:NewCastTimer(6, 180017, nil, false)
 local countdownShadowofDeath			= mod:NewCountdownFades("Alt5", 179864)
 local countdownDigest					= mod:NewCountdown("Alt40", 181295, nil, nil, 8)
 
-local voiceTouchofDoom					= mod:NewVoice(179977)--runout
-local voiceHungerforLife				= mod:NewVoice(180148)--justrun
-local voiceBellowingShout				= mod:NewVoice(181582, "HasInterrupt")--kickcast
-local voiceShadowofDeath				= mod:NewVoice(179864)--teleyou, new voice, teleport into a new phase phase
-local voiceSharedFate					= mod:NewVoice(179909)--linegather, new voice, like Blood-Queen Lana'thel's Pact of the Darkfallen, line gather will be better.
-local voiceBurning						= mod:NewVoice(185189) --changemt
-
 mod:AddSetIconOption("SetIconOnFate", 179909)
 mod:AddSetIconOption("SetIconOnDoom", 179977, false)
 mod:AddHudMapOption("HudMapOnSharedFate", 179909)--Smart hud, distinquishes rooted from non rooted by larger dot/font and lines/arrows
@@ -86,6 +79,7 @@ local sharedFateTimers = {19, 28, 25, 22}
 local sharedFateTargets = {}
 local playerHasFate = false
 local playerName = UnitName("player")
+local digestDebuff, gorefiendCorruption = DBM:GetSpellInfo(181295), DBM:GetSpellInfo(179867)
 --[[
 Time   Player Role   # of players sent, if your raid size is...
                           10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29
@@ -117,7 +111,7 @@ local function sharedFateDelay(self)
 			local name = sharedFateTargets[i]
 			if name == playerName then
 				specWarnSharedFate:Show(self.vb.rootedFate)
-				voiceSharedFate:Play("linegather")
+				specWarnSharedFate:Play("linegather")
 			end
 			if marker1 and name and DBM:GetRaidUnitId(name) then
 				local marker2 = DBMHudMap:RegisterRangeMarkerOnPartyMember(179908, "party", name, 0.4, 10, nil, nil, nil, 0.5):Appear():SetLabel(name, nil, nil, nil, nil, nil, 0.8, nil, -16, 9, nil)
@@ -132,6 +126,7 @@ local function sharedFateDelay(self)
 end
 
 function mod:OnCombatStart(delay)
+	digestDebuff, gorefiendCorruption = DBM:GetSpellInfo(181295), DBM:GetSpellInfo(179867)
 	self.vb.rootedFate = nil
 	self.vb.shadowOfDeathCount = 0
 	self.vb.sharedFateCount = 0
@@ -168,9 +163,8 @@ function mod:OnCombatStart(delay)
 	end
 	timerFeastofSouls:Start(-delay)
 	if self.Options.InfoFrame then
-		local spellName = GetSpellInfo(181295)
-		DBM.InfoFrame:SetHeader(spellName)
-		DBM.InfoFrame:Show(10, "playerdebuffremaining", spellName)
+		DBM.InfoFrame:SetHeader(digestDebuff)
+		DBM.InfoFrame:Show(10, "playerdebuffremaining", digestDebuff)
 	end
 end
 
@@ -192,7 +186,7 @@ function mod:SPELL_CAST_START(args)
 		self:SendSync("FeastOfSouls")
 	elseif spellId == 181582 and self:CheckInterruptFilter(args.sourceGUID) then
 		specWarnBellowingShout:Show(args.sourceName)
-		voiceBellowingShout:Play("kickcast")
+		specWarnBellowingShout:Play("kickcast")
 	elseif spellId == 187814 then
 		warnRagingCharge:Show(args.sourceName)
 	elseif spellId == 181085 then
@@ -221,14 +215,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnShadowofDeath:Show(self.vb.shadowOfDeathCount)
 			countdownShadowofDeath:Start()
-			voiceShadowofDeath:Play("teleyou")
+			specWarnShadowofDeath:Play("teleyou")
 		end
 		--Check if it's a tank (todo, maybe just change it to count == 2 to reduce cpu, the tank is pretty much always 2/6
 		local uId = DBM:GetRaidUnitId(args.destName)
 		if self:IsTanking(uId, "boss1") and not UnitIsUnit("player", uId) then
 			--It is a tank and we're not tanking. Fire taunt warning
 			specWarnShadowofDeathTank:Show(args.destName)
-			voiceShadowofDeath:Play("tauntboss")
+			specWarnShadowofDeathTank:Play("tauntboss")
 		end
 	elseif spellId == 179977 or spellId == 189434 then
 		if not playerDown then
@@ -236,7 +230,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if args:IsPlayer() and not self:IsLFR() then
 			specWarnTouchofDoom:Show()
-			voiceTouchofDoom:Play("runout")
+			specWarnTouchofDoom:Play("runout")
 			yellTouchofDoom:Yell()
 		end
 		if self.Options.SetIconOnDoom then
@@ -273,7 +267,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnHungerforLife:CombinedShow(0.5, args.destName)
 		if args:IsPlayer() and self:AntiSpam(5, 2) then
 			specWarnHungerforLife:Show()
-			voiceHungerforLife:Play("justrun")
+			specWarnHungerforLife:Play("justrun")
 		end
 	elseif spellId == 181295 then
 		if args:IsPlayer() then
@@ -294,12 +288,13 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 185189 then
 		local amount = args.amount or 1
 		if (amount >= 4) and self:AntiSpam(3, 5) then
-			voiceBurning:Play("changemt")
 			if args:IsPlayer() then
 				specWarnBurning:Show(amount)
+				specWarnBurning:Play("stackhigh")
 			else--Taunt as soon as stacks are clear, regardless of stack count.
 				if not UnitDebuff("player", args.spellName) and not UnitIsDeadOrGhost("player") then
 					specWarnBurningOther:Show(args.destName)
+					specWarnBurningOther:Play("tauntboss")
 				end
 			end
 		end
@@ -380,9 +375,8 @@ function mod:OnSync(msg)
 		end
 		--Switch to debuff tracking on mythic feast.
 		if self.Options.InfoFrame and self:IsMythic() then
-			local spellName = GetSpellInfo(179867)
-			DBM.InfoFrame:SetHeader(spellName)
-			DBM.InfoFrame:Show(10, "playerbaddebuff", spellName, nil, true)
+			DBM.InfoFrame:SetHeader(gorefiendCorruption)
+			DBM.InfoFrame:Show(10, "playerbaddebuff", gorefiendCorruption, nil, true)
 		end
 	elseif msg == "SharedFateCast" then
 		table.wipe(sharedFateTargets)
@@ -442,9 +436,8 @@ function mod:OnSync(msg)
 			timerShadowofDeathCDHealer:Start(21, "2x"..DBM_CORE_HEALER_ICON)
 			if self.Options.InfoFrame then
 				--Switch back to digest
-				local spellName = GetSpellInfo(181295)
-				DBM.InfoFrame:SetHeader(spellName)
-				DBM.InfoFrame:Show(10, "playerdebuffremaining", spellName)
+				DBM.InfoFrame:SetHeader(digestDebuff)
+				DBM.InfoFrame:Show(10, "playerdebuffremaining", digestDebuff)
 			end
 		else
 			local numDpsPlayers = 1

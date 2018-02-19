@@ -107,6 +107,8 @@ L["STRING_CLOSEALL"] = "Todos las ventanas de Detalles se ocultan. Usar '/detail
 -- L["STRING_COLOR"] = ""
 L["STRING_COMMAND_LIST"] = "lista de comandos"
 L["STRING_COOLTIP_NOOPTIONS"] = "ningún opciones"
+--Translation missing 
+-- L["STRING_CREATEAURA"] = ""
 L["STRING_CRITICAL_HITS"] = "Golpes críticos"
 L["STRING_CRITICAL_ONLY"] = "crítico"
 L["STRING_CURRENT"] = "Actual"
@@ -1883,11 +1885,15 @@ L["STRING_SLASH_WIPECONFIG_CONFIRM"] = "Hacer clic para continuar la reinstalaci
 --Translation missing 
 -- L["STRING_SLASH_WORLDBOSS_DESC"] = ""
 L["STRING_SPELL_INTERRUPTED"] = "Hechizos interrumpidos"
+--Translation missing 
+-- L["STRING_SPELLLIST"] = ""
 L["STRING_SPELLS"] = "Hechizos"
 --Translation missing 
 -- L["STRING_SPIRIT_LINK_TOTEM"] = ""
 --Translation missing 
 -- L["STRING_SPIRIT_LINK_TOTEM_DESC"] = ""
+--Translation missing 
+-- L["STRING_STATISTICS"] = ""
 --Translation missing 
 -- L["STRING_STATUSBAR_NOOPTIONS"] = ""
 --Translation missing 

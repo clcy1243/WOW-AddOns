@@ -46,6 +46,8 @@ L["alt_click_looting_desc"] = "Active le butin en Alt-clic, c.-à-d. qu'une sess
 L["Alternatively, flag the loot as award later."] = "Sinon, désigner le butin comme devant être attribué plus tard."
 L["Always use RCLootCouncil when I'm Master Looter"] = "Toujours utiliser RCLootCouncil lorsque je suis maître du butin"
 L["Always use when leader"] = "Toujours utiliser lorsque je suis chef"
+--Translation missing 
+-- L["always_show_tooltip_howto"] = ""
 L["Announce Awards"] = "Annoncer les attributions"
 L["Announce Considerations"] = "Annoncer les objets en examen"
 --Translation missing 
@@ -93,6 +95,8 @@ L["Auto Enable"] = "Activation automatique"
 L["Auto Open"] = "Ouverture automatique"
 L["Auto Pass"] = "Passer automatiquement"
 L["Auto pass BoE"] = "Passer automatiquement sur les objets LqE"
+--Translation missing 
+-- L["Auto Pass Trinkets"] = ""
 L["Auto Start"] = "Lancement automatique"
 L["auto_award_desc"] = "Active l'attribution automatique."
 L["auto_award_to_desc"] = "Joueur à qui les objets seront automatiquement attribués. Une liste de sélection des membres du raid s'affichera si vous êtes dans un groupe de raid. "
@@ -102,6 +106,8 @@ L["auto_loot_desc"] = "Active la fouille automatique de tous les objets pouvant 
 L["auto_open_desc"] = "Cochez cette case pour que la fenêtre de vote s'ouvre automatiquement lorsque nécessaire. La fenêtre de vote peut indifféremment être ouverte en tapant /rc open. Remarque : cette option nécessite la permission du maître du butin."
 L["auto_pass_boe_desc"] = "Décocher pour ne jamais passer automatiquement sur des objets liés quand équipés."
 L["auto_pass_desc"] = "Cocher pour passer automatiquement sur les objets inutilisables par votre classe."
+--Translation missing 
+-- L["auto_pass_trinket_desc"] = ""
 L["auto_start_desc"] = "Active le lancement automatique, c.-à-d. qu'une session sera lancée avec tous les objets éligibles. En désactivant cette option, une liste d'objets modifiable s'affichera avant chaque début de session. "
 --Translation missing 
 -- L["Autoloot all BoE"] = ""
@@ -159,17 +165,6 @@ L["Changing LootMethod to Master Looting"] = "Le système de butin a été chang
 L["channel_desc"] = "Le canal dans lequel sera envoyé le message."
 L["chat tVersion string"] = "|cFF87CEFARCLootCouncil |cFFFFFFFFversion |cFFFFA500 %s - %s"
 L["chat version String"] = "|cFF87CEFARCLootCouncil |cFFFFFFFFversion |cFFFFA500 %s"
-L["chat_commands"] = [=[- config    - Ouvre les paramètres de l'interface
-- council   - Ouvre l'interface du conseil
-- history   - Ouvre l'historique du butin (autrement 'h' ou 'his')
-- version   - Ouvre le vérificateur de version (autrement 'v' ou 'ver')
-- open      - Ouvre la fenêtre de vote
-- reset     - Réinitialise la position des fenêtres de l'add-on
-- test (#)  - Simule une session de butin comportant # objets, 1 si le nombre n'est pas spécifié
-- whisper   - Affiche une aide pour les commandes de chuchotement
-- add [item]- Ajoute un objet à la fenêtre de la session
-- award     - Lance une session avec les objets récupérés se trouvant dans votre inventaire
-- winners   - Affiche les vainqueurs à qui ont été attribués les objets récupérés se trouvant dans votre inventaire]=]
 --Translation missing 
 -- L["chat_commands_add"] = ""
 --Translation missing 
@@ -482,6 +477,8 @@ L["silent_auto_pass_desc"] = "Cocher pour masquer les messages liés à la fonct
 L["Simple BBCode output."] = "Exporter en BBCode simple."
 L["Skins"] = "Apparences"
 L["skins_description"] = "Sélectionnez une des apparences par défaut ou créez en une vous-même. Ces options sont purement esthétiques. Ouvrez le vérificateur de version pour immédiatement voir les changements (\"/rc version\")."
+--Translation missing 
+-- L["Socket"] = ""
 L["Something went wrong :'("] = "Une erreur s'est produite :'("
 --Translation missing 
 -- L["Something went wrong during syncing, please try again."] = ""

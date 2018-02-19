@@ -2,18 +2,12 @@
 -- Diablohu(diablohudream@gmail.com)
 -- yleaf(yaroot@gmail.com)
 -- Mini Dragon(projecteurs@gmail.com)
--- Last update: 2017/11/01
+-- Last update: 2018/02/14
 
 if GetLocale() ~= "zhCN" then return end
 
-DBM_CORE_NEED_LOCALS				= "如果你会编程并且英语不错，请来帮助我们完善DBM中文翻译。你可以访问DBM论坛，或是在DBM Discord中联系MysticalOS。"
-DBM_CORE_NEED_LOGS					= "DBM需要战斗记录器 (http://www.wowace.com/addons/transcriptor/) 的日志来使得技能判断更准确。如果你想帮忙，请用 transcriptor 记录并上传日志文件到我们的论坛或Discord。"
 DBM_HOW_TO_USE_MOD					= "欢迎使用DBM。在聊天框输入 /dbm help 以获取可用命令的帮助。输入 /dbm 可打开设置窗口，并对各个Boss模块进行设置，也可以浏览首领击杀记录。DBM 会自动按你的专精做出相应配置，但是你可以进行微调。"
 DBM_SILENT_REMINDER					= "提示：DBM 正处于安静模式。"
-
-DBM_FORUMS_MESSAGE					= "发现BUG或错误的计时条?你希望要让某些模组有新的警告，计时器或是特别功能?\n请前往DBM论坛或到DBM Discord频道给些反馈。"
-DBM_FORUMS_COPY_URL_DIALOG			= "拜访我们的讨论与支持论坛"
-DBM_FORUMS_COPY_URL_DIALOG_NEWS		= "想知道更多关于新功能的信息请拜访我们的论坛"
 
 DBM_CORE_LOAD_MOD_ERROR				= "读取%s模块时发生错误：%s"
 DBM_CORE_LOAD_MOD_SUCCESS			= "'%s' 模块已加载。在聊天框输入 /dbm 可设置自定义语音或注记等选项。"
@@ -21,11 +15,12 @@ DBM_CORE_LOAD_MOD_COMBAT			= "延迟读取模块 '%s' 直到你脱离战斗。"
 DBM_CORE_LOAD_GUI_ERROR				= "无法读取图形界面：%s"
 DBM_CORE_LOAD_GUI_COMBAT			= "DBM无法在战斗中初始化图形界面。请先在非战斗状态打开图形设置界面，之后的战斗中就可以自由打开和关闭该界面了。"
 DBM_CORE_BAD_LOAD					= "DBM检测到由于你在战斗过程中载入模块，有些计时器可能会错误。请在离开战斗后马上重载界面。"
-DBM_CORE_LOAD_MOD_VER_MISMATCH		= "%s 模块无法被载入。 DBM核心版本过旧。请升级DBM。"
+DBM_CORE_LOAD_MOD_VER_MISMATCH		= "%s 模块无法被载入。DBM核心未达到模块所需版本。请升级DBM。"
+DBM_CORE_LOAD_MOD_EXP_MISMATCH		= "%s 模块无法被载入, 因为它是为新资料片/测试服所设计的. 当新资料片在正式服开放时就能正确加载了."
 DBM_CORE_LOAD_MOD_DISABLED			= "%s 模块已安装但被禁用。该模块不会被载入除非启用它。"
 DBM_CORE_LOAD_MOD_DISABLED_PLURAL	= "%s 模块已安装但被禁用。这些模块不会被载入除非启用它们。"
 
-DBM_CORE_WHATS_NEW					= "一些窗口中的链接被移除了防止bug。"
+DBM_COPY_URL_DIALOG					= "复制网址"
 
 --Post Patch 7.1
 DBM_CORE_NO_RANGE					= "距离雷达在副本中无法使用，该功能会使用文本代替"
@@ -128,7 +123,6 @@ DBM_CORE_GENERIC_TIMER_BERSERK		= "狂暴"
 DBM_CORE_OPTION_TIMER_BERSERK		= "计时条：$spell:26662"
 DBM_CORE_GENERIC_TIMER_COMBAT		= "战斗开始"
 DBM_CORE_OPTION_TIMER_COMBAT		= "显示战斗开始倒计时"
-DBM_CORE_OPTION_HEALTH_FRAME		= "首领生命值窗口"
 DBM_CORE_BAD						= "必杀技"
 
 DBM_CORE_OPTION_CATEGORY_TIMERS		= "计时条"
@@ -251,8 +245,6 @@ DBM_CORE_TIMER_USAGE	= {
 }
 
 DBM_ERROR_NO_PERMISSION				= "权限不足。需要队长或助理权限。"
-
-DBM_CORE_BOSSHEALTH_HIDE_FRAME		= "隐藏生命值框体"
 
 --Common Locals
 DBM_NEXT							= "下一个 %s"
@@ -448,6 +440,7 @@ DBM_CORE_AUTO_SOUND_OPTION_TEXT				= "为技能$spell:%s提供内置语音警报
 DBM_CORE_AUTO_VOICE_OPTION_TEXT				= "为技能$spell:%s提供语音包警报"
 DBM_CORE_AUTO_VOICE2_OPTION_TEXT			= "为阶段转换提供语音包警报"
 DBM_CORE_AUTO_VOICE3_OPTION_TEXT			= "为下一波小怪提供语音包警报"
+DBM_CORE_AUTO_VOICE4_OPTION_TEXT			= "为踩了不该踩的东西提供语音警报"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT			= "倒计时：$spell:%s的冷却时间倒计时"
 DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2		= "倒计时：$spell:%s消失时"
 DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT			= "倒计时：$spell:%s的持续时间正计时"
@@ -459,14 +452,17 @@ DBM_CORE_AUTO_YELL_OPTION_TEXT.fade			= "当你身上的$spell:%s即将消失时
 DBM_CORE_AUTO_YELL_OPTION_TEXT.shortfade	= "当你身上的$spell:%s即将消失时大喊（带倒数）"
 DBM_CORE_AUTO_YELL_OPTION_TEXT.iconfade		= "当你身上的$spell:%s即将消失时大喊（带倒数和标记）"
 DBM_CORE_AUTO_YELL_OPTION_TEXT.position		= "当你受到$spell:%s影响时大喊（带位置）"
+DBM_CORE_AUTO_YELL_OPTION_TEXT.combo		= "当你受到$spell:%s影响时大喊（带一个自定义文本）"
 --
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.shortyell  = "%s"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.yell		= UnitName("player") .. " 中了%s"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.count		= UnitName("player") .. " 中了%s (%%d)"
-DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.fade		= "%s 于%%d秒后消失"
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.fade		= "%s 剩%%d秒"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.shortfade	= "%%d秒"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.iconfade	= "{rt%%2$d}%%1$d秒" --应该对的吧。
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.position	= UnitName("player").." ({rt%%3$d})中了%1$s (%%1$s - {rt%%2$d})" --리동윤
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.combo		= "%s, %%s"
+
 --
 --DBM_CORE_AUTO_YELL_CUSTOM_POSITION			= "{rt%d}%s{rt%d}"--Doesn't need translating. Has no strings
 --DBM_CORE_AUTO_YELL_CUSTOM_POSITION2			= "{rt%d}{rt%d}%s{rt%d}{rt%d}"--Doesn't need translating. Has no strings
@@ -502,6 +498,8 @@ DBM_CORE_HUD_USAGE	= {
 }
 
 DBM_ARROW_MOVABLE				= "可移动箭头"
+DBM_ARROW_WAY_USAGE				= "/dway <x> <y>: 新建一个箭头到指定位置 (使用区域地图坐标系)"
+DBM_ARROW_WAY_SUCCESS			= "输入 '/dbm arrow hide' 隐藏箭头, 或到达位置"
 DBM_ARROW_ERROR_USAGE	= {
 	"DBM-Arrow 可用命令：",
 	"-----------------",

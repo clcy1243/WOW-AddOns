@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("HighmaulTrash", "DBM-Highmaul")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
 --mod:SetModelID(47785)
 mod:SetZone()
 
@@ -25,10 +25,9 @@ local specWarnArcaneVol				= mod:NewSpecialWarningMoveAway(166200)
 local yellArcaneVol					= mod:NewYell(166200)
 local specWarnWildFlames			= mod:NewSpecialWarningMove(173827)
 
-mod:RemoveOption("HealthFrame")
 mod:AddRangeFrameOption(8, 166200)
 
-local debuff = GetSpellInfo(166200)
+local debuff = DBM:GetSpellInfo(166200)
 local DebuffFilter
 do
 	DebuffFilter = function(uId)
@@ -66,6 +65,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				DBM.RangeCheck:Show(8, nil, nil, nil, nil, 6.5)
 			end
 		end
+		debuff = DBM:GetSpellInfo(166200)
 		if self.Options.RangeFrame and not UnitDebuff("player", debuff) then
 			DBM.RangeCheck:Show(8, DebuffFilter, nil, nil, nil, 6.5)
 		end

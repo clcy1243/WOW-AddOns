@@ -1,5 +1,59 @@
-changeset:   691:bfc5ab9d4df1
+changeset:   700:379ec089b56c
 tag:         tip
+user:        Tercio
+date:        Fri Feb 09 11:33:02 2018 -0200
+summary:     - Added real time compile error while writing a custom script.
+
+
+changeset:   699:ad8526b89561
+user:        Tercio
+date:        Fri Feb 02 13:29:07 2018 -0200
+summary:     - Fixed wasted shield subtracting the total healing of the spell. This wasn't affecting the healing done of the actor it self.
+
+
+changeset:   698:77c2eeecd28d
+user:        Tercio
+date:        Fri Jan 26 14:07:43 2018 -0200
+summary:     - Warlock mana from Life Tap won't show up any more under mana regen, this makes easy to see Soul Shard gain.
+
+
+changeset:   697:8e9fc4be13d7
+user:        Tercio
+date:        Thu Jan 18 14:58:35 2018 -0200
+summary:     - Framework upated to v63 (template parenting support).
+
+
+changeset:   696:d4a8c7e49b83
+user:        Tercio
+date:        Fri Jan 12 10:36:46 2018 -0200
+summary:     - Default width for death window is now 350 (up from 300).
+
+
+changeset:   695:a9105667be91
+user:        Tercio
+date:        Wed Jan 03 11:53:23 2018 -0200
+summary:     - Custom window should now clear the previous code when start editing a new custom display.
+
+
+changeset:   694:a3424c8730ec
+user:        Tercio
+date:        Fri Dec 22 09:09:34 2017 -0200
+summary:     - Create Aura and API window moved to the new plugin window.
+
+
+changeset:   693:a690bf789019
+user:        Tercio
+date:        Fri Dec 15 08:29:20 2017 -0200
+summary:     - Polish on the Custom Display and Encounter Details windows.
+
+
+changeset:   692:d29c7d939821
+user:        Tercio
+date:        Tue Dec 12 13:09:20 2017 -0200
+summary:     - Embeding the custom display window into the new plugin window.
+
+
+changeset:   691:bfc5ab9d4df1
 user:        Tercio
 date:        Sat Dec 09 10:08:54 2017 -0200
 summary:     - Fixed an issue with the statistics sharing among guild members.

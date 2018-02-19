@@ -124,7 +124,7 @@ function RCVotingFrame:EndSession(hide)
 	if active then -- Only end session once
 		addon:Debug("RCVotingFrame:EndSession", hide)
 		active = false -- The session has ended, so deactivate
-		self:Update()
+		self:Update(true)
 		if hide then self:Hide() end -- Hide if need be
 	end
 end
@@ -434,13 +434,14 @@ function RCVotingFrame:DoAllRandomRolls()
 
 end
 
------------------------------------------------------------------ -
+------------------------------------------------------------------
 --	Visuals
 -- @section Visuals
 ------------------------------------------------------------------
-function RCVotingFrame:Update()
+--@param forceUpdate If false/nil, updates will be delayed to only happen once every MIN_UPDATE_INTERVAL
+function RCVotingFrame:Update(forceUpdate)
 	needUpdate = false
-	if noUpdateTimeRemaining > 0 then needUpdate = true; return end
+	if not forceUpdate and noUpdateTimeRemaining > 0 then needUpdate = true; return end
 	if not self.frame then return end -- No updates when it doesn't exist
 	if not lootTable[session] then return addon:Debug("VotingFrame:Update() without lootTable!!") end -- No updates if lootTable doesn't exist.
 	noUpdateTimeRemaining = MIN_UPDATE_INTERVAL
@@ -486,6 +487,15 @@ function RCVotingFrame:Update()
 	else
 		self.frame.filter.Text:SetTextColor(_G.NORMAL_FONT_COLOR:GetRGB()) --#ffd100
 	end
+	if db.modules["RCVotingFrame"].alwaysShowTooltip then
+		self.frame.itemTooltip:SetOwner(self.frame.content, "ANCHOR_NONE")
+		self.frame.itemTooltip:SetHyperlink(lootTable[session].link)
+		self.frame.itemTooltip:Show()
+		self.frame.itemTooltip:SetPoint("TOP", self.frame, "TOP", 0, 0)
+		self.frame.itemTooltip:SetPoint("RIGHT", sessionButtons[#lootTable], "LEFT", 0, 0)
+	else
+		self.frame.itemTooltip:Hide()
+	end
 end
 
 updateFrame:SetScript("OnUpdate", function(self, elapsed)
@@ -509,10 +519,12 @@ function RCVotingFrame:SwitchSession(s)
 	self.frame.itemIcon:SetNormalTexture(t.texture)
 	self.frame.itemText:SetText(t.link)
 	self.frame.iState:SetText(self:GetItemStatus(t.link))
+	local bonusText = addon:GetItemBonusText(t.link, "/")
+	if bonusText ~= "" then bonusText = "+ "..bonusText end
 	self.frame.itemLvl:SetText(_G.ITEM_LEVEL_ABBR..": "..addon:GetItemLevelText(t.ilvl, t.token))
 	-- Set a proper item type text
-
 	self.frame.itemType:SetText(addon:GetItemTypeText(t.link, t.subType, t.equipLoc, t.typeID, t.subTypeID, t.classes, t.token, t.relic))
+	self.frame.bonuses:SetText(bonusText)
 
 	-- Update the session buttons
 	sessionButtons[s] = self:UpdateSessionButton(s, t.texture, t.link, t.awarded)
@@ -526,7 +538,7 @@ function RCVotingFrame:SwitchSession(s)
 	end
 	self.frame.st.cols[j].sort = "asc"
 	FauxScrollFrame_OnVerticalScroll(self.frame.st.scrollframe, 0, self.frame.st.rowHeight, function() self.frame.st:Refresh() end) -- Reset scrolling to 0
-	self:Update()
+	self:Update(true)
 	self:UpdatePeopleToVote()
 	addon:SendMessage("RCSessionChangedPost", s)
 end
@@ -648,11 +660,13 @@ function RCVotingFrame:GetFrame()
 		Session item icon and strings
 	    ------------------------------]]
 	local item = CreateFrame("Button", nil, f.content)
-	item:EnableMouse()
     item:SetNormalTexture("Interface/ICONS/INV_Misc_QuestionMark")
     item:SetScript("OnEnter", function()
 		if not lootTable then return; end
 		addon:CreateHypertip(lootTable[session].link)
+		GameTooltip:AddLine("")
+		GameTooltip:AddLine(L["always_show_tooltip_howto"], nil, nil, nil, true)
+		GameTooltip:Show()
 	end)
 	item:SetScript("OnLeave", function() addon:HideTooltip() end)
 	item:SetScript("OnClick", function()
@@ -660,10 +674,18 @@ function RCVotingFrame:GetFrame()
 	    if ( IsModifiedClick() ) then
 		    HandleModifiedItemClick(lootTable[session].link);
         end
+        if item.lastClick and GetTime() - item.lastClick <= 0.5 then
+        	db.modules["RCVotingFrame"].alwaysShowTooltip = not db.modules["RCVotingFrame"].alwaysShowTooltip
+        	self:Update()
+		else
+			item.lastClick = GetTime()
+		end
     end);
 	item:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -20)
 	item:SetSize(50,50)
 	f.itemIcon = item
+
+	f.itemTooltip = addon:CreateGameTooltip("votingframe", f.content)
 
 	local iTxt = f.content:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 	iTxt:SetPoint("TOPLEFT", item, "TOPRIGHT", 10, 0)
@@ -687,6 +709,10 @@ function RCVotingFrame:GetFrame()
 	iType:SetTextColor(0.5, 1, 1) -- Turqouise
 	iType:SetText("")
 	f.itemType = iType
+
+	f.bonuses = f.content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	f.bonuses:SetPoint("LEFT", f.itemType, "RIGHT", 1, 0)
+	f.bonuses:SetTextColor(0.2,1,0.2) -- Green
 	--#end----------------------------
 
 	-- Abort button
@@ -728,7 +754,7 @@ function RCVotingFrame:GetFrame()
 
 	f.moreInfo = CreateFrame( "GameTooltip", "RCVotingFrameMoreInfo", nil, "GameTooltipTemplate" )
 	f.content:SetScript("OnSizeChanged", function()
- 		f.moreInfo:SetScale(self.frame:GetScale() * 0.6)
+ 		f.moreInfo:SetScale(f:GetScale() * 0.6)
  	end)
 
 	-- Filter
@@ -1623,7 +1649,7 @@ do
 			info.func = function()
 				addon:Debug("Update Filter")
 				db.modules["RCVotingFrame"].filters.showPlayersCantUseTheItem = not db.modules["RCVotingFrame"].filters.showPlayersCantUseTheItem
-				RCVotingFrame:Update()
+				RCVotingFrame:Update(true)
 			end
 			info.checked = db.modules["RCVotingFrame"].filters.showPlayersCantUseTheItem
 			Lib_UIDropDownMenu_AddButton(info, level)
@@ -1643,7 +1669,7 @@ do
 					info.func = function()
 						addon:Debug("Update tier Filter")
 						db.modules["RCVotingFrame"].filters.tier[k] = not db.modules["RCVotingFrame"].filters.tier[k]
-						RCVotingFrame:Update()
+						RCVotingFrame:Update(true)
 					end
 					info.checked = db.modules["RCVotingFrame"].filters.tier[k]
 					Lib_UIDropDownMenu_AddButton(info, level)
@@ -1655,7 +1681,7 @@ do
 					info.func = function()
 						addon:Debug("Update relic Filter")
 						db.modules["RCVotingFrame"].filters.relic[k] = not db.modules["RCVotingFrame"].filters.relic[k]
-						RCVotingFrame:Update()
+						RCVotingFrame:Update(true)
 					end
 					info.checked = db.modules["RCVotingFrame"].filters.relic[k]
 					Lib_UIDropDownMenu_AddButton(info, level)
@@ -1667,7 +1693,7 @@ do
 					info.func = function()
 						addon:Debug("Update Filter")
 						db.modules["RCVotingFrame"].filters[k] = not db.modules["RCVotingFrame"].filters[k]
-						RCVotingFrame:Update()
+						RCVotingFrame:Update(true)
 					end
 					info.checked = db.modules["RCVotingFrame"].filters[k]
 					Lib_UIDropDownMenu_AddButton(info, level)
@@ -1685,7 +1711,7 @@ do
 					info.func = function()
 						addon:Debug("Update Filter")
 						db.modules["RCVotingFrame"].filters[k] = not db.modules["RCVotingFrame"].filters[k]
-						RCVotingFrame:Update()
+						RCVotingFrame:Update(true)
 					end
 					info.checked = db.modules["RCVotingFrame"].filters[k]
 					Lib_UIDropDownMenu_AddButton(info, level)
@@ -1714,7 +1740,7 @@ do
 						info.func = function()
 							addon:Debug("Update rank Filter", k)
 							db.modules["RCVotingFrame"].filters.ranks[k] = not db.modules["RCVotingFrame"].filters.ranks[k]
-							RCVotingFrame:Update()
+							RCVotingFrame:Update(true)
 						end
 						info.checked = db.modules["RCVotingFrame"].filters.ranks[k]
 						Lib_UIDropDownMenu_AddButton(info, level)
@@ -1725,7 +1751,7 @@ do
 				info.func = function()
 					addon:Debug("Update rank Filter", "Not in your guild")
 					db.modules["RCVotingFrame"].filters.ranks.notInYourGuild = not db.modules["RCVotingFrame"].filters.ranks.notInYourGuild
-					RCVotingFrame:Update()
+					RCVotingFrame:Update(true)
 				end
 				info.checked = db.modules["RCVotingFrame"].filters.ranks.notInYourGuild
 				Lib_UIDropDownMenu_AddButton(info, level)

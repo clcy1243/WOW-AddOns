@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(133, "DBM-Party-Cataclysm", 3, 71)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 174 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 185 $"):sub(12, -3))
 mod:SetCreatureID(40319)
 mod:SetEncounterID(1048)
 mod:SetZone()
@@ -30,19 +30,19 @@ local timerDevouringCD			= mod:NewCDTimer(40, 90950, nil, nil, nil, 3)
 local timerDevouring			= mod:NewBuffActiveTimer(5, 90950)
 --local timerShredding			= mod:NewBuffActiveTimer(20, 75271)
 
-local flamingFixate = GetSpellInfo(82850)
+local flamingFixate = DBM:GetSpellInfo(82850)
 local fixateWarned = {}
-local Valiona = EJ_GetSectionInfo(3369)
+local Valiona = DBM:EJ_GetSectionInfo(3369)
 local valionaLanded = false
 
 function mod:OnCombatStart(delay)
+	flamingFixate = DBM:GetSpellInfo(82850)
 	table.wipe(fixateWarned)
 	valionaLanded = false
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 75328 and DBM.BossHealth:IsShown() then
-		DBM.BossHealth:RemoveBoss(40320)
+	if args.spellId == 75328 then
 		timerDevouringCD:Cancel()
 		timerDevouring:Cancel()
 	elseif args.spellId == 75317 and args:IsPlayer() then
@@ -70,9 +70,6 @@ function mod:CHAT_MSG_MONSTER_YELL(msg, npc)
 	if npc == Valiona and not valionaLanded then
 		valionaLanded = true
 		timerDevouringCD:Start(29)
-		if DBM.BossHealth:IsShown() then
-			DBM.BossHealth:AddBoss(40320, Valiona)
-		end
 	end
 end
 

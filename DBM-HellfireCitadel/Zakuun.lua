@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1391, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
 mod:SetCreatureID(89890)
 mod:SetEncounterID(1777)
 mod:SetZone()
@@ -23,7 +23,7 @@ mod:RegisterEventsInCombat(
 --(ability.id = 179406) and type = "begincast" or (ability.id = 181508 or ability.id = 181515 or ability.id = 179709 or ability.id = 179582) and type = "cast" or (ability.id = 179667 or ability.id = 179681)
 --Encounter-Wide Mechanics
 local warnLatentEnergy					= mod:NewTargetAnnounce(182008, 3, nil, false)--Spammy, optional
-local warnEnrage						= mod:NewSpellAnnounce(179681, 3)
+local warnEnrage						= mod:NewSpellAnnounce(179681, 3, nil, nil, nil, nil, nil, 2)
 --Armed
 local warnRumblingFissure				= mod:NewCountAnnounce(179582, 2)
 local warnBefouled						= mod:NewTargetCountAnnounce(179711, 2, nil, "Healer")--Only healer really needs list of targets, player only needs to know if it's on self
@@ -59,12 +59,7 @@ local timerSeedsofDestructionCD			= mod:NewNextCountTimer(14.5, 181508, nil, nil
 local countdownDisarm					= mod:NewCountdown(85.8, 179667)
 local countdownDisembodied				= mod:NewCountdownFades("AltTwo15", 179407, false)--Depends on whether or not you are going down.
 local countdownSeedsofDestructionCD		= mod:NewCountdown(14.5, 181508)--Seeds cannot be cast while disarm countdown is running, so this is fine.
-local countdownSeedsofDestruction		= mod:NewCountdownFades("Alt5", 181508)--Alt voice for expiring is good.
-
-local voiceSoulCleave					= mod:NewVoice(179406)--"179406"
-local voiceWakeofDestruction			= mod:NewVoice(181499)--watchwave
-local voiceSeedsofDestruction			= mod:NewVoice(181508)--Runout
-local voiceEnrage						= mod:NewVoice(179681)--enrage
+local countdownSeedsofDestruction		= mod:NewCountdownFades("Alt5", 181508)--Alt count for expiring is good.
 
 mod:AddRangeFrameOption(10, 179711)
 mod:AddInfoFrameOption(182008, false)
@@ -85,7 +80,7 @@ mod.vb.yellType = "Icon"
 mod.vb.latentIcon = 8
 local yellSeeds2 = mod:NewPosYell(181508, nil, true, false)
 local seedsTargets = {}
-local befouledName = GetSpellInfo(179711)
+local befouledName, latentDebuff = DBM:GetSpellInfo(179711), DBM:GetSpellInfo(182008)
 local UnitDebuff = UnitDebuff
 local debuffFilter
 do
@@ -143,7 +138,7 @@ local function warnSeeds(self)
 				yellSeeds2:Yell(currentType[i], i, i)
 			end
 			if currentVoice and currentVoice[i] then
-				voiceSeedsofDestruction:Play(currentVoice[i])
+				specWarnSeedPosition:Play(currentVoice[i])
 			end
 		end
 		if self.Options.SetIconOnSeeds and not self:IsLFR() then
@@ -168,7 +163,7 @@ end
 local function warnWake(self)
 	if self:AntiSpam(3, 1) then
 		specWarnWakeofDestruction:Show()
-		voiceWakeofDestruction:Play("watchwave")
+		specWarnWakeofDestruction:Play("watchwave")
 	end
 end
 
@@ -193,6 +188,7 @@ local function delayModCheck(self)
 end
 
 function mod:OnCombatStart(delay)
+	befouledName, latentDebuff = DBM:GetSpellInfo(179711), DBM:GetSpellInfo(182008)
 	table.wipe(seedsTargets)
 	self.vb.befouledTargets = 0
 	self.vb.FissureCount = 0
@@ -222,9 +218,8 @@ function mod:OnCombatStart(delay)
 		self:Schedule(5, delayModCheck, self)--Do this after 5 seconds, allow time to see if we get a sync
 	end
 	if self.Options.InfoFrame then
-		local spellName = GetSpellInfo(182008)
-		DBM.InfoFrame:SetHeader(spellName)
-		DBM.InfoFrame:Show(10, "playerbaddebuff", spellName, true)
+		DBM.InfoFrame:SetHeader(latentDebuff)
+		DBM.InfoFrame:Show(10, "playerbaddebuff", latentDebuff, true)
 	end
 end
 
@@ -246,7 +241,7 @@ function mod:SPELL_CAST_START(args)
 	if spellId == 179406 then
 		self.vb.SoulCleaveCount = self.vb.SoulCleaveCount + 1
 		specWarnSoulCleave:Show(self.vb.SoulCleaveCount)
-		voiceSoulCleave:Play("179406")
+		specWarnSoulCleave:Play("179406")
 		if self.vb.Enraged or self.vb.SoulCleaveCount == 1 then--Only casts two between phases, unless enraged
 			timerSoulCleaveCD:Start(nil, self.vb.SoulCleaveCount+1)
 		end
@@ -287,7 +282,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnSeedofDestruction:Show()
 			if self:IsLFR() or self.vb.yellType == "FreeForAll" then
 				yellSeedsofDestruction:Yell()
-				voiceSeedsofDestruction:Play("runout")
+				specWarnSeedofDestruction:Play("runout")
 			end
 		end
 		if self:AntiSpam(5, 2) then
@@ -331,7 +326,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		self.vb.SeedsCount = 0
 		self.vb.FissureCount = 0
 		warnEnrage:Show()
-		voiceEnrage:Play("enrage")
+		warnEnrage:Play("enrage")
 		timerRumblingFissureCD:Start(6, 1)--Keep an eye on this
 		timerSeedsofDestructionCD:Start(27, 1)
 		countdownSeedsofDestructionCD:Start(27)

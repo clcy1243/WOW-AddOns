@@ -5,21 +5,16 @@
 local mod = BigWigs:NewBoss("XT-002 Deconstructor", 529, 1640)
 if not mod then return end
 mod:RegisterEnableMob(33293)
-mod.toggleOptions = {{63024, "ICON", "FLASH"}, {63018, "ICON", "FLASH"}, 62776, 64193, 63849, "proximity", "berserk"}
-mod.optionHeaders = {
-	[63024] = "normal",
-	[64193] = "hard",
-	proximity = "general",
-}
+mod.engageId = 1142
+--mod.respawnTime = 25
 
 --------------------------------------------------------------------------------
 -- Locals
 --
 
-local phase = nil
-local exposed1 = nil
-local exposed2 = nil
-local exposed3 = nil
+local exposed1 = false
+local exposed2 = false
+local exposed3 = false
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -33,14 +28,28 @@ if L then
 	L.gravitybomb_other = "Gravity on %s!"
 
 	L.lightbomb_other = "Light on %s!"
-
-	L.tantrum_bar = "~Tantrum Cooldown"
 end
 L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
 --
+
+function mod:GetOptions()
+	return {
+		{63024, "ICON", "FLASH"}, -- Gravity Bomb
+		{63018, "ICON", "FLASH"}, -- Searing Light
+		62776, -- Tympanic Tantrum
+		64193, -- Heartbreak
+		63849, -- Exposed Heart
+		"proximity",
+		"berserk",
+	}, {
+		[63024] = "normal",
+		[64193] = -17610, -- Hard Mode
+		proximity = "general",
+	}
+end
 
 function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Exposed", 63849)
@@ -50,18 +59,16 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_REMOVED", "GravityRemoved", 63024, 64234)
 	self:Log("SPELL_AURA_REMOVED", "LightRemoved", 63018, 65121)
 	self:Log("SPELL_CAST_START", "Tantrum", 62776)
-	self:Death("Win", 33293)
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-	self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
+
+	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
 end
 
 function mod:OnEngage()
-	phase = 1
-	exposed1 = nil
-	exposed2 = nil
-	exposed3 = nil
+	exposed1 = false
+	exposed2 = false
+	exposed3 = false
 	self:Berserk(600)
+	self:CDBar(62776, 32) -- Tympanic Tantrum
 end
 
 --------------------------------------------------------------------------------
@@ -74,15 +81,12 @@ function mod:Exposed(args)
 end
 
 function mod:Heartbreak()
-	phase = 2
 	self:Message(64193, "Important")
 end
 
 function mod:Tantrum(args)
-	if phase == 2 then
-		self:Message(args.spellId, "Attention")
-		self:Bar(args.spellId, 65, L["tantrum_bar"])
-	end
+	self:Message(args.spellId, "Attention")
+	self:CDBar(args.spellId, 62)
 end
 
 function mod:GravityBomb(args)
@@ -120,18 +124,15 @@ function mod:LightRemoved(args)
 end
 
 function mod:UNIT_HEALTH_FREQUENT(unit)
-	if self:MobId(UnitGUID(unit)) == 33293 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-		if not exposed1 and hp > 86 and hp <= 88 then
-			exposed1 = true
-			self:Message(63849, "Attention", nil, L["exposed_warning"])
-		elseif not exposed2 and hp > 56 and hp <= 58 then
-			exposed2 = true
-			self:Message(63849, "Attention", nil, L["exposed_warning"])
-		elseif not exposed3 and hp > 26 and hp <= 28 then
-			exposed3 = true
-			self:Message(63849, "Attention", nil, L["exposed_warning"])
-		end
+	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+	if not exposed1 and hp > 86 and hp < 90 then
+		exposed1 = true
+		self:Message(63849, "Attention", nil, L["exposed_warning"])
+	elseif not exposed2 and hp > 56 and hp < 58 then
+		exposed2 = true
+		self:Message(63849, "Attention", nil, L["exposed_warning"])
+	elseif not exposed3 and hp > 26 and hp < 28 then
+		exposed3 = true
+		self:Message(63849, "Attention", nil, L["exposed_warning"])
 	end
 end
-

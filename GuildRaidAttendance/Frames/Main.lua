@@ -7,7 +7,7 @@ local lastFrame = nil
 -----------------------------------------
 -- main frame
 -----------------------------------------
-gra.mainFrame = GRA:CreateMovableFrame("Guild Raid Attendance", "GRA_MainFrame", 620, 400, "GRA_FONT_TITLE", false)
+gra.mainFrame = GRA:CreateMovableFrame("Guild Raid Attendance", "GRA_MainFrame", 620, 400, "GRA_FONT_TITLE")
 
 -----------------------------------------
 -- Guild Message of the Day
@@ -86,8 +86,10 @@ configBtn:SetPoint("BOTTOMRIGHT", -8, 5)
 configBtn:SetScript("OnClick", function()
 	gra.importFrame:Hide()
 	gra.epgpOptionsFrame:Hide()
+	gra.dkpOptionsFrame:Hide()
 	gra.attendanceEditor:Hide()
 	gra.rosterEditorFrame:Hide()
+	gra.appearanceFrame:Hide()
 	if gra.configFrame:IsShown() then
 		gra.configFrame:Hide()
 	else
@@ -137,6 +139,7 @@ buttons["announcementsBtn"]:SetScript("OnClick", function()
 end)
 -- TODO: announcements
 buttons["announcementsBtn"]:SetEnabled(false)
+buttons["announcementsBtn"]:Hide()
 
 -- track button, change text and color OnClick
 local trackBtn = GRA:CreateButton(gra.mainFrame.header, "TRACK", nil, {60, 22}, "GRA_FONT_PIXEL")
@@ -177,13 +180,13 @@ local function EnableMiniMode(f)
 	if f then
 		buttons["attendanceSheetBtn"]:Hide()
 		buttons["raidLogsBtn"]:Hide()
-		buttons["announcementsBtn"]:Hide()
+		-- buttons["announcementsBtn"]:Hide()
 		buttons["attendanceSheetBtn"]:Click()
 		-- gra.mainFrame:SetHeight(420)
 	else
 		buttons["attendanceSheetBtn"]:Show()
 		buttons["raidLogsBtn"]:Show()
-		buttons["announcementsBtn"]:Show()
+		-- buttons["announcementsBtn"]:Show()
 		-- gra.mainFrame:SetHeight(400)
 	end
 end

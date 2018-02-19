@@ -6,9 +6,12 @@ eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 -- eventFrame:RegisterEvent("PLAYER_LOGOUT")
 
 local raidDate = nil
+-- local function UpdateLeaveTime()
 local function RaidRosterUpdate()
-	-- 处于意外删除了刚刚创建的记录，再次询问
-	if not _G[GRA_R_RaidLogs][raidDate] then GRA:StartTracking() end
+	-- 意外删除了刚刚创建的记录，再次询问
+	if not _G[GRA_R_RaidLogs][raidDate] then GRA:StartTracking() return end
+
+	-- joinTime
 	local n = GetNumGroupMembers("LE_PARTY_CATEGORY_HOME")
 	for i = 1, n do
 		-- name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index)
@@ -16,18 +19,36 @@ local function RaidRosterUpdate()
 		if playerName then
 			if not string.find(playerName, "-") then playerName = playerName .. "-" .. GetRealmName() end
 			
-			-- only log players in raid team, and "ONCE"
-			if _G[GRA_R_Roster][playerName] and not _G[GRA_R_RaidLogs][raidDate]["attendees"][playerName] then
-				-- check attendance (PRESENT or LATE)
-				local joinTime = time()
-				local att = GRA:IsLate(joinTime, raidDate.._G[GRA_R_Config]["raidInfo"]["startTime"])
-				-- keep it logged
-				_G[GRA_R_RaidLogs][raidDate]["attendees"][playerName] = {att, joinTime}
-				-- remove from absentees
-				_G[GRA_R_RaidLogs][raidDate]["absentees"] = GRA:RemoveElementsByKeys(_G[GRA_R_RaidLogs][raidDate]["absentees"], {playerName})
-				-- refresh sheet and logs
-				GRA:FireEvent("GRA_RAIDLOGS", raidDate)
+			if _G[GRA_R_Roster][playerName] and _G[GRA_R_RaidLogs][raidDate]["attendances"][playerName] then
+				-- only log players in roster, and record joinTime
+				if not _G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][3] then
+					-- check attendance (PRESENT or PARTLY)
+					local joinTime = time()
+					local att = GRA:CheckAttendanceStatus(joinTime, select(2, GRA:GetRaidStartTime(raidDate)))
+					-- keep it logged
+					_G[GRA_R_RaidLogs][raidDate]["attendances"][playerName] = {att, nil, joinTime}
+					-- refresh sheet and logs
+					GRA:FireEvent("GRA_RAIDLOGS", raidDate)
+				end
+
+				-- in group, delete leaveTime if exists
+				if _G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][4] then
+					table.remove(_G[GRA_R_RaidLogs][raidDate]["attendances"][playerName], 4)
+					-- update att
+					_G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][1] = GRA:CheckAttendanceStatus(_G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][3], select(2, GRA:GetRaidStartTime(raidDate)))
+				end
 			end
+		end
+	end
+
+	-- leaveTime
+	for playerName, t in pairs(_G[GRA_R_RaidLogs][raidDate]["attendances"]) do
+		if not _G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][4]
+			and _G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][3]
+			and not (UnitInParty(GRA:GetShortName(playerName)) or UnitInRaid(GRA:GetShortName(playerName))) then
+			-- 记录离团时间，并更新出勤
+			_G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][4] = time()
+			_G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][1] = GRA:CheckAttendanceStatus(_G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][3], select(2, GRA:GetRaidStartTime(raidDate)), _G[GRA_R_RaidLogs][raidDate]["attendances"][playerName][4], select(2, GRA:GetRaidEndTime(raidDate)))
 		end
 	end
 end
@@ -41,7 +62,7 @@ function GRA:StartTracking(instanceName, difficultyName)
 
 	local text = L["Keep track of loots and attendances during this raid session?"]
 	if instanceName and difficultyName then
-		text = text.."\n|cff909090"..L["Raid: "]..instanceName.."("..difficultyName..")"
+		text = text.."\n|cff909090"..L["Raid: "]..instanceName.." "..difficultyName
 	end
 
 	GRA:CreateStaticPopup(L["Track This Raid"], text, function()
@@ -60,16 +81,17 @@ function GRA:StartTracking(instanceName, difficultyName)
 		
 		-- init date
 		if not _G[GRA_R_RaidLogs][raidDate] then
-			_G[GRA_R_RaidLogs][raidDate] = {["attendees"]={}, ["absentees"]={}, ["details"]={}}
-			-- fill absent with all members
+			_G[GRA_R_RaidLogs][raidDate] = {["attendances"]={}, ["details"]={}}
+			-- init all members with "ABSENT" 
 			for n, t in pairs(_G[GRA_R_Roster]) do
-				_G[GRA_R_RaidLogs][raidDate]["absentees"][n] = ""
+				_G[GRA_R_RaidLogs][raidDate]["attendances"][n] = {"ABSENT"}
 			end
 		end
 
-		RaidRosterUpdate()
+		RaidRosterUpdate() -- scan raid for attendance
 		eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 		GRA:FireEvent("GRA_TRACK", raidDate)
+		GRA:FireEvent("GRA_RAIDLOGS", raidDate)
 		gra.isTracking = true
 
 		if cb then cb:Hide() end

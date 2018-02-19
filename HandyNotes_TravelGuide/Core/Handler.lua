@@ -43,7 +43,7 @@ local function work_out_texture(point)
 	local icon_key
 	
 	if (point.boat) then icon_key = "boat" end
-	if (point.zeplin) then icon_key = "zeplin" end
+	if (point.zeppelin) then icon_key = "zeppelin" end
 	if (point.portal) then icon_key = "portal" end
 	if (point.valliance) then icon_key = "valliance" end
 	if (point.vhorde) then icon_key = "vhorde" end
@@ -253,7 +253,7 @@ do
 		if (point.boat and not private.db.show_boat) then return false; end
 		if (point.valliance and not private.db.show_valliance) then return false; end
 		if (point.vhorde and not private.db.show_vhorde) then return false; end
-		if (point.zeplin and not private.db.show_zeplin) then return false; end
+		if (point.zeppelin and not private.db.show_zeplin) then return false; end
 		if (point.others and not private.db.show_others) then return false; end
 		return true
 	end

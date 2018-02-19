@@ -48,56 +48,59 @@ DB.points = {
 	--]]
 	[mapFile(1014)] = { -- Dalaran Broken Isles
 		[38296559] = { portal=true, level=10, label=format(L[" Portal to Stormwind \n Portal to Ironforge \n Portal to Darnasuss \n Portal to Exodar \n Portal to Shrine of Seven Stars"]), faction="Alliance" },
+		[56802336] = { portal=true, level=10, label=format(L[" Portal to Orgrimmar \n Portal to Undercity \n Portal to Thunder Bluff \n Portal to Silvermoon \n Portal to Shrine of Two Moons"]), faction="Horde" },
 		[49354757] = { portal=true, level=10, label=L[" Caverns of Time \n Shattrath \n Wyrmrest Temple \n Dalaran Crater \n Karazhan"]  },
 		[38747963] = { portal=true, level=12, label=format(L["Portal to Caverns of Time"]) },
 		[35658549] = { portal=true, level=12, label=format(L["Portal to Shattrath"]) },
 		[30798447] = { portal=true, level=12, label=format(L["Portal to Wyrmrest Temple"]) },
 		[28777754] = { portal=true, level=12, label=format(L["Portal to Dalaran Crater, Alterac Mtn."]) },
 		[31967150] = { portal=true, level=12, label=format(L["Portal to Karazhan"]) },
---		[] = { portal=true, level=10, label=format(L[" Portal to Ogrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Shrine of Two Moons"]), faction="Horde" },
 	},
 	[mapFile(1007)] = { -- Broken Isles
 		[30712543] = { portal=true, label=format(L[" Portal to Dalaran \n Portal to Emerald Dreamway"]), class="DRUID" },
 		[45666494] = { portal=true, label=format(L[" Portal to Stormwind \n Portal to Ironforge \n Portal to Darnasuss \n Portal to Exodar \n Portal to Shrine of Seven Stars \n Portal to Caverns of Time \n Portal to Shattrath \n Portal to Wyrmrest Temple \n Portal to Dalaran Crater \n Portal to Karazhan"]), faction="Alliance" },
-		[45666495] = { portal=true, label=format(L[" Portal to Ogrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Shrine of Two Moons \n Portal to Caverns of Time \n Portal to Shattrath \n Portal to Wyrmrest Temple \n Portal to Dalaran Crater \n Portal to Karazhan"]), faction="Horde" },
+		[45666495] = { portal=true, label=format(L[" Portal to Orgrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Vale of Eternal Blossoms \n Portal to Caverns of Time \n Portal to Shattrath \n Portal to Wyrmrest Temple \n Portal to Dalaran Crater \n Portal to Karazhan"]), faction="Horde" },
 	},
 	[mapFile(1018)] = { -- Val'sharah
 		[41742385] = { portal=true, label=format(L[" Portal to Dalaran \n Portal to Emerald Dreamway"]), class="DRUID" },
 	},
 	[mapFile(301)] = { -- Stormwind
 		[48948733] = { portal=true, label=format(L[" Portal to Blasted Lands \n Portal to Hellfire Peninsula"]), faction="Alliance" },
-		[87543524] = { portal=true, label=format(L["Portal to Ashran"]) },
+		[87543524] = { portal=true, label=format(L["Portal to Ashran"]), faction="Alliance" },
 		[22015670] = { boat=true, label=format(L["Boat to Darnassus"]), note=L["Rut'theran Village"], faction="Alliance" },
 		[17592553] = { boat=true, label=format(L["Boat to Borean Tundra"]), note=L["Valiance Keep"], faction="Alliance" },
 		[74481841] = { portal=true, label=format(L[" Portal to Tol Barad \n Portal ro Uldum \n Portal to Deepholm \n Portal to Vashj'ir \n Portal to Twilight Highlands \n Portal to Hyjal"]), faction="Alliance" },
 --		[] = { portal=true, label=format(L["Portal to Pandaria"]), faction="Alliance" },
 	},
---	[mapFile(321)] = { -- Ogrimmar
---		[] = { portal=true, label=format(L[" Portal to Blasted Lands \n Portal to Hellfire Peninsula"]), faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Undercity"]), note=L["Tirisfal Glades"], faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Thunder Bluff"]), note=L["Mulgore"], faction="Horde" },
---		[] = { portal=true, label=format(L[" Portal to Tol Barad \n Portal ro Uldum \n Portal to Deepholm \n Portal to Vashj'ir \n Portal to Twilight Highlands \n Portal to Hyjal"]), faction="Horde" },
---		[] = { portal=true, label=format(L["Portal to Pandaria"]) }
---		[] = { zeplin=true, label=format(L["Zeplin to Borean Tundra"]), note=L["Warsong Hold"], faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Stranglethorn Vale"]), note=L["Grom'gol Base Camp"], faction="Horde" },
---		},
---	[mapFile(382)] = { -- Undercity
---		[] = { portal=true, label=format(L[" Portal to Blasted Lands \n Portal to Hellfire Peninsula"]), faction="Horde" },
---		},
---	[mapFile(20)] = { -- Trisfal Glades
---		[] = { portal=true, label=format(L[" Portal to Blasted Lands \n Portal to Hellfire Peninsula"]), faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Ogrimmar"]), note=L["Durotar"], faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Stranglethorn Vale"]), note=L["Grom'gol Base Camp"], faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Howling Fjord"]), note=L["Vengeance Landing"], faction="Horde" },
---		},
---	[mapFile(362)] = { -- Thunder Bluff
---		[] = { portal=true, label=format(L[" Portal to Blasted Lands \n Portal to Hellfire Peninsula"]), faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Ogrimmar"]), note=L["Durotar"], faction="Horde" },
---		},
---	[mapFile(9)] = { -- Mulgore
---		[] = { portal=true, label=format(L[" Portal to Blasted Lands \n Portal to Hellfire Peninsula"]), faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Ogrimmar"]), note=L["Durotar"], faction="Horde" },
---		},
+	[mapFile(321)] = { -- Orgrimmar
+		[44466670] = { portal=true, level=02, label=format(L[" Portal to Blasted Lands \n Portal to Dalaran"]), faction="Horde" },
+		[30275833] = { portal=true, level=02, label=format(L["Portal to Hellfire Peninsula"]), faction="Horde" },
+		[36137094] = { portal=true, level=02, label=format(L["Portal to Dalaran"]), faction="Horde" },
+		[46116002] = { portal=true, level=01, label=format(L[" Portal to Blasted Lands \n Portal to Dalaran \n Portal to Hellfire Peninsula"]), faction="Horde" },
+		[50435651] = { zeppelin=true, level=01, label=format(L["Zeppelin to Undercity"]), note=L["Tirisfal Glades"], faction="Horde" },
+		[42636567] = { zeppelin=true, level=01, label=format(L["Zeppelin to Thunder Bluff"]), note=L["Mulgore"], faction="Horde" },
+		[50103773] = { portal=true, level=01, label=format(L[" Portal to Tol Barad \n Portal to Uldum \n Portal to Deeph olm \n Portal to Vashj'ir \n Portal to Twilight Highlands \n Portal to Hyjal"]), faction="Horde" },
+		[68824039] = { portal=true, level=01, label=format(L["Portal to Pandaria"]) },
+		[45306178] = { zeppelin=true, level=01, label=format(L["Zeppelin to Borean Tundra"]), note=L["Warsong Hold"], faction="Horde" },
+		[52885242] = { zeppelin=true, level=01, label=format(L["Zeppelin to Stranglethorn Vale"]), note=L["Grom'gol Base Camp"], faction="Horde" },
+		},
+	[mapFile(382)] = { -- Undercity
+		[84781646] = { portal=true, label=format(L["Portal to Hellfire Peninsula"]), faction="Horde" },
+		},
+	[mapFile(20)] = { -- Trisfal Glades
+		[65766857] = { portal=true, label=format(L["Portal to Hellfire Peninsula"]), faction="Horde" },
+		[60475885] = { zeppelin=true, label=format(L["Zeppelin to Orgrimmar"]), note=L["Durotar"], faction="Horde" },
+		[62035926] = { zeppelin=true, label=format(L["Zeppelin to Stranglethorn Vale"]), note=L["Grom'gol Base Camp"], faction="Horde" },
+		[58875901] = { zeppelin=true, label=format(L["Zeppelin to Howling Fjord"]), note=L["Vengeance Landing"], faction="Horde" },
+		},
+	[mapFile(362)] = { -- Thunder Bluff
+		[23221350] = { portal=true, label=format(L["Portal to Hellfire Peninsula"]), faction="Horde" },
+		[14222574] = { zeppelin=true, label=format(L["Zeppelin to Orgrimmar"]), note=L["Durotar"], faction="Horde" },
+		},
+	[mapFile(9)] = { -- Mulgore
+		[35412133] = { portal=true, label=format(L["Portal to Hellfire Peninsula"]), faction="Horde" },
+		[33692368] = { zeppelin=true, label=format(L["Zeppelin to Orgrimmar"]), note=L["Durotar"], faction="Horde" },
+		},
 	[mapFile(40)] = { -- Wetlands
 		[06216261] = { boat=true, label=format(L["Boat to Theramore"]), note=L["Dudswallow Marsh"], faction="Alliance" },
 		[04415718] = { boat=true, label=format(L["Boat to Howling Fjord"]), note=L["Valgarde"], faction="Alliance" },
@@ -109,19 +112,22 @@ DB.points = {
 		[39551281] = { portal=true, label=format(L[" Portal to Hellfire Peninsula \n Portal ro Exodar"]), faction="Alliance" },
 		[29992737] = { portal=true, label=format(L[" Portal to Hellfire Peninsula \n Portal ro Darnassus"]), faction="Alliance" },
 		[29312826] = { boat=true, label=format(L["Boat to Darnassus"]) },
---		[] = { portal=true, label=format(L[" Portal to Blasted Lands \n Portal to Hellfire Peninsula"]), faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Ogrimmar"]), note=L["Durotar"], faction="Horde" },
---		[] = { zeplin=true, label=format(L["Ogrimmar Zeplins"]), note=L[" Zeplin to Thunder Bluff \n Zeplin to Undercity \n Zeplin to Grom'gol \n Zeplin to Borean Tundra"], faction="Horde" },
+		[45965583] = { portal=true, label=format(L["Portal to Hellfire Peninsula"]), faction="Horde" },
+		[45375637] = { zeppelin=true, label=format(L["Zeppelin to Orgrimmar"]), note=L["Durotar"], faction="Horde" },
+		[60174524] = { zeppelin=true, label=format(L["Orgrimmar Zeplins"]), note=L[" Zeppelin to Thunder Bluff \n Zeppelin to Undercity \n Zeppelin to Grom'gol \n Zeppelin to Borean Tundra"], faction="Horde" },
 
 		},
 	[mapFile(606)] = { -- Mount Hyjal
 		[62522429] = { portal=true, label=format(L["Portal to Stormwind"]), faction="Alliance" },
+		[63492444] = { portal=true, label=format(L["Portal to Orgrimmar"]), faction="Horde" },
 	},
 	[mapFile(640)] = { -- Deepholm
 		[49485184] = { portal=true, label=format(L["Portal to Stormwind"]), faction="Alliance" },
+		[50935310] = { portal=true, label=format(L["Portal to Orgrimmar"]), faction="Horde" },
 	},
 	[mapFile(709)] = { -- Tol Barad Peninsula
 		[75255887] = { portal=true, label=format(L["Portal to Stormwind"]), faction="Alliance" },
+		[56277966] = { portal=true, label=format(L["Portal to Orgrimmar"]), faction="Horde" },
 	},
 	[mapFile(11)] = { -- Northern Barrens
 		[70307341] = { boat=true, label=format(L["Boat to Booty Bay"]) },
@@ -132,25 +138,29 @@ DB.points = {
 	[mapFile(14)] = { -- Eastern Kingdom
 		[41107209] = { boat=true, label=format(L["Stormwind Dock"]), note=L[" Boat to Darnassus \n Boat to Borean Tundra"], faction="Alliance" },
 		[46885813] = { portal=true, label=format(L["Portal to Hellfire Peninsula"]), faction="Alliance" },
+		[42933465] = { portal=true, label=format(L["Portal to Hellfire Peninsula"]), faction="Horde" },
 		[45995488] = { boat=true, label=format(L["Menethil Harbor"]), note=L[" Boat to Theramore \n Boat to Howling Fjord"], faction="Alliance" },
 		[42999362] = { boat=true, label=format(L["Boat to Ratchet"]) },
---		[] = { zeplin=true, label=format(L["Grom'gol Base Camp"]), note=L[" Zeplin to Ogrimmar \n Zeplin to Undercity"], faction="Horde" },
---		[] = { zeplin=true, label=format(L["Trisfal Glades"]), note=L[" Zeplin to Ogrimmar \n Zeplin to Grom'gol Base Camp"], faction="Horde" },
+		[44068694] = { zeppelin=true, label=format(L["Grom'gol Base Camp"]), note=L[" Zeppelin to Orgrimmar \n Zeppelin to Undercity"], faction="Horde" },
+		[43863354] = { zeppelin=true, label=format(L["Trisfal Glades"]), note=L[" Zeppelin to Orgrimmar \n Zeppelin to Grom'gol Base Camp"], faction="Horde" },
+	},
+	[mapFile(37)] = { -- Northern Stranglethorn
+		[37195161] = { boat=true, label=format(L["Grom'gol Base Camp"]), note=L[" Zeppelin to Orgrimmar \n Zeppelin to Undercity"], faction="Horde" },
 	},
 	[mapFile(465)] = { -- Hellfire Peninsula
 		[89225101] = { portal=true, label=format(L["Portal to Stormwind"]), faction="Alliance" },
-		[89234946] = { portal=true, label=format(L["Portal to  Ogrimmar"]), faction="Horde" },
+		[89234946] = { portal=true, label=format(L["Portal to  Orgrimmar"]), faction="Horde" },
 	},
 	[mapFile(481)] = { -- Shattrath
 		[57224827] = { portal=true, label=format(L["Portal to Stormwind"]), faction="Alliance" },
 		[48594200] = { portal=true, label=format(L["Portal to Isle of Quel'Danas"]) },
-		[56834888] = { portal=true, label=format(L["Portal to  Ogrimmar"]), faction="Horde" },
+		[56834888] = { portal=true, label=format(L["Portal to  Orgrimmar"]), faction="Horde" },
 	},
 	[mapFile(466)] = { -- Outland
 		[43886598] = { portal=true, label=format(L[" Portal to Stormwind \n Portal to Isle of Quel'Danas"]), faction="Alliance" },
-		[43886599] = { portal=true, label=format(L[" Portal to Ogrimmar \n Portal to Isle of Quel'Danas"]), faction="Horde" },
+		[43886599] = { portal=true, label=format(L[" Portal to Orgrimmar \n Portal to Isle of Quel'Danas"]), faction="Horde" },
 		[69025230] = { portal=true, label=format(L["Portal to Stormwind"]), faction="Alliance" },
-		[69025231] = { portal=true, label=format(L["Portal to Ogrimmar"]), faction="Horde" },
+		[69025231] = { portal=true, label=format(L["Portal to Orgrimmar"]), faction="Horde" },
 	},
 	[mapFile(341)] = { -- Ironforge
 		[27260699] = { portal=true, label=format(L["Portal to Hellfire Peninsula"]), faction="Alliance" },
@@ -177,22 +187,22 @@ DB.points = {
 	},
 	[mapFile(504)] = { -- Dalaran Northrend
 		[40086282] = { portal=true, level=1, label=format(L["Portal to Stormwind"]), faction="Alliance" },
---		[] = { portal=true, level=1, label=format(L["Portal to Ogrimmar"]), faction="Horde" },
+		[55432550] = { portal=true, level=1, label=format(L["Portal to Orgrimmar"]), faction="Horde" },
 	},
 	[mapFile(510)] = { -- Crystalsong Forest
 		[26194278] = { portal=true, label=format(L["Portal to Stormwind"]), faction="Alliance" },
-		[33463169] = { portal=true, label=format(L["Portal to Ogrimmar"]), faction="Horde" },
+		[31273177] = { portal=true, label=format(L["Portal to Orgrimmar"]), faction="Horde" },
 	},
 	[mapFile(485)] = { -- Northrend
 		[47874119] = { portal=true, label=format(L["Portal to Stormwind"]), faction="Alliance" },
-		[47894119] = { portal=true, label=format(L["Portal to Ogrimmar"]), faction="Horde" },
+		[47894119] = { portal=true, label=format(L["Portal to Orgrimmar"]), faction="Horde" },
 		[80748454] = { boat=true, label=format(L["Boat to Menethil Harbor"]), faction="Alliance" },
 		[23117069] = { boat=true, label=format(L["Boat to Stormwind"]), faction="Alliance" },
 		[46596733] = { boat=true, label=format(L[" Boat to Unu'Pe \n Boat to Kamagua"]) },
 		[29306561] = { boat=true, label=format(L["Boat to Mpa'Ki Harbor"]) },
 		[67738283] = { boat=true, label=format(L["Boat to Mpa'Ki Harbor"]) },
---		[] = { zeplin=true, label=format(L["Zeplin to Ogrimmar"]), note=L["Durotar"], faction="Horde" },
---		[] = { zeplin=true, label=format(L["Zeplin to Undercity"]), note=L["Trisfal Glades"], faction="Horde" },
+		[17556488] = { zeppelin=true, label=format(L["Zeppelin to Orgrimmar"]), note=L["Durotar"], faction="Horde" },
+		[86237276] = { zeppelin=true, label=format(L["Zeppelin to Undercity"]), note=L["Trisfal Glades"], faction="Horde" },
 	},
 	[mapFile(488)] = { -- Dragonblight
 		[47797887] = { boat=true, label=format(L["Boat to Unu'Pe"]) },
@@ -201,21 +211,21 @@ DB.points = {
 	[mapFile(486)] = { -- Borean Tundra
 		[79015383] = { boat=true, label=format(L["Boat to Mpa'Ki"]) },
 		[59946947] = { boat=true, label=format(L["Boat to Stormwind"]), faction="Alliance" },
---		[] = { zeplin=true, label=format(L["Zeplin to Ogrimmar"]), note=L["Durotar"], faction="Horde" },
+		[41255344] = { zeppelin=true, label=format(L["Zeppelin to Orgrimmar"]), note=L["Durotar"], faction="Horde" },
 	},
 	[mapFile(491)] = { -- Howling Fjord
 		[23295769] = { boat=true, label=format(L["Boat to Mpa'Ki"]) },
 		[61506270] = { boat=true, label=format(L["Boat to Menethil Harbor"]), faction="Alliance" },
---		[] = { zeplin=true, label=format(L["Zeplin to Undercity"]), note=L["Trisfal Glades"], faction="Horde" },
+		[77612813] = { zeppelin=true, label=format(L["Zeppelin to Undercity"]), note=L["Trisfal Glades"], faction="Horde" },
 	},
 	[mapFile(811)] = { -- Vale of Eternal Blossoms
 		[87276493] = { portal=true, label=format(L[" Portal to Stormwind \n Portal to Ironforge \n Portal to Darnasuss \n Portal to Exodar \n Portal to Shattrath \n Portal to Dalaran-Northrend"]), faction="Alliance" },
---		[] = { portal=true, label=format(L[" Portal to Ogrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Shattrath \n Portal to Dalaran-Northrend"]), faction="Horde" },
+		[63141292] = { portal=true, label=format(L[" Portal to Orgrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Shattrath \n Portal to Dalaran-Northrend"]), faction="Horde" },
 	},
 	[mapFile(862)] = { -- Pandaria
 		[54465630] = { portal=true, label=format(L[" Portal to Stormwind \n Portal to Ironforge \n Portal to Darnasuss \n Portal to Exodar \n Portal to Shattrath \n Portal to Dalaran-Northrend"]), faction="Alliance" },
 		[29494649] = { portal=true, label=format(L["Portal to Isle of Thunder"]) },
---		[] = { portal=true, label=format(L[" Portal to Ogrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Shattrath \n Portal to Dalaran-Northrend"]), faction="Horde" },
+		[50734785] = { portal=true, label=format(L[" Portal to Orgrimmar \n Portal to Thunder Bluff \n Portal to Undercity \n Portal to Silvermoon \n Portal to Shattrath \n Portal to Dalaran-Northrend"]), faction="Horde" },
 	},
 	[mapFile(810)] = { -- Townlong Steppes
 		[49706870] = { portal=true, label=format(L["Portal to Isle of Thunder"]), faction="Alliance"},

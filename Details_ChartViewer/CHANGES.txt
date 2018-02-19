@@ -1,7 +1,7 @@
-changeset:   48:5c366c2479aa
-tag:         v7.3.2.048
+changeset:   54:7ef9ce8c3a75
+tag:         v7.3.5.054
 user:        Tercio
-date:        Sat Dec 09 09:28:21 2017 -0200
-summary:     - Make the frame fit correctly inside the plugin window at Details!.
+date:        Thu Jan 18 14:52:38 2018 -0200
+summary:     - Using the new default button templates from Details!
 
 

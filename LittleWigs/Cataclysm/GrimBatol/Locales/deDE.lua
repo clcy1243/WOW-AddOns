@@ -1,24 +1,8 @@
 local L = BigWigs:NewBossLocale("Erudax", "deDE")
+if not L then return end
 if L then
--- GrimBatol/Erudax
-	L["summon"] = "Gesichtsloser Verschlinger beschwören"
-	L["summon_desc"] = "Warnt, wenn Erudax einen Gesichtsloser Verschlinger beschwört."
-	L["summon_message"] = "Gesichtslose Wächter beschworen!"
-	L["summon_trigger"] = "%s beschwört einen |cFFFF0000gesichtslosen Wächter|r!"
-
-end
-
-L = BigWigs:NewBossLocale("Drahga Shadowburner", "deDE")
-if L then
--- GrimBatol/Drahga
-	L["summon_message"] = "Add gespawnt!"
-	L["summon_trigger"] = "|TInterface\\\\Icons\\\\spell_fire_elemental_totem.blp:20|t%s wirkt den Zauber |cFFFF6F00|Hspell:75218|h'Hervorrufung der Flamme'|h|r!"
-
-end
-
-L = BigWigs:NewBossLocale("Forgemaster Throngus", "deDE")
-if L then
--- GrimBatol/Forgemaster
-	L["roar_message"] = "%dx Gebrüll"
-
+	--L.summon = "Summon Faceless Guardian"
+	--L.summon_desc = "Warn when Erudax summons a Faceless Guardian"
+	--L.summon_message = "Faceless Guardian Summoned"
+	--L.summon_trigger = "%s summons a"
 end

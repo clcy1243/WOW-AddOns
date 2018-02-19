@@ -1,7 +1,7 @@
-changeset:   263:2622a9548910
-tag:         v7.3.2.263-release
+changeset:   271:f88c4161dbea
+tag:         v7.3.5.271-release
 user:        Tercio
-date:        Sat Dec 09 11:41:05 2017 -0200
-summary:     - Back to convert to raid if the quest is an epic quest (world boss).
+date:        Fri Feb 09 12:03:04 2018 -0200
+summary:     - Ticket #609: fixed rare icons not showing in the map.
 
 

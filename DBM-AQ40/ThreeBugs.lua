@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("ThreeBugs", "DBM-AQ40", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 637 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 647 $"):sub(12, -3))
 mod:SetCreatureID(15544, 15511, 15543)
 mod:SetEncounterID(710)
 mod:SetModelID(15657)
@@ -13,13 +13,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 25807",
 	"UNIT_DIED"
 )
-mod:SetBossHealthInfo(
-	15543, L.Yauj,
-	15544, L.Vem,
-	15511, L.Kri
-)
 
---TODO, cd timer for fear/heal?
 local warnFear			= mod:NewSpellAnnounce(26580, 2)
 local warnHeal			= mod:NewCastAnnounce(25807, 3)
 
@@ -28,8 +22,6 @@ local specWarnHeal		= mod:NewSpecialWarningInterrupt(25807, "HasInterrupt", nil,
 local timerFearCD		= mod:NewCDTimer(20.5, 26580, nil, nil, nil, 2)
 local timerFear			= mod:NewBuffActiveTimer(8, 26580, nil, nil, nil, 2)
 local timerHeal			= mod:NewCastTimer(2, 25807, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
-
-local voiceHeal			= mod:NewVoice(25807, "HasInterrupt")--kickcast
 
 function mod:OnCombatStart(delay)
 	timerFearCD:Start(10-delay)
@@ -52,7 +44,7 @@ function mod:SPELL_CAST_START(args)
 	if args.spellId == 25807 then
 		if self.Options.SpecWarn25807interrupt then
 			specWarnHeal:Show(args.sourceName)
-			voiceHeal:Play("kickcast")
+			specWarnHeal:Play("kickcast")
 		else
 			warnHeal:Show()
 		end

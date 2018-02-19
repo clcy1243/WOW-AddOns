@@ -191,7 +191,6 @@ end)
 --  Functions  --
 -----------------
 --/run DBM.Nameplate:Show(true, UnitGUID("target"), 227723)--Mana tracking, easy to find in Legion Dalaran
---/run DBM.Nameplate:Show(true, UnitGUID("target"), 186406)--Sign of the Critter
 --/run DBM.Nameplate:Show(false, GetUnitName("target", true), 227723)--Mana tracking, easy to find in Dalaran
 --/run DBM.Nameplate:Hide(true, nil, nil, nil, true)
 --/run DBM.Nameplate:Hide(true, UnitGUID("target"), 227723)
@@ -199,7 +198,7 @@ end)
 
 --Add more nameplate mods as they gain support
 function nameplateFrame:SupportedNPMod()
-    if KuiNameplates then return true end--TidyPlatesThreat
+    if KuiNameplates or TidyPlatesThreatDBM then return true end
     return false
 end
 

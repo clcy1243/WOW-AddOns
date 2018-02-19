@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("GRDTrash", "DBM-Party-WoD", 3)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
 --mod:SetModelID(47785)
 mod:SetZone()
 
@@ -23,8 +23,6 @@ local specWarnLavaWreath				= mod:NewSpecialWarningMoveAway(176025)
 local specWarnFlametongueGround			= mod:NewSpecialWarningMove(176033)--Ground aoe, may add an earlier personal warning if target scanning works.
 local specWarnShrapnelblast				= mod:NewSpecialWarningMove(166675, "Tank", nil, nil, 3)--160943 boss version, 166675 trash version.
 local specWarnThunderzone				= mod:NewSpecialWarningMove(166340)
-
-mod:RemoveOption("HealthFrame")
 
 local isTrivial = mod:IsTrivial(110)
 

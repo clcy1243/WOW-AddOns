@@ -1,7 +1,7 @@
-changeset:   77:e769b2448c6c
-tag:         v7.3.2.077
+changeset:   81:c623442f2466
+tag:         v7.3.5.081
 user:        Tercio
-date:        Fri Dec 08 19:23:30 2017 -0200
-summary:     - Fixed several frame sizes to fit correctly inside the new plugin frame on Details!.
+date:        Thu Jan 18 14:55:34 2018 -0200
+summary:     - Using the new buttom template from Details!
 
 

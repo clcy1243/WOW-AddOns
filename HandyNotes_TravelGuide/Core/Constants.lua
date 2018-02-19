@@ -37,5 +37,5 @@ constants.icon_texture = {
 	valliance	= "Interface\\MINIMAP\\Vehicle-Air-Alliance",
 	vhorde		= "Interface\\MINIMAP\\Vehicle-Air-Horde",
 	boat 		= "Interface\\AddOns\\HandyNotes_TravelGuide\\Images\\boat",
-	zeplin 		= "Interface\\AddOns\\HandyNotes_TravelGuide\\Images\\zeplin",
+	zeppelin 	= "Interface\\AddOns\\HandyNotes_TravelGuide\\Images\\Zeppelin",
 }

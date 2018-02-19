@@ -68,7 +68,7 @@ local englishClueNames = {
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
 	L.Guard = "Duskwatch Guard"
 	L.Construct = "Guardian Construct"
@@ -106,7 +106,7 @@ if L then
 	L.announce_buff_items_icon = 211080
 
 	L.available = "%s|cffffffff%s|r available" -- Context: item is available to use
-	L.usableBy = "usable by %s"  -- Context: item is usable by someone
+	L.usableBy = "usable by %s" -- Context: item is usable by someone
 
 	L.custom_on_use_buff_items = "Instantly use buff items"
 	L.custom_on_use_buff_items_desc = "Enable this option to instantly use the buff items around the dungeon. This will not use items which aggro the guards before the second boss."
@@ -198,7 +198,6 @@ if L then
 	L["I heard the spy always has a book of written secrets at the belt."] = 14
 	L["Rumor has is the spy loves to read and always carries around at least one book."] = 14
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -394,6 +393,16 @@ do
 		},
 	}
 
+	local buffs = {
+		[105160] = 211081, -- Fel Orb
+		[105831] = 211080, -- Infernal Tome
+		[106024] = 211093, -- Magical Lantern
+		[105249] = 211102, -- Nightshade Refreshments
+		[106108] = 211071, -- Starlight Rose Brew
+		[105340] = 211110, -- Umbral Bloom
+		[106110] = 211084, -- Waterlogged Scroll
+	}
+
 	local guardItems = {
 		[106018] = { -- Bazaar Goods
 			["name"] = "BazaarGoods",
@@ -507,41 +516,39 @@ do
 	local function printNew(locale, clue)
 		timer = nil
 		knownClues[clue] = true -- Throttle to only show once per new message
-		sendChatMessage(clue)
-		RaidNotice_AddMessage(RaidWarningFrame, "LittleWigs: Unknown clue detected, see chat for info.", {r=1,g=1,b=1})
-		BigWigs:Print("LittleWigs is sending the entire clue to chat as it detected an unknown clue, please report it on Discord/GitHub/Curse so we can add it and shorten the message.")
-		BigWigs:Error(("|cffffff00TELL THE AUTHORS:|r New clue '%s' with '%s'"):format(clue, locale))
+		if clue == GetGossipText() then -- Extra safety
+			RaidNotice_AddMessage(RaidWarningFrame, "LittleWigs: Unknown clue detected, see chat for info.", {r=1,g=1,b=1})
+			BigWigs:Print("LittleWigs has found an unknown clue, please report it on Discord or GitHub so we can add it and shorten the message.")
+			BigWigs:Error(("|cffffff00TELL THE AUTHORS:|r New clue '%s' with '%s'"):format(clue, locale))
+		end
 	end
 
 	function mod:GOSSIP_SHOW()
+		if timer then
+			self:CancelTimer(timer)
+			timer = nil
+		end
+
 		local mobId = self:MobId(UnitGUID("npc"))
 		local spyEventHelper = self:GetOption("spy_helper") > 0
 		if autoTalk[mobId] or buffItems[mobId] then
-			if GetGossipOptions() then
-				if (spyEventHelper and autoTalk[mobId]) or (self:GetOption("custom_on_use_buff_items") and buffItems[mobId]) then
-					SelectGossipOption(1)
-				end
-			else
-				if mobId == 107486 then -- Chatty Rumormonger
-					if timer then
-						self:CancelTimer(timer)
-						timer = nil
+			if not GetGossipOptions() and mobId == 107486 then -- Chatty Rumormonger
+				local clue = GetGossipText()
+				local num = L[clue]
+				if num then
+					if spyEventHelper and not knownClues[num] then
+						local text = L.hints[num]
+						sendChatMessage(text, englishClueNames[num] ~= text and englishClueNames[num])
 					end
-
-					local clue = GetGossipText()
-					local num = L[clue]
-					if num then
-						if spyEventHelper and not knownClues[num] then
-							local text = L.hints[num]
-							sendChatMessage(text, englishClueNames[num] ~= text and englishClueNames[num])
-						end
-						mod:Sync("clue", num)
-					else
-						if spyEventHelper and not knownClues[clue] then
-							timer = self:ScheduleTimer(printNew, 1, GetLocale(), clue)
-						end
+					mod:Sync("clue", num)
+				else
+					if spyEventHelper and not knownClues[clue] then
+						timer = self:ScheduleTimer(printNew, 2, GetLocale(), clue)
 					end
 				end
+			end
+			if (spyEventHelper and autoTalk[mobId]) or (self:GetOption("custom_on_use_buff_items") and buffItems[mobId]) then
+				SelectGossipOption(1)
 			end
 		end
 	end
@@ -633,6 +640,10 @@ do
 
 	local prevTable, usableTimer, lastProfessionUpdate = {}, nil, 0
 	local function usableFound(self, id, item)
+		if buffs[id] and UnitBuff("player", self:SpellName(buffs[id])) then -- there's no point in showing a message if we already have the buff
+			return
+		end
+		
 		local t = GetTime()
 		if t-(prevTable[id] or 0) > 300 then
 			prevTable[id] = t

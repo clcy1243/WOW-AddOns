@@ -107,6 +107,7 @@ function ns:DefaultOptions()
 					[ns.vzbuchka_spid] = 2,
 					[ns.dikiyrev_spid] = 5,
 					[ns.moonfire_spid] = 1,
+					[ns.fb_id] = 6,
 				},				
 				sort = {
 					{ name = ns.moonfire_spid, 	sort = 1, on = true },
@@ -114,6 +115,7 @@ function ns:DefaultOptions()
 					{ name = ns.glybokayrana_spid, sort = 3, on = true },
 					{ name = ns.razorvat_spid, 	sort = 4, on = true },
 					{ name = ns.dikiyrev_spid, 	sort = 5, on = true },
+					{ name = ns.fb_id, 			sort = 6, on = false },
 				}
 			},
 			
@@ -194,6 +196,8 @@ function ns:DefaultOptions()
 				powerType = 1,
 
 				disableIconSwap = false,
+				
+				enable4T21 = true,
 				
 				anchoring = 2,
 				
@@ -1928,6 +1932,19 @@ function ns:OptionsTable()
 			end,
 		}
 		
+		o.args.icons_.args.style.args.enable4T21 = {
+			name = L["Подсвечивать иконку при проке"]..' '..GetSpellNameGUI(252752), disabled = false,
+			desc = GetSpellDescription(252752),
+			type = "toggle", order	= 1.4, width = 'full',
+			set = function(info,val) 
+				ns.db.profile.icons.enable4T21 = not ns.db.profile.icons.enable4T21
+				ns:UpdateFramesStyle();
+			end,
+			get = function(info)
+				return ns.db.profile.icons.enable4T21
+			end,
+		}
+		
 		o.args.icons_.args.style.args.anchoring = {
 			order = 2, name = L["Точка привязки"],
 			type = "dropdown",
@@ -2716,7 +2733,7 @@ function ns:OptionsTable()
 		},
 	}
 	
-	for i, spell in pairs({ns.glybokayrana_spid, ns.razorvat_spid, ns.vzbuchka_spid, ns.dikiyrev_spid, ns.moonfire_spid  }) do
+	for i, spell in pairs({ns.glybokayrana_spid, ns.razorvat_spid, ns.vzbuchka_spid, ns.dikiyrev_spid, ns.moonfire_spid, ns.fb_id }) do
 		o.args.icons_.args.iconorder_new.args['spell'..i] = {
 			name = L["Показывать"],
 			order = i,
@@ -4018,7 +4035,7 @@ do
 		
 		f.showbutton = CreateFrame('CheckButton', nil, f, "UICheckButtonTemplate") --"UICheckButtonTemplate"
 		f.showbutton:SetFrameLevel(f:GetFrameLevel() + 1)
-		f.showbutton:SetPoint("LEFT", f, 'RIGHT', -200, 0)
+		f.showbutton:SetPoint("LEFT", f, 'RIGHT', -210, 0)
 		f.showbutton.f = f
 		f.showbutton:SetSize(20, 20)
 		f.showbutton:SetCheckedTexture("Interface\\Buttons\\UI-CheckBox-Check")
@@ -4040,11 +4057,11 @@ do
 		
 		f._buttons = {}
 		
-		for i=1, 5 do
+		for i=1, 6 do
 		
 			local button = CreateFrame('CheckButton', nil, f, "UICheckButtonTemplate") --"UICheckButtonTemplate"
 			button:SetFrameLevel(f:GetFrameLevel() + 1)
-			button:SetPoint("LEFT", f, 'RIGHT', ( -110 + 20*(i-1) ), -5)
+			button:SetPoint("LEFT", f, 'RIGHT', ( -125 + 20*(i-1) ), -5)
 			button.f = f
 			button.id = i
 			button:SetSize(20, 20)

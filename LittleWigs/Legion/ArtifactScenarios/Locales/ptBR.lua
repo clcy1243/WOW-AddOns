@@ -1,8 +1,8 @@
 local L = BigWigs:NewBossLocale("Tugar Bloodtotem", "ptBR")
 if not L then return end
 if L then
-	--L.tugar = "Tugar Bloodtotem"
-	--L.jormog = "Jormog the Behemoth"
+	L.tugar = "Tugar Totem de Sangue"
+	L.jormog = "Jormog, o Beemote"
 
 	--L.remaining = "Scales Remaining"
 
@@ -19,7 +19,7 @@ end
 
 L = BigWigs:NewBossLocale("Raest", "ptBR")
 if L then
-	--L.name = "Raest Magespear"
+	L.name = "Raest Magilança"
 
 	--L.handFromBeyond = "Hand from Beyond"
 
@@ -34,21 +34,34 @@ end
 
 L = BigWigs:NewBossLocale("Kruul", "ptBR")
 if L then
-	-- NPC Names
-	--L.name = "Highlord Kruul"
-	--L.inquisitor = "Inquisitor Variss"
-	--L.velen = "Prophet Velen"
+	L.name = "Grão-lorde Kruul"
+	L.inquisitor = "Inquisidor Variss"
+	L.velen = "Profeta Velen"
 
-	-- Triggers
 	--L.warmup_trigger = "Arrogant fools! I am empowered by the souls of a thousand conquered worlds!"
+	--L.win_trigger = "So be it. You will not stand in our way any longer."
 
-	-- Engage / Options
 	--L.engage_message = "Highlord Kruul's Challenge Engaged!"
 
 	--L.nether_aberration_desc = "Summons portals around the room, spawning Nether Aberrations."
-	--L.nether_aberration_icon = "ability_socererking_summonaberration"
 
 	--L.smoldering_infernal = "Smoldering Infernal"
 	--L.smoldering_infernal_desc = "Summons a Smoldering Infernal."
-	--L.smoldering_infernal_icon = "inv_infernalmountgreen"
+end
+
+L = BigWigs:NewBossLocale("Lord Erdris Thorn", "ptBR")
+if L then
+	L.erdris = "Lorde Erdris Cardo"
+
+	--L.warmup_trigger = "Your arrival is well-timed."
+	--L.warmup_trigger2 = "What's... happening?" --Stage 5 Warm up
+
+	L.mage = "Mago Reanimado Corrompido"
+	L.soldier = "Soldado Reanimado Corrompido"
+	L.arbalest = "Arcobalista Reanimada Corrompida"
+end
+
+L = BigWigs:NewBossLocale("Archmage Xylem", "ptBR")
+if L then
+	L.name = "Arquimago Tauriel"
 end

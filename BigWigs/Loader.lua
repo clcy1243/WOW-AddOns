@@ -7,8 +7,8 @@ local bwFrame = CreateFrame("Frame")
 -- Generate our version variables
 --
 
-local BIGWIGS_VERSION = 83
-local BIGWIGS_RELEASE_STRING = ""
+local BIGWIGS_VERSION = 88
+local BIGWIGS_RELEASE_STRING, BIGWIGS_VERSION_STRING = "", ""
 local versionQueryString, versionResponseString = "Q^%d^%s", "V^%d^%s"
 
 do
@@ -18,7 +18,7 @@ do
 	local RELEASE = "RELEASE"
 
 	local releaseType = RELEASE
-	local myGitHash = "9b28a6c" -- The ZIP packager will replace this with the Git hash.
+	local myGitHash = "5a0d494" -- The ZIP packager will replace this with the Git hash.
 	local releaseString = ""
 	--[===[@alpha@
 	-- The following code will only be present in alpha ZIPs.
@@ -39,6 +39,7 @@ do
 		releaseString = L.alphaRelease:format(BIGWIGS_VERSION, myGitHash)
 	end
 	BIGWIGS_RELEASE_STRING = releaseString
+	BIGWIGS_VERSION_STRING = ("%d-%s"):format(BIGWIGS_VERSION, myGitHash)
 	-- Format is "V:version-hash"
 	versionQueryString = versionQueryString:format(BIGWIGS_VERSION, myGitHash)
 	versionResponseString = versionResponseString:format(BIGWIGS_VERSION, myGitHash)
@@ -864,8 +865,8 @@ end
 
 do
 	-- This is a crapfest mainly because DBM's actual handling of versions is a crapfest, I'll try explain how this works...
-	local DBMdotRevision = "16965" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
-	local DBMdotDisplayVersion = "7.3.12" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
+	local DBMdotRevision = "17241" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
+	local DBMdotDisplayVersion = "7.3.21" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
 	local DBMdotReleaseRevision = DBMdotRevision -- This is manually changed by them every release, they use it to track the highest release version, a new DBM release is the only time it will change.
 
 	local timer, prevUpgradedUser = nil, nil
@@ -1190,10 +1191,6 @@ do
 				self:UNIT_TARGET("player")
 			elseif inside then
 				bwFrame:UnregisterEvent("UNIT_TARGET")
-				-- XXX temp
-				if id == 1712 and not loadedList[id] then
-					sysprint("Antorus modules are still under development. The fastest way to get bugs fixed is via our Discord.")
-				end
 				loadedList[id] = true
 				if loadAndEnableCore() then
 					if BigWigs:IsEnabled() and loadOnZone[id] then
@@ -1309,6 +1306,10 @@ end
 
 function public:GetReleaseString()
 	return BIGWIGS_RELEASE_STRING
+end
+
+function public:GetVersionString()
+	return BIGWIGS_VERSION_STRING
 end
 
 function public:GetZoneMenus()

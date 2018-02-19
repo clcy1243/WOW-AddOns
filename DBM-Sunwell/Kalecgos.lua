@@ -2,7 +2,7 @@ local mod	= DBM:NewMod("Kal", "DBM-Sunwell")
 local Kal 	= DBM:GetModByName("Kal")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 642 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 647 $"):sub(12, -3))
 mod:SetCreatureID(24850)
 mod:SetEncounterID(724)
 mod:SetModelID(26628)
@@ -32,8 +32,6 @@ local timerBuffetCD		= mod:NewCDTimer(8, 45018, nil, nil, nil, 2)
 local timerPorted		= mod:NewBuffActiveTimer(60, 46021, nil, nil, nil, 6)
 local timerExhausted	= mod:NewBuffActiveTimer(60, 44867, nil, nil, nil, 6)
 
-local voiceBuffet		= mod:NewVoice(45018)--stackhigh
-
 mod:AddBoolOption("RangeFrame", true)
 mod:AddBoolOption("ShowFrame", true)
 mod:AddBoolOption("FrameLocked", false)
@@ -57,11 +55,6 @@ function mod:OnCombatStart(delay)
 	end
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Show()
-	end
-	if DBM.BossHealth:IsShown() then
-		DBM.BossHealth:Clear()
-		DBM.BossHealth:AddBoss(24850, L.name)
-		DBM.BossHealth:AddBoss(24892, L.Demon)
 	end
 end
 
@@ -115,7 +108,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		local amount = args.amount or 1
 		if amount >= 10 and amount % 2 == 0 then
 			specWarnBuffet:Show(amount)
-			voiceBuffet:Play("stackhigh")
+			specWarnBuffet:Play("stackhigh")
 		end
 	end
 end

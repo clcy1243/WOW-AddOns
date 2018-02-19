@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("UBRSTrash", "DBM-Party-WoD", 8)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
 --mod:SetModelID(47785)
 mod:SetZone()
 
@@ -30,8 +30,6 @@ local specWarnEruption					= mod:NewSpecialWarningDodge(155037, "Tank")
 
 local timerSmashCD						= mod:NewCDTimer(13, 155572, nil, nil, nil, 3)
 local timerEruptionCD					= mod:NewCDTimer(10, 155037, nil, false, nil, 3)--10-15 sec variation. May be distracting or spammy since two of them
-
-mod:RemoveOption("HealthFrame")
 
 local isTrivial = mod:IsTrivial(110)
 

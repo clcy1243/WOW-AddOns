@@ -73,11 +73,7 @@
 				self:SetSize (96, 32)
 			</OnLoad>
 			<OnEnter>
-				GameTooltip:SetOwner (self, "ANCHOR_TOPLEFT")
-				local tab = DETAILS_PLUGIN_CHART_VIEWER:GetTab (self.index)
-				GameTooltip:AddLine (tab.segment_type == 1 and "Current Segment" or "Last 5 Segments")
-				GameTooltip:Show()
-				self.CloseButton:SetNormalTexture ("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
+				DETAILS_PLUGIN_CHART_VIEWER:TabOnEnter (self)
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide()

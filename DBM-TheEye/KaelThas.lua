@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("KaelThas", "DBM-TheEye")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 631 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 647 $"):sub(12, -3))
 mod:SetCreatureID(19622)
 mod:SetEncounterID(733)
 mod:SetModelID(20023)
@@ -39,9 +39,9 @@ local warnPyro			= mod:NewCastAnnounce(36819, 4)
 local warnPhase5		= mod:NewPhaseAnnounce(5)
 local warnGravity		= mod:NewSpellAnnounce(35966, 4)
 
-local specWarnGaze		= mod:NewSpecialWarning("SpecWarnGaze", nil, nil, nil, 4)--Can't void generic special warnings
+local specWarnGaze		= mod:NewSpecialWarning("SpecWarnGaze", nil, nil, nil, 4, 2)
 local specWarnToy		= mod:NewSpecialWarningYou(37027, nil, nil, nil, 1, 2)
-local specWarnEgg		= mod:NewSpecialWarning("SpecWarnEgg")--Can't void generic special warnings
+local specWarnEgg		= mod:NewSpecialWarning("SpecWarnEgg", nil, nil, nil, 1, 2)
 local specWarnShield	= mod:NewSpecialWarningSpell(36815)--No decent voice for this
 local specWarnPyro		= mod:NewSpecialWarningInterrupt(36819, "HasInterrupt", nil, nil, 1, 2)
 local specWarnVapor		= mod:NewSpecialWarningStack(35859, nil, 2, nil, nil, 1, 6)
@@ -59,13 +59,10 @@ local timerGravity		= mod:NewBuffActiveTimer(32, 35941, nil, nil, nil, 6)
 
 local countdownPhase	= mod:NewCountdown(105, 190978)
 
-local voicePyro			= mod:NewVoice(36819, "HasInterrupt")--kickcast
-local voiceVapor		= mod:NewVoice(35859)--stackhigh
-
-mod:AddBoolOption("HealthFrame", false)
 mod:AddBoolOption("MCIcon", true)
 mod:AddBoolOption("GazeIcon", false)
 mod:AddBoolOption("RangeFrame", true)
+mod:AddInfoFrameOption(36815, true)
 
 mod.vb.mcIcon = 8
 local warnConflagTargets = {}
@@ -90,16 +87,14 @@ function mod:OnCombatStart(delay)
 	self.vb.phase = 1
 	timerPhase1mob:Start(32, L.Thaladred)
 	countdownPhase:Start(32)
-	if DBM.BossHealth:IsShown() then
-		DBM.BossHealth:Clear()
-		DBM.BossHealth:Show(L.name)
-		DBM.BossHealth:AddBoss(20064, L.Thaladred)
-	end
 end
 
 function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
+	end
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:Hide()
 	end
 end
 
@@ -128,13 +123,15 @@ function mod:SPELL_AURA_APPLIED(args)
 			warnToy:Show(args.destName)
 		end
 	elseif args.spellId == 36815 and self.vb.phase ~= 5 then
-		self:ShowShieldHealthBar(args.destGUID, args.spellName, 80000)
-		self:ScheduleMethod(10, "RemoveShieldHealthBar", args.destGUID)
 		specWarnShield:Show()
 		timerShieldCD:Start()
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(args.spellName)
+			DBM.InfoFrame:Show(2, "enemyabsorb", nil, UnitGetTotalAbsorbs("boss1"))
+		end
 	elseif args.spellId == 35859 and args:IsPlayer() and self:IsInCombat() and (args.amount or 1) >= 2 then
 		specWarnVapor:Show(args.amount)
-		voiceVapor:Play("stackhigh")
+		specWarnVapor:Play("stackhigh")
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -142,9 +139,10 @@ mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 function mod:SPELL_AURA_REMOVED(args)
 	if args.spellId == 36815 and self.vb.phase ~= 5 then
 		specWarnPyro:Show(args.sourceName)
-		voicePyro:Play("kickcast")
-		self:UnscheduleMethod("RemoveShieldHealthBar", args.destGUID)
-		self:RemoveShieldHealthBar(args.destGUID)
+		specWarnPyro:Play("kickcast")
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:Hide()
+		end
 	elseif args.spellId == 36797 then
 		if self.Options.MCIcon then
 			self:SetIcon(args.destName, 0)
@@ -180,11 +178,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args.spellId == 34341 and self:IsInCombat() then
 		warnEgg:Show()
 		specWarnEgg:Show()
+		specWarnEgg:Play("killmob")
 		timerRebirth:Show()
-		DBM.BossHealth:AddBoss(21364, L.Egg)
-		self:Schedule(15, function()
-			DBM.BossHealth:RemoveBoss(21364)
-		end)
 	end
 end
 
@@ -192,41 +187,28 @@ function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 20064 then
 		timerNextGaze:Cancel()
-		DBM.BossHealth:RemoveBoss(20064)
 	elseif cid == 20060 then
 		timerFearCD:Cancel()
-		DBM.BossHealth:RemoveBoss(20060)
 	elseif cid == 20062 then
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Hide()
 		end
-		DBM.BossHealth:RemoveBoss(20062)
-	elseif cid == 20063 then
-		DBM.BossHealth:RemoveBoss(20063)
 	elseif cid == 21268 then
 		warnMobDead:Show(L.Bow)
-		DBM.BossHealth:RemoveBoss(21268)
 	elseif cid == 21269 then
 		warnMobDead:Show(L.Axe)
-		DBM.BossHealth:RemoveBoss(21269)
 	elseif cid == 21270 then
 		warnMobDead:Show(L.Mace)
-		DBM.BossHealth:RemoveBoss(21270)
 	elseif cid == 21271 then
 		warnMobDead:Show(L.Dagger)
-		DBM.BossHealth:RemoveBoss(21271)
 	elseif cid == 21272 then
 		warnMobDead:Show(L.Sword)
-		DBM.BossHealth:RemoveBoss(21272)
 	elseif cid == 21273 then
 		warnMobDead:Show(L.Shield)
-		DBM.BossHealth:RemoveBoss(21273)
 	elseif cid == 21274 then
 		warnMobDead:Show(L.Staff)
-		DBM.BossHealth:RemoveBoss(21274)
 	elseif cid == 21364 then
 		timerRebirth:Cancel()
-		DBM.BossHealth:RemoveBoss(21364)
 	end
 end
 
@@ -236,6 +218,7 @@ function mod:CHAT_MSG_MONSTER_EMOTE(msg, _, _, _, target)
 		timerNextGaze:Start()
 		if target == UnitName("player") then
 			specWarnGaze:Show()
+			specWarnGaze:Play("justrun")
 		else
 			warnGaze:Show(target)
 		end
@@ -249,47 +232,32 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.YellSang or msg:find(L.YellSang) then
 		timerPhase1mob:Start(12.5, L.Sanguinar)
 		countdownPhase:Start(12.5)
-		DBM.BossHealth:AddBoss(20060, L.Sanguinar)
 	elseif msg == L.YellCaper or msg:find(L.YellCaper) then
 		timerPhase1mob:Start(7, L.Capernian)
 		countdownPhase:Start(7)
-		DBM.BossHealth:AddBoss(20062, L.Capernian)
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show()
 		end
 	elseif msg == L.YellTelo or msg:find(L.YellTelo) then
 		timerPhase1mob:Start(8.4, L.Telonicus)
 		countdownPhase:Start(8.4)
-		DBM.BossHealth:AddBoss(20063, L.Telonicus)
 	elseif msg == L.YellPhase2 or msg:find(L.YellPhase2) then
 		self.vb.phase = 2
 		timerPhase:Start(105)
 		countdownPhase:Start()
 		warnPhase2:Show()
 		warnPhase3:Schedule(105)
-		DBM.BossHealth:AddBoss(21268, L.Bow)
-		DBM.BossHealth:AddBoss(21269, L.Axe)
-		DBM.BossHealth:AddBoss(21270, L.Mace)
-		DBM.BossHealth:AddBoss(21271, L.Dagger)
-		DBM.BossHealth:AddBoss(21272, L.Sword)
-		DBM.BossHealth:AddBoss(21273, L.Shield)
-		DBM.BossHealth:AddBoss(21274, L.Staff)
 	elseif msg == L.YellPhase3 or msg:find(L.YellPhase3) then
 		self.vb.phase = 3
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show()
 		end
 		self:Schedule(10, function()
-			DBM.BossHealth:AddBoss(20064, L.Thaladred)
-			DBM.BossHealth:AddBoss(20060, L.Sanguinar)
-			DBM.BossHealth:AddBoss(20062, L.Capernian)
-			DBM.BossHealth:AddBoss(20063, L.Telonicus)
 			timerPhase:Start(173)
 			countdownPhase:Start(173)
 		end)
 	elseif msg == L.YellPhase4 or msg:find(L.YellPhase4) then
 		self.vb.phase = 4
-		DBM.BossHealth:AddBoss(19622, L.name)
 		warnPhase4:Show()
 		timerPhase:Cancel()
 		countdownPhase:Cancel()

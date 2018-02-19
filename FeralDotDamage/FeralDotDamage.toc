@@ -1,6 +1,6 @@
 ## Interface: 70300
 ## Author: Alea
-## Version: 290
+## Version: 291
 ## Title: FeralDotDamage
 ## Notes: 
 ## DefaultState: Enabled

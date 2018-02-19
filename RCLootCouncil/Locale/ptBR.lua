@@ -48,6 +48,8 @@ L["All items has been awarded and  the loot session concluded"] = "Todos os iten
 -- L["Alternatively, flag the loot as award later."] = ""
 L["Always use RCLootCouncil when I'm Master Looter"] = "Sempre usar RCLootCouncil quando eu for o Mestre do Saque"
 L["Always use when leader"] = "Sempre usar quando eu liderar"
+--Translation missing 
+-- L["always_show_tooltip_howto"] = ""
 L["Announce Awards"] = "Anunciar Recompensas"
 L["Announce Considerations"] = "Anunciar Considerações"
 --Translation missing 
@@ -97,6 +99,8 @@ L["Auto extracted from whisper"] = "Extraído automaticamente do sussuro"
 L["Auto Open"] = "Abrir Automaticamente"
 L["Auto Pass"] = "Passar Automaticamente"
 L["Auto pass BoE"] = "Passar Automaticamente Itens Vinculados ao Equipar"
+--Translation missing 
+-- L["Auto Pass Trinkets"] = ""
 L["Auto Start"] = "Iniciar Automaticamente"
 --Translation missing 
 -- L["auto_award_desc"] = ""
@@ -114,6 +118,8 @@ L["Auto Start"] = "Iniciar Automaticamente"
 -- L["auto_pass_boe_desc"] = ""
 --Translation missing 
 -- L["auto_pass_desc"] = ""
+--Translation missing 
+-- L["auto_pass_trinket_desc"] = ""
 --Translation missing 
 -- L["auto_start_desc"] = ""
 --Translation missing 
@@ -203,8 +209,6 @@ L["Autoloot BoE"] = "Saque automático para itens Vinculados ao Equipar"
 -- L["chat tVersion string"] = ""
 --Translation missing 
 -- L["chat version String"] = ""
---Translation missing 
--- L["chat_commands"] = ""
 --Translation missing 
 -- L["chat_commands_add"] = ""
 --Translation missing 
@@ -667,6 +671,8 @@ L["Autoloot BoE"] = "Saque automático para itens Vinculados ao Equipar"
 -- L["Skins"] = ""
 --Translation missing 
 -- L["skins_description"] = ""
+--Translation missing 
+-- L["Socket"] = ""
 --Translation missing 
 -- L["Something went wrong :'("] = ""
 --Translation missing 

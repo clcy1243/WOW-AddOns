@@ -9,31 +9,52 @@
 <!-- The Burning Crusade -->
 
 <Include file="TBC\MagistersTerrace\modules.xml"/>
+<Include file="TBC\MagistersTerrace\locales.xml"/>
 <Include file="TBC\ManaTombs\modules.xml"/>
 <Include file="TBC\TheArcatraz\modules.xml"/>
 <Include file="TBC\TheBlackMorass\modules.xml"/>
+<Include file="TBC\TheBlackMorass\locales.xml"/>
 <Include file="TBC\TheShatteredHalls\modules.xml"/>
 <Include file="TBC\TheSlavePens\modules.xml"/>
 
 <!-- Wrath of the Lich King -->
 
 <Include file="WotLK\Ahnkahet\modules.xml"/>
+<Include file="WotLK\Ahnkahet\locales.xml"/>
+<!--<Include file="WotLK\AzjolNerub\modules.xml"/>-->
+<!--<Include file="WotLK\DrakTharonKeep\modules.xml"/>-->
 <Include file="WotLK\Gundrak\modules.xml"/>
+<Include file="WotLK\Gundrak\locales.xml"/>
 <Include file="WotLK\HallsOfLightning\modules.xml"/>
+<Include file="WotLK\HallsOfLightning\locales.xml"/>
+<!--<Include file="WotLK\HallsOfReflection\modules.xml"/>-->
+<!--<Include file="WotLK\HallsOfStone\modules.xml"/>-->
 <Include file="WotLK\PitOfSaron\modules.xml"/>
+<!--<Include file="WotLK\TheCullingOfStratholme\modules.xml"/>-->
+<!--<Include file="WotLK\TheForgeOfSouls\modules.xml"/>-->
 <Include file="WotLK\TheNexus\modules.xml"/>
+<Include file="WotLK\TheNexus\locales.xml"/>
+<!--<Include file="WotLK\TheOculus\modules.xml"/>-->
 <Include file="WotLK\TheVioletHold\modules.xml"/>
+<Include file="WotLK\TheVioletHold\locales.xml"/>
+<!--<Include file="WotLK\TrialOfTheChampion\modules.xml"/>-->
+<!--<Include file="WotLK\UtgardeKeep\modules.xml"/>-->
 <Include file="WotLK\UtgardePinnacle\modules.xml"/>
+<Include file="WotLK\UtgardePinnacle\locales.xml"/>
 
 <!-- Cataclysm -->
 
 <!--<Include file="Cataclysm\BlackrockCaverns\modules.xml"/>-->
 <Include file="Cataclysm\EndTime\modules.xml"/>
+<Include file="Cataclysm\EndTime\locales.xml"/>
 <Include file="Cataclysm\GrimBatol\modules.xml"/>
+<Include file="Cataclysm\GrimBatol\locales.xml"/>
 <!--<Include file="Cataclysm\HallsOfOrigination\modules.xml"/>-->
 <!--<Include file="Cataclysm\HourOfTwilight\modules.xml"/>-->
 <Include file="Cataclysm\LostCity\modules.xml"/>
+<Include file="Cataclysm\LostCity\locales.xml"/>
 <Include file="Cataclysm\Stonecore\modules.xml"/>
+<Include file="Cataclysm\Stonecore\locales.xml"/>
 <Include file="Cataclysm\ThroneTides\modules.xml"/>
 <Include file="Cataclysm\VortexPinnacle\modules.xml"/>
 <!--<Include file="Cataclysm\WellOfEternity\modules.xml"/>-->
@@ -69,14 +90,19 @@
 <Include file="WoD\BloodmaulSlagMines\modules.xml"/>
 
 <Include file="WoD\GrimrailDepot\modules.xml"/>
+<Include file="WoD\GrimrailDepot\locales.xml"/>
 
 <Include file="WoD\IronDocks\modules.xml"/>
+<Include file="WoD\IronDocks\locales.xml"/>
 
 <Include file="WoD\ShadowmoonBurialGrounds\modules.xml"/>
+<Include file="WoD\ShadowmoonBurialGrounds\locales.xml"/>
 
 <Include file="WoD\Skyreach\modules.xml"/>
+<Include file="WoD\Skyreach\locales.xml"/>
 
 <Include file="WoD\TheEverbloom\modules.xml"/>
+<Include file="WoD\TheEverbloom\locales.xml"/>
 
 <Include file="WoD\UpperBlackrockSpire\modules.xml"/>
 <Include file="WoD\UpperBlackrockSpire\locales.xml"/>
@@ -86,8 +112,10 @@
 <Include file="Legion\ArtifactScenarios\locales.xml"/>
 
 <Include file="Legion\AssaultOnVioletHold\modules.xml"/>
+<Include file="Legion\AssaultOnVioletHold\locales.xml"/>
 
 <Include file="Legion\BlackRookHold\modules.xml"/>
+<Include file="Legion\BlackRookHold\locales.xml"/>
 
 <Include file="Legion\CourtOfStars\modules.xml"/>
 <Include file="Legion\CourtOfStars\locales.xml"/>
@@ -96,13 +124,16 @@
 <Include file="Legion\DarkheartThicket\locales.xml"/>
 
 <Include file="Legion\EyeOfAzshara\modules.xml"/>
+<Include file="Legion\EyeOfAzshara\locales.xml"/>
 
 <Include file="Legion\HallsOfValor\modules.xml"/>
 <Include file="Legion\HallsOfValor\locales.xml"/>
 
 <Include file="Legion\Karazhan\modules.xml"/>
+<Include file="Legion\Karazhan\locales.xml"/>
 
 <Include file="Legion\MawOfSouls\modules.xml"/>
+<Include file="Legion\MawOfSouls\locales.xml"/>
 
 <Include file="Legion\NeltharionsLair\modules.xml"/>
 <Include file="Legion\NeltharionsLair\locales.xml"/>
@@ -114,6 +145,8 @@
 <Include file="Legion\VaultOfTheWardens\locales.xml"/>
 
 <Include file="Legion\CathedralOfEternalNight\modules.xml"/>
+<Include file="Legion\CathedralOfEternalNight\locales.xml"/>
 
 <Include file="Legion\SeatOfTheTriumvirate\modules.xml"/>
+<Include file="Legion\SeatOfTheTriumvirate\locales.xml"/>
 </Ui>

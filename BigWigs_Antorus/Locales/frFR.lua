@@ -7,13 +7,37 @@ if L then
 	L.custom_off_always_show_combined = "Toujours afficher les messages Explosion d'âme et Bombe d'âme combinés"
 	L.custom_off_always_show_combined_desc = "Le message combiné ne s'affichera pas si vous êtes vous-même affecté par |cff71d5ffExplosion d'âme|r ou |cff71d5ffBombe d'âme|r. Activez cette option pour toujours avoir le message combiné, même si vous êtes affecté. |cff33ff99Pratique pour les chefs de raid.|r"
 
+	L.fear_help = "Combinaison Peur de Sargeras"
+	L.fear_help_desc = "Fait dire à votre personnage un message spécial si vous subissez |cff71d5ffPeur de Sargeras|r et |cff71d5ffFléau de l'âme|r/|cff71d5ffExplosion d'âme|r/|cff71d5ffBombe d'âme|r/|cff71d5ffCondamnation de Sargeras|r."
+
+	L[257931] = "Peur" -- short for Sargeras' Fear
+	L[248396] = "Fléau" -- short for Soulblight
+	L[251570] = "Bombe" -- short for Soulbomb
+	L[250669] = "Explosion" -- short for Soulburst
+	L[257966] = "Condamnation" -- short for Sentence of Sargeras
+
 	L.stage2_early = "Que la fureur de la mer engloutisse la corruption !"
 	L.stage3_early = "Aucun espoir, mais de la souffrance... et rien que de la souffrance !" -- à vérifier
 
-	L.explosion = "Explosion |2 %s"
-	L.gifts = "Dons : %s (Cieux), %s (Mers)"
+	L.gifts = "Dons : %s (cieux), %s (mers)"
 	L.burst = "|T1778229:15:15:0:0:64:64:4:60:4:60|tExplosion :%s" -- short for Soulburst
-	L.bomb = "|T1778228:15:15:0:0:64:64:4:60:4:60|tBombe :%s" -- short for Soulbomb
+	L.bomb = "|T1778228:15:15:0:0:64:64:4:60:4:60|t|T137002:0|tBombe (%d):%s - " -- short for Soulbomb
+
+	L.sky_say = "{rt5} Crit/Maît" -- short for Critical Strike/Mastery (stats)
+	L.sea_say = "{rt6} Hâte/Poly" -- short for Haste/Versatility (stats)
+
+	L.bomb_explosions = "Explosions des bombes"
+	L.bomb_explosions_desc = "Affiche un délai pour les explosions de Explosion d'âme et Bombe d'âme."
+end
+
+L = BigWigs:NewBossLocale("Aggramar", "frFR")
+if L then
+	L.wave_cleared = "Vague %d terminée !" -- Wave 1 Cleared!
+
+	L.track_ember = "Suivi des Braises de Taeshalach"
+	L.track_ember_desc = "Affiche un message à chaque mort d'une Braise de Taeshalach."
+
+	L.custom_off_ember_marker_desc = "Marque les Braises de Taeshalach avec {rt1}{rt2}{rt3}{rt4}{rt5}. Nécessite d'être assistant ou chef de raid.\n|cff33ff99Mythique : ceci ne marquera que les adds de la vague actuelle qui ont plus de 45 d'énergie.|r"
 end
 
 L = BigWigs:NewBossLocale("The Coven of Shivarra", "frFR")
@@ -75,4 +99,28 @@ if L then
 
 	L.decimationImpact = "Impact Décimation"
 	L.decimationImpact_desc = "Affiche un délai pour l'atterrissage des missiles de Décimation."
+end
+
+L = BigWigs:NewBossLocale("Antorus Trash", "frFR")
+if L then
+	-- [[ Before Garothi Worldbreaker ]] --
+	L.felguard = "Gangregarde antoréen"
+
+	-- [[ After Garothi Worldbreaker ]] --
+	L.flameweaver = "Tisseur de flammes"
+
+	-- [[ Before Antoran High Command ]] --
+	L.ravager = "Ravageur ligelame"
+	L.deconix = "Imperator Deconix"
+	L.clobex = "Clobex"
+
+	-- [[ Before Portal Keeper Hasabel ]] --
+	L.stalker = "Traqueur affamé"
+
+	-- [[ Before Varimathras / Coven of Shivarra ]] --
+	L.tarneth = "Tarneth"
+	L.priestess = "Prêtresse du délire"
+
+	-- [[ Before Aggramar ]] --
+	L.aedis = "Gardien noir Aedis"
 end

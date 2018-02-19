@@ -128,11 +128,13 @@ local announcers = {
 	RavenLord = "Raven Lord",
 	SnakeGod = "Snake God",
 	SpiderQueen = "Spider Queen",
+	VolskayaA = "Volskaya",
 	-- Brawl
 	Athena = "Athena",
 	Arena = "Arena",
 	Commodore = "Commodore",
 	-- Warcraft
+	AlexstraszaA = "Alexstrasza",
 	AnubarakAnnouncer = "Anub'arak",
 	ArthasA = "Arthas",
 	BrightwingA = "Brightwing",
@@ -144,6 +146,7 @@ local announcers = {
 	JainaA = "Jaina",
 	KelthuzadA = "Kel'Thuzad",
 	LiLiA = "Li Li",
+	MaievA = "Maiev",
 	MalfurionA = "Malfurion",
 	MuradinA = "Muradin",
 	MurkyA = "Murky",
@@ -151,19 +154,25 @@ local announcers = {
 	StitchesA = "Stitches",
 	-- StarCraft
 	Abathur = "Abathur",
+	AlarakA = "Alarak",
+	BlazeA = "Blaze",
 	SiegeTankA = "Sgt. Hammer",
 	TassadarA = "Tassadar",
 	TychusA = "Tychus",
 	ZeratulA = "Zeratul",
 	-- Diablo
-	ButcherA = "Butcher",
+	-- ButcherA = "Butcher",
 	DiabloA = "Diablo",
 	WitchDoctorA = "Nazeebo",
 	BarbarianA = "Sonya",
+	TyraelA = "Tyrael",
+	TyraelMechaA = "Mecha Tyrael",
 	DemonHunterA = "Valla",
 	-- Overwatch
 	DvaA = "D.Va",
 	GenjiA = "Genji",
+	HanzoA = "Hanzo",
+	JunkratA = "Junkrat",
 }
 
 function ns.RegisterVoices()
@@ -176,17 +185,15 @@ function ns.RegisterVoices()
 	local path = "Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\%s\\%s_Countdown%dsec00.ogg"
 
 	for k, v in next, announcers do
-		if k ~= "ButcherA" then
-			local id = ("%s: %s: %s"):format(lang, "Heroes of the Storm", v) -- should be using k but I don't want to break everything D;
-			local name = L.key:format(lang, L.heroes, L[k] or v)
-			BigWigsAPI:RegisterCountdown(id, name, {
-				path:format(locale, k, 1),
-				path:format(locale, k, 2),
-				path:format(locale, k, 3),
-				path:format(locale, k, 4),
-				path:format(locale, k, 5),
-			})
-		end
+		local id = ("%s: %s: %s"):format(lang, "Heroes of the Storm", v) -- should be using k but I don't want to break everything D;
+		local name = L.key:format(lang, L.heroes, L[k] or v)
+		BigWigsAPI:RegisterCountdown(id, name, {
+			path:format(locale, k, 1),
+			path:format(locale, k, 2),
+			path:format(locale, k, 3),
+			path:format(locale, k, 4),
+			path:format(locale, k, 5),
+		})
 	end
 
 	-- Special case Butcher (It's just grunts and growls)

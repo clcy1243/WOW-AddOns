@@ -306,8 +306,6 @@ L:SetOptionLocalization{
 	TimeToPhase3			= "Zeige Zeit bis Phase 3",
 	TimeToPhase4			= "Zeige Zeit bis Phase 4",
 	MagneticCore			= "Verkünde Spieler, die Magnetische Kerne plündern",
-	HealthFramePhase4		= "Zeige Lebensanzeige in Phase 4",
-	AutoChangeLootToFFA		= "Plündermodus in Phase 3 automatisch auf 'Jeder gegen jeden' einstellen",
 	WarnBombSpawn			= "Zeige Warnung für Bombenbot",
 	TimerHardmode			= "Zeige Timer für Hard Mode",
 	ShockBlastWarningInP1	= "Spezialwarnung für $spell:63631 in Phase 1",
@@ -321,9 +319,6 @@ L:SetMiscLocalization{
 	MobPhase3		= "Luftkommandoeinheit",
 	YellPull		= "Wir haben nicht viel Zeit, Freunde! Ihr werdet mir dabei helfen, meine neueste und großartigste Kreation zu testen. Bevor Ihr nun Eure Meinung ändert, denkt daran, dass Ihr mir etwas schuldig seid, nach dem Unfug, den Ihr mit dem XT-002 angestellt habt.",
 	YellHardPull	= "Warum habt Ihr das denn jetzt gemacht? Habt Ihr das Schild nicht gesehen, auf dem steht \"DIESEN KNOPF NICHT DRÜCKEN!\"? Wie sollen wir die Tests abschließen, solange der Selbstzerstörungsmechanismus aktiv ist?",
-	YellPhase2		= "WUNDERBAR! Das sind Ergebnisse nach meinem Geschmack! Integrität der Hülle bei 98,9 Prozent! So gut wie keine Dellen! Und weiter geht's.",
-	YellPhase3		= "Danke Euch, Freunde! Eure Anstrengungen haben fantastische Daten geliefert! So, wo habe ich noch gleich... Ah, hier ist…",
-	YellPhase4		= "Vorversuchsphase abgeschlossen. Jetzt kommt der eigentliche Test!",
 	LootMsg			= "([^%s]+).*Hitem:(%d+)"
 }
 
@@ -397,7 +392,6 @@ L:SetOptionLocalization{
 	SpecWarnFervorCast				= "Spezialwarnung, wenn $spell:63138 auf dich gewirkt wird (muss anvisiert oder im Fokus mindestens eines Schlachtzugmitglieds sein)",
 	specWarnBrainPortalSoon			= "Spezialwarnung für nächste Gehirnportale",
 	NextPortal						= "Zeige Zeit bis nächste Gehirnportale",
-	ShowSaraHealth					= "Zeige Lebensanzeige für Sara in Phase 1 (muss anvisiert oder im Fokus mindestens eines Schlachtzugmitglieds sein)",
 	MaladyArrow						= "Zeige DBM-Pfeil, wenn $spell:63881 in deiner Nähe ist"
 }
 

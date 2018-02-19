@@ -13,10 +13,8 @@ mod.toggleOptions = {"timers"}
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
-	L["moduleName"] = "Tribunal of Ages"
-
 	L["enable_trigger"] = "Time to get some answers"
 	L["engage_trigger"] = "Now keep an eye out"
 	L["defeat_trigger"] = "The old magic fingers"
@@ -28,9 +26,6 @@ if L then
 	L["wave"] = "First wave!"--leaving this just incase I revert the warmup
 	L["victory"] = "Victory!"
 end
-L = mod:GetLocale()
-
-mod.displayName = L["moduleName"]
 
 --------------------------------------------------------------------------------
 -- Initialization

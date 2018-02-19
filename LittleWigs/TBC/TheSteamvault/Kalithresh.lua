@@ -14,14 +14,13 @@ mod.toggleOptions = {
 -------------------------------------------------------------------------------
 --  Localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("Little Wigs: Warlord Kalithresh", "enUS", true)
+local L = mod:GetLocale()
 if L then
-	
-	
+	L["engage_message"] = "Engaged - channeling in ~15sec!"
+	L["rage_message"] = "Warlord is channeling!"
+	L["rage_soon"] = "Channeling Soon"
+	L["rage_soonbar"] = "~Possible channeling"
 end
-
-L = LibStub("AceLocale-3.0"):GetLocale("Little Wigs: Warlord Kalithresh")
-mod.locale = L
 
 -------------------------------------------------------------------------------
 --  Initialization

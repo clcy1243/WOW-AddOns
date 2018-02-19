@@ -1,13 +1,7 @@
 if GetLocale() ~= "zhTW" then return end
 
-DBM_CORE_NEED_LOCALS				= "你是否擁有良好的程式開發或語言能力? 如果是的話, DBM需要你的本地化翻譯。如果你能幫忙，拜訪DBM討論區或到DBM Discrod聯繫MysticalOS。"
-DBM_CORE_NEED_LOGS					= "DBM需要Transcriptor (http://www.wowace.com/addons/transcriptor/) 去紀錄此戰鬥紀錄讓插件更加完美。如果你願意幫忙，請使用transcriptor去紀錄這些戰鬥過程然後將記錄發佈在DBM討論區或Discord。"
 DBM_HOW_TO_USE_MOD					= "歡迎使用DBM。在聊天頻道輸入 /dbm 打開設定開始設定。你可以載入特定區域後為任何首領設定你喜歡的特別設置。DBM會在設定你的職業天賦的預設值，但有些選項可能需要調整。"
 DBM_SILENT_REMINDER					= "提醒：DBM正處於無聲模式。"
-
-DBM_FORUMS_MESSAGE					= "發現臭蟲或錯誤的計時器?你希望能讓某些模組有新的警告，計時器或是特別功能?\n拜訪DBM討論區或到DBM Discord伺服器給些回饋。"
-DBM_FORUMS_COPY_URL_DIALOG			= "來拜訪我們新的討論與支援討論區"
-DBM_FORUMS_COPY_URL_DIALOG_NEWS		= "想知道新功能以及如何運作，拜訪我們的討論區"
 
 DBM_CORE_LOAD_MOD_ERROR				= "載入%s模組時發生錯誤：%s"
 DBM_CORE_LOAD_MOD_SUCCESS			= "成功載入%s模組。輸入/dbm 可自訂警告音效和個人化註記。"
@@ -15,11 +9,12 @@ DBM_CORE_LOAD_MOD_COMBAT			= "延遲載入'%s'直到離開戰鬥"
 DBM_CORE_LOAD_GUI_ERROR				= "無法載入圖形介面：%s"
 DBM_CORE_LOAD_GUI_COMBAT			= "圖形介面不能在戰鬥中初始化。圖形介面將在脫離戰鬥後自動開啟，這樣就能夠再次在戰鬥中使用。"
 DBM_CORE_BAD_LOAD					= "DBM偵測到你的此副本的模組在戰鬥中讀取失敗。一旦脫離戰鬥，請立即輸入/console reloadui重新載入。"
-DBM_CORE_LOAD_MOD_VER_MISMATCH		= "%s不能被讀取因為你的DBM核心未達需求，請更新版本。"
+DBM_CORE_LOAD_MOD_VER_MISMATCH		= "%s不能被讀取因為你的DBM-Core未達需求，請更新版本。"
+DBM_CORE_LOAD_MOD_EXP_MISMATCH		= "%s不能被讀取因為這是設計給WoW資料片而目前尚未開放。當資料片開放時，此模組會自動啟用。"
 DBM_CORE_LOAD_MOD_DISABLED			= "%s已安裝但目前停用中。此模組不會載入除非你啟用它。"
 DBM_CORE_LOAD_MOD_DISABLED_PLURAL	= "%s已安裝但目前停用中。這些模組不會載入除非你啟用它們。"
 
-DBM_CORE_WHATS_NEW					= "一些頻道連結的功能已經被移除避免BUG。"
+DBM_COPY_URL_DIALOG					= "複製網址"
 
 --Post Patch 7.1
 DBM_CORE_NO_RANGE					= "距離雷達不能在副本中使用，使用傳統文字距離框架取代"
@@ -122,7 +117,6 @@ DBM_CORE_GENERIC_TIMER_BERSERK		= "狂暴"
 DBM_CORE_OPTION_TIMER_BERSERK		= "為$spell:26662顯示計時器"
 DBM_CORE_GENERIC_TIMER_COMBAT		= "戰鬥開始"
 DBM_CORE_OPTION_TIMER_COMBAT		= "為戰鬥開始顯示計時器"
-DBM_CORE_OPTION_HEALTH_FRAME		= "顯示首領血量框架"
 DBM_CORE_BAD						= "地板技"
 
 DBM_CORE_OPTION_CATEGORY_TIMERS			= "計時器"
@@ -153,13 +147,13 @@ DBM_CORE_VERSIONCHECK_ENTRY_TWO		= "%s：%s (r%d) & %s (r%d)"
 DBM_CORE_VERSIONCHECK_ENTRY_NO_DBM	= "%s：尚未安裝任何團隊首領模組"
 DBM_CORE_VERSIONCHECK_FOOTER		= "找到有%d玩家正在使用DBM且有%d玩家正在使用Bigwigs"
 DBM_CORE_VERSIONCHECK_OUTDATED		= "下列有%d玩家正在使用過期的首領模組:%s"
-DBM_CORE_YOUR_VERSION_OUTDATED		= "你的 Deadly Boss Mod 已經過期。請到http://dev.deadlybossmods.com下載最新版本。"
+DBM_CORE_YOUR_VERSION_OUTDATED		= "你的 Deadly Boss Mod 已經過期。請到http://www.deadlybossmods.com下載最新版本。"
 DBM_CORE_VOICE_PACK_OUTDATED		= "你所選的DBM語音包可能缺少一些DBM支援的的語音。部分警告音效仍然會使用預設音效播放。請下載新版本的語音包或是聯絡語音包作者更新並加入缺少的語音。"
 DBM_CORE_VOICE_MISSING				= "DBM找不到你所選取的語音包。你的語音包選項已經被重置為'None'。請確定你的語音包已正確的安裝與啟用。"
 DBM_CORE_VOICE_DISABLED				= "你的語音包已安裝但是尚未啟用。如果你想使用語音包，請確定語言包已在語音警告中被選取，或是刪除不使用的語音包去隱藏此訊息。"
 DBM_CORE_VOICE_COUNT_MISSING		= "所選取的語音/倒數語音包%d找不到倒數語音。設定已被重置回預設值。"
 
-DBM_CORE_UPDATEREMINDER_HEADER			= "你的Deadly Boss Mod已經過期。\n你可以在Curse網站或是wowinterface網站以及此網址下載到新版本%s(r%d)："
+DBM_CORE_UPDATEREMINDER_HEADER			= "你的Deadly Boss Mod已經過期。\n你可以在Curse/Twitch網站或是WOWI網站以及deadlybossmods.com下載到新版本%s(r%d)："
 DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "你的ALPHA版本Deadly Boss Mods已經過期。\n 你至少落後%d個測試版本。建議DBM使用者使用最新的ALPHA或最新的穩定版本。過期的alpha版本可能會有效能低落或未完成的功能。"
 DBM_CORE_UPDATEREMINDER_FOOTER			= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製下載網址到剪貼簿。"
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "按下" .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  "：複製網址到剪貼簿。"
@@ -243,8 +237,6 @@ DBM_CORE_TIMER_USAGE	= {
 }
 
 DBM_ERROR_NO_PERMISSION				= "無權進行此操作。"
-
-DBM_CORE_BOSSHEALTH_HIDE_FRAME		= "關閉血量框架"
 
 --Common Locals
 DBM_NEXT							= "下一次%s"
@@ -451,13 +443,15 @@ DBM_CORE_AUTO_YELL_OPTION_TEXT.fade		= "當$spell:%s正消退時大喊(倒數和
 DBM_CORE_AUTO_YELL_OPTION_TEXT.shortfade	= "當$spell:%s正消退時大喊(倒數)"
 DBM_CORE_AUTO_YELL_OPTION_TEXT.iconfade	= "當$spell:%s正消退時大喊(倒數和圖示)"
 DBM_CORE_AUTO_YELL_OPTION_TEXT.position	= "當你中了$spell:%s時大喊(位置)"
+DBM_CORE_AUTO_YELL_OPTION_TEXT.combo	= "當你同時中了$spell:%s和其他技能時大喊(自訂文字)"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.shortyell	= "%s"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.yell	= "" .. UnitName("player") .. "中了%s"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.count	= "" .. UnitName("player") .. "中了%s(%%d)"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.fade	= "%s在%%d秒後消退!"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.shortfade	= "%%d"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.iconfade	= "{rt%%2$d}%%1$d"
-DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.position = "" .. UnitName("player") .. "中了%s(%%s)".."{rt%%d}"--Arg order is going to be a problem. any way to word differently for playername at end?
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.position = "{rt%%3$d}"..UnitName("player").."{rt%%3$d}中了%1$s %%2$s"--Arg order is going to be a problem. any way to word differently for playername at end?
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.combo	= "%s和%%s"
 DBM_CORE_AUTO_YELL_CUSTOM_FADE			= "%s消退了"
 DBM_CORE_AUTO_HUD_OPTION_TEXT			= "為$spell:%s顯示HudMap(已退役)"
 DBM_CORE_AUTO_HUD_OPTION_TEXT_MULTI		= "為不同的機制顯示HudMap(已退役)"

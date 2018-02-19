@@ -19,7 +19,11 @@ local shardCount = 1
 --------------------------------------------------------------------------------
 -- Localization
 --
+
 local L = mod:GetLocale()
+if L then
+	L.name = "Nightbane"
+end
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -42,6 +46,10 @@ function mod:GetOptions()
 		[228834] = CL.stage:format(2),
 		[228837] = CL.stage:format(3),
 	}
+end
+
+function mod:OnRegister()
+	self.displayName = L.name
 end
 
 function mod:OnBossEnable()
@@ -153,9 +161,7 @@ function mod:IgniteSoul(args)
 		igniteSoulOnMe = true
 		self:Say(args.spellId)
 		self:Flash(args.spellId)
-		self:ScheduleTimer("Say", 6, args.spellId, 3, true)
-		self:ScheduleTimer("Say", 7, args.spellId, 2, true)
-		self:ScheduleTimer("Say", 8, args.spellId, 1, true)
+		self:SayCountdown(args.spellId, 9)
 	end
 	self:Bar(args.spellId, 25.5)
 end
@@ -163,7 +169,9 @@ end
 function mod:IgniteSoulRemoved(args)
 	if self:Me(args.destGUID) then
 		igniteSoulOnMe = nil
+		self:CancelSayCountdown(args.spellId)
 	end
+	self:StopBar(args.spellName, args.destName)
 end
 
 function mod:ConcentratedPower(args)

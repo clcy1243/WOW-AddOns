@@ -10,12 +10,10 @@ if not L then return end
 -- L[" you are now the Master Looter and RCLootCouncil is now handling looting."] = ""
 --Translation missing 
 -- L["&p was awarded with &i for &r!"] = ""
---Translation missing 
--- L["2 Piece"] = ""
+L["2 Piece"] = "2 Pezzi"
 --Translation missing 
 -- L["2nd Tier Piece"] = ""
---Translation missing 
--- L["4 Piece"] = ""
+L["4 Piece"] = "4 Pezzi"
 --Translation missing 
 -- L["4th Tier Piece"] = ""
 --Translation missing 
@@ -68,6 +66,8 @@ if not L then return end
 -- L["Always use RCLootCouncil when I'm Master Looter"] = ""
 --Translation missing 
 -- L["Always use when leader"] = ""
+--Translation missing 
+-- L["always_show_tooltip_howto"] = ""
 --Translation missing 
 -- L["Announce Awards"] = ""
 --Translation missing 
@@ -137,6 +137,8 @@ if not L then return end
 --Translation missing 
 -- L["Auto pass BoE"] = ""
 --Translation missing 
+-- L["Auto Pass Trinkets"] = ""
+--Translation missing 
 -- L["Auto Start"] = ""
 --Translation missing 
 -- L["auto_award_desc"] = ""
@@ -154,6 +156,8 @@ if not L then return end
 -- L["auto_pass_boe_desc"] = ""
 --Translation missing 
 -- L["auto_pass_desc"] = ""
+--Translation missing 
+-- L["auto_pass_trinket_desc"] = ""
 --Translation missing 
 -- L["auto_start_desc"] = ""
 --Translation missing 
@@ -244,8 +248,6 @@ if not L then return end
 -- L["chat tVersion string"] = ""
 --Translation missing 
 -- L["chat version String"] = ""
---Translation missing 
--- L["chat_commands"] = ""
 --Translation missing 
 -- L["chat_commands_add"] = ""
 --Translation missing 
@@ -462,8 +464,7 @@ if not L then return end
 -- L["Lower Quality Limit"] = ""
 --Translation missing 
 -- L["lower_quality_limit_desc"] = ""
---Translation missing 
--- L["Mainspec/Need"] = ""
+L["Mainspec/Need"] = "Necessità"
 --Translation missing 
 -- L["Master Looter"] = ""
 --Translation missing 
@@ -476,8 +477,7 @@ if not L then return end
 -- L["message_desc"] = ""
 --Translation missing 
 -- L["Minimize in combat"] = ""
---Translation missing 
--- L["Minor Upgrade"] = ""
+L["Minor Upgrade"] = "Incremento"
 --Translation missing 
 -- L["ML sees voting"] = ""
 --Translation missing 
@@ -550,8 +550,7 @@ if not L then return end
 -- L["observe_desc"] = ""
 --Translation missing 
 -- L["Offline or RCLootCouncil not installed"] = ""
---Translation missing 
--- L["Offspec/Greed"] = ""
+L["Offspec/Greed"] = "Avidità"
 --Translation missing 
 -- L["Only use in raids"] = ""
 --Translation missing 
@@ -600,8 +599,7 @@ if not L then return end
 -- L["Raw lua output. Doesn't work well with date selection."] = ""
 --Translation missing 
 -- L["RCLootCouncil - Synchronizer"] = ""
---Translation missing 
--- L["RCLootCouncil Loot Frame"] = ""
+L["RCLootCouncil Loot Frame"] = "RCLootCouncil Finestra Bottino"
 --Translation missing 
 -- L["RCLootCouncil Loot History"] = ""
 --Translation missing 
@@ -708,6 +706,8 @@ if not L then return end
 -- L["Skins"] = ""
 --Translation missing 
 -- L["skins_description"] = ""
+--Translation missing 
+-- L["Socket"] = ""
 --Translation missing 
 -- L["Something went wrong :'("] = ""
 --Translation missing 

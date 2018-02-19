@@ -2,7 +2,7 @@
 ## Interface: 70300
 ## Notes: An RCLootCouncil module for more advanced utilities.
 ## Title: RCLootCouncil - Extra Utilities
-## Version: 0.6.1
+## Version: 0.6.2
 ## Dependencies: RCLootCouncil
 
 Locale\Locales.xml

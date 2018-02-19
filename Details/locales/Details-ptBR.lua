@@ -85,6 +85,8 @@ L["STRING_CLOSEALL"] = "Todas as janelas estão fechadas, digite '/details mostr
 L["STRING_COLOR"] = "Cor"
 L["STRING_COMMAND_LIST"] = "lista de comandos"
 L["STRING_COOLTIP_NOOPTIONS"] = "não há opções"
+--Translation missing 
+-- L["STRING_CREATEAURA"] = ""
 L["STRING_CRITICAL_HITS"] = "Golpes Críticos"
 L["STRING_CRITICAL_ONLY"] = "critico"
 L["STRING_CURRENT"] = "Atual"
@@ -1573,6 +1575,8 @@ L["STRING_SLASH_WIPECONFIG_DESC"] = "faz a reinstalação do addon limpando toda
 L["STRING_SLASH_WORLDBOSS"] = "worldboss"
 L["STRING_SLASH_WORLDBOSS_DESC"] = "executa uma macro mostrando quais 'world boss' você matou esta semana."
 L["STRING_SPELL_INTERRUPTED"] = "Magias Interrompidas"
+--Translation missing 
+-- L["STRING_SPELLLIST"] = ""
 L["STRING_SPELLS"] = "Habilidades"
 L["STRING_SPIRIT_LINK_TOTEM"] = "Troca de Vida"
 L["STRING_SPIRIT_LINK_TOTEM_DESC"] = [=[Quantidade de vida trocada entre
@@ -1580,6 +1584,8 @@ jogadores dentro do círculo do totem.
 
 Esta cura não é adicionada ao
 total curado do jogador.]=]
+--Translation missing 
+-- L["STRING_STATISTICS"] = ""
 L["STRING_STATUSBAR_NOOPTIONS"] = "Não há opcoes para esta ferramenta."
 L["STRING_SWITCH_CLICKME"] = "clique-me"
 L["STRING_SWITCH_SELECTMSG"] = "Selecione o display para o atalho #%d."

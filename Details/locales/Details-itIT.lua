@@ -170,6 +170,8 @@ if not L then return end
 --Translation missing 
 -- L["STRING_COOLTIP_NOOPTIONS"] = ""
 --Translation missing 
+-- L["STRING_CREATEAURA"] = ""
+--Translation missing 
 -- L["STRING_CRITICAL_HITS"] = ""
 --Translation missing 
 -- L["STRING_CRITICAL_ONLY"] = ""
@@ -598,9 +600,9 @@ if not L then return end
 --Translation missing 
 -- L["STRING_MELEE"] = ""
 L["STRING_MEMORY_ALERT_BUTTON"] = "Ho capito"
-L["STRING_MEMORY_ALERT_TEXT1"] = "Details! utilizza un sacco di memoria, ma, |cFFFF8800contrariamente alla credenza popolare|r, l'utilizzo della memoria da addons |cFFFF8800non influisce|r nel nulla le prestazioni del gioco o il vostro FPS."
-L["STRING_MEMORY_ALERT_TEXT2"] = "Quindi, se vedete Details! utilizzando grandi quantità di memoria, non fatevi prendere dal panico :D |cFFFF8800Va tutto bene|r, e, una parte di questa memoria è anche |cFFFF8800utilizzato in cache|r per rendere l'addon ancora più veloce."
-L["STRING_MEMORY_ALERT_TEXT3"] = "Tuttavia, se è il vostro desiderio di conoscere |cFFFF8800che addons sono piu 'pesanti'|r o che sono in diminuzione più il vostro FPS, installare l'addon: '|cFFFFFF00AddOns Cpu Usage|r'."
+L["STRING_MEMORY_ALERT_TEXT1"] = "Details! utilizza un sacco di memoria, ma, |cFFFF8800contrariamente alla credenza popolare|r, l'utilizzo della memoria da addons |cFFFF8800non influisce|r nelle prestazioni del gioco o gli FPS."
+L["STRING_MEMORY_ALERT_TEXT2"] = "Quindi, se vedete Details! utilizzare grandi quantità di memoria, non fatevi prendere dal panico :D |cFFFF8800Va tutto bene! |r, e una parte di questa memoria è anche |cFFFF8800utilizzato in cache |r per rendere l'addon ancora più veloce."
+L["STRING_MEMORY_ALERT_TEXT3"] = "Tuttavia, se è vorreste conoscere |cFFFF8800 quali addons influiscono maggiormente|r o che diminuiscono gli FPS, installate l'addon: '|cFFFFFF00AddOns Cpu Usage|r'."
 L["STRING_MEMORY_ALERT_TITLE"] = "Si prega di leggere con attenzione!"
 --Translation missing 
 -- L["STRING_MENU_CLOSE_INSTANCE"] = ""
@@ -2471,11 +2473,15 @@ L["STRING_MINITUTORIAL_OPTIONS_PANEL6"] = "Selezionare qui che finestra che si d
 --Translation missing 
 -- L["STRING_SPELL_INTERRUPTED"] = ""
 --Translation missing 
+-- L["STRING_SPELLLIST"] = ""
+--Translation missing 
 -- L["STRING_SPELLS"] = ""
 --Translation missing 
 -- L["STRING_SPIRIT_LINK_TOTEM"] = ""
 --Translation missing 
 -- L["STRING_SPIRIT_LINK_TOTEM_DESC"] = ""
+--Translation missing 
+-- L["STRING_STATISTICS"] = ""
 --Translation missing 
 -- L["STRING_STATUSBAR_NOOPTIONS"] = ""
 --Translation missing 

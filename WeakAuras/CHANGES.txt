@@ -1,26 +1,12 @@
-tag b21382c1c26786ef0008e8ba74958be18c76e3dc 2.4.25
+tag 05f0c599f3db40175c2818c0cea61be86a7994b4 2.5.6
 Author:	Benjamin Staneck <staneck@gmail.com>
-Date:	Sat Oct 28 13:08:24 2017 +0200
+Date:	Tue Feb 6 10:26:46 2018 +0100
 
-commit 5053c3e68ae96923b6fea743f4903b89e9661e14
-Author: Benjamin Staneck <staneck@gmail.com>
-Date:   Sat Oct 28 13:08:00 2017 +0200
+commit 85dcdd2e89c791bb021d7195d51a8ee2fffe99c5
+Author: emptyrivers <emptyrivers@users.noreply.github.com>
+Date:   Tue Feb 6 08:43:44 2018 +0100
 
-    Revert "Observe squelch_actions for Sounds played from Conditions"
+    Fix Lua errors on Login with certain locales
     
-    This reverts commit d79f1d912332a6b939e97c8d792945be20bb22df.
-
-commit ca1a1b5822b8acdb02bd1103f5fd4ab008f96a59
-Author: Benjamin Staneck <staneck@gmail.com>
-Date:   Sat Oct 28 13:08:00 2017 +0200
-
-    Revert "Observe squelch_actions for Sounds played from Conditions"
-    
-    This reverts commit d79f1d912332a6b939e97c8d792945be20bb22df.
-
-commit 542c2af3832e975fd9aedfd2340e2dfbb234a929
-Author: Benjamin Staneck <staneck@gmail.com>
-Date:   Fri Oct 27 17:23:19 2017 +0200
-
-    Actually load the esMX language files
+    Ticket-Nr: 1089
 

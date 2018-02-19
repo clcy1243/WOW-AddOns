@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(817, "DBM-ThroneofThunder", nil, 362)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 72 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 114 $"):sub(12, -3))
 mod:SetCreatureID(68078, 68079, 68080, 68081)--Ro'shak 68079, Quet'zal 68080, Dam'ren 68081, Iron Qon 68078
 mod:SetEncounterID(1559)
 mod:SetMainBossID(68078)
@@ -80,32 +80,12 @@ mod:AddBoolOption("InfoFrame")
 local Roshak = select(2, EJ_GetCreatureInfo(2, 817))
 local Quetzal = select(2, EJ_GetCreatureInfo(3, 817))
 local Damren = select(2, EJ_GetCreatureInfo(4, 817))
-local arcingName = GetSpellInfo(136193)
+local arcingName = DBM:GetSpellInfo(136193)
 mod.vb.phase = 1
 mod.vb.fistSmashCount = 0
 local spearSpecWarnFired = false
 --Spear/arcing methods called VERY often, so cache these globals locally
 local UnitDetailedThreatSituation, UnitExists, UnitClass, UnitDebuff = UnitDetailedThreatSituation, UnitExists, UnitClass, UnitDebuff
-
-local function updateHealthFrame()
-	if DBM.BossHealth:IsShown() then
-		DBM.BossHealth:Clear()
-		if mod.vb.phase == 1 then
-			DBM.BossHealth:AddBoss(68079, Roshak)
-		elseif mod.vb.phase == 2 then
-			DBM.BossHealth:AddBoss(68080, Quetzal)
-		elseif mod.vb.phase == 3 then
-			DBM.BossHealth:AddBoss(68081, Damren)
-		elseif mod.vb.phase == 4 then
-			DBM.BossHealth:AddBoss(68078, L.name)
-			if mod:IsHeroic() then
-				DBM.BossHealth:AddBoss(68081, Damren)
-				DBM.BossHealth:AddBoss(68080, Quetzal)
-				DBM.BossHealth:AddBoss(68079, Roshak)
-			end
-		end
-	end
-end
 
 --Custom, don't use IsTanking prototype here
 local function notEligable(unit)
@@ -181,9 +161,9 @@ local function checkArcing()
 end
 
 function mod:OnCombatStart(delay)
+	arcingName = DBM:GetSpellInfo(136193)
 	self.vb.phase = 1
 	self.vb.fistSmashCount = 0
-	updateHealthFrame()
 	warnPhase1:Show()
 	timerThrowSpearCD:Start(-delay)
 	self:Schedule(25, checkSpear)
@@ -198,8 +178,8 @@ function mod:OnCombatStart(delay)
 		timerWhirlingWindsCD:Start(15-delay)
 		timerLightningStormCD:Start(22-delay)
 		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader(GetSpellInfo(136193))
-			DBM.InfoFrame:Show(5, "playerbaddebuff", 136193)
+			DBM.InfoFrame:SetHeader(arcingName)
+			DBM.InfoFrame:Show(5, "playerbaddebuff", arcingName)
 		end
 	end
 	berserkTimer:Start(-delay)
@@ -355,7 +335,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			end
 			--Only one log, but i looks like spear cd from phase 1 remains intact
 			self.vb.phase = 2
-			updateHealthFrame()
 			timerUnleashedFlameCD:Cancel()
 			timerMoltenOverload:Cancel()
 			timerWhirlingWindsCD:Cancel()
@@ -372,7 +351,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			timerWindStormCD:Start(52)
 		elseif cid == 68080 then--Quet'zal
 			self.vb.phase = 3
-			updateHealthFrame()
 			timerLightningStormCD:Cancel()
 			timerWindStorm:Cancel()
 			timerWindStormCD:Cancel()
@@ -386,7 +364,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		elseif cid == 68081 then--Dam'ren
 			--confirmed, dam'ren's abilities do NOT reset in phase 4, cds from phase 3 carry over.
 			self.vb.phase = 4
-			updateHealthFrame()
 			timerImpaleCD:Cancel()
 			warnPhase4:Show()
 			timerRisingAngerCD:Start(15)
@@ -397,7 +374,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			end
 			if self.Options.InfoFrame then
 				DBM.InfoFrame:SetHeader(arcingName)
-				DBM.InfoFrame:Show(5, "playerbaddebuff", 136193)
+				DBM.InfoFrame:Show(5, "playerbaddebuff", arcingName)
 			end
 		end
 	elseif spellId == 139172 then--Whirling Winds (Phase 1 Heroic).
@@ -434,18 +411,17 @@ function mod:UNIT_DIED(args)
 	if cid == 68079 then--Ro'shak
 		timerUnleashedFlameCD:Cancel()
 		timerMoltenOverload:Cancel()
-		if self:IsHeroic() and DBM.BossHealth:IsShown() then--In heroic, all mounts die in phase 4.
-			DBM.BossHealth:RemoveBoss(cid)
+		if self:IsHeroic() then--In heroic, all mounts die in phase 4.
+
 		else
 			if self.Options.RangeFrame then
 				DBM.RangeCheck:Show(10, nil, nil, 1)--Switch range frame back to 1. Range is assumed 10, no spell info
 			end
 			if self.Options.InfoFrame and not self:IsDifficulty("lfr25") then
 				DBM.InfoFrame:SetHeader(arcingName)
-				DBM.InfoFrame:Show(5, "playerbaddebuff", 136193)
+				DBM.InfoFrame:Show(5, "playerbaddebuff", arcingName)
 			end
 			self.vb.phase = 2
-			updateHealthFrame()
 			timerImpaleCD:Cancel()
 			timerLightningStormCD:Start(17)
 			self:Unschedule(checkSpear)
@@ -468,11 +444,10 @@ function mod:UNIT_DIED(args)
 				DBM.RangeCheck:Hide()
 			end
 		end
-		if self:IsHeroic() and DBM.BossHealth:IsShown() then--In heroic, all mounts die in phase 4.
-			DBM.BossHealth:RemoveBoss(cid)
+		if self:IsHeroic() then--In heroic, all mounts die in phase 4.
+
 		else
 			self.vb.phase = 3
-			updateHealthFrame()
 			timerImpaleCD:Cancel()
 			warnPhase3:Show()
 			timerDeadZoneCD:Start(6)
@@ -483,11 +458,10 @@ function mod:UNIT_DIED(args)
 	elseif cid == 68081 then--Dam'ren
 		timerDeadZoneCD:Cancel()
 		timerFreezeCD:Cancel()
-		if self:IsHeroic() and DBM.BossHealth:IsShown() then--In heroic, all mounts die in phase 4.
-			DBM.BossHealth:RemoveBoss(cid)
+		if self:IsHeroic() then--In heroic, all mounts die in phase 4.
+
 		else
 			self.vb.phase = 4
-			updateHealthFrame()
 			timerImpaleCD:Cancel()
 			timerThrowSpearCD:Cancel()
 			self:Unschedule(checkSpear)

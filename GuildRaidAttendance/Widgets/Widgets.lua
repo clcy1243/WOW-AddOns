@@ -58,7 +58,7 @@ function GRA:CreateFrame(title, name, parent, width, height)
 	return f
 end
 
-function GRA:CreateMovableFrame(title, name, width, height, font, clampedToScreen, frameStrata, frameLevel)
+function GRA:CreateMovableFrame(title, name, width, height, font, frameStrata, frameLevel)
 	local f = CreateFrame("Frame", name)
 	f:EnableMouse(true)
 	-- f:SetResizable(false)
@@ -66,19 +66,19 @@ function GRA:CreateMovableFrame(title, name, width, height, font, clampedToScree
 	f:SetUserPlaced(true)
 	f:SetFrameStrata(frameStrata or "HIGH")
 	f:SetFrameLevel(frameLevel or 1)
-	f:SetClampedToScreen(clampedToScreen and true)
+	f:SetClampedToScreen(true)
 	f:SetSize(width, height)
 	f:SetPoint("CENTER")
 	f:Hide()
 	LPP:PixelPerfectScale(f)
-	GRA:StylizeFrame(f, nil, nil, {32, -11, -11, 11})
+	GRA:StylizeFrame(f, nil, nil, {31, -10, -10, 10})
 	-- table.insert(UISpecialFrames, name) -- make it closable with the Escape key
 	
 	-- header
 	local header = CreateFrame("Frame", nil, f)
 	f.header = header
 	header:EnableMouse(true)
-	header:SetClampedToScreen(clampedToScreen and true)
+	header:SetClampedToScreen(true)
 	header:RegisterForDrag("LeftButton")
 	header:SetScript("OnDragStart", function() f:StartMoving() end)
 	header:SetScript("OnDragStop", function() f:StopMovingOrSizing() end)
@@ -143,8 +143,8 @@ function GRA:CreateEditBox(parent, width, height, isNumeric, font)
 	eb:SetScript("OnEnterPressed", function() eb:ClearFocus() end)
 	eb:SetScript("OnEditFocusGained", function() eb:HighlightText() end)
 	eb:SetScript("OnEditFocusLost", function() eb:HighlightText(0, 0) end)
-	-- eb:SetScript("OnDisable", function() eb:SetTextColor(.4, .4, .4, 1) end)
-	-- eb:SetScript("OnEnable", function() eb:SetTextColor(1, 1, 1, 1) end)
+	eb:SetScript("OnDisable", function() eb:SetTextColor(.7, .7, .7, 1) end)
+	eb:SetScript("OnEnable", function() eb:SetTextColor(1, 1, 1, 1) end)
 
 	return eb
 end
@@ -182,6 +182,9 @@ function GRA:CreateButton(parent, text, buttonColor, size, font, noBorder, ...)
 	elseif buttonColor == "chartreuse" then
 		color = {.5, 1, 0, .6}
 		hoverColor = {.5, 1, 0, .8}
+	elseif buttonColor == "magenta" then
+		color = {.6, .1, .6, .6}
+		hoverColor = {.6, .1, .6, 1}
 	elseif buttonColor == "transparent" then -- drop down item
 		color = {0, 0, 0, 0}
 		hoverColor = {.5, 1, 0, .7}
@@ -191,15 +194,17 @@ function GRA:CreateButton(parent, text, buttonColor, size, font, noBorder, ...)
 	elseif buttonColor == "transparent-light" then -- list button
 		color = {0, 0, 0, 0}
 		hoverColor = {.5, 1, 0, .5}
-	elseif buttonColor == "GP" then
+	elseif buttonColor == "Credit" then
 		color = {.1, .6, .95, .4}
 		hoverColor = {.1, .6, .95, .65}
-	elseif buttonColor == "EP" then
+	elseif buttonColor == "Award" then
 		color = {.1, .95, .2, .4}
 		hoverColor = {.1, .95, .2, .65}
 	elseif buttonColor == "Penalize" then
 		color = {.95, .17, .2, .4}
 		hoverColor = {.95, .17, .2, .65}
+	elseif buttonColor == "none" then
+		color = {0, 0, 0, 0}
 	else
 		color = {.1, .1, .1, .7}
 		hoverColor = {.5, 1, 0, .6}
@@ -243,8 +248,10 @@ function GRA:CreateButton(parent, text, buttonColor, size, font, noBorder, ...)
     b:SetNormalFontObject(font)
 	b:SetHighlightFontObject(font)
 	
-	b:SetScript("OnEnter", function(self) self:SetBackdropColor(unpack(hoverColor)) end)
-	b:SetScript("OnLeave", function(self) self:SetBackdropColor(unpack(color)) end)
+	if buttonColor ~= "none" then
+		b:SetScript("OnEnter", function(self) self:SetBackdropColor(unpack(hoverColor)) end)
+		b:SetScript("OnLeave", function(self) self:SetBackdropColor(unpack(color)) end)
+	end
 	
 	-- click sound
 	b:SetScript("PostClick", function() PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON) end)
@@ -539,12 +546,21 @@ function GRA:CreateGrid(frame, width, text, color, highlight, ...)
 	grid:SetPushedTextOffset(0, 0)
 	grid:SetNormalFontObject("GRA_FONT_SMALL")
 
+	function grid:Highlight()
+		-- save current color
+		grid.bColor = {grid:GetBackdropColor()} 
+		grid:SetBackdropColor(grid.bColor[1], grid.bColor[2], grid.bColor[3], .6)
+	end
+		
+	function grid:Unhighlight()
+		grid:SetBackdropColor(unpack(grid.bColor))
+	end
+
 	if highlight then -- highlight onMouseOver
 		grid:SetScript("OnEnter", function() 
-			grid.bColor = {grid:GetBackdropColor()} 
-			grid:SetBackdropColor(grid.bColor[1], grid.bColor[2], grid.bColor[3], .6)
+			grid:Highlight()
 		end)
-		grid:SetScript("OnLeave", function() grid:SetBackdropColor(unpack(grid.bColor)) end)
+		grid:SetScript("OnLeave", function() grid:Unhighlight() end)
 	end
 
 	if frame:GetObjectType() == "Button" then -- used for row highlight
@@ -555,27 +571,46 @@ function GRA:CreateGrid(frame, width, text, color, highlight, ...)
 		function grid:SetAttendance(att)
 			if att == nil then
 				grid:SetBackdropColor(.7, .7, .7, .1)
+			elseif att == "IGNORED" then
+				grid:SetBackdropColor(.7, .7, .7, .1)
+				-- local tex = grid:CreateTexture()
+				-- tex:SetColorTexture(0, 0, 0, 1)
+				-- tex:SetSize(10, 1)
+				-- tex:SetPoint("CENTER")
 			elseif att == "PRESENT" then
 				grid:SetBackdropColor(0, 1, 0, .2)
-			elseif att == "LATE" then
+			elseif att == "PARTLY" then
 				grid:SetBackdropColor(1, 1, 0, .2)
-			elseif att == "" then -- absent
+			elseif att == "ABSENT" then
 				grid:SetBackdropColor(1, 0, 0, .2)
 			else  -- on leave
 				grid:SetBackdropColor(1, 0, 1, .2)
 			end
 		end
+
+		grid.noteMark = grid:CreateTexture()
+		grid.noteMark:SetTexture([[Interface\AddOns\GuildRaidAttendance\Media\mark]])
+		grid.noteMark:SetAlpha(.7)
+		grid.noteMark:SetPoint("TOPRIGHT")
+		grid.noteMark:Hide()
+		function grid:ShowNoteMark(s)
+			if s then
+				grid.noteMark:Show()
+			else
+				grid.noteMark:Hide()
+			end
+		end
 	end
 
-	grid.onEnter = grid:GetScript("OnEnter")
-	grid.onLeave = grid:GetScript("OnLeave")
+	-- grid.onEnter = grid:GetScript("OnEnter")
+	-- grid.onLeave = grid:GetScript("OnLeave")
 
 	SetTooltip(grid, 0, 0, ...)
 
 	return grid
 end
 
-function GRA:CreateRow(frame, width, nameText, onDoubleClick)
+function GRA:CreateRow(frame, width, mainName, onDoubleClick)
 	local row = CreateFrame("Button", nil, frame)
 	row:SetFrameLevel(5)
 	row:SetSize(width, gra.size.height)
@@ -583,17 +618,24 @@ function GRA:CreateRow(frame, width, nameText, onDoubleClick)
 	row:SetBackdropColor(0, 0, 0, 0) 
     row:SetBackdropBorderColor(0, 0, 0, 1)
 	
-	row.nameGrid = GRA:CreateGrid(row, gra.size.grid_name, nameText, {.7,.7,.7,.1})
+	row.nameGrid = GRA:CreateGrid(row, gra.size.grid_name, GRA:GetClassColoredName(mainName), {.7,.7,.7,.1})
 	row.nameGrid:SetBackdropBorderColor(0, 0, 0, 1)
 	row.nameGrid:GetFontString():ClearAllPoints()
-	row.nameGrid:GetFontString():SetPoint("LEFT", 5, 0)
+	row.nameGrid:GetFontString():SetPoint("LEFT", 20, 0)
 	row.nameGrid:SetNormalFontObject("GRA_FONT_TEXT")
-	row.nameGrid:SetPoint("LEFT")
+	row.nameGrid:SetPoint("TOPLEFT")
 	row.nameGrid:SetScript("OnDoubleClick", function(self, button)
 		if button == "LeftButton" and onDoubleClick then
 			onDoubleClick()
 		end
 	end)
+
+	row.primaryRole = GRA:CreateButton(row.nameGrid, "", "none", {16, 16})
+	row.primaryRole:SetAlpha(.7)
+	row.primaryRole:SetPoint("LEFT", 2, 0)
+	row.primaryRole:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
+	row.primaryRole:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
+	row.primaryRole:SetNormalTexture([[Interface\AddOns\GuildRaidAttendance\Media\Roles\]] .. (_G[GRA_R_Roster][mainName]["role"] or "DPS"))
 
 	-- ep
 	row.epGrid = GRA:CreateGrid(row, gra.size.grid_others, " ", {.7,.7,.7,.1})
@@ -609,6 +651,21 @@ function GRA:CreateRow(frame, width, nameText, onDoubleClick)
 	row.prGrid = GRA:CreateGrid(row, gra.size.grid_others, " ", {.7,.7,.7,.1})
 	row.prGrid:SetBackdropBorderColor(0, 0, 0, 1)
 	row.prGrid:SetNormalFontObject("GRA_FONT_GRID")
+
+	-- current
+	row.currentGrid = GRA:CreateGrid(row, gra.size.grid_others, " ", {.7,.7,.7,.1})
+	row.currentGrid:SetBackdropBorderColor(0, 0, 0, 1)
+	row.currentGrid:SetNormalFontObject("GRA_FONT_GRID")
+
+	-- spent
+	row.spentGrid = GRA:CreateGrid(row, gra.size.grid_others, " ", {.7,.7,.7,.1})
+	row.spentGrid:SetBackdropBorderColor(0, 0, 0, 1)
+	row.spentGrid:SetNormalFontObject("GRA_FONT_GRID")
+
+	-- total
+	row.totalGrid = GRA:CreateGrid(row, gra.size.grid_others, " ", {.7,.7,.7,.1})
+	row.totalGrid:SetBackdropBorderColor(0, 0, 0, 1)
+	row.totalGrid:SetNormalFontObject("GRA_FONT_GRID")
 	
 	-- ar 30
 	row.ar30Grid = GRA:CreateGrid(row, gra.size.grid_others, " ", {.7,.7,.7,.1}, true)
@@ -634,22 +691,41 @@ function GRA:CreateRow(frame, width, nameText, onDoubleClick)
 	local lastColumn
 	function row:SetColumns()
 		lastColumn = row.nameGrid
-		if _G[GRA_R_Config]["system"] == "EPGP" then
-			row.epGrid:SetPoint("LEFT", row.nameGrid, "RIGHT", -1, 0)
+		if _G[GRA_R_Config]["raidInfo"]["system"] == "EPGP" then
+			row.epGrid:SetPoint("TOPLEFT", row.nameGrid, "TOPRIGHT", -1, 0)
 			row.epGrid:Show()
-			row.gpGrid:SetPoint("LEFT", row.epGrid, "RIGHT", -1, 0)
+			row.gpGrid:SetPoint("TOPLEFT", row.epGrid, "TOPRIGHT", -1, 0)
 			row.gpGrid:Show()
-			row.prGrid:SetPoint("LEFT", row.gpGrid, "RIGHT", -1, 0)
+			row.prGrid:SetPoint("TOPLEFT", row.gpGrid, "TOPRIGHT", -1, 0)
 			row.prGrid:Show()
 			lastColumn = row.prGrid
+
+			row.currentGrid:Hide()
+			row.spentGrid:Hide()
+			row.totalGrid:Hide()
+		elseif _G[GRA_R_Config]["raidInfo"]["system"] == "DKP" then
+			row.currentGrid:SetPoint("TOPLEFT", row.nameGrid, "TOPRIGHT", -1, 0)
+			row.currentGrid:Show()
+			row.spentGrid:SetPoint("TOPLEFT", row.currentGrid, "TOPRIGHT", -1, 0)
+			row.spentGrid:Show()
+			row.totalGrid:SetPoint("TOPLEFT", row.spentGrid, "TOPRIGHT", -1, 0)
+			row.totalGrid:Show()
+			lastColumn = row.totalGrid
+
+			row.epGrid:Hide()
+			row.gpGrid:Hide()
+			row.prGrid:Hide()
 		else
 			row.epGrid:Hide()
 			row.gpGrid:Hide()
 			row.prGrid:Hide()
+			row.currentGrid:Hide()
+			row.spentGrid:Hide()
+			row.totalGrid:Hide()
 		end
 
 		if GRA_Variables["columns"]["AR_30"] then
-			row.ar30Grid:SetPoint("LEFT", lastColumn, "RIGHT", -1, 0)
+			row.ar30Grid:SetPoint("TOPLEFT", lastColumn, "TOPRIGHT", -1, 0)
 			row.ar30Grid:Show()
 			lastColumn = row.ar30Grid
 		else
@@ -657,7 +733,7 @@ function GRA:CreateRow(frame, width, nameText, onDoubleClick)
 		end
 
 		if GRA_Variables["columns"]["AR_60"] then
-			row.ar60Grid:SetPoint("LEFT", lastColumn, "RIGHT", -1, 0)
+			row.ar60Grid:SetPoint("TOPLEFT", lastColumn, "TOPRIGHT", -1, 0)
 			row.ar60Grid:Show()
 			lastColumn = row.ar60Grid
 		else
@@ -665,7 +741,7 @@ function GRA:CreateRow(frame, width, nameText, onDoubleClick)
 		end
 
 		if GRA_Variables["columns"]["AR_90"] then
-			row.ar90Grid:SetPoint("LEFT", lastColumn, "RIGHT", -1, 0)
+			row.ar90Grid:SetPoint("TOPLEFT", lastColumn, "TOPRIGHT", -1, 0)
 			row.ar90Grid:Show()
 			lastColumn = row.ar90Grid
 		else
@@ -673,7 +749,7 @@ function GRA:CreateRow(frame, width, nameText, onDoubleClick)
 		end
 
 		if GRA_Variables["columns"]["AR_Lifetime"] then
-			row.arLifetimeGrid:SetPoint("LEFT", lastColumn, "RIGHT", -1, 0)
+			row.arLifetimeGrid:SetPoint("TOPLEFT", lastColumn, "TOPRIGHT", -1, 0)
 			row.arLifetimeGrid:Show()
 			lastColumn = row.arLifetimeGrid
 		else
@@ -681,7 +757,7 @@ function GRA:CreateRow(frame, width, nameText, onDoubleClick)
 		end
 
 		if row.dateGrids[1] then -- dateGrids created
-			row.dateGrids[1]:SetPoint("LEFT", lastColumn, "RIGHT", -1, 0)
+			row.dateGrids[1]:SetPoint("TOPLEFT", lastColumn, "TOPRIGHT", -1, 0)
 		end
 	end
 	
@@ -703,6 +779,72 @@ function GRA:CreateRow(frame, width, nameText, onDoubleClick)
 	
 	row:SetScript("OnEnter", function(self) self:SetBackdropColor(.5, .5, .5, .1) end)
 	row:SetScript("OnLeave", function(self) self:SetBackdropColor(0, 0, 0, 0) end)
+
+	function row:AddAlt(altName)
+		if not row.alts then row.alts = {} end
+		row.alts[altName] = {}
+		row.alts[altName].dateGrids = {}
+
+		local altsNum = GRA:Getn(row.alts)
+		local height = (altsNum + 1) * gra.size.height - altsNum
+		row:SetHeight(height)
+		row.epGrid:SetHeight(height)
+		row.gpGrid:SetHeight(height)
+		row.prGrid:SetHeight(height)
+		row.currentGrid:SetHeight(height)
+		row.spentGrid:SetHeight(height)
+		row.totalGrid:SetHeight(height)
+		row.ar30Grid:SetHeight(height)
+		row.ar60Grid:SetHeight(height)
+		row.ar90Grid:SetHeight(height)
+		row.arLifetimeGrid:SetHeight(height)
+		
+		-- nameGrid
+		row.alts[altName].nameGrid = GRA:CreateGrid(row, gra.size.grid_name, GRA:GetClassColoredName(altName), {.7,.7,.7,.1})
+		row.alts[altName].nameGrid:SetBackdropBorderColor(0, 0, 0, 1)
+		row.alts[altName].nameGrid:GetFontString():ClearAllPoints()
+		row.alts[altName].nameGrid:GetFontString():SetPoint("LEFT", 20, 0)
+		row.alts[altName].nameGrid:SetNormalFontObject("GRA_FONT_TEXT")
+		row.alts[altName].nameGrid:SetPoint("TOP", row.nameGrid, 0, - altsNum * gra.size.height + altsNum)
+
+		-- primaryRole
+		row.alts[altName].primaryRole = GRA:CreateButton(row.alts[altName].nameGrid, "", "none", {16, 16})
+		row.alts[altName].primaryRole:SetAlpha(.7)
+		row.alts[altName].primaryRole:SetPoint("LEFT", 2, 0)
+		row.alts[altName].primaryRole:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
+		row.alts[altName].primaryRole:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
+		row.alts[altName].primaryRole:SetNormalTexture([[Interface\AddOns\GuildRaidAttendance\Media\Roles\]] .. (_G[GRA_R_Roster][altName]["role"] or "DPS"))
+
+		-- dateGrids
+		for i = 1, #row.dateGrids do
+			local grid = GRA:CreateGrid(row, gra.size.grid_dates, " ", {.7,.7,.7,.1})
+			if i == 1 then
+				grid:SetPoint("TOP", row.dateGrids[1], "TOP", 0, - altsNum * gra.size.height + altsNum)
+			else
+				grid:SetPoint("LEFT", row.alts[altName].dateGrids[i-1], "RIGHT", -1, 0)
+			end
+			grid:SetBackdropBorderColor(0, 0, 0, 1)
+			grid:SetNormalFontObject("GRA_FONT_GRID")
+			table.insert(row.alts[altName].dateGrids, grid)
+
+			-- highlight
+			row.dateGrids[i]:HookScript("OnEnter", function()
+				grid:Highlight()
+			end)
+			row.dateGrids[i]:HookScript("OnLeave", function()
+				grid:Unhighlight()
+			end)
+
+			grid:HookScript("OnEnter", function()
+				-- get the newest OnEnter
+				row.dateGrids[i]:GetScript("OnEnter")()
+			end)
+			grid:HookScript("OnLeave", function()
+				-- get the newest OnEnter
+				row.dateGrids[i]:GetScript("OnLeave")()
+			end)
+		end
+	end
 	
 	return row
 end
@@ -738,7 +880,7 @@ function GRA:CreateListButton(parent, text, color, size, font)
 	return b
 end
 
-function GRA:CreateRow_MemberEditor(parent, width, name, attendance, reason)
+function GRA:CreateRow_AttendanceEditor(parent, width, name, attendance, note, joinTime, leaveTime)
 	local row = CreateFrame("Button", nil, parent)
 	row:SetFrameLevel(5)
 	row:SetSize(width, 20)
@@ -746,31 +888,120 @@ function GRA:CreateRow_MemberEditor(parent, width, name, attendance, reason)
 	row:SetBackdropColor(0, 0, 0, 0) 
     row:SetBackdropBorderColor(0, 0, 0, 1)
 	
-	row.nameGrid = GRA:CreateGrid(row, 75, name, {.7,.7,.7,.1})
+	row.nameGrid = GRA:CreateGrid(row, gra.size.grid_name - 15, GRA:GetClassColoredName(name), {.7,.7,.7,.1})
 	row.nameGrid:SetBackdropBorderColor(0, 0, 0, .35)
 	row.nameGrid:GetFontString():ClearAllPoints()
 	row.nameGrid:GetFontString():SetPoint("LEFT", 5, 0)
 	row.nameGrid:SetNormalFontObject("GRA_FONT_TEXT")
 	row.nameGrid:SetPoint("LEFT")
-	
-	row.attendanceGrid = GRA:CreateGrid(row, 60, attendance or " ", {.7,.7,.7,.1})
+
+	row.attendanceGrid = GRA:CreateGrid(row, 60, " ", {.7,.7,.7,.1})
 	row.attendanceGrid:SetBackdropBorderColor(0, 0, 0, 1)
 	row.attendanceGrid:SetPoint("LEFT", row.nameGrid, "RIGHT", -1, 0)
+	row.attendanceGrid:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
+	row.attendanceGrid:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
+	
+	row.joinTimeEditBox = GRA:CreateEditBox(row, 60, 20)
+	row.joinTimeEditBox:SetJustifyH("CENTER")
+	GRA:StylizeFrame(row.joinTimeEditBox, {.7,.7,.7,.1})
+	row.joinTimeEditBox:SetPoint("LEFT", row.attendanceGrid, "RIGHT", -1, 0)
+	row.joinTimeEditBox:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
+	row.joinTimeEditBox:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
+	row.joinTimeEditBox:Hide()
 
-	-- row.reasonGrid = GRA:CreateGrid(row, 100, reason or " ", {.7,.7,.7,.1})
-	-- row.reasonGrid:SetBackdropBorderColor(0, 0, 0, 1)
-	-- row.reasonGrid:SetPoint("LEFT", row.attendanceGrid, "RIGHT", -1, 0)
-	-- row.reasonGrid:SetPoint("RIGHT")
+	row.leaveTimeEditBox = GRA:CreateEditBox(row, 60, 20)
+	row.leaveTimeEditBox:SetJustifyH("CENTER")
+	GRA:StylizeFrame(row.leaveTimeEditBox, {.7,.7,.7,.1})
+	row.leaveTimeEditBox:SetPoint("LEFT", row.joinTimeEditBox, "RIGHT", -1, 0)
+	row.leaveTimeEditBox:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
+	row.leaveTimeEditBox:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
+	row.leaveTimeEditBox:Hide()
 
-	row.reasonEditBox = GRA:CreateEditBox(row, 100, 20)
-	GRA:StylizeFrame(row.reasonEditBox, {.7,.7,.7,.1})
-	row.reasonEditBox:SetPoint("LEFT", row.attendanceGrid, "RIGHT", -1, 0)
-	row.reasonEditBox:SetPoint("RIGHT")
-	row.reasonEditBox:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
-	row.reasonEditBox:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
+	row.noteEditBox = GRA:CreateEditBox(row, 100, 20)
+	GRA:StylizeFrame(row.noteEditBox, {.7,.7,.7,.1})
+	row.noteEditBox:SetPoint("LEFT", row.attendanceGrid, "RIGHT", -1, 0)
+	row.noteEditBox:SetPoint("RIGHT")
+	row.noteEditBox:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
+	row.noteEditBox:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
 
-	row:SetScript("OnEnter", function(self) self:SetBackdropColor(.5, .5, .5, .1) end)
-	row:SetScript("OnLeave", function(self) self:SetBackdropColor(0, 0, 0, 0) end)
+	function row:SetTimeGridVisible(v)
+		if v then
+			row.joinTimeEditBox:Show()
+			row.joinTimeEditBox:SetTextColor(1, 1, 1, 1)
+			row.leaveTimeEditBox:Show()
+			row.leaveTimeEditBox:SetTextColor(1, 1, 1, 1)
+			row.noteEditBox:SetPoint("LEFT", row.leaveTimeEditBox, "RIGHT", -1, 0)
+		else
+			row.joinTimeEditBox:Hide()
+			row.leaveTimeEditBox:Hide()
+			row.noteEditBox:SetPoint("LEFT", row.attendanceGrid, "RIGHT", -1, 0)
+		end
+	end
+
+	function row:SetRowInfo(att, nt, jt, lt)
+		local attendanceText
+		row.attendance = att -- sort key
+		row.joinTime = jt
+		row.leaveTime = lt
+		row.note = nt
+
+		if att == "PRESENT" or att == "PARTLY" then
+			row.attendance = "PRESENT"
+			attendanceText = L["Present"]
+			row.attendanceGrid:GetFontString():SetTextColor(0, 1, 0, .9)
+		elseif att == "ABSENT" then
+			attendanceText = L["Absent"]
+			row.attendanceGrid:GetFontString():SetTextColor(1, 0, 0, .9)
+		elseif att == "ONLEAVE" then
+			attendanceText = L["On Leave"]
+			row.attendanceGrid:GetFontString():SetTextColor(1, 0, 1, .9)
+		else -- ignored
+			attendanceText = L["Ignored"]
+			row.attendanceGrid:GetFontString():SetTextColor(.7, .7, .7, 1)
+		end
+		row.attendanceGrid:SetText(attendanceText)
+		
+		row.noteEditBox:SetText(nt or "")
+		if nt == "" then row.note = nil end
+
+		if jt then
+			row:SetTimeGridVisible(true)
+			row.joinTimeEditBox:SetText(GRA:SecondsToTime(jt))
+			row.leaveTimeEditBox:SetText(GRA:SecondsToTime(lt))
+		else
+			row:SetTimeGridVisible(false)
+		end
+		
+		if att == "IGNORED" then
+			row.noteEditBox:SetEnabled(false)
+		else
+			if not _G[GRA_R_Roster][name]["altOf"] then
+				row.noteEditBox:SetEnabled(true)
+			else
+				row.noteEditBox:SetEnabled(false)
+				row.noteEditBox:SetText(L["Not available for alts"])
+			end
+		end
+		-- let the first letter be first
+		row.noteEditBox:SetCursorPosition(0)
+	end
+	row:SetRowInfo(attendance, note, joinTime, leaveTime)
+
+	function row:SetChanged(changed)
+		if changed then
+			GRA:StylizeFrame(row.nameGrid, {1, .3, .3, .2})
+			GRA:StylizeFrame(row.attendanceGrid, {1, .3, .3, .2})
+			GRA:StylizeFrame(row.joinTimeEditBox, {1, .3, .3, .2})
+			GRA:StylizeFrame(row.leaveTimeEditBox, {1, .3, .3, .2})
+			GRA:StylizeFrame(row.noteEditBox, {1, .3, .3, .2})
+		else
+			GRA:StylizeFrame(row.nameGrid, {.7,.7,.7,.1})
+			GRA:StylizeFrame(row.attendanceGrid, {.7,.7,.7,.1})
+			GRA:StylizeFrame(row.joinTimeEditBox, {.7,.7,.7,.1})
+			GRA:StylizeFrame(row.leaveTimeEditBox, {.7,.7,.7,.1})
+			GRA:StylizeFrame(row.noteEditBox, {.7,.7,.7,.1})
+		end
+	end
 
 	return row
 end
@@ -779,6 +1010,7 @@ end
 -- detail button (raid logs frame)
 -----------------------------------------
 function GRA:CreateDetailButton(parent, detailTable, font)
+	if string.find(detailTable[1], "DKP") then return end
 	-- {"EP"/"GP", ep/gp, reason(string)/itemLink, {playerName...}},
 	if not font then font = "GRA_FONT_SMALL" end
 	local hoverColor, borderColor, textColor
@@ -812,6 +1044,9 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 	local tex3 = b:CreateTexture()
 	tex3:SetColorTexture(unpack(borderColor))
 	tex3:SetSize(1, gra.size.height)
+	local tex4 = b:CreateTexture() -- for GP
+	tex4:SetColorTexture(unpack(borderColor))
+	tex4:SetSize(1, gra.size.height)
 
 	b.typeText = b:CreateFontString(nil, "OVERLAY", font)
 	b.typeText:SetTextColor(unpack(textColor))
@@ -833,7 +1068,7 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 	b.reasonText = b:CreateFontString(nil, "OVERLAY", font)
 	b.reasonText:SetTextColor(unpack(textColor))
 	b.reasonText:SetPoint("LEFT", b.valueText, "RIGHT", 5, 0)
-	b.reasonText:SetWidth(120)
+	b.reasonText:SetWidth(130)
 	b.reasonText:SetJustifyH("LEFT")
 	b.reasonText:SetWordWrap(false)
 	tex3:SetPoint("RIGHT", b.reasonText, 3, 0)
@@ -841,9 +1076,13 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 	b.playerText = b:CreateFontString(nil, "OVERLAY", font)
 	b.playerText:SetTextColor(unpack(textColor))
 	b.playerText:SetPoint("LEFT", b.reasonText, "RIGHT", 5, 0)
-	b.playerText:SetPoint("RIGHT", -5, 0)
 	b.playerText:SetJustifyH("LEFT")
 	b.playerText:SetWordWrap(false)
+
+	b.noteText = b:CreateFontString(nil, "OVERLAY", font)
+	b.noteText:SetTextColor(unpack(textColor))
+	b.noteText:SetJustifyH("LEFT")
+	b.noteText:SetWordWrap(false)
 
 	if string.find(detailTable[1], "P") == 1 then
 		b.typeText:SetText(string.sub(detailTable[1], 2, 3))
@@ -852,6 +1091,20 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 	end
 	b.valueText:SetText(detailTable[2])
 	b.reasonText:SetText(detailTable[3])
+
+	if detailTable[1] == "GP" then
+		b.playerText:SetWidth(80)
+		tex4:SetPoint("RIGHT", b.playerText, 3, 0)
+		b.noteText:SetPoint("LEFT", b.playerText, "RIGHT", 5, 0)
+		b.noteText:SetPoint("RIGHT", -5, 0)
+		if detailTable[5] and detailTable[5] ~= "" then
+			b.noteText:SetText(detailTable[5])
+		else
+			tex4:Hide()
+		end
+	else
+		b.playerText:SetPoint("RIGHT", -5, 0)
+	end
 
 	local playerText = ""
 	if type(detailTable[4]) == "string" then -- gp name
@@ -868,6 +1121,7 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 		b.valueText:SetTextColor(1, 1, 1, 1)
 		b.reasonText:SetTextColor(1, 1, 1, 1)
 		b.playerText:SetTextColor(1, 1, 1, 1)
+		b.noteText:SetTextColor(1, 1, 1, 1)
 		b:SetBackdropColor(unpack(hoverColor))
 	end)
 
@@ -876,6 +1130,7 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 		b.valueText:SetTextColor(unpack(textColor))
 		b.reasonText:SetTextColor(unpack(textColor))
 		b.playerText:SetTextColor(unpack(textColor))
+		b.noteText:SetTextColor(unpack(textColor))
 		b:SetBackdropColor(0, 0, 0, 0)
 	end)
 
@@ -894,6 +1149,7 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 		b.valueText:SetTextColor(1, 1, 1, 1)
 		b.reasonText:SetTextColor(1, 1, 1, 1)
 		b.playerText:SetTextColor(1, 1, 1, 1)
+		b.noteText:SetTextColor(1, 1, 1, 1)
 		b:SetBackdropColor(unpack(hoverColor))
 	end)
 	b.deleteBtn:SetScript("OnLeave", function()
@@ -901,6 +1157,7 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 		b.valueText:SetTextColor(unpack(textColor))
 		b.reasonText:SetTextColor(unpack(textColor))
 		b.playerText:SetTextColor(unpack(textColor))
+		b.noteText:SetTextColor(unpack(textColor))
 		b:SetBackdropColor(0, 0, 0, 0)
 	end)
 	
@@ -909,9 +1166,163 @@ function GRA:CreateDetailButton(parent, detailTable, font)
 	return b
 end
 
-function GRA:CreateDetailButton_NonEPGP(parent, detailTable, font)
+function GRA:CreateDetailButton_DKP(parent, detailTable, font)
+	if not string.find(detailTable[1], "DKP") then return end
+	-- {"DKP_A"/"DKP_C"/"DKP_P", value, reason(string)/itemLink/reason(string), {playerName...}},
+	if not font then font = "GRA_FONT_SMALL" end
+	local hoverColor, borderColor, textColor
+	if detailTable[1] == "DKP_C" then
+		hoverColor = {.1, .6, .95, .3}
+		borderColor = {.1, .6, .95, .6}
+		textColor = {.16, .56, .95, 1}
+	elseif detailTable[1] == "DKP_A" then
+		hoverColor = {.1, .95, .2, .3}
+		borderColor = {.1, .95, .2, .6}
+		textColor = {.1, .95, .2, 1}
+	else -- DKP_P
+		hoverColor = {.95, .17, .2, .3}
+		borderColor = {.95, .17, .2, .6}
+		textColor = {.95, .2, .2, 1}
+	end
+
+	local b = CreateFrame("Button", nil, parent)
+	b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left=1,top=1,right=1,bottom=1}})
+	b:SetBackdropColor(0, 0, 0, 0)
+	b:SetBackdropBorderColor(unpack(borderColor))
+	b:SetPushedTextOffset(0, 0)
+	b:SetSize(gra.size.height, gra.size.height)
+
+	local tex1 = b:CreateTexture()
+	tex1:SetColorTexture(unpack(borderColor))
+	tex1:SetSize(1, gra.size.height)
+	local tex2 = b:CreateTexture()
+	tex2:SetColorTexture(unpack(borderColor))
+	tex2:SetSize(1, gra.size.height)
+	local tex3 = b:CreateTexture()
+	tex3:SetColorTexture(unpack(borderColor))
+	tex3:SetSize(1, gra.size.height)
+	local tex4 = b:CreateTexture() -- for DKP_C
+	tex4:SetColorTexture(unpack(borderColor))
+	tex4:SetSize(1, gra.size.height)
+
+	b.typeText = b:CreateFontString(nil, "OVERLAY", font)
+	b.typeText:SetTextColor(unpack(textColor))
+	b.typeText:SetPoint("LEFT", 5, 0)
+	-- b.typeText:SetPoint("RIGHT", b, "LEFT", 50, 0)
+	b.typeText:SetWidth(25)
+	b.typeText:SetJustifyH("LEFT")
+	b.typeText:SetWordWrap(false)
+	tex1:SetPoint("RIGHT", b.typeText, 3, 0)
+
+	b.valueText = b:CreateFontString(nil, "OVERLAY", font)
+	b.valueText:SetTextColor(unpack(textColor))
+	b.valueText:SetPoint("LEFT", b.typeText, "RIGHT", 5, 0)
+	b.valueText:SetWidth(45)
+	b.valueText:SetJustifyH("LEFT")
+	b.valueText:SetWordWrap(false)
+	tex2:SetPoint("RIGHT", b.valueText, 3, 0)
+
+	b.reasonText = b:CreateFontString(nil, "OVERLAY", font)
+	b.reasonText:SetTextColor(unpack(textColor))
+	b.reasonText:SetPoint("LEFT", b.valueText, "RIGHT", 5, 0)
+	b.reasonText:SetWidth(130)
+	b.reasonText:SetJustifyH("LEFT")
+	b.reasonText:SetWordWrap(false)
+	tex3:SetPoint("RIGHT", b.reasonText, 3, 0)
+
+	b.playerText = b:CreateFontString(nil, "OVERLAY", font)
+	b.playerText:SetTextColor(unpack(textColor))
+	b.playerText:SetPoint("LEFT", b.reasonText, "RIGHT", 5, 0)
+	b.playerText:SetJustifyH("LEFT")
+	b.playerText:SetWordWrap(false)
+	
+	b.noteText = b:CreateFontString(nil, "OVERLAY", font)
+	b.noteText:SetTextColor(unpack(textColor))
+	b.noteText:SetJustifyH("LEFT")
+	b.noteText:SetWordWrap(false)
+	
+	b.typeText:SetText("DKP")
+	if detailTable[1] == "DKP_C" then
+		b.valueText:SetText(-detailTable[2])
+		b.playerText:SetWidth(80)
+		tex4:SetPoint("RIGHT", b.playerText, 3, 0)
+		b.noteText:SetPoint("LEFT", b.playerText, "RIGHT", 5, 0)
+		b.noteText:SetPoint("RIGHT", -5, 0)
+		if detailTable[5] and detailTable[5] ~= "" then
+			b.noteText:SetText(detailTable[5])
+		else
+			tex4:Hide()
+		end
+	else
+		b.valueText:SetText(detailTable[2])
+		b.playerText:SetPoint("RIGHT", -5, 0)
+	end
+	b.reasonText:SetText(detailTable[3])
+
+	local playerText = ""
+	if type(detailTable[4]) == "string" then -- looter name
+		playerText = GRA:GetShortName(detailTable[4])
+	else -- names
+		for _, name in pairs(detailTable[4]) do
+			playerText = playerText .. GRA:GetShortName(name) .. " "
+		end
+	end
+	b.playerText:SetText(playerText)
+
+	b:SetScript("OnEnter", function()
+		b.typeText:SetTextColor(1, 1, 1, 1)
+		b.valueText:SetTextColor(1, 1, 1, 1)
+		b.reasonText:SetTextColor(1, 1, 1, 1)
+		b.playerText:SetTextColor(1, 1, 1, 1)
+		b.noteText:SetTextColor(1, 1, 1, 1)
+		b:SetBackdropColor(unpack(hoverColor))
+	end)
+
+	b:SetScript("OnLeave", function()
+		b.typeText:SetTextColor(unpack(textColor))
+		b.valueText:SetTextColor(unpack(textColor))
+		b.reasonText:SetTextColor(unpack(textColor))
+		b.playerText:SetTextColor(unpack(textColor))
+		b.noteText:SetTextColor(unpack(textColor))
+		b:SetBackdropColor(0, 0, 0, 0)
+	end)
+
+
+	b.deleteBtn = CreateFrame("Button", nil, b)
+	b.deleteBtn:SetSize(gra.size.height, gra.size.height)
+	b.deleteBtn:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1, insets = {left=1,top=1,right=1,bottom=1}})
+	b.deleteBtn:SetBackdropColor(unpack(hoverColor))
+	b.deleteBtn:SetBackdropBorderColor(unpack(borderColor))
+	b.deleteBtn:SetText("×")
+	b.deleteBtn:SetNormalFontObject("GRA_FONT_BUTTON")
+	b.deleteBtn:SetPushedTextOffset(0, -1)
+	b.deleteBtn:SetPoint("RIGHT")
+	b.deleteBtn:SetScript("OnEnter", function()
+		b.typeText:SetTextColor(1, 1, 1, 1)
+		b.valueText:SetTextColor(1, 1, 1, 1)
+		b.reasonText:SetTextColor(1, 1, 1, 1)
+		b.playerText:SetTextColor(1, 1, 1, 1)
+		b.noteText:SetTextColor(1, 1, 1, 1)
+		b:SetBackdropColor(unpack(hoverColor))
+	end)
+	b.deleteBtn:SetScript("OnLeave", function()
+		b.typeText:SetTextColor(unpack(textColor))
+		b.valueText:SetTextColor(unpack(textColor))
+		b.reasonText:SetTextColor(unpack(textColor))
+		b.playerText:SetTextColor(unpack(textColor))
+		b.noteText:SetTextColor(unpack(textColor))
+		b:SetBackdropColor(0, 0, 0, 0)
+	end)
+	
+	b.deleteBtn:Hide()
+
+	return b
+end
+
+function GRA:CreateDetailButton_LC(parent, detailTable, font)
 	-- 为了兼容性，假装为GP
 	-- {"GP", 0, itemLink, playerName, note},
+	if detailTable[1] ~= "GP" then return end
 	if not font then font = "GRA_FONT_SMALL" end
 	local hoverColor, borderColor, textColor
 	hoverColor = {.1, .6, .95, .3}
@@ -936,7 +1347,7 @@ function GRA:CreateDetailButton_NonEPGP(parent, detailTable, font)
 	b.itemText = b:CreateFontString(nil, "OVERLAY", font)
 	b.itemText:SetTextColor(unpack(textColor))
 	b.itemText:SetPoint("LEFT", 5, 0)
-	b.itemText:SetWidth(150)
+	b.itemText:SetWidth(160)
 	b.itemText:SetJustifyH("LEFT")
 	b.itemText:SetWordWrap(false)
 	tex1:SetPoint("RIGHT", b.itemText, 3, 0)
@@ -944,7 +1355,7 @@ function GRA:CreateDetailButton_NonEPGP(parent, detailTable, font)
 	b.playerText = b:CreateFontString(nil, "OVERLAY", font)
 	b.playerText:SetTextColor(unpack(textColor))
 	b.playerText:SetPoint("LEFT", b.itemText, "RIGHT", 5, 0)
-	b.playerText:SetWidth(100)
+	b.playerText:SetWidth(80)
 	b.playerText:SetJustifyH("LEFT")
 	b.playerText:SetWordWrap(false)
 	tex2:SetPoint("RIGHT", b.playerText, 3, 0)
@@ -953,19 +1364,21 @@ function GRA:CreateDetailButton_NonEPGP(parent, detailTable, font)
 	b.noteText:SetTextColor(unpack(textColor))
 	b.noteText:SetPoint("LEFT", b.playerText, "RIGHT", 5, 0)
 	b.noteText:SetPoint("RIGHT", -5, 0)
-	b.noteText:SetWidth(120)
 	b.noteText:SetJustifyH("LEFT")
 	b.noteText:SetWordWrap(false)
 
-	local itemText, playerText, noteText
-	
 	b.itemText:SetText(detailTable[3])
-	if type(detailTable[4]) == "table" then -- EPGP mass GP credit
-		b.playerText:SetText(L["EPGP data"])
+	if type(detailTable[4]) == "table" then -- EPGP/DKP mass award credit
+		b.playerText:SetText("EPGP/DKP data")
 	else -- string
 		b.playerText:SetText(GRA:GetShortName(detailTable[4]))
 	end
-	b.noteText:SetText(detailTable[5] or "")
+
+	if detailTable[5] and detailTable[5] ~= "" then
+		b.noteText:SetText(detailTable[5])
+	else
+		tex2:Hide()
+	end
 
 	b:SetScript("OnEnter", function()
 		b.itemText:SetTextColor(1, 1, 1, 1)

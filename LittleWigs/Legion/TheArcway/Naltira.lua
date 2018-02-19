@@ -19,13 +19,12 @@ local blinkCount = 1
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
 	L.vicious_manafang = -13765
 	L.vicious_manafang_desc = -13766 -- Devour
 	L.vicious_manafang_icon = "inv_misc_monsterspidercarapace_01"
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -88,7 +87,7 @@ end
 -- end
 
 function mod:Devour(args)
-  self:TargetMessage(args.spellId, args.destName, "Important", "Info", nil, nil, true)
+	self:TargetMessage(args.spellId, args.destName, "Important", "Info", nil, nil, true)
 end
 
 do
@@ -135,13 +134,13 @@ do
 end
 
 do
-  local prev = 0
-  function mod:NetherVenomDamage(args)
+	local prev = 0
+	function mod:NetherVenomDamage(args)
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 2 then
 			prev = t
 			self:Flash(args.spellId)
 			self:Message(args.spellId, "Personal", "Alarm", CL.underyou:format(args.spellName))
 		end
-  end
+	end
 end

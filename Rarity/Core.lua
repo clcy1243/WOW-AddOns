@@ -1,5 +1,5 @@
 Rarity = LibStub("AceAddon-3.0"):NewAddon("Rarity", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0", "LibSink-2.0", "AceBucket-3.0", "LibBars-1.0", "AceSerializer-3.0")
-Rarity.MINOR_VERSION = tonumber(("$Revision: 606 $"):match("%d+"))
+Rarity.MINOR_VERSION = tonumber(("$Revision: 627 $"):match("%d+"))
 local FORCE_PROFILE_RESET_BEFORE_REVISION = 1 -- Set this to one higher than the Revision on the line above this
 local L = LibStub("AceLocale-3.0"):GetLocale("Rarity")
 local R = Rarity
@@ -537,6 +537,7 @@ do
   self:RegisterEvent("TRADE_SKILL_CLOSE", "OnEvent")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT", "OnMouseOver")
   self:RegisterEvent("CRITERIA_COMPLETE", "OnCriteriaComplete")
+  self:RegisterEvent("ENCOUNTER_END", "OnEncounterEnd")
   self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnCombatEnded")
   self:RegisterEvent("PET_BATTLE_OPENING_START", "OnPetBattleStart")
   self:RegisterEvent("PET_BATTLE_CLOSE", "OnPetBattleEnd")
@@ -2249,6 +2250,35 @@ function R:OnCriteriaComplete(event, id)
 	end
 end
 
+-------------------------------------------------------------------------------------
+-- Raid encounter ended: Used for detecting raid bosses that don't actually die when the encounter ends and have no statistic tied to them (e.g., the Keepers of Ulduar)
+-- While it might work to change their method from NPC to BOSS, at this time I'm not sure if that wouldn't cause problems elsewhere... so I won't touch it
+-------------------------------------------------------------------------------------
+local encounterLUT = {
+	[1133] = "Blessed Seed", -- Freya
+	[1135] = "Ominous Pile of Snow", -- Hodir
+	[1138] = "Overcomplicated Controller", -- Mimiron
+	[1143] = "Wriggling Darkness", -- Yogg-Saron (mount uses the BOSS method and is tracked separately)
+}
+
+function R:OnEncounterEnd(event, encounterID, encounterName, difficultyID, raidSize, endStatus)
+
+	local item = encounterLUT[encounterID]
+	if item and type(item) == "string" then -- This encounter has an entry in the LUT and needs special handling
+	
+		R:Debug("Detected raid encounter with id = " .. tonumber(encounterID or "0") .. ", name = " .. encounterName .. ", endStatus = " .. endStatus)
+		local v = self.db.profile.groups.pets[item] -- v = value = number of attempts for this item
+		
+		if endStatus == 1 then -- Encounter succeeded -> Check if number of attempts should be increased
+			if v and type(v) == "table" and v.enabled ~= false and R:IsAttemptAllowed(v) then -- Add one attempt for this item
+				if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
+				R:OutputAttempts(v)
+			end
+		end
+		
+	end
+
+end
 
 -------------------------------------------------------------------------------------
 -- Pet battles: we want to hide the progress bar(s) during them
@@ -3256,6 +3286,11 @@ do
 								end
 							end
 							elseif v.lockBossName then
+								
+								if not lbb["Theralion and Valiona"] and lbb["Valiona and Theralion"] then -- LibBabble-Boss is still outdated -> Add correct encounter name
+									lbb["Theralion and Valiona"] = lbb["Valiona and Theralion"] -- Workaround for issue: https://github.com/SacredDuckwhale/Rarity/issues/22 - can be removed once the library was updated
+								end
+								
 								if lbb[v.lockBossName] and (Rarity.lockouts[lbb[v.lockBossName]] == true or Rarity.lockouts[v.lockBossName] == true) then status = colorize(L["Defeated"], red) else status = colorize(L["Undefeated"], green) end
 							elseif v.lockDungeonId then
 								if Rarity.lockouts_holiday[v.lockDungeonId] == true then

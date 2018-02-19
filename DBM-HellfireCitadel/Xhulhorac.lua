@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1447, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
 mod:SetCreatureID(93068)
 mod:SetEncounterID(1800)
 mod:SetZone()
@@ -25,7 +25,7 @@ mod:RegisterEventsInCombat(
 --(target.id = 94185 or target.id =  94239) and type = "death" or (ability.id = 190223 or ability.id = 190224 or ability.id = 186453 or ability.id = 186783 or ability.id = 186546 or ability.id = 189779 or ability.id = 186490 or ability.id = 189775) and type = "begincast" or (ability.id = 186407 or ability.id = 186333) and type = "cast" or ability.id = 187204 and type = "applybuff"
 --Fire Phase
 ----Boss
-local warnFelPortal					= mod:NewSpellAnnounce(187003, 2)
+local warnFelPortal					= mod:NewSpellAnnounce(187003, 2, nil, nil, nil, nil, nil, 2)
 local warnFelSurge					= mod:NewTargetAnnounce(186407, 3)
 local warnFelStrike					= mod:NewSpellAnnounce(186271, 3, nil, "Tank")
 local warnImps						= mod:NewCountAnnounce("ej11694", 2, 112866, "Melee")
@@ -34,12 +34,13 @@ local warnFelChains					= mod:NewTargetAnnounce(186490, 3)
 local warnEmpoweredFelChains		= mod:NewTargetAnnounce(189775, 3)--Mythic
 --Void Phase
 ----Boss
-local warnVoidPortal				= mod:NewSpellAnnounce(187006, 2)
+local warnVoidPortal				= mod:NewSpellAnnounce(187006, 2, nil, nil, nil, nil, nil, 2)
 local warnVoidSurge					= mod:NewTargetAnnounce(186333, 3)
 local warnVoidStrike				= mod:NewSpellAnnounce(186292, 3, nil, "Tank")
 local warnVoids						= mod:NewCountAnnounce("ej11714", 2, 697, "Ranged")
 ----
 --End Phase
+local warnPhase3					= mod:NewPhaseAnnounce(3, 2, nil, nil, nil, nil, nil, 2)
 local warnOverwhelmingChaos			= mod:NewCountAnnounce(187204, 4)
 
 --Fight Wide
@@ -96,15 +97,6 @@ local countdownFelSurge				= mod:NewCountdown(30, 186407, "-Tank", nil, 3)
 local countdownVoidSurge			= mod:NewCountdown("Alt30", 186333, "Ranged", nil, 3)
 local countdownImps					= mod:NewCountdown("AltTwo25", "ej11694", "Dps", nil, 4)
 
-local voicePhaseChange				= mod:NewVoice(nil, nil, DBM_CORE_AUTO_VOICE2_OPTION_TEXT)
-local voiceFelsinged				= mod:NewVoice(186073)	--run away
-local voiceFelSurge					= mod:NewVoice(186407)	--run out (because need to tell difference from run away GTFOs)
-local voiceWastingVoid				= mod:NewVoice(186063)  --run away
-local voiceVoidSurge				= mod:NewVoice(186333)	--new voice
-local voicePhasing					= mod:NewVoice(189047)	--changemt
-local voiceFelblazeFlurry			= mod:NewVoice(186453, "Tank")	--defensive
-local voiceWitheringGaze			= mod:NewVoice(186783, "Tank")	--defensive
-
 --Warning behavior choices for Chains.
 --Cast only gives original target, not all targets, but does so 3 seconds faster. It allows the person to move early and change other players they affect with chains by pre moving.
 --Applied gives all targets, this is the easier strat for most users, where they wait until everyone has it, then run in different directions.
@@ -125,7 +117,7 @@ local UnitExists, UnitGUID, UnitDetailedThreatSituation = UnitExists, UnitGUID, 
 local AddsSeen = {}
 
 local debuffFilter
-local debuffName = GetSpellInfo(189775)
+local debuffName, vanguardTank, voidwalkerTank = DBM:GetSpellInfo(189775), DBM:GetSpellInfo(186135), DBM:GetSpellInfo(186134)
 local UnitDebuff = UnitDebuff
 do
 	debuffFilter = function(uId)
@@ -208,6 +200,7 @@ function mod:EmpoweredFelChains(targetname, uId)
 end
 
 function mod:OnCombatStart(delay)
+	debuffName, vanguardTank, voidwalkerTank = DBM:GetSpellInfo(189775), DBM:GetSpellInfo(186135), DBM:GetSpellInfo(186134)
 	self.vb.EmpFelChainCount = 0
 	self.vb.phase = 1
 	self.vb.impCount = 0
@@ -239,12 +232,12 @@ function mod:SPELL_CAST_START(args)
 					return
 				else
 					--Not Tanking
-					if self.vb.phase >= 3 and playerTanking == 1 and not UnitDebuff("player", GetSpellInfo(186135)) then--Vanguard Tank
+					if self.vb.phase >= 3 and playerTanking == 1 and not UnitDebuff("player", vanguardTank) then--Vanguard Tank
 						--You're the Vanguard tank and do NOT have aggro for this strike or void debuff, taunt NOW
 						local targetName = UnitName(bossUnitID.."target") or DBM_CORE_UNKNOWN
 						if self:AntiSpam(3, targetName) then
 							specWarnPhasing:Show(targetName)
-							voicePhasing:Play("tauntboss")
+							specWarnPhasing:Play("tauntboss")
 						end
 					end
 				end
@@ -260,12 +253,12 @@ function mod:SPELL_CAST_START(args)
 					return
 				else
 					--Not Tanking
-					if self.vb.phase >= 3 and playerTanking == 2 and not UnitDebuff("player", GetSpellInfo(186134)) then--VoidWalker Tank
+					if self.vb.phase >= 3 and playerTanking == 2 and not UnitDebuff("player", voidwalkerTank) then--VoidWalker Tank
 						--You're the void walker tank and do NOT have aggro for this strike or fel debuff, taunt NOW
 						local targetName = UnitName(bossUnitID.."target") or DBM_CORE_UNKNOWN
 						if self:AntiSpam(3, targetName) then
 							specWarnPhasing:Show(targetName)
-							voicePhasing:Play("tauntboss")
+							specWarnPhasing:Play("tauntboss")
 						end
 					end
 				end
@@ -278,7 +271,7 @@ function mod:SPELL_CAST_START(args)
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
 				playerTanking = 1--Set player tanking to vanguard
 				specWarnFelBlazeFlurry:Show()--So show tank warning
-				voiceFelblazeFlurry:Play("defensive")
+				specWarnFelBlazeFlurry:Play("defensive")
 				break
 			end
 		end
@@ -288,7 +281,7 @@ function mod:SPELL_CAST_START(args)
 			if UnitExists(bossUnitID) and UnitGUID(bossUnitID) == args.sourceGUID and UnitDetailedThreatSituation("player", bossUnitID) then--We are highest threat target
 				playerTanking = 2--Set player tanking to void walker
 				specWarnWitheringGaze:Show()--So show tank warning
-				voiceWitheringGaze:Play("defensive")
+				specWarnWitheringGaze:Play("defensive")
 				break
 			end
 		end
@@ -353,20 +346,20 @@ function mod:SPELL_CAST_SUCCESS(args)
 				if not args:IsPlayer() then
 					if self:AntiSpam(3, args.destName) then
 						specWarnPhasing:Show(args.destName)
-						voicePhasing:Play("tauntboss")
+						specWarnPhasing:Play("tauntboss")
 					end
 				end
 			elseif self.vb.bothDead == 2 and playerTanking == 0 then
 				if not args:IsPlayer() then--Just warn whoever THIS strike didn't hit
 					if self:AntiSpam(3, args.destName) then
 						specWarnPhasing:Show(args.destName)
-						voicePhasing:Play("tauntboss")
+						specWarnPhasing:Play("tauntboss")
 					end
 				else
-					voicePhasing:Play("changemt")
+					specWarnPhasing:Play("changemt")
 				end
 			else
-				voicePhasing:Play("changemt")
+				specWarnPhasing:Play("changemt")
 			end
 		end
 	elseif spellId == 186292 then--190224 is not valid, because it returns target boss had at cast start, even if a taunt happened mid cast.
@@ -376,20 +369,20 @@ function mod:SPELL_CAST_SUCCESS(args)
 				if not args:IsPlayer() then
 					if self:AntiSpam(3, args.destName) then
 						specWarnPhasing:Show(args.destName)
-						voicePhasing:Play("tauntboss")
+						specWarnPhasing:Play("tauntboss")
 					end
 				end
 			elseif self.vb.bothDead == 2 and playerTanking == 0 then
 				if not args:IsPlayer() then
 					if self:AntiSpam(3, args.destName) then
 						specWarnPhasing:Show(args.destName)
-						voicePhasing:Play("tauntboss")
+						specWarnPhasing:Play("tauntboss")
 					end
 				else
-					voicePhasing:Play("changemt")
+					specWarnPhasing:Play("changemt")
 				end
 			else
-				voicePhasing:Play("changemt")
+				specWarnPhasing:Play("changemt")
 			end
 			timerVoidStrikeCD:Start(13)
 		else
@@ -402,10 +395,10 @@ function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 186063 and args:IsPlayer() and self:AntiSpam(2, 1) then
 		specWarnWastingVoid:Show()
-		voiceWastingVoid:Play("runaway")
+		specWarnWastingVoid:Play("runaway")
 	elseif spellId == 186073 and args:IsPlayer() and self:AntiSpam(2, 2) then
 		specWarnFelsinged:Show()
-		voiceFelsinged:Play("runaway")
+		specWarnFelsinged:Play("runaway")
 	elseif spellId == 186135 and args:IsPlayer() then
 		specWarnVoidTouched:Show()
 	elseif spellId == 186134 and args:IsPlayer() then
@@ -415,14 +408,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnFelSurge:Show()
 			yellFelSurge:Yell()
-			voiceFelSurge:Play("runout")
+			specWarnFelSurge:Play("runout")
 		end
 	elseif spellId == 186333 then
 		warnVoidSurge:CombinedShow(0.3, args.destName)
 		if args:IsPlayer() then
 			specWarnVoidSurge:Show()
 			yellVoidSurge:Yell()
-			voiceVoidSurge:Play("186333")
+			specWarnVoidSurge:Play("186333")
 		end
 	elseif spellId == 186500 and self.Options.ChainsBehavior ~= "Cast" then--Chains! (show warning if type is applied or both)
 		warnFelChains:CombinedShow(0.3, args.destName)
@@ -473,15 +466,9 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 					timerFelChainsCD:Start(12)
 				end
 				timerFelBlazeFlurryCD:Start(5.5)
-				if DBM.BossHealth:IsShown() then
-					DBM.BossHealth:AddBoss(cid, UnitName(uId))
-				end
 			elseif cid == 94239 then--Omnus
 				timerWitheringGazeCD:Start(4)
 				timerBlackHoleCD:Start(18, 1)
-				if DBM.BossHealth:IsShown() then
-					DBM.BossHealth:AddBoss(cid, UnitName(uId))
-				end
 			end
 		end
 	end
@@ -500,9 +487,6 @@ function mod:UNIT_DIED(args)
 				playerTanking = 0--Vanguard died, set player tanking to 0
 			end
 		end
-		if DBM.BossHealth:IsShown() then
-			DBM.BossHealth:RemoveBoss(cid)
-		end
 	elseif cid == 94239 then--Omnus
 		self.vb.bothDead = self.vb.bothDead + 1
 		timerWitheringGazeCD:Stop()
@@ -514,9 +498,6 @@ function mod:UNIT_DIED(args)
 				playerTanking = 0--Omnus died, set player tanking to 0
 			end
 		end
-		if DBM.BossHealth:IsShown() then
-			DBM.BossHealth:RemoveBoss(cid)
-		end
 	elseif cid == 94231 then--Imps
 		self.vb.impActive = self.vb.impActive - 1
 	end
@@ -524,7 +505,7 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 187003 then--Activate Fel Portal
-		voicePhaseChange:Play("phasechange")
+		warnFelPortal:Play("phasechange")
 		warnFelPortal:Show()
 		if not self:IsLFR() then
 			timerImpCD:Start(10)
@@ -532,7 +513,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 			self:Schedule(10, ImpRepeater, self)
 		end
 	elseif spellId == 187006 then--Activate Void Portal
-		voicePhaseChange:Play("phasechange")
+		warnVoidPortal:Play("phasechange")
 		warnVoidPortal:Show()
 		timerFelStrikeCD:Stop()
 		timerFelSurgeCD:Stop()
@@ -551,7 +532,8 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		countdownVoidSurge:Start(17.8)--TODO, reverify?
 	elseif spellId == 189047 then--Phase 3 (Shadowfel Phasing)
 		self.vb.phase = 3
-		voicePhaseChange:Play("phasechange")
+		warnPhase3:Show()
+		warnPhase3:Play("phasechange")
 		if not self:IsMythic() then
 			timerVoidStrikeCD:Stop()--Regardless of what was left on timer, he will use it immediately after shadowfel phasing
 		end

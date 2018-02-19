@@ -1,13 +1,13 @@
 ## Interface: 70300
 ## Title: RSA [|c10FF75B3Core|r]
-## Notes: |cff00FF00Version: 3.2751|r. Easy Spell Announcements! Amongst other things. This is required to run RSA.
+## Notes: |cff00FF00Version: 3.276|r. Easy Spell Announcements! Amongst other things. This is required to run RSA.
 ## Author: Raeli, Jenneth, Xadurk, Rowaa[SR13]
-## Version: 3.2752
+## Version: 3.276
 ## SavedVariables: RSADB
 ## OptionalDeps: Ace3, LibDualSpec-1.0, LibSink-2.0
 
 ## Title-zhTW: RSA [|c10FF75B3核心|r]
-## Notes-zhTW: |cff00FF00版本: 3.2752|r. 簡易法術通報！假如使用附加模組，將需要執行RSA。
+## Notes-zhTW: |cff00FF00版本: 3.276|r. 簡易法術通報！假如使用附加模組，將需要執行RSA。
 
 
 #@no-lib-strip@

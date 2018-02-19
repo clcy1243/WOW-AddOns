@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("DSTrash", "DBM-DragonSoul")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 155 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 185 $"):sub(12, -3))
 mod:SetModelID(39378)
 mod:SetZone()
 mod.isTrashMod = true
@@ -27,11 +27,10 @@ local timerRoleplay			= mod:NewTimer(45.5, "timerRoleplay", "Interface\\Icons\\S
 --No one knew it ended at 24 drakes before hotfix because timer always expired before any raid hit 24, so we often just saw the hard capped event limit.
 --I suspect some shitty LFR group is still gonna hit timer limit before 15 drakes, so we'll see
 
-mod:RemoveOption("HealthFrame")
-
 local drakeRunning = false
 local drakesCount = 15
 local drakeguid = {}
+local drakeEscape = DBM:GetSpellInfo(109904)
 
 local function drakeDied(GUID)
 	if not drakeguid[GUID] then
@@ -145,6 +144,7 @@ end
 function mod:OnSync(msg, GUID)
 	if msg == "Skyrim" then
 		if not drakeRunning then
+			drakeEscape = DBM:GetSpellInfo(109904)
 			self:RegisterShortTermEvents(
 				"SPELL_DAMAGE",
 				"SPELL_MISSED",
@@ -157,7 +157,7 @@ function mod:OnSync(msg, GUID)
 		end
 		table.wipe(drakeguid)
 		drakesCount = 15--Reset drakes here too soo they stay accurate after wipes.
-		timerDrakes:Start(231, GetSpellInfo(109904))
+		timerDrakes:Start(231, drakeEscape)
 	elseif msg == "SkyrimEnded" then
 		drakeRunning = false
 		self:UnregisterShortTermEvents()
@@ -167,6 +167,7 @@ function mod:OnSync(msg, GUID)
 	elseif msg == "SecondRP" then
 		timerRoleplay:Start(32)
 		if not drakeRunning then
+			drakeEscape = DBM:GetSpellInfo(109904)
 			self:RegisterShortTermEvents(
 				"SPELL_DAMAGE",
 				"SPELL_MISSED",
@@ -179,7 +180,7 @@ function mod:OnSync(msg, GUID)
 		end
 		table.wipe(drakeguid)
 		drakesCount = 15--Reset drakes here still in case no one running current dbm is targeting thrall
-		timerDrakes:Start(253, GetSpellInfo(109904))--^^
+		timerDrakes:Start(253, drakeEscape)--^^
 		--timer still remains even combat starts. so, cancels manually. (Probably for someone who wasn't present for first drake dying.
 	end
 end

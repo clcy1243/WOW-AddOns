@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- To Do
+-- Enveloping Winds timers are not 100% accurate
 
 --------------------------------------------------------------------------------
 -- Module Declaration
@@ -7,6 +10,15 @@ local mod, CL = BigWigs:NewBoss("Advisor Melandrus", 1087, 1720)
 if not mod then return end
 mod:RegisterEnableMob(104218)
 mod.engageId = 1870
+
+--------------------------------------------------------------------------------
+-- Localization
+--
+
+local L = mod:GetLocale()
+if L then
+	L.warmup_trigger = "Yet another failure, Melandrus. Consider this your chance to correct it. Dispose of these outsiders. I must return to the Nighthold."
+end
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -20,6 +32,7 @@ local bladeSurgeCount = 0
 
 function mod:GetOptions()
 	return {
+		"warmup",
 		209602, -- Blade Surge
 		224333, -- Enveloping Winds
 		209628, -- Piercing Gale
@@ -28,33 +41,43 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
+	self:RegisterEvent("CHAT_MSG_MONSTER_SAY", "Warmup")
+	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1")
 	self:Log("SPELL_CAST_START", "BladeSurge", 209602)
-	self:Log("SPELL_CAST_SUCCESS", "EnvelopingWinds", 224333)
 	self:Log("SPELL_CAST_START", "PiercingGale", 209628)
 	self:Log("SPELL_CAST_START", "SlicingMaelstrom", 209676)
 end
 
 function mod:OnEngage()
-	bladeSurgeCount = 0
-	self:CDBar(209628, 7) -- Piercing Gale
-	self:CDBar(224333, 10) -- Enveloping Winds
-	self:CDBar(209602, 15) -- Blade Surge
-	self:CDBar(209676, 10) -- Slicing Maelstrom
+	bladeSurgeCount = 1
+	self:CDBar(209628, 11) -- Piercing Gale
+	self:CDBar(224333, 8.4) -- Enveloping Winds
+	self:CDBar(209602, 5.2, CL.count:format(args.spellName, bladeSurgeCount)) -- Blade Surge
+	self:CDBar(209676, 23) -- Slicing Maelstrom
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function mod:BladeSurge(args)
-	bladeSurgeCount = bladeSurgeCount + 1
-	self:Message(args.spellId, "Important", "Info", CL.count:format(args.spellName, bladeSurgeCount))
-	self:CDBar(args.spellId, 19)
+function mod:Warmup(event, msg)
+	if msg == L.warmup_trigger then
+		self:UnregisterEvent(event)
+		self:Bar("warmup", 11, CL.active, "inv_helm_mask_fittedalpha_b_01_nightborne_01")
+	end
 end
 
-function mod:EnvelopingWinds(args)
-	self:Message(args.spellId, "Important", "Info")
-	self:CDBar(args.spellId, 11)
+function mod:BladeSurge(args)
+	self:Message(args.spellId, "Important", "Info", CL.count:format(args.spellName, bladeSurgeCount))
+	bladeSurgeCount = bladeSurgeCount + 1
+	self:CDBar(args.spellId, 12, CL.count:format(args.spellName, bladeSurgeCount))
+end
+
+function mod:UNIT_SPELLCAST_SUCCEEDED(unit, spellName, _, _, spellId)
+	if spellId == 224327 then -- Enveloping Winds
+		self:Message(224333, "Attention", "Info", spellName)
+		self:CDBar(224333, 9.4) -- actual spellid has no icon/tooltip
+	end
 end
 
 do
@@ -64,12 +87,12 @@ do
 		if t-prev > 2 then
 			prev = t
 			self:Message(args.spellId, "Urgent", "Alarm")
-			self:CDBar(args.spellId, 18)
+			self:CDBar(args.spellId, 24)
 		end
 	end
 end
 
 function mod:SlicingMaelstrom(args)
 	self:Message(args.spellId, "Attention", "Warning", CL.incoming:format(args.spellName))
-	self:CDBar(args.spellId, 18)
+	self:CDBar(args.spellId, 24)
 end

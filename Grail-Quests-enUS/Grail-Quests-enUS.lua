@@ -25397,4 +25397,410 @@ G[48952]='Throw Them a Bone'
 G[49057]='Minixis'
 end
 
+if release >= 24956 then
+G[47124]='The Fallen Avatar'
+G[48028]='Youthful Resistance'
+G[48029]='The Heart of It'
+G[48103]="Gatekeeper's Review: Tenacity"
+G[48282]='Imp Mother Laglath'
+G[48318]='Work Order: Lightblood Elixirs'
+G[48442]="Nath'raxas Hold: Preparations"
+G[48443]="Nath'raxas Hold: Rescue Mission"
+G[48453]='Strike Back'
+G[48511]='Commander Endaxis'
+G[48634]='Further Supplying Krokuun'
+G[48910]='Supplying Krokuun'
+G[49099]='Invasion Point: Bonich'
+end
+
+if release >= 24970 then
+G[47128]='The Deceiver'
+G[48056]='A Harsh Mistress'
+G[48065]='Extraterrestrial Exploration'
+G[48091]='Vagath the Betrayed'
+G[48096]='Core Mechanics'
+G[48202]='Reinforce the Veiled Den'
+G[48360]='Supplies Needed: Fiendish Leather'
+G[48509]='Commander Sathrenael'
+G[48510]='Commander Vecaya'
+G[48605]="Commander's Downfall"
+G[48614]='Woeful Implications'
+G[48733]="Jed'hin Champion Vorusk"
+G[48836]='Watcher Aival'
+G[48929]='Sizing Up The Opposition'
+G[49096]='Invasion Point: Naigtal'
+G[49097]='Invasion Point: Sangua'
+G[49098]="Invasion Point: Cen'gar"
+end
+
+if release >= 24974 then
+G[48526]='Scuttled'
+G[49091]='Invasion Point: Val'
+G[49293]='Invasion Onslaught'
+end
+
+if release >= 25021 then
+G[10413]='The Horrors of Pollution'
+G[37484]="Captain's Whistle"
+G[40761]='Whispers from Oronaar'
+G[41296]='Fjarnskaggl Cluster'
+G[41300]='Singed Fjarnskaggl'
+G[41440]='Magnificent Leystone Deposits'
+G[41503]='Leystone Basilisks'
+G[41563]='Felhide'
+G[41603]='Lively Stormrays'
+G[44580]='Honor the Flame'
+G[44582]='Desecrate this Fire!'
+G[44614]='Honor the Flame'
+G[44624]='Desecrate this Fire!'
+G[46104]='Arachnid Toxicity'
+G[46279]='Zargrom'
+G[46503]='Tomb of Sargeras: A Lesson in Pain'
+G[47102]='The Mysterious Missive'
+G[47104]='Imprisoned Inquisitor'
+G[47126]='The Deceiver'
+G[47134]="Foiling the Legion's Jailbreak"
+G[47135]='For Their Own Good'
+G[47182]='Long Overdue'
+G[47507]='Khazaduum'
+G[47551]='Lessons of Fire and Pain'
+G[47554]="Intercepting the Legion's Plans"
+G[47561]='Blistermaw'
+G[47566]="Gar'zoth"
+G[47624]='Bury It'
+G[47625]='The Ritual We Share'
+G[47646]='Rope Around'
+G[47705]='Behind Legion Lines'
+G[47707]='Melting Down'
+G[47720]='Eternal Vengeance'
+G[47724]='Besieged'
+G[47828]='Memories of the Fallen'
+G[47833]='Shadowcaster Voruun'
+G[47844]='Recurring Madness'
+G[47858]='Security: Engaged'
+G[47953]='Tereck the Selector'
+G[48094]='Void Clot'
+G[48095]='Dark Experimentation'
+G[48097]="Gatekeeper's Review: Cunning"
+G[48098]='Garden Pests'
+G[48099]='Hostile Echology'
+G[48100]="The Defense of Mac'Aree"
+G[48101]='Bully Pulpit'
+G[48106]='No Love Lost'
+G[48175]='Hidden in the Hollows'
+G[48284]='Reap the Fields'
+G[48285]='Aerial Superiority'
+G[48286]='Crystal Methods'
+G[48287]='Harvesters of Sorrow'
+G[48375]='Primal Obliterum'
+G[48386]="Jed'hin Tournament"
+G[48445]='The Ruins of Oronaar'
+G[48446]='Relics of the Ancient Eredar'
+G[48447]='Shadowguard Dispersion'
+G[48465]="Vrax'thul"
+G[48466]="Ven'orn"
+G[48502]='Naroua, King of the Forest'
+G[48506]='The Hand of Fate'
+G[48507]='The Hand of Fate'
+G[48512]='Sister Subversia'
+G[48592]='Holding the Spire'
+G[48615]='War Never Changes'
+G[48624]='Who Let The Dogs Out?'
+G[48635]='More Void Inoculation'
+G[48637]='Cleansing Fire'
+G[48654]='Beneath Oronaar'
+G[48672]='Lockout Tracking - Normal - Ice'
+G[48673]='Lockout Tracking - Normal - Blood'
+G[48674]='Lockout Tracking - Normal - Islands'
+G[48675]='Lockout Tracking - Normal - Marsh'
+G[48694]='Soultwisted Monstrosity'
+G[48696]='Wrangler Kravos'
+G[48701]='Baruut the Bloodthirsty'
+G[48722]='Feasel the Muffin Thief'
+G[48723]='Vigilant Thanos'
+G[48724]='Vigilant Kuro'
+G[48726]='Turek the Lucid'
+G[48727]='Captain Faruq'
+G[48730]='Sorolis the Ill-Fated'
+G[48731]='Herald of Chaos'
+G[48732]='Sabuul'
+G[48734]="Overseer Y'Beda"
+G[48735]="Overseer Y'Sorna"
+G[48736]="Overseer Y'Morna"
+G[48737]='Instructor Tarahna'
+G[48740]='Skreeg the Devourer'
+G[48777]='Den of Fiends'
+G[48828]='Lieutenant Xakaar'
+G[48829]='Wrath-Lord Yarez'
+G[48830]='Inquisitor Vethroz'
+G[48831]='Commander Texlaz'
+G[48834]='Worldsplitter Skuul'
+G[48835]='Houndmaster Kerrax'
+G[48837]='All-Seer Xanarian'
+G[48875]='Mix It Up'
+G[48911]='Void Inoculation'
+G[48931]='Behemoths Awakened'
+G[48936]='Slithon the Last'
+G[48951]='Seat of the Triumvirate: Voidmaw'
+G[48953]='Seat of the Triumvirate: Darkcaller'
+G[48958]='Ritual Interruption'
+G[48959]='Seat of the Triumvirate: Dark Fissures'
+G[48982]='Invasion Point: Aurinor'
+G[49041]='Ruinhoof'
+G[49044]='Retch'
+G[49045]='Deathscreech'
+G[49046]='Gnasher'
+G[49047]='Bucky'
+G[49048]='Snozz'
+G[49052]="Mar'cuus"
+G[49054]='Bloat'
+G[49055]='Earseeker'
+G[49056]='Pilfer'
+G[49058]='One-of-Many'
+end
+
+if release >= 25195 then
+G[47122]='The Fallen Avatar'
+G[48105]='Peer Review'
+G[48230]='Fragment of the Past'
+G[48231]='Armor of the Triumvirate'
+G[48261]='The Power to Reforge'
+G[48271]='Recovering the Pieces'
+G[48448]='Hindering the Legion War Machine'
+G[48600]='Take the Edge Off'
+G[48601]='Felfire Shattering'
+G[48698]='Kaara the Pale'
+G[48739]='Commander Xethgar'
+G[48803]='Forging a Key to the Past'
+G[48864]='The Broken Blacksmith'
+G[48957]='Seat of the Triumvirate: Void-Blade Zedaat'
+G[48985]='Seat of the Triumvirate: Twilight-Harbinger Tharuul'
+end
+
+if release >= 25383 then
+G[41200]='Rough Leystone Outcropping'
+G[41266]='Raft Fishing'
+G[41270]='Huge Mossgill Perch'
+G[41304]='Flourishing Starlight Roses'
+G[41538]='Iridescent Starlight Roses'
+G[47456]='Calming the Void'
+G[47496]='Bunker Buster'
+G[48102]='Scale Samples'
+G[48376]='Mass Primal Obliterum'
+G[48636]='Fueling the Antoran Campaign'
+G[48738]="Zul'tan the Numerous"
+G[48912]='Supplying the Antoran Campaign'
+G[49049]='Gloamwing'
+G[49050]='Shadeflicker'
+G[49053]='Watcher'
+G[49445]='The Prime Exchange'
+end
+
+if release >= 25455 then
+G[47744]='Smoke, Meat, and Pretty Flowers'
+G[47745]='Yeah, Definitely for the Kids'
+G[47746]='Holing Up'
+G[47747]='Fight Plague with Fire'
+G[47750]='For Emery'
+G[47906]='The Deaths of Chromie'
+end
+
+if release >= 25497 then
+G[47252]='Interesting Times'
+G[47253]='The Originals'
+end
+
+if release >= 25549 then
+G[48203]='The Burning Throne'
+G[48272]='Visions of Fear'
+G[48273]='The Speaker Listens'
+G[48277]='The Speaker Seeks'
+G[48280]='Visions of Another'
+G[48288]='Antoran High Command'
+G[48292]='The Soulhunter'
+G[48729]='Ataxon'
+G[49472]='A Titanic Effort'
+G[49473]='A Titanic Effort'
+G[49474]='The Cursed Shard'
+end
+
+if release >= 25717 then
+G[28688]="Warchief's Command: Northern Stranglethorn!"
+G[28699]="Hero's Call: Northern Stranglethorn!"
+G[28709]="Hero's Call: Borean Tundra!"
+G[28711]="Warchief's Command: Borean Tundra!"
+G[47128]='Tomb of Sargeras: The Deceiver'
+end
+
+if release >= 25753 then
+G[49976]='Gifts of the Fallen'
+G[49981]='Witness to the Wound'
+G[50046]="It's a Sabotage"
+G[50047]='Free Samples'
+G[50049]="The Speaker's Perspective"
+G[50226]='The Source of Power'
+G[50227]='Larvae By The Dozen'
+G[50228]='The Twilight Survivor'
+G[50229]="A Wee Bit O' Cloth"
+G[50371]='Summons to Stormwind'
+G[50372]='Desert Research'
+G[50373]='A Recent Arrival'
+G[50374]='The Blood of Azeroth'
+end
+
+if release >= 25860 then
+G[49077]='Moments of Reflection'
+G[50432]='Titanic Innovation'
+end
+
+if release >= 25881 then
+G[45731]='Chilled Meat'
+G[45732]='Crocolisk Tails'
+G[45733]='Raw Tiger Steaks'
+G[45737]="Ahn'Qiraj: C'thun"
+G[45741]='The Colossus of Regal'
+G[45742]='The Colossus of Zora'
+G[48728]='Umbraliss'
+G[48976]='Supplies From the Argussian Reach'
+G[49860]='Adventure Calls'
+end
+
+if release >= 25901 then
+G[12071]='Attack by Air!'
+G[12958]='Shipment: Blood Jade Amulet'
+G[25809]='Leave No Man Behind!'
+G[32468]='Crystal Clarity'
+G[32469]='Crystal Clarity'
+G[32470]='Light Camera Action'
+G[32471]='Light Camera Action'
+G[39180]="Warchief's Command: Zangarmarsh!"
+G[39181]="Hero's Call: Zangarmarsh!"
+G[39182]="Warchief's Command: Terokkar Forest!"
+G[39188]="Hero's Call: Terokkar Forest!"
+G[39196]="Warchief's Command: Nagrand!"
+G[39197]="Hero's Call: Nagrand!"
+G[39198]="Warchief's Command: Blade's Edge Mountains!"
+G[39199]="Hero's Call: Blade's Edge Mountains!"
+G[39201]="Warchief's Command: Netherstorm!"
+G[39202]="Hero's Call: Netherstorm!"
+G[39203]="Warchief's Command: Dragonblight!"
+G[39204]="Hero's Call: Dragonblight!"
+G[39206]="Warchief's Command: Grizzly Hills!"
+G[39207]="Hero's Call: Grizzly Hills!"
+G[39343]='Vault of the Wardens: Bendy Glass Tubes'
+G[39781]="Neltharion's Lair: Death to the Underking"
+G[43509]="Halls of Valor: Odyn's Challenge"
+G[43521]='The Emerald Nightmare: Essence of Power'
+G[43531]='The Nighthold: Into the Nighthold'
+G[43545]='Black Rook Hold: The Lord of Black Rook Hold'
+G[43546]="The Emerald Nightmare: Il'gynoth"
+G[43547]="The Emerald Nightmare: Il'gynoth"
+G[43548]="The Emerald Nightmare: Il'gynoth"
+G[43549]="The Emerald Nightmare: Il'gynoth"
+G[43550]='Court of Stars: Into the Court of Stars'
+G[43551]='Darkheart Thicket: Into Darkheart Thicket'
+G[43552]='Eye of Azshara: Into the Eye of Azshara'
+G[43553]='Maw of Souls: Into the Maw of Souls'
+G[43554]="Neltharion's Lair: Into Neltharion's Lair"
+G[43555]='The Arcway: Into the Arcway'
+G[43556]='Vault of the Wardens: Into the Vault of the Wardens'
+G[43557]='Assault on Violet Hold: Into the Violet Hold'
+G[43596]='Maw of Souls: Piercing the Mists'
+G[43902]='The Emerald Nightmare: Fall of Cenarius'
+G[43903]='The Emerald Nightmare: Xavius'
+G[43904]='The Emerald Nightmare: Fall of Cenarius'
+G[43905]='The Emerald Nightmare: Xavius'
+G[43906]='The Emerald Nightmare: Fall of Cenarius'
+G[43907]='The Emerald Nightmare: Xavius'
+G[43908]='The Emerald Nightmare: Fall of Cenarius'
+G[43909]='The Emerald Nightmare: Xavius'
+G[44258]='Assault on Violet Hold: Into the Violet Hold'
+G[44259]='Assault on Violet Hold: Into the Violet Hold'
+G[44260]='Vault of the Wardens: Into the Vault of the Wardens'
+G[44261]='Vault of the Wardens: Into the Vault of the Wardens'
+G[44262]='The Arcway: Into the Arcway'
+G[44263]='The Arcway: Into the Arcway'
+G[44264]="Neltharion's Lair: Into Neltharion's Lair"
+G[44265]="Neltharion's Lair: Into Neltharion's Lair"
+G[44266]='Maw of Souls: Into the Maw of Souls'
+G[44267]='Maw of Souls: Into the Maw of Souls'
+G[44268]="Halls of Valor: Odyn's Challenge"
+G[44269]="Halls of Valor: Odyn's Challenge"
+G[44270]='Eye of Azshara: Into the Eye of Azshara'
+G[44271]='Eye of Azshara: Into the Eye of Azshara'
+G[44272]='Darkheart Thicket: Into Darkheart Thicket'
+G[44273]='Darkheart Thicket: Into Darkheart Thicket'
+G[44274]='Court of Stars: Into the Court of Stars'
+G[44275]='Court of Stars: Into the Court of Stars'
+G[44276]='Black Rook Hold: The Lord of Black Rook Hold'
+G[44277]='Black Rook Hold: The Lord of Black Rook Hold'
+G[45381]="The Nighthold: Talisman of the Shal'dorei"
+G[45420]="The Nighthold: The Eye of Aman'Thul"
+G[46244]='Cathedral of Eternal Night: Altar of the Aegis'
+G[47114]="Tomb of Sargeras: The Tomb's Mistress"
+G[47118]='Tomb of Sargeras: Free The Tormented'
+G[47122]='Tomb of Sargeras: The Fallen Avatar'
+G[47123]='Tomb of Sargeras: The Fallen Avatar'
+G[47124]='Tomb of Sargeras: The Fallen Avatar'
+G[47125]='Tomb of Sargeras: The Fallen Avatar'
+G[47126]='Tomb of Sargeras: The Deceiver'
+G[47725]="Tomb of Sargeras: Aegwynn's Path"
+G[47726]="Tomb of Sargeras: Aegwynn's Path"
+G[48231]='The Seat of the Triumvirate: Armor of the Triumvirate'
+G[48337]='Work Order: Astral Glory'
+G[48725]='Venomtail Skyfin'
+G[49015]='Antorus, the Burning Throne: The Death of a Titan'
+end
+
+if release >= 25928 then
+G[49042]='Foulclaw'
+G[49051]='Corrupted Blood of Argus'
+end
+
+if release >= 25946 then
+G[49787]='The Ghostlands'
+G[49929]='The Call for Allies'
+G[50239]='A Choice of Allies'
+end
+
+if release >= 25950 then
+G[48962]='Telogrus Rift'
+G[49266]='Forge of Aeons'
+G[49698]='The Lightforged'
+G[49772]='For the Alliance'
+G[49788]='For the Alliance'
+G[50071]='For the Light!'
+G[50248]='A Second Ally For the Cause'
+G[50305]='Stranger in a Strange Land'
+end
+
+if release >= 25961 then
+G[41522]='Felwort'
+G[41571]='Felhide'
+G[41764]='Walking in Their Footsteps'
+G[41882]='Whispers of the Darkness'
+G[46135]='Gemcutter Needed'
+G[46136]='Gemcutter Needed'
+G[46189]="Shel'zuul"
+G[48349]='Work Order: Empyrium'
+G[48373]='Work Order: Lightweave Cloth'
+G[50313]='Stranger in a Strange Land'
+end
+
+if release >= 25996 then
+G[10]='The Scrimshank Redemption'
+G[41446]='Darkened Felslate Deposits'
+G[41495]='Brilliant Leystone Seams'
+G[45563]='The Shrouded Coin'
+G[46137]='Gemcutter Needed'
+G[46507]='Tomb of Sargeras: The Dread Stalker'
+G[46817]='Infernal Downfall'
+G[47017]='Only the Best'
+G[47040]='Fate Sealed'
+G[48689]='Lockout Tracking - Boss - Marsh'
+G[48977]='Supplies From the Army of the Light'
+G[49198]='Greater Invasion Point: Inquisitor Meto'
+G[50316]='Disturbance Detected: Ulduar'
+end
+
 --	End of localized quest names

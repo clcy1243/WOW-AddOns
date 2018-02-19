@@ -70,8 +70,8 @@ config.options = {
 				},
 				show_zeplin = {
 					type = "toggle",
-					name = L["Zeplin"],
-					desc = L["Show the zeplin locations."],
+					name = L["Zeppelin"],
+					desc = L["Show the Zeppelin locations."],
 					order = 22,
 				},
 				show_others = {

@@ -5661,11 +5661,9 @@ local build_mode_list = function (self, elapsed)
 		CoolTip:SetOption ("YSpacingMod", 1)
 		
 		CoolTip:SetOption ("HeighMod", 3)
+		CoolTip:SetOption ("SubFollowButton", true)
 		
 		_detalhes:SetTooltipMinWidth()
-		
-		--CoolTip:SetOption ("FixedHeight", 106)
-		--CoolTip:SetOption ("FixedWidthSub", 146)
 		
 		CoolTip:AddLine (Loc ["STRING_MODE_GROUP"])
 		CoolTip:AddMenu (1, instancia.AlteraModo, 2, true)
@@ -5693,12 +5691,8 @@ local build_mode_list = function (self, elapsed)
 			end
 			
 			CoolTip:SetWallpaper (2, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
-			
-			if (amt <= 3) then
-				CoolTip:SetOption ("SubFollowButton", true)
-			end
 		end
-		
+
 		CoolTip:AddLine (Loc ["STRING_MODE_SELF"])
 		CoolTip:AddMenu (1, instancia.AlteraModo, 1, true)
 		CoolTip:AddIcon ([[Interface\AddOns\Details\images\modo_icones]], 1, 1, 20, 20, 0, 32/256, 0, 1)
@@ -5822,12 +5816,12 @@ local build_mode_list = function (self, elapsed)
 		GameCooltip:AddLine ("$div")
 		
 		--> forge and history buttons
-		CoolTip:AddLine (Loc ["STRING_MODE_OPENFORGE"])
+		CoolTip:AddLine (Loc ["STRING_SPELLLIST"])
 		CoolTip:AddMenu (1, _detalhes.OpenForge)
 		CoolTip:AddIcon ([[Interface\MINIMAP\Vehicle-HammerGold-3]], 1, 1, 16, 16, 0, 1, 0, 1)
 		
 		--> statistics
-		CoolTip:AddLine ("Statistics") --curse localization isn't adding new strings (and I deleted the old one)
+		CoolTip:AddLine (Loc ["STRING_STATISTICS"])
 		CoolTip:AddMenu (1, _detalhes.OpenRaidHistoryWindow)
 		CoolTip:AddIcon ([[Interface\PvPRankBadges\PvPRank08]], 1, 1, 16, 16, 0, 1, 0, 1)
 		
@@ -6008,6 +6002,8 @@ local build_segment_list = function (self, elapsed)
 		CoolTip:SetOption ("FixedWidthSub", 195)
 		CoolTip:SetOption ("RightTextWidth", 105)
 		CoolTip:SetOption ("RightTextHeight", 12)
+		
+		CoolTip:SetOption ("SubFollowButton", true)
 	
 		----------- segments
 		local menuIndex = 0

@@ -1,9 +1,8 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("Little Wigs: Kael'thas Sunstrider", "esES")
+local L = BigWigs:NewBossLocale("Vexallus", "esES") or BigWigs:NewBossLocale("Vexallus", "esMX")
+if not L then return end
 if L then
-	
-end
-
-local L = LibStub("AceLocale-3.0"):NewLocale("Little Wigs: Vexallus", "esES")
-if L then
-	
+	--L.adds. = "Pure Energy"
+	--L.adds_desc = "Warn when Pure Energy is discharged."
+	--L.adds_message = "Pure Energy discharged!"
+	--L.adds_trigger = "discharges pure energy!"
 end
