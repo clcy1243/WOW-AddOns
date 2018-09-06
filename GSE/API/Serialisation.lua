@@ -91,7 +91,7 @@ function GSE.EncodeMessage(tab)
 
   local one = libS:Serialize(tab)
   GSE.PrintDebugMessage ("Compress Stage 1: " .. one, Statics.SourceTransmission)
-  local two = libC:CompressHuffman(one)
+  local two = libC:Compress(one)
   GSE.PrintDebugMessage ("Compress Stage 2: " .. two, Statics.SourceTransmission)
   local final = GSE.encodeB64(two)
   GSE.PrintDebugMessage ("Compress Stage Result: " .. final, Statics.SourceTransmission)
@@ -131,7 +131,7 @@ function GSE.TransmitSequence(key, channel, target)
   t.ClassID = classid
   t.SequenceName = SequenceName
   t.Sequence = GSELibrary[classid][SequenceName]
-  GSSendMessage(t, channel, target)
+  GSE.sendMessage(t, channel, target)
   GSE.GUITransmissionFrame:SetStatusText(SequenceName .. L[" sent"])
 end
 

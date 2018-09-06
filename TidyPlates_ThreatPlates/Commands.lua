@@ -1,5 +1,5 @@
-﻿local ADDON_NAME, NAMESPACE = ...
-local TP = NAMESPACE.ThreatPlates
+﻿local ADDON_NAME, Addon = ...
+local TP = Addon.ThreatPlates
 
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
@@ -35,7 +35,7 @@ local function TPTPTOGGLE()
 	if (TidyPlatesThreat.db.profile.optionRoleDetectionAutomatic and TidyPlatesThreat.db.profile.verbose) then
 		TP.Print(L["|cff89F559Threat Plates|r: Role toggle not supported because automatic role detection is enabled."])
 	else
-		if TidyPlatesThreat:GetSpecRole() then
+		if Addon:PlayerRoleIsTank() then
 			toggleDPS()
 		else
 			toggleTANK()

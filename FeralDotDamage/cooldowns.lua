@@ -8,7 +8,7 @@ local COOLDOWN_AURA_TAG = "COOLDOWN_AURA"
 
 local options
 
-local initialDBUpdate = 3
+local initialDBUpdate = 5
 
 local GetSpellCooldownCharges
 local perSpellMethids
@@ -64,6 +64,9 @@ C.eluneguid_name = GetSpellInfo(C.eluneguid_spid)
 
 C.ashamane_spid = 210722
 C.ashamane_name = GetSpellInfo(C.ashamane_spid) 
+
+C.feralFrenzy_spid = 274837
+C.feralFrenzy_name = GetSpellInfo(C.feralFrenzy_spid) 
 
 C.ydarkogtiami_spid = 202028
 C.ydarkogtiami_name = GetSpellInfo(C.ydarkogtiami_spid)
@@ -144,7 +147,7 @@ perSpellMethids = {
 		end
 	end,
 	['TF_ShowGlow'] = function(parent)
-		if UnitBuff('player', (GetSpellInfo(5217))) then
+		if AuraUtil.FindAuraByName((GetSpellInfo(5217)), 'player', "HELPFUL") then --UnitBuff('player', (GetSpellInfo(5217))) then
 			local start, duration = GetSpellCooldownCharges(5217)
 			if start == 0 and duration == 0 then
 				if parent._tfGlow ~= true then
@@ -181,7 +184,7 @@ perSpellMethids = {
 	--	perSpellMethids['TF_ShowGlow'](parent)
 		
 		if C.db.profile.cooldowns.specificSpell[C.tigrinoe_spid].artRegen then	
-			local name = UnitBuff('player', (GetSpellInfo(210583)))			
+			local name = AuraUtil.FindAuraByName((GetSpellInfo(210583)), 'player', "HELPFUL") -- UnitBuff('player', (GetSpellInfo(210583)))			
 			if name then
 				local c = C.db.profile.cooldowns.specificSpell[C.tigrinoe_spid].color
 				parent.icon:SetVertexColor(c[1], c[2], c[3], c[4])
@@ -225,7 +228,7 @@ perSpellMethids = {
 	end,
 	
 	['Maim_LegendaryProc'] = function(parent, start, duration, stacks, status, maxstacks, reset)
-		local name = UnitBuff('player', (GetSpellInfo(maimLegProcID)))		-- 212875
+		local name = AuraUtil.FindAuraByName((GetSpellInfo(maimLegProcID)), 'player', "HELPFUL") -- UnitBuff('player', (GetSpellInfo(maimLegProcID)))		-- 212875
 		
 		if name and status == 3 then
 			FeralDotDamage.ShowOverlayGlow(parent)
@@ -233,14 +236,25 @@ perSpellMethids = {
 			FeralDotDamage.HideOverlayGlow(parent)
 		end
 	end,
+
+	['AzeritBerserkTrait'] = function()
+		local name = AuraUtil.FindAuraByName((GetSpellInfo(279526)), 'player', "HELPFUL") -- UnitBuff('player', (GetSpellInfo(maimLegProcID)))		-- 212875
+		
+		if name then
+			return true
+		else
+			return false
+		end
+	end,
 }
 
 local placeholder = {
 	[C.dikiyrev_glyph_spid] = C.dikiyrev_spid,
+	[279526] = C.berserk_spid,
 }
 
 local spells_to_show = {
-	{ id = C.berserk_spid, 		cd = 180 ,	default = true,  tip = COOLDOWN_AURA_TAG	},
+	{ id = C.berserk_spid, 		cd = 180 ,	default = true,  tip = COOLDOWN_AURA_TAG, onShowGlow = 'AzeritBerserkTrait' },
 	{ id = C.tigrinoe_spid, 	cd = 30 ,	default = true,  tip = COOLDOWN_AURA_TAG, onTimeIcon = 'Art_Regen' },
 --	{ id = C.pererogdenie_spid,	cd = 180 ,	default = true,  tip = COOLDOWN_AURA_TAG, talent = C.pererogdenie_spid },
 	{ id = C.skullbuch_spid, 	cd = 15	,	default = false, tip = COOLDOWN_AURA_TAG	},
@@ -253,12 +267,12 @@ local spells_to_show = {
 --	{ id = C.serdcedikoy_spid,	cd = 360,	default = true,  tip = COOLDOWN_AURA_TAG , talent = 108292 },
 --	{ id = C.prirodnaya_spid,	cd = 90,	default = true,  tip = COOLDOWN_AURA_TAG , talent = 124974 },
 	{ id = C.sremit_rivok_spid,	cd = 15,	default = false, tip = COOLDOWN_TAG 	 , talent = 102401 },
-	{ id = C.astralskachek_spid,cd = 30,	default = false, tip = COOLDOWN_TAG 	 , talent = 102280 },	
+	--{ id = C.astralskachek_spid,cd = 30,	default = false, tip = COOLDOWN_TAG 	 , talent = 102280 },	
 	{ id = C.trevogniyrev_spid,	cd = 120,	default = false, tip = COOLDOWN_AURA_TAG},
 	{ id = C.clearcast_id,		cd = 15,	default = false, tip = AURA_TAG, },
 	{ id = C.dikiyrev_spid,		cd = 40,	default = false, tip = AURA_TAG, onTimeIcon = "CP_ShowPandemia", onShowGlow = "CP_ShowGlow", talent = 52610 },
-	{ id = C.eluneguid_spid,    cd = 45,	default = true,	 tip = COOLDOWN_TAG,       talent = 202060 },
-	{ id = C.ashamane_spid,		cd = 75,	default = true,  tip = COOLDOWN_TAG,	   spellKnown = 210722 },
+	--{ id = C.eluneguid_spid,    cd = 45,	default = true,	 tip = COOLDOWN_TAG,       talent = 202060 },
+	{ id = C.feralFrenzy_spid,	cd = 45,	default = true,  tip = COOLDOWN_TAG,	   talent = 274837 },
 	{ id = C.ydarkogtiami_spid, cd = 16, 	default = true,  tip = COOLDOWN_TAG,	   talent = C.ydarkogtiami_spid },
 	
 	{ id = C.maim_spid,			cd = 1,		default = true,  tip = COOLDOWN_TAG,  onUpdate = 'Maim_LegendaryProc', item = 144354	},
@@ -904,7 +918,7 @@ end
 local function CheckForCorruptedSettigns()	
 
 	if C.db.profile.cooldowns.ordering_spells.initialReset ~= initialDBUpdate then
-		print('FDD: Update SpellSorting cuz of init update', C.db.profile.cooldowns.ordering_spells.initialReset)
+		print('FDD: Update cooldown settings cuz of force update')
 		C.db.profile.cooldowns.ordering_spells.initialReset = initialDBUpdate
 		ResetCorruptedSettings()
 		return
@@ -912,7 +926,7 @@ local function CheckForCorruptedSettigns()
 	
 	for index, data in pairs(spells_to_show) do	
 		if not C.db.profile.cooldowns.ordering_spells.spellList[data.id] then
-			print('FDD: Update SpellSorting cuz of invalid spells_to_show', data.id, GetSpellInfo(data.id))
+			print('FDD: Update cooldown settings cuz of invalid spell to show', data.id, (GetSpellInfo(data.id)) )
 			ResetCorruptedSettings()
 			return
 		end
@@ -920,7 +934,7 @@ local function CheckForCorruptedSettigns()
 	
 	for spellID in pairs(C.db.profile.cooldowns.ordering_spells.spellList) do
 		if not id_to_spell[ spellID ] then
-			print('FDD: Update SpellSorting cuz of invalid spellidtoid', spellID, GetSpellInfo(spellID))
+			print('FDD: Update cooldown settings cuz of invalid spellid to id', spellID, (GetSpellInfo(spellID)) )
 			ResetCorruptedSettings()
 			return
 		end
@@ -939,6 +953,7 @@ function C:UpdateCooldownSortings()
 	
 	wipe(sortedSpellList)
 
+	
 	for spellID, data in pairs(C.db.profile.cooldowns.ordering_spells.spellList) do	
 		sortedSpellList[data.sort] = spellID
 	end
@@ -1188,7 +1203,7 @@ local function GetAuras(spellID)
 
 	while ( true ) do
 	
-		local name, rank, icon, count, debuffType, duration2, expirationTime, unitCaster, isStealable, _, spellID2 = UnitAura("player", i, "HELPFUL")
+		local name, icon, count, debuffType, duration2, expirationTime, unitCaster, isStealable, _, spellID2 = UnitAura("player", i, "HELPFUL")
 	
 		
 		if not name then

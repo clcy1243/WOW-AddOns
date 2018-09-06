@@ -51,6 +51,10 @@ L= DBM:GetModLocalization(2093)
 -----------------------
 L= DBM:GetModLocalization(2094)
 
+L:SetMiscLocalization({
+	openingRP = "자, 다들 판돈을 거십시오! 여기 새로운 호구... 아니, 선수가 등장했습니다! 굴그토크, 우딘, 시작해!"
+})
+
 -----------------------
 -- Harlan Sweete --
 -----------------------
@@ -73,13 +77,28 @@ L:SetGeneralLocalization({
 -----------------------
 L= DBM:GetModLocalization(2165)
 
+-----------------------
+-- Mummification Construct --
+-----------------------
+L= DBM:GetModLocalization(2171)
+
+-----------------------
+-- The Warring Warlords --
+-----------------------
+L= DBM:GetModLocalization(2170)
+
+-----------------------
+-- Dazar, The First King --
+-----------------------
+L= DBM:GetModLocalization(2172)
+
 ---------
 --Trash--
 ---------
 L = DBM:GetModLocalization("KingsRestTrash")
 
 L:SetGeneralLocalization({
-	name =	"왕의 안식처 일반몹"
+	name =	"왕들의 안식처 일반몹"
 })
 
 -----------------------
@@ -91,17 +110,21 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization(2153)
 
 -----------------------
--- Council --
+-- Tidesage Council --
 -----------------------
 L= DBM:GetModLocalization(2154)
 
 -----------------------
--- Priest --
+-- Lord Stormsong --
 -----------------------
 L= DBM:GetModLocalization(2155)
 
+L:SetMiscLocalization({
+	openingRP	= "손님이 있는 것 같군, 스톰송 군주."
+})
+
 -----------------------
--- Faceless --
+-- Vol'zith the Whisperer --
 -----------------------
 L= DBM:GetModLocalization(2156)
 
@@ -111,16 +134,23 @@ L= DBM:GetModLocalization(2156)
 L = DBM:GetModLocalization("SotSTrash")
 
 L:SetGeneralLocalization({
-	name =	"폭풍의 제단 일반몹"
+	name =	"폭풍의 사원 일반몹"
 })
 
 -----------------------
 -- <<<Siege of Boralus >>> --
 -----------------------
 -----------------------
--- Chopper Redhook --
+-- Dread Captain Lockwood --
+-----------------------
+L= DBM:GetModLocalization(2173)
+
+-----------------------
+-- Chopper Redhook / Sergeant Bainbridge --
 -----------------------
 L= DBM:GetModLocalization(2132)
+
+L= DBM:GetModLocalization(2133)
 
 -----------------------
 -- Hadal Darkfathom --
@@ -128,7 +158,7 @@ L= DBM:GetModLocalization(2132)
 L= DBM:GetModLocalization(2134)
 
 -----------------------
--- Lady Ashvane --
+-- Kraken --
 -----------------------
 L= DBM:GetModLocalization(2140)
 
@@ -138,7 +168,7 @@ L= DBM:GetModLocalization(2140)
 L = DBM:GetModLocalization("BoralusTrash")
 
 L:SetGeneralLocalization({
-	name =	"보랄러스의 공성 일반몹"
+	name =	"보랄러스 공성전 일반몹"
 })
 
 -----------------------
@@ -174,7 +204,7 @@ L:SetGeneralLocalization({
 })
 
 -----------------------
--- <<<The Undermine>>> --
+-- <<<MOTHERLOAD>>> --
 -----------------------
 -----------------------
 -- Coin-operated Crowd Pummeler --
@@ -202,7 +232,7 @@ L= DBM:GetModLocalization(2116)
 L = DBM:GetModLocalization("UndermineTrash")
 
 L:SetGeneralLocalization({
-	name =	"언더마인 일반몹"
+	name =	"왕노다지 광산!! 일반몹"
 })
 
 -----------------------
@@ -273,17 +303,17 @@ L:SetGeneralLocalization({
 -- <<<Waycrest Manor>>> --
 -----------------------
 -----------------------
--- Witch Council --
+-- Heartsbane Triad --
 -----------------------
 L= DBM:GetModLocalization(2125)
 
 -----------------------
--- Wicker Goliath --
+-- Soulbound Goliath --
 -----------------------
 L= DBM:GetModLocalization(2126)
 
 -----------------------
--- Gluttony --
+-- Raal the Gluttonous --
 -----------------------
 L= DBM:GetModLocalization(2127)
 
@@ -293,7 +323,7 @@ L= DBM:GetModLocalization(2127)
 L= DBM:GetModLocalization(2128)
 
 -----------------------
--- Drust King --
+-- Gorak Tul --
 -----------------------
 L= DBM:GetModLocalization(2129)
 
@@ -303,5 +333,5 @@ L= DBM:GetModLocalization(2129)
 L = DBM:GetModLocalization("WaycrestTrash")
 
 L:SetGeneralLocalization({
-	name =	"웨이크레스트 장원 일반몹"
+	name =	"웨이크레스트 저택 일반몹"
 })

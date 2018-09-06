@@ -1,5 +1,6 @@
 local GSE = GSE
 local L = GSE.L
+local Statics = GSE.Static
 
 --- This function pops up a confirmation dialog.
 function GSE.GUIDeleteSequence(currentSeq, iconWidget)
@@ -24,7 +25,7 @@ end
 function GSE.GUIParseText(editbox)
   if GSEOptions.RealtimeParse then
     text = GSE.UnEscapeString(editbox:GetText())
-    returntext = GSE.TranslateString(text , GetLocale(), GetLocale(), true)
+    returntext = GSE.TranslateString(text , "STRING", true)
     editbox:SetText(returntext)
     editbox:SetCursorPosition(string.len(returntext)+2)
   end
@@ -36,7 +37,7 @@ function GSE.GUILoadEditor(key, incomingframe, recordedstring)
   local sequence
   if GSE.isEmpty(key) then
     classid = GSE.GetCurrentClassID()
-    sequenceName = "New"
+    sequenceName = "NEW_SEQUENCE"
     sequence = {
       ["Author"] = GSE.GetCharacterName(),
       ["Talents"] = GSE.GetCurrentTalents(),
@@ -57,11 +58,13 @@ function GSE.GUILoadEditor(key, incomingframe, recordedstring)
       sequence.MacroVersions[1][1] = nil
       sequence.MacroVersions[1] = GSE.SplitMeIntolines(recordedstring)
     end
+    GSE.GUIEditFrame.NewSequence = true
   else
     elements = GSE.split(key, ",")
     classid = tonumber(elements[1])
     sequenceName = elements[2]
     sequence = GSE.CloneSequence(GSELibrary[classid][sequenceName], true)
+    GSE.GUIEditFrame.NewSequence = false
   end
   GSE.GUIEditFrame.SequenceName = sequenceName
   GSE.GUIEditFrame.Sequence = sequence
@@ -73,6 +76,8 @@ function GSE.GUILoadEditor(key, incomingframe, recordedstring)
   GSE.GUIEditFrame.Dungeon = sequence.Dungeon or sequence.Default
   GSE.GUIEditFrame.Heroic = sequence.Heroic or sequence.Default
   GSE.GUIEditFrame.Party = sequence.Party or sequence.Default
+  GSE.GUIEditFrame.Timewalking = sequence.Timewalking or sequence.Default
+  GSE.GUIEditFrame.MythicPlus = sequence.MythicPlus or sequence.Default
   GSE.GUIEditorPerformLayout(GSE.GUIEditFrame)
   GSE.GUIEditFrame.ContentContainer:SelectTab("config")
   incomingframe:Hide()
@@ -100,7 +105,7 @@ end
 function GSE.GUIUpdateSequenceDefinition(classid, SequenceName, sequence)
   -- Changes have been made so save them
   for k,v in ipairs(sequence.MacroVersions) do
-    sequence.MacroVersions[k] = GSE.TranslateSequenceFromTo(v, GetLocale(), "enUS", SequenceName)
+    sequence.MacroVersions[k] = GSE.TranslateSequence(v, SequenceName, "ID")
     sequence.MacroVersions[k] = GSE.UnEscapeSequence(sequence.MacroVersions[k])
   end
 
@@ -114,6 +119,16 @@ function GSE.GUIUpdateSequenceDefinition(classid, SequenceName, sequence)
       vals.sequencename = SequenceName
       vals.sequence = sequence
       vals.classid = classid
+      if GSE.GUIEditFrame.NewSequence then
+        if GSE.ObjectExists(SequenceName) then
+          GSE.GUIEditFrame:SetStatusText(string.format(L["Sequence Name %s is in Use. Please choose a different name."], SequenceName))
+          GSE.GUIEditFrame.nameeditbox:SetText(GSEOptions.UNKNOWN .. GSE.GUIEditFrame.nameeditbox:GetText() .. Statics.StringReset)
+          GSE.GUIEditFrame.nameeditbox:SetFocus()
+          return
+        end
+        vals.checkmacro = true
+        GSE.GUIEditFrame.NewSequence = false
+      end
       table.insert(GSE.OOCQueue, vals)
       GSE.GUIEditFrame:SetStatusText(string.format(L["Sequence %s saved."], SequenceName))
     end

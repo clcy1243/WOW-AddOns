@@ -1,4 +1,4 @@
-﻿local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate_Sharing","koKR")
+local L = LibStub("AceLocale-3.0"):NewLocale("GatherMate_Sharing","koKR")
 if not L then return end
 
 -- Addon name

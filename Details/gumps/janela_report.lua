@@ -57,7 +57,6 @@ local _UIParent = UIParent --> wow api locals
 		local t = _detalhes.latest_report_table [index]
 		
 		if (t) then
-		
 			if (not DetailsReportWindow) then
 				gump:CriaJanelaReport()
 				DetailsReportWindow:Hide()
@@ -74,12 +73,6 @@ local _UIParent = UIParent --> wow api locals
 			instance:monta_relatorio()
 			
 			instance:SetDisplay (nil, cattribute, csubattribute)
-			
-			if (index > 5) then
-				local t = _detalhes.latest_report_table [index]
-				tremove (_detalhes.latest_report_table, index)
-				tinsert (_detalhes.latest_report_table, 1, t)
-			end
 			
 			GameCooltip:Hide()
 		end
@@ -352,7 +345,6 @@ local function cria_drop_down (este_gump)
 		end
 	
 		local build_list = function()
-		
 			local output_array = {}
 		
 			for index, case in ipairs (lista) do 
@@ -362,7 +354,8 @@ local function cria_drop_down (este_gump)
 			end
 			
 			local channels = {_GetChannelList()} --> coloca o resultado em uma tabela .. {id1, canal1, id2, canal2}
-			for i = 1, #channels, 2 do --> total de canais
+			--09/august/2018: GetChannelList passed to return 3 values for each channel instead of 2
+			for i = 1, #channels, 3 do --> total de canais
 				output_array [#output_array + 1] = {iconsize = iconsize, value = "CHANNEL|"..channels [i+1], label = channels [i]..". "..channels [i+1], onclick = on_click, icon = [[Interface\FriendsFrame\UI-Toast-ToastIcons]], texcoord = {0.3046875, 0.4453125, 0.109375, 0.390625}, iconcolor = {149/255, 112/255, 112/255}}
 			end
 			
@@ -965,7 +958,7 @@ local function cria_drop_down (este_gump)
 				local last_reports = _detalhes.latest_report_table
 				if (#last_reports > 0) then
 					local i = 1
-					for index = 1, min (#last_reports, 10) do
+					for index = 1, min (#last_reports, 8) do
 						local b = window.recently_report_buttons [i]
 						local report = last_reports [index]
 						local instance_number, attribute, subattribute, amt, report_where = unpack (report)

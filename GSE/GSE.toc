@@ -1,8 +1,8 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: |cffff0000GSE2:|r |cFF00D1FFGnome Sequencer Enhanced|r
 ## Notes: Allows you to execute a sequence of macros without stopping on unusable spells.
 ## Author: TimothyLuke
-## Version: 2203
+## Version: 2309
 ## SavedVariables: GSEOptions GSELibrary
 ## OptionalDeps: WeakAuras
 
@@ -34,11 +34,6 @@ API\Init.lua
 API\Statics.lua
 API\InitialOptions.lua
 
-# Spells Language Strings
-Localization\enUS.lua
-Localization\enUSHash.lua
-Localization\enUSSHADOW.lua
-
 
 #storage and core
 API\StaticPopup.lua
@@ -50,4 +45,5 @@ API\Translator.lua
 API\Plugins.lua
 API\Serialisation.lua
 API\Options.lua
+API\OneOffEvents.lua
 API\Events.lua

@@ -96,15 +96,15 @@ function Sharing:OnMessage(prefix, message, distribution, sender)
 	nodeType = tonumber(nodeType)
 	coord = tonumber(coord)
 	nodeID = tonumber(nodeID)
-	local x,y,nodeName, level
+	local x,y,nodeName
 	if not GatherMate2.reverseNodeIDs[ dbIndexes[nodeType] ][nodeID] then
 		return -- invalid nodeID
 	end
-	x,y,level = GatherMate2:DecodeLoc(coord)
+	x,y = GatherMate2:DecodeLoc(coord)
 	nodeName = GatherMate2.reverseNodeIDs[dbIndexes[nodeType]][nodeID]
 	if cmd == 'A' and db.syncAdds then
 		actingOnComm = true
-		GatherMate2:AddNode(zone,x,y,level,dbIndexes[nodeType],nodeName)
+		GatherMate2:AddNode(zone,x,y,dbIndexes[nodeType],nodeName)
 		actingOnComm = false
 	elseif cmd == 'D' and db.syncDeletes then
 		actingOnComm = true

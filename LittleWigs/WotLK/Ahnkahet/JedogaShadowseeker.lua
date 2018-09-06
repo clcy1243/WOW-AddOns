@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Jedoga Shadowseeker", 522, 582)
+local mod, CL = BigWigs:NewBoss("Jedoga Shadowseeker", 619, 582)
 if not mod then return end
 mod:RegisterEnableMob(29310)
 
@@ -28,7 +28,7 @@ end
 --
 
 function mod:Thundershock()
-	self:Message(60029, "Important")
+	self:Message(60029, "red")
 	self:Bar(60029, 10)
 end
 

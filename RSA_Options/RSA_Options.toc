@@ -1,7 +1,7 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: RSA [|c11FF75B3Options|r]
 ## Notes: Load on Demand configuration options for Raeli's Spell Announcer.
-## Author: Raeli, Jenneth, Xadurk
+## Author: Raeli
 ## Dependencies: RSA
 ## LoadOnDemand: 1
 

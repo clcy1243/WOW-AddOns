@@ -1,12 +1,12 @@
-tag 1e579ba56c902fab50ec19a88cd1110435318bd0 v70300-1.0.1
+tag 1e32bee620f941dfeec10c729c9039b13ef15a89 v80000-1.0.0
 Author:	Jim Whitehead <jnwhiteh@gmail.com>
-Date:	Sun Sep 24 09:15:04 2017 +0200
+Date:	Fri Jul 20 11:58:32 2018 +0200
 
-Tagging v70300-1.0.1
+Tagging v80000-1.0.0
 
-commit d0fabe12ca5fa8e807945e9821031852e371c7db
+commit e12f1aa9327728e4c5fd69687a2c79479f287179
 Author: Jim Whitehead <jnwhiteh@gmail.com>
-Date:   Sun Sep 24 09:14:49 2017 +0200
+Date:   Fri Jul 20 11:58:17 2018 +0200
 
-    Fix constant names
+    Initial update for 8.0
 

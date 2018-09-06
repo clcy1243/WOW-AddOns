@@ -1,0 +1,10 @@
+lightweight tag c072141f4a1dec709bc295ad8d3de84d37aad5f1 v1.0-alpha2
+Author:	TimothyLuke <timothy@minahan.net>
+Date:	Fri Aug 18 09:32:24 2017 +0930
+
+commit c072141f4a1dec709bc295ad8d3de84d37aad5f1
+Author: TimothyLuke <timothy@minahan.net>
+Date:   Fri Aug 18 09:32:24 2017 +0930
+
+    TOC Packaging updates
+

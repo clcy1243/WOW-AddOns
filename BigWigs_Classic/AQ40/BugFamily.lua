@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("The Bug Trio", 766, 1547)
+local mod, CL = BigWigs:NewBoss("The Bug Trio", 531, 1547)
 if not mod then return end
 mod:RegisterEnableMob(15543, 15544, 15511) -- Princess Yauj, Vem, Lord Kri
 
@@ -46,18 +46,18 @@ end
 --
 
 function mod:GreatHeal(args)
-	self:Message(args.spellId, "Urgent", nil, CL.casting:format(args.spellName))
+	self:Message(args.spellId, "orange", nil, CL.casting:format(args.spellName))
 	self:Bar(args.spellId, 2, CL.cast:format(args.spellName))
 end
 
 function mod:Fear(args)
 	self:Bar(args.spellId, 20)
-	self:Message(args.spellId, "Important")
-	self:DelayedMessage(args.spellId, 15, "Urgent", CL.custom_sec:format(args.spellName, 5))
+	self:Message(args.spellId, "red")
+	self:DelayedMessage(args.spellId, 15, "orange", CL.custom_sec:format(args.spellName, 5))
 end
 
 function mod:ToxicVolley(args)
-	self:Message(args.spellId, "Attention")
+	self:Message(args.spellId, "yellow")
 end
 
 do
@@ -66,7 +66,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 and self:Me(args.destGUID) then
 			prev = t
-			self:Message(args.spellId, "Personal", "Alarm", CL.underyou:format(args.spellName))
+			self:Message(args.spellId, "blue", "Alarm", CL.underyou:format(args.spellName))
 		end
 	end
 end

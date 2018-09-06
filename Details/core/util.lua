@@ -279,10 +279,11 @@
 				return format ("%.2f", numero/1000000000) .. "B"
 			elseif (numero > 1000000) then
 				return _string_format ("%.2f", numero/1000000) .. "M"
-			elseif (numero > 1000) then
+			elseif (numero > 999) then
 				return _string_format ("%.1f", numero/1000) .. "K"
 			end
-			return _string_format ("%.1f", numero)
+			
+			return _string_format ("%.0f", numero)
 		end
 		
 		function _detalhes:ToK2 (numero)
@@ -295,7 +296,8 @@
 			elseif (numero > 999) then
 				return _string_format ("%.1f", (numero/1000)) .. "K"
 			end
-			return _string_format ("%.1f", numero)
+			
+			return _string_format ("%.0f", numero)
 		end
 		
 		--> short numbers no numbers after comma
@@ -307,6 +309,7 @@
 			elseif (numero > 1000) then
 				return _string_format ("%.0f", numero/1000) .. "K"
 			end
+			
 			return _string_format ("%.0f", numero)
 		end
 	
@@ -316,7 +319,8 @@
 			elseif (numero > 1000) then
 				return _string_format ("%.1f", numero/1000) .. "k"
 			end
-			return _string_format ("%.1f", numero)
+			
+			return _string_format ("%.0f", numero)
 		end
 		
 		function _detalhes:ToK2Min (numero)
@@ -327,7 +331,8 @@
 			elseif (numero > 999) then
 				return _string_format ("%.1f", (numero/1000)) .. "k"
 			end
-			return _string_format ("%.1f", numero)
+			
+			return _string_format ("%.0f", numero)
 		end
 		
 		--> short numbers no numbers after comma
@@ -337,6 +342,7 @@
 			elseif (numero > 1000) then
 				return _string_format ("%.0f", numero/1000) .. "k"
 			end
+			
 			return _string_format ("%.0f", numero)
 		end
 		
@@ -347,6 +353,7 @@
 			elseif (numero > 1000) then
 				return _string_format ("%.1f", numero/1000) .. "K"
 			end
+			
 			return numero
 		end
 		
@@ -449,27 +456,36 @@
 	--> replacing data for custom texts
 	_detalhes.string = {}
 	
-	local left_side_func
-	local right_side_func
+	local function_cache = {}
+	local arguments_cache = {}
+	local parameters_cache = {}
 	
-	local args
 	local replace_arg = function (i)
-		return args [tonumber(i)]
+		return arguments_cache [tonumber(i)]
 	end
 	local run_function = function (str)
+		--> cache functions
+		local func = function_cache [str]
+		if (not func) then
+			func = loadstring (str)
+			function_cache [str] = func
+		end
 	
-		--str = [[local player, combat = ...;]] .. str
-	
-		local okey, value = _pcall (loadstring (str), args[4], args[5])
+		local okey, value = _pcall (func, parameters_cache [1], parameters_cache [2])
 		if (not okey) then
-			_detalhes:Msg ("|cFFFF9900error on custom text function|r:", value)
+			_detalhes:Msg ("|cFFFF9900error on custom text|r:", value)
 			return 0
 		end
 		return value or 0
 	end
 
-	function _detalhes.string.replace (str, ...)
-		args = {...}
+	function _detalhes.string.replace (str, v1, v2, v3, v4, v5)
+		arguments_cache [1] = v1
+		arguments_cache [2] = v2
+		arguments_cache [3] = v3
+		parameters_cache [1] = v4
+		parameters_cache [2] = v5
+		
 		return (str:gsub ("{data(%d+)}", replace_arg):gsub ("{func(.-)}", run_function)) 
 	end
 	
@@ -565,7 +581,13 @@
 			
 			local tpe = _type (value)
 			
-			if (type (key) ~= "string") then
+			if (type (key) == "function") then
+				key = "#function#"
+			elseif (type (key) == "table") then
+				key = "#table#"
+			end
+			
+			if (type (key) ~= "string" and type (key) ~= "number") then
 				key = "unknown?"
 			end
 			
@@ -581,7 +603,7 @@
 				s = s .. space .. "[" .. key .. "] = |cFFffc1f4" .. value .. "|r\n"
 				
 			elseif (tpe == "function") then
-				s = s .. space .. "[" .. key .. "] = function()\n"
+				s = s .. space .. "|cFFa9a9ff[|r" .. key .. "|cFFa9a9ff]|r = |cFFa9a9fffunction()|r\n"
 				
 			elseif (tpe == "boolean") then
 				s = s .. space .. "[" .. key .. "] = |cFF99d0ff" .. (value and "true" or "false") .. "|r\n"
@@ -785,17 +807,20 @@ end
 
 		_detalhes:TimeDataTick()
 		_detalhes:BrokerTick()
-
-		if (_detalhes.zone_type == "pvp" or _detalhes.zone_type == "arena" or _InCombatLockdown()) then
+		
+		if ((_detalhes.zone_type == "pvp" and _detalhes.use_battleground_server_parser) or _detalhes.zone_type == "arena" or _InCombatLockdown()) then
 			return true
+			
 		elseif (_UnitAffectingCombat("player")) then
 			return true
+			
 		elseif (_IsInRaid()) then
 			for i = 1, _GetNumGroupMembers(), 1 do
 				if (_UnitAffectingCombat ("raid"..i)) then
 					return true
 				end
 			end
+			
 		elseif (_IsInGroup()) then
 			for i = 1, _GetNumGroupMembers()-1, 1 do
 				if (_UnitAffectingCombat ("party"..i)) then
@@ -805,12 +830,14 @@ end
 		end
 		
 		--> don't leave the combat if is in the argus encounter ~REMOVE on 8.0
+		--[=[
 		if (_detalhes.encounter_table and _detalhes.encounter_table.id == 2092) then
 			if (_detalhes.debug) then
 				_detalhes:Msg ("(debug) in argus encounter, cannot leave the combat.")
 			end
 			return true
 		end
+		--]=]
 		
 		--mythic dungeon test
 		if (_detalhes.MythicPlus.Started and _detalhes.mythic_plus.always_in_combat) then

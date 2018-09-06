@@ -7,7 +7,7 @@
 --		Banjankri of Blackrock, Predeter of Proudmoore, Xenyr of Aszune
 
 -- Currently maintained by
--- Cybeloras of Aerie Peak/Detheroc/Mal'Ganis
+-- Cybeloras of Aerie Peak
 -- --------------------
 
 
@@ -192,7 +192,7 @@ TMW.HELP:NewCode("SOUND_TEST_ERROR", 10, false)
 
 function Sound:TestSound(button, soundFile)
 	if tonumber(soundFile) then
-		(PlaySoundKitID or PlaySound)(soundFile) -- PlaySoundKitID is gone in 7.3
+		PlaySound(soundFile)
 	else
 		PlaySoundFile(soundFile, TMW.db.profile.SoundChannel)
 	end

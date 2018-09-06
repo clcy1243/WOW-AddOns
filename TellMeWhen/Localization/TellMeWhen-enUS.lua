@@ -136,8 +136,6 @@ Anchoring groups to the cursor can be useful for icons that are checking the 'mo
 
 To anchor a group to the cursor, |cff7fffffRight-Click-and-drag|r an icon to this dummy.
 
-Due to a Blizzard bug, the cooldown sweep animation will bug out when it moves around, so you probably should disable it for cursor-anchored icons.
-
 |cff7fffffLeft-Click and drag|r to move this dummy.]]
 
 L["ERROR_ANCHORSELF"] = "%s was trying to anchor to itself, so TellMeWhen reset it's anchor to the center of the screen to prevent catastrophic failure."
@@ -685,7 +683,7 @@ L["SORTBYNONE_DURATION"] = "Normal Duration"
 L["SORTBYNONE_STACKS"] = "Normal Stacks"
 L["SORTBYNONE_DESC"] = [[If checked, spells will be checked in and appear in the order that they were entered into the "%s" editbox.
 
-If this icon is a buff/debuff icon and the number of auras being checked exceeds the efficiency threshold setting, auras will be checked in the order that they would normally appear on the unit's unit frame.]]
+If this icon is a buff/debuff icon, auras will be checked in the order that they would normally appear on the unit's unit frame.]]
 L["SORTBYNONE_META_DESC"] = [[If checked, icons will be checked in the order that was configured above.]]
 L["ICONMENU_SORTASC"] = "Low duration"
 L["ICONMENU_SORTASC_DESC"] = "Check this box to prioritize and show spells with the lowest duration."
@@ -840,6 +838,10 @@ L["UIPANEL_BAR_BORDERBAR"] = "Bar Border"
 L["UIPANEL_BAR_BORDERBAR_DESC"] = "Set a border around the bar."
 L["UIPANEL_BAR_BORDERCOLOR"] = "Border Color"
 L["UIPANEL_BAR_BORDERCOLOR_DESC"] = "Change the color of the icon and bar borders."
+L["UIPANEL_BAR_SIZE_X"] = "Icon Width"
+L["UIPANEL_BAR_SIZE_X_DESC"] = "Modifies the width of icons in this group."
+L["UIPANEL_BAR_SIZE_Y"] = "Icon Height"
+L["UIPANEL_BAR_SIZE_Y_DESC"] = "Modifies the height of icons in this group."
 
 
 L["UIPANEL_ICONS"] = "Icons"
@@ -959,6 +961,10 @@ L["UIPANEL_WARNINVALIDS_DESC"] = [[If this setting is enabled, TellMeWhen when w
 
 It is HIGHLY RECOMMENDED that you keep this setting enabled, as some of these configuration errors can cause particularly poor performance]]
 
+L["UIPANEL_DRDURATION"] = "DR Duration"
+L["UIPANEL_DRDURATION_DESC"] = [[Set the duration that diminishing returns last.
+
+The official time stated by Blizzard is 18 seconds, but in many cases, this can be too short and will cause your DR icons to report completed DR when it isn't quite done. You may wish to add a second or two to compensate for that.]]
 
 L["UIPANEL_GROUPSORT"] = "Icon Sorting"
 
@@ -1437,6 +1443,7 @@ This includes the current flex raid tuning.]]
 L["CONDITIONPANEL_SWIMMING"] = "Swimming"
 L["CONDITIONPANEL_RESTING"] = "Resting"
 L["CONDITIONPANEL_INPETBATTLE"] = "In pet battle"
+L["CONDITIONPANEL_WARMODE"] = "War Mode enabled"
 L["CONDITIONPANEL_OVERRBAR"] = "Action bar overridden"
 L["CONDITIONPANEL_OVERRBAR_DESC"] = "Checks if you have some effect that override your primary action bar. This does not include pet battles."
 L["CONDITIONPANEL_MANAUSABLE"] = "Spell Usable (Mana/Energy/etc.)"
@@ -1976,7 +1983,7 @@ L["CONFIGPANEL_BACKDROP_HEADER"] = "Bar Backdrop"
 
 
 
-L["CACHING"] = [[TellMeWhen is caching and filtering all spells in the game. This only needs to be done once per WoW patch. You can speed up or slow down the process using the slider below.
+L["CACHING"] = [[TellMeWhen is caching and filtering all spells in the game.
 
 You do not have to wait for this process to complete in order to use TellMeWhen. Only the suggestion list is dependent on the completion of the spell cache.]]
 L["CACHINGSPEED"] = "Spells per frame:"
@@ -2675,9 +2682,7 @@ Try dragging an icon to a meta icon, another group, or another frame on your scr
 L["HELP_EXPORT_DOCOPY_WIN"] = [[Press |cff7fffffCTRL+C|r to copy]]
 L["HELP_EXPORT_DOCOPY_MAC"] = [[Press |cff7fffffCMD+C|r to copy]]
 
-L["HELP_EXPORT_MULTIPLE_STRING"] = [[The export string contains extra strings for data that is required by the main data that you have exported. To see what this includes, look at the "From String" import menu for the string.
-
-Users of TellMeWhen v7.0.0+ can copy all the strings at once to import them. Others will need to paste each string individually.]]
+L["HELP_EXPORT_MULTIPLE_STRING"] = [[The export string contains extra data that is required by the main data that you have exported. To see what this includes, look at the "From String" import menu for the string.]]
 L["HELP_EXPORT_MULTIPLE_COMM"] = [[The exported data includes extra data that is required by the main data that you have exported. To see what this includes, export the same data to a string and look at the "From String" import menu for that string.]]
 
 

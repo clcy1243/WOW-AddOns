@@ -1,24 +1,54 @@
-tag fa7267ce92e77849528d70396c0ca3ffd6aa5121 1.7.6
+tag c50479aef726602ef53d1b7388a54ee64d24d09c 1.8.1
 Author:	Hendrik Leppkes <h.leppkes@gmail.com>
-Date:	Wed Aug 30 08:50:34 2017 +0200
+Date:	Tue Aug 21 11:44:21 2018 +0200
 
-Tag as 1.7.6
+Tag as 1.8.1
 
-commit dfbc5fe939a9e44a178fc3809d1bbe3932cb5a87
+commit d710a95fa6f261edd5e2e9fdb9f161a4a7da1dae
 Author: Hendrik Leppkes <h.leppkes@gmail.com>
-Date:   Wed Aug 30 08:50:21 2017 +0200
+Date:   Tue Aug 21 11:42:45 2018 +0200
 
-    Update TOC for 7.3
+    Re-implement configuring the map fade alpha
 
-commit 2cf89455a858b49bc610cb3f52335e0fe597ffa4
+commit b29cd18bf87df5db343b4229ffa520996b719b88
 Author: Hendrik Leppkes <h.leppkes@gmail.com>
-Date:   Wed Aug 30 08:49:22 2017 +0200
+Date:   Tue Aug 21 11:36:30 2018 +0200
 
-    Update FogClear data for Argus
+    Re-implement Quest POI scaling
 
-commit 6975e72c7760af7304132580b058d4844851799b
+commit 636af525f260c4b3acdf760c42b80a8bd97f1676
 Author: Hendrik Leppkes <h.leppkes@gmail.com>
-Date:   Wed Jul 12 14:16:38 2017 +0200
+Date:   Sun Aug 19 18:01:44 2018 +0200
 
-    Switch to ignoring missing locale strings
+    Remove UIPanel scale handling
+
+commit caae3d3d511a32ab1f0a292034446d2aadd32f6f
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Sun Aug 19 14:13:10 2018 +0200
+
+    Restore Player Arrow scale functionality
+
+commit 4e12ef7b93f7c3edfdab8310326ec0b77c9b9424
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Sun Aug 19 14:06:34 2018 +0200
+
+    Restore EJ Icon scale functionality
+
+commit 85f9757104b4e7cd154eab8e15782dd73e035431
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Sun Aug 19 13:50:21 2018 +0200
+
+    Restore closing the map on ESC
+
+commit 53fe23981c3aa1573b63866067ff24ad56755a15
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Sun Aug 19 13:46:00 2018 +0200
+
+    Restore position when loading a profile
+
+commit a3712a50d36c69578446342f3a1745de9c51b8be
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Sun Aug 19 13:38:03 2018 +0200
+
+    Restore the ability to move the map
 

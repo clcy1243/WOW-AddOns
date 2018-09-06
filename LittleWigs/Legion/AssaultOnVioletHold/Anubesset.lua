@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Anub'esset", 1066, 1696)
+local mod, CL = BigWigs:NewBoss("Anub'esset", 1544, 1696)
 if not mod then return end
 mod:RegisterEnableMob(102246)
 mod.engageId = 1852
@@ -47,12 +47,12 @@ end
 --
 
 function mod:MandibleStrikesCast(args)
-	self:Message(args.spellId, "Attention", nil, CL.casting:format(args.spellName))
+	self:Message(args.spellId, "yellow", nil, CL.casting:format(args.spellName))
 	self:CDBar(args.spellId, 22)
 end
 
 function mod:MandibleStrikesApplied(args)
-	self:TargetMessage(args.spellId, args.destName, "Attention", "Alarm", nil, nil, self:Healer())
+	self:TargetMessage(args.spellId, args.destName, "yellow", "Alarm", nil, nil, self:Healer())
 	self:TargetBar(args.spellId, 10, args.destName)
 end
 
@@ -62,7 +62,7 @@ do
 			self:Say(202341)
 			self:Flash(202341)
 		end
-		self:TargetMessage(202341, player, "Important", "Long")
+		self:TargetMessage(202341, player, "red", "Long")
 		self:PrimaryIcon(202341, player)
 	end
 
@@ -76,22 +76,24 @@ do
 end
 
 function mod:CallOfTheSwarm(args)
-	self:Message(args.spellId, "Urgent", "Info")
+	self:Message(args.spellId, "orange", "Info")
 end
 
 function mod:Fixated(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(args.spellId, args.destName, "Personal", "Warning")
+		self:TargetMessage(args.spellId, args.destName, "blue", "Warning")
 	end
 end
 
 do
 	local prev = 0
 	function mod:BlisteringOozeDamage(args)
-		local t = GetTime()
-		if t-prev > 2 and self:Me(args.destGUID) then
-			prev = t
-			self:Message(args.spellId, "Personal", "Alarm", CL.underyou:format(args.spellName))
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			if t-prev > 2 then
+				prev = t
+				self:Message(args.spellId, "blue", "Alarm", CL.underyou:format(args.spellName))
+			end
 		end
 	end
 end

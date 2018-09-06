@@ -315,7 +315,6 @@ L["Hide Login Message"] = true
 L["Hides the message that GSE is loaded."] = true
 L["Your current Specialisation is "] = true
 -- GSE 2.0.14
-L["A new version of %s has been added."] = true
 L["This Sequence was exported from GSE %s."] = true
 
 --GSE 2.1.0
@@ -395,3 +394,48 @@ L["Heroic setting changed to Default."] = true
 L["Dungeon setting changed to Default."] = true
 L["Party setting changed to Default."] = true
 L["Macro found by the name %sPVP%s. Rename this macro to a different name to be able to use it.  WOW has a global object called PVP that is referenced instead of this macro."] = true
+
+-- GSE 2.2.07
+L["Random - It will select .... a spell, any spell"] = true
+
+-- GSE 2.2.08
+L["Don't Translate Sequences"] = true
+L["Enable this option to stop automatically translating sequences from enUS to local language."] = true
+
+-- GSE 2.3.00
+L["The GUI has not been loaded.  Please activate this plugin amongst WoW's addons to use the GSE GUI."] = true
+L["Target protection is currently %s"] = true
+L["Arena setting changed to Default."] = true
+L["Arena"] = true
+L["Local Macro"] = true
+L["Updated Macro"] = true
+L["Sequence Compare"] = true
+L["Default Import Action"] = true
+L["When GSE imports a macro and it already exists locally and has local edits, what do you want the default action to be.  Merge - Add the new MacroVersions to the existing Macro.  Replace - Replace the existing macro with the new version. Ignore - ignore updates.  This default action will set the default on the Compare screen however if the GUI is not available this will be the action taken."] = true
+L["Merge"] = true
+L["Ignore"] = true
+L["Choose import action:"] = true
+L["Continue"] = true
+L["Extra Macro Versions of %s has been added."] = true
+L["No changes were made to "] = true
+L[" was updated to new version."] = true
+L["All macros are now stored as upper case names.  You may need to re-add your old macros to your action bars."] = true
+L["MergeSequence"] = true
+L["Sequence Name %s is in Use. Please choose a different name."] = true
+L["Timewalking"] = true
+L["Mythic+"] = true
+L["Format export for WLM Forums"] = true
+
+-- GSE 2.3.02
+L["Rename New Macro"] = true
+L[" was imported as a new macro."] = true
+L["New Sequence Name"] = true
+
+-- GSE 2.3.04
+L["Use WLM Export Sequence Format"] = true
+L["When exporting a sequence create a stub entry to import for WLM's Website."] = true
+
+
+-- GSE 2.3.09
+L["Mythic+ setting changed to Default."] = true
+L["Timewalking setting changed to Default."] = true

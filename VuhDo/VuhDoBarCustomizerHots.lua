@@ -42,6 +42,7 @@ local VUHDO_CHARGE_COLORS = { "HOT_CHARGE_1", "HOT_CHARGE_2", "HOT_CHARGE_3", "H
 local VUHDO_HOT_CFGS = { "HOT1", "HOT2", "HOT3", "HOT4", "HOT5", "HOT6", "HOT7", "HOT8", "HOT9", "HOT10", };
 
 local VUHDO_CACHE_SPELL_ONLY_BY_ID = { 
+	[VUHDO_SPELL_ID.SOOTHING_MIST] = true,
 	[VUHDO_SPELL_ID.RIPTIDE] = true,
 	[VUHDO_SPELL_ID.CENARION_WARD] = true,
 };
@@ -531,7 +532,7 @@ local function VUHDO_updateHots(aUnit, anInfo)
 		for tCnt = 1, huge do
 
 			if not tDebuffOffset then
-				tBuffName, _, tBuffIcon, tStacks, _, tDuration, tExpiry, tCaster, _, _, tSpellId = UnitBuff(aUnit, tCnt);
+				tBuffName, tBuffIcon, tStacks, _, tDuration, tExpiry, tCaster, _, _, tSpellId = UnitBuff(aUnit, tCnt);
 
 				if not tBuffIcon then
 					tDebuffOffset = tCnt - 1;
@@ -539,7 +540,7 @@ local function VUHDO_updateHots(aUnit, anInfo)
 			end
 
 			if tDebuffOffset then -- Achtung kein elseif
-				tBuffName, _, tBuffIcon, tStacks, _, tDuration, tExpiry, tCaster, _, _, tSpellId = UnitDebuff(aUnit, tCnt - tDebuffOffset);
+				tBuffName, tBuffIcon, tStacks, _, tDuration, tExpiry, tCaster, _, _, tSpellId = UnitDebuff(aUnit, tCnt - tDebuffOffset);
 
 				if not tBuffIcon then
 					break;

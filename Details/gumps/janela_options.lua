@@ -666,7 +666,6 @@ local menus2 = {
 		Loc ["STRING_OPTIONSMENU_SPELLS"], --15
 		Loc ["STRING_OPTIONSMENU_DATACHART"], --16
 		Loc ["STRING_OPTIONSMENU_AUTOMATIC"], --17
-		--Loc ["STRING_OPTIONSMENU_MISC"], --18
 		"Streamer Settings", --18
 		Loc ["STRING_OPTIONSMENU_DATAFEED"], --19
 		Loc ["STRING_OPTIONSMENU_TOOLTIP"], --20
@@ -687,8 +686,9 @@ local menus2 = {
 	}
 	window.is_window_settings = is_window_settings
 	
+		--~new
 		local newIcon = g:CreateImage (window, [[Interface\AddOns\Details\images\icons2]], 62*0.6, 40*0.6, "overlay", {443/512, 505/512, 306/512, 346/512})
-		newIcon:SetPoint ("topleft", window.widget, "topleft", 135, -351)
+		--newIcon:SetPoint ("topleft", window.widget, "topleft", 135, -351)
 	
 		local select_options = function (options_type, true_index)
 			
@@ -1613,7 +1613,7 @@ function window:CreateFrame20()
 			window:CreateLineBackground2 (frame20, "TooltipTextColorPickAnchor", "TooltipTextColorAnchorLabel", Loc ["STRING_OPTIONS_TOOLTIPS_FONTCOLOR_DESC"])
 		
 		-- text size
-		g:NewLabel (frame20, _, "$parentTooltipTextSizeLabel", "TooltipTextSizeLabel", Loc ["STRING_OPTIONS_TOOLTIPS_FONTSIZE"], "GameFontHighlightLeft")
+		g:NewLabel (frame20, _, "$parentTooltipTextSizeLabel", "TooltipTextSizeLabel", Loc ["STRING_OPTIONS_TEXT_SIZE"], "GameFontHighlightLeft")
 		local s = g:NewSlider (frame20, _, "$parentTooltipTextSizeSlider", "TooltipTextSizeSlider", SLIDER_WIDTH, SLIDER_HEIGHT, 5, 32, 1, tonumber (_detalhes.tooltip.fontsize), nil, nil, nil, options_slider_template)
 		--config_slider (s)
 	
@@ -1642,7 +1642,7 @@ function window:CreateFrame20()
 			return fonts 
 		end
 
-		g:NewLabel (frame20, _, "$parentTooltipFontLabel", "TooltipFontLabel", Loc ["STRING_OPTIONS_TOOLTIPS_FONTFACE"] , "GameFontHighlightLeft")
+		g:NewLabel (frame20, _, "$parentTooltipFontLabel", "TooltipFontLabel", Loc ["STRING_OPTIONS_TEXT_FONT"] , "GameFontHighlightLeft")
 		local d = g:NewDropDown (frame20, _, "$parentTooltipFontDropdown", "TooltipFontDropdown", DROPDOWN_WIDTH, dropdown_height, build_tooltip_menu, _detalhes.tooltip.fontface, options_dropdown_template)
 		
 		frame20.TooltipFontDropdown:SetPoint ("left", frame20.TooltipFontLabel, "right", 2)
@@ -2483,6 +2483,19 @@ function window:CreateFrame18()
 				
 				window:CreateLineBackground2 (frame18, "DisableMythicDungeonSlider", "DisableMythicDungeonLabel", "Threat mythic dungeon segments as common segments: no trash merge, no mythic run overall, segments wraps on entering and leaving combat.")
 				
+			--> disable chart at the end of a mythic dungeon
+				g:NewLabel (frame18, _, "$parentDisableMythicDungeonChartLabel", "DisableMythicDungeonChartLabel", "Show Mythic Dungeon Damage Graphic", "GameFontHighlightLeft")
+				g:NewSwitch (frame18, _, "$parentDisableMythicDungeonChartSlider", "DisableMythicDungeonChartSlider", 60, 20, _, _, _detalhes.mythic_plus.show_damage_graphic, nil, nil, nil, nil, options_switch_template)
+
+				frame18.DisableMythicDungeonChartSlider:SetPoint ("left", frame18.DisableMythicDungeonChartLabel, "right", 2)
+				frame18.DisableMythicDungeonChartSlider:SetAsCheckBox()
+				frame18.DisableMythicDungeonChartSlider.OnSwitch = function (_, _, value)
+					_detalhes.mythic_plus.show_damage_graphic = not _detalhes.mythic_plus.show_damage_graphic
+					_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
+				end
+				
+				window:CreateLineBackground2 (frame18, "DisableMythicDungeonChartSlider", "DisableMythicDungeonChartLabel", "At the end of a mythic dungeon run, show a graphic with the DPS of each player.")
+				
 			--> clear cache
 				g:NewLabel (frame18, _, "$parentClearCacheLabel", "ClearCacheLabel", "Clear Cache on New Event", "GameFontHighlightLeft")
 				g:NewSwitch (frame18, _, "$parentClearCacheSlider", "ClearCacheSlider", 60, 20, _, _, _detalhes.streamer_config.reset_spec_cache, nil, nil, nil, nil, options_switch_template)
@@ -2544,6 +2557,7 @@ function window:CreateFrame18()
 			{"FasterUpdatesLabel"},
 			{"QuickDetectionLabel"},
 			{"DisableMythicDungeonLabel"},
+			{"DisableMythicDungeonChartLabel"},
 			{"ClearCacheLabel"},
 			--{"AdvancedAnimationsLabel"},
 		}
@@ -3881,7 +3895,7 @@ function window:CreateFrame14()
 			return fonts 
 		end
 
-		g:NewLabel (frame14, _, "$parentAttributeFontLabel", "attributeFontLabel", Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_FONT"], "GameFontHighlightLeft")
+		g:NewLabel (frame14, _, "$parentAttributeFontLabel", "attributeFontLabel", Loc ["STRING_OPTIONS_TEXT_FONT"], "GameFontHighlightLeft")
 		local d = g:NewDropDown (frame14, _, "$parentAttributeFontDropdown", "attributeFontDropdown", DROPDOWN_WIDTH, dropdown_height, build_font_menu, instance.attribute_text.text_face, options_dropdown_template)
 		
 		frame14.attributeFontDropdown:SetPoint ("left", frame14.attributeFontLabel, "right", 2)
@@ -3889,7 +3903,7 @@ function window:CreateFrame14()
 		window:CreateLineBackground2 (frame14, "attributeFontDropdown", "attributeFontLabel", Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_FONT_DESC"])
 		
 	--size
-		g:NewLabel (frame14, _, "$parentAttributeTextSizeLabel", "attributeTextSizeLabel", Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_TEXTSIZE"], "GameFontHighlightLeft")
+		g:NewLabel (frame14, _, "$parentAttributeTextSizeLabel", "attributeTextSizeLabel", Loc ["STRING_OPTIONS_TEXT_SIZE"], "GameFontHighlightLeft")
 		local s = g:NewSlider (frame14, _, "$parentAttributeTextSizeSlider", "attributeTextSizeSlider", SLIDER_WIDTH, SLIDER_HEIGHT, 5, 32, 1, tonumber ( instance.attribute_text.text_size), nil, nil, nil, options_slider_template)
 		--config_slider (s)
 	
@@ -4048,7 +4062,7 @@ function window:CreateFrame1()
 				_detalhes:Msg (errortext)
 			end
 			--> we call again here, because if not accepted the box return the previous value and if successful accepted, update the value for formated string.
-			local nick = _detalhes:GetNickname (UnitGUID ("player"), UnitName ("player"), true)
+			local nick = _detalhes:GetNickname (UnitName ("player"), UnitName ("player"), true)
 
 			frame1.nicknameEntry.text = nick
 			_G.DetailsOptionsWindow1AvatarNicknameLabel:SetText (nick)
@@ -4272,8 +4286,8 @@ function window:CreateFrame1()
 	
 	--> avatar
 	
-		local avatar = NickTag:GetNicknameAvatar (UnitGUID ("player"), NICKTAG_DEFAULT_AVATAR, true)
-		local background, cords, color = NickTag:GetNicknameBackground (UnitGUID ("player"), NICKTAG_DEFAULT_BACKGROUND, NICKTAG_DEFAULT_BACKGROUND_CORDS, {1, 1, 1, 1}, true)
+		local avatar = NickTag:GetNicknameAvatar (UnitName ("player"), NICKTAG_DEFAULT_AVATAR, true)
+		local background, cords, color = NickTag:GetNicknameBackground (UnitName ("player"), NICKTAG_DEFAULT_BACKGROUND, NICKTAG_DEFAULT_BACKGROUND_CORDS, {1, 1, 1, 1}, true)
 		
 		frame1.avatarPreview.texture = avatar
 		frame1.avatarPreview2.texture = background
@@ -4287,12 +4301,18 @@ function window:CreateFrame1()
 			_detalhes:SelectNumericalSystem (systemNumber)
 		end
 		
-
-
+		local asian1K, asian10K, asian1B = _detalhes.gump:GetAsianNumberSymbols()
+		local asianNumerals = {value = 2, label = Loc ["STRING_NUMERALSYSTEM_MYRIAD_EASTASIA"], desc = "1" .. asian1K .. " = 1.000 \n1" .. asian10K .. " = 10.000 \n10" .. asian10K .. " = 100.000 \n100" .. asian10K .. " = 1.000.000", onclick = onSelectNumeralSystem, icon = icon, iconcolor = iconcolor, iconsize = iconsize}
+		
+		--> if region is western it'll be using Korean symbols, set a font on the dropdown so it won't show ?????
+		local clientRegion = _detalhes.gump:GetClientRegion()
+		if (clientRegion == "western" or clientRegion == "russia") then
+			asianNumerals.descfont = _detalhes.gump:GetBestFontForLanguage ("koKR")
+		end
 
 		local numeralSystems = {
 			{value = 1, label = Loc ["STRING_NUMERALSYSTEM_ARABIC_WESTERN"], desc = "1K = 1.000 \n10K = 10.000 \n100K = 100.000 \n1M = 1.000.000", onclick = onSelectNumeralSystem, icon = icon, iconcolor = iconcolor, iconsize = iconsize},
-			{value = 2, label = Loc ["STRING_NUMERALSYSTEM_MYRIAD_EASTASIA"], desc = "1천 = 1.000 \n1만 = 10.000 \n10만 = 100.000 \n100만 = 1.000.000", onclick = onSelectNumeralSystem, icon = icon, iconcolor = iconcolor, iconsize = iconsize},
+			asianNumerals
 		}
 		
 		local buildNumeralSystemsMenu = function()
@@ -4352,7 +4372,7 @@ function window:CreateFrame1()
 		
 		
 		--lock unlock
-			g:NewButton (frame1, _, "$parentLockButton", "LockButton", window.buttons_width, window.buttons_height, _detalhes.lock_instance_function, nil, nil, nil, Loc ["STRING_OPTIONS_WC_LOCK"], 1, options_button_template)
+			g:NewButton (frame1, _, "$parentLockButton", "LockButton", window.buttons_width, window.buttons_height, _detalhes.lock_instance_function, true, true, nil, Loc ["STRING_OPTIONS_WC_LOCK"], 1, options_button_template)
 			--frame1.LockButton:InstallCustomTexture (nil, nil, nil, nil, nil, true)
 
 			window:CreateLineBackground2 (frame1, "LockButton", "LockButton", Loc ["STRING_OPTIONS_WC_LOCK_DESC"], nil, {1, 0.8, 0}, button_color_rgb)
@@ -4424,7 +4444,7 @@ function window:CreateFrame1()
 				_detalhes.gump:ColorPick (_G.DetailsOptionsWindow1SetWindowColorButton, r, g, b, a, windowcolor_callback)
 			end
 		
-			g:NewButton (frame1, _, "$parentSetWindowColorButton", "SetWindowColorButton", window.buttons_width, window.buttons_height, change_color, nil, nil, nil, "Change Color", 1, options_button_template)
+			g:NewButton (frame1, _, "$parentSetWindowColorButton", "SetWindowColorButton", window.buttons_width, window.buttons_height, change_color, nil, nil, nil, Loc ["STRING_OPTIONS_CHANGECOLOR"], 1, options_button_template)
 			--frame1.SetWindowColorButton:InstallCustomTexture (nil, nil, nil, nil, nil, true)
 			
 			window:CreateLineBackground2 (frame1, "SetWindowColorButton", "SetWindowColorButton", "Shortcut to modify the window color.\nFor more options check out |cFFFFFF00Window Settings|r section.", nil, {1, 0.8, 0}, button_color_rgb)
@@ -4828,14 +4848,14 @@ function window:CreateFrame2()
 
 	--> battleground
 		--> remote parser
-		g:NewLabel (frame2, _, "$parentRemoteParserLabel", "RemoteParserLabel", Loc ["STRING_OPTIONS_BG_REMOTE_PARSER"], "GameFontHighlightLeft")
+		g:NewLabel (frame2, _, "$parentRemoteParserLabel", "RemoteParserLabel", Loc ["STRING_OPTIONS_BG_UNIQUE_SEGMENT"], "GameFontHighlightLeft")
 		g:NewSwitch (frame2, _, "$parentRemoteParserSlider", "RemoteParserSlider", 60, 20, _, _, _detalhes.use_battleground_server_parser, nil, nil, nil, nil, options_switch_template)
 		frame2.RemoteParserSlider:SetPoint ("left", frame2.RemoteParserLabel, "right", 2)
 		frame2.RemoteParserSlider:SetAsCheckBox()
 		frame2.RemoteParserSlider.OnSwitch = function (self, _, value)
 			_detalhes.use_battleground_server_parser = value
 		end
-		window:CreateLineBackground2 (frame2, "RemoteParserSlider", "RemoteParserLabel", Loc ["STRING_OPTIONS_BG_REMOTE_PARSER_DESC"])
+		window:CreateLineBackground2 (frame2, "RemoteParserSlider", "RemoteParserLabel", Loc ["STRING_OPTIONS_BG_UNIQUE_SEGMENT_DESC"])
 		
 	--> show all
 		g:NewLabel (frame2, _, "$parentShowAllLabel", "ShowAllLabel", Loc ["STRING_OPTIONS_BG_ALL_ALLY"], "GameFontHighlightLeft")
@@ -5815,6 +5835,38 @@ function window:CreateFrame3()
 		
 		window:CreateLineBackground2 (frame3, "ChatTabEmbed2WindowsSlider", "ChatTabEmbed2WindowsLabel", Loc ["STRING_OPTIONS_TABEMB_SINGLE_DESC"])
 		
+		--> size correction - width
+			g:NewLabel (frame3, _, "$parentChatTabEmbedSizeCorrectionLabel", "ChatTabEmbedSizeCorrectionLabel", "Width Offset", "GameFontHighlightLeft")
+			local s = g:NewSlider (frame3, _, "$parentChatTabEmbedSizeCorrectionSlider", "ChatTabEmbedSizeCorrectionSlider", SLIDER_WIDTH, SLIDER_HEIGHT, -100, 100, 1, tonumber (_detalhes.chat_tab_embed.x_offset), nil, nil, nil, options_slider_template)
+
+			frame3.ChatTabEmbedSizeCorrectionSlider:SetPoint ("left", frame3.ChatTabEmbedSizeCorrectionLabel, "right", 2)
+			frame3.ChatTabEmbedSizeCorrectionSlider:SetHook ("OnValueChange", function (self, instance, amount) 
+				_detalhes.chat_tab_embed.x_offset = amount
+				
+				if (_detalhes.chat_embed.enabled) then
+					_detalhes.chat_embed:DoEmbed()
+				end
+				
+				_detalhes:SendOptionsModifiedEvent (instance)
+			end)	
+			window:CreateLineBackground2 (frame3, "ChatTabEmbedSizeCorrectionSlider", "ChatTabEmbedSizeCorrectionLabel", "Fine tune the size of the window while embeded in the chat.")
+		---------
+		--> size correction - height
+			g:NewLabel (frame3, _, "$parentChatTabEmbedSizeCorrection2Label", "ChatTabEmbedSizeCorrection2Label", "Height Offset", "GameFontHighlightLeft")
+			local s = g:NewSlider (frame3, _, "$parentChatTabEmbedSizeCorrection2Slider", "ChatTabEmbedSizeCorrection2Slider", SLIDER_WIDTH, SLIDER_HEIGHT, -100, 100, 1, tonumber (_detalhes.chat_tab_embed.y_offset), nil, nil, nil, options_slider_template)
+
+			frame3.ChatTabEmbedSizeCorrection2Slider:SetPoint ("left", frame3.ChatTabEmbedSizeCorrection2Label, "right", 2)
+			frame3.ChatTabEmbedSizeCorrection2Slider:SetHook ("OnValueChange", function (self, instance, amount) 
+				_detalhes.chat_tab_embed.y_offset = amount
+				
+				if (_detalhes.chat_embed.enabled) then
+					_detalhes.chat_embed:DoEmbed()
+				end
+				
+				_detalhes:SendOptionsModifiedEvent (instance)
+			end)	
+			window:CreateLineBackground2 (frame3, "ChatTabEmbedSizeCorrection2Slider", "ChatTabEmbedSizeCorrection2Label", "Fine tune the size of the window while embeded in the chat.")
+		--------
 	
 	--> extra Options -~-extra
 		g:NewLabel (frame3, _, "$parentSkinExtraOptionsAnchor", "SkinExtraOptionsAnchor", Loc ["STRING_OPTIONS_SKIN_EXTRA_OPTIONS_ANCHOR"], "GameFontNormal")
@@ -5859,6 +5911,8 @@ function window:CreateFrame3()
 			{"ChatTabEmbedEnabledLabel", 2}, 
 			{"ChatTabEmbedNameLabel", 3}, 
 			{"ChatTabEmbed2WindowsLabel", 4}, 
+			{"ChatTabEmbedSizeCorrectionLabel"},
+			{"ChatTabEmbedSizeCorrection2Label"},
 			
 			{"SkinExtraOptionsAnchor", 5, true},
 		}
@@ -6535,6 +6589,26 @@ function window:CreateFrame4()
 		titulo_bars_desc:SetPoint (x, window.title_y_pos2)
 
 		local left_side = {
+			--basic
+			{frame4.RowGeneralAnchorLabel, 1, true},
+			
+			{frame4.rowHeightLabel, 1},
+			{frame4.BarSpacementLabel, 1},
+			{"DisableBarHighlightLabel", 1},
+			
+			{"GrowLabel", 2, true},
+			{"OrientationLabel", 2},
+			{"SortLabel", 2},
+
+			--backdrop
+			{frame4.BackdropAnchorLabel, 3, true},
+			{frame4.BackdropColorLabel, 3},
+			{frame4.BackdropEnabledLabel, 3},
+			{frame4.BackdropSizeLabel, 3},
+			{frame4.BackdropBorderTextureLabel, 3},
+		}
+		
+		local right_side = {
 			--textures
 			{frame4.rowUpperTextureLabel, 1, true},
 			{frame4.textureLabel, 2},
@@ -6553,23 +6627,6 @@ function window:CreateFrame4()
 			{frame4.barStartLabel, 13},			
 		}
 		
-		local right_side = {
-			--basic
-			{frame4.RowGeneralAnchorLabel, 1, true},
-			{"GrowLabel", 2},
-			{"OrientationLabel", 3},
-			{"SortLabel", 4},
-			{frame4.rowHeightLabel, 5, true},
-			{frame4.BarSpacementLabel, 6},
-			{"DisableBarHighlightLabel", 7},
-			--backdrop
-			{frame4.BackdropAnchorLabel, 8, true},
-			{frame4.BackdropColorLabel, 9},
-			{frame4.BackdropEnabledLabel, 10},
-			{frame4.BackdropSizeLabel, 11},
-			{frame4.BackdropBorderTextureLabel, 12},
-		}
-
 		window:arrange_menu (frame4, left_side, x, window.top_start_at)
 		window:arrange_menu (frame4, right_side, 360, window.top_start_at)
 
@@ -6577,7 +6634,7 @@ end
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Appearance - Texts 6
+-- Appearance - Texts ~5
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function window:CreateFrame5()
 
@@ -6739,9 +6796,7 @@ function window:CreateFrame5()
 		frame5.textLeftOutlineSmallSlider:SetAsCheckBox()
 		frame5.textLeftOutlineSmallSlider.OnSwitch = function (self, instance, value)
 			instance:SetBarTextSettings (nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, value)
-			--(13, smalloutline_left, smalloutlinecolor_left, smalloutline_right, smalloutlinecolor_right)
-			--14 15 16 17
-			
+	
 			if (_detalhes.options_group_edit and not DetailsOptionsWindow.loading_settings) then
 				for _, this_instance in ipairs (instance:GetInstanceGroup()) do
 					if (this_instance ~= instance) then
@@ -6755,7 +6810,7 @@ function window:CreateFrame5()
 		
 		window:CreateLineBackground2 (frame5, "textLeftOutlineSmallSlider", "textLeftOutlineSmallLabel", "Text Outline")
 		
-	--> outline small color
+	--> left outline small color
 		local left_outline_small_callback = function (button, r, g, b, a)
 			local instance = _G.DetailsOptionsWindow.instance
 			instance:SetBarTextSettings (nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {r, g, b, a})
@@ -6819,6 +6874,52 @@ function window:CreateFrame5()
 		end
 
 		window:CreateLineBackground2 (frame5, "textRightOutlineSlider", "textRightOutlineLabel", Loc ["STRING_OPTIONS_TEXT_ROUTILINE_DESC"])
+	
+	
+	--> right outline small
+		g:NewSwitch (frame5, _, "$parentTextRightOutlineSmallSlider", "textRightOutlineSmallSlider", 60, 20, _, _, instance.row_info.textR_outline_small, nil, nil, nil, nil, options_switch_template)
+		g:NewLabel (frame5, _, "$parentTextRightOutlineSmallLabel", "textRightOutlineSmallLabel", "Outline", "GameFontHighlightLeft")
+		
+		frame5.textRightOutlineSmallSlider:SetPoint ("left", frame5.textRightOutlineSmallLabel, "right", 2)
+		frame5.textRightOutlineSmallSlider:SetAsCheckBox()
+		frame5.textRightOutlineSmallSlider.OnSwitch = function (self, instance, value)
+			instance:SetBarTextSettings (nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, value)
+			--(13, smalloutline_Right, smalloutlinecolor_Right, smalloutline_right, smalloutlinecolor_right)
+			--14 15 16 17
+			
+			if (_detalhes.options_group_edit and not DetailsOptionsWindow.loading_settings) then
+				for _, this_instance in ipairs (instance:GetInstanceGroup()) do
+					if (this_instance ~= instance) then
+						this_instance:SetBarTextSettings (nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, value)
+					end
+				end
+			end
+			
+			_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
+		end
+		
+		window:CreateLineBackground2 (frame5, "textRightOutlineSmallSlider", "textRightOutlineSmallLabel", "Text Outline")
+		
+	--> right outline small color
+		local right_outline_small_callback = function (button, r, g, b, a)
+			local instance = _G.DetailsOptionsWindow.instance
+			instance:SetBarTextSettings (nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {r, g, b, a})
+			
+			if (_detalhes.options_group_edit and not DetailsOptionsWindow.loading_settings) then
+				for _, this_instance in ipairs (instance:GetInstanceGroup()) do
+					if (this_instance ~= instance) then
+						this_instance:SetBarTextSettings (nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {r, g, b, a})
+					end
+				end
+			end
+			
+			_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
+		end
+		g:NewColorPickButton (frame5, "$parentOutlineSmallColorRight", "OutlineSmallColorRight", right_outline_small_callback, false, options_button_template)
+		local OutlineSmallColorTextRight = g:NewLabel (frame5, _, "$parentOutlineSmallLabelRight", "OutlineSmallColorLabelRight", "Outline Color", "GameFontHighlightRight")
+		frame5.OutlineSmallColorRight:SetPoint ("left", OutlineSmallColorTextRight, "right", 2, 0)
+
+		window:CreateLineBackground2 (frame5, "OutlineSmallColorRight", "OutlineSmallColorLabelRight", "Outline Color")	
 	
 	--> percent type
 		local onSelectPercent = function (_, instance, percentType)
@@ -7146,7 +7247,6 @@ function window:CreateFrame5()
 		window:CreateLineBackground2 (frame5, "RightTextShowPSSlider", "RightTextShowPSLabel", Loc ["STRING_OPTIONS_TEXT_SHOW_PS_DESC"])
 		
 		-- percent
-
 		g:NewSwitch (frame5, _, "$parentRightTextShowPercentSlider", "RightTextShowPercentSlider", 60, 20, _, _, instance.row_info.textR_show_data [3], nil, nil, nil, nil, options_switch_template)
 		g:NewLabel (frame5, _, "$parentRightTextShowPercentLabel", "RightTextShowPercentLabel", Loc ["STRING_OPTIONS_TEXT_SHOW_PERCENT"], "GameFontHighlightLeft")
 		
@@ -7182,7 +7282,7 @@ function window:CreateFrame5()
 			
 			_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
 		end
-
+		
 		local BracketTable = {
 			{value = "(", label = "(", onclick = onSelectBracket, icon = ""},
 			{value = "{", label = "{", onclick = onSelectBracket, icon = ""},
@@ -7195,7 +7295,6 @@ function window:CreateFrame5()
 		end
 		
 		local d = g:NewDropDown (frame5, _, "$parentBracketDropdown", "BracketDropdown", 60, dropdown_height, buildBracketMenu, nil, options_dropdown_template)
-
 		
 		g:NewLabel (frame5, _, "$parentBracketLabel", "BracketLabel", Loc ["STRING_OPTIONS_TEXT_SHOW_BRACKET"], "GameFontHighlightLeft")
 		frame5.BracketDropdown:SetPoint ("left", frame5.BracketLabel, "right", 2)
@@ -7233,15 +7332,15 @@ function window:CreateFrame5()
 		end
 		
 		local d = g:NewDropDown (frame5, _, "$parentSeparatorDropdown", "SeparatorDropdown", 60, dropdown_height, buildSeparatorMenu, nil, options_dropdown_template)
-
+		
 		
 		g:NewLabel (frame5, _, "$parentSeparatorLabel", "SeparatorLabel", Loc ["STRING_OPTIONS_TEXT_SHOW_SEPARATOR"], "GameFontHighlightLeft")
 		frame5.SeparatorDropdown:SetPoint ("left", frame5.SeparatorLabel, "right", 2)
-
+		
 		window:CreateLineBackground2 (frame5, "SeparatorDropdown", "SeparatorLabel", Loc ["STRING_OPTIONS_TEXT_SHOW_SEPARATOR_DESC"])
 		
 	--> anchors
-	
+		
 		--general anchor
 		g:NewLabel (frame5, _, "$parentRowTextGeneralAnchor", "RowGeneralAnchorLabel", Loc ["STRING_OPTIONS_GENERAL_ANCHOR"], "GameFontNormal")
 		
@@ -7256,6 +7355,12 @@ function window:CreateFrame5()
 		titulo_texts_desc:SetPoint (x, window.title_y_pos2)
 
 		local left_side = {
+			{"RowGeneralAnchorLabel", 7, true},
+			{frame5.fonsizeLabel, 8}, --text size
+			{frame5.fontLabel, 9},--text fontface
+			{frame5.fixedTextColorLabel, 10},
+			{frame5.percentLabel, 11, true},
+			
 			{"LeftTextAnchorLabel", 1, true},
 			{"textLeftOutlineLabel", 2},
 			{"textLeftOutlineSmallLabel", 2},
@@ -7264,12 +7369,6 @@ function window:CreateFrame5()
 			{"PositionNumberLabel", 4},
 			{"cutomLeftTextLabel", 5, true},
 			{"cutomLeftTextEntryLabel", 6},
-			
-			{"RowGeneralAnchorLabel", 7, true},
-			{frame5.fonsizeLabel, 8}, --text size
-			{frame5.fontLabel, 9},--text fontface
-			{frame5.fixedTextColorLabel, 10},
-			{frame5.percentLabel, 11, true},
 		}
 		
 		window:arrange_menu (frame5, left_side, x, window.top_start_at)
@@ -7277,6 +7376,9 @@ function window:CreateFrame5()
 		local right_side = {
 			{"RightTextAnchorLabel", 1, true},
 			{"textRightOutlineLabel", 2},
+			{"textRightOutlineSmallLabel", 2},
+			{"OutlineSmallColorLabelRight", 2},
+			
 			{"classColorsRightTextLabel", 3},
 			
 			{"RightTextShowTotalLabel", 4, true},
@@ -8544,7 +8646,7 @@ function window:CreateFrame7()
 		window:CreateLineBackground2 (frame7, "fontDropdown", "fontLabel", Loc ["STRING_OPTIONS_MENU_FONT_FACE_DESC"])	
 		
 		--> menu text size
-		g:NewLabel (frame7, _, "$parentMenuTextSizeLabel", "MenuTextSizeLabel", Loc ["STRING_OPTIONS_MENU_FONT_SIZE"], "GameFontHighlightLeft")
+		g:NewLabel (frame7, _, "$parentMenuTextSizeLabel", "MenuTextSizeLabel", Loc ["STRING_OPTIONS_TEXT_SIZE"], "GameFontHighlightLeft")
 		local s = g:NewSlider (frame7, _, "$parentMenuTextSizeSlider", "MenuTextSizeSlider", SLIDER_WIDTH, SLIDER_HEIGHT, 5, 32, 1, _detalhes.font_sizes.menus, nil, nil, nil, options_slider_template)
 	
 		frame7.MenuTextSizeSlider:SetPoint ("left", frame7.MenuTextSizeLabel, "right", 2)
@@ -11147,8 +11249,32 @@ function window:CreateFrame12()
 end
 	
 	--> create the frames
-	if (UnitAffectingCombat ("player")) then
+	if (InCombatLockdown()) then
 
+		window.IsLoading = true
+
+		if (not _detalhes.LoadingOptionsPanelFrame) then
+			_detalhes.LoadingOptionsPanelFrame = CreateFrame ("frame", "LoadingOptionsPanelFrame", UIParent)
+			_detalhes.LoadingOptionsPanelFrame:SetSize (390, 75)
+			_detalhes.LoadingOptionsPanelFrame:SetPoint ("center")
+			_detalhes.LoadingOptionsPanelFrame:SetFrameStrata ("TOOLTIP")
+			_detalhes.gump:ApplyStandardBackdrop (_detalhes.LoadingOptionsPanelFrame)
+			_detalhes.LoadingOptionsPanelFrame:SetBackdropBorderColor (1, 0.8, 0.1)
+			
+			_detalhes.LoadingOptionsPanelFrame.IsLoadingLabel1 = _detalhes.gump:CreateLabel (_detalhes.LoadingOptionsPanelFrame, "Details! is Safe Loading the Options Panel During Combat")
+			_detalhes.LoadingOptionsPanelFrame.IsLoadingLabel2 = _detalhes.gump:CreateLabel (_detalhes.LoadingOptionsPanelFrame, "This may take only a few seconds")
+			_detalhes.LoadingOptionsPanelFrame.IsLoadingImage1 = _detalhes.gump:CreateImage (_detalhes.LoadingOptionsPanelFrame, [[Interface\DialogFrame\UI-Dialog-Icon-AlertOther]], 32, 32)
+			_detalhes.LoadingOptionsPanelFrame.IsLoadingLabel1.align = "center"
+			_detalhes.LoadingOptionsPanelFrame.IsLoadingLabel2.align = "center"
+			
+			_detalhes.LoadingOptionsPanelFrame.IsLoadingLabel1:SetPoint ("center", 16, 10)
+			_detalhes.LoadingOptionsPanelFrame.IsLoadingLabel2:SetPoint ("center", 16, -5)
+			_detalhes.LoadingOptionsPanelFrame.IsLoadingImage1:SetPoint ("left", 10, 0)
+			
+			_detalhes.LoadingOptionsPanelFrame.ProgressBar = _detalhes.gump:CreateBar (_detalhes.LoadingOptionsPanelFrame, "Details Serenity", 300, 20, 0)
+			_detalhes.LoadingOptionsPanelFrame.ProgressBar:SetPoint ("center", 0, -25)
+		end
+	
 		local panel_index = 1
 		local percent_string = g:NewLabel (window, nil, nil, "percent_string", "loading: 0%", "GameFontNormal", 12)
 		percent_string.textcolor = "white"
@@ -11170,10 +11296,14 @@ end
 				last_pressed = first_button
 				first_button.widget.text:SetPoint ("left", first_button.widget, "left", 3, -1)
 				first_button.textcolor = selected_textcolor
-
+				
+				_detalhes.LoadingOptionsPanelFrame:Hide()
+				window.IsLoading = false
+			else
+				percent_string.text = "wait... " .. math.floor (step * panel_index) .. "%"
+				_detalhes.LoadingOptionsPanelFrame.ProgressBar.value = (step * panel_index)
 			end
-			
-			percent_string.text = "wait... " .. math.floor (step * panel_index) .. "%"
+
 			panel_index = panel_index + 1
 			
 		end
@@ -11363,6 +11493,8 @@ end --> if not window
 		_G.DetailsOptionsWindow3ChatTabEmbedEnabledSlider.MyObject:SetValue (_detalhes.chat_tab_embed.enabled)
 		_G.DetailsOptionsWindow3ChatTabEmbedNameEntry.MyObject.text = _detalhes.chat_tab_embed.tab_name
 		_G.DetailsOptionsWindow3ChatTabEmbed2WindowsSlider.MyObject:SetValue (_detalhes.chat_tab_embed.single_window)
+		_G.DetailsOptionsWindow3ChatTabEmbedSizeCorrectionSlider.MyObject:SetValue (_detalhes.chat_tab_embed.x_offset)
+		_G.DetailsOptionsWindow3ChatTabEmbedSizeCorrection2Slider.MyObject:SetValue (_detalhes.chat_tab_embed.y_offset)
 		
 		--> hide all
 		for name, _ in pairs (_detalhes.skins) do
@@ -11470,13 +11602,19 @@ end --> if not window
 		
 		local r, g, b, a = unpack (editing_instance.row_info.textL_outline_small_color)
 		_G.DetailsOptionsWindow5OutlineSmallColorLeft.MyObject:SetColor (r, g, b, a)
-	
+		
 		_G.DetailsOptionsWindow5TextLeftOutlineSmallSlider.MyObject:SetFixedParameter (editing_instance)
 		_G.DetailsOptionsWindow5TextLeftOutlineSmallSlider.MyObject:SetValue (editing_instance.row_info.textL_outline_small)
 		
-		
 		_G.DetailsOptionsWindow5TextLeftOutlineSlider.MyObject:SetFixedParameter (editing_instance)
 		_G.DetailsOptionsWindow5TextLeftOutlineSlider.MyObject:SetValue (editing_instance.row_info.textL_outline)
+		--
+		local r, g, b, a = unpack (editing_instance.row_info.textR_outline_small_color)
+		_G.DetailsOptionsWindow5OutlineSmallColorRight.MyObject:SetColor (r, g, b, a)
+		
+		_G.DetailsOptionsWindow5TextRightOutlineSmallSlider.MyObject:SetFixedParameter (editing_instance)
+		_G.DetailsOptionsWindow5TextRightOutlineSmallSlider.MyObject:SetValue (editing_instance.row_info.textR_outline_small)
+		
 		_G.DetailsOptionsWindow5TextRightOutlineSlider.MyObject:SetFixedParameter (editing_instance)
 		_G.DetailsOptionsWindow5TextRightOutlineSlider.MyObject:SetValue (editing_instance.row_info.textR_outline)
 		
@@ -11668,6 +11806,7 @@ end --> if not window
 		_G.DetailsOptionsWindow18FasterUpdatesSlider.MyObject:SetValue (_detalhes.streamer_config.faster_updates)
 		_G.DetailsOptionsWindow18QuickDetectionSlider.MyObject:SetValue (_detalhes.streamer_config.quick_detection)
 		_G.DetailsOptionsWindow18DisableMythicDungeonSlider.MyObject:SetValue (_detalhes.streamer_config.disable_mythic_dungeon)
+		_G.DetailsOptionsWindow18DisableMythicDungeonChartSlider.MyObject:SetValue (_detalhes.mythic_plus.show_damage_graphic)
 		_G.DetailsOptionsWindow18ClearCacheSlider.MyObject:SetValue (_detalhes.streamer_config.reset_spec_cache)
 		--_G.DetailsOptionsWindow18AdvancedAnimationsSlider.MyObject:SetValue (_detalhes.streamer_config.use_animation_accel)
 		
@@ -11931,7 +12070,7 @@ end --> if not window
 		
 		_G.DetailsOptionsWindow5FixedTextColor.MyObject:SetColor (unpack (editing_instance.row_info.fixed_text_color))
 		
-		_G.DetailsOptionsWindow1NicknameEntry.MyObject.text = _detalhes:GetNickname (UnitGUID ("player"), UnitName ("player"), true) or ""
+		_G.DetailsOptionsWindow1NicknameEntry.MyObject.text = _detalhes:GetNickname (UnitName ("player"), UnitName ("player"), true) or ""
 		_G.DetailsOptionsWindow1TTDropdown.MyObject:Select (_detalhes.time_type, true)
 		
 		_G.DetailsOptionsWindow.MyObject.instance = instance
@@ -11971,8 +12110,8 @@ end --> if not window
 		
 		window:Show()
 
-		local avatar = NickTag:GetNicknameAvatar (UnitGUID ("player"), NICKTAG_DEFAULT_AVATAR, true)
-		local background, cords, color = NickTag:GetNicknameBackground (UnitGUID ("player"), NICKTAG_DEFAULT_BACKGROUND, NICKTAG_DEFAULT_BACKGROUND_CORDS, {1, 1, 1, 1}, true)
+		local avatar = NickTag:GetNicknameAvatar (UnitName ("player"), NICKTAG_DEFAULT_AVATAR, true)
+		local background, cords, color = NickTag:GetNicknameBackground (UnitName ("player"), NICKTAG_DEFAULT_BACKGROUND, NICKTAG_DEFAULT_BACKGROUND_CORDS, {1, 1, 1, 1}, true)
 
 		_G.DetailsOptionsWindow1AvatarPreviewTexture.MyObject.texture = avatar
 		_G.DetailsOptionsWindow1AvatarPreviewTexture2.MyObject.texture = background
@@ -11987,7 +12126,7 @@ end --> if not window
 			_G.DetailsOptionsWindow1.HaveAvatar = false
 		end
 
-		local nick = _detalhes:GetNickname (UnitGUID ("player"), UnitName ("player"), true)
+		local nick = _detalhes:GetNickname (UnitName ("player"), UnitName ("player"), true)
 		_G.DetailsOptionsWindow1AvatarNicknameLabel:SetText (nick)
 		
 		if (window.update_wallpaper_info) then
@@ -11995,9 +12134,14 @@ end --> if not window
 		end
 		
 		if (section) then
+		
+			
+		
 			local button = window.menu_buttons [section]
-			local mouse_up_hook = button.OnMouseUpHook
-			mouse_up_hook (button.widget)
+			button:Click()
+			
+			--local mouse_up_hook = button.OnMouseUpHook
+			--mouse_up_hook (button.widget)
 		end
 
 		DetailsOptionsWindow.loading_settings = nil
@@ -12025,7 +12169,12 @@ end --> if not window
 	window:Show()
 	
 	function DetailsOptionsWindow.OpenInPluginPanel()
-		for i = 1, #window.options do
+		if (not window.options) then
+			--might be loading in combat
+			return
+		end
+		
+		for i = 1, #window.options do	
 			local frame = window.options [i][1]
 			if (frame) then
 				frame:EnableMouse (false)

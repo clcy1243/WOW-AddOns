@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1227, "DBM-Party-WoD", 8, 559)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(76021)
 mod:SetEncounterID(1758)
 mod:SetZone()
@@ -86,7 +86,7 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 --	"<58.9 23:54:07> [UNIT_SPELLCAST_SUCCEEDED] Drakonid Monstrosity [[target:Vileblood Serum::0:161209]]", -- [1996]
 	if spellId == 161209 and self:AntiSpam(3, 2) then
 		warnVilebloodSerum:Show()

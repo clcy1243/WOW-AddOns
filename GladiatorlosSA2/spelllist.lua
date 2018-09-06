@@ -298,6 +298,7 @@
 			[33786] = "cyclone",
 			[209753] = "cyclone", -- SCREAMS LOUDLY Balance Druid Cyclone
 			[339] = "entanglingRoots",
+			[235963] = "entanglingRoots", -- Feral Druid Honor Talent
 			[202767] = "littleMoon", -- New Moon
 			[202768] = "middleMoon", -- Half Moon
 			[202771] = "fullMoon", -- Full Moon

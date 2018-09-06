@@ -43,37 +43,6 @@ function mod:OnDisable()
    end
 end
 
---Returns the value to devide by and the symbol to append
-local function GetScaleFactor(number)
-   if type(number) ~= "number" then return end
-   for _,numberScale in pairs(scaleFactors) do
-      if number >= numberScale.factor then
-         return numberScale.factor,numberScale.symbol
-      end
-   end
-end
-
---Rounds the number display to 4 characters (excluding unit separator, including unit multiplier)
-local function RoundNumber(number)
-   if type(number) ~= "number" then return number end
-   local digits = string.len(number)
-   if digits > 4 then
-      local trimDigits = digits-3
-      --remove trimmed digits, by rounding up or down
-      local mod = number % 10^trimDigits
-      if mod < 10^trimDigits/2 then
-         number = number - mod
-      else
-         number = number + (10^trimDigits-mod)
-      end
-      local factor, unit = GetScaleFactor(number)
-      if not (factor or unit) then DebugPrint("Error getting number scaling factors") return end
-      local rounded = number/factor
-      return rounded..unit  
-   end
-   return number   
-end
-
 function mod:UpdateButton(event, button)
    local itemId = button.itemId
    local text = texts[button]
@@ -97,7 +66,7 @@ function mod:UpdateButton(event, button)
          DebugPrint("Unable to find Artifact Power for :"..itemLink:gsub("\124", "\124\124").." level:"..level)
          value = "???"
       end
-      text:SetText(RoundNumber(value))
+      text:SetText(AddonTable.RoundNumber(value))
       text:SetPoint("TOP", button, 0, -2)
       return text:Show()
    elseif AddonTable.ItemTables.AncientManaItems[itemId] then

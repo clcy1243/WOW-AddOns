@@ -1,7 +1,7 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: RSA [|c53ABD473Hunter|r]
 ## Notes: RSA Hunter Module. This is needed to announce Hunter Spells.
-## Author: Raeli, Jenneth
+## Author: Raeli
 ## Dependencies: RSA
 ## LoadOnDemand: 1
 

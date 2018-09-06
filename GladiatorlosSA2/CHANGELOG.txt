@@ -1,3 +1,20 @@
+- version B2
+
+* Fixed the UnitAura LUA error. Note that Drinking alert in arenas will no longer function until I make a proper fix.
+
+**THIS DOES NOT INCLUDE CHANGES TO THE SPELL LIBRARY OR VO, THAT IS STILL  WORK IN PROGRESS**
+===============================================
+- version B1
+
+General
+* Functioning in Battle for Azeroth. Bear in mind that the spell/VO databases have not yet been updated, this is merely to get the addon actually working on the Beta.
+* **This version will cause errors on Live!**
+===============================================
+- version 1.17.1
+
+Druid
+* Fixed Entangling Roots for feral druids talented into Earthen Grasp.
+===============================================
 - version 1.17
 
 General

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Deathwhisper", "DBM-Icecrown", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 258 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 280 $"):sub(12, -3))
 mod:SetCreatureID(36855)
 mod:SetEncounterID(1100)
 mod:SetModelID(30893)
@@ -34,7 +34,7 @@ local specWarnVampricMight			= mod:NewSpecialWarningDispel(70674, "MagicDispelle
 local specWarnDarkMartyrdom			= mod:NewSpecialWarningRun(71236, "Melee", nil, nil, 4, 2)
 local specWarnFrostbolt				= mod:NewSpecialWarningInterrupt(71420, "HasInterrupt", nil, 2, 1, 2)
 
-local timerAdds						= mod:NewTimer(60, "TimerAdds", 61131, nil, nil, 1, nil, DBM_CORE_TANK_ICON..DBM_CORE_DAMAGE_ICON)
+local timerAdds						= mod:NewTimer(60, "TimerAdds", 61131, nil, nil, 1, DBM_CORE_TANK_ICON..DBM_CORE_DAMAGE_ICON)
 local timerDominateMind				= mod:NewBuffActiveTimer(12, 71289)
 local timerDominateMindCD			= mod:NewCDTimer(40, 71289, nil, nil, nil, 3)
 local timerSummonSpiritCD			= mod:NewCDTimer(10, 71426, nil, false)
@@ -93,7 +93,6 @@ local function TrySetTarget(self)
 end
 
 function mod:OnCombatStart(delay)
-	shieldName = DBM:GetSpellInfo(70842)
 	berserkTimer:Start(-delay)
 	timerAdds:Start(7)
 	warnAddsSoon:Schedule(4)			-- 3sec pre-warning on start

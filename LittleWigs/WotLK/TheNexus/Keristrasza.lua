@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Keristrasza", 520, 621)
+local mod, CL = BigWigs:NewBoss("Keristrasza", 576, 621)
 if not mod then return end
 mod:RegisterEnableMob(26723)
 
@@ -36,16 +36,16 @@ end
 
 function mod:IntenseCold(args)
 	if self:Me(args.destGUID) then
-		self:StackMessage(args.spellId, args.destName, args.amount, "Personal", args.amount > 3 and "Alarm")
+		self:StackMessage(args.spellId, args.destName, args.amount, "blue", args.amount > 3 and "Alarm")
 	end
 end
 
 function mod:Crystallize(args)
-	self:Message(args.spellId, "Urgent")
+	self:Message(args.spellId, "orange")
 end
 
 function mod:CrystalChains(args)
-	self:TargetMessage(args.spellId, args.destName, "Attention")
+	self:TargetMessage(args.spellId, args.destName, "yellow")
 	self:TargetBar(args.spellId, 10, args.destName)
 end
 
@@ -54,6 +54,6 @@ function mod:CrystalChainsRemoved(args)
 end
 
 function mod:Enrage(args)
-	self:Message(args.spellId, "Important", self:Dispeller("enrage", true) and "Info", "25% - ".. args.spellName)
+	self:Message(args.spellId, "red", self:Dispeller("enrage", true) and "Info", CL.percent:format(25, args.spellName))
 end
 

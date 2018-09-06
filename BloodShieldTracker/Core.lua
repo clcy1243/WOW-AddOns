@@ -28,12 +28,13 @@ local function cleanupVersion(version)
 end
 
 addon.addonTitle = _G.GetAddOnMetadata(ADDON_NAME,"Title")
-addon.addonVersion = cleanupVersion("7.3.0")
+addon.addonVersion = cleanupVersion("8.0.0")
 
 addon.CURRENT_BUILD, addon.CURRENT_INTERNAL, 
     addon.CURRENT_BUILD_DATE, addon.CURRENT_UI_VERSION = _G.GetBuildInfo()
 addon.WoD = addon.CURRENT_UI_VERSION >= 60000
 addon.Legion = addon.CURRENT_UI_VERSION >= 70000
+addon.BfA = addon.CURRENT_UI_VERSION >= 80000
 
 local function round(number)
     if not number then return 0 end
@@ -213,4 +214,50 @@ end
 function addon:BarDisplayRemove(event, bar)
 	local events = addon.UpdateDisplayEvents[event]
 	events[bar] = nil
+end
+
+-- UnitBuff for BfA.  Scans buffs by name.
+addon.UnitBuff = function(unit, spellName, filter)
+	local name, icon, count, dispelType, duration, expires, 
+	caster, isStealable, shouldConsolidate, spellId, canApplyAura, 
+	isBossDebuff, castByPlayer, value1, value2, value3
+	
+	local i = 1
+	name = ""
+	while name ~= nil and i < 100 do
+		name, icon, count, dispelType, duration, expires, 
+		caster, isStealable, shouldConsolidate, spellId, canApplyAura, 
+		isBossDebuff, castByPlayer, value1, value2, value3
+			= _G.UnitBuff(unit, i, filter)
+		if name == spellName then
+			return name, icon, count, dispelType, duration, expires, 
+				caster, isStealable, shouldConsolidate, spellId, canApplyAura, 
+				isBossDebuff, castByPlayer, value1, value2, value3
+		end
+		i = i + 1
+	end
+	return nil
+end
+
+-- UnitDebuff for BfA.  Scans debuffs by name.
+addon.UnitDebuff = function(unit, spellName, filter)
+	local name, icon, count, dispelType, duration, expires, 
+	caster, isStealable, shouldConsolidate, spellId, canApplyAura, 
+	isBossDebuff, castByPlayer, value1, value2, value3
+	
+	local i = 1
+	name = ""
+	while name ~= nil and i < 100 do
+		name, icon, count, dispelType, duration, expires, 
+		caster, isStealable, shouldConsolidate, spellId, canApplyAura, 
+		isBossDebuff, castByPlayer, value1, value2, value3
+			= _G.UnitDebuff(unit, i, filter)
+		if name == spellName then
+			return name, icon, count, dispelType, duration, expires, 
+				caster, isStealable, shouldConsolidate, spellId, canApplyAura, 
+				isBossDebuff, castByPlayer, value1, value2, value3
+		end
+		i = i + 1
+	end
+	return nil
 end

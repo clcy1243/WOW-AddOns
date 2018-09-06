@@ -1,3 +1,41 @@
+TipTac Changes | 2018 Aug 20
+----------------------------
+- Fixed a "FadeOut flag not cleared" issue that could occur under certain circumstances.
+- Fixed mouse anchoring for other frames than the GameTooltip using the "GameTooltip_SetDefaultAnchor" method. Thanks foxlit.
+
+TipTac Changes | 2018 Aug 12
+----------------------------
+- Fixed the call to the "Mary Sue Protocol", which was being done incorrectly before.
+- Split a few of the core TipTac features into their own lua file for better code segmentation.
+- The "Show Who Targets the Unit" feature no longer requires the "TipTac Unit Tip Appearance" feature to be enabled to work.
+- The Font option "Font Size Delta" has been split into two settings, "Font Size Header Delta" and "Font Size Small Delta". They both control the font size relative to the main "Font Size" setting. Header is the first line of the tooltip, small is used for comparison tooltips.
+- The "Color Tip Border by Class Color" option will now take precedence over the "Color border based on the unit's reaction" option.
+- TipTacItemRef: Seperated the "Show Item Level & ID" option. So if the default item level text is prefered, that's now possible.
+- Disabled tiling of the backdrop.
+- Options: Updated the Options and AzDropDown libraries.
+
+TipTac Changes | 2018 Jul 24
+----------------------------
+- No longer tries to style the "ShoppingTooltip3", "ItemRefShoppingTooltip3" and "WorldMapCompareTooltip3". Which seemed to have been removed in WoD.
+- Fixed aura textures and cooldown not being applied properly.
+- Having an anchor type set to "Parent Anchor", will no longer apply if the parent frame is UIParent. Instead it will fall back to using "Normal Anchor".
+- Added "/tiptac reset" which will reset all settings back to their default values.
+- Renamed all the "core.lua" files, for all TipTac addons, into something more appropriate for their purpose. Restart of client required when updating.
+- Fixed all the backdrop issues. Hopefully there aren't any side effects with this new method of ensuring the correct backdrop.
+- No longer resizes the tooltip manually, but instead uses the GTT:SetPadding() function.
+
+TipTac Changes | 2018 Jul 22
+----------------------------
+- Tried to fix some of the issues with the backdrop setting not always being applied. There may still be some issues left.
+- TipTacItemRef: Fixed an issue that could reference the Icon before it was created, if ApplySettings was called from TipTac.
+
+TipTac Changes | 2018 Jul 19
+----------------------------
+- Updated the TOC version to 80000 for the Battle for Azeroth 8.0 pre-patch.
+- Fixed code related to API changes in BfA (UnitAura).
+- TipTacItemRef: Fixed code related to API changes in BfA (UnitAura, GetSpell, GetSpellInfo).
+- Rewrote the way auras are being queried and displayed, to avoid having the code for buffs and debuffs being 99% identical.
+
 TipTac Changes | 2017 Oct 10
 ----------------------------
 - Updated the TOC version to 70300 for the 7.3 patch.

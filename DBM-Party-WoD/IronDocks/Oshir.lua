@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1237, "DBM-Party-WoD", 4, 558)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(79852)
 mod:SetEncounterID(1750)
 mod:SetZone()
@@ -61,7 +61,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 161239 and self:AntiSpam(5, 2) then
 		warnRendingSlashes:Show()
 		specWarnRendingSlashes:Show()

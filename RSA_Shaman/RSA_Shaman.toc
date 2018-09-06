@@ -1,7 +1,7 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: RSA [|c590055FFShaman|r]
 ## Notes: RSA Shaman Module. This is needed to announce Shaman Spells.
-## Author: Raeli, Jenneth, Xadurk
+## Author: Raeli
 ## Dependencies: RSA
 ## LoadOnDemand: 1
 

@@ -1,5 +1,5 @@
-local ADDON_NAME, NAMESPACE = ...
-local ThreatPlates = NAMESPACE.ThreatPlates
+local ADDON_NAME, Addon = ...
+local ThreatPlates = Addon.ThreatPlates
 
 ---------------------------------------------------------------------------------------------------
 -- Stuff for handling the database with the SavedVariables of ThreatPlates (ThreatPlatesDB)
@@ -10,36 +10,32 @@ local ThreatPlates = NAMESPACE.ThreatPlates
 ---------------------------------------------------------------------------------------------------
 
 -- Lua APIs
-local floor = floor
-local unpack = unpack
-local type = type
-local min = min
-local pairs = pairs
+local floor, select, unpack, type, min, pairs = floor, select, unpack, type, min, pairs
 
 -- WoW APIs
-local InCombatLockdown = InCombatLockdown
-local GetCVar = GetCVar
+local GetCVar, SetCVar = GetCVar, SetCVar
+local UnitClass, GetSpecialization = UnitClass, GetSpecialization
 
 -- ThreatPlates APIs
 local L = ThreatPlates.L
 local TidyPlatesThreat = TidyPlatesThreat
+local RGB = ThreatPlates.RGB
 
 ---------------------------------------------------------------------------------------------------
 -- Global functions for accessing the configuration
 ---------------------------------------------------------------------------------------------------
 
 -- Returns if the currently active spec is tank (true) or dps/heal (false)
-function TidyPlatesThreat:GetSpecRole()
-  local active_role
+Addon.PlayerClass = select(2, UnitClass("player"))
+local PLAYER_ROLE_BY_SPEC = ThreatPlates.SPEC_ROLES[Addon.PlayerClass]
 
-  if (self.db.profile.optionRoleDetectionAutomatic) then
-    active_role = ThreatPlates.SPEC_ROLES[ThreatPlates.Class()][ThreatPlates.Active()]
-    if not active_role then active_role = false end
+function Addon:PlayerRoleIsTank()
+  local db = TidyPlatesThreat.db
+  if db.profile.optionRoleDetectionAutomatic then
+    return PLAYER_ROLE_BY_SPEC[GetSpecialization()] or false
   else
-    active_role = self.db.char.spec[ThreatPlates.Active()]
+    return db.char.spec[GetSpecialization()]
   end
-
-  return active_role
 end
 
 -- Sets the role of the index spec or the active spec to tank (value = true) or dps/healing
@@ -47,7 +43,7 @@ function TidyPlatesThreat:SetRole(value,index)
   if index then
     self.db.char.spec[index] = value
   else
-    self.db.char.spec[ThreatPlates.Active()] = value
+    self.db.char.spec[GetSpecialization()] = value
   end
 end
 
@@ -65,23 +61,17 @@ local function GetUnitVisibility(full_unit_type)
 end
 
 local function SetNamePlateClickThrough(friendly, enemy)
-  if InCombatLockdown() then
-    ThreatPlates.Print(L["Nameplate clickthrough cannot be changed while in combat."], true)
-  else
+--  if InCombatLockdown() then
+--    ThreatPlates.Print(L["Nameplate clickthrough cannot be changed while in combat."], true)
+--  else
     local db = TidyPlatesThreat.db.profile
     db.NamePlateFriendlyClickThrough = friendly
     db.NamePlateEnemyClickThrough = enemy
-    C_NamePlate.SetNamePlateFriendlyClickThrough(friendly)
-    C_NamePlate.SetNamePlateEnemyClickThrough(enemy)
-  end
-end
-
-local function SyncWithGameSettings(friendly, enemy)
-  if not InCombatLockdown() then
-    local db = TidyPlatesThreat.db.profile
-    C_NamePlate.SetNamePlateFriendlyClickThrough(db.NamePlateFriendlyClickThrough)
-    C_NamePlate.SetNamePlateEnemyClickThrough(db.NamePlateEnemyClickThrough)
-  end
+    Addon:CallbackWhenOoC(function()
+      C_NamePlate.SetNamePlateFriendlyClickThrough(friendly)
+      C_NamePlate.SetNamePlateEnemyClickThrough(enemy)
+    end, L["Nameplate clickthrough cannot be changed while in combat."])
+--  end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -105,7 +95,7 @@ local function GetDefaultSettingsV1(defaults)
   db.questWidget.ModeHPBar = true
   db.ResourceWidget.BarTexture = "Aluminium"
   db.settings.elitehealthborder.show = true
-  db.settings.healthborder.texture = "TP_HealthBarOverlay"
+  db.settings.healthborder.texture = "TP_Border_Default"
   db.settings.healthbar.texture = "ThreatPlatesBar"
   db.settings.healthbar.backdrop = "ThreatPlatesEmpty"
   db.settings.healthbar.BackgroundOpacity = 1
@@ -255,12 +245,10 @@ end
 
 local function MigrationTargetScale(profile_name, profile)
   if DatabaseEntryExists(profile, { "nameplate", "scale", "Target" }) then
-    --TidyPlatesThreat.db.global.MigrationLog[profile_name .. "MigrationTargetScaleTarget"] = "Migrating Target from " .. profile.nameplate.scale.Target .. " to " .. (profile.nameplate.scale.Target - 1)
     profile.nameplate.scale.Target = profile.nameplate.scale.Target - 1
   end
 
   if DatabaseEntryExists(profile, { "nameplate", "scale", "NoTarget" }) then
-    --TidyPlatesThreat.db.global.MigrationLog[profile_name .. "MigrationTargetScaleNoTarget"] = "Migrating NoTarget from " .. profile.nameplate.scale.NoTarget .. " to " .. (profile.nameplate.scale.NoTarget - 1)
     profile.nameplate.scale.NoTarget = profile.nameplate.scale.NoTarget - 1
   end
 end
@@ -278,9 +266,149 @@ local function MigrateCustomTextShow(profile_name, profile)
   end
 end
 
+local function MigrateCastbarColoring(profile_name, profile)
+  -- default for castbarColor.toggle was true
+  local entry = { "castbarColor", "toggle" }
+  if DatabaseEntryExists(profile, entry) and profile.castbarColor.toggle == false then
+    profile.castbarColor = RGB(255, 255, 0, 1)
+    profile.castbarColorShield = RGB(255, 255, 0, 1)
+    DatabaseEntryDelete(profile, entry)
+    DatabaseEntryDelete(profile, { "castbarColorShield", "toggle" })
+  end
+
+  -- default for castbarColorShield.toggle was true
+  local entry = { "castbarColorShield", "toggle" }
+  if DatabaseEntryExists(profile, entry) and profile.castbarColorShield.toggle == false then
+    profile.castbarColorShield = profile.castbarColor or { r = 1, g = 0.56, b = 0.06, a = 1 }
+    DatabaseEntryDelete(profile, entry)
+  end
+end
+
+local function MigrationTotemSettings(profile_name, profile)
+  local entry = { "totemSettings" }
+  if DatabaseEntryExists(profile, entry) then
+    for key, value in pairs(profile.totemSettings) do
+      if type(value) == "table" then -- omit hideHealthbar setting and skip if new default totem settings
+        value.Style = value[7] or profile.totemSettings[key].Style
+        value.Color = value.color or profile.totemSettings[key].Color
+        if value[1] == false then
+          value.ShowNameplate = false
+        end
+        if value[2] == false then
+          value.ShowHPColor = false
+        end
+        if value[3] == false then
+          value.ShowIcon = false
+        end
+
+        value[7] = nil
+        value.color = nil
+        value[1] = nil
+        value[2] = nil
+        value[3] = nil
+      end
+    end
+  end
+end
+
+local function MigrateBorderTextures(profile_name, profile)
+  if DatabaseEntryExists(profile, { "settings", "elitehealthborder", "texture" } ) then
+    if profile.settings.elitehealthborder.texture == "TP_HealthBarEliteOverlay" then
+      profile.settings.elitehealthborder.texture = "TP_EliteBorder_Default"
+    else -- TP_HealthBarEliteOverlayThin
+      profile.settings.elitehealthborder.texture = "TP_EliteBorder_Thin"
+    end
+  end
+
+  if DatabaseEntryExists(profile, { "settings", "healthborder", "texture" } ) then
+    if profile.settings.healthborder.texture == "TP_HealthBarOverlay" then
+      profile.settings.healthborder.texture = "TP_Border_Default"
+    else -- TP_HealthBarOverlayThin
+      profile.settings.healthborder.texture = "TP_Border_Thin"
+    end
+  end
+
+  if DatabaseEntryExists(profile, { "settings", "castborder", "texture" } ) then
+    if profile.settings.castborder.texture == "TP_CastBarOverlay" then
+      profile.settings.castborder.texture = "TP_Castbar_Border_Default"
+    else -- TP_CastBarOverlayThin
+      profile.settings.castborder.texture = "TP_Castbar_Border_Thin"
+    end
+  end
+end
+
+local function MigrationAurasSettings(profile_name, profile)
+  if DatabaseEntryExists(profile, { "AuraWidget" } ) then
+    profile.AuraWidget.Debuffs = profile.AuraWidget.Debuffs or {}
+    profile.AuraWidget.Buffs = profile.AuraWidget.Buffs or {}
+    profile.AuraWidget.CrowdControl = profile.AuraWidget.CrowdControl or {}
+
+    if DatabaseEntryExists(profile, { "AuraWidget", "ShowDebuffsOnFriendly", } ) and profile.AuraWidget.ShowDebuffsOnFriendly then
+      profile.AuraWidget.Debuffs.ShowFriendly = true
+    end
+    DatabaseEntryDelete(profile, { "AuraWidget", "ShowDebuffsOnFriendly", } )
+
+    -- Don't migration FilterByType, does not make sense
+    DatabaseEntryDelete(profile, { "AuraWidget", "FilterByType", } )
+
+
+    if DatabaseEntryExists(profile, { "AuraWidget", "ShowFriendly", } ) and not profile.AuraWidget.ShowFriendly then
+      profile.AuraWidget.Debuffs.ShowFriendly = false
+      profile.AuraWidget.Buffs.ShowFriendly = false
+      profile.AuraWidget.CrowdControl.ShowFriendly = false
+
+      DatabaseEntryDelete(profile, { "AuraWidget", "ShowFriendly", } )
+    end
+
+    if DatabaseEntryExists(profile, { "AuraWidget", "ShowEnemy", } ) and not profile.AuraWidget.ShowEnemy then
+      profile.AuraWidget.Debuffs.ShowEnemy = false
+      profile.AuraWidget.Buffs.ShowEnemy = false
+      profile.AuraWidget.CrowdControl.ShowEnemy = false
+
+      DatabaseEntryDelete(profile, { "AuraWidget", "ShowEnemy", } )
+    end
+
+    if DatabaseEntryExists(profile, { "AuraWidget", "FilterBySpell", } ) then
+      profile.AuraWidget.Debuffs.FilterBySpell = profile.AuraWidget.FilterBySpell
+      DatabaseEntryDelete(profile, { "AuraWidget", "FilterBySpell", } )
+    end
+
+    if DatabaseEntryExists(profile, { "AuraWidget", "FilterMode", } ) then
+      if profile.AuraWidget.FilterMode == "BLIZZARD" then
+        profile.AuraWidget.Debuffs.FilterMode = "blacklist"
+        profile.AuraWidget.Debuffs.ShowAllEnemy = false
+        profile.AuraWidget.Debuffs.ShowOnlyMine = false
+        profile.AuraWidget.Debuffs.ShowBlizzardForEnemy = true
+      else
+        profile.AuraWidget.Debuffs.FilterMode = profile.AuraWidget.FilterMode:gsub("Mine", "")
+      end
+      DatabaseEntryDelete(profile, { "AuraWidget", "FilterMode", } )
+    end
+
+    if DatabaseEntryExists(profile, { "AuraWidget", "scale", } ) then
+      profile.AuraWidget.Debuffs.Scale = profile.AuraWidget.scale
+      DatabaseEntryDelete(profile, { "AuraWidget", "scale", } )
+    end
+  end
+end
+
+local function MigrationAurasSettingsFix(profile_name, profile)
+  if DatabaseEntryExists(profile, { "AuraWidget", "Debuffs", "FilterMode", } ) and profile.AuraWidget.Debuffs.FilterMode == "BLIZZARD" then
+    profile.AuraWidget.Debuffs.FilterMode = "blacklist"
+    profile.AuraWidget.Debuffs.ShowAllEnemy = false
+    profile.AuraWidget.Debuffs.ShowOnlyMine = false
+    profile.AuraWidget.Debuffs.ShowBlizzardForEnemy = true
+  end
+  if DatabaseEntryExists(profile, { "AuraWidget", "Buffs", "FilterMode", } ) and profile.AuraWidget.Buffs.FilterMode == "BLIZZARD" then
+    profile.AuraWidget.Buffs.FilterMode = "blacklist"
+  end
+  if DatabaseEntryExists(profile, { "AuraWidget", "CrowdControl", "FilterMode", } ) and profile.AuraWidget.CrowdControl.FilterMode == "BLIZZARD" then
+    profile.AuraWidget.CrowdControl.FilterMode = "blacklist"
+  end
+end
+
 local function MigrateAuraWidget(profile_name, profile)
   if DatabaseEntryExists(profile, { "debuffWidget" }) then
-    TidyPlatesThreat.db.global.MigrationLog["AuraWidget"] = "ON = " .. tostring(profile.AuraWidget.ON) .. " and ShowInHeadlineView = " .. tostring(profile.AuraWidget.ShowInHeadlineView)
     if not profile.AuraWidget.ON and not profile.AuraWidget.ShowInHeadlineView then
       profile.AuraWidget = profile.AuraWidget or {}
       profile.AuraWidget.ModeIcon = profile.AuraWidget.ModeIcon or {}
@@ -308,24 +436,32 @@ end
 
 ---- Settings in the SavedVariables file that should be migrated and/or deleted
 local DEPRECATED_SETTINGS = {
-  NamesColor = { MigrateNamesColor, },                        -- settings.name.color
-  CustomTextShow = { MigrateCustomTextShow, },                -- settings.customtext.show
-  BlizzFadeA = { MigrationBlizzFadeA, },                      -- blizzFadeA.toggle and blizzFadeA.amount
-  TargetScale = { MigrationTargetScale, "8.5.0" },            -- nameplate.scale.Target/NoTarget
-  --AuraWidget = { MigrateAuraWidget, "8.6.0" },                -- disabled until someone requests it
-  AlphaFeatures = { "alphaFeatures" },
-  AlphaFeatureHeadlineView = { "alphaFeatureHeadlineView" },
-  AlphaFeatureAuraWidget2= { "alphaFeatureAuraWidget2" },
-  AlphaFriendlyNameOnly = { "alphaFriendlyNameOnly" },
-  HVBlizzFarding = { "HeadlineView", "blizzFading" },         -- (removed in 8.5.1)
-  HVBlizzFadingAlpha = { "HeadlineView", "blizzFadingAlpha"}, -- (removed in 8.5.1)
-  HVNameWidth = { "HeadlineView", "name", "width" },          -- (removed in 8.5.0)
-  HVNameHeight = { "HeadlineView", "name", "height" },       -- (removed in 8.5.0)
-  -- [ "debuffWidget" }, -- in release 8.7 (removed in 8.6.0)
+--  NamesColor = { MigrateNamesColor, },                        -- settings.name.color
+--  CustomTextShow = { MigrateCustomTextShow, },                -- settings.customtext.show
+--  BlizzFadeA = { MigrationBlizzFadeA, },                      -- blizzFadeA.toggle and blizzFadeA.amount
+--  TargetScale = { MigrationTargetScale, "8.5.0" },            -- nameplate.scale.Target/NoTarget
+--  --AuraWidget = { MigrateAuraWidget, "8.6.0" },              -- disabled until someone requests it
+--  AlphaFeatures = { "alphaFeatures" },
+--  AlphaFeatureHeadlineView = { "alphaFeatureHeadlineView" },
+--  AlphaFeatureAuraWidget2= { "alphaFeatureAuraWidget2" },
+--  AlphaFriendlyNameOnly = { "alphaFriendlyNameOnly" },
+--  HVBlizzFarding = { "HeadlineView", "blizzFading" },         -- (removed in 8.5.1)
+--  HVBlizzFadingAlpha = { "HeadlineView", "blizzFadingAlpha"}, -- (removed in 8.5.1)
+--  HVNameWidth = { "HeadlineView", "name", "width" },          -- (removed in 8.5.0)
+--  HVNameHeight = { "HeadlineView", "name", "height" },        -- (removed in 8.5.0)
+  DebuffWidget = { "debuffWidget" },                          -- (removed in 8.6.0)
+  OldSettings = { "OldSettings" },                            -- (removed in 8.7.0)
+  CastbarColoring = { MigrateCastbarColoring, },              -- (removed in 8.7.0)
+  TotemSettings = { MigrationTotemSettings, "8.7.0" },        -- (changed in 8.7.0)
+  Borders = { MigrateBorderTextures, "8.7.0" },               -- (changed in 8.7.0)
+  UniqueSettingsList = { "uniqueSettings", "list" },          -- (removed in 8.7.0, cleanup added in 8.7.1)
+  Auras = { MigrationAurasSettings, "9.0.0" },                -- (changed in 9.0.0)
+  AurasFix = { MigrationAurasSettingsFix },                   -- (changed in 9.0.4 and 9.0.9)
 }
 
 local function MigrateDatabase(current_version)
-  TidyPlatesThreat.db.global.MigrationLog = {}
+  TidyPlatesThreat.db.global.MigrationLog = nil
+  -- TidyPlatesThreat.db.global.MigrationLog = {}
 
   local profile_table = TidyPlatesThreat.db.profiles
   for key, entry in pairs(DEPRECATED_SETTINGS) do
@@ -361,4 +497,3 @@ ThreatPlates.MigrateDatabase = MigrateDatabase
 
 ThreatPlates.GetUnitVisibility = GetUnitVisibility
 ThreatPlates.SetNamePlateClickThrough = SetNamePlateClickThrough
-ThreatPlates.SyncWithGameSettings = SyncWithGameSettings

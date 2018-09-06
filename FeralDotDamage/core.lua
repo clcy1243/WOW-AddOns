@@ -28,7 +28,11 @@ internalVersion = tonumber(internalVersion)
 
 ns.eventFrame = CreateFrame("Frame")
 ns.eventFrame:SetScript("OnEvent", function(self, event, ...)
-	ns[event](ns, event, ...)
+	if event == 'COMBAT_LOG_EVENT_UNFILTERED' then
+		ns[event](ns, event, CombatLogGetCurrentEventInfo())
+	else
+		ns[event](ns, event, ...)
+	end
 end)
 ns.RegisterEvent = function(self, ...)
 	ns.eventFrame:RegisterEvent(...)
@@ -203,7 +207,7 @@ ns.dot_store = dot_store
 local dots_info = {
 	
 	[glybokayrana_spid] 	= { 3, 15, 19.5 , 	glybokayrana_name,	4.5}, -- tick period, default duration, pandemia duration
-	[razorvat_spid] 		= { 2, 24, 31.2 , 	razorvat_name,		7.2},
+	[razorvat_spid] 		= { 2, 28, 28*1.3 , razorvat_name,		28*0.3},
 	[vzbuchka_spid] 		= { 3, 15, 15*1.3 , vzbuchka_name,		15*0.3},
 	[dikiyrev_spid] 		= { 0, 0, 0 ,	 	dikiyrev_name,		12.6},
 	[dikiyrev_glyph_spid] 	= { 0, 0, 0 , 		dikiyrev_name,		12.6},
@@ -214,22 +218,22 @@ local dots_info = {
 }
 
 local function GetAuras()
-	local tigrinie_neistvo = UnitAura("player", tigrinoe_name) 	 -- 15%
-	local dikiy_rev		   = UnitAura("player", dikiyrev_name) 	 -- 40%
-	local krovavie_kogti   = UnitAura("player", krovaviekogti_name) or ( hideauraTime2 > GetTime() ) -- 30%
+	local tigrinie_neistvo = AuraUtil.FindAuraByName(tigrinoe_name, 'player', 'HELPFUL|PLAYER')	 -- 15%
+	--local dikiy_rev		   = AuraUtil.FindAuraByName(dikiyrev_name, 'player', 'HELPFUL|PLAYER')  -- 15%
+	local krovavie_kogti   = AuraUtil.FindAuraByName(krovaviekogti_name, 'player', 'HELPFUL|PLAYER') or ( hideauraTime2 > GetTime() ) -- 25%
 	local imprake		   = 
-								UnitAura("player", stealth_name) or 
-								( not incarnationFix and UnitAura("player", incarnation_name) ) or 
-								UnitAura("player", ( GetSpellInfo(58984) )) or 
+								AuraUtil.FindAuraByName(stealth_name, 'player', 'HELPFUL|PLAYER') or 
+								( not incarnationFix and AuraUtil.FindAuraByName(incarnation_name, 'player', 'HELPFUL|PLAYER') ) or 
+								AuraUtil.FindAuraByName((GetSpellInfo(58984)), 'player', 'HELPFUL|PLAYER') or 
 								( detectrakeBonus and hideauraTime3 > GetTime() ) or 
 								( hideauraTime > GetTime() )-- 100%
 
-	return tigrinie_neistvo, dikiy_rev, krovavie_kogti, imprake
+	return tigrinie_neistvo, krovavie_kogti, imprake
 end
 
 
 function ns:UpdateDamageMods(guid, spellid, dstName)
-	local tigrinie_neistvo, dikiy_rev, krovavie_kogti, imp_rake = GetAuras()
+	local tigrinie_neistvo, krovavie_kogti, imp_rake = GetAuras()
 	
 	self:RegisterDot(guid, spellid)
 
@@ -302,10 +306,10 @@ function ns:GetDotBuffValue(guid, spellid)
 		return 1, 1	
 	end
 	]==]
-	local cur_tigrinie_neistvo, cur_dikiy_rev, cur_krovavie_kogti, cur_imp_rake = GetAuras()
+	local cur_tigrinie_neistvo, cur_krovavie_kogti, cur_imp_rake = GetAuras()
 
 	local tigrinie_neistvo = dot_store[guid..spellid] and dot_store[guid..spellid][9] or false
-	local dikiy_rev = dot_store[guid..spellid] and dot_store[guid..spellid][10] or false
+	--local dikiy_rev = dot_store[guid..spellid] and dot_store[guid..spellid][10] or false
 	local krovavie_kogti = dot_store[guid..spellid] and dot_store[guid..spellid][11] or false
 	local impr_rake = dot_store[guid..spellid] and dot_store[guid..spellid][12] or false
 	
@@ -313,19 +317,19 @@ function ns:GetDotBuffValue(guid, spellid)
 	local total = 1
 	
 	if cur_tigrinie_neistvo then total_cur = total_cur * 1.15 end
-	if cur_dikiy_rev and not is70300 then total_cur = total_cur * 1.25 end -- 1.4 for WoD
+	--if cur_dikiy_rev and not is70300 then total_cur = total_cur * 1.25 end 
 	
 	if spellid ~= moonfire_spid then
-		if cur_krovavie_kogti then total_cur = total_cur * ( is70300 and 1.2 or 1.5 ) end
+		if cur_krovavie_kogti then total_cur = total_cur * 1.25 end
 	end
 	
 	if imprived_rake_gained and cur_imp_rake and spellid == glybokayrana_spid then total_cur = total_cur * 2 end
 	
 	if tigrinie_neistvo then total = total * 1.15 end
-	if dikiy_rev and not is70300 then total = total * 1.25 end -- 1.4 for WoD
+	--if dikiy_rev and not is70300 then total = total * 1.15 end -- 1.4 for WoD
 	
 	if spellid ~= moonfire_spid then
-		if krovavie_kogti then total = total * ( is70300 and 1.2 or 1.5 ) end
+		if krovavie_kogti then total = total * 1.25 end
 	end
 	
 	if imprived_rake_gained and impr_rake and spellid == glybokayrana_spid then total = total * 2 end
@@ -495,7 +499,7 @@ function ns:IsAshamaneBiteAvailible(guid)
 --	print('IsAshamaneBiteAvailible:3', unit)
 	
 	if unit then
-		local name, _, _, _, _, duration, expires = UnitDebuff(unit, (GetSpellInfo(210705)), nil, 'PLAYER')
+		local name, _, _, _, duration, expires = AuraUtil.FindAuraByName((GetSpellInfo(210705)), unit, 'HARMFUL|PLAYER') -- UnitDebuff(unit, (GetSpellInfo(210705)), nil, 'PLAYER')
 		
 --		print('IsAshamaneBiteAvailible:4', name, duration, expires)
 		if name then
@@ -652,9 +656,9 @@ local missType = {
 }
 
 local function GetRakeDamage(critical)
-	local tigrinie_neistvo = UnitAura("player", tigrinoe_name) 	 -- 15%
-	local dikiy_rev		   = UnitAura("player", dikiyrev_name) 	 -- 30%, 40% for WoD
-	local krovavie_kogti   = UnitAura("player", krovaviekogti_name) or ( hideauraTime2 > GetTime() ) -- 30%
+	local tigrinie_neistvo = AuraUtil.FindAuraByName(tigrinoe_name, 'player', 'HELPFUL') 	 -- 15%
+	local dikiy_rev		   = AuraUtil.FindAuraByName(dikiyrev_name, 'player', 'HELPFUL') 	 -- 15%
+	local krovavie_kogti   = AuraUtil.FindAuraByName(krovaviekogti_name, 'player', 'HELPFUL') or ( hideauraTime2 > GetTime() ) -- 25%
 	
 	local versality = 1 + ( GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE) * 0.01 )
 	local mastery = 1 + ( GetMastery()*2 * 0.01 ) -- 3.13 for WoD
@@ -677,10 +681,10 @@ local function GetRakeDamage(critical)
 		dmg_buff = dmg_buff * 1.15
 	end
 	if dikiy_rev and not is70300 then 
-		dmg_buff = dmg_buff * 1.25 -- 1.4 for WoD
+		dmg_buff = dmg_buff * 1.15 -- 1.4 for WoD
 	end
 	if krovavie_kogti then 
-		dmg_buff = dmg_buff * 1.5
+		dmg_buff = dmg_buff * 1.25
 	end
 	
 	local tdmg = ceil(dmg*versality*mastery*2*crit*dmg_buff)
@@ -1074,7 +1078,7 @@ function ns:UpdateVisible(unit)
 				local haveProc = false
 				
 				if ( ns.db.profile.icons.enable4T21 ) then
-					if UnitBuff('player', (GetSpellInfo(252752))) then
+					if AuraUtil.FindAuraByName((GetSpellInfo(252752)), 'player', 'HELPFUL') then --UnitBuff('player', (GetSpellInfo(252752))) then
 						haveProc = true
 						
 						if not frame._enable4T2Highlight then
@@ -1127,7 +1131,7 @@ function ns:UpdateVisible(unit)
 
 				while ( true ) do
 					local guid = UnitGUID("target")
-					local name, _, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura("target", ind, "PLAYER|HARMFUL")
+					local name, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura("target", ind, "PLAYER|HARMFUL")
 					
 					if not name then
 						break;
@@ -1165,7 +1169,7 @@ function ns:UpdateVisible(unit)
 							frame:ToggleComboPoints(cp)
 							
 							if frame.spellID == vzbuchka_spid then
-								local name1, _, icon1, _, _, duration1, expirationTime1, _, _, _, spellId1 = UnitBuff("player", (GetSpellInfo(210664)))
+								local name1, icon1, _, _, duration1, expirationTime1, _, _, _, spellId1 = AuraUtil.FindAuraByName((GetSpellInfo(210664)), 'player', 'HELPFUL|PLAYER') --UnitBuff("player", (GetSpellInfo(210664)))
 								
 							--	print('T', name1, duration1, (expirationTime1 and  expirationTime1-GetTime() or -1 ))
 								
@@ -1193,7 +1197,7 @@ function ns:UpdateVisible(unit)
 				ind = 1
 				
 				while ( true ) do
-					local name, _, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura("player", ind, "PLAYER|HELPFUL")
+					local name, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura("player", ind, "PLAYER|HELPFUL")
 					
 					if not name then
 						break;
@@ -1225,7 +1229,7 @@ function ns:UpdateVisible(unit)
 				end
 			end
 			
-			local clearCast, _, _, _, _, duration, expirationTime = UnitAura("player", clearcast_name, nil, "PLAYER|HELPFUL")
+			local clearCast, _, _, _, duration, expirationTime = AuraUtil.FindAuraByName(clearcast_name, 'player', "PLAYER|HELPFUL") -- UnitAura("player", clearcast_name, nil, "PLAYER|HELPFUL")
 			
 			CLEAR_CAST_FIND = clearCast
 			if clearCast then
@@ -1480,10 +1484,15 @@ local function IconOnUpdateHandler(self, elapsed)
 		local baseDur = ( is70300 and 12 or 8 ) + ((SR_COMBO_POINTS-1) * ( is70300 and 6 or 4 ) )
 		if numb < baseDur*0.3 then			
 			if not parent.glow:IsShown() then
-				parent.glow.elapsed = 0
-				parent.glow:SetAlpha(0)
-				parent.glow.dir = 1.7
-				parent.glow:Show()
+				if ns.db.profile.icons.fadingglow then
+					parent.glow.elapsed = 0
+					parent.glow:SetAlpha(0)
+					parent.glow.dir = 1.7
+					parent.glow:Show()
+				else  
+					parent.glow:SetAlpha(1)
+					parent.glow:Show()
+				end	
 			end
 		else
 			parent.glow.elapsed = 0
@@ -1493,10 +1502,15 @@ local function IconOnUpdateHandler(self, elapsed)
 		end
 	elseif dots_info[spellid] and numb < dots_info[spellid][5] then
 		if not parent.glow:IsShown() then
-			parent.glow.elapsed = 0
-			parent.glow.dir = 1.7
-			parent.glow:SetAlpha(0)
-			parent.glow:Show()
+			if ns.db.profile.icons.fadingglow then
+				parent.glow.elapsed = 0
+				parent.glow:SetAlpha(0)
+				parent.glow.dir = 1.7
+				parent.glow:Show()
+			else  
+				parent.glow:SetAlpha(1)
+				parent.glow:Show()
+			end	
 		end
 	else
 		parent.glow.elapsed = 0
@@ -1547,10 +1561,15 @@ local function StatusBarOnUpdateHandler(self, elapsed)
 		local baseDur = ( is70300 and 12 or 8 ) + ((SR_COMBO_POINTS-1) * ( is70300 and 6 or 4 ) )
 		if numb < baseDur*0.3 then			
 			if not parent.glow:IsShown() then
-				parent.glow.elapsed = 0
-				parent.glow:SetAlpha(0)
-				parent.glow.dir = 1.7
-				parent.glow:Show()
+				if ns.db.profile.icons.fadingglow then
+					parent.glow.elapsed = 0
+					parent.glow:SetAlpha(0)
+					parent.glow.dir = 1.7
+					parent.glow:Show()
+				else  
+					parent.glow:SetAlpha(1)
+					parent.glow:Show()
+				end	
 			end
 		else
 			parent.glow.elapsed = 0
@@ -1560,10 +1579,15 @@ local function StatusBarOnUpdateHandler(self, elapsed)
 		end
 	elseif dots_info[spellid] and numb < dots_info[spellid][5] then
 		if not parent.glow:IsShown() then
-			parent.glow.elapsed = 0
-			parent.glow:SetAlpha(0)
-			parent.glow.dir = 1.7
-			parent.glow:Show()
+			if ns.db.profile.icons.fadingglow then
+				parent.glow.elapsed = 0
+				parent.glow:SetAlpha(0)
+				parent.glow.dir = 1.7
+				parent.glow:Show()
+			else  
+				parent.glow:SetAlpha(1)
+				parent.glow:Show()
+			end	
 		end
 	else
 		parent.glow.elapsed = 0
@@ -3364,12 +3388,12 @@ end
 
 do
 	-- Artifact Parser
+	--[==[
 	local function PrepareForScan()
 		local ArtifactFrame = _G.ArtifactFrame
 		
 		if not ArtifactFrame or not ArtifactFrame:IsShown() then
-	--		print('PrepareForScan', 'Success')
-			
+
 			_G.UIParent:UnregisterEvent("ARTIFACT_UPDATE")
 			if ArtifactFrame then
 				ArtifactFrame:UnregisterEvent("ARTIFACT_UPDATE")
@@ -3382,9 +3406,7 @@ do
 			
 		if not ArtifactFrame or not ArtifactFrame:IsShown() then
 			C_ArtifactUI.Clear()
-			
-	--		print('RestoreStateAfterScan', 'Success')
-			
+
 			if ArtifactFrame then
 				ArtifactFrame:RegisterEvent("ARTIFACT_UPDATE")
 			end
@@ -3418,9 +3440,7 @@ do
 			SocketInventoryItem(INVSLOT_MAINHAND)
 			
 			local powers = C_ArtifactUI.GetPowers();
-			
-		--	print('T', powers)
-			
+
 			if powers then
 				wipe(percs)
 				for i, powerID in ipairs(powers) do
@@ -3445,6 +3465,7 @@ do
 
 		return percs[reqSpellID]
 	end
+	]==]
 end
 
 do
@@ -3499,8 +3520,8 @@ do
 		imprived_rake_gained = true --IsSpellKnown(157276)
 		moonfire_talent 	 = IsTalentKnown(155580)-- IsSpellKnown(155580)
 		savage_roar_talent 	 = IsTalentKnown(52610)
-		ns.rakeBonusDamage	 = ns:GetAtrifactPercInfo(210593)
-		ns.ashamaneBite		 = ns:GetAtrifactPercInfo(210702) == 1 and true or false
+		--ns.rakeBonusDamage	 = ns:GetAtrifactPercInfo(210593)
+		--ns.ashamaneBite		 = ns:GetAtrifactPercInfo(210702) == 1 and true or false
 		ns.brutalSlash		 = IsTalentKnown(202028)
 		ns.moonkinForm		 = IsTalentKnown(197488)
 	
@@ -3517,14 +3538,14 @@ do
 	--	print('T', (GetSpellInfo(202032)), IsTalentKnown(202032))
 		
 		if IsTalentKnown(202032) then
-			local modValue = is70300 and 0.80 or 0.67
+			local modValue = 0.80
 			
 			dots_info[glybokayrana_spid] 	= { 3*modValue, 15*modValue, 15*1.3*modValue , 	glybokayrana_name,	15*0.3*modValue} -- tick period, default duration, pandemia duration
-			dots_info[razorvat_spid] 		= { 2*modValue, 24*modValue, 24*1.3*modValue   , 	razorvat_name,	24*0.3*modValue}
+			dots_info[razorvat_spid] 		= { 2*modValue, 28*modValue, 28*1.3*modValue , 	razorvat_name,		28*0.3*modValue}
 			dots_info[vzbuchka_spid] 		= { 3*modValue, 15*modValue, 15*1.3*modValue , 	vzbuchka_name,		15*0.3*modValue}
 		else		
 			dots_info[glybokayrana_spid] 	= { 3, 15, 15*1.3 , 	glybokayrana_name,	15*0.3} -- tick period, default duration, pandemia duration
-			dots_info[razorvat_spid] 		= { 2, 24, 24*1.3   , 	razorvat_name,		24*0.3}
+			dots_info[razorvat_spid] 		= { 2, 28, 28*1.3   , 	razorvat_name,		28*0.3}
 			dots_info[vzbuchka_spid] 		= { 3, 15, 15*1.3 , 	vzbuchka_name,	15*0.3}
 		end
 		
@@ -3628,6 +3649,7 @@ do
 	
 	
 	function ns:InitSwitchTalents()
+
 		eventframe:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 		eventframe:RegisterEvent("PLAYER_TALENT_UPDATE")
 		eventframe:RegisterEvent("PLAYER_LEVEL_UP")
@@ -3635,7 +3657,7 @@ do
 	--	eventframe:RegisterEvent("INSPECT_READY")
 	--	eventframe:RegisterEvent("ARTIFACT_XP_UPDATE")
 	--	eventframe:RegisterEvent("ARTIFACT_UPDATE")
-		eventframe:RegisterEvent("ARTIFACT_CLOSE")
+	--	eventframe:RegisterEvent("ARTIFACT_CLOSE")
 		eventframe:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", 'player')
 
 
@@ -3762,7 +3784,7 @@ do
 		
 		if ns.disable_addon then return end
 
-		local name, rank, icon, count, dispelType, duration, expires = UnitBuff('player', GetBuff('flask'))			
+		local name, icon, count, dispelType, duration, expires = AuraUtil.FindAuraByName(GetBuff('flask'), 'player', 'HELPFUL')	
 		if name and ns.db.profile.others.flashCheck then
 			self.flask.cooldown:SetCooldown(expires-duration, duration)
 			self.flask.icon:SetDesaturated(false)
@@ -3788,7 +3810,7 @@ do
 		
 		self.flask.icon:SetTexture(GetBuffTexture('flask'))
 		
-		local name, rank, icon, count, dispelType, duration, expires = UnitBuff('player', GetBuff('rune'))			
+		local name, icon, count, dispelType, duration, expires = AuraUtil.FindAuraByName(GetBuff('rune'), 'player', 'HELPFUL')		
 		if name and ns.db.profile.others.runeCheck then
 			self.rune.cooldown:SetCooldown(expires-duration, duration)
 			self.rune.icon:SetDesaturated(false)
@@ -3813,7 +3835,7 @@ do
 
 		self.rune.icon:SetTexture(GetBuffTexture('rune'))
 		
-		local name, rank, icon, count, dispelType, duration, expires = UnitBuff('player', GetBuff('food'))			
+		local name, icon, count, dispelType, duration, expires = AuraUtil.FindAuraByName(GetBuff('food'), 'player', 'HELPFUL')			
 		if name and ns.db.profile.others.foodCheck then
 			self.food.cooldown:SetCooldown(expires-duration, duration)
 			self.food.icon:SetDesaturated(false)
@@ -3861,7 +3883,7 @@ do
 		
 		if ns.db.profile.others.flashCheck then
 			
-			local name, rank, icon, count, dispelType, duration, expires = UnitBuff('player', GetBuff('flask'))
+			local name, icon, count, dispelType, duration, expires = AuraUtil.FindAuraByName(GetBuff('flask'), 'player', 'HELPFUL')		
 			
 			if name then
 				if expires - GetTime() < 60*10 then
@@ -3875,7 +3897,7 @@ do
 		
 		if ns.db.profile.others.runeCheck then
 			
-			local name, rank, icon, count, dispelType, duration, expires = UnitBuff('player', GetBuff('rune'))
+			local name, icon, count, dispelType, duration, expires = AuraUtil.FindAuraByName(GetBuff('rune'), 'player', 'HELPFUL')		
 			
 			if name then
 				if expires - GetTime() < 60*10 then
@@ -3889,7 +3911,7 @@ do
 		
 		if ns.db.profile.others.foodCheck then
 			
-			local name, rank, icon, count, dispelType, duration, expires = UnitBuff('player', GetBuff('food'))
+			local name, icon, count, dispelType, duration, expires = AuraUtil.FindAuraByName(GetBuff('food'), 'player', 'HELPFUL')		
 			
 			if name then
 				if expires - GetTime() < 60*10 then

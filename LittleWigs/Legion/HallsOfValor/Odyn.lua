@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Odyn", 1041, 1489)
+local mod, CL = BigWigs:NewBoss("Odyn", 1477, 1489)
 if not mod then return end
 mod:RegisterEnableMob(95676)
 mod.engageId = 1809
@@ -17,6 +17,9 @@ local L = mod:GetLocale()
 if L then
 	L.custom_on_autotalk = "Autotalk"
 	L.custom_on_autotalk_desc = "Instantly selects the gossip option to start the fight."
+
+	L.gossip_available = "Gossip available"
+	L.gossip_trigger = "Most impressive! I never thought I would meet anyone who could match the Valarjar's strength... and yet here you stand."
 
 	L[197963] = "|cFF800080Top Right|r (|T1323037:15:15:0:0:64:64:4:60:4:60|t)" -- Boss_OdunRunes_Purple
 	L[197964] = "|cFFFFA500Bottom Right|r (|T1323039:15:15:0:0:64:64:4:60:4:60|t)" -- Boss_OdunRunes_Orange
@@ -41,6 +44,7 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
+	self:RegisterEvent("CHAT_MSG_MONSTER_YELL", "Warmup")
 	self:Log("SPELL_CAST_START", "RunicBrand", 197961)
 	self:Log("SPELL_AURA_APPLIED", "RunicBrandYou", 197963, 197964, 197965, 197966, 197967)
 	self:Log("SPELL_CAST_START", "RadiantTempest", 198263)
@@ -57,34 +61,45 @@ function mod:OnEngage()
 	self:Bar(197961, 44) -- Runic Brand
 end
 
+function mod:VerifyEnable(unit)
+	return UnitCanAttack("player", unit) or (UnitHealth(unit) / UnitHealthMax(unit) > 0.8)
+end
+
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
+function mod:Warmup(event, msg)
+	if msg == L.gossip_trigger then
+		self:UnregisterEvent(event)
+		self:Bar("warmup", 28.2, L.gossip_available, "achievement_boss_odyn")
+	end
+end
+
 function mod:RunicBrand(args)
-	self:Message(args.spellId, "Attention", "Alarm", CL.casting:format(args.spellName))
+	self:Message(args.spellId, "yellow", "Alarm", CL.casting:format(args.spellName))
 	self:Bar(args.spellId, 56) -- m pull:44.0, 56.0
 end
 
 function mod:RunicBrandYou(args)
 	if self:Me(args.destGUID) then
-		self:Message(197961, "Urgent", "Warning", L[args.spellId], args.spellId)
+		self:Message(197961, "orange", "Warning", L[args.spellId], args.spellId)
 	end
 end
 
 function mod:RadiantTempest(args)
-	self:Message(args.spellId, "Important", "Long")
+	self:Message(args.spellId, "red", "Long")
 	self:CDBar(args.spellId, self:Mythic() and 80 or 56) -- hc pull:24.0 / m pull:8.0, 80.0
 end
 
 function mod:ShatterSpears(args)
-	self:Message(args.spellId, "Important", "Alert", CL.incoming:format(args.spellName))
+	self:Message(args.spellId, "red", "Alert", CL.incoming:format(args.spellName))
 	self:Bar(args.spellId, 56) -- m pull:40.0, 56.0
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 198396 then -- Spear of Light
-		self:Message(200988, "Urgent", "Alert")
+		self:Message(200988, "orange", "Alert")
 	end
 end
 
@@ -100,7 +115,7 @@ end
 function mod:BigWigs_BossComm(_, msg)
 	if msg == "odyn" then
 		local name = EJ_GetEncounterInfo(1489)
-		self:Message("warmup", "Neutral", "Info", CL.incoming:format(name), false)
+		self:Message("warmup", "cyan", "Info", CL.incoming:format(name), false)
 		self:CDBar("warmup", 2.7, name, "achievement_boss_odyn")
 	end
 end

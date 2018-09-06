@@ -1,5 +1,5 @@
 
-VUHDO_STANDARD_ICON = "interface\\characterframe\\temporaryportrait-female-bloodelf";
+VUHDO_STANDARD_ICON = "Interface\\AddOns\\VuhDo\\Images\\TemporaryPortrait-Female-BloodElf-VuhDo";
 
 
 
@@ -49,14 +49,6 @@ VUHDO_HEADER_TEXTS = {
 	[VUHDO_ID_SELF_PET] = VUHDO_I18N_OWN_PET,
 	[VUHDO_ID_TARGET] = VUHDO_I18N_TARGET,
 	[VUHDO_ID_FOCUS] = VUHDO_I18N_FOCUS,
-};
-
-
-
--- For initializing the minimap
-VUHDO_MM_LAYOUT = {
-	drag = "CIRCLE",
-	position = 0,
 };
 
 

@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Icecrown Gunship Battle", 604, 1626)
+local mod = BigWigs:NewBoss("Icecrown Gunship Battle", 631, 1626)
 if not mod then return end
 mod:RegisterEnableMob(37184) -- Zafod Boombox
 mod.toggleOptions = {"adds", "mage"}
@@ -88,12 +88,12 @@ end
 --
 
 function mod:AddsPortal()
-	self:Message("adds", "Attention", nil, L["adds_message"], 53142)
+	self:Message("adds", "yellow", nil, L["adds_message"], 53142)
 	self:Bar("adds", 60, L["adds_bar"], 53142) --Portal: Dalaran icon
 end
 
 function mod:Frozen(args)
-	self:Message("mage", "Positive", "Info", L["mage_message"], args.spellId)
+	self:Message("mage", "green", "Info", L["mage_message"], args.spellId)
 end
 
 function mod:FrozenCD(args)

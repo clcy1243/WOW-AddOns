@@ -1,8 +1,10 @@
-local GRA, gra = unpack(select(2, ...))
-local L = select(2, ...).L
+local addonName, addonTable = ...
+local GRA, gra = unpack(addonTable)
+local L = addonTable.L
 local LPP = LibStub:GetLibrary("LibPixelPerfect")
 
-local helpFrame = GRA:CreateMovableFrame("GRA " .. L["Help"], "GRA_HelpFrame", 550, 400, "GRA_FONT_NORMAL", "HIGH")
+-- TODO: incomplete
+local helpFrame = GRA:CreateMovableFrame("GRA " .. L["Help"] .. " (OUTDATED)", "GRA_HelpFrame", 550, 400, "GRA_FONT_NORMAL", "HIGH")
 gra.helpFrame = helpFrame
 helpFrame:SetToplevel(true)
 helpFrame:SetScript("OnShow", function()
@@ -81,23 +83,22 @@ content:SetHyperlinkFormat("|H%s|h"..gra.colors.yellow.s.."%s|r|h")
 local about = [[
     <html><body>
     <p></p>
-    <p>]]..gra.colors.firebrick.s..L["Run WoW in full screen mode, if you want GRA to be pixel perfect."]..[[</p>
     <p>]]..L["Click on |cffffd100yellow text|r to copy it."]..[[</p>
     <h1>]]..L["Author"]..[[</h1>
     <img src="Interface\AddOns\GuildRaidAttendance\Media\author" height="16" align="left"/>
     <p></p>
     <p></p>
-    <p><a href="link">shinozakisama@live.com</a></p>
+    <p><a href="link">]]..GetAddOnMetadata(addonName, "X-Email")..[[</a></p>
     <br/>
     <h1>]]..L["Websites"]..[[</h1>
     <img src="Interface\AddOns\GuildRaidAttendance\Media\curseforge-logo" height="16" align="left"/>
     <p></p>
     <p></p>
-    <p><a href="link">https://www.curseforge.com/wow/addons/guild-raid-attendance</a></p>
+    <p><a href="link">]]..GetAddOnMetadata(addonName, "X-Website")..[[</a></p>
     <p></p>
     <p>]]..L["Please leave me a pm on curseforge if you want to help with the localization."]..[[</p>
     <p></p>
-    <p>]]..L["Submit a ticket here %s, let me know what you need or what bugs you've found."]:format([[<a href="link">https://github.com/enderneko/GuildRaidAttendance/issues</a>]])..[[</p>
+    <p>]]..L["Submit a ticket here %s, let me know what you need or what bugs you've found."]:format([[<a href="link">]]..GetAddOnMetadata(addonName, "X-Issues")..[[</a>]])..[[</p>
     <br/>
     <h1>]]..L["Translators"]..[[</h1>
     </body></html>

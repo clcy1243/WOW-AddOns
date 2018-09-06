@@ -15,7 +15,7 @@ L["Bait"] = true
 L["Rare Fish"] = true
 L["Fish Bait"] = true --The Combined Bait and Rare Fish container
 L["Reputation"] = REPUTATION or true
-L["Broken Shore"] = GetMapNameByID(1021) --Broken Shore
+L["Broken Shore"] = C_Map.GetMapInfo(646).name --Broken Shore
 L["Legendary Equipment"] = true
 --Option Strings
 L['Create a section for Artifact Power items.'] = true
@@ -39,9 +39,11 @@ L["NumberScaleFactors"] = {
 	{1000,"k"},
 	{1000000,"m"},
 	{1000000000,"b"},
+	{1000000000000,"t"},
 }
 --Artifact Power Currency
 L["Artifact Power Currency"] = true
+L["Abbreviate Artifact Power"] = true
 
 
 

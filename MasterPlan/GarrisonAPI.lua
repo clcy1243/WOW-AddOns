@@ -4,6 +4,14 @@ local EV, L = T.Evie, newproxy(true)
 getmetatable(L).__call = function(_,k) if T.L then L = T.L return L(k) end return k end
 local FOLLOWER_ITEM_LEVEL_CAP, MENTOR_FOLLOWER, INF = T.FOLLOWER_ITEM_LEVEL_CAP, T.MENTOR_FOLLOWER, math.huge
 local unfreeStatusOrder = {[GARRISON_FOLLOWER_WORKING]=2, [GARRISON_FOLLOWER_INACTIVE]=1}
+local GameTooltip = AltGameTooltip or GameTooltip
+
+local function getShoppingTooltips(tip)
+	local GameTooltip = _G.GameTooltip
+	if tip[0] == GameTooltip[0] and not GameTooltip:IsForbidden() then
+		return GameTooltip.shoppingTooltips
+	end
+end
 
 hooksecurefunc(C_Garrison, "MarkMissionComplete", function(mid)
 	EV("MP_MARK_MISSION_COMPLETE", mid)
@@ -2787,9 +2795,10 @@ end
 function api.SetItemTooltip(tip, id)
 	local cs = T.TokenSlots[id]
 	tip:SetItemByID(id)
-	if cs then
+	local sta = getShoppingTooltips(tip)
+	if cs and sta then
 		T.SetModifierSensitiveTip(api.SetItemTooltip, tip, id)
-		local st1, st2 = tip.shoppingTooltips[1], tip.shoppingTooltips[2]
+		local st1, st2 = sta[1], sta[2]
 		if IsModifiedClick("COMPAREITEMS") or GetCVarBool("alwaysCompareItems") then
 			local ofsFrame, oy = GameTooltip, -8
 			if GetInventoryItemID("player", cs) then
@@ -2827,8 +2836,9 @@ local function doSetCurrencyTraitTip(owner, id, tip)
 end
 function api.SetCurrencyTraitTip(tip, id, ftype)
 	local ts = T[ftype == 2 and "ShipTraitStack" or "TraitStack"][id]
-	if ts and tip.shoppingTooltips and tip.shoppingTooltips[1] then
-		doSetCurrencyTraitTip(tip, ts, tip.shoppingTooltips[1])
+	local sta = getShoppingTooltips(tip)
+	if ts and sta and sta[1] then
+		doSetCurrencyTraitTip(tip, ts, sta[1])
 	end
 end
 function api.SetGroupTooltip(tip, g, mi)

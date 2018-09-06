@@ -18,6 +18,7 @@ DBM_COPY_URL_DIALOG					= "Copy URL"
 --Post Patch 7.1
 DBM_CORE_NO_RANGE					= "Range Radar can not be used in instances. Legacy text range frame used instead"
 DBM_CORE_NO_ARROW					= "Arrow can not be used in instances"
+DBM_CORE_ARROW_SUMMONED				= "Arrow has been activated. If you did not do this manually, you have a 3rd party addon configured to activated it for you"
 DBM_CORE_NO_HUD						= "HUDMap can not be used in instances"
 
 DBM_CORE_DYNAMIC_DIFFICULTY_CLUMP	= "DBM has disabled dynamic range frame on this fight do to insufficient information about number of players needed to affect clump check for a group of your size."
@@ -28,7 +29,7 @@ DBM_CORE_LOOT_SPEC_REMINDER			= "Your current spec is %s. Your current loot choi
 
 DBM_CORE_BIGWIGS_ICON_CONFLICT		= "DBM has detected that you have raid icons turned on in both BigWigs and DBM. Please disable icons in one of them to avoid conflicts"
 
-DBM_CORE_MOD_AVAILABLE				= "%s is available for this content. You can find on download on deadlybossmods.com or on Curse. This message will only display once."
+DBM_CORE_MOD_AVAILABLE				= "%s is available for this zone/boss. You can find download on Curse/WoWI or deadlybossmods.com."
 
 DBM_CORE_COMBAT_STARTED				= "%s engaged. Good luck and have fun! :)"
 DBM_CORE_COMBAT_STARTED_IN_PROGRESS	= "Engaged an in progress fight against %s. Good luck and have fun! :)"
@@ -124,6 +125,7 @@ DBM_CORE_OPTION_CATEGORY_WARNINGS_YOU	= "Personal Announces"
 DBM_CORE_OPTION_CATEGORY_WARNINGS_OTHER	= "Target Announces"
 DBM_CORE_OPTION_CATEGORY_WARNINGS_ROLE	= "Role Announces"
 DBM_CORE_OPTION_CATEGORY_SOUNDS			= "Sounds"
+DBM_CORE_OPTION_CATEGORY_DROPDOWNS		= "Dropdowns"
 
 DBM_CORE_AUTO_RESPONDED						= "Auto-responded."
 DBM_CORE_STATUS_WHISPER						= "%s: %s, %d/%d people alive"
@@ -165,6 +167,7 @@ DBM_CORE_UPDATEREMINDER_TESTVERSION		= "WARNING: You are using a version of Dead
 DBM_CORE_VEM							= "WARNING: You are running both Deadly Boss Mods and Voice Encounter Mods. DBM will not run in this configuration and therefore will not be loaded."
 DBM_CORE_3RDPROFILES					= "WARNING: DBM-Profiles not compatible with this version of DBM. It must be removed before DBM can proceed, to avoid conflict."
 DBM_CORE_DPMCORE						= "WARNING: Deadly PvP mods is discontinued and not compatible with this version of DBM. It must be removed before DBM can proceed, to avoid conflict."
+DBM_CORE_DBMLDB							= "WARNING: DBM-LDB is now built into DBM-Core. While it won't do any harm, it's recommended to remove 'DBM-LDB' from your addons folder"
 DBM_CORE_UPDATE_REQUIRES_RELAUNCH		= "WARNING: This DBM update will not work correctly if you don't fully restart your game client. This update contains new files or .toc file changes that cannot be loaded via ReloadUI. You may encounter broken functionality or errors if you continue without a client restart."
 DBM_CORE_OUT_OF_DATE_NAG				= "Your version of Deadly Boss Mods is out-of-date. It is recommended you update for this fight so you are not missing an important alert or timer or a yell rest of raid is expecting to see from you."
 
@@ -176,7 +179,7 @@ DBM_PIZZA_CONFIRM_IGNORE			= "Do you really want to ignore DBM timers from %s fo
 DBM_PIZZA_ERROR_USAGE				= "Usage: /dbm [broadcast] timer <time> <text>. <time> must be greater than 1."
 
 DBM_CORE_MINIMAP_TOOLTIP_HEADER		= "Deadly Boss Mods"
-DBM_CORE_MINIMAP_TOOLTIP_FOOTER		= "Shift+click or right-click to move\nAlt+shift+click for free drag and drop"
+DBM_CORE_MINIMAP_TOOLTIP_FOOTER		= "Hold shift and drag to move"
 
 DBM_CORE_RANGECHECK_HEADER			= "Range Check (%dyd)"
 DBM_CORE_RANGECHECK_SETRANGE		= "Set range"
@@ -200,6 +203,9 @@ DBM_CORE_INFOFRAME_SHOW_SELF		= "Always show your power"		-- Always show your ow
 DBM_CORE_INFOFRAME_SETLINES			= "Set max lines"
 DBM_CORE_INFOFRAME_LINESDEFAULT		= "Set by mod"
 DBM_CORE_INFOFRAME_LINES_TO			= "%d lines"
+DBM_CORE_INFOFRAME_POWER			= "Power"
+DBM_CORE_INFOFRAME_MAIN				= "Main:"--Main power
+DBM_CORE_INFOFRAME_ALT				= "Alt:"--Alternate Power
 
 DBM_LFG_INVITE						= "LFG Invite"
 
@@ -245,6 +251,7 @@ DBM_CORE_UNKNOWN					= "unknown"--UNKNOWN which is "Unknown" (does u vs U matter
 DBM_CORE_LEFT						= "Left"
 DBM_CORE_RIGHT						= "Right"
 DBM_CORE_BACK						= "Back"--BACK
+DBM_CORE_SIDE						= "Side"
 DBM_CORE_TOP						= "Top"
 DBM_CORE_BOTTOM						= "Bottom"
 DBM_CORE_MIDDLE						= "Middle"
@@ -258,9 +265,11 @@ DBM_CORE_ORB						= "Orb"
 DBM_CHEST							= "Chest"--As in Treasure 'Chest'. Not Chest as in body part.
 DBM_NO_DEBUFF						= "Not %s"--For use in places like info frame where you put "Not Spellname"
 DBM_ALLY							= "Ally"--Such as "Move to Ally"
-DBM_ADDS							= "Adds"--Such as "Move to Ally"
+DBM_ADD								= "Add"--A fight Add as in "boss spawned extra adds"
+DBM_ADDS							= "Adds"
 DBM_CORE_ROOM_EDGE					= "Room Edge"
 DBM_CORE_FAR_AWAY					= "Far Away"
+DBM_CORE_BREAK_LOS					= "Break LOS"
 DBM_CORE_SAFE						= "Safe"
 DBM_CORE_SHIELD						= "Shield"
 DBM_INCOMING						= "%s Incoming"
@@ -343,6 +352,7 @@ DBM_CORE_AUTO_SPEC_WARN_TEXTS = {
 	close			= "%s on >%%s< near you",
 	move			= "%s - move away",
 	dodge			= "%s - dodge attack",
+	dodgeloc		= "%s - dodge from %%s",
 	moveaway		= "%s - move away from others",
 	moveto			= "%s - move to >%%s<",
 	jump			= "%s - jump",
@@ -380,6 +390,7 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS = {
 	close 			= "Show special warning when someone close to you is affected by $spell:%s",
 	move 			= "Show special warning to move out from $spell:%s",
 	dodge 			= "Show special warning to dodge $spell:%s",
+	dodgeloc		= "Show special warning (with location) to dodge $spell:%s",
 	moveaway		= "Show special warning to move away from others for $spell:%s",
 	moveto			= "Show special warning to move to someone or some place for $spell:%s",
 	jump			= "Show special warning to move to jump for $spell:%s",
@@ -485,6 +496,7 @@ DBM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT	= "Show range frame (%s)"--For when a rang
 DBM_CORE_AUTO_RRANGE_OPTION_TEXT		= "Show reverse range frame (%s) for $spell:%s"--Reverse range frame (green when players in range, red when not)
 DBM_CORE_AUTO_RRANGE_OPTION_TEXT_SHORT	= "Show reverse range frame (%s)"
 DBM_CORE_AUTO_INFO_FRAME_OPTION_TEXT	= "Show info frame for $spell:%s"
+DBM_CORE_AUTO_INFO_FRAME_OPTION_TEXT2	= "Show info frame for encounter overview"
 DBM_CORE_AUTO_READY_CHECK_OPTION_TEXT	= "Play ready check sound when boss is pulled (even if it's not targeted)"
 
 -- New special warnings
@@ -577,3 +589,22 @@ DBM_CORE_POISON_ICON		= "|TInterface\\EncounterJournal\\UI-EJ-Icons.blp:20:20:0:
 DBM_CORE_DISEASE_ICON		= "|TInterface\\EncounterJournal\\UI-EJ-Icons.blp:20:20:0:0:255:66:70:86:40:58|t"
 DBM_CORE_CURSE_ICON			= "|TInterface\\EncounterJournal\\UI-EJ-Icons.blp:20:20:0:0:255:66:6:21:40:58|t"
 DBM_CORE_ENRAGE_ICON		= "|TInterface\\EncounterJournal\\UI-EJ-Icons.blp:20:20:0:0:255:66:102:118:40:58|t"
+
+--LDB
+DBM_LDB_TOOLTIP_HELP1	= "Left-click to open DBM"
+DBM_LDB_TOOLTIP_HELP2	= "Right-click to open config menu"
+
+DBM_LDB_LOAD_MODS		= "Load boss mods"
+
+DBM_LDB_CAT_BFA			= EXPANSION_NAME7
+DBM_LDB_CAT_LEG			= EXPANSION_NAME6
+DBM_LDB_CAT_WOD			= EXPANSION_NAME5
+DBM_LDB_CAT_MOP			= EXPANSION_NAME4
+DBM_LDB_CAT_CATA		= EXPANSION_NAME3
+DBM_LDB_CAT_WOTLK		= EXPANSION_NAME2
+DBM_LDB_CAT_BC			= EXPANSION_NAME1
+DBM_LDB_CAT_CLASSIC 	= EXPANSION_NAME0
+DBM_LDB_CAT_OTHER		= "Other Boss Mods"
+
+DBM_LDB_CAT_GENERAL		= "General"
+DBM_LDB_ENABLE_BOSS_MOD	= "Enable boss mod"

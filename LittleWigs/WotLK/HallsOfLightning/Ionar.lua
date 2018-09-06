@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Ionar", 525, 599)
+local mod, CL = BigWigs:NewBoss("Ionar", 602, 599)
 if not mod then return end
 mod:RegisterEnableMob(28546)
 
@@ -19,7 +19,7 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:Log("SPELL_AURA_APPLIED", "StaticOverload", 52658, 59795)
+	self:Log("SPELL_AURA_APPLIED", "StaticOverload", 52658, 59795) -- normal, heroic
 	self:Log("SPELL_AURA_REMOVED", "StaticOverloadRemoved", 52658, 59795)
 	self:Log("SPELL_CAST_START", "Disperse", 52770)
 
@@ -31,7 +31,7 @@ end
 --
 
 function mod:StaticOverload(args)
-	self:TargetMessage(59795, args.destName, "Attention", "Alarm")
+	self:TargetMessage(59795, args.destName, "yellow", "Alarm")
 	self:TargetBar(59795, 10, args.destName)
 	if self:Me(args.destGUID) then
 		self:Say(59795)
@@ -48,6 +48,6 @@ function mod:StaticOverloadRemoved(args)
 end
 
 function mod:Disperse(args)
-	self:Message(args.spellId, "Urgent", "Info")
+	self:Message(args.spellId, "orange", "Info")
 end
 

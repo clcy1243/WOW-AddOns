@@ -4,7 +4,10 @@ local remindMeagain = true
 local name
 local string_match = string.match
 local format = format
-local SendAddonMessage = SendAddonMessage
+local IsAddonMessagePrefixRegistered = C_ChatInfo and C_ChatInfo.IsAddonMessagePrefixRegistered or IsAddonMessagePrefixRegistered
+local SendAddonMessage = C_ChatInfo and C_ChatInfo.SendAddonMessage or SendAddonMessage
+local RegisterAddonMessagePrefix = C_ChatInfo and C_ChatInfo.RegisterAddonMessagePrefix or RegisterAddonMessagePrefix
+
 local tonumber = tonumber
 local sendmessagethottle = 20
 local versioncheck = 0

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1452, "DBM-Draenor", nil, 557)--Not yet in journal, needs journalID in whatever build they add his ID in
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(94015)
 mod:SetEncounterID(1801)
 mod:SetReCombatTime(20)
@@ -75,7 +75,7 @@ function mod:SPELL_AURA_REMOVED(args)
 end
 
 --Not in combat log, that or it was filtered by transcriptor bug
-function mod:UNIT_SPELLCAST_START(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_START(uId, _, spellId)
 	if spellId == 187664 and self:AntiSpam() then
 		timerBreathCD:Start()
 	end

@@ -3,9 +3,11 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Echo of Baine", 820, 340)
+local mod, CL = BigWigs:NewBoss("Echo of Baine", 938, 340)
 if not mod then return end
 mod:RegisterEnableMob(54431)
+mod.engageId = 1881
+mod.respawnTime = 30
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -32,7 +34,6 @@ function mod:OnBossEnable()
 	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE", "Blitz")
 	self:Log("SPELL_SUMMON", "TotemDown", 101614)
 	self:Log("SPELL_AURA_REMOVED", "TotemUp", 101614)
-	self:Death("Win", 54431)
 end
 
 function mod:OnEngage()
@@ -46,22 +47,22 @@ end
 function mod:Blitz(_, msg, _, _, _, player)
 	if msg:find(self:SpellName(-4140)) then
 		if player then
-			self:TargetMessage(-4140, player, "Important", "Alert")
+			self:TargetMessage(-4140, player, "red", "Alert")
 			self:PrimaryIcon(-4140, player)
 			self:ScheduleTimer("PrimaryIcon", 4, -4140)
 		else
-			self:Message(-4140, "Important", "Alert")
+			self:Message(-4140, "red", "Alert")
 		end
 	end
 end
 
 function mod:TotemDown()
-	self:Message(-4141, "Important", "Alarm", L.totemDrop)
+	self:Message(-4141, "red", "Alarm", L.totemDrop)
 	self:Bar(-4141, 20, L.totemDrop)
 end
 
 function mod:TotemUp(args)
-	self:Message(-4141, "Positive", "Info", L.totemThrow:format(args.destName))
+	self:Message(-4141, "green", "Info", L.totemThrow:format(args.destName))
 	self:StopBar(L.totemDrop)
 end
 

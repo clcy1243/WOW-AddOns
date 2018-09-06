@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1162, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 25 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(77692)
 mod:SetEncounterID(1713)
 mod:SetZone()
@@ -124,7 +124,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnSlam:Show()
 		specWarnSlam:Play("defensive")
 		timerSlamCD:Start()
-	elseif spellId == 158217 then--Probably not in combat log, it's scripted. Probably needs a UNIT_SPELLCAST event
+	elseif spellId == 158217 then
 		self.vb.mountainCast = self.vb.mountainCast + 1
 		specWarnCalloftheMountain:Show(self.vb.mountainCast)
 		timerCalloftheMountain:Start()
@@ -160,7 +160,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			if args:IsPlayer() then
 				specWarnWarpedArmor:Show(amount)
 			else--Taunt as soon as stacks are clear, regardless of stack count.
-				if not UnitDebuff("player", args.spellName) and not UnitIsDeadOrGhost("player") then
+				if not DBM:UnitDebuff("player", args.spellName) and not UnitIsDeadOrGhost("player") then
 					specWarnWarpedArmorOther:Show(args.destName)
 				else
 					warnWarpedArmor:Show(args.destName, amount)

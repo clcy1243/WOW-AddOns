@@ -5,7 +5,7 @@ function wodhraonload()
 	_, wodhraenglishclass = UnitClass("player")
 	wodhrahuntertime=0
 	
-	raWoDModVers=7.300
+	raWoDModVers=8.001
 
 local _, a2 = GetInstanceInfo()
 if select(3,GetInstanceInfo())==2 and a2=="party" then
@@ -212,7 +212,7 @@ end
 
 
 --Bloodmaul Slag Mines
-if GetCurrentMapAreaID()==964 then
+--if C_Map.GetBestMapForUnit("player")==964 then
 
 if arg2=="UNIT_DIED" and wohbosskilled==nil then
   if wodhraspisokon[1]==1 and wodhraachdone1 then
@@ -248,11 +248,11 @@ end
 
 
 
-end
+--end
 --
 
 --Железные доки
-if GetCurrentMapAreaID()==987 then
+--if C_Map.GetBestMapForUnit("player")==987 then
 
 
 if arg2=="SPELL_DAMAGE" and (arg10==169129 or arg10==168390) and arg4 and arg8 then
@@ -266,11 +266,11 @@ end
 
 
 
-end
+--end
 --
 
 --Auchindoun
-if GetCurrentMapAreaID()==984 then
+--if C_Map.GetBestMapForUnit("player")==984 then
 
 if arg2=="UNIT_DIED" and wohbosskilled==nil then
   if wodhraspisokon[4]==1 and wodhraachdone1 then
@@ -287,11 +287,11 @@ if arg2=="UNIT_DIED" then
   end
 end
 
-end
+--end
 --
 
 --Skyreach
-if GetCurrentMapAreaID()==989 then
+--if C_Map.GetBestMapForUnit("player")==989 then
 
 if arg2=="UNIT_DIED" and wohbosskilled==nil then
   if wodhraspisokon[5]==1 and wodhraachdone1 then
@@ -317,11 +317,11 @@ if ((arg2=="SPELL_DAMAGE" and (arg10==153544 or arg10==153315 or arg10==153139))
 	end
 end
 
-end
+--end
 --
 
 --Shadowmoon Burial Grounds
-if GetCurrentMapAreaID()==969 then
+--if C_Map.GetBestMapForUnit("player")==969 then
 
 if arg2=="SPELL_DAMAGE" and (arg10==153908) and arg7 then
 if wodhraspisokon[7]==1 and wodhraachdone1 then
@@ -350,17 +350,17 @@ if wodhraspisokon[7]==1 and wodhraachdone1 then
 end
 end
 
-end
+--end
 --
 
 --Grimrail Depot
-if GetCurrentMapAreaID()==993 then
+--if C_Map.GetBestMapForUnit("player")==993 then
 
-end
+--end
 --
 
 --The Everbloom
-if GetCurrentMapAreaID()==1008 then
+--if C_Map.GetBestMapForUnit("player")==1008 then
 
 if arg2=="SPELL_ENERGIZE" and (arg10==164438) and arg4 and arg8 and UnitName("boss1") then
 	if wodhraspisokon[8]==1 and wodhraachdone1 then
@@ -368,11 +368,11 @@ if arg2=="SPELL_ENERGIZE" and (arg10==164438) and arg4 and arg8 and UnitName("bo
 	end
 end
 
-end
+--end
 --
 
 --Верхняя часть пика черной горы
-if GetCurrentMapAreaID()==995 then
+--if C_Map.GetBestMapForUnit("player")==995 then
 
 
 if arg2=="SPELL_CAST_SUCCESS" and arg10==154899 then
@@ -405,7 +405,7 @@ end
 
 
 
-end
+--end
 --
 
 

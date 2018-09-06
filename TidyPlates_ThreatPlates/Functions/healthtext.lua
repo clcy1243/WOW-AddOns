@@ -1,5 +1,5 @@
-local ADDON_NAME, NAMESPACE = ...
-local ThreatPlates = NAMESPACE.ThreatPlates
+local ADDON_NAME, Addon = ...
+local ThreatPlates = Addon.ThreatPlates
 
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
@@ -22,7 +22,6 @@ local string = string
 local TidyPlatesThreat = TidyPlatesThreat
 local RGB = ThreatPlates.RGB
 local RGB_P = ThreatPlates.RGB_P
-local SetStyle = TidyPlatesThreat.SetStyle
 local GetColorByHealthDeficit = ThreatPlates.GetColorByHealthDeficit
 
 ---------------------------------------------------------------------------------------------------
@@ -34,21 +33,68 @@ local COLOR_GUILD = RGB(178, 178, 229, .7)
 
 local UnitSubtitles = {}
 local ScannerName = "ThreatPlates_Tooltip_Subtext"
-local TooltipScanner = CreateFrame( "GameTooltip", ScannerName , nil, "GameTooltipTemplate" ); -- Tooltip name cannot be nil
-TooltipScanner:SetOwner( WorldFrame, "ANCHOR_NONE" );
+local TooltipScanner = CreateFrame( "GameTooltip", ScannerName , nil, "GameTooltipTemplate" ) -- Tooltip name cannot be nil
+TooltipScanner:SetOwner( WorldFrame, "ANCHOR_NONE" )
 
-local function Truncate(value)
-	if TidyPlatesThreat.db.profile.text.truncate then
-		if value >= 1e6 then
-			return format('%.1fm', value / 1e6)
-		elseif value >= 1e4 then
-			return format('%.1fk', value / 1e3)
-		else
-			return value
-		end
-	else
-		return value
-	end
+---------------------------------------------------------------------------------------------------
+-- Determine correct number units: Western or East Asian Nations (CJK)
+---------------------------------------------------------------------------------------------------
+local function TruncateWestern(value)
+  if not TidyPlatesThreat.db.profile.text.truncate then
+    return value
+  end
+
+  if value >= 1e6 then
+    return format("%.1fm", value / 1e6)
+  elseif value >= 1e4 then
+    return format("%.1fk", value / 1e3)
+  else
+    return value
+  end
+end
+
+local TruncateEastAsian = TruncateWestern
+local Truncate = TruncateWestern
+
+local MAP_LOCALE_TO_UNIT_SYMBOL = {
+  koKR = { -- Korrean
+    Unit_1K = "천",
+    Unit_10K = "만",
+    Unit_1B = "억",
+  },
+  zhCN = { -- Simplified Chinese
+    Unit_1K = "千",
+    Unit_10K = "万",
+    Unit_1B = "亿",
+  },
+  zhTW = { -- Traditional Chinese
+    Unit_1K = "千",
+    Unit_10K = "萬",
+    Unit_1B = "億",
+  },
+}
+
+local locale = GetLocale()
+if MAP_LOCALE_TO_UNIT_SYMBOL[locale] then
+  local Format_Unit_1K = "%.1f" .. MAP_LOCALE_TO_UNIT_SYMBOL[locale].Unit_1K
+  local Format_Unit_10K = "%.1f" .. MAP_LOCALE_TO_UNIT_SYMBOL[locale].Unit_10K
+  local Format_Unit_1B = "%.1f" .. MAP_LOCALE_TO_UNIT_SYMBOL[locale].Unit_1B
+
+  TruncateEastAsian = function(value)
+    if not TidyPlatesThreat.db.profile.text.truncate then
+      return value
+    end
+
+    if value >= 1e8 then
+      return format(Format_Unit_1B, value / 1e8)
+    elseif value >= 1e4 then
+      return format(Format_Unit_10K, value / 1e4)
+    elseif value >= 1e3 then
+      return format(Format_Unit_1K, value / 1e3)
+    else
+      return value
+    end
+  end
 end
 
 local function GetUnitSubtitle(unit)
@@ -66,8 +112,8 @@ local function GetUnitSubtitle(unit)
 
 		local TooltipTextLeft1 = _G[ScannerName.."TextLeft1"]
 		local TooltipTextLeft2 = _G[ScannerName.."TextLeft2"]
-		local TooltipTextLeft3 = _G[ScannerName.."TextLeft3"]
-		local TooltipTextLeft4 = _G[ScannerName.."TextLeft4"]
+		--local TooltipTextLeft3 = _G[ScannerName.."TextLeft3"]
+		--local TooltipTextLeft4 = _G[ScannerName.."TextLeft4"]
 
 		name = TooltipTextLeft1:GetText()
 
@@ -139,14 +185,14 @@ local function TextHealthPercentColored(unit)
 	if db.amount then
 
 		if db.deficit and unit.health ~= unit.healthmax then
-			HpAmt = "-"..Truncate(unit.healthmax - unit.health)
+			HpAmt = "-" .. Truncate(unit.healthmax - unit.health)
 		else
 			HpAmt = Truncate(unit.health)
 		end
 
 		if db.max then
 			if HpAmt ~= "" then
-				HpMax = " / "..Truncate(unit.healthmax)
+				HpMax = " / " .. Truncate(unit.healthmax)
 			else
 				HpMax = Truncate(unit.healthmax)
 			end
@@ -245,10 +291,8 @@ local SUBTEXT_FUNCTIONS =
 --
 ---------------------------------------------------------------------------------------------------
 
-local function SetCustomText(unit)
-	if not unit.unitid then return end
-
-  local style = unit.TP_Style or SetStyle(unit)
+function Addon:SetCustomText(unit)
+  local style = unit.style
 
 	local db = TidyPlatesThreat.db.profile
 	if style == "NameOnly" or style == "NameOnly-Unique" then
@@ -265,7 +309,7 @@ local function SetCustomText(unit)
 	local subtext, color = func(unit)
 
 	if db.SubtextColorUseHeadline then
-		return subtext, TidyPlatesThreat.SetNameColor(unit)
+		return subtext, Addon:SetNameColor(unit)
 	elseif db.SubtextColorUseSpecific then
 		return subtext, color.r, color.g, color.b, color.a
 	end
@@ -274,4 +318,9 @@ local function SetCustomText(unit)
 	return subtext, color.r, color.g, color.b, color.a
 end
 
-TidyPlatesThreat.SetCustomText = SetCustomText
+function Addon:UpdateConfigurationStatusText()
+  Truncate = (TidyPlatesThreat.db.profile.text.LocalizedUnitSymbol and TruncateEastAsian) or TruncateWestern
+
+  -- TODO: pre-select functions for text and color
+end
+

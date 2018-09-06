@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1229, "DBM-Party-WoD", 8, 559)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(76585)
 mod:SetEncounterID(1760)
 mod:SetZone()
@@ -89,7 +89,7 @@ end
 mod.SPELL_ABSORBED = mod.SPELL_PERIODIC_DAMAGE
 
 --This boss actually does fire IEEU so boss1 works
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 154996 then
 		specWarnEngulfingFire:Show()
 		if not self.vb.firstBreath then

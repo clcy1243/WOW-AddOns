@@ -1,4 +1,5 @@
 -- damage object
+--2672
 
 	local _detalhes = 		_G._detalhes
 	local Loc = LibStub ("AceLocale-3.0"):GetLocale ( "Details" )
@@ -32,6 +33,9 @@
 	local _GetSpellInfo = _detalhes.getspellinfo --details api
 	local _string_replace = _detalhes.string.replace --details api
 
+	--show more information about spells
+	local debugmode = false
+	
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> constants
 
@@ -311,7 +315,7 @@
 				elseif (actor.owner) then
 					return _unpack (_detalhes.class_colors [actor.owner.classe or "UNKNOW"])
 
-				elseif (actor.arena_team) then
+				elseif (actor.arena_team and _detalhes.color_by_arena_team) then
 					if (actor.arena_team == 0) then
 						return _unpack (_detalhes.class_colors.ARENA_GREEN)
 					else
@@ -1558,7 +1562,8 @@ function atributo_damage:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 
 	--> n�o h� barras para mostrar -- not have something to show
 	if (#showing._ActorTable < 1) then 
-		if (_detalhes.debug) then
+		
+		if (_detalhes.debug and false) then
 			_detalhes.showing_ActorTable_Timer = _detalhes.showing_ActorTable_Timer or 0
 			if (time() > _detalhes.showing_ActorTable_Timer) then
 				_detalhes:Msg ("(debug) nothing to show -> #showing._ActorTable < 1")
@@ -2010,7 +2015,7 @@ function atributo_damage:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 				end
 			
 				if (#conteudo < 1) then
-					if (_detalhes.debug) then
+					if (_detalhes.debug and false) then
 						_detalhes.showing_ActorTable_Timer2 = _detalhes.showing_ActorTable_Timer2 or 0
 						if (time() > _detalhes.showing_ActorTable_Timer2) then
 							_detalhes:Msg ("(debug) nothing to show -> #conteudo < 1 (using cache)")
@@ -2082,7 +2087,7 @@ function atributo_damage:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 		end
 		instancia:EsconderScrollBar() --> precisaria esconder a scroll bar
 		
-		if (_detalhes.debug) then
+		if (_detalhes.debug and false) then
 			_detalhes.showing_ActorTable_Timer2 = _detalhes.showing_ActorTable_Timer2 or 0
 			if (time() > _detalhes.showing_ActorTable_Timer2) then
 				_detalhes:Msg ("(debug) nothing to show -> amount < 1")
@@ -2317,7 +2322,7 @@ end
 
 local actor_class_color_r, actor_class_color_g, actor_class_color_b
 
--- ~atualizar ~barra
+-- ~atualizar ~barra ~update
 function atributo_damage:AtualizaBarra (instancia, barras_container, qual_barra, lugar, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
 							-- inst�ncia, container das barras, qual barra, coloca��o, total?, sub atributo, for�ar refresh, key
 	
@@ -2401,6 +2406,8 @@ function atributo_damage:AtualizaBarra (instancia, barras_container, qual_barra,
 			else
 				porcentagem = porcentagem .. "%"
 			end
+			
+			--(bars_show_data [3] and bars_show_data [2] and bars_separator or "")
 			esta_barra.texto_direita:SetText (formated_damage .. bars_brackets[1] .. formated_dps .. bars_separator .. porcentagem .. bars_brackets[2])
 		end
 		
@@ -2652,6 +2659,9 @@ local set_text_size = function (bar, instance)
 	end
 end
 
+--> this is the in bar icon (icon inside the player bar, like faction or role icon) padding, icon has the row height as is width and height - padding
+local InBarIconPadding = 6
+
 --[[ exported]] function _detalhes:SetBarLeftText (bar, instance, enemy, arena_enemy, arena_ally, UsingCustomLeftText)
 
 	local bar_number = ""
@@ -2661,32 +2671,42 @@ end
 
 	if (enemy) then
 		if (arena_enemy) then
-			if (UsingCustomLeftText) then
-				bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, "|TInterface\\LFGFRAME\\UI-LFG-ICON-ROLES:" .. instance.row_info.height .. ":" .. instance.row_info.height .. ":0:0:256:256:" .. _detalhes.role_texcoord [self.role or "NONE"] .. "|t ", self, instance.showing))
+			if (_detalhes.show_arena_role_icon) then
+				--> show arena role icon
+				if (UsingCustomLeftText) then
+					bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, "|TInterface\\LFGFRAME\\UI-LFG-ICON-ROLES:" .. (instance.row_info.height - InBarIconPadding)..":"..(instance.row_info.height - InBarIconPadding) .. ":0:0:256:256:" .. _detalhes.role_texcoord [self.role or "NONE"] .. "|t ", self, instance.showing))
+				else
+					bar.texto_esquerdo:SetText (bar_number .. "|TInterface\\LFGFRAME\\UI-LFG-ICON-ROLES:" .. (instance.row_info.height - InBarIconPadding)..":"..(instance.row_info.height - InBarIconPadding) .. ":0:0:256:256:" .. _detalhes.role_texcoord [self.role or "NONE"] .. "|t " .. self.displayName)
+				end
 			else
-				bar.texto_esquerdo:SetText (bar_number .. "|TInterface\\LFGFRAME\\UI-LFG-ICON-ROLES:" .. instance.row_info.height .. ":" .. instance.row_info.height .. ":0:0:256:256:" .. _detalhes.role_texcoord [self.role or "NONE"] .. "|t " .. self.displayName)
+				--don't show arena role icon
+				if (UsingCustomLeftText) then
+					bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, " ", self, instance.showing))
+				else
+					bar.texto_esquerdo:SetText (bar_number .. self.displayName)
+				end
 			end
 		else
 			if (_detalhes.faction_against == "Horde") then
 				if (UsingCustomLeftText) then
-					bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, "|TInterface\\AddOns\\Details\\images\\icones_barra:"..instance.row_info.height..":"..instance.row_info.height..":0:0:256:32:0:32:0:32|t", self, instance.showing))
+					bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, "|TInterface\\AddOns\\Details\\images\\icones_barra:" .. (instance.row_info.height - InBarIconPadding)..":"..(instance.row_info.height - InBarIconPadding) .. ":0:0:256:32:0:32:0:32|t", self, instance.showing))
 				else
-					bar.texto_esquerdo:SetText (bar_number .. "|TInterface\\AddOns\\Details\\images\\icones_barra:"..instance.row_info.height..":"..instance.row_info.height..":0:0:256:32:0:32:0:32|t"..self.displayName) --seta o texto da esqueda -- HORDA
+					bar.texto_esquerdo:SetText (bar_number .. "|TInterface\\AddOns\\Details\\images\\icones_barra:" .. (instance.row_info.height - InBarIconPadding)..":"..(instance.row_info.height - InBarIconPadding) .. ":0:0:256:32:0:32:0:32|t"..self.displayName) --seta o texto da esqueda -- HORDA
 				end
 			else --alliance
 				if (UsingCustomLeftText) then
-					bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, "|TInterface\\AddOns\\Details\\images\\icones_barra:"..instance.row_info.height..":"..instance.row_info.height..":0:0:256:32:32:64:0:32|t", self, instance.showing))
+					bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, "|TInterface\\AddOns\\Details\\images\\icones_barra:" .. (instance.row_info.height - InBarIconPadding)..":"..(instance.row_info.height - InBarIconPadding) .. ":0:0:256:32:32:64:0:32|t", self, instance.showing))
 				else
-					bar.texto_esquerdo:SetText (bar_number .. "|TInterface\\AddOns\\Details\\images\\icones_barra:"..instance.row_info.height..":"..instance.row_info.height..":0:0:256:32:32:64:0:32|t"..self.displayName) --seta o texto da esqueda -- ALLY
+					bar.texto_esquerdo:SetText (bar_number .. "|TInterface\\AddOns\\Details\\images\\icones_barra:" .. (instance.row_info.height - InBarIconPadding)..":"..(instance.row_info.height - InBarIconPadding) .. ":0:0:256:32:32:64:0:32|t"..self.displayName) --seta o texto da esqueda -- ALLY
 				end
 			end
 		end
 	else
-		if (arena_ally) then
+		if (arena_ally and _detalhes.show_arena_role_icon) then
 			if (UsingCustomLeftText) then
-				bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, "|TInterface\\LFGFRAME\\UI-LFG-ICON-ROLES:" .. instance.row_info.height .. ":" .. instance.row_info.height .. ":0:0:256:256:" .. _detalhes.role_texcoord [self.role or "NONE"] .. "|t ", self, instance.showing))
+				bar.texto_esquerdo:SetText (_string_replace (instance.row_info.textL_custom_text, bar.colocacao, self.displayName, "|TInterface\\LFGFRAME\\UI-LFG-ICON-ROLES:" .. (instance.row_info.height - InBarIconPadding)..":"..(instance.row_info.height - InBarIconPadding) .. ":0:0:256:256:" .. _detalhes.role_texcoord [self.role or "NONE"] .. "|t ", self, instance.showing))
 			else
-				bar.texto_esquerdo:SetText (bar_number .. "|TInterface\\LFGFRAME\\UI-LFG-ICON-ROLES:" .. instance.row_info.height .. ":" .. instance.row_info.height .. ":0:0:256:256:" .. _detalhes.role_texcoord [self.role or "NONE"] .. "|t " .. self.displayName)
+				bar.texto_esquerdo:SetText (bar_number .. "|TInterface\\LFGFRAME\\UI-LFG-ICON-ROLES:" .. (instance.row_info.height - InBarIconPadding)..":"..(instance.row_info.height - InBarIconPadding) .. ":0:0:256:256:" .. _detalhes.role_texcoord [self.role or "NONE"] .. "|t " .. self.displayName)
 			end
 		else
 			if (UsingCustomLeftText) then
@@ -2873,8 +2893,6 @@ function atributo_damage:ToolTip_DamageDone (instancia, numero, barra, keydown)
 			elseif (_detalhes.time_type == 2) then
 				meu_tempo = instancia.showing:GetCombatTime()
 			end
-			
-			--print ("time:", meu_tempo)
 			
 			--add actor spells
 			for _spellid, _skill in _pairs (ActorSkillsContainer) do
@@ -3096,7 +3114,7 @@ function atributo_damage:ToolTip_DamageDone (instancia, numero, barra, keydown)
 				
 				--_detalhes:AddTooltipSpellHeaderText ("Phases", headerColor, 1, [[Interface\Garrison\MobileAppIcons]], 2*130/1024, 3*130/1024, 5*130/1024, 6*130/1024)
 				--_detalhes:AddTooltipSpellHeaderText ("Phases", headerColor, 1, [[Interface\Garrison\orderhall-missions-mechanic10]], 0, 1, 0, 1)
-				_detalhes:AddTooltipSpellHeaderText ("Phases", headerColor, 1, [[Interface\Garrison\orderhall-missions-mechanic8]], 11/64, 53/64, 11/64, 53/64)
+				_detalhes:AddTooltipSpellHeaderText ("Phases", headerColor, 1, [[Interface\Garrison\orderhall-missions-mechanic8]], 11/64, 53/64, 11/64, 53/64) --localize-me
 				--GameCooltip:AddIcon ([[Interface\AddOns\Details\images\key_shift]], 1, 2, _detalhes.tooltip_key_size_width, _detalhes.tooltip_key_size_height, 0, 1, 0, 0.640625, _detalhes.tooltip_key_overlay1)
 				_detalhes:AddTooltipHeaderStatusbar (r, g, b, barAlha)
 				
@@ -3847,7 +3865,11 @@ end
 	end
 	
 	if (type (index) == "number") then
-		row.texto_esquerdo:SetText (index .. ". " .. name)
+		if (debugmode) then
+			row.texto_esquerdo:SetText (index .. ". " .. name .. " (" .. spellid .. ")")
+		else
+			row.texto_esquerdo:SetText (index .. ". " .. name)
+		end
 	else
 		row.texto_esquerdo:SetText (name)
 	end
@@ -3899,7 +3921,7 @@ end
 			row.textura:SetStatusBarColor (1, 1, 1)
 		end
 	else
-		if (spellid == 98021) then
+		if (spellid == 98021) then --spirit linkl
 			row.textura:SetStatusBarColor (1, 0.4, 0.4)
 		else
 			row.textura:SetStatusBarColor (1, 1, 1)

@@ -121,6 +121,10 @@ local BarMetaFunctions = _G [DF.GlobalWidgetControlNames ["normal_bar"]]
 	local gmember_textcolor = function (_object)
 		return _object.textleft:GetTextColor()
 	end
+	--> alpha 
+	local gmember_alpha= function (_object)
+		return _object:GetAlpha()
+	end
 
 	BarMetaFunctions.GetMembers = BarMetaFunctions.GetMembers or {}
 	BarMetaFunctions.GetMembers ["tooltip"] = gmember_tooltip
@@ -139,6 +143,7 @@ local BarMetaFunctions = _G [DF.GlobalWidgetControlNames ["normal_bar"]]
 	BarMetaFunctions.GetMembers ["textsize"] = gmember_textsize --alias
 	BarMetaFunctions.GetMembers ["textfont"] = gmember_textfont --alias
 	BarMetaFunctions.GetMembers ["textcolor"] = gmember_textcolor --alias
+	BarMetaFunctions.GetMembers ["alpha"] = gmember_alpha
 	
 	BarMetaFunctions.__index = function (_table, _member_requested)
 
@@ -212,6 +217,11 @@ local BarMetaFunctions = _G [DF.GlobalWidgetControlNames ["normal_bar"]]
 
 		return _object._texture:SetVertexColor (_value1, _value2, _value3, _value4)
 	end
+	--> background color
+	local smember_backgroundcolor = function (_object, _value)
+		local _value1, _value2, _value3, _value4 = DF:ParseColors (_value)
+		return _object.background:SetVertexColor (_value1, _value2, _value3, _value4)
+	end
 	--> icon
 	local smember_icon = function (_object, _value)
 		if (type (_value) == "table") then
@@ -255,6 +265,20 @@ local BarMetaFunctions = _G [DF.GlobalWidgetControlNames ["normal_bar"]]
 		end
 		return
 	end
+	--> background texture
+	local smember_backgroundtexture = function (_object, _value)
+		if (_value:find ("\\")) then
+			_object.background:SetTexture (_value)
+		else
+			local file = SharedMedia:Fetch ("statusbar", _value)
+			if (file) then
+				_object.background:SetTexture (file)
+			else
+				_object.background:SetTexture (_value)
+			end
+		end
+		return
+	end
 	--> font face
 	local smember_textfont = function (_object, _value)
 		DF:SetFontFace (_object.textleft, _value)
@@ -276,7 +300,11 @@ local BarMetaFunctions = _G [DF.GlobalWidgetControlNames ["normal_bar"]]
 		DF:SetFontOutline (_object.textleft, _value)
 		return DF:SetFontOutline (_object.textright, _value)
 	end
-
+	--> alpha 
+	local smember_alpha= function (_object, _value)
+		return _object:SetAlpha (_value)
+	end
+	
 	BarMetaFunctions.SetMembers = BarMetaFunctions.SetMembers or {}
 	BarMetaFunctions.SetMembers["tooltip"] = smember_tooltip
 	BarMetaFunctions.SetMembers["shown"] = smember_shown
@@ -286,8 +314,10 @@ local BarMetaFunctions = _G [DF.GlobalWidgetControlNames ["normal_bar"]]
 	BarMetaFunctions.SetMembers["righttext"] = smember_rtext
 	BarMetaFunctions.SetMembers["lefttext"] = smember_ltext
 	BarMetaFunctions.SetMembers["color"] = smember_color
+	BarMetaFunctions.SetMembers["backgroundcolor"] = smember_backgroundcolor
 	BarMetaFunctions.SetMembers["icon"] = smember_icon
 	BarMetaFunctions.SetMembers["texture"] = smember_texture
+	BarMetaFunctions.SetMembers["backgroundtexture"] = smember_backgroundtexture
 	BarMetaFunctions.SetMembers["fontsize"] = smember_textsize
 	BarMetaFunctions.SetMembers["fontface"] = smember_textfont
 	BarMetaFunctions.SetMembers["fontcolor"] = smember_textcolor
@@ -296,6 +326,7 @@ local BarMetaFunctions = _G [DF.GlobalWidgetControlNames ["normal_bar"]]
 	BarMetaFunctions.SetMembers["textcolor"] = smember_textcolor --alias
 	BarMetaFunctions.SetMembers["shadow"] = smember_outline
 	BarMetaFunctions.SetMembers["outline"] = smember_outline --alias
+	BarMetaFunctions.SetMembers["alpha"] = smember_alpha
 	
 	BarMetaFunctions.__newindex = function (_table, _key, _value)
 	
@@ -629,6 +660,66 @@ function DetailsFrameworkNormalBar_OnCreate (self)
 	return true
 end
 
+local build_statusbar = function (self)
+
+	self:SetSize (300, 14)
+	
+	self.background = self:CreateTexture ("$parent_background", "BACKGROUND")
+	self.background:Hide()
+	self.background:SetAllPoints()
+	self.background:SetTexture ([[Interface\PaperDollInfoFrame\UI-Character-Skills-Bar]])
+	self.background:SetVertexColor (.3, .3, .3, .3)
+
+	self.timertexture = self:CreateTexture ("$parent_timerTexture", "ARTWORK")
+	self.timertexture:Hide()
+	self.timertexture:SetSize (300, 14)
+	self.timertexture:SetTexture ([[Interface\PaperDollInfoFrame\UI-Character-Skills-Bar]])
+	self.timertexture:SetPoint ("LEFT", self, "LEFT")
+
+	self.timertextureR = self:CreateTexture ("$parent_timerTextureR", "ARTWORK")
+	self.timertextureR:Hide()
+	self.timertextureR:SetSize (300, 14)
+	self.timertextureR:SetTexture ([[Interface\PaperDollInfoFrame\UI-Character-Skills-Bar]])
+	self.timertextureR:SetPoint ("TOPRIGHT", self, 0, 0)
+	self.timertextureR:SetPoint ("BOTTOMRIGHT", self, 0, 0)
+
+	self.texture = self:CreateTexture ("$parent_statusbarTexture", "ARTWORK")
+	self.texture:SetSize (300, 14)
+	self.texture:SetTexture ([[Interface\PaperDollInfoFrame\UI-Character-Skills-Bar]])
+	
+	self:SetStatusBarTexture (self.texture)
+	
+	self.icontexture = self:CreateTexture ("$parent_icon", "OVERLAY")
+	self.icontexture:SetSize (14, 14)
+	self.icontexture:SetPoint ("LEFT", self, "LEFT")
+	
+	self.sparkmouseover = self:CreateTexture ("$parent_sparkMouseover", "OVERLAY")
+	self.sparkmouseover:SetSize (32, 32)
+	self.sparkmouseover:SetTexture ([[Interface\CastingBar\UI-CastingBar-Spark]])
+	self.sparkmouseover:SetBlendMode ("ADD")
+	self.sparkmouseover:SetPoint ("LEFT", self, "RIGHT", -16, -1)
+	self.sparkmouseover:Hide()
+	
+	self.sparktimer = self:CreateTexture ("$parent_sparkTimer", "OVERLAY")
+	self.sparktimer:SetSize (32, 32)
+	self.sparktimer:SetPoint ("LEFT", self.timertexture, "RIGHT", -16, -1)
+	self.sparktimer:SetTexture ([[Interface\CastingBar\UI-CastingBar-Spark]])
+	self.sparktimer:SetBlendMode ("ADD")
+	self.sparktimer:Hide()
+	
+	self.lefttext = self:CreateFontString ("$parent_TextLeft", "OVERLAY", "GameFontHighlight")
+	self.lefttext:SetJustifyH ("LEFT")
+	self.lefttext:SetPoint ("LEFT", self.icontexture, "RIGHT", 3, 0)
+	DF:SetFontSize (self.lefttext, 10)
+
+	self.righttext = self:CreateFontString ("$parent_TextRight", "OVERLAY", "GameFontHighlight")
+	self.righttext:SetJustifyH ("LEFT")
+	DF:SetFontSize (self.righttext, 10)
+	self.righttext:SetPoint ("RIGHT", self, "RIGHT", -3, 0)
+	
+	DetailsFrameworkNormalBar_OnCreate (self)
+end
+
 function DF:CreateBar (parent, texture, w, h, value, member, name)
 	return DF:NewBar (parent, parent, name, member, w, h, value, texture)
 end
@@ -674,7 +765,9 @@ function DF:NewBar (parent, container, name, member, w, h, value, texture_name)
 	BarObject.container = container
 	
 	--> create widgets
-		BarObject.statusbar = CreateFrame ("statusbar", name, parent, "DetailsFrameworkNormalBarTemplate")
+		BarObject.statusbar = CreateFrame ("statusbar", name, parent)
+		build_statusbar (BarObject.statusbar)
+		
 		BarObject.widget = BarObject.statusbar
 		
 		if (not APIBarFunctions) then

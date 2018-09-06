@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Putricide Dogs", 604)
+local mod = BigWigs:NewBoss("Putricide Dogs", 631)
 if not mod then return end
 mod:RegisterEnableMob(37217, 37025)
 mod.toggleOptions = {71127}
@@ -22,7 +22,7 @@ end
 
 function mod:Wound(args)
 	if args.amount > 5 then
-		self:StackMessage(71127, args.destName, args.amount, "Important")
+		self:StackMessage(71127, args.destName, args.amount, "red")
 	end
 end
 

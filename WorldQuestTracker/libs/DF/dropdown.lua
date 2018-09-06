@@ -311,7 +311,8 @@ local function isOptionVisible (thisOption)
 end
 
 function DropDownMetaFunctions:Refresh()
-	local menu = self.func()
+	--> do a safe call
+	local menu =  DF:Dispatch (self.func, self)
 
 	if (#menu == 0) then
 		self:NoOption (true)
@@ -371,7 +372,7 @@ function DropDownMetaFunctions:Select (optionName, byOptionNumber)
 		return false
 	end
 
-	local menu = self.func()
+	local menu =  DF:Dispatch (self.func, self)
 
 	if (#menu == 0) then
 		self:NoOption (true)
@@ -489,7 +490,7 @@ function DetailsFrameworkDropDownOptionClick (button)
 				error ("Details! Framework: dropdown " .. button:GetParent():GetParent():GetParent().MyObject:GetName() ..  " error: " .. errorText)
 			end
 			
-			--button.table.onclick (button:GetParent():GetParent():GetParent().MyObject, button.object.FixedValue, button.table.value)	
+			button:GetParent():GetParent():GetParent().MyObject:RunHooksForWidget ("OnOptionSelected", button:GetParent():GetParent():GetParent().MyObject, button.object.FixedValue, button.table.value)
 		end
 		
 	--> set the value of selected option in main object
@@ -535,6 +536,10 @@ function DetailsFrameworkDropDownOptionOnEnter (frame)
 		GameCooltip2:AddLine (frame.table.desc)
 		if (frame.table.descfont) then
 			GameCooltip2:SetOption ("TextFont", frame.table.descfont)
+		end
+		
+		if (frame.table.tooltipwidth) then
+			GameCooltip2:SetOption ("FixedWidth", frame.table.tooltipwidth)
 		end
 		
 		GameCooltip2:SetHost (frame, "topleft", "topright", 10, 0)
@@ -598,7 +603,6 @@ function DetailsFrameworkDropDownOnMouseDown (button)
 						local name = button:GetName() .. "Row" .. i
 						local parent = scrollChild
 						
-						--_this_row = CreateFrame ("Button", name, parent, "DetailsFrameworkDropDownOptionTemplate")
 						_this_row = DF:CreateDropdownButton (parent, name)
 						local anchor_i = i-1
 						_this_row:SetPoint ("topleft", parent, "topleft", 5, (-anchor_i*20)-5)
@@ -943,13 +947,11 @@ function DF:NewDropDown (parent, container, name, member, w, h, func, default, t
 		--> misc
 		DropDownObject.container = container
 		
-	--DropDownObject.dropdown = CreateFrame ("Button", name, parent, "DetailsFrameworkDropDownTemplate")
 	DropDownObject.dropdown = DF:CreateNewDropdownFrame (parent, name)
 	
 	DropDownObject.widget = DropDownObject.dropdown
 	
 	DropDownObject.__it = {nil, nil}
-	--_G [name] = DropDownObject
 
 	if (not APIDropDownFunctions) then
 		APIDropDownFunctions = true
@@ -985,7 +987,8 @@ function DF:NewDropDown (parent, container, name, member, w, h, func, default, t
 	
 	local scroll = _G [DropDownObject.dropdown:GetName() .. "_ScrollFrame"]
 
-	DropDownObject.scroll = DF:NewScrollBar (scroll, _G [DropDownObject.dropdown:GetName() .. "_ScrollFrame".."_ScrollChild"], -25, -18)
+	DropDownObject.scroll = DF:NewScrollBar (scroll, _G [DropDownObject.dropdown:GetName() .. "_ScrollFrame".."_ScrollChild"], -18, -18)
+	DF:ReskinSlider (scroll)
 	
 	function DropDownObject:HideScroll()
 		scroll.baixo:Hide()
@@ -998,8 +1001,6 @@ function DF:NewDropDown (parent, container, name, member, w, h, func, default, t
 		scroll.slider:Show()
 	end
 	
-	--button_down_scripts (DropDownObject, scroll.slider, scroll.baixo)
-	
 	DropDownObject:HideScroll()
 	DropDownObject.label:SetSize (DropDownObject.dropdown:GetWidth()-40, 10)
 	
@@ -1008,6 +1009,7 @@ function DF:NewDropDown (parent, container, name, member, w, h, func, default, t
 		OnLeave = {},
 		OnHide = {},
 		OnShow = {},
+		OnOptionSelected = {},
 	}	
 	
 	DropDownObject.dropdown:SetScript ("OnShow", DetailsFrameworkDropDownOnShow)
@@ -1108,12 +1110,14 @@ function DF:CreateNewDropdownFrame (parent, name)
 	scroll:SetSize (150, 150)
 	scroll:SetPoint ("topleft", f, "bottomleft", 0, 0)
 	f.dropdownframe = scroll
-	
+
 	local child = CreateFrame ("frame", "$Parent_ScrollChild", scroll)
 	child:SetSize (150, 150)
 	child:SetPoint ("topleft", scroll, "topleft", 0, 0)
 	child:SetBackdrop (child_backdrop)
 	child:SetBackdropColor (0, 0, 0, 1)
+	
+	DF:ApplyStandardBackdrop (child)
 	
 	local selected = child:CreateTexture ("$parent_SelectedTexture", "BACKGROUND")
 	selected:SetSize (150, 16)

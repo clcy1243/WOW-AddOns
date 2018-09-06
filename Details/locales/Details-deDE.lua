@@ -243,8 +243,8 @@ L["STRING_FORGE_HEADER_OWNER"] = "Besitzer"
 L["STRING_FORGE_HEADER_SCHOOL"] = "Kategorie"
 L["STRING_FORGE_HEADER_SPELLID"] = "Zauber-ID"
 L["STRING_FORGE_HEADER_TIMER"] = "Timer"
---Translation missing 
--- L["STRING_FORGE_TUTORIAL_DESC"] = ""
+L["STRING_FORGE_TUTORIAL_DESC"] = [=[
+Durchsuche Zauber- und Boss-Mods-Timer, um Auren durch Klicken auf '|cFFFFFF00Aura Erstellen|r' zu erstellen.]=]
 L["STRING_FORGE_TUTORIAL_TITLE"] = "Willkommen bei Details! Forge"
 L["STRING_FORGE_TUTORIAL_VIDEO"] = "Beispiel einer Aura bei Verwendung von Bossmod-Timern:"
 L["STRING_FREEZE"] = "Dieses Segment ist im Moment nicht verfügbar "
@@ -264,8 +264,8 @@ L["STRING_GUILDDAMAGERANK_ROLE"] = "Rolle"
 L["STRING_GUILDDAMAGERANK_SHOWHISTORY"] = "Verlauf zeigen"
 L["STRING_GUILDDAMAGERANK_SHOWRANK"] = "Gildenbank zeigen"
 L["STRING_GUILDDAMAGERANK_SYNCBUTTONTEXT"] = "Mit Gilde synchronisieren"
---Translation missing 
--- L["STRING_GUILDDAMAGERANK_TUTORIAL_DESC"] = ""
+--[[Translation missing --]]
+--[[ L["STRING_GUILDDAMAGERANK_TUTORIAL_DESC"] = ""--]] 
 L["STRING_GUILDDAMAGERANK_WINDOWALERT"] = "Boss besiegt! Rangliste zeigen"
 L["STRING_HEAL"] = "Heilung"
 L["STRING_HEAL_ABSORBED"] = "Absorbierte Heilung"
@@ -395,14 +395,14 @@ L["STRING_OPTIONS_3D_LALPHA_DESC"] = [=[Wähle einen Wert für die Transparenz.
 |cFFFFFF00Achtung|r: Einige Modelle ignorieren den Transparenzwert.]=]
 L["STRING_OPTIONS_3D_LANCHOR"] = "Unteres 3D-Modell:"
 L["STRING_OPTIONS_3D_LENABLED_DESC"] = "Aktiviert oder deaktiviert die Nutzung eines 3D-Modells unter den Balken."
-L["STRING_OPTIONS_3D_LSELECT_DESC"] = "Wähle das zu benutzende 3D-Modell für Balken."
+L["STRING_OPTIONS_3D_LSELECT_DESC"] = "Wähle das zu benutzende 3D-Modell für die Balken."
 L["STRING_OPTIONS_3D_SELECT"] = "Modell wählen"
 L["STRING_OPTIONS_3D_UALPHA_DESC"] = [=[Wähle einen Wert für die Transparenz des oberen Modells.
 
 |cFFFFFF00Achtung|r: Einige Modelle ignorieren den Transparenzwert.]=]
 L["STRING_OPTIONS_3D_UANCHOR"] = "Oberes 3D-Modell:"
 L["STRING_OPTIONS_3D_UENABLED_DESC"] = "Aktiviert oder deaktiviert die Nutzung eines 3D-Modells über den Balken."
-L["STRING_OPTIONS_3D_USELECT_DESC"] = "Wähle das zu benutzende 3D-Modell für Balken."
+L["STRING_OPTIONS_3D_USELECT_DESC"] = "Wähle das zu benutzende 3D-Modell für die Balken."
 L["STRING_OPTIONS_ADVANCED"] = "Erweitert"
 L["STRING_OPTIONS_ALPHAMOD_ANCHOR"] = "Automatisch Verbergen:"
 L["STRING_OPTIONS_ALWAYS_USE"] = "Bei allen Charakteren benutzen"
@@ -510,8 +510,8 @@ L["STRING_OPTIONS_BG_ALL_ALLY_DESC"] = [=[Aktiviert: Zeigt auch gegnerische Spie
 
 |cFFFFFF00Wichtig|r: Änderungen werden erst beim nächsten Kampf übernommen.]=]
 L["STRING_OPTIONS_BG_ANCHOR"] = "Schlachtfelder:"
-L["STRING_OPTIONS_BG_REMOTE_PARSER"] = "Punktezahl"
-L["STRING_OPTIONS_BG_REMOTE_PARSER_DESC"] = "Aktiviert: Schaden und Heilung werden mit der Punktetafel synchronisiert."
+L["STRING_OPTIONS_BG_UNIQUE_SEGMENT"] = "Einzigartiges Segment"
+L["STRING_OPTIONS_BG_UNIQUE_SEGMENT_DESC"] = "Ein Segment wird beim Start eines Schlachtfeldes erstellt und besteht bis das Schlachtfeld endet."
 L["STRING_OPTIONS_CAURAS"] = "Auren erfassen"
 L["STRING_OPTIONS_CAURAS_DESC"] = [=[Aktiviert die Erfassung von:
 
@@ -535,6 +535,7 @@ L["STRING_OPTIONS_CENERGY_DESC"] = [=[Aktiviert die Erfassung von:
 - |cFFFFFF00Erzeugte Runenmacht|r]=]
 L["STRING_OPTIONS_CHANGE_CLASSCOLORS"] = "Klassenfarben ändern"
 L["STRING_OPTIONS_CHANGE_CLASSCOLORS_DESC"] = "Wähle neue Klassenfarben aus."
+L["STRING_OPTIONS_CHANGECOLOR"] = "Farbe ändern"
 L["STRING_OPTIONS_CHANGELOG"] = "Versionshinweise"
 L["STRING_OPTIONS_CHART_ADD"] = "Daten hinzufügen"
 L["STRING_OPTIONS_CHART_ADD2"] = "Hinzufügen"
@@ -652,8 +653,7 @@ L["STRING_OPTIONS_DEATHLIMIT_DESC"] = [=[Stelle die Anzahl an Ereignissen für d
 
 |cFFFFFF00Wichtig|r: Wird nach der Änderung nur auf neue Tode angewendet.]=]
 L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = "Mindestheilung für Todesprotokoll"
---Translation missing 
--- L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = ""
+L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = "|cFFFFFF00Tip|r: Rechtsklicken, um einen manuellen Wert einzugeben."
 L["STRING_OPTIONS_DESATURATE_MENU"] = "Entfärbt"
 L["STRING_OPTIONS_DESATURATE_MENU_DESC"] = "Aktiviert: Alle Symbole der Werkzeugleiste werden schwarz-weiß."
 L["STRING_OPTIONS_DISABLE_ALLDISPLAYSWINDOW"] = "Das Menü 'Alle Anzeigen' deaktivieren"
@@ -844,8 +844,7 @@ L["STRING_OPTIONS_OVERALL_DUNGEONCLEAN_DESC"] = "Segmente mit abgräumtem Dungeo
 L["STRING_OPTIONS_OVERALL_LOGOFF"] = "Beim Ausloggen löschen"
 L["STRING_OPTIONS_OVERALL_LOGOFF_DESC"] = "Aktiviert: Die Gesamtdaten werden automatisch beim Ausloggen des Charakters gelöscht."
 L["STRING_OPTIONS_OVERALL_MYTHICPLUS"] = "Beim Start einer Mythic+ löschen"
---Translation missing 
--- L["STRING_OPTIONS_OVERALL_MYTHICPLUS_DESC"] = ""
+L["STRING_OPTIONS_OVERALL_MYTHICPLUS_DESC"] = "Wenn aktiviert, werden sämtliche Daten automatisch gelöscht, wenn ein neuer Mythisch+-Durchlauf gestartet wird."
 L["STRING_OPTIONS_OVERALL_NEWBOSS"] = "Bei neuem Boss löschen"
 L["STRING_OPTIONS_OVERALL_NEWBOSS_DESC"] = "Aktiviert: Die Gesamtdaten werden automatisch bei einem neuen Boss gelöscht."
 L["STRING_OPTIONS_OVERALL_RAIDBOSS"] = "Schlachtzugsbosse"
@@ -1655,6 +1654,13 @@ L["STRING_WELCOME_7"] = "Für Ranglisten verwendet diese Methode die Kampflaufze
 L["STRING_WELCOME_70"] = "Titelleisteneinstellungen"
 L["STRING_WELCOME_71"] = "Leisteneinstellungen"
 L["STRING_WELCOME_72"] = "Fenstereinstellungen"
+L["STRING_WELCOME_73"] = "Wähle das Alphabet oder die Region:"
+L["STRING_WELCOME_74"] = "Lateinisches Alphabet"
+L["STRING_WELCOME_75"] = "Kyrillisches Alphabet"
+L["STRING_WELCOME_76"] = "China"
+L["STRING_WELCOME_77"] = "Korea"
+L["STRING_WELCOME_78"] = "Taiwan"
+L["STRING_WELCOME_79"] = "Zweites Fenster erstellen"
 L["STRING_WINDOW_NOTFOUND"] = "Kein Fenster gefunden."
 L["STRING_WINDOW_NUMBER"] = "Fensternummer"
 L["STRING_WINDOW1ATACH_DESC"] = "Zur Bildung einer Fenstergruppe, ziehe Fenster #2 in die Nähe von Fenster #1."

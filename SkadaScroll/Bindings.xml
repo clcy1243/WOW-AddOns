@@ -1,8 +1,0 @@
-<Bindings>
-	<Binding name="SKADASCROLLUP">
-		SkadaScroll_Scroll(true)
-	</Binding>
-	<Binding name="SKADASCROLLDOWN">
-		SkadaScroll_Scroll(false)
-	</Binding>
-</Bindings>

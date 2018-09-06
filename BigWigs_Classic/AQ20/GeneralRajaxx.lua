@@ -1,9 +1,9 @@
-﻿
+
 --------------------------------------------------------------------------------
 -- Module declaration
 --
 
-local mod = BigWigs:NewBoss("General Rajaxx", 717, 1538)
+local mod = BigWigs:NewBoss("General Rajaxx", 509, 1538)
 if not mod then return end
 mod:RegisterEnableMob(15341, 15471) -- General Rajaxx, Lieutenant General Andorov
 
@@ -74,18 +74,18 @@ end
 --
 
 function mod:AttackOrder(args)
-	self:TargetMessage(args.spellId, args.destName, "Attention")
+	self:TargetMessage(args.spellId, args.destName, "yellow")
 	self:TargetBar(args.spellId, 10, args.destName)
 end
 
 function mod:Frenzy(args)
-	self:Message(args.spellId, "Important")
+	self:Message(args.spellId, "red")
 end
 
-function mod:CHAT_MSG_MONSTER_YELL(event, msg)
+function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 	for i = 1, 9 do
 		if msg == L["trigger"..i] then
-			self:Message("wave", "Urgent", nil, L["warn"..i], false)
+			self:Message("wave", "orange", nil, L["warn"..i], false)
 			break
 		end
 	end

@@ -679,9 +679,7 @@ function Gnosis:SetupChanneledSpellsTable()
 
 	-- priest
 	self:AddChanneledSpellById(15407, 4, false, 5, false, false, "shadow", false, 3);	-- mind flay
-	self:AddChanneledSpellById(129197, 4, false, 5, false, false, "shadow", false, 2);	-- insanity
-	self:AddChanneledSpellById(32000, 6, false, 7, true, true, "shadow", false, 3); 	-- mind sear
-	self:AddChanneledSpellById(179338, 6, false, 7, true, true, "shadow", false, 1); 	-- searing insanity
+	self:AddChanneledSpellById(48045, 4, false, 5, false, true, "shadow", false, 3); 	-- mind sear
 	self:AddChanneledSpellById(47540, 3, false, 2, true, false, "holy", true, 1);		-- penance, first tick instant
 	self:AddChanneledSpellById(64843, 4, false, 15, false, true, "holy", true, 4);		-- divine hymn
 	
@@ -880,7 +878,7 @@ end
 -- clip test
 function Gnosis:SetupChannelData()
 	local fCurTime = GetTime() * 1000.0;
-	local name, rank, displayName, texture, startTime, endTime = UnitChannelInfo("player");
+	local name, displayName, texture, startTime, endTime = UnitChannelInfo("player");
 
 	local cs = self.s.channeledspells[name];
 	if(cs and cs.ben and (cs.bcliptest or cs.bcombattext or cs.bticksound)) then
@@ -946,7 +944,7 @@ function Gnosis:RequestClipTest()
 end
 
 function Gnosis:UpdateClipTest()
-	local spell, _, _, _, startTime, endTime = UnitChannelInfo("player");
+	local spell, _, _, startTime, endTime = UnitChannelInfo("player");
 	local cc = (self.nextchannel and self.nextchannel.spell == spell) and self.nextchannel or
 		((self.curchannel and self.curchannel.spell == spell) and self.curchannel or nil);
 
@@ -974,8 +972,8 @@ function Gnosis:UpdateClipTest()
 end
 
 function Gnosis:PlaySounds()
-	if (self.s.ct.bsound and self.s.ct.sound) then
-		PlaySound(self.s.ct.sound, self.s.ct.channel and
+	if (self.s.ct.bsound and self.s.ct.sound and SOUNDKIT[self.s.ct.sound]) then
+		PlaySound(SOUNDKIT[self.s.ct.sound], self.s.ct.channel and
 			self.tSoundChannels[self.s.ct.channel] or self.tSoundChannels[1]);
 	end
 	if (self.s.ct.bmusic and self.s.ct.music) then

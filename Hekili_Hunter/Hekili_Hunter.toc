@@ -1,9 +1,0 @@
-## Interface: 70200
-## Version: 7.1.5
-## Title: Hekili_Hunter
-## Author: Hekili
-## Notes: Survival Hunter module for Hekili addon.
-## RequiredDeps: Hekili
-## OptionalDeps: Masque, SpellFlash, SpellFlashCore, WeakAuras
-
-Hunter.lua

@@ -1,13 +1,9 @@
-﻿## Interface: 70000
+## Interface: 80000
 ## X-Compatible-With: 50300
 ## Title: Improved Stable Frame
-## Version: 3.1.2
-## Author: Cybeloras of Detheroc/Mal'Ganis
+## Version: 3.3.1
+## Author: Cybeloras of Aerie Peak
 ## Notes: Condenses your stabled pets onto one page.
-## X-Curse-Packaged-Version: 3.1.2
-## X-Curse-Project-Name: Improved Stable Frame
-## X-Curse-Project-ID: improved-stable-frame
-## X-Curse-Repository-ID: wow/improved-stable-frame/mainline
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Execute: PetStableFrame:HookScript("OnShow", function() if not IsAddOnLoaded("ImprovedStableFrame") then AddonLoader:LoadAddOn("ImprovedStableFrame") end end)

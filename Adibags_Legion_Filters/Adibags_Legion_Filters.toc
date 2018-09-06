@@ -1,8 +1,8 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: AdiBags Legion Filters
 ## Notes: Adds filters for Legion items to AdiBags
 ## Author: Selvanis@Uldum
-## Version: 1.6.7
+## Version: 1.6.9
 ## Dependencies: AdiBags
 Localization.lua
 data\ItemTables.lua

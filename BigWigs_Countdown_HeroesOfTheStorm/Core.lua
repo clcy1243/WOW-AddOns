@@ -120,19 +120,23 @@ local announcers = {
 	-- Map
 	Adjutant = "Adjutant",
 	Angel = "Angel",
+	Athena = "Athena",
 	Blackheart = "Blackheart",
 	Demon = "Demon",
+	DrekTharA = "Drek'Thar",
 	GardensDayAnnouncer = "Queen Nightshade",
 	LadyofThorns = "Lady of Thorns",
 	Necromancer = "Necromancer",
 	RavenLord = "Raven Lord",
 	SnakeGod = "Snake God",
 	SpiderQueen = "Spider Queen",
+	VanndarA = "Vanndar Stormpike",
 	VolskayaA = "Volskaya",
 	-- Brawl
-	Athena = "Athena",
 	Arena = "Arena",
 	Commodore = "Commodore",
+	-- LuchaA = "El Guapo", -- same for all languages
+	MiraA = "Mira Han",
 	-- Warcraft
 	AlexstraszaA = "Alexstrasza",
 	AnubarakAnnouncer = "Anub'arak",
@@ -152,27 +156,33 @@ local announcers = {
 	MurkyA = "Murky",
 	RehgarAnnouncer = "Rehgar",
 	StitchesA = "Stitches",
+	WhitemaneA = "Whitemane",
+	YrelA = "Yrel",
 	-- StarCraft
 	Abathur = "Abathur",
 	AlarakA = "Alarak",
 	BlazeA = "Blaze",
+	FenixA = "Fenix",
 	SiegeTankA = "Sgt. Hammer",
 	TassadarA = "Tassadar",
 	TychusA = "Tychus",
 	ZeratulA = "Zeratul",
 	-- Diablo
-	-- ButcherA = "Butcher",
+	-- ButcherA = "Butcher", -- same for all languages
 	DiabloA = "Diablo",
+	DeckardA = "Deckard Cain",
+	MephistoA = "Mephisto",
 	WitchDoctorA = "Nazeebo",
 	BarbarianA = "Sonya",
 	TyraelA = "Tyrael",
-	TyraelMechaA = "Mecha Tyrael",
 	DemonHunterA = "Valla",
 	-- Overwatch
 	DvaA = "D.Va",
 	GenjiA = "Genji",
 	HanzoA = "Hanzo",
 	JunkratA = "Junkrat",
+	-- Skins
+	TyraelMechaA = "Mecha Tyrael",
 }
 
 function ns.RegisterVoices()
@@ -185,7 +195,7 @@ function ns.RegisterVoices()
 	local path = "Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\%s\\%s_Countdown%dsec00.ogg"
 
 	for k, v in next, announcers do
-		local id = ("%s: %s: %s"):format(lang, "Heroes of the Storm", v) -- should be using k but I don't want to break everything D;
+		local id = ("%s: Heroes of the Storm: %s"):format(lang, v) -- should be using k but I don't want to break everything D;
 		local name = L.key:format(lang, L.heroes, L[k] or v)
 		BigWigsAPI:RegisterCountdown(id, name, {
 			path:format(locale, k, 1),
@@ -198,14 +208,28 @@ function ns.RegisterVoices()
 
 	-- Special case Butcher (It's just grunts and growls)
 	-- This is reversed from HotS so 2/1 are the more distinctive sounds
-	local butcher = "Heroes of the Storm: Butcher"
-	if not BigWigsAPI:HasCountdown(butcher) then
-		BigWigsAPI:RegisterCountdown(butcher, L.key_short:format(L.heroes, L.ButcherA or "Butcher"), {
+	local k, v = "ButcherA", "Butcher"
+	local id = ("Heroes of the Storm: %s"):format(v)
+	if not BigWigsAPI:HasCountdown(id) then
+		BigWigsAPI:RegisterCountdown(id, L.key_short:format(L.heroes, L[k] or v), {
 			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_DismissBark02.ogg",
 			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_VOX_Attack08.ogg",
 			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_VOX_GetHitSmall02.ogg",
 			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_VOX_GetHitSmall01.ogg",
 			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_VOX_GetHitSmall04.ogg",
+		})
+	end
+
+	-- Special case El Guapo (Spanish for all locales)
+	local k, v = "LuchaA", "El Guapo"
+	local id = ("Heroes of the Storm: %s"):format(v)
+	if not BigWigsAPI:HasCountdown(id) then
+		BigWigsAPI:RegisterCountdown(id, L.key_short:format(L.heroes, L[k] or v), {
+			path:format("enUS", k, 1),
+			path:format("enUS", k, 2),
+			path:format("enUS", k, 3),
+			path:format("enUS", k, 4),
+			path:format("enUS", k, 5),
 		})
 	end
 end

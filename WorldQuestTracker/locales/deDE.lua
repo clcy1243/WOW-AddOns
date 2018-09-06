@@ -2,7 +2,6 @@ local L = LibStub("AceLocale-3.0"):NewLocale("WorldQuestTrackerAddon", "deDE")
 if not L then return end 
 
 L["S_APOWER_AVAILABLE"] = "Verfügbar"
-L["S_APOWER_DOWNVALUE"] = "%s bei einer Quest bedeutet, dass diese nach Abschluss der Forschung abläuft."
 L["S_APOWER_NEXTLEVEL"] = "Nächste Stufe"
 L["S_ENABLED"] = "Aktiviert"
 L["S_ERROR_NOTIMELEFT"] = "Diese Quest ist bereits abgelaufen."
@@ -29,19 +28,15 @@ L["S_GROUPFINDER_ACTIONS_UNLISTING"] = "abmelden..."
 L["S_GROUPFINDER_ACTIONS_WAITING"] = "warten..."
 L["S_GROUPFINDER_AUTOOPEN_RARENPC_TARGETED"] = "Beim Anvisieren eines seltenen Gegners automatisch öffnen"
 L["S_GROUPFINDER_ENABLED"] = "Bei neuer Quest automatisch öffnen"
---Translation missing 
--- L["S_GROUPFINDER_INVASION_ENABLED"] = ""
 L["S_GROUPFINDER_LEAVEOPTIONS"] = "Optionen Gruppenverlassen"
 L["S_GROUPFINDER_LEAVEOPTIONS_AFTERX"] = "Nach X Sekunden verlassen"
---Translation missing 
--- L["S_GROUPFINDER_LEAVEOPTIONS_ASKX"] = ""
+L["S_GROUPFINDER_LEAVEOPTIONS_ASKX"] = "Verlasse nicht automatisch, frage nur für X Sekunden"
 L["S_GROUPFINDER_LEAVEOPTIONS_DONTLEAVE"] = "Das Menü zum Verlassen nicht anzeigen"
 L["S_GROUPFINDER_LEAVEOPTIONS_IMMEDIATELY"] = "Nach Questabschluss sofort verlassen"
 L["S_GROUPFINDER_NOPVP"] = "PvP-Realms vermeiden"
 L["S_GROUPFINDER_OT_ENABLED"] = "Buttons auf der Questverfolgung zeigen."
 L["S_GROUPFINDER_QUEUEBUSY"] = "Du bist bereits in einer Warteschlange."
---Translation missing 
--- L["S_GROUPFINDER_QUEUEBUSY2"] = ""
+L["S_GROUPFINDER_QUEUEBUSY2"] = "Das Fenster der Gruppensuche konnte nicht angezeigt werden: Du bist schon in einer Gruppe oder Warteschlange"
 L["S_GROUPFINDER_RESULTS_APPLYING"] = "Es gibt noch %d verbleibende Gruppen, klicke nochmal"
 L["S_GROUPFINDER_RESULTS_APPLYING1"] = "Es gibt noch 1 verbleibende Gruppe, klicke nochmal"
 L["S_GROUPFINDER_RESULTS_FOUND"] = [=[Es wurden %s Gruppen gefunden
@@ -54,9 +49,6 @@ L["S_GROUPFINDER_SECONDS"] = "Sekunden"
 L["S_GROUPFINDER_TITLE"] = "Dungeonbrowser"
 L["S_GROUPFINDER_TUTORIAL1"] = "Erledige deine Weltquests schneller, indem du Gruppen beitrittst, die die gleiche Quest machen!"
 L["S_MAPBAR_AUTOWORLDMAP"] = "Autom. Weltkarte"
-L["S_MAPBAR_AUTOWORLDMAP_DESC"] = [=[Wenn du dich in Dalaran oder in der Klassenordenshalle befindest, öffnet das Drücken von "M" direkt die Karte der Verheerten Inseln.
-
-Drücke "M" zweimal, um die Karte deines aktuellen Standorts zu öffnen.]=]
 L["S_MAPBAR_FILTER"] = "Filter"
 L["S_MAPBAR_FILTERMENU_FACTIONOBJECTIVES"] = "Fraktionsziele"
 L["S_MAPBAR_FILTERMENU_FACTIONOBJECTIVES_DESC"] = "Zeigt Fraktionsquests, selbst wenn sie durch obenstehende Filter herausgefiltert wurden."
@@ -115,16 +107,13 @@ L["S_QUESTTYPE_PROFESSION"] = "Beruf"
 L["S_QUESTTYPE_PVP"] = "PvP"
 L["S_QUESTTYPE_RESOURCE"] = "Ressourcen"
 L["S_QUESTTYPE_TRADESKILL"] = "Berufsfertigkeit"
---Translation missing 
--- L["S_RAREFINDER_ADDFROMPREMADE"] = ""
+L["S_RAREFINDER_ADDFROMPREMADE"] = "Seltene Gegner, die über die organisierten Gruppen gefunden wurden, hinzufügen"
 L["S_RAREFINDER_NPC_NOTREGISTERED"] = "Seltener NSC nicht in der Datenbank"
 L["S_RAREFINDER_OPTIONS_ENGLISHSEARCH"] = "Immer auf Englisch suchen"
 L["S_RAREFINDER_OPTIONS_SHOWICONS"] = "Symbole für aktive seltene Gegner anzeigen"
 L["S_RAREFINDER_SOUND_ALWAYSPLAY"] = "Immer abspielen, selbst wenn Soundeffekte deaktiviert sind"
---Translation missing 
--- L["S_RAREFINDER_SOUND_ENABLED"] = ""
---Translation missing 
--- L["S_RAREFINDER_SOUNDWARNING"] = ""
+L["S_RAREFINDER_SOUND_ENABLED"] = "Einen Ton für seltenen Gegner auf der Minikarte abspielen"
+L["S_RAREFINDER_SOUNDWARNING"] = "Ein Ton wird wegen einem seltenen Gegner auf der Minikarte abgespielt. Du kannst diesen Ton im Optionsmenü unter 'Suche seltener Gegner' deaktivieren"
 L["S_RAREFINDER_TITLE"] = "Suche seltener Gegner"
 L["S_RAREFINDER_TOOLTIP_REMOVE"] = "Entfernen"
 L["S_RAREFINDER_TOOLTIP_SEACHREALM"] = "Auf anderen Realms suchen"
@@ -140,13 +129,7 @@ L["S_SUMMARYPANEL_LIFETIMESTATISTICS_CHARACTER"] = "Charakterspezifische Statist
 L["S_SUMMARYPANEL_OTHERCHARACTERS"] = "Andere Charaktere"
 L["S_TUTORIAL_AMOUNT"] = "Zeigt die zu erhaltene Anzahl an"
 L["S_TUTORIAL_CLICKTOTRACK"] = "Klicken, um eine Quest zu verfolgen."
-L["S_TUTORIAL_CLOSE"] = "Anleitung schließen"
-L["S_TUTORIAL_FACTIONBOUNTY"] = "Zeigt an, dass diese Quest zur Erfüllung der Abgesandtenquest der ausgewählten Fraktion beiträgt."
-L["S_TUTORIAL_FACTIONBOUNTY_AMOUNTQUESTS"] = "Zeigt an, wie viele Quests auf der Karte zur Erfüllung der Abgesandtenquest der ausgewählten Fraktion beitragen."
-L["S_TUTORIAL_HOWTOADDTRACKER"] = "Linksklick, um eine Quest zu verfolgen, |cFFFFFFFFRechtsklick|r, um sie nicht mehr zu verfolgen."
 L["S_TUTORIAL_PARTY"] = "Wenn du in einer Gruppe bist, zeigt ein blauer Stern bei einer Quest an, dass diese alle Gruppenmitglieder haben."
-L["S_TUTORIAL_RARITY"] = "Zeigt die Seltenheit an (gewöhnlich, selten, episch)"
-L["S_TUTORIAL_REWARD"] = "Zeigt die Belohnung an (Ausrüstung, Gold, Artefaktmacht, Ressourcen, Reagenzien)"
 L["S_TUTORIAL_TIMELEFT"] = "Zeigt die verbleibende Zeit an (+4 Stunden, +90 Minuten, +30 Minuten, weniger als 30 Minuten)"
 L["S_TUTORIAL_WORLDMAPBUTTON"] = "Diese Schaltfläche öffnet die Karte der Verheerten Inseln."
 L["S_UNKNOWNQUEST"] = "Unbekannte Quest"

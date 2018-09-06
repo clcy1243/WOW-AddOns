@@ -3,9 +3,15 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Corborus", 768, 110)
+local mod, CL = BigWigs:NewBoss("Corborus", 725, 110)
 if not mod then return end
 mod:RegisterEnableMob(43438)
+mod.engageId = 1056
+mod.respawnTime = 30
+
+--------------------------------------------------------------------------------
+-- Localization
+--
 
 local L = mod:GetLocale()
 if L then
@@ -29,16 +35,12 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
-
 	self:Log("SPELL_AURA_APPLIED", "Barrage", 81634, 81637, 81638, 86881, 92012) -- XXX do we need all this?
-
-	self:Death("Win", 43438)
 end
 
 function mod:OnEngage()
 	self:Bar("burrow", 30, L.burrow_message, "ABILITY_HUNTER_PET_WORM")
-	self:DelayedMessage("burrow", 25, "Attention", L.burrow_warning)
+	self:DelayedMessage("burrow", 25, "yellow", L.burrow_warning)
 	self:ScheduleTimer("Burrow", 30)
 end
 
@@ -47,22 +49,22 @@ end
 --
 
 function mod:Burrow()
-	self:Message("burrow", "Important", "Info", L.burrow_message, "ABILITY_HUNTER_PET_WORM")
+	self:Message("burrow", "red", "Info", L.burrow_message, "ABILITY_HUNTER_PET_WORM")
 	self:Bar("burrow", 25, L.emerge_message, "ABILITY_HUNTER_PET_WORM")
-	self:DelayedMessage("burrow", 20, "Attention", L.emerge_warning)
+	self:DelayedMessage("burrow", 20, "yellow", L.emerge_warning)
 	self:ScheduleTimer("Emerge", 25)
 end
 
 function mod:Emerge()
-	self:Message("burrow", "Important", "Info", L.emerge_message, "ABILITY_HUNTER_PET_WORM")
+	self:Message("burrow", "red", "Info", L.emerge_message, "ABILITY_HUNTER_PET_WORM")
 	self:Bar("burrow", 90, L.burrow_message, "ABILITY_HUNTER_PET_WORM")
-	self:DelayedMessage("burrow", 85, "Attention", L.burrow_warning)
+	self:DelayedMessage("burrow", 85, "yellow", L.burrow_warning)
 	self:ScheduleTimer("Burrow", 90) --guesstimate
 end
 
 function mod:Barrage(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(86881, args.destName, "Personal", "Alarm")
+		self:TargetMessage(86881, args.destName, "blue", "Alarm")
 		self:Flash(86881)
 	end
 end

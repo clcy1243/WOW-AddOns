@@ -1,11 +1,17 @@
-------------------------------------------------------------------------
-r402 | raeli87 | 2017-12-17 05:37:47 -0600 (Sun, 17 Dec 2017) | 1 line
-Changed paths:
-   M /trunk/Core.lua
-   M /trunk/Options/Options.lua
-   M /trunk/Priest/Priest.lua
-   M /trunk/RSA.toc
+lightweight tag 021d483094f0eff8becef5f883aebb0854c1fe6c r492-Release
+Author:	Caedilla <42666479+Caedilla@users.noreply.github.com>
+Date:	Sat Sep 1 00:48:11 2018 +0200
 
-Added Mind Bomb
-------------------------------------------------------------------------
+commit 021d483094f0eff8becef5f883aebb0854c1fe6c
+Author: Caedilla <42666479+Caedilla@users.noreply.github.com>
+Date:   Sat Sep 1 00:48:11 2018 +0200
+
+    Fixed Dispels
+    
+    - Added Grimoire of Sacrifice Spell Lock to Spell Lock
+    - Added Devour Magic
+    - Detox now also includes BrM/WW version
+    - Purify now also includes Purify Disease
+    
+    Dispel messages are now configured as Dispel, not cast, to clarify they announce on Dispel, not cast.
 

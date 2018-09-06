@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1153, "DBM-Highmaul", nil, 477)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(79015)
 mod:SetEncounterID(1723)
 mod:SetZone()
@@ -83,7 +83,7 @@ local lastX, LastY = nil, nil--Not in VB table because it player personal positi
 local barName, arcaneDebuff = DBM:GetSpellInfo(156803), DBM:GetSpellInfo(162186)
 
 local function closeRange(self)
-	if self.Options.RangeFrame and not UnitDebuff("player", arcaneDebuff) then
+	if self.Options.RangeFrame and not DBM:UnitDebuff("player", arcaneDebuff) then
 		DBM.RangeCheck:Hide()
 	end
 	self.vb.fireActive = false
@@ -123,7 +123,6 @@ function mod:FrostTarget(targetname, uId)
 end
 
 function mod:OnCombatStart(delay)
-	barName, arcaneDebuff = DBM:GetSpellInfo(156803), DBM:GetSpellInfo(162186)
 	self.vb.ballsCount = 0
 	self.vb.shieldCharging = false
 	self.vb.fireActive = false

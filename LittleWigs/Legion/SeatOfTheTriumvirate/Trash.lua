@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Seat of the Triumvirate Trash", 1178)
+local mod, CL = BigWigs:NewBoss("Seat of the Triumvirate Trash", 1753)
 if not mod then return end
 mod.displayName = CL.trash
 mod:RegisterEnableMob(
@@ -75,23 +75,23 @@ end
 
 function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 	if msg == L.alleria_gossip_trigger then
-		self:Bar("warmup", 40, L.gossip_available, L.custom_on_autotalk_icon)
+		self:Bar("warmup", 38, L.gossip_available, L.custom_on_autotalk_icon)
 	end
 end
 
 function mod:PersonalAurasWithSay(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(args.spellId, args.destName, "Personal", "Alarm")
+		self:TargetMessage(args.spellId, args.destName, "blue", "Alarm")
 		self:Say(args.spellId)
 	end
 end
 
 function mod:VoidDiffusionCast(args)
-	self:Message(args.spellId, "Attention", self:Interrupter() and "Info", CL.casting:format(args.spellName))
+	self:Message(args.spellId, "yellow", self:Interrupter() and "Info", CL.casting:format(args.spellName))
 end
 
 function mod:DarkMatterCast(args)
-	self:Message(args.spellId, "Important", "Warning", CL.casting:format(args.spellName))
+	self:Message(args.spellId, "red", "Warning", CL.casting:format(args.spellName))
 	if self:GetOption(matterMarker) then
 		self:RegisterTargetEvents("MarkMatter")
 	end

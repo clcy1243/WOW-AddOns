@@ -12,6 +12,7 @@ local otherversionlistboxvalue = ""
 local default = 1
 local raid = 1
 local pvp = 1
+local arena = 1
 local mythic = 1
 local classid = GSE.GetCurrentClassID()
 
@@ -28,6 +29,8 @@ editframe.Mythic = 1
 editframe.Dungeon = 1
 editframe.Heroic = 1
 editframe.Party = 1
+editframe.Arena = 1
+editframe.Timewalking = 1
 editframe.ClassID = classid
 editframe.save = false
 editframe.SelectedTab = "group"
@@ -94,7 +97,14 @@ function GSE.GUIEditorPerformLayout(frame)
   local nameeditbox = AceGUI:Create("EditBox")
   nameeditbox:SetLabel(L["Sequence Name"])
   nameeditbox:SetWidth(250)
-  nameeditbox:SetCallback("OnTextChanged", function() editframe.SequenceName = nameeditbox:GetText(); end)
+  nameeditbox:SetCallback("OnTextChanged", function()
+    editframe.SequenceName = nameeditbox:GetText()
+  end)
+  -- nameeditbox:SetScript("OnEditFocusLost", function()
+  --   editframe:SetText(string.upper(editframe:GetText()))
+  --   editframe.SequenceName = nameeditbox:GetText()
+  -- end)
+
   nameeditbox:DisableButton( true)
   nameeditbox:SetText(editframe.SequenceName)
   editframe.nameeditbox = nameeditbox
@@ -154,6 +164,9 @@ function GSE.GUIEditorPerformLayout(frame)
   savebutton:SetText(L["Save"])
   savebutton:SetWidth(150)
   savebutton:SetCallback("OnClick", function()
+    editframe.Sequence.ManualIntervention = true
+    nameeditbox:SetText(string.upper(nameeditbox:GetText()))
+    editframe.SequenceName = nameeditbox:GetText()
     GSE.GUIUpdateSequenceDefinition(editframe.ClassID, editframe.SequenceName, editframe.Sequence)
     editframe.save = true
   end)
@@ -291,7 +304,6 @@ function GSE:GUIDrawMetadataEditor(container)
   defaultdropdown:SetWidth(250)
   defaultdropdown:SetList(GSE.GetVersionList())
   defaultdropdown:SetValue(tostring(editframe.Default))
-  defgroup1:AddChild(defaultdropdown)
   defaultdropdown:SetCallback("OnValueChanged", function (obj,event,key)
     editframe.Sequence.Default = tonumber(key)
     editframe.Default = tonumber(key)
@@ -299,14 +311,12 @@ function GSE:GUIDrawMetadataEditor(container)
 
   local spacerlabel4 = AceGUI:Create("Label")
   spacerlabel4:SetWidth(100)
-  defgroup1:AddChild(spacerlabel4)
 
   local raiddropdown = AceGUI:Create("Dropdown")
   raiddropdown:SetLabel(L["Raid"])
   raiddropdown:SetWidth(250)
   raiddropdown:SetList(GSE.GetVersionList())
   raiddropdown:SetValue(tostring(editframe.Raid))
-  defgroup1:AddChild(raiddropdown)
   raiddropdown:SetCallback("OnValueChanged", function (obj,event,key)
     if editframe.Sequence.Default == tonumber(key) then
       editframe.Sequence.Raid = nil
@@ -322,6 +332,14 @@ function GSE:GUIDrawMetadataEditor(container)
   defgroup2:SetLayout("Flow")
   defgroup2:SetWidth(editframe.Width - 100)
 
+  local arenadropdown = AceGUI:Create("Dropdown")
+  arenadropdown:SetLabel(L["Arena"])
+  arenadropdown:SetWidth(250)
+  arenadropdown:SetList(GSE.GetVersionList())
+  arenadropdown:SetValue(tostring(editframe.Arena))
+
+
+
   local mythicdropdown = AceGUI:Create("Dropdown")
   mythicdropdown:SetLabel(L["Mythic"])
   mythicdropdown:SetWidth(250)
@@ -335,19 +353,24 @@ function GSE:GUIDrawMetadataEditor(container)
       editframe.Mythic = tonumber(key)
     end
   end)
-  defgroup2:AddChild(mythicdropdown)
+  arenadropdown:SetCallback("OnValueChanged", function (obj,event,key)
+    if editframe.Sequence.Default == tonumber(key) then
+      editframe.Sequence.Arena = nil
+    else
+      editframe.Sequence.Arena = tonumber(key)
+      editframe.Arena = tonumber(key)
+    end
+  end)
+
 
   local spacerlabel5 = AceGUI:Create("Label")
   spacerlabel5:SetWidth(100)
-  defgroup2:AddChild(spacerlabel5)
 
   local pvpdropdown = AceGUI:Create("Dropdown")
   pvpdropdown:SetLabel(L["PVP"])
   pvpdropdown:SetWidth(250)
   pvpdropdown:SetList(GSE.GetVersionList())
   pvpdropdown:SetValue(tostring(editframe.PVP))
-  defgroup2:AddChild(pvpdropdown)
-  contentcontainer:AddChild(defgroup2)
 
   pvpdropdown:SetCallback("OnValueChanged", function (obj,event,key)
     if editframe.Sequence.Default == tonumber(key) then
@@ -357,6 +380,10 @@ function GSE:GUIDrawMetadataEditor(container)
       editframe.PVP = tonumber(key)
     end
   end)
+
+
+  contentcontainer:AddChild(defgroup2)
+
 
   local defgroup3 = AceGUI:Create("SimpleGroup")
   defgroup3:SetLayout("Flow")
@@ -368,7 +395,7 @@ function GSE:GUIDrawMetadataEditor(container)
   dungeondropdown:SetWidth(250)
   dungeondropdown:SetList(GSE.GetVersionList())
   dungeondropdown:SetValue(tostring(editframe.Dungeon))
-  defgroup3:AddChild(dungeondropdown)
+
   dungeondropdown:SetCallback("OnValueChanged", function (obj,event,key)
     if editframe.Sequence.Default == tonumber(key) then
       editframe.Sequence.Dungeon = nil
@@ -380,14 +407,12 @@ function GSE:GUIDrawMetadataEditor(container)
 
   local spacerlabel6 = AceGUI:Create("Label")
   spacerlabel6:SetWidth(100)
-  defgroup3:AddChild(spacerlabel6)
 
   local heroicdropdown = AceGUI:Create("Dropdown")
   heroicdropdown:SetLabel(L["Heroic"])
   heroicdropdown:SetWidth(250)
   heroicdropdown:SetList(GSE.GetVersionList())
   heroicdropdown:SetValue(tostring(editframe.Heroic))
-  defgroup3:AddChild(heroicdropdown)
   heroicdropdown:SetCallback("OnValueChanged", function (obj,event,key)
     if editframe.Sequence.Default == tonumber(key) then
       editframe.Sequence.Heroic = nil
@@ -406,7 +431,6 @@ function GSE:GUIDrawMetadataEditor(container)
   partydropdown:SetWidth(250)
   partydropdown:SetList(GSE.GetVersionList())
   partydropdown:SetValue(tostring(editframe.Party))
-  defgroup4:AddChild(partydropdown)
   partydropdown:SetCallback("OnValueChanged", function (obj,event,key)
     if editframe.Sequence.Default == tonumber(key) then
       editframe.Sequence.Party = nil
@@ -418,9 +442,63 @@ function GSE:GUIDrawMetadataEditor(container)
 
   local spacerlabel7 = AceGUI:Create("Label")
   spacerlabel7:SetWidth(100)
-  defgroup4:AddChild(spacerlabel7)
+
   contentcontainer:AddChild(defgroup3)
   contentcontainer:AddChild(defgroup4)
+
+  local defgroup5 = AceGUI:Create("SimpleGroup")
+  defgroup5:SetLayout("Flow")
+  defgroup5:SetWidth(editframe.Width - 100)
+
+  local Timewalkingdropdown = AceGUI:Create("Dropdown")
+  Timewalkingdropdown:SetLabel(L["Timewalking"])
+  Timewalkingdropdown:SetWidth(250)
+  Timewalkingdropdown:SetList(GSE.GetVersionList())
+  Timewalkingdropdown:SetValue(tostring(editframe.Timewalking))
+  Timewalkingdropdown:SetCallback("OnValueChanged", function (obj,event,key)
+    if editframe.Sequence.Default == tonumber(key) then
+      editframe.Sequence.Timewalking = nil
+    else
+      editframe.Sequence.Timewalking = tonumber(key)
+      editframe.Timewalking = tonumber(key)
+    end
+  end)
+
+  local spacerlabel8 = AceGUI:Create("Label")
+  spacerlabel8:SetWidth(100)
+
+  local mythicplusdropdown = AceGUI:Create("Dropdown")
+  mythicplusdropdown:SetLabel(L["Mythic+"])
+  mythicplusdropdown:SetWidth(250)
+  mythicplusdropdown:SetList(GSE.GetVersionList())
+  mythicplusdropdown:SetValue(tostring(editframe.MythicPlus))
+  mythicplusdropdown:SetCallback("OnValueChanged", function (obj,event,key)
+    if editframe.Sequence.Default == tonumber(key) then
+      editframe.Sequence.MythicPlus = nil
+    else
+      editframe.Sequence.MythicPlus = tonumber(key)
+      editframe.MythicPlus = tonumber(key)
+    end
+  end)
+
+  defgroup1:AddChild(defaultdropdown)
+  defgroup1:AddChild(spacerlabel4)
+  defgroup1:AddChild(raiddropdown)
+  defgroup2:AddChild(arenadropdown)
+  defgroup2:AddChild(spacerlabel5)
+  defgroup2:AddChild(pvpdropdown)
+  defgroup3:AddChild(mythicdropdown)
+  defgroup3:AddChild(spacerlabel6)
+  defgroup3:AddChild(mythicplusdropdown)
+  defgroup4:AddChild(heroicdropdown)
+  defgroup4:AddChild(spacerlabel7)
+  defgroup4:AddChild(dungeondropdown)
+  defgroup5:AddChild(Timewalkingdropdown)
+  defgroup5:AddChild(spacerlabel8)
+  defgroup5:AddChild(partydropdown)
+
+  contentcontainer:AddChild(defgroup5)
+
   container:AddChild(scrollcontainer)
 end
 
@@ -436,7 +514,7 @@ function GSE:GUIDrawMacroEditor(container, version)
     editframe.Sequence.MacroVersions[version][1] = "/say Hello"
   end
 
-  editframe.Sequence.MacroVersions[version] = GSE.TranslateSequence(editframe.Sequence.MacroVersions[version], "From Editor")
+  editframe.Sequence.MacroVersions[version] = GSE.TranslateSequence(editframe.Sequence.MacroVersions[version], "From Editor", "STRING")
 
   local layoutcontainer = AceGUI:Create("SimpleGroup")
   layoutcontainer:SetFullWidth(true)
@@ -463,7 +541,7 @@ function GSE:GUIDrawMacroEditor(container, version)
   stepdropdown:SetList({
     ["Sequential"] = L["Sequential (1 2 3 4)"],
     ["Priority"] = L["Priority List (1 12 123 1234)"],
-
+    ["Random"] = L["Random - It will select .... a spell, any spell"]
   })
   if GSE.isEmpty(editframe.Sequence.MacroVersions[version].StepFunction) then
     editframe.Sequence.MacroVersions[version].StepFunction = "Sequential"
@@ -725,22 +803,23 @@ function GSE:GUIDrawMacroEditor(container, version)
 end
 
 function GSE.GUISelectEditorTab(container, event, group)
-  container:ReleaseChildren()
-  editframe.SelectedTab = group
-  editframe.nameeditbox:SetText(GSE.GUIEditFrame.SequenceName)
-  editframe.iconpicker:SetImage(GSE.GetMacroIcon(editframe.ClassID, editframe.SequenceName))
-  if group == "config" then
-    GSE:GUIDrawMetadataEditor(container)
-  elseif group == "new" then
-    -- Copy the Default to a new version
-    table.insert(editframe.Sequence.MacroVersions, GSE.CloneMacroVersion(editframe.Sequence.MacroVersions[editframe.Sequence.Default]))
+  if not  GSE.isEmpty(container) then
+    container:ReleaseChildren()
+    editframe.SelectedTab = group
+    editframe.nameeditbox:SetText(GSE.GUIEditFrame.SequenceName)
+    editframe.iconpicker:SetImage(GSE.GetMacroIcon(editframe.ClassID, editframe.SequenceName))
+    if group == "config" then
+      GSE:GUIDrawMetadataEditor(container)
+    elseif group == "new" then
+      -- Copy the Default to a new version
+      table.insert(editframe.Sequence.MacroVersions, GSE.CloneMacroVersion(editframe.Sequence.MacroVersions[editframe.Sequence.Default]))
 
-    GSE.GUIEditorPerformLayout(editframe)
-    GSE.GUISelectEditorTab(container, event, table.getn(editframe.Sequence.MacroVersions))
-  else
-    GSE:GUIDrawMacroEditor(container, group)
+      GSE.GUIEditorPerformLayout(editframe)
+      GSE.GUISelectEditorTab(container, event, table.getn(editframe.Sequence.MacroVersions))
+    else
+      GSE:GUIDrawMacroEditor(container, group)
+    end
   end
-
 end
 
 function GSE.GUIDeleteVersion(version)
@@ -758,6 +837,10 @@ function GSE.GUIDeleteVersion(version)
   if sequence.PVP == version then
     sequence.PVP = sequence.Default
     printtext = printtext .. " " .. L["PVP setting changed to Default."]
+  end
+  if sequence.Arena == version then
+    sequence.Arena = sequence.Default
+    printtext = printtext .. " " .. L["Arena setting changed to Default."]
   end
   if sequence.Raid == version then
     sequence.Raid = sequence.Default
@@ -779,6 +862,15 @@ function GSE.GUIDeleteVersion(version)
     sequence.Party = sequence.Default
     printtext = printtext .. " " .. L["Party setting changed to Default."]
   end
+  if sequence.MythicPlus == version then
+    sequence.MythicPlus = sequence.Default
+    printtext = printtext .. " " .. L["Mythic+ setting changed to Default."]
+  end
+  if sequence.Timewalking == version then
+    sequence.Timewalking = sequence.Default
+    printtext = printtext .. " " .. L["Timewalking setting changed to Default."]
+  end
+
 
   if sequence.Default > 1 then
     sequence.Default = tonumber(sequence.Default) - 1
@@ -789,12 +881,31 @@ function GSE.GUIDeleteVersion(version)
   if not GSE.isEmpty(sequence.PVP) then
     sequence.PVP = tonumber(sequence.PVP) - 1
   end
+  if not GSE.isEmpty(sequence.Arena) then
+    sequence.Arena = tonumber(sequence.Arena) - 1
+  end
   if not GSE.isEmpty(sequence.Raid) then
     sequence.Raid = tonumber(sequence.Raid) - 1
   end
   if not GSE.isEmpty(sequence.Mythic) then
     sequence.Mythic = tonumber(sequence.Mythic) - 1
   end
+  if not GSE.isEmpty(sequence.MythicPlus) then
+    sequence.MythicPlus = tonumber(sequence.MythicPlus) - 1
+  end
+  if not GSE.isEmpty(sequence.Timewalking) then
+    sequence.Timewalking = tonumber(sequence.Timewalking) - 1
+  end
+  if not GSE.isEmpty(sequence.Heroic) then
+    sequence.Heroic = tonumber(sequence.Heroic) - 1
+  end
+  if not GSE.isEmpty(sequence.Dungeon) then
+    sequence.Dungeon = tonumber(sequence.Dungeon) - 1
+  end
+  if not GSE.isEmpty(sequence.Party) then
+    sequence.Party = tonumber(sequence.Party) - 1
+  end
+
   table.remove(sequence.MacroVersions, version)
   printtext = printtext .. " " .. L["This change will not come into effect until you save this macro."]
   GSE.GUIEditorPerformLayout(editframe)

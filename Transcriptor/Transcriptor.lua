@@ -1,9 +1,5 @@
 
 local Transcriptor = {}
-local version = "v7.3.3"
-if version:find("@", nil, true) then
-	version = "repo"
-end
 
 local playerSpellBlacklist
 local badSourcelessPlayerSpellList
@@ -21,38 +17,37 @@ local logName = nil
 local currentLog = nil
 local logStartTime = nil
 local logging = nil
-local previousWorldState = nil
 local compareSuccess = nil
 local compareUnitSuccess = nil
 local compareStart = nil
 local compareAuraApplied = nil
 local compareStartTime = nil
 local collectPlayerAuras = nil
+local hiddenUnitAuraCollector, hiddenAuraInitList = nil, nil
+local hiddenAuraPermList = {}
 local shouldLogFlags = false
 local inEncounter, blockingRelease, limitingRes = false, false, false
-local wowVersion, buildRevision, _, buildTOC = GetBuildInfo() -- Note that both returns here are strings, not numbers.
 local mineOrPartyOrRaid = 7 -- COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID
 
 local band = bit.band
 local tinsert = table.insert
 local format, find, strjoin = string.format, string.find, string.join
 local tostring, tostringall = tostring, tostringall
-local type, select, next = type, select, next
+local type, next = type, next
 local date = date
 local debugprofilestop, wipe = debugprofilestop, wipe
 local print = print
 
 local C_Scenario, C_DeathInfo_GetSelfResurrectOptions = C_Scenario, C_DeathInfo.GetSelfResurrectOptions
-local RegisterAddonMessagePrefix = RegisterAddonMessagePrefix
 local IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease = IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease
-local IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal_GetSectionInfo = IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal.GetSectionInfo
+local IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal_GetSectionInfo, C_Map_GetMapInfo = IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal.GetSectionInfo, C_Map.GetMapInfo
 local UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo = UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo
 local UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification = UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification
-local UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth, UnitHealthMax = UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth, UnitHealthMax
-local UnitLevel, UnitCreatureType, GetNumWorldStateUI, GetWorldStateUIInfo = UnitLevel, UnitCreatureType, GetNumWorldStateUI, GetWorldStateUIInfo
-local GetInstanceInfo, GetCurrentMapAreaID, GetCurrentMapDungeonLevel, GetMapNameByID = GetInstanceInfo, GetCurrentMapAreaID, GetCurrentMapDungeonLevel, GetMapNameByID
-local GetZoneText, GetRealZoneText, GetSubZoneText, SetMapToCurrentZone, GetSpellInfo = GetZoneText, GetRealZoneText, GetSubZoneText, SetMapToCurrentZone, GetSpellInfo
-local GetSpellTabInfo, GetNumSpellTabs, GetSpellBookItemInfo, GetSpellBookItemName = GetSpellTabInfo, GetNumSpellTabs, GetSpellBookItemInfo, GetSpellBookItemName
+local UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth = UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth
+local UnitLevel, UnitCreatureType = UnitLevel, UnitCreatureType
+local GetInstanceInfo = GetInstanceInfo
+local GetZoneText, GetRealZoneText, GetSubZoneText, GetSpellInfo = GetZoneText, GetRealZoneText, GetSubZoneText, GetSpellInfo
+local GetBestMapForUnit = C_Map.GetBestMapForUnit
 
 -- GLOBALS: TranscriptDB BigWigsLoader DBM CLOSE SlashCmdList SLASH_TRANSCRIPTOR1 SLASH_TRANSCRIPTOR2 SLASH_TRANSCRIPTOR3 EasyMenu CloseDropDownMenus
 -- GLOBALS: GetMapID GetBossID GetSectionID
@@ -116,19 +111,22 @@ end
 
 function GetMapID(name)
 	name = name:lower()
-	for i=1,2000 do
-		local fetchedName = GetMapNameByID(i)
-		if fetchedName then
-			local lowerFetchedName = fetchedName:lower()
-			if find(lowerFetchedName, name, nil, true) then
-				print(fetchedName..": "..i)
+	for i=1,3000 do
+		local tbl = C_Map_GetMapInfo(i)
+		if tbl then
+			local fetchedName = tbl.name
+			if fetchedName then
+				local lowerFetchedName = fetchedName:lower()
+				if find(lowerFetchedName, name, nil, true) then
+					print(fetchedName..": "..i)
+				end
 			end
 		end
 	end
 end
 function GetBossID(name)
 	name = name:lower()
-	for i=1,2000 do
+	for i=1,3000 do
 		local fetchedName = EJ_GetEncounterInfo(i)
 		if fetchedName then
 			local lowerFetchedName = fetchedName:lower()
@@ -182,7 +180,7 @@ do
 		editBox[i]:SetScript("OnEscapePressed", function(f) f:GetParent():GetParent():Hide() f:SetText("") end)
 		if i % 2 ~= 0 then
 			editBox[i]:SetScript("OnHyperlinkLeave", GameTooltip_Hide)
-			editBox[i]:SetScript("OnHyperlinkEnter", function(self, link, text) 
+			editBox[i]:SetScript("OnHyperlinkEnter", function(self, link, text)
 				if link and find(link, "spell", nil, true) then
 					local spellId = link:match("(%d+)")
 					if spellId then
@@ -239,7 +237,7 @@ do
 					local text = logTbl.total[i]
 
 					for j = 1, 3 do
-						local flagsText, srcGUID, name, destGUID, tarName, idText, spellName = text:match(events[j])
+						local flagsText, srcGUID, name, destGUID, tarName, idText = text:match(events[j])
 						local id = tonumber(idText)
 						local flags = tonumber(flagsText)
 						local tbl = tables[j]
@@ -341,7 +339,7 @@ do
 			[231770] = true, -- Drenched
 			[232732] = true, -- Slicing Tornado
 			[232913] = true, -- Befouling Ink
-			[234621] = true, -- Devouring Maw 
+			[234621] = true, -- Devouring Maw
 			[236329] = true, -- Star Burn
 			[243294] = true, -- Fel Slicer
 			[238442] = true, -- Spear of Anguish
@@ -375,13 +373,12 @@ do
 					local text = logTbl.total[i]
 
 					for j = 1, 3 do
-						local flagsText, name, destGUID, tarName, idText, spellName = text:match(eventsNoSource[j])
+						local flagsText, name, destGUID, tarName, idText = text:match(eventsNoSource[j])
 						local id = tonumber(idText)
 						local flags = tonumber(flagsText)
 						local tbl = tables[j]
 						local sortedTbl = sortedTables[j]
 						if name == "nil" and id and flags and band(flags, mineOrPartyOrRaid) ~= 0 and not ignoreList[id] and not badSourcelessPlayerSpellList[id] and not total[id] and #sortedTbl < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
-							local destGUIDType = strsplit("-", destGUID)
 							tbl[id] = tarName:gsub("%-.+", "*")
 							total[id] = true
 							sortedTbl[#sortedTbl+1] = id
@@ -542,28 +539,45 @@ end
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:Hide()
-
 local sh = {}
-function sh.UPDATE_WORLD_STATES()
-	local ret
-	for i = 1, GetNumWorldStateUI() do
-		local m = strjoin("#", tostringall(GetWorldStateUIInfo(i)))
-		if m then
-			if not ret then
-				ret = format("[%d] %s", i, m)
-			else
-				ret = format("%s [%d] %s", ret, i, m)
+
+--[[
+	TopCenterFrame: widgetSetID = 1, widgetType = 0
+	widgetID = 
+		The Black Morass: 507 (health), 527 (waves)
+		The Violet Hold (WotLK): 565 (health), 566 (waves)
+
+	We don't care about other widgets, for now
+]]
+do
+	local GetIconAndTextWidgetVisualizationInfo = C_UIWidgetManager and C_UIWidgetManager.GetIconAndTextWidgetVisualizationInfo
+	function sh.UPDATE_UI_WIDGET(tbl)
+		if tbl.widgetSetID == 1 and tbl.widgetType == 0 then
+			local id = tbl.widgetID
+			local dataTbl = GetIconAndTextWidgetVisualizationInfo(id)
+			local txt = format("[%d]", id)
+			if dataTbl.text then
+				txt = format("%s %s", txt, dataTbl.text)
 			end
+			for k, v in next, dataTbl do
+				if k ~= "text" then
+					txt = format("%s, %s:%s", txt, k, tostring(v))
+				end
+			end
+			return txt
+		else
+			local txt
+			for k, v in next, tbl do
+				if not txt then
+					txt = format("%s:%s", k, v)
+				else
+					txt = format("%s, %s:%s", txt, k, v)
+				end
+			end
+			return txt
 		end
 	end
-	if not ret or ret == previousWorldState then
-		return
-	else
-		previousWorldState = ret
-		return ret
-	end
 end
-sh.WORLD_STATE_UI_TIMER_UPDATE = sh.UPDATE_WORLD_STATES
 
 do
 	badSourcelessPlayerSpellList = {
@@ -615,17 +629,20 @@ do
 	-- HFC/Socrethar - Player cast on friendly vehicle "SPELL_CAST_SUCCESS#Player-GUID#PLAYER#Vehicle-0-3151-1448-8853-90296-00001D943C#Soulbound Construct#190466#Incomplete Binding"
 	-- HFC/Zakuun - Player boss debuff cast on self "SPELL_AURA_APPLIED#Player-GUID#PLAYER#Player-GUID#PLAYER#189030#Befouled#DEBUFF#"
 	-- ToS/Sisters - Boss pet marked as guardian "SPELL_CAST_SUCCESS#Creature-0-3895-1676-10786-119205-0000063360#Moontalon##nil#236697#Deathly Screech"
-	function sh.COMBAT_LOG_EVENT_UNFILTERED(timeStamp, event, caster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, _, extraSpellId, amount)
-		-- XXX 8.0
-		if CombatLogGetCurrentEventInfo then
-			timeStamp, event, caster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, _, extraSpellId, amount = CombatLogGetCurrentEventInfo()
+	function sh.COMBAT_LOG_EVENT_UNFILTERED()
+		local timeStamp, event, caster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, _, extraSpellId, amount = CombatLogGetCurrentEventInfo()
+
+		if (event == "SPELL_AURA_APPLIED" or event == "SPELL_AURA_REMOVED") and not hiddenAuraPermList[spellId] then
+			hiddenAuraPermList[spellId] = true
 		end
 
 		if badEvents[event] or
 		   (event == "UNIT_DIED" and band(destFlags, mineOrPartyOrRaid) ~= 0 and band(destFlags, guardian) == guardian) or -- Guardian deaths, player deaths can explain debuff removal
 		   (sourceName and badPlayerEvents[event] and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
 		   (sourceName and badPlayerFilteredEvents[event] and playerSpellBlacklist[spellId] and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
-		   (not sourceName and destName and badPlayerFilteredEvents[event] and badSourcelessPlayerSpellList[spellId] and band(destFlags, mineOrPartyOrRaid) ~= 0)
+		   (not sourceName and destName and badPlayerFilteredEvents[event] and badSourcelessPlayerSpellList[spellId] and band(destFlags, mineOrPartyOrRaid) ~= 0) or
+		   -- Temporary (hopefully) hacks, due to srcFlags not correctly attributing as mineOrPartyOrRaid
+		   (spellId == 120694 and sourceName == "Beast" and band(destFlags, mineOrPartyOrRaid) ~= 0) -- Dire Beast from summoned creature to player
 		then
 			return
 		else
@@ -835,17 +852,16 @@ do
 		end
 	end
 
-	function sh.UNIT_SPELLCAST_STOP(unit, ...)
+	function sh.UNIT_SPELLCAST_STOP(unit, castId, spellId, ...)
 		if safeUnit(unit) then
-			return format("%s(%s) [[%s]]", UnitName(unit), UnitName(unit.."target"), strjoin(":", tostringall(unit, ...)))
+			return format("%s(%s) -%s- [[%s]]", UnitName(unit), UnitName(unit.."target"), GetSpellInfo(spellId), strjoin(":", tostringall(unit, castId, ...)))
 		end
 	end
 	sh.UNIT_SPELLCAST_CHANNEL_STOP = sh.UNIT_SPELLCAST_STOP
 	sh.UNIT_SPELLCAST_INTERRUPTED = sh.UNIT_SPELLCAST_STOP
 
-	function sh.UNIT_SPELLCAST_SUCCEEDED(unit, ...)
+	function sh.UNIT_SPELLCAST_SUCCEEDED(unit, castId, spellId, ...)
 		if safeUnit(unit) then
-			local _, _, _, spellId = ...
 			if not compareUnitSuccess then compareUnitSuccess = {} end
 			if not compareUnitSuccess[spellId] then compareUnitSuccess[spellId] = {} end
 			local npcId = MobId(UnitGUID(unit))
@@ -859,21 +875,21 @@ do
 				end
 			end
 
-			return format("%s(%s) [[%s]]", UnitName(unit), UnitName(unit.."target"), strjoin(":", tostringall(unit, ...)))
+			return format("%s(%s) -%s- [[%s]]", UnitName(unit), UnitName(unit.."target"), GetSpellInfo(spellId), strjoin(":", tostringall(unit, castId, ...)))
 		end
 	end
 	function sh.UNIT_SPELLCAST_START(unit, ...)
 		if safeUnit(unit) then
-			local _, _, _, icon, startTime, endTime = UnitCastingInfo(unit)
+			local spellName, _, _, startTime, endTime = UnitCastingInfo(unit)
 			local time = ((endTime or 0) - (startTime or 0)) / 1000
-			return format("%s(%s) - %d - %ssec [[%s]]", UnitName(unit), UnitName(unit.."target"), icon, time, strjoin(":", tostringall(unit, ...)))
+			return format("%s(%s) - %s - %ss [[%s]]", UnitName(unit), UnitName(unit.."target"), spellName, time, strjoin(":", tostringall(unit, ...)))
 		end
 	end
 	function sh.UNIT_SPELLCAST_CHANNEL_START(unit, ...)
 		if safeUnit(unit) then
-			local _, _, _, icon, startTime, endTime = UnitChannelInfo(unit)
+			local spellName, _, _, startTime, endTime = UnitChannelInfo(unit)
 			local time = ((endTime or 0) - (startTime or 0)) / 1000
-			return format("%s(%s) - %s - %ssec [[%s]]", UnitName(unit), UnitName(unit.."target"), icon, time, strjoin(":", tostringall(unit, ...)))
+			return format("%s(%s) - %s - %ss [[%s]]", UnitName(unit), UnitName(unit.."target"), spellName, time, strjoin(":", tostringall(unit, ...)))
 		end
 	end
 end
@@ -913,7 +929,7 @@ do
 		arena1 = true, arena2 = true, arena3 = true, arena4 = true, arena5 = true,
 		arenapet1 = true, arenapet2 = true, arenapet3 = true, arenapet4 = true, arenapet5 = true
 	}
-	function sh.UNIT_POWER(unit, typeName)
+	function sh.UNIT_POWER_UPDATE(unit, typeName)
 		if not allowedPowerUnits[unit] then return end
 		local typeIndex = UnitPowerType(unit)
 		local mainPower = UnitPower(unit)
@@ -988,11 +1004,8 @@ sh.ZONE_CHANGED_INDOORS = sh.ZONE_CHANGED
 sh.ZONE_CHANGED_NEW_AREA = sh.ZONE_CHANGED
 
 function sh.CINEMATIC_START(...)
-	SetMapToCurrentZone()
-	local areaId = GetCurrentMapAreaID() or 0
-	local areaLevel = GetCurrentMapDungeonLevel() or 0
-	local id = ("%d:%d"):format(areaId, areaLevel)
-	return strjoin("#", "Fake ID:", id, "Real Args:", tostringall(...))
+	local id = -(GetBestMapForUnit("player"))
+	return strjoin("#", "uiMapID:", id, "Real Args:", tostringall(...))
 end
 
 function sh.CHAT_MSG_ADDON(prefix, msg, channel, sender)
@@ -1005,6 +1018,55 @@ function sh.ENCOUNTER_START(...)
 	compareStartTime = debugprofilestop()
 	wipe(data)
 	return strjoin("#", "ENCOUNTER_START", ...)
+end
+
+do
+	local UnitAura = UnitAura
+	local units = {
+		"boss1", "boss2", "boss3", "boss4", "boss5",
+		"target", "mouseover", "focus",
+		"nameplate1", "nameplate2", "nameplate3", "nameplate4", "nameplate5", "nameplate6", "nameplate7", "nameplate8", "nameplate9", "nameplate10",
+		"nameplate11", "nameplate12", "nameplate13", "nameplate14", "nameplate15", "nameplate16", "nameplate17", "nameplate18", "nameplate19", "nameplate20",
+		"nameplate21", "nameplate22", "nameplate23", "nameplate24", "nameplate25", "nameplate26", "nameplate27", "nameplate28", "nameplate29", "nameplate30",
+		"nameplate31", "nameplate32", "nameplate33", "nameplate34", "nameplate35", "nameplate36", "nameplate37", "nameplate38", "nameplate39", "nameplate40",
+		"party1", "party2", "party3", "party4",
+		"raid1", "raid2", "raid3", "raid4", "raid5",
+		"raid6", "raid7", "raid8", "raid9", "raid10",
+		"raid11", "raid12", "raid13", "raid14", "raid15",
+		"raid16", "raid17", "raid18", "raid19", "raid20",
+		"raid21", "raid22", "raid23", "raid24", "raid25",
+		"raid26", "raid27", "raid28", "raid29", "raid30",
+		"raid31", "raid32", "raid33", "raid34", "raid35",
+		"raid36", "raid37", "raid38", "raid39", "raid40"
+	}
+	function Transcriptor:UpdateHiddenAuraBlacklist()
+		hiddenUnitAuraCollector, hiddenAuraInitList = {}, {}
+		for j = 1, #units do
+			local unit = units[j]
+			for i = 1, 100 do
+				local _, _, _, _, _, _, _, _, _, spellId = UnitAura(unit, i, "HARMFUL|HELPFUL")
+				if not spellId then
+					break
+				elseif not hiddenAuraInitList[spellId] then
+					hiddenAuraInitList[spellId] = true
+				end
+			end
+		end
+	end
+	function sh.UNIT_AURA(unit)
+		for i = 1, 100 do
+			local name, _, _, _, duration, _, _, _, _, spellId = UnitAura(unit, i, "HARMFUL|HELPFUL")
+			if not spellId then
+				break
+			elseif not hiddenUnitAuraCollector[spellId] then
+				if UnitIsVisible(unit) then
+					hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("DEBUFF", spellId, name, duration, unit, UnitName(unit)))
+				else -- If it's not visible it may not show up in CLEU, use this as an indicator of a false positive
+					hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("DEBUFF", "UNIT_NOT_VISIBLE", spellId, name, duration, unit, UnitName(unit)))
+				end
+			end
+		end
+	end
 end
 
 local wowEvents = {
@@ -1029,9 +1091,9 @@ local wowEvents = {
 	"UNIT_SPELLCAST_INTERRUPTED",
 	"UNIT_SPELLCAST_CHANNEL_START",
 	"UNIT_SPELLCAST_CHANNEL_STOP",
-	"UNIT_POWER",
-	"UPDATE_WORLD_STATES",
-	"WORLD_STATE_UI_TIMER_UPDATE",
+	"UNIT_POWER_UPDATE",
+	"UPDATE_UI_WIDGET",
+	"UNIT_AURA",
 	"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
 	"UNIT_TARGETABLE_CHANGED",
 	"ENCOUNTER_START",
@@ -1253,7 +1315,7 @@ init:SetScript("OnEvent", function(self, event, addon)
 	if DBM then insertMenuItems(dbmEvents) end
 	tinsert(menu, { text = CLOSE, func = function() CloseDropDownMenus() end, notCheckable = 1 })
 
-	RegisterAddonMessagePrefix("Transcriptor")
+	C_ChatInfo.RegisterAddonMessagePrefix("Transcriptor")
 
 	SlashCmdList["TRANSCRIPTOR"] = function(input)
 		if type(input) == "string" and input:lower() == "clear" then
@@ -1304,23 +1366,23 @@ do
 		[23] = "5Mythic",
 		[24] = "5Timewalking",
 	}
-	local logNameFormat = "[%s]@[%s] - %d/%d/%s/%s/%s@%s" .. format(" (%s) (%s.%s)", version, wowVersion, buildRevision)
+	local wowVersion, buildRevision = GetBuildInfo() -- Note that both returns here are strings, not numbers.
+	local logNameFormat = "[%s]@[%s] - Zone:%d Difficulty:%d,%s Type:%s " .. format("Version: %s.%s", wowVersion, buildRevision)
 	function Transcriptor:StartLog(silent)
 		if logging then
 			print(L["You are already logging an encounter."])
 		else
 			ldb.text = L["|cffFF0000Recording|r"]
 			ldb.icon = "Interface\\AddOns\\Transcriptor\\icon_on"
-			previousWorldState = nil
 			shouldLogFlags = TranscriptIgnore.logFlags and true or false
 			wipe(data)
 
 			compareStartTime = debugprofilestop()
 			logStartTime = compareStartTime / 1000
-			local _, _, diff, _, _, _, _, instanceId = GetInstanceInfo()
-			local diffText = difficultyTbl[diff] or tostring(diff)
-			SetMapToCurrentZone() -- Update map ID
-			logName = format(logNameFormat, date("%Y-%m-%d"), date("%H:%M:%S"), GetCurrentMapAreaID() or 0, instanceId or 0, GetZoneText() or "?", GetRealZoneText() or "?", GetSubZoneText() or "none", diffText)
+			self:UpdateHiddenAuraBlacklist()
+			local _, instanceType, diff, _, _, _, _, instanceId = GetInstanceInfo()
+			local diffText = difficultyTbl[diff] or "None"
+			logName = format(logNameFormat, date("%Y-%m-%d"), date("%H:%M:%S"), instanceId or 0, diff, diffText, instanceType)
 
 			if type(TranscriptDB[logName]) ~= "table" then TranscriptDB[logName] = {} end
 			if type(TranscriptIgnore) ~= "table" then TranscriptIgnore = {} end
@@ -1377,11 +1439,14 @@ function Transcriptor:StopLog(silent)
 	else
 		ldb.text = L["|cff696969Idle|r"]
 		ldb.icon = "Interface\\AddOns\\Transcriptor\\icon_off"
-		previousWorldState = nil
 
 		--Clear Events
 		eventFrame:Hide()
-		eventFrame:UnregisterAllEvents()
+		for i, event in next, wowEvents do
+			if not TranscriptIgnore[event] then
+				eventFrame:UnregisterEvent(event)
+			end
+		end
 		if BigWigsLoader then
 			BigWigsLoader.SendMessage(eventFrame, "BigWigs_OnPluginDisable", eventFrame)
 		end
@@ -1664,6 +1729,13 @@ function Transcriptor:StopLog(silent)
 				end
 			end
 		end
+		for id, str in next, hiddenUnitAuraCollector do
+			if not hiddenAuraPermList[id] and not hiddenAuraInitList[id] then
+				if not currentLog.TIMERS then currentLog.TIMERS = {} end
+				if not currentLog.TIMERS.HIDDEN_AURAS then currentLog.TIMERS.HIDDEN_AURAS = {} end
+				currentLog.TIMERS.HIDDEN_AURAS[#currentLog.TIMERS.HIDDEN_AURAS+1] = str
+			end
+		end
 
 		--Clear Log Path
 		currentLog = nil
@@ -1675,6 +1747,8 @@ function Transcriptor:StopLog(silent)
 		compareStartTime = nil
 		collectPlayerAuras = nil
 		logStartTime = nil
+		hiddenUnitAuraCollector = nil
+		hiddenAuraInitList = nil
 
 		return logName
 	end

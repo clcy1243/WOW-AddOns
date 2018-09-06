@@ -3,10 +3,16 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Mana Devourer", 1115, 1818)
+local mod, CL = BigWigs:NewBoss("Mana Devourer", 1651, 1818)
 if not mod then return end
 mod:RegisterEnableMob(114252)
 mod.engageId = 1959
+
+--------------------------------------------------------------------------------
+-- Locals
+--
+
+local unstableManaOnMe = false
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -27,6 +33,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "EnergyVoid", 227523)
 	self:Log("SPELL_AURA_APPLIED", "UnstableMana", 227502)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "UnstableMana", 227502)
+	self:Log("SPELL_AURA_REMOVED", "UnstableManaRemoved", 227502)
 	self:Log("SPELL_AURA_APPLIED", "CoalescePower", 227297)
 	self:Log("SPELL_PERIODIC_DAMAGE", "EnergyVoidDamage", 227524)
 	self:Log("SPELL_PERIODIC_MISSED", "EnergyVoidDamage", 227524)
@@ -34,6 +41,7 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage()
+	unstableManaOnMe = false
 	self:Bar(227618, 7) -- Arcane Bomb
 	self:Bar(227523, 14.5) -- Energy Void
 end
@@ -43,34 +51,43 @@ end
 --
 
 function mod:ArcaneBomb(args)
-	self:Message(args.spellId, "Important", "Warning")
+	self:Message(args.spellId, "red", "Warning")
 	self:CDBar(args.spellId, 14.5)
 end
 
 function mod:EnergyVoid(args)
-	self:Message(args.spellId, "Attention", "Info")
+	self:Message(args.spellId, "yellow", "Info")
 	self:Bar(args.spellId, 21.9)
 end
 
 function mod:UnstableMana(args)
 	if self:Me(args.destGUID) then
+		unstableManaOnMe = true
 		local amount = args.amount or 1
-		self:StackMessage(args.spellId, args.destName, amount, "Positive")
+		self:StackMessage(args.spellId, args.destName, amount, "green")
+	end
+end
+
+function mod:UnstableManaRemoved(args)
+	if self:Me(args.destGUID) then
+		unstableManaOnMe = false
 	end
 end
 
 function mod:CoalescePower(args)
-	self:Message(args.spellId, "Urgent", "Long")
+	self:Message(args.spellId, "orange", "Long")
 	self:Bar(args.spellId, 30.3)
 end
 
 do
 	local prev = 0
 	function mod:EnergyVoidDamage(args)
-		local t = GetTime()
-		if t-prev > 2 and self:Me(args.destGUID) and not UnitDebuff("player", self:SpellName(227502)) then
-			prev = t
-			self:Message(227523, "Personal", "Alarm", CL.underyou:format(args.spellName))
+		if self:Me(args.destGUID) and not unstableManaOnMe then
+			local t = GetTime()
+			if t-prev > 2 then
+				prev = t
+				self:Message(227523, "blue", "Alarm", CL.underyou:format(args.spellName))
+			end
 		end
 	end
 end

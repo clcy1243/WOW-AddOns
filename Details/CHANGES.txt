@@ -1,5 +1,239 @@
-changeset:   700:379ec089b56c
+changeset:   739:6af1603684c5
 tag:         tip
+user:        Tercio
+date:        Tue Aug 28 13:03:08 2018 -0300
+summary:     - Fixed custom display 'Dynamic Overall Data'.
+
+
+changeset:   738:253e14dca82e
+user:        Tercio
+date:        Sat Aug 25 20:15:31 2018 -0300
+summary:     - Fixed spell container :ListActors() API.
+
+
+changeset:   737:84218026dc7b
+user:        Tercio
+date:        Fri Aug 24 22:41:35 2018 -0300
+summary:     - Cleanup on the item level tracker.
+
+
+changeset:   736:1fdf66defdcb
+user:        Tercio
+date:        Wed Aug 22 12:22:19 2018 -0300
+summary:     - Workaround for Hunter's Incendiary Ammunition bug.
+
+
+changeset:   735:4fcaff920195
+user:        Tercio
+date:        Tue Aug 21 18:14:42 2018 -0300
+summary:     - Parser cleanup.
+
+
+changeset:   734:28929636d0cd
+user:        Tercio
+date:        Mon Aug 20 21:29:47 2018 -0300
+summary:     - Fixed the latest raid check update.
+
+
+changeset:   733:0c3d5411181c
+user:        Tercio
+date:        Sun Aug 19 15:27:19 2018 -0300
+summary:     - Updated flask and food list to BFA.
+
+
+changeset:   732:0fe5b00bc175
+user:        Tercio
+date:        Thu Aug 16 22:05:10 2018 -0300
+summary:     - bug fixes.
+
+
+changeset:   731:dfe710f3192f
+user:        Tercio
+date:        Mon Aug 13 17:06:46 2018 -0300
+summary:     - Fixed an issue with Alliance or Horde icons showing at random in player bars.
+
+
+changeset:   730:a4e4991a7f8d
+user:        Tercio
+date:        Mon Aug 13 17:01:58 2018 -0300
+summary:     - Fixed an issue with Alliance or Horde icons showing at random in player bars.
+
+
+changeset:   729:41c0431ad5c8
+user:        Tercio
+date:        Thu Aug 09 11:55:18 2018 -0300
+summary:     - Fixed mobs showing when in Standard mode.
+
+
+changeset:   728:5c29a7092020
+user:        Tercio
+date:        Thu Aug 09 00:39:13 2018 -0300
+summary:     - Hotfix an initialization issue caused by a stealth patch in the client addon API.
+
+
+changeset:   727:3f1ec67b4eeb
+user:        Tercio
+date:        Tue Aug 07 15:55:19 2018 -0300
+summary:     - Death Knight: Epidemic, Scourge Strike and Howling Blast now has a better description on the spell name.
+
+
+changeset:   726:7ca9550a402a
+user:        Tercio
+date:        Mon Jul 30 14:02:20 2018 -0300
+summary:     - Framework update.
+
+
+changeset:   725:9c36469215a4
+user:        Tercio
+date:        Sat Jul 28 18:22:13 2018 -0300
+summary:     - Added size offset options for the chat tab embed feature.
+
+
+changeset:   724:c37a7672ea3a
+user:        Tercio
+date:        Tue Jul 24 13:56:44 2018 -0300
+summary:     - Removed bookmark tutorial popup.
+
+
+changeset:   723:7269c15128aa
+user:        Tercio
+date:        Fri Jul 20 18:23:25 2018 -0300
+summary:     - Added Cyclone to crowd control.
+
+
+changeset:   722:905512562025
+user:        Tercio
+date:        Thu Jul 19 16:40:11 2018 -0300
+summary:     - Missing localization for the welcome window has been added.
+
+
+changeset:   721:d62a7bb07482
+user:        Tercio
+date:        Wed Jul 18 16:42:30 2018 -0300
+summary:     - Attempt to fix a load file error.
+
+
+changeset:   720:6cf5b11ae1f7
+user:        Tercio
+date:        Wed Jul 18 16:29:26 2018 -0300
+summary:     - Fixing a red alert load fail which was happening for some users.
+
+
+changeset:   719:4fe1a6f189e6
+user:        Tercio
+date:        Tue Jul 17 13:31:22 2018 -0300
+summary:     - Second pass on Patch 8.0.1
+
+
+changeset:   718:100a0bcd8c7e
+user:        Tercio
+date:        Tue Jul 17 12:07:40 2018 -0300
+summary:     - Patch 8.0.1
+
+
+changeset:   717:e63e22c9c4af
+user:        Tercio
+date:        Fri May 04 13:14:49 2018 -0300
+summary:     - Attempt to make the packager work.
+
+
+changeset:   716:d021b8e5392f
+user:        Tercio
+date:        Thu May 03 14:51:47 2018 -0300
+summary:     - Changes to make the live version work with the BfA Beta.
+
+
+changeset:   715:b025504ef9dd
+user:        Tercio
+date:        Fri Apr 27 13:31:55 2018 -0300
+summary:     - Fixed major issue with the statistics sharing.
+
+
+changeset:   714:4803d97fbcf0
+user:        Tercio
+date:        Fri Apr 13 10:46:36 2018 -0300
+summary:     Release 5559:
+
+
+changeset:   713:049eb249f86f
+user:        Tercio
+date:        Fri Apr 06 13:59:18 2018 -0300
+summary:     - Created a safe dispatcher for callbacks registered in details events.
+
+
+changeset:   712:7f8c65f91d5b
+user:        Tercio
+date:        Fri Apr 06 13:52:50 2018 -0300
+summary:     - Added a minimize button on the mythic dungeon chart window.
+
+
+changeset:   711:27afcfb49a35
+user:        Tercio
+date:        Fri Mar 30 10:44:46 2018 -0300
+summary:     - Added outline option for the right text of the bar.
+
+
+changeset:   710:eb1e33639a41
+user:        Tercio
+date:        Sat Mar 24 09:32:03 2018 -0300
+summary:     - Forgot to disable debug on mythic dungeons.
+
+
+changeset:   709:3f710381107a
+user:        Tercio
+date:        Fri Mar 23 14:50:11 2018 -0300
+summary:     - Fixed dungeon chart at the end of a mythic dungeon run.
+
+
+changeset:   708:2c718c3348dc
+user:        Tercio
+date:        Fri Mar 16 13:04:05 2018 -0300
+summary:     - Added run macro to disable arena team colors, use '/run Details.color_by_arena_team = false;' to disable it.
+
+
+changeset:   707:aa06683bfa18
+user:        Tercio
+date:        Tue Mar 13 22:15:05 2018 -0300
+summary:     - hot fixes for the last update.
+
+
+changeset:   706:15c2bfee2970
+user:        Tercio
+date:        Sat Mar 10 10:55:49 2018 -0300
+summary:     - Added suport to open plugins through macros, example: /run Details:OpenPlugin ("Time Line").
+
+
+changeset:   705:09866345bf79
+user:        Tercio
+date:        Fri Mar 09 15:31:22 2018 -0300
+summary:     - More development on the mythic dungeon chart.
+
+
+changeset:   704:15e95c95cd02
+user:        Tercio
+date:        Fri Mar 02 21:39:27 2018 -0300
+summary:     - Nicktag library update
+
+
+changeset:   703:c0a7b29a7d2e
+user:        Tercio
+date:        Wed Feb 28 11:57:00 2018 -0300
+summary:     - Fix for ticket #333: error on the new dungeon chart recorder.
+
+
+changeset:   702:8d27c569ad87
+user:        Tercio
+date:        Mon Feb 26 11:13:39 2018 -0300
+summary:     - Added option to disable the mythic dungeon damage chart.
+
+
+changeset:   701:2de94f058bc6
+user:        Tercio
+date:        Fri Feb 23 12:13:56 2018 -0300
+summary:     - Added damage chart at the end of a mythic dungeon run.
+
+
+changeset:   700:379ec089b56c
 user:        Tercio
 date:        Fri Feb 09 11:33:02 2018 -0200
 summary:     - Added real time compile error while writing a custom script.

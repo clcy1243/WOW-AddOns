@@ -3,9 +3,11 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Witherbark", 1008, 1214)
+local mod, CL = BigWigs:NewBoss("Witherbark", 1279, 1214)
 if not mod then return end
 mod:RegisterEnableMob(81522)
+mod.engageId = 1746
+mod.respawnTime = 20
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -35,8 +37,6 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
-
 	self:Log("SPELL_AURA_APPLIED", "UncheckedGrowth", 164294)
 	self:Log("SPELL_AURA_APPLIED", "BrittleBark", 164275)
 	self:Log("SPELL_AURA_REMOVED", "BrittleBarkOver", 164275)
@@ -44,8 +44,6 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "ParchedGasp", 164357)
 
 	self:Log("SPELL_CAST_SUCCESS", "UncheckedGrowthSpawned", 181113) -- Encounter Spawn
-
-	self:Death("Win", 81522)
 end
 
 function mod:OnEngage()
@@ -60,18 +58,18 @@ end
 
 function mod:UncheckedGrowth(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "Personal", "Alarm", CL.you:format(args.spellName))
+		self:Message(args.spellId, "blue", "Alarm", CL.you:format(args.spellName))
 	end
 end
 
 function mod:BrittleBark(args)
 	energy = 0
-	self:Message(args.spellId, "Attention", "Info", ("%s - %s"):format(args.spellName, CL.incoming:format(self:SpellName(-10100)))) -- 10100 = Aqueous Globules
+	self:Message(args.spellId, "yellow", "Info", ("%s - %s"):format(args.spellName, CL.incoming:format(self:SpellName(-10100)))) -- 10100 = Aqueous Globules
 	self:StopBar(164357) -- Parched Gasp
 end
 
 function mod:BrittleBarkOver(args)
-	self:Message(args.spellId, "Attention", "Info", CL.over:format(args.spellName))
+	self:Message(args.spellId, "yellow", "Info", CL.over:format(args.spellName))
 	self:Bar(args.spellId, 30)
 	self:CDBar(164357, 4) -- Parched Gasp
 end
@@ -80,17 +78,16 @@ function mod:Energize()
 	if self.isEngaged then -- This happens when killing the trash, we only want it during the encounter.
 		energy = energy + 25
 		if energy < 101 then
-			self:Message(164275, "Neutral", nil, L.energyStatus:format(energy), "spell_lightning_lightningbolt01")
+			self:Message(164275, "cyan", nil, L.energyStatus:format(energy), "spell_lightning_lightningbolt01")
 		end
 	end
 end
 
 function mod:ParchedGasp(args)
-	self:Message(args.spellId, "Important")
+	self:Message(args.spellId, "red")
 	self:CDBar(args.spellId, 11) -- 10-13s
 end
 
 function mod:UncheckedGrowthSpawned()
-	self:Message(164294, "Urgent", nil, CL.add_spawned)
+	self:Message(164294, "orange", nil, CL.add_spawned)
 end
-

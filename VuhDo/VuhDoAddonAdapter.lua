@@ -1,7 +1,12 @@
 local _;
 
+-- For initializing the minimap
+VUHDO_MM_SETTINGS = { };
+
 VUHDO_LibSharedMedia = LibStub("LibSharedMedia-3.0");
 VUHDO_LibDataBroker = LibStub("LibDataBroker-1.1", true);
+VUHDO_LibDBIcon = LibStub("LibDBIcon-1.0");
+
 VUHDO_LibButtonFacade = nil;
 
 VUHDO_LibCompress = LibStub:GetLibrary("LibCompress");
@@ -40,8 +45,8 @@ LoadAddOn("FuBarPlugin-3.0");
 
 --
 function VUHDO_initAddonMessages()
-	if not IsAddonMessagePrefixRegistered("CTRA") then RegisterAddonMessagePrefix("CTRA"); end
-	if not IsAddonMessagePrefixRegistered(VUHDO_COMMS_PREFIX) then RegisterAddonMessagePrefix(VUHDO_COMMS_PREFIX); end
+	if not C_ChatInfo.IsAddonMessagePrefixRegistered("CTRA") then C_ChatInfo.RegisterAddonMessagePrefix("CTRA"); end
+	if not C_ChatInfo.IsAddonMessagePrefixRegistered(VUHDO_COMMS_PREFIX) then C_ChatInfo.RegisterAddonMessagePrefix(VUHDO_COMMS_PREFIX); end
 end
 
 
@@ -76,9 +81,9 @@ end
 function VUHDO_initFuBar()
 	-- libDataBroker
 	if VUHDO_LibDataBroker then
-		VUHDO_LibDataBroker:NewDataObject("VuhDo", {
+		local minimapObject = VUHDO_LibDataBroker:NewDataObject("VuhDo", {
 			type = "launcher",
-			icon = "Interface\\AddOns\\VuhDo\\Images\\VuhDo",
+			icon = VUHDO_STANDARD_ICON,
 			OnClick = function(aClickedFrame, aButton)
 				if aButton == "RightButton" then
 					ToggleDropDownMenu(1, nil, VuhDoMinimapDropDown, aClickedFrame:GetName(), 0, -5);
@@ -91,7 +96,14 @@ function VUHDO_initFuBar()
 				aTooltip:AddLine(VUHDO_I18N_BROKER_TOOLTIP_1)
 				aTooltip:AddLine(VUHDO_I18N_BROKER_TOOLTIP_2)
 			end,
-		})
+		});
+
+		-- Minimap icon provided by LibDBIcon
+		if VUHDO_LibDBIcon then
+			VUHDO_LibDBIcon:Register("VuhDo", minimapObject, VUHDO_MM_SETTINGS);
+
+			VUHDO_initMinimap();
+		end
 	end
 
 	-- Native FuBar
@@ -106,7 +118,7 @@ function VUHDO_initFuBar()
 		VuhDo:SetFuBarOption("hasNoColor", true);
 		VuhDo:SetFuBarOption("cannotDetachTooltip", true);
 		VuhDo:SetFuBarOption("hideWithoutStandby", true);
-		VuhDo:SetFuBarOption("iconPath", "Interface\\AddOns\\VuhDo\\Images\\VuhDo");
+		VuhDo:SetFuBarOption("iconPath", VUHDO_STANDARD_ICON);
 		VuhDo:SetFuBarOption("hasIcon", true);
 		VuhDo:SetFuBarOption("defaultPosition", "RIGHT");
 		VuhDo:SetFuBarOption("tooltipHiddenWhenEmpty", true);
@@ -199,4 +211,28 @@ function VUHDO_initButtonFacade(anInstance)
 		VUHDO_LibButtonFacade:Group("VuhDo", VUHDO_I18N_BUFF_WATCH);
 		VUHDO_LibButtonFacade:Group("VuhDo", VUHDO_I18N_HOTS);
 	end
+end
+
+
+
+--
+function VUHDO_initMinimap()
+
+	VUHDO_initShowMinimap();
+
+end
+
+
+
+--
+function VUHDO_initShowMinimap()
+
+	if VUHDO_LibDataBroker and VUHDO_LibDBIcon then
+		if VUHDO_CONFIG["SHOW_MINIMAP"] then
+			VUHDO_LibDBIcon:Show("VuhDo");
+		else
+			VUHDO_LibDBIcon:Hide("VuhDo");
+		end
+	end
+
 end

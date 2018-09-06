@@ -1,34 +1,24 @@
-tag d0c1d7932ca7a66a669372bce3237adda2f19cf0 1.1.6
+tag 18f669c15a49121c315ab110baee6fed66e3e733 1.1.13
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Wed Feb 14 05:20:54 2018 -0600
+Date:	Tue Sep 4 21:47:23 2018 -0500
 
-Tagging as 1.1.6
+Tagging as 1.1.13
 
-commit 8b78c1c542813de9fc9113d4364acefe803814fa
+commit 899d8894097c8b316ee358d5ac0758e2a0597321
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Wed Feb 14 05:18:09 2018 -0600
+Date:   Tue Sep 4 21:46:16 2018 -0500
 
-    Add Maiev
+    Add Mephisto
 
-commit 5246d2978e286d9b0205830d148c80a5f3126260
+commit 986512bbf04b05df1c335de608d2a0b9e7dafc32
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Wed Jan 10 03:20:08 2018 -0600
+Date:   Tue Sep 4 21:45:51 2018 -0500
 
-    Localize the options
-    
-    These were left out when I was going to remove the
-    option to switch language, but since I decided against
-    that for now, may as well pull strings from the client.
+    Tweaks
 
-commit 4c605ea0beed7742026a82ba0c3193c579ab6409
+commit 815d1a81f7e75c16e8530ba11befabd6ef172e52
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Wed Jan 10 02:49:49 2018 -0600
+Date:   Sat Aug 11 00:47:19 2018 -0500
 
-    Update README.md
-
-commit 6789e2803b2c020dcd02320e81273d9dc6fa36e1
-Author: Kyle Buller <bullerk@gmail.com>
-Date:   Wed Jan 10 02:49:16 2018 -0600
-
-    Remove an old bit of code
+    Add missing Athena translations
 

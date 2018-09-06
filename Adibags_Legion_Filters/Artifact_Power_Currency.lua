@@ -56,6 +56,12 @@ local function GetBackpack()
    end
 end
 
+function mod:OnInitialize()
+self.db = AdiBags.db:RegisterNamespace(L["Artifact Power Currency"], { profile = { 
+      AbbreviateCurrency = true,
+      }})
+end
+
 --CurrencyModule update hook. adds AP values to the CurrencyModule fontstring
 function mod:AddArtifactPower(module,...)
    if not (CurrencyModule and CurrencyModule:IsEnabled()) then return end
@@ -63,15 +69,21 @@ function mod:AddArtifactPower(module,...)
    self.hooks[CurrencyModule]["Update"](CurrencyModule,...) --Call original Update Function
 
    if GetBackpack():IsOpen() then
-      local totalAP, completeData = CalculateArtifactPower()
+      local totalAP, completeData = 0, true
 
       if totalAP > 0 then
+         if self.db.profile.AbbreviateCurrency then
+            totalAP = AddonTable.RoundNumber(totalAP)
+         else
+            BreakUpLargeNumbers(totalAP)
+         end
+
          if not widget:IsVisible() then --When the CurrencyModule doesn't have currencies to display it hides, but doesnt clear the text.
             fs:SetText("")
             widget:Show()
          end
          --Add our text at the end and update the width
-         fs:SetText((fs:GetText() or "") ..BreakUpLargeNumbers(totalAP)..(completeData and "" or "*")..APICON)
+         fs:SetText((fs:GetText() or "") ..totalAP..(completeData and "" or "*")..APICON)
          widget:SetSize(
             fs:GetStringWidth(),
             ceil(fs:GetStringHeight()) + 3
@@ -118,4 +130,21 @@ function mod:OnDisable()
       originalFunc(CurrencyModule)
    end
    self:UnregisterAllEvents()
+end
+
+
+function mod:GetOptions()
+   local values = {}
+   return {
+         AbbreviateCurrency = {
+            name = L["Abbreviate Artifact Power"],
+            type = 'toggle',
+            order = 10,
+            set = function(info,val) 
+               self.db.profile.AbbreviateCurrency = val
+               mod:AddArtifactPower()
+            end,
+            width = 'double'
+         },
+   }, AdiBags:GetOptionHandler(self, true)
 end

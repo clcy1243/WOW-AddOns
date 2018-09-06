@@ -1,5 +1,5 @@
 
-local dversion = 65
+local dversion = 101
 local major, minor = "DetailsFramework-1.0", dversion
 local DF, oldminor = LibStub:NewLibrary (major, minor)
 
@@ -15,6 +15,10 @@ local _
 local _type = type
 local _unpack = unpack
 local upper = string.upper
+local string_match = string.match
+
+SMALL_NUMBER = 0.000001
+ALPHA_BLEND_AMOUNT = 0.8400251
 
 --> will always give a very random name for our widgets
 local init_counter = math.random (1, 1000000)
@@ -117,6 +121,20 @@ local embed_functions = {
 	"CreateBorder",
 	"FormatNumber",
 	"IntegerToTimer",
+	"QuickDispatch",
+	"Dispatch",
+	"CommaValue",
+	"RemoveRealmName",
+	"Trim",
+	"CreateGlowOverlay",
+	"CreateAnts",
+	"CreateFrameShake",
+}
+
+DF.WidgetFunctions = {
+	GetCapsule = function (self)
+		return self.MyObject
+	end,
 }
 
 DF.table = {}
@@ -146,6 +164,22 @@ function DF:FadeFrame (frame, t)
 		frame:SetAlpha (0)
 		frame:Hide()
 	end
+end
+
+function DF.table.addunique (t, index, value)
+	if (not value) then
+		value = index
+		index = #t + 1
+	end
+
+	for i = 1, #t do
+		if (t[i] == value) then
+			return false
+		end
+	end
+	
+	tinsert (t, index, value)
+	return true
 end
 
 function DF.table.reverse (t)
@@ -181,6 +215,7 @@ function DF.table.deploy (t1, t2)
 			t1 [key] = value
 		end
 	end
+	return t1
 end
 
 function DF.table.dump (t, s, deep)
@@ -228,6 +263,19 @@ elseif (GetLocale() == "zhTW") then
 	symbol_1K, symbol_10K, symbol_1B = "千", "萬", "億"
 end
 
+function DF:GetAsianNumberSymbols()
+	if (GetLocale() == "koKR") then
+		return "천", "만", "억"
+	elseif (GetLocale() == "zhCN") then
+		return "千", "万", "亿"
+	elseif (GetLocale() == "zhTW") then
+		return "千", "萬", "億"
+	else
+		--> return korean as default (if the language is western)
+		return "천", "만", "억"
+	end
+end
+
 if (symbol_1K) then
 	function DF.FormatNumber (numero)
 		if (numero > 99999999) then
@@ -254,8 +302,24 @@ else
 		elseif (numero > 999) then
 			return format ("%.1f", (numero/1000)) .. "K"
 		end
-		return format ("%.1f", numero)
+		return floor (numero)
 	end
+end
+
+function DF:CommaValue (value)
+	if (not value) then 
+		return "0" 
+	end
+	
+	value = floor (value)
+	
+	if (value == 0) then
+		return "0"
+	end
+	
+	--source http://richard.warburton.it
+	local left, num, right = string_match (value, '^([^%d]*%d)(%d*)(.-)$')
+	return left .. (num:reverse():gsub ('(%d%d%d)','%1,'):reverse()) .. right
 end
 
 function DF:IntegerToTimer (value)
@@ -328,13 +392,29 @@ function DF:SetFontOutline (fontString, outline)
 	fontString:SetFont (fonte, size, outline)
 end
 
+function DF:Trim (s) --hello name conventions!
+	return DF:trim (s)
+end
+
 function DF:trim (s)
 	local from = s:match"^%s*()"
 	return from > #s and "" or s:match(".*%S", from)
 end
 
+function DF:TruncateText (fontString, maxWidth)
+	local text = fontString:GetText()
+	
+	while (fontString:GetStringWidth() > maxWidth) do
+		text = strsub (text, 1, #text - 1)
+		fontString:SetText (text)
+		if (string.len (text) <= 1) then
+			break
+		end
+	end	
+end
+
 function DF:Msg (msg)
-	print ("|cFFFFFFAA" .. self.__name .. "|r " .. msg)
+	print ("|cFFFFFFAA" .. (self.__name or "FW Msg:") .. "|r ", msg)
 end
 
 function DF:GetNpcIdFromGuid (guid)
@@ -343,6 +423,25 @@ function DF:GetNpcIdFromGuid (guid)
 		return tonumber ( NpcId )
 	end
 	return 0
+end
+
+function DF.SortOrder1 (t1, t2)
+	return t1[1] > t2[1]
+end
+function DF.SortOrder2 (t1, t2)
+	return t1[2] > t2[2]
+end
+function DF.SortOrder3 (t1, t2)
+	return t1[3] > t2[3]
+end
+function DF.SortOrder1R (t1, t2)
+	return t1[1] < t2[1]
+end
+function DF.SortOrder2R (t1, t2)
+	return t1[2] < t2[2]
+end
+function DF.SortOrder3R (t1, t2)
+	return t1[3] < t2[3]
 end
 
 local onFinish = function (self)
@@ -462,6 +561,77 @@ end
 		return v1 or "topleft", v2, v3 or "topleft", v4 or 0, v5 or 0
 	end
 	
+	local anchoring_functions = {
+		function (frame, anchorTo, offSetX, offSetY) --> 1 TOP LEFT
+			frame:ClearAllPoints()
+			frame:SetPoint ("bottomleft", anchorTo, "topleft", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 2 LEFT
+			frame:ClearAllPoints()
+			frame:SetPoint ("right", anchorTo, "left", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 3 BOTTOM LEFT
+			frame:ClearAllPoints()
+			frame:SetPoint ("topleft", anchorTo, "bottomleft", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 4 BOTTOM
+			frame:ClearAllPoints()
+			frame:SetPoint ("top", anchorTo, "bottom", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 5 BOTTOM RIGHT
+			frame:ClearAllPoints()
+			frame:SetPoint ("topright", anchorTo, "bottomright", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 6 RIGHT
+			frame:ClearAllPoints()
+			frame:SetPoint ("left", anchorTo, "right", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 7 TOP RIGHT
+			frame:ClearAllPoints()
+			frame:SetPoint ("bottomright", anchorTo, "topright", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 8 TOP
+			frame:ClearAllPoints()
+			frame:SetPoint ("bottom", anchorTo, "top", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 9 CENTER
+			frame:ClearAllPoints()
+			frame:SetPoint ("center", anchorTo, "center", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 10
+			frame:ClearAllPoints()
+			frame:SetPoint ("left", anchorTo, "left", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 11
+			frame:ClearAllPoints()
+			frame:SetPoint ("right", anchorTo, "right", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 12
+			frame:ClearAllPoints()
+			frame:SetPoint ("top", anchorTo, "top", offSetX, offSetY)
+		end,
+		
+		function (frame, anchorTo, offSetX, offSetY) --> 13
+			frame:ClearAllPoints()
+			frame:SetPoint ("bottom", anchorTo, "bottom", offSetX, offSetY)
+		end
+	}
+
+	function DF:SetAnchor (widget, config, anchorTo)
+		anchorTo = anchorTo or widget:GetParent()
+		anchoring_functions [config.side] (widget, anchorTo, config.x, config.y)
+	end	
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> colors
@@ -541,7 +711,7 @@ end
 	
 	local disable_on_combat = {}
 	
-	function DF:BuildMenu (parent, menu, x_offset, y_offset, height, use_two_points, text_template, dropdown_template, switch_template, switch_is_box, slider_template, button_template)
+	function DF:BuildMenu (parent, menu, x_offset, y_offset, height, use_two_points, text_template, dropdown_template, switch_template, switch_is_box, slider_template, button_template, value_change_hook)
 		
 		if (not parent.widget_list) then
 			DF:SetAsOptionsPanel (parent)
@@ -550,6 +720,7 @@ end
 		local cur_x = x_offset
 		local cur_y = y_offset
 		local max_x = 0
+		local line_widgets_created = 0 --how many widgets has been created on this line loop pass
 		
 		height = abs ((height or parent:GetHeight()) - abs (y_offset) + 20)
 		height = height*-1
@@ -567,6 +738,7 @@ end
 				label.widget_type = "label"
 				label:SetPoint (cur_x, cur_y)
 				tinsert (parent.widget_list, label)
+				line_widgets_created = line_widgets_created + 1
 			
 			elseif (widget_table.type == "select" or widget_table.type == "dropdown") then
 				local dropdown = DF:NewDropDown (parent, nil, "$parentWidget" .. index, nil, 140, 18, widget_table.values, widget_table.get(), dropdown_template)
@@ -577,6 +749,18 @@ end
 				dropdown:SetPoint ("left", label, "right", 2)
 				label:SetPoint (cur_x, cur_y)
 				
+				--> global callback
+				if (value_change_hook) then
+					dropdown:SetHook ("OnOptionSelected", value_change_hook)
+				end
+				
+				--> hook list
+				if (widget_table.hooks) then
+					for hookName, hookFunc in pairs (widget_table.hooks) do
+						dropdown:SetHook (hookName, hookFunc)
+					end
+				end
+				
 				local size = label.widget:GetStringWidth() + 140 + 4
 				if (size > max_x) then
 					max_x = size
@@ -584,6 +768,7 @@ end
 				
 				tinsert (parent.widget_list, dropdown)
 				widget_created = dropdown
+				line_widgets_created = line_widgets_created + 1
 				
 			elseif (widget_table.type == "toggle" or widget_table.type == "switch") then
 				local switch = DF:NewSwitch (parent, nil, "$parentWidget" .. index, nil, 60, 20, nil, nil, widget_table.get(), nil, nil, nil, nil, switch_template)
@@ -594,6 +779,17 @@ end
 				
 				if (switch_is_box) then
 					switch:SetAsCheckBox()
+				end
+				
+				if (value_change_hook) then
+					switch:SetHook ("OnSwitch", value_change_hook)
+				end
+				
+				--> hook list
+				if (widget_table.hooks) then
+					for hookName, hookFunc in pairs (widget_table.hooks) do
+						switch:SetHook (hookName, hookFunc)
+					end
 				end
 				
 				local label = DF:NewLabel (parent, nil, "$parentLabel" .. index, nil, widget_table.name .. (use_two_points and ": " or ""), "GameFontNormal", widget_table.text_template or text_template or 12)
@@ -607,6 +803,7 @@ end
 				
 				tinsert (parent.widget_list, switch)
 				widget_created = switch
+				line_widgets_created = line_widgets_created + 1
 				
 			elseif (widget_table.type == "range" or widget_table.type == "slider") then
 				local is_decimanls = widget_table.usedecimals
@@ -618,6 +815,19 @@ end
 				
 				if (widget_table.thumbscale) then
 					slider:SetThumbSize (slider.thumb:GetWidth()*widget_table.thumbscale, nil)
+				else
+					slider:SetThumbSize (slider.thumb:GetWidth()*1.3, nil)
+				end
+				
+				if (value_change_hook) then
+					slider:SetHook ("OnValueChanged", value_change_hook)
+				end
+				
+				--> hook list
+				if (widget_table.hooks) then
+					for hookName, hookFunc in pairs (widget_table.hooks) do
+						slider:SetHook (hookName, hookFunc)
+					end
 				end
 				
 				local label = DF:NewLabel (parent, nil, "$parentLabel" .. index, nil, widget_table.name .. (use_two_points and ": " or ""), "GameFontNormal", widget_table.text_template or text_template or 12)
@@ -631,6 +841,7 @@ end
 				
 				tinsert (parent.widget_list, slider)
 				widget_created = slider
+				line_widgets_created = line_widgets_created + 1
 				
 			elseif (widget_table.type == "color" or widget_table.type == "color") then
 				local colorpick = DF:NewColorPickButton (parent, "$parentWidget" .. index, nil, widget_table.set, nil, button_template)
@@ -645,6 +856,17 @@ end
 					colorpick:SetColor (default_value, g, b, a)
 				end
 				
+				if (value_change_hook) then
+					colorpick:SetHook ("OnColorChanged", value_change_hook)
+				end
+				
+				--> hook list
+				if (widget_table.hooks) then
+					for hookName, hookFunc in pairs (widget_table.hooks) do
+						colorpick:SetHook (hookName, hookFunc)
+					end
+				end
+				
 				local label = DF:NewLabel (parent, nil, "$parentLabel" .. index, nil, widget_table.name .. (use_two_points and ": " or ""), "GameFontNormal", widget_table.text_template or text_template or 12)
 				colorpick:SetPoint ("left", label, "right", 2)
 				label:SetPoint (cur_x, cur_y)
@@ -656,6 +878,7 @@ end
 				
 				tinsert (parent.widget_list, colorpick)
 				widget_created = colorpick
+				line_widgets_created = line_widgets_created + 1
 				
 			elseif (widget_table.type == "execute" or widget_table.type == "button") then
 			
@@ -668,6 +891,15 @@ end
 				button.tooltip = widget_table.desc
 				button.widget_type = "execute"
 				
+				--> execute doesn't trigger global callback
+				
+				--> hook list
+				if (widget_table.hooks) then
+					for hookName, hookFunc in pairs (widget_table.hooks) do
+						button:SetHook (hookName, hookFunc)
+					end
+				end				
+				
 				local size = button:GetWidth() + 4
 				if (size > max_x) then
 					max_x = size
@@ -675,7 +907,7 @@ end
 				
 				tinsert (parent.widget_list, button)
 				widget_created = button
-				
+				line_widgets_created = line_widgets_created + 1
 				
 			elseif (widget_table.type == "textentry") then
 				local textentry = DF:CreateTextEntry (parent, widget_table.func, 120, 18, nil, "$parentWidget" .. index, nil, button_template)
@@ -690,6 +922,15 @@ end
 				textentry:SetPoint ("left", label, "right", 2)
 				label:SetPoint (cur_x, cur_y)
 
+				--> text entry doesn't trigger global callback
+				
+				--> hook list
+				if (widget_table.hooks) then
+					for hookName, hookFunc in pairs (widget_table.hooks) do
+						textentry:SetHook (hookName, hookFunc)
+					end
+				end
+				
 				local size = label.widget:GetStringWidth() + 60 + 4
 				if (size > max_x) then
 					max_x = size
@@ -697,6 +938,7 @@ end
 				
 				tinsert (parent.widget_list, textentry)
 				widget_created = textentry
+				line_widgets_created = line_widgets_created + 1
 				
 			end
 			
@@ -713,6 +955,7 @@ end
 			if (widget_table.type == "breakline" or cur_y < height) then
 				cur_y = y_offset
 				cur_x = cur_x + max_x + 30
+				line_widgets_created = 0
 				max_x = 0
 			end
 		
@@ -797,42 +1040,15 @@ end
 	
 	function DF:ShowTutorialAlertFrame (maintext, desctext, clickfunc)
 		
-		local TutorialAlertFrame = _G.DetailsFrameworkTutorialAlertFrame
+		local TutorialAlertFrame = _G.DetailsFrameworkAlertFrame
 		
 		if (not TutorialAlertFrame) then
-			
-			TutorialAlertFrame = CreateFrame ("ScrollFrame", "DetailsFrameworkTutorialAlertFrame", UIParent, "DetailsFrameworkTutorialAlertFrameTemplate")
+
+			TutorialAlertFrame = CreateFrame ("frame", "DetailsFrameworkAlertFrame", UIParent, "MicroButtonAlertTemplate")
 			TutorialAlertFrame.isFirst = true
 			TutorialAlertFrame:SetPoint ("left", UIParent, "left", -20, 100)
-			
-			TutorialAlertFrame:SetWidth (290)
-			TutorialAlertFrame.ScrollChild:SetWidth (256)
-			
-			local scrollname = TutorialAlertFrame.ScrollChild:GetName()
-			_G [scrollname .. "BorderTopLeft"]:SetVertexColor (1, 0.8, 0, 1)
-			_G [scrollname .. "BorderTopRight"]:SetVertexColor (1, 0.8, 0, 1)
-			_G [scrollname .. "BorderBotLeft"]:SetVertexColor (1, 0.8, 0, 1)
-			_G [scrollname .. "BorderBotRight"]:SetVertexColor (1, 0.8, 0, 1)	
-			_G [scrollname .. "BorderLeft"]:SetVertexColor (1, 0.8, 0, 1)
-			_G [scrollname .. "BorderRight"]:SetVertexColor (1, 0.8, 0, 1)
-			_G [scrollname .. "BorderBottom"]:SetVertexColor (1, 0.8, 0, 1)
-			_G [scrollname .. "BorderTop"]:SetVertexColor (1, 0.8, 0, 1)
-			
-			local iconbg = _G [scrollname .. "QuestIconBg"]
-			iconbg:SetTexture ([[Interface\MainMenuBar\UI-MainMenuBar-EndCap-Human]])
-			iconbg:SetTexCoord (0, 1, 0, 1)
-			iconbg:SetSize (100, 100)
-			iconbg:ClearAllPoints()
-			iconbg:SetPoint ("bottomleft", TutorialAlertFrame.ScrollChild, "bottomleft")
-			
-			_G [scrollname .. "Exclamation"]:SetVertexColor (1, 0.8, 0, 1)
-			_G [scrollname .. "QuestionMark"]:SetVertexColor (1, 0.8, 0, 1)
-			
-			_G [scrollname .. "TopText"]:SetText ("Details!") --string
-			_G [scrollname .. "QuestName"]:SetText ("") --string
-			_G [scrollname .. "BottomText"]:SetText ("") --string
-			
-			TutorialAlertFrame.ScrollChild.IconShine:SetTexture ([[Interface\MainMenuBar\UI-MainMenuBar-EndCap-Human]])
+			TutorialAlertFrame:SetFrameStrata ("TOOLTIP")
+			TutorialAlertFrame:Hide()
 			
 			TutorialAlertFrame:SetScript ("OnMouseUp", function (self) 
 				if (self.clickfunc and type (self.clickfunc) == "function") then
@@ -843,21 +1059,13 @@ end
 			TutorialAlertFrame:Hide()
 		end
 		
-		if (type (maintext) == "string") then
-			TutorialAlertFrame.ScrollChild.QuestName:SetText (maintext)
-		else
-			TutorialAlertFrame.ScrollChild.QuestName:SetText ("")
-		end
-		
-		if (type (desctext) == "string") then
-			TutorialAlertFrame.ScrollChild.BottomText:SetText (desctext)
-		else
-			TutorialAlertFrame.ScrollChild.BottomText:SetText ("")
-		end
+		--
+		TutorialAlertFrame.label = type (maintext) == "string" and maintext or type (desctext) == "string" and desctext or ""
+		MicroButtonAlert_SetText (TutorialAlertFrame, alert.label)
+		--
 		
 		TutorialAlertFrame.clickfunc = clickfunc
 		TutorialAlertFrame:Show()
-		DetailsTutorialAlertFrame_SlideInFrame (TutorialAlertFrame, "AUTOQUEST")
 	end
 	
 	local refresh_options = function (self)
@@ -999,11 +1207,61 @@ end
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> templates
 
-DF.font_templates = {}
-DF.font_templates ["ORANGE_FONT_TEMPLATE"] = {color = "orange", size = 11, font = "Accidental Presidency"}
-DF.font_templates ["OPTIONS_FONT_TEMPLATE"] = {color = "yellow", size = 12, font = "Accidental Presidency"}
+--fonts
 
-DF.dropdown_templates = {}
+DF.font_templates = DF.font_templates or {}
+
+--> detect which language is the client and select the font accordingly
+local clientLanguage = GetLocale()
+if (clientLanguage == "enGB") then
+	clientLanguage = "enUS"
+end
+
+DF.ClientLanguage = clientLanguage
+
+--> returns which region the language the client is running, return "western", "russia" or "asia"
+function DF:GetClientRegion()
+	if (clientLanguage == "zhCN" or clientLanguage == "koKR" or clientLanguage == "zhTW") then
+		return "asia"
+	elseif (clientLanguage == "ruRU") then
+		return "russia"
+	else
+		return "western"
+	end
+end
+
+--> return the best font to use for the client language
+function DF:GetBestFontForLanguage (language, western, cyrillic, china, korean, taiwan)
+	if (not language) then
+		language = DF.ClientLanguage
+	end
+
+	if (language == "enUS" or language == "deDE" or language == "esES" or language == "esMX" or language == "frFR" or language == "itIT" or language == "ptBR") then
+		return western or "Accidental Presidency"
+		
+	elseif (language == "ruRU") then
+		return cyrillic or "Arial Narrow"
+		
+	elseif (language == "zhCN") then
+		return china or "AR CrystalzcuheiGBK Demibold"
+	
+	elseif (language == "koKR") then
+		return korean or "2002"
+		
+	elseif (language == "zhTW") then
+		return taiwan or "AR CrystalzcuheiGBK Demibold"
+	
+	end
+end
+
+--DF.font_templates ["ORANGE_FONT_TEMPLATE"] = {color = "orange", size = 11, font = "Accidental Presidency"}
+--DF.font_templates ["OPTIONS_FONT_TEMPLATE"] = {color = "yellow", size = 12, font = "Accidental Presidency"}
+DF.font_templates ["ORANGE_FONT_TEMPLATE"] = {color = "orange", size = 11, font = DF:GetBestFontForLanguage()}
+DF.font_templates ["OPTIONS_FONT_TEMPLATE"] = {color = "yellow", size = 12, font = DF:GetBestFontForLanguage()}
+
+-- dropdowns
+
+DF.dropdown_templates = DF.dropdown_templates or {}
 DF.dropdown_templates ["OPTIONS_DROPDOWN_TEMPLATE"] = {
 	backdrop = {edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true},
 	backdropcolor = {1, 1, 1, .5},
@@ -1012,7 +1270,9 @@ DF.dropdown_templates ["OPTIONS_DROPDOWN_TEMPLATE"] = {
 	onenterbordercolor = {1, 1, 1, 1},
 }
 
-DF.switch_templates = {}
+-- switches
+
+DF.switch_templates = DF.switch_templates or {}
 DF.switch_templates ["OPTIONS_CHECKBOX_TEMPLATE"] = {
 	backdrop = {edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true},
 	backdropcolor = {1, 1, 1, .5},
@@ -1034,14 +1294,18 @@ DF.switch_templates ["OPTIONS_CHECKBOX_BRIGHT_TEMPLATE"] = {
 	onenterbordercolor = {1, 1, 1, 1},
 }
 
-DF.button_templates = {}
+-- buttons
+
+DF.button_templates = DF.button_templates or {}
 DF.button_templates ["OPTIONS_BUTTON_TEMPLATE"] = {
 	backdrop = {edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true},
 	backdropcolor = {1, 1, 1, .5},
 	backdropbordercolor = {0, 0, 0, 1},
 }
 
-DF.slider_templates = {}
+-- sliders
+
+DF.slider_templates = DF.slider_templates or {}
 DF.slider_templates ["OPTIONS_SLIDER_TEMPLATE"] = {
 	backdrop = {edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true},
 	backdropcolor = {1, 1, 1, .5},
@@ -1074,6 +1338,14 @@ function DF:InstallTemplate (widget_type, template_name, template, parent_name)
 	local template_table
 	if (widget_type == "font") then
 		template_table = DF.font_templates
+		
+		local font = template.font
+		if (font) then
+			--> fonts passed into the template has default to western
+			--> the framework will get the game client language and change the font if needed
+			font = DF:GetBestFontForLanguage (nil, font)
+		end
+		
 	elseif (widget_type == "dropdown") then
 		template_table = DF.dropdown_templates
 	elseif (widget_type == "button") then
@@ -1122,7 +1394,7 @@ function DF:RunHooksForWidget (event, ...)
 	local hooks = self.HookList [event]
 	
 	if (not hooks) then
-		print (self.widget:GetName(), "sem hook para", event)
+		print (self.widget:GetName(), "no hooks for", event)
 		return
 	end
 	
@@ -1259,6 +1531,7 @@ function DF:CreateAnimationHub (parent, onPlay, onFinished)
 	local newAnimation = parent:CreateAnimationGroup()
 	newAnimation:SetScript ("OnPlay", onPlay)
 	newAnimation:SetScript ("OnFinished", onFinished)
+	newAnimation:SetScript ("OnStop", onFinished)
 	newAnimation.NextAnimation = 1
 	return newAnimation
 end
@@ -1293,6 +1566,415 @@ function DF:CreateAnimation (animation, type, order, duration, arg1, arg2, arg3,
 	return anim
 end
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> frame shakes
+
+--> frame shakes rely on OnUpdate scripts, we are using a built-in OnUpdate so is guarantee it'll run
+local FrameshakeUpdateFrame = DetailsFrameworkFrameshakeControl or CreateFrame ("frame", "DetailsFrameworkFrameshakeControl", UIParent)
+--> store the frame which has frame shakes registered
+FrameshakeUpdateFrame.RegisteredFrames = FrameshakeUpdateFrame.RegisteredFrames or {}
+
+FrameshakeUpdateFrame.RegisterFrame = function (newFrame)
+	--> add the frame into the registered frames to update
+	DF.table.addunique (FrameshakeUpdateFrame.RegisteredFrames, newFrame)
+end
+
+--forward declared
+local frameshake_do_update
+
+FrameshakeUpdateFrame:SetScript ("OnUpdate", function (self, deltaTime)
+	for i = 1, #FrameshakeUpdateFrame.RegisteredFrames do
+		local parent = FrameshakeUpdateFrame.RegisteredFrames [i]
+		--> check if there's a shake running
+		if (parent.__frameshakes.enabled > 0) then
+			--update all shakes for this frame
+			for i = 1, #parent.__frameshakes do
+				local shakeObject = parent.__frameshakes [i]
+				if (shakeObject.IsPlaying) then
+					frameshake_do_update (parent, shakeObject, deltaTime)
+				end
+			end
+		end	
+	end
+end)
+
+
+local frameshake_shake_finished = function (parent, shakeObject)
+	if (shakeObject.IsPlaying) then
+		shakeObject.IsPlaying = false
+		shakeObject.TimeLeft = 0
+		shakeObject.IsFadingOut = false
+		shakeObject.IsFadingIn = false
+		
+		--> update the amount of shake running on this frame
+		parent.__frameshakes.enabled = parent.__frameshakes.enabled - 1
+		
+		--> restore the default anchors, in case where deltaTime was too small that didn't triggered an update
+		for i = 1, #shakeObject.Anchors do
+			local anchor = shakeObject.Anchors [i]
+			
+			--> automatic anchoring and reanching needs to the reviwed in the future
+			if (#anchor == 1) then
+				local anchorTo = unpack (anchor)
+				parent:ClearAllPoints()
+				parent:SetPoint (anchorTo)
+				
+			elseif (#anchor == 2) then
+				local anchorTo, point1 = unpack (anchor)
+				parent:ClearAllPoints()
+				parent:SetPoint (anchorTo, point1)
+				
+			elseif (#anchor == 3) then
+				local anchorTo, point1, point2 = unpack (anchor)
+				parent:SetPoint (anchorTo, point1, point2)
+				
+			elseif (#anchor == 5) then
+				local anchorName1, anchorTo, anchorName2, point1, point2 = unpack (anchor)
+				parent:SetPoint (anchorName1, anchorTo, anchorName2, point1, point2)
+			end
+		end
+	end
+end
+
+--already declared above the update function
+frameshake_do_update = function (parent, shakeObject, deltaTime)
+
+	--> check delta time
+	deltaTime = deltaTime or 0
+	
+	--> update time left
+	shakeObject.TimeLeft = max (shakeObject.TimeLeft - deltaTime, 0)
+
+	if (shakeObject.TimeLeft > 0) then
+		--> update fade in and out
+		if (shakeObject.IsFadingIn) then
+			shakeObject.IsFadingInTime = shakeObject.IsFadingInTime + deltaTime
+		end
+		if (shakeObject.IsFadingOut) then
+			shakeObject.IsFadingOutTime = shakeObject.IsFadingOutTime + deltaTime
+		end
+
+		--> check if can disable fade in
+		if (shakeObject.IsFadingIn and shakeObject.IsFadingInTime > shakeObject.FadeInTime) then
+			shakeObject.IsFadingIn = false
+		end
+		
+		--> check if can enable fade out
+		if (not shakeObject.IsFadingOut and shakeObject.TimeLeft < shakeObject.FadeOutTime) then
+			shakeObject.IsFadingOut = true
+			shakeObject.IsFadingOutTime = shakeObject.FadeOutTime - shakeObject.TimeLeft
+		end
+		
+		--> update position
+		local scaleShake = min (shakeObject.IsFadingIn and (shakeObject.IsFadingInTime / shakeObject.FadeInTime) or 1, shakeObject.IsFadingOut and (1 - shakeObject.IsFadingOutTime / shakeObject.FadeOutTime) or 1)
+
+		if (scaleShake > 0) then
+
+			--> delate the time by the frequency on both X and Y offsets
+			shakeObject.XSineOffset = shakeObject.XSineOffset + (deltaTime * shakeObject.Frequency)
+			shakeObject.YSineOffset = shakeObject.YSineOffset + (deltaTime * shakeObject.Frequency)
+			
+			--> calc the new position
+			local newX, newY
+			if (shakeObject.AbsoluteSineX) then
+				--absoluting only the sine wave, passing a negative scale will reverse the absolute direction
+				newX = shakeObject.Amplitude * abs (math.sin (shakeObject.XSineOffset)) * scaleShake * shakeObject.ScaleX
+			else
+				newX = shakeObject.Amplitude * math.sin (shakeObject.XSineOffset) * scaleShake * shakeObject.ScaleX
+			end
+			
+			if (shakeObject.AbsoluteSineY) then
+				newY = shakeObject.Amplitude * abs (math.sin (shakeObject.YSineOffset)) * scaleShake * shakeObject.ScaleY
+			else
+				newY = shakeObject.Amplitude * math.sin (shakeObject.YSineOffset) * scaleShake * shakeObject.ScaleY
+			end
+			
+			--> apply the offset to the frame anchors
+			for i = 1, #shakeObject.Anchors do
+				local anchor = shakeObject.Anchors [i]
+				
+				if (#anchor == 1 or #anchor == 3) then
+					local anchorTo, point1, point2 = unpack (anchor)
+					point1 = point1 or 0
+					point2 = point2 or 0
+					parent:SetPoint (anchorTo, point1 + newX, point2 + newY)
+					
+				elseif (#anchor == 5) then
+					local anchorName1, anchorTo, anchorName2, point1, point2 = unpack (anchor)
+					--parent:ClearAllPoints()
+					
+					parent:SetPoint (anchorName1, anchorTo, anchorName2, point1 + newX, point2 + newY)
+				end
+			end
+			
+		end
+	else
+		frameshake_shake_finished (parent, shakeObject)
+	end
+end
+
+local frameshake_stop = function (parent, shakeObject)
+	frameshake_shake_finished (parent, shakeObject)
+end
+
+--> scale direction scales the X and Y coordinates, scale strength scales the amplitude and frequency
+local frameshake_play = function (parent, shakeObject, scaleDirection, scaleAmplitude, scaleFrequency, scaleDuration)
+
+	--> check if is already playing
+	if (shakeObject.TimeLeft > 0) then
+		--> reset the time left
+		shakeObject.TimeLeft = shakeObject.Duration
+		
+		if (shakeObject.IsFadingOut) then
+			if (shakeObject.FadeInTime > 0) then
+				shakeObject.IsFadingIn = true
+				--> scale the current fade out into fade in, so it starts the fade in at the point where it was fading out
+				shakeObject.IsFadingInTime = shakeObject.FadeInTime * (1 - shakeObject.IsFadingOutTime / shakeObject.FadeOutTime)
+			else
+				shakeObject.IsFadingIn = false
+				shakeObject.IsFadingInTime = 0
+			end
+			
+			--> disable fade out and enable fade in
+			shakeObject.IsFadingOut = false
+			shakeObject.IsFadingOutTime = 0
+		end
+	else
+		--> create a new random offset
+		shakeObject.XSineOffset = math.pi * 2 * math.random()
+		shakeObject.YSineOffset = math.pi * 2 * math.random()
+		
+		--> store the initial position if case it needs a reset
+		shakeObject.StartedXSineOffset = shakeObject.XSineOffset
+		shakeObject.StartedYSineOffset = shakeObject.YSineOffset
+		
+		--> check if there's a fade in time
+		if (shakeObject.FadeInTime > 0) then
+			shakeObject.IsFadingIn = true
+		else
+			shakeObject.IsFadingIn = false
+		end
+		
+		shakeObject.IsFadingInTime = 0
+		shakeObject.IsFadingOut = false
+		shakeObject.IsFadingOutTime = 0
+		
+		--> apply custom scale
+		shakeObject.ScaleX = (scaleDirection or 1) * shakeObject.OriginalScaleX
+		shakeObject.ScaleY = (scaleDirection or 1) * shakeObject.OriginalScaleY
+		shakeObject.Frequency = (scaleFrequency or 1) * shakeObject.OriginalFrequency
+		shakeObject.Amplitude = (scaleAmplitude or 1) * shakeObject.OriginalAmplitude
+		shakeObject.Duration = (scaleDuration or 1) * shakeObject.OriginalDuration
+		
+		--> update the time left
+		shakeObject.TimeLeft = shakeObject.Duration
+		
+		--> check if is dynamic points
+		if (shakeObject.IsDynamicAnchor) then
+			wipe (shakeObject.Anchors)
+			for i = 1, parent:GetNumPoints() do
+				local p1, p2, p3, p4, p5 = parent:GetPoint (i)
+				shakeObject.Anchors [#shakeObject.Anchors+1] = {p1, p2, p3, p4, p5}
+			end
+		end
+		
+		--> update the amount of shake running on this frame
+		parent.__frameshakes.enabled = parent.__frameshakes.enabled + 1
+		
+		if (not parent:GetScript ("OnUpdate")) then
+			parent:SetScript ("OnUpdate", function()end)
+		end
+	end
+
+	shakeObject.IsPlaying = true
+	
+	frameshake_do_update (parent, shakeObject)
+end
+
+function DF:CreateFrameShake (parent, duration, amplitude, frequency, absoluteSineX, absoluteSineY, scaleX, scaleY, fadeInTime, fadeOutTime, anchorPoints)
+
+	--> create the shake table
+	local frameShake = {
+		Amplitude = amplitude or 2,
+		Frequency = frequency or 5,
+		Duration = duration or 0.3,
+		FadeInTime = fadeInTime or 0.01,
+		FadeOutTime = fadeOutTime or 0.01,
+		ScaleX  = scaleX or 0.2,
+		ScaleY = scaleY or 1,
+		AbsoluteSineX = absoluteSineX,
+		AbsoluteSineY = absoluteSineY,
+		--
+		IsPlaying = false,
+		TimeLeft = 0,
+	}
+	
+	frameShake.OriginalScaleX = frameShake.ScaleX
+	frameShake.OriginalScaleY = frameShake.ScaleY
+	frameShake.OriginalFrequency = frameShake.Frequency
+	frameShake.OriginalAmplitude = frameShake.Amplitude
+	frameShake.OriginalDuration = frameShake.Duration
+	
+	if (type (anchorPoints) ~= "table") then
+		frameShake.IsDynamicAnchor = true
+		frameShake.Anchors = {}
+	else 
+		frameShake.Anchors = anchorPoints
+	end
+	
+	--> inject frame shake table into the frame
+	if (not parent.__frameshakes) then
+		parent.__frameshakes = {
+			enabled = 0,
+		}
+		parent.PlayFrameShake = frameshake_play
+		parent.StopFrameShake = frameshake_stop
+		parent.UpdateFrameShake = frameshake_do_update
+		
+		--> register the frame within the frame shake updater
+		FrameshakeUpdateFrame.RegisterFrame (parent)
+	end
+
+	tinsert (parent.__frameshakes, frameShake)
+	
+	return frameShake
+end
+
+
+-----------------------------
+--> glow overlay
+
+local glow_overlay_play = function (self)
+	if (not self:IsShown()) then
+		self:Show()
+	end
+	if (self.animOut:IsPlaying()) then
+		self.animOut:Stop()
+	end
+	if (not self.animIn:IsPlaying()) then
+		self.animIn:Play()
+	end
+end
+
+local glow_overlay_stop = function (self)
+	if (self.animOut:IsPlaying()) then
+		self.animOut:Stop()
+	end
+	if (self.animIn:IsPlaying()) then
+		self.animIn:Stop()
+	end
+	if (self:IsShown()) then
+		self:Hide()
+	end
+end
+
+local glow_overlay_setcolor = function (self, antsColor, glowColor)
+	if (antsColor) then
+		local r, g, b, a = DF:ParseColors (antsColor)
+		self.ants:SetVertexColor (r, g, b, a)
+		self.AntsColor.r = r
+		self.AntsColor.g = g
+		self.AntsColor.b = b
+		self.AntsColor.a = a
+	end
+	
+	if (glowColor) then
+		local r, g, b, a = DF:ParseColors (glowColor)
+		self.outerGlow:SetVertexColor (r, g, b, a)
+		self.GlowColor.r = r
+		self.GlowColor.g = g
+		self.GlowColor.b = b
+		self.GlowColor.a = a
+	end
+end
+
+local glow_overlay_onshow = function (self)
+	glow_overlay_play (self)
+end
+
+local glow_overlay_onhide = function (self)
+	glow_overlay_stop (self)
+end
+
+--this is most copied from the wow client code, few changes applied to customize it
+function DF:CreateGlowOverlay (parent, antsColor, glowColor)
+	local glowFrame = CreateFrame ("frame", parent:GetName() and "$parentGlow2" or "OverlayActionGlow" .. math.random (1, 10000000), parent, "ActionBarButtonSpellActivationAlert")
+	glowFrame:HookScript ("OnShow", glow_overlay_onshow)
+	glowFrame:HookScript ("OnHide", glow_overlay_onhide)
+	
+	glowFrame.Play = glow_overlay_play
+	glowFrame.Stop = glow_overlay_stop
+	glowFrame.SetColor = glow_overlay_setcolor
+	
+	glowFrame:Hide()
+	
+	parent.overlay = glowFrame
+	local frameWidth, frameHeight = parent:GetSize()
+	
+	local scale = 1.4
+	
+	--Make the height/width available before the next frame:
+	parent.overlay:SetSize(frameWidth * scale, frameHeight * scale)
+	parent.overlay:SetPoint("TOPLEFT", parent, "TOPLEFT", -frameWidth * 0.32, frameHeight * 0.36)
+	parent.overlay:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", frameWidth * 0.32, -frameHeight * 0.36)
+	
+	local r, g, b, a = DF:ParseColors (antsColor or defaultColor)
+	glowFrame.ants:SetVertexColor (r, g, b, a)
+	glowFrame.AntsColor = {r, g, b, a}
+	
+	local r, g, b, a = DF:ParseColors (glowColor or defaultColor)
+	glowFrame.outerGlow:SetVertexColor (r, g, b, a)
+	glowFrame.GlowColor = {r, g, b, a}
+	
+	glowFrame.outerGlow:SetScale (1.2)
+	return glowFrame
+end
+
+--> custom glow with ants animation
+local ants_set_texture_offset = function (self, leftOffset, rightOffset, topOffset, bottomOffset)
+	leftOffset = leftOffset or 0
+	rightOffset = rightOffset or 0
+	topOffset = topOffset or 0
+	bottomOffset = bottomOffset or 0
+
+	self:ClearAllPoints()
+	self:SetPoint ("topleft", leftOffset, topOffset)
+	self:SetPoint ("bottomright", rightOffset, bottomOffset)
+end
+
+function DF:CreateAnts (parent, antTable, leftOffset, rightOffset, topOffset, bottomOffset, antTexture)
+	leftOffset = leftOffset or 0
+	rightOffset = rightOffset or 0
+	topOffset = topOffset or 0
+	bottomOffset = bottomOffset or 0
+	
+	local f = CreateFrame ("frame", nil, parent)
+	f:SetPoint ("topleft", leftOffset, topOffset)
+	f:SetPoint ("bottomright", rightOffset, bottomOffset)
+	
+	f.SetOffset = ants_set_texture_offset
+	
+	local t = f:CreateTexture (nil, "overlay")
+	t:SetAllPoints()
+	t:SetTexture (antTable.Texture)
+	t:SetBlendMode (antTable.BlendMode or "ADD")
+	t:SetVertexColor (DF:ParseColors (antTable.Color or "white"))
+	f.Texture = t
+	
+	f.AntTable = antTable
+	
+	f:SetScript ("OnUpdate", function (self, deltaTime)
+		AnimateTexCoords (t, self.AntTable.TextureWidth, self.AntTable.TextureHeight, self.AntTable.TexturePartsWidth, self.AntTable.TexturePartsHeight, self.AntTable.AmountParts, deltaTime, self.AntTable.Throttle or 0.025)
+	end)
+	
+	return f
+end
+
+--[=[ --test ants
+do
+	local f = DF:CreateAnts (UIParent)
+end	
+--]=]
 
 -----------------------------
 --> borders
@@ -1317,6 +1999,34 @@ local SetBorderAlpha = function (self, alpha1, alpha2, alpha3)
 	end
 end
 
+local SetBorderColor = function (self, r, g, b)
+	for _, texture in ipairs (self.Borders.Layer1) do
+		texture:SetColorTexture (r, g, b)
+	end
+	for _, texture in ipairs (self.Borders.Layer2) do
+		texture:SetColorTexture (r, g, b)
+	end
+	for _, texture in ipairs (self.Borders.Layer3) do
+		texture:SetColorTexture (r, g, b)
+	end
+end
+
+local SetLayerVisibility = function (self, layer1Shown, layer2Shown, layer3Shown)
+
+	for _, texture in ipairs (self.Borders.Layer1) do
+		texture:SetShown (layer1Shown)
+	end
+	
+	for _, texture in ipairs (self.Borders.Layer2) do
+		texture:SetShown (layer2Shown)
+	end
+	
+	for _, texture in ipairs (self.Borders.Layer3) do
+		texture:SetShown (layer3Shown)
+	end
+
+end
+
 function DF:CreateBorder (parent, alpha1, alpha2, alpha3)
 	
 	parent.Borders = {
@@ -1329,6 +2039,8 @@ function DF:CreateBorder (parent, alpha1, alpha2, alpha3)
 	}
 	
 	parent.SetBorderAlpha = SetBorderAlpha
+	parent.SetBorderColor = SetBorderColor
+	parent.SetLayerVisibility = SetLayerVisibility
 	
 	local border1 = parent:CreateTexture (nil, "background")
 	border1:SetPoint ("topleft", parent, "topleft", -1, 1)
@@ -1400,6 +2112,115 @@ function DF:CreateBorder (parent, alpha1, alpha2, alpha3)
 	
 end
 
+
+function DF:CreateBorderWithSpread (parent, alpha1, alpha2, alpha3, size, spread)
+	
+	parent.Borders = {
+		Layer1 = {},
+		Layer2 = {},
+		Layer3 = {},
+		Alpha1 = alpha1 or default_border_color1,
+		Alpha2 = alpha2 or default_border_color2,
+		Alpha3 = alpha3 or default_border_color3,
+	}
+	
+	parent.SetBorderAlpha = SetBorderAlpha
+	parent.SetBorderColor = SetBorderColor
+	parent.SetLayerVisibility = SetLayerVisibility
+	
+	--left
+	local border1 = parent:CreateTexture (nil, "background")
+	border1:SetPoint ("topleft", parent, "topleft", -1 + spread, 1 + (-spread))
+	border1:SetPoint ("bottomleft", parent, "bottomleft", -1 + spread, -1 + spread)
+	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
+	border1:SetWidth (size)
+	
+	local border2 = parent:CreateTexture (nil, "background")
+	border2:SetPoint ("topleft", parent, "topleft", -2 + spread, 2 + (-spread))
+	border2:SetPoint ("bottomleft", parent, "bottomleft", -2 + spread, -2 + spread)
+	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
+	border2:SetWidth (size)
+	
+	local border3 = parent:CreateTexture (nil, "background")
+	border3:SetPoint ("topleft", parent, "topleft", -3 + spread, 3 + (-spread))
+	border3:SetPoint ("bottomleft", parent, "bottomleft", -3 + spread, -3 + spread)
+	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
+	border3:SetWidth (size)
+	
+	tinsert (parent.Borders.Layer1, border1)
+	tinsert (parent.Borders.Layer2, border2)
+	tinsert (parent.Borders.Layer3, border3)
+	
+	--top
+	local border1 = parent:CreateTexture (nil, "background")
+	border1:SetPoint ("topleft", parent, "topleft", 0 + spread, 1 + (-spread))
+	border1:SetPoint ("topright", parent, "topright", 1 + (-spread), 1 + (-spread))
+	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
+	border1:SetHeight (size)
+	
+	local border2 = parent:CreateTexture (nil, "background")
+	border2:SetPoint ("topleft", parent, "topleft", -1 + spread, 2 + (-spread))
+	border2:SetPoint ("topright", parent, "topright", 2 + (-spread), 2 + (-spread))
+	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
+	border2:SetHeight (size)
+	
+	local border3 = parent:CreateTexture (nil, "background")
+	border3:SetPoint ("topleft", parent, "topleft", -2 + spread, 3 + (-spread))
+	border3:SetPoint ("topright", parent, "topright", 3 + (-spread), 3 + (-spread))
+	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
+	border3:SetHeight (size)
+	
+	tinsert (parent.Borders.Layer1, border1)
+	tinsert (parent.Borders.Layer2, border2)
+	tinsert (parent.Borders.Layer3, border3)	
+	
+	--right
+	local border1 = parent:CreateTexture (nil, "background")
+	border1:SetPoint ("topright", parent, "topright", 1 + (-spread), 0 + (-spread))
+	border1:SetPoint ("bottomright", parent, "bottomright", 1 + (-spread), -1 + spread)
+	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
+	border1:SetWidth (size)
+	
+	local border2 = parent:CreateTexture (nil, "background")
+	border2:SetPoint ("topright", parent, "topright", 2 + (-spread), 1 + (-spread))
+	border2:SetPoint ("bottomright", parent, "bottomright", 2 + (-spread), -2 + spread)
+	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
+	border2:SetWidth (size)
+	
+	local border3 = parent:CreateTexture (nil, "background")
+	border3:SetPoint ("topright", parent, "topright", 3 + (-spread), 2 + (-spread))
+	border3:SetPoint ("bottomright", parent, "bottomright", 3 + (-spread), -3 + spread)
+	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
+	border3:SetWidth (size)
+	
+	tinsert (parent.Borders.Layer1, border1)
+	tinsert (parent.Borders.Layer2, border2)
+	tinsert (parent.Borders.Layer3, border3)	
+	
+	local border1 = parent:CreateTexture (nil, "background")
+	border1:SetPoint ("bottomleft", parent, "bottomleft", 0 + spread, -1 + spread)
+	border1:SetPoint ("bottomright", parent, "bottomright", 0 + (-spread), -1 + spread)
+	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
+	border1:SetHeight (size)
+	
+	local border2 = parent:CreateTexture (nil, "background")
+	border2:SetPoint ("bottomleft", parent, "bottomleft", -1 + spread, -2 + spread)
+	border2:SetPoint ("bottomright", parent, "bottomright", 1 + (-spread), -2 + spread)
+	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
+	border2:SetHeight (size)
+	
+	local border3 = parent:CreateTexture (nil, "background")
+	border3:SetPoint ("bottomleft", parent, "bottomleft", -2 + spread, -3 + spread)
+	border3:SetPoint ("bottomright", parent, "bottomright", 2 + (-spread), -3 + spread)
+	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
+	border3:SetHeight (size)
+	
+	tinsert (parent.Borders.Layer1, border1)
+	tinsert (parent.Borders.Layer2, border2)
+	tinsert (parent.Borders.Layer3, border3)
+	
+end
+
 function DF:ReskinSlider (slider, heightOffset)
 	if (slider.slider) then
 		slider.cima:SetNormalTexture ([[Interface\Buttons\Arrow-Up-Up]])
@@ -1441,49 +2262,76 @@ function DF:ReskinSlider (slider, heightOffset)
 		slider.slider.thumb:SetTexCoord (482/512, 492/512, 104/512, 120/512)
 		slider.slider.thumb:SetSize (12, 12)
 		slider.slider.thumb:SetVertexColor (0.6, 0.6, 0.6, 0.95)
+		
 	else
+		--up button
+		do
+			local normalTexture = slider.ScrollBar.ScrollUpButton.Normal
+			normalTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Up]])
+			normalTexture:SetTexCoord (0, 1, .2, 1)
+			
+			normalTexture:SetPoint ("topleft", slider.ScrollBar.ScrollUpButton, "topleft", 1, 0)
+			normalTexture:SetPoint ("bottomright", slider.ScrollBar.ScrollUpButton, "bottomright", 1, 0)
+			
+			local pushedTexture = slider.ScrollBar.ScrollUpButton.Pushed
+			pushedTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Down]])
+			pushedTexture:SetTexCoord (0, 1, .2, 1)
+			
+			pushedTexture:SetPoint ("topleft", slider.ScrollBar.ScrollUpButton, "topleft", 1, 0)
+			pushedTexture:SetPoint ("bottomright", slider.ScrollBar.ScrollUpButton, "bottomright", 1, 0)
 
-		slider.ScrollBar.ScrollUpButton:SetNormalTexture ([[Interface\Buttons\Arrow-Up-Up]])
-		slider.ScrollBar.ScrollUpButton:GetNormalTexture():SetTexCoord (0, 1, 0, 1)
-		slider.ScrollBar.ScrollUpButton:SetPushedTexture ([[Interface\Buttons\Arrow-Up-Down]])
-		slider.ScrollBar.ScrollUpButton:GetPushedTexture():SetTexCoord (0, 1, 0, 1)
-		slider.ScrollBar.ScrollUpButton:SetDisabledTexture ([[Interface\Buttons\Arrow-Up-Disabled]])
-		slider.ScrollBar.ScrollUpButton:GetDisabledTexture():SetTexCoord (0, 1, 0, 1)
+			local disabledTexture = slider.ScrollBar.ScrollUpButton.Disabled
+			disabledTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Disabled]])
+			disabledTexture:SetTexCoord (0, 1, .2, 1)
+			disabledTexture:SetAlpha (.5)
+			
+			disabledTexture:SetPoint ("topleft", slider.ScrollBar.ScrollUpButton, "topleft", 1, 0)
+			disabledTexture:SetPoint ("bottomright", slider.ScrollBar.ScrollUpButton, "bottomright", 1, 0)
+			
+			slider.ScrollBar.ScrollUpButton:SetSize (16, 16)
+			slider.ScrollBar.ScrollUpButton:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = "Interface\\Tooltips\\UI-Tooltip-Background"})
+			slider.ScrollBar.ScrollUpButton:SetBackdropColor (0, 0, 0, 0.3)
+			slider.ScrollBar.ScrollUpButton:SetBackdropBorderColor (0, 0, 0, 1)
+			
+			--it was having problems with the texture anchor when calling ClearAllPoints() and setting new points different from the original
+			--now it is using the same points from the original with small offsets tp align correctly
+		end
+		
+		--down button
+		do
+			local normalTexture = slider.ScrollBar.ScrollDownButton.Normal
+			normalTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Up]])
+			normalTexture:SetTexCoord (0, 1, 0, .8)
+			
+			normalTexture:SetPoint ("topleft", slider.ScrollBar.ScrollDownButton, "topleft", 1, -4)
+			normalTexture:SetPoint ("bottomright", slider.ScrollBar.ScrollDownButton, "bottomright", 1, -4)
+			
+			local pushedTexture = slider.ScrollBar.ScrollDownButton.Pushed
+			pushedTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Down]])
+			pushedTexture:SetTexCoord (0, 1, 0, .8)
+			
+			pushedTexture:SetPoint ("topleft", slider.ScrollBar.ScrollDownButton, "topleft", 1, -4)
+			pushedTexture:SetPoint ("bottomright", slider.ScrollBar.ScrollDownButton, "bottomright", 1, -4)
+			
+			local disabledTexture = slider.ScrollBar.ScrollDownButton.Disabled
+			disabledTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Disabled]])
+			disabledTexture:SetTexCoord (0, 1, 0, .8)
+			disabledTexture:SetAlpha (.5)
+			
+			disabledTexture:SetPoint ("topleft", slider.ScrollBar.ScrollDownButton, "topleft", 1, -4)
+			disabledTexture:SetPoint ("bottomright", slider.ScrollBar.ScrollDownButton, "bottomright", 1, -4)
+			
+			slider.ScrollBar.ScrollDownButton:SetSize (16, 16)
+			slider.ScrollBar.ScrollDownButton:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = "Interface\\Tooltips\\UI-Tooltip-Background"})
+			slider.ScrollBar.ScrollDownButton:SetBackdropColor (0, 0, 0, 0.3)
+			slider.ScrollBar.ScrollDownButton:SetBackdropBorderColor (0, 0, 0, 1)
 
-		slider.ScrollBar.ScrollUpButton:SetSize (16, 16)
-		slider.ScrollBar.ScrollUpButton:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = "Interface\\Tooltips\\UI-Tooltip-Background"})
-		slider.ScrollBar.ScrollUpButton:SetBackdropColor (0, 0, 0, 0.3)
-		slider.ScrollBar.ScrollUpButton:SetBackdropBorderColor (0, 0, 0, 1)
-
-		slider.ScrollBar.ScrollUpButton:GetNormalTexture():ClearAllPoints()
-		slider.ScrollBar.ScrollUpButton:GetPushedTexture():ClearAllPoints()
-		slider.ScrollBar.ScrollUpButton:GetDisabledTexture():ClearAllPoints()
-		slider.ScrollBar.ScrollUpButton:GetNormalTexture():SetPoint ("center", slider.ScrollBar.ScrollUpButton, "center", 1, 1)
-		slider.ScrollBar.ScrollUpButton:GetPushedTexture():SetPoint ("center", slider.ScrollBar.ScrollUpButton, "center", 1, 1)
-		slider.ScrollBar.ScrollUpButton:GetDisabledTexture():SetPoint ("center", slider.ScrollBar.ScrollUpButton, "center", 1, 1)
-	
+			--<Anchor point="TOP" relativePoint="BOTTOM"/>
+			--slider.ScrollBar.ScrollDownButton:SetPoint ("top", slider.ScrollBar, "bottom", 0, 0)
+		end
+		
 		--
 		
-		slider.ScrollBar.ScrollDownButton:SetNormalTexture ([[Interface\Buttons\Arrow-Down-Up]])
-		slider.ScrollBar.ScrollDownButton:GetNormalTexture():SetTexCoord (0, 1, 0, 1)
-		slider.ScrollBar.ScrollDownButton:SetPushedTexture ([[Interface\Buttons\Arrow-Down-Down]])
-		slider.ScrollBar.ScrollDownButton:GetPushedTexture():SetTexCoord (0, 1, 0, 1)
-		slider.ScrollBar.ScrollDownButton:SetDisabledTexture ([[Interface\Buttons\Arrow-Down-Disabled]])
-		slider.ScrollBar.ScrollDownButton:GetDisabledTexture():SetTexCoord (0, 1, 0, 1)
-		
-		slider.ScrollBar.ScrollDownButton:SetSize (16, 16)
-		slider.ScrollBar.ScrollDownButton:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = "Interface\\Tooltips\\UI-Tooltip-Background"})
-		slider.ScrollBar.ScrollDownButton:SetBackdropColor (0, 0, 0, 0.3)
-		slider.ScrollBar.ScrollDownButton:SetBackdropBorderColor (0, 0, 0, 1)
-	
-		slider.ScrollBar.ScrollDownButton:GetNormalTexture():ClearAllPoints()
-		slider.ScrollBar.ScrollDownButton:GetPushedTexture():ClearAllPoints()
-		slider.ScrollBar.ScrollDownButton:GetDisabledTexture():ClearAllPoints()
-		slider.ScrollBar.ScrollDownButton:GetNormalTexture():SetPoint ("center", slider.ScrollBar.ScrollDownButton, "center", 1, -5)
-		slider.ScrollBar.ScrollDownButton:GetPushedTexture():SetPoint ("center", slider.ScrollBar.ScrollDownButton, "center", 1, -5)
-		slider.ScrollBar.ScrollDownButton:GetDisabledTexture():SetPoint ("center", slider.ScrollBar.ScrollDownButton, "center", 1, -5)
-	
-		--
 		slider.ScrollBar:SetPoint ("TOPLEFT", slider, "TOPRIGHT", 6, -16)
 		slider.ScrollBar:SetPoint ("BOTTOMLEFT", slider, "BOTTOMRIGHT", 6, 16 + (heightOffset and heightOffset*-1 or 0))
 		
@@ -1498,4 +2346,72 @@ function DF:ReskinSlider (slider, heightOffset)
 	end
 end
 
+function DF:GetCurrentSpec()
+	local specIndex = GetSpecialization()
+	if (specIndex) then
+		local specID = GetSpecializationInfo (specIndex)
+		if (specID and specID ~= 0) then
+			return specID
+		end
+	end
+end
+
+local specs_per_class = {
+	["DEMONHUNTER"] = {577, 581},
+	["DEATHKNIGHT"] = {250, 251, 252},
+	["WARRIOR"] = {71, 72, 73},
+	["MAGE"] = {62, 63, 64},
+	["ROGUE"] = {259, 260, 261},
+	["DRUID"] = {102, 103, 104, 105},
+	["HUNTER"] = {253, 254, 255},
+	["SHAMAN"] = {262, 263, 254},
+	["PRIEST"] = {256, 257, 258},
+	["WARLOCK"] = {265, 266, 267},
+	["PALADIN"] = {65, 66, 70},
+	["MONK"] = {268, 269, 270},
+}
+
+function DF:GetClassSpecIDs (class)
+	return specs_per_class [class]
+end
+
+local dispatch_error = function (context, errortext)
+	DF:Msg ( (context or "<no context>") .. " |cFFFF9900error|r: " .. (errortext or "<no error given>"))
+end
+
+--> safe call an external func with payload and without telling who is calling
+function DF:QuickDispatch (func, ...)
+	if (type (func) ~= "function") then
+		return
+	end
+	
+	local okay, errortext = pcall (func, ...)
+	
+	if (not okay) then
+		--> trigger an error msg
+		dispatch_error (_, errortext)
+		return
+	end
+	
+	return true
+end
+
+function DF:Dispatch (func, ...)
+	if (type (func) ~= "function") then
+		return dispatch_error (_, "Dispatch required a function.")
+	end
+
+	local okay, result1, result2, result3, result4 = xpcall (func, geterrorhandler(), ...)
+	
+	if (not okay) then
+		return nil
+	end
+	
+	return result1, result2, result3, result4
+end
+
+--/run local a, b =32,3; local f=function(c,d) return c+d, 2, 3;end; print (xpcall(f,geterrorhandler(),a,b))
+
+
 --doo elsee 
+--was doing double loops due to not enought height

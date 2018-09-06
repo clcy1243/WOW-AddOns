@@ -1,7 +1,31 @@
-changeset:   271:f88c4161dbea
-tag:         v7.3.5.271-release
+changeset:   313:2c91017a4fc7
+tag:         tip
 user:        Tercio
-date:        Fri Feb 09 12:03:04 2018 -0200
-summary:     - Ticket #609: fixed rare icons not showing in the map.
+date:        Fri Aug 31 13:08:47 2018 -0300
+summary:     - Fixed an issue when using the Open Quest Log keybind wasn't loading the WQT statusbar.
+
+
+changeset:   312:07ea7b128696
+user:        Tercio
+date:        Fri Aug 31 12:50:39 2018 -0300
+summary:     - Fixed tooltips blinking the work 'rewards'.
+
+
+changeset:   311:19e1bed70fba
+user:        Tercio
+date:        Thu Aug 30 10:54:11 2018 -0300
+summary:     - Fixed an issue where world in the world map won't show for some characters.
+
+
+changeset:   310:4eea84a94106
+user:        Tercio
+date:        Wed Aug 29 19:32:42 2018 -0300
+summary:     - Fixed the Failed to load due to an extra space character in the .toc file.
+
+
+changeset:   309:4937dbf56eb0
+user:        Tercio
+date:        Tue Aug 28 20:17:20 2018 -0300
+summary:     - Fixing broken version, tested the version before sent.
 
 

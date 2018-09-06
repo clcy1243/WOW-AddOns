@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Deathbound Ward", 604)
+local mod = BigWigs:NewBoss("Deathbound Ward", 631)
 if not mod then return end
 mod:RegisterEnableMob(37007)
 mod.toggleOptions = {{71022, "FLASH"}}
@@ -21,7 +21,7 @@ end
 --
 
 function mod:Shout(args)
-	self:Message(71022, "Personal")
+	self:Message(71022, "blue")
 	self:Bar(71022, 3)
 	self:Flash(71022)
 end

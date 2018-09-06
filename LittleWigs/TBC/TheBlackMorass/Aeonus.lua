@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Aeonus", 733, 554)
+local mod, CL = BigWigs:NewBoss("Aeonus", 269, 554)
 if not mod then return end
 mod:RegisterEnableMob(17881)
 
@@ -38,7 +38,7 @@ end
 --
 
 function mod:Enrage(args)
-	self:Message(args.spellId, "Urgent")
+	self:Message(args.spellId, "orange")
 	self:Bar(args.spellId, 8)
 end
 

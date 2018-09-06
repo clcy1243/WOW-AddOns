@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod = BigWigs:NewBoss("Baron Geddon", 696, 1524)
+local mod = BigWigs:NewBoss("Baron Geddon", 409, 1524)
 if not mod then return end
 mod:RegisterEnableMob(12056)
 mod.toggleOptions = {{20475, "FLASH", "ICON", "PROXIMITY", "SAY"}, 19695, 20478}
@@ -35,7 +35,7 @@ function mod:LivingBomb(args)
 	else
 		self:OpenProximity(args.spellId, 9, args.destName)
 	end
-	self:TargetMessage(args.spellId, args.destName, "Personal", "Alarm")
+	self:TargetMessage(args.spellId, args.destName, "blue", "Alarm")
 	self:PrimaryIcon(args.spellId, args.destName)
 	self:TargetBar(args.spellId, 8, args.destName)
 end
@@ -45,12 +45,12 @@ function mod:LivingBombRemoved(args)
 end
 
 function mod:Inferno(args)
-	self:Message(args.spellId, "Important", "Long")
+	self:Message(args.spellId, "red", "Long")
 	self:Bar(args.spellId, 8)
 end
 
 function mod:Armageddon(args)
 	self:Bar(args.spellId, 8)
-	self:Message(args.spellId, "Urgent")
+	self:Message(args.spellId, "orange")
 end
 

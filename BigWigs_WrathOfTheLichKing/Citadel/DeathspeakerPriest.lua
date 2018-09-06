@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Deathspeaker High Priest", 604)
+local mod = BigWigs:NewBoss("Deathspeaker High Priest", 631)
 if not mod then return end
 mod:RegisterEnableMob(36805, 36807, 36808, 36811, 36829)
 mod.toggleOptions = {{69483, "ICON", "FLASH"}, "proximity"}
@@ -22,7 +22,7 @@ end
 --
 
 function mod:Reckoning(args)
-	self:TargetMessage(69483, args.destName, "Personal", "Alert")
+	self:TargetMessage(69483, args.destName, "blue", "Alert")
 	self:Bar(69483, 8)
 	if self:Me(args.destGUID) then
 		self:Flash(69483)

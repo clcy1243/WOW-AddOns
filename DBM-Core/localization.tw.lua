@@ -19,6 +19,7 @@ DBM_COPY_URL_DIALOG					= "複製網址"
 --Post Patch 7.1
 DBM_CORE_NO_RANGE					= "距離雷達不能在副本中使用，使用傳統文字距離框架取代"
 DBM_CORE_NO_ARROW					= "箭頭不能在副本中使用"
+DBM_CORE_ARROW_SUMMONED				= "箭頭已被啟用。如果你沒有開啟此功能，可能有其他第三方插件為你啟用此功能。"
 DBM_CORE_NO_HUD						= "HUDMap 不能在副本中使用"
 
 DBM_CORE_DYNAMIC_DIFFICULTY_CLUMP	= "DBM已中禁用動態距離框架，你目前的團隊人數在這場戰鬥中的機制資訊不足。"
@@ -125,6 +126,7 @@ DBM_CORE_OPTION_CATEGORY_WARNINGS_YOU	= "個人提示"
 DBM_CORE_OPTION_CATEGORY_WARNINGS_OTHER	= "目標提示"
 DBM_CORE_OPTION_CATEGORY_WARNINGS_ROLE	= "角色專精提示"
 DBM_CORE_OPTION_CATEGORY_SOUNDS			= "音效"
+DBM_CORE_OPTION_CATEGORY_DROPDOWNS		= "下拉選單"
 
 DBM_CORE_AUTO_RESPONDED						= "已自動回覆密語。"
 DBM_CORE_STATUS_WHISPER						= "%s：%s，%d/%d存活。"
@@ -165,6 +167,7 @@ DBM_CORE_UPDATEREMINDER_TESTVERSION		= "警告:你使用的DBM版本和遊戲版
 DBM_CORE_VEM							= "警告:你同時使用DBM和VEM。DBM將停用而無法執行。"
 DBM_CORE_3RDPROFILES					= "警告:DBM-Profiles不相容此版本DBM。請移除避免衝突。"
 DBM_CORE_DPMCORE						= "警告:Deadly PvP 模組已經停止更新而且不相容此版本的DBM。請移除避免衝突。"
+DBM_CORE_DBMLDB							= "警告:DBM-LDB已經內建在DBM-Core，建議從你的addons資料夾中移除DBM-LDB。"
 DBM_CORE_UPDATE_REQUIRES_RELAUNCH		= "警告:如果你沒有重啟你的遊戲，這次DBM更新可能無法正確運作。這次更新包含了新的檔案或是.toc檔更新而不能使用ReloadUI載入。如果沒有將遊戲完全重啟可能會導致錯誤或功能不完整。"
 DBM_CORE_OUT_OF_DATE_NAG				= "你的DBM版本已經過期你設定忽略彈出更新提示。還是建議你更新避免缺少一些重要的警告或是計時器，而其他人也看不到從你發出的大喊警告。"
 
@@ -176,7 +179,7 @@ DBM_PIZZA_CONFIRM_IGNORE			= "是否要在該次遊戲連結中忽略來自%s的
 DBM_PIZZA_ERROR_USAGE				= "命令：/dbm [broadcast] timer <時間（秒）> <文字>。<時間>必須大於1"
 
 --DBM_CORE_MINIMAP_TOOLTIP_HEADER (Same as English locales)
-DBM_CORE_MINIMAP_TOOLTIP_FOOTER		= "Shift+左鍵或右鍵點擊即可移動，Alt+Shift+點擊即可拖放"
+DBM_CORE_MINIMAP_TOOLTIP_FOOTER		= "按住shift即可拖放移動"
 
 DBM_CORE_RANGECHECK_HEADER			= "距離監視(%d碼)"
 DBM_CORE_RANGECHECK_SETRANGE		= "設置距離"
@@ -200,6 +203,9 @@ DBM_CORE_INFOFRAME_SHOW_SELF		= "總是顯示你的能量"
 DBM_CORE_INFOFRAME_SETLINES			= "設定最大線條數"
 DBM_CORE_INFOFRAME_LINESDEFAULT		= "由模組設定"
 DBM_CORE_INFOFRAME_LINES_TO			= "%d線條"
+DBM_CORE_INFOFRAME_POWER			= "能量"
+DBM_CORE_INFOFRAME_MAIN				= "主要能量:"--Main power
+DBM_CORE_INFOFRAME_ALT				= "次要能量:"--Alternate Power
 
 DBM_LFG_INVITE						= "地城準備確認"
 
@@ -245,6 +251,7 @@ DBM_CORE_UNKNOWN					= "未知"
 DBM_CORE_LEFT						= "左"
 DBM_CORE_RIGHT						= "右"
 DBM_CORE_BACK						= "後"
+DBM_CORE_SIDE						= "側"
 DBM_CORE_TOP						= "上"
 DBM_CORE_BOTTOM						= "下"
 DBM_CORE_MIDDLE						= "中"
@@ -258,10 +265,13 @@ DBM_CORE_ORB						= "球"
 DBM_CHEST							= "獎勵箱"
 DBM_NO_DEBUFF						= "沒有%s"
 DBM_ALLY							= "隊友"
+DBM_ADD								= "小怪"
 DBM_ADDS							= "小怪"
 DBM_CORE_ROOM_EDGE					= "房間邊緣"
 DBM_CORE_FAR_AWAY					= "遠方"
+DBM_CORE_BREAK_LOS					= "卡視角"
 DBM_CORE_SAFE						= "安全"
+DBM_CORE_SHIELD						= "護盾"
 DBM_INCOMING						= "%s來了"
 --Common Locals end
 
@@ -335,6 +345,7 @@ DBM_CORE_AUTO_SPEC_WARN_TEXTS.taunt			= ">%%s<中了%s - 快嘲諷"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.close			= "你附近的>%%s<中了%s"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.move			= "%s - 快移動"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.dodge			= "%s - 閃避攻擊"
+DBM_CORE_AUTO_SPEC_WARN_TEXTS.dodgeloc		= "%s - 閃避%%s"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.moveaway		= "%s - 快離開其他人"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.moveto		= "%s - 快跑向>%%s<"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.jump			= "%s - 快跳躍"
@@ -369,12 +380,13 @@ DBM_CORE_AUTO_SPEC_WARN_OPTIONS.taunt 		= "當其他坦克中了$spell:%s顯示�
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.close		= "當你附近有人中了$spell:%s時顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.move		= "當你中了$spell:%s時顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.dodge 		= "當需要閃避$spell:%s時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.dodgeloc	= "當需要閃避$spell:%s時(站位)顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.moveaway	= "當你中了$spell:%s要跑離開其他人時顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.moveto		= "為$spell:%s需要跑向某人或某地時顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.jump		= "當你中了$spell:%s需跳起來時顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.run			= "為$spell:%s顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.cast		= "為$spell:%s施放時顯示停止施法的特別警告"
-DBM_CORE_AUTO_SPEC_WARN_OPTIONS.lookaway		= "當需要為$spell:%s轉身時顯示特別警告"
+DBM_CORE_AUTO_SPEC_WARN_OPTIONS.lookaway	= "當需要為$spell:%s轉身時顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.reflect		= "為$spell:%s施放時顯示停止攻擊的特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.count 		= "為$spell:%s顯示特別警告"
 DBM_CORE_AUTO_SPEC_WARN_OPTIONS.stack		= "為中了>=%d層$spell:%s時顯示特別警告"
@@ -450,7 +462,7 @@ DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.count	= "" .. UnitName("player") .. "中了%s(%
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.fade	= "%s在%%d秒後消退!"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.shortfade	= "%%d"
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.iconfade	= "{rt%%2$d}%%1$d"
-DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.position = "{rt%%3$d}"..UnitName("player").."{rt%%3$d}中了%1$s %%2$s"--Arg order is going to be a problem. any way to word differently for playername at end?
+DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.position = "{rt%%d}"..UnitName("player").."{rt%%d}中了%s(%%s)"--Arg order is going to be a problem. any way to word differently for playername at end?
 DBM_CORE_AUTO_YELL_ANNOUNCE_TEXT.combo	= "%s和%%s"
 DBM_CORE_AUTO_YELL_CUSTOM_FADE			= "%s消退了"
 DBM_CORE_AUTO_HUD_OPTION_TEXT			= "為$spell:%s顯示HudMap(已退役)"
@@ -461,6 +473,7 @@ DBM_CORE_AUTO_RANGE_OPTION_TEXT_SHORT	= "顯示距離框架(%s碼)"
 DBM_CORE_AUTO_RRANGE_OPTION_TEXT		= "為$spell:%2$s顯示反色距離框架(%1$s碼)"--Reverse range frame (green when players in range, red when not)
 DBM_CORE_AUTO_RRANGE_OPTION_TEXT_SHORT	= "顯示反色距離框架(%s碼)"
 DBM_CORE_AUTO_INFO_FRAME_OPTION_TEXT	= "為$spell:%s顯示訊息框架"
+DBM_CORE_AUTO_INFO_FRAME_OPTION_TEXT2	= "為整體戰鬥顯示訊息框架"
 DBM_CORE_AUTO_READY_CHECK_OPTION_TEXT	= "當首領開打時撥放準備檢查的音效(即使沒有選定目標)"
 
 -- New special warnings
@@ -526,3 +539,15 @@ DBM_CORE_LAG_CHECKING				= "檢測團隊成員的網路延遲中..."
 DBM_CORE_LAG_HEADER					= "Deadly Boss Mods - 網路延遲結果"
 DBM_CORE_LAG_ENTRY					= "%s:世界延遲[%d毫秒]/家延遲[%d毫秒]"
 DBM_CORE_LAG_FOOTER					= "無回應:%s"
+
+--LDB
+DBM_LDB_TOOLTIP_HELP1	= "左鍵開啟DBM"
+DBM_LDB_TOOLTIP_HELP2	= "右鍵開啟設置"
+
+DBM_LDB_LOAD_MODS		= "載入首領模組"
+
+DBM_LDB_CAT_OTHER		= "其他首領"
+
+DBM_LDB_CAT_GENERAL		= "一般"
+DBM_LDB_ENABLE_BOSS_MOD	= "啟用首領模組"
+

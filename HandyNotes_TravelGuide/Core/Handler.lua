@@ -246,7 +246,7 @@ do
 			return false
 		end
 		-- this will check if any node is for specific faction
-		if (point.faction and point.faction ~= select(2, UnitFactionGroup("player"))) then
+		if (point.faction and point.faction ~= select(1, UnitFactionGroup("player"))) then
 			return false
 		end
 		if (point.portal and not private.db.show_portal) then return false; end

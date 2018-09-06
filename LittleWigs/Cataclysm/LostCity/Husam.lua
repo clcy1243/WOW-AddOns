@@ -3,9 +3,11 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("General Husam", 747, 117)
+local mod, CL = BigWigs:NewBoss("General Husam", 755, 117)
 if not mod then return end
 mod:RegisterEnableMob(44577)
+mod.engageId = 1052
+mod.respawnTime = 30
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -20,12 +22,9 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
-
 	self:Log("SPELL_CAST_START", "Shockwave", 83445)
 	self:Log("SPELL_CAST_START", "DetonateTraps", 91263)
 	self:Log("SPELL_CAST_SUCCESS", "BadIntentions", 83113)
-	self:Death("Win", 44577)
 end
 
 function mod:OnEngage()
@@ -37,17 +36,17 @@ end
 --
 
 function mod:Shockwave(args)
-	self:Message(args.spellId, "Important", "Info")
+	self:Message(args.spellId, "red", "Info")
 	self:Bar(args.spellId, 5, CL.casting:format(args.spellName))
 	self:CDBar(args.spellId, 40)
 end
 
 function mod:DetonateTraps(args)
-	self:Message(args.spellId, "Urgent", "Alarm")
+	self:Message(args.spellId, "orange", "Alarm")
 end
 
 function mod:BadIntentions(args)
-	self:TargetMessage(args.spellId, args.destName, "Attention", "Alert")
+	self:TargetMessage(args.spellId, args.destName, "yellow", "Alert")
 	self:CDBar(args.spellId, 25)
 end
 

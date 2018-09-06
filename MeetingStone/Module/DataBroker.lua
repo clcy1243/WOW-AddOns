@@ -135,14 +135,12 @@ function DataBroker:MEETINGSTONE_SETTING_CHANGED(_, key, value, onUser)
     elseif key == 'sound' then
         self:SetMinimapButtonSound(value)
     elseif key == 'ignore' then
-        if value then
-            Addon:EnableModule('Misc')
-        else
-            Addon:DisableModule('Misc')
-        end
-        IgnoreList_Update()
-    elseif key == 'spamWord' then
-        self:SendMessage('MEETINGSTONE_SPAMWORD_STATUS_UPDATE', value, onUser)
+        -- if value then
+        --     Addon:EnableModule('Misc')
+        -- else
+        --     Addon:DisableModule('Misc')
+        -- end
+        -- IgnoreList_Update()
     end
 end
 

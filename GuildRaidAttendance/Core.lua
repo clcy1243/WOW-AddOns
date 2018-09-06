@@ -278,6 +278,9 @@ function frame:ADDON_LOADED(arg1)
 
 		-- help viewed
 		if type(GRA_A_Variables["helpViewed"]) ~= "boolean" then GRA_A_Variables["helpViewed"] = false end
+		
+		-- about current version
+		if type(GRA_A_Variables["aboutViewed"]) ~= "string" then GRA_A_Variables["aboutViewed"] = "" end
 
 		-- scale
 		if type(GRA_A_Variables["scaleFactor"]) ~= "number" then GRA_A_Variables["scaleFactor"] = 1 end
@@ -291,6 +294,7 @@ function frame:ADDON_LOADED(arg1)
 			gra.size = gra.sizes[GRA_A_Variables["size"]]
 			for name, f in pairs(gra) do
 				if gra.size[name] then
+					-- TODO: add GRA:Resize() in Appearance.lua
 					f:Resize()
 					GRA:Debug("Resized " .. name)
 				end
@@ -410,11 +414,11 @@ function SlashCmdList.GUILDRAIDATTENDANCE(msg, editbox)
 		gra.mainFrame:SetPoint("CENTER")
 		gra.mainFrame:Show()
 	elseif command == "resetsize" then
-		-- TODO:
+		-- TODO: 
 	elseif command == "loot" then
 		gra.distributionFrame:Show()
 	--[===[@debug@
-	elseif command == "test" then
+	elseif command == "testPopup" then
 		if rest == "receivePopup" then
 			local class = select(2, UnitClass("player"))
 			local name = GRA:GetClassColoredName(strjoin("-",UnitFullName("player")), class)
@@ -436,6 +440,8 @@ function SlashCmdList.GUILDRAIDATTENDANCE(msg, editbox)
 	elseif command == "font" then
 		rest = tonumber(rest)
 		GRA_FONT_TEXT:SetFont(GRA_FONT_TEXT:GetFont(), rest or 11)
+	elseif command == "test" then
+		texplore(GRA:GetPlayersInRaid())
 	--@end-debug@]===]
 	else
 		GRA:Print(gra.colors.firebrick.s .. "Unknown command.")

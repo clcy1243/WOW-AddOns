@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1160, "DBM-Party-WoD", 6, 537)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(76407)
 mod:SetEncounterID(1682)
 
@@ -58,7 +58,7 @@ function mod:SPELL_SUMMON(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 154671 then
 		specWarnRitualOfBones:Show()
 		timerRitualOfBonesCD:Start()

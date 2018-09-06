@@ -10,6 +10,7 @@ local floor = floor
 local GetNumGroupMembers = GetNumGroupMembers
 local ItemUpgradeInfo = LibStub ("LibItemUpgradeInfo-1.0")
 local LibGroupInSpecT = LibStub ("LibGroupInSpecT-1.1")
+--local LibGroupInSpecT = false
 
 local storageDebug = false
 local store_instances = _detalhes.InstancesToStoreData
@@ -20,6 +21,10 @@ function _detalhes:UpdateGears()
 	_detalhes:UpdateControl()
 	_detalhes:UpdateCombat()
 	
+end
+
+function _detalhes:GetCoreVersion()
+	return _detalhes.realversion
 end
 
 ------------------------------------------------------------------------------------------------------------
@@ -168,9 +173,9 @@ end
 					local y_up = window1.toolbar_side == 1 and -20 or 0
 					local y_down = (window1.show_statusbar and 14 or 0) + (window1.toolbar_side == 2 and 20 or 0)
 					
-					window1.baseframe:SetPoint ("topleft", ChatFrameBackground, "topleft", 0, y_up)
-					window1.baseframe:SetPoint ("bottomright", ChatFrameBackground, "bottomright", 0, y_down)
-					
+					window1.baseframe:SetPoint ("topleft", ChatFrameBackground, "topleft", 0, y_up + _detalhes.chat_tab_embed.y_offset)
+					window1.baseframe:SetPoint ("bottomright", ChatFrameBackground, "bottomright", _detalhes.chat_tab_embed.x_offset, y_down)
+
 					window1:LockInstance (true)
 					window1:SaveMainWindowPosition()
 					
@@ -216,11 +221,11 @@ end
 					local width = ChatFrameBackground:GetWidth() / 2
 					local height = ChatFrameBackground:GetHeight() - y_down + y_up
 					
-					window1.baseframe:SetSize (width, height)
-					window2.baseframe:SetSize (width, height)
+					window1.baseframe:SetSize (width + (_detalhes.chat_tab_embed.x_offset/2), height + _detalhes.chat_tab_embed.y_offset)
+					window2.baseframe:SetSize (width + (_detalhes.chat_tab_embed.x_offset/2), height + _detalhes.chat_tab_embed.y_offset)
 					
-					window1.baseframe:SetPoint ("topleft", ChatFrameBackground, "topleft", 0, y_up)
-					window2.baseframe:SetPoint ("topright", ChatFrameBackground, "topright", 0, y_up)
+					window1.baseframe:SetPoint ("topleft", ChatFrameBackground, "topleft", 0, y_up + _detalhes.chat_tab_embed.y_offset)
+					window2.baseframe:SetPoint ("topright", ChatFrameBackground, "topright", _detalhes.chat_tab_embed.x_offset, y_up + _detalhes.chat_tab_embed.y_offset)
 				
 					window1:SaveMainWindowPosition()
 					window2:SaveMainWindowPosition()
@@ -1005,6 +1010,11 @@ end
 --remote call RoS
 function _detalhes.storage:GetIDsToGuildSync()
 	local db = _detalhes.storage:OpenRaidStorage()
+	
+	if (db) then
+		return
+	end
+	
 	local IDs = {}
 	
 	--build the encounter ID list
@@ -1033,6 +1043,10 @@ end
 --local call RoC - received the encounter IDS - need to know which fights is missing
 function _detalhes.storage:CheckMissingIDsToGuildSync (IDsList)
 	local db = _detalhes.storage:OpenRaidStorage()
+	
+	if (db) then
+		return
+	end
 	
 	if (type (IDsList) ~= "table") then
 		if (_detalhes.debug) then
@@ -1067,6 +1081,10 @@ end
 --remote call RoS - build the encounter list from the IDsList
 function _detalhes.storage:BuildEncounterDataToGuildSync (IDsList)
 	local db = _detalhes.storage:OpenRaidStorage()
+	
+	if (db) then
+		return
+	end
 	
 	if (type (IDsList) ~= "table") then
 		if (_detalhes.debug) then
@@ -1128,6 +1146,10 @@ end
 function _detalhes.storage:AddGuildSyncData (data, source)
 	local db = _detalhes.storage:OpenRaidStorage()
 	
+	if (db) then
+		return
+	end
+	
 	local AddedAmount = 0
 	_detalhes.LastGuildSyncReceived = GetTime()
 	
@@ -1185,6 +1207,11 @@ end
 
 function _detalhes.storage:ListDiffs()
 	local db = _detalhes.storage:OpenRaidStorage()
+	
+	if (db) then
+		return
+	end
+	
 	local t = {}
 	for diff, _ in pairs (db) do
 		tinsert (t, diff)
@@ -1194,6 +1221,10 @@ end
 
 function _detalhes.storage:ListEncounters (diff)
 	local db = _detalhes.storage:OpenRaidStorage()
+	
+	if (db) then
+		return
+	end
 	
 	local t = {}
 	if (diff) then
@@ -1217,6 +1248,10 @@ end
 function _detalhes.storage:GetPlayerData (diff, encounter_id, playername)
 	local db = _detalhes.storage:OpenRaidStorage()
 
+	if (db) then
+		return
+	end
+	
 	local t = {}
 	assert (type (playername) == "string", "PlayerName must be a string.")
 
@@ -1572,9 +1607,13 @@ function _detalhes:StoreEncounter (combat)
 			end
 			
 			if (myBestDps > d_one) then
-				print (Loc ["STRING_DETAILS1"] .. format (Loc ["STRING_SCORE_NOTBEST"], _detalhes:ToK2 (d_one), _detalhes:ToK2 (myBestDps), onencounter.date, mybest[2]))
+				if (not _detalhes.deny_score_messages) then
+					print (Loc ["STRING_DETAILS1"] .. format (Loc ["STRING_SCORE_NOTBEST"], _detalhes:ToK2 (d_one), _detalhes:ToK2 (myBestDps), onencounter.date, mybest[2]))
+				end
 			else
-				print (Loc ["STRING_DETAILS1"] .. format (Loc ["STRING_SCORE_BEST"], _detalhes:ToK2 (d_one)))
+				if (not _detalhes.deny_score_messages) then
+					print (Loc ["STRING_DETAILS1"] .. format (Loc ["STRING_SCORE_BEST"], _detalhes:ToK2 (d_one)))
+				end
 			end
 		end
 		
@@ -1590,7 +1629,10 @@ function _detalhes:StoreEncounter (combat)
 				local func = {_detalhes.OpenRaidHistoryWindow, _detalhes, raid_name, encounter_id, diff, my_role, guildName} --, 2, UnitName ("player")
 				--local icon = {[[Interface\AddOns\Details\images\icons]], 16, 16, false, 434/512, 466/512, 243/512, 273/512}
 				local icon = {[[Interface\PvPRankBadges\PvPRank08]], 16, 16, false, 0, 1, 0, 1}
-				instance:InstanceAlert (Loc ["STRING_GUILDDAMAGERANK_WINDOWALERT"], icon, _detalhes.update_warning_timeout, func, true)
+				
+				if (not _detalhes.deny_score_messages) then
+					instance:InstanceAlert (Loc ["STRING_GUILDDAMAGERANK_WINDOWALERT"], icon, _detalhes.update_warning_timeout, func, true)
+				end
 			end
 		end
 	else
@@ -1637,46 +1679,57 @@ local MAX_INSPECT_AMOUNT = 1
 local MIN_ILEVEL_TO_STORE = 50
 local LOOP_TIME = 7
 
---if the item is an artifact off-hand, get the item level of the main hand
-local artifact_offhands = {
-	["133959"] = true, --mage fire
-	["128293"] = true, --dk frost
-	["127830"] = true, --dh havoc
-	["128831"] = true, --dh vengeance
-	["128859"] = true, --druid feral
-	["128822"] = true, --druid guardian
-	["133948"] = true, --monk ww
-	["133958"] = true, --priest shadow
-	["128869"] = true, --rogue assassination
-	["134552"] = true, --rogue outlaw
-	["128479"] = true, --rogue subtlety
-	["128936"] = true, --shaman elemental
-	["128873"] = true, --shaman en
-	["128934"] = true, --shaman resto
-}
+function _detalhes:IlvlFromNetwork (player, realm, core, serialNumber, itemLevel, talentsSelected, currentSpec)
+	if (_detalhes.debug) then
+		local talents = "Invalid Talents"
+		if (type (talentsSelected) == "table") then
+			talents = ""
+			for i = 1, #talentsSelected do
+				talents = talents .. talentsSelected [i] .. ","
+			end
+		end
+		_detalhes:Msg ("(debug) Received PlayerInfo Data: " .. (player or "Invalid Player Name") .. " | " .. (itemLevel or "Invalid Item Level") .. " | " .. (currentSpec or "Invalid Spec") .. " | " .. talents  .. " | " .. (serialNumber or "Invalid Serial"))
+	end
 
---if the artifact has its main piece as the offhand, when scaning the main hand get the ilevel of the off-hand.
-local offhand_ismain = {
-	["137246"] = true, --warlock demo / spine of thalkiel
-	["128288"] = true, --warrior prot / scaleshard
-	["128867"] = true, --paladin prot / oathseeker
-}
+	if (not player) then
+		return
+	end
+	
+	--> older versions of details wont send serial nor talents nor spec
+	if (not serialNumber or not itemLevel or not talentsSelected or not currentSpec) then
+		--if any data is invalid, abort
+		return
+	end
 
-function _detalhes:IlvlFromNetwork (player, realm, core, ilvl)
-	local guid = UnitGUID (player .. "-" .. realm)
-	if (not guid) then
-		guid = UnitGUID (player)
-		if (not guid) then
-			return
+	--> won't inspect this actor
+	_detalhes.trusted_characters [serialNumber] = true
+	
+	if (type (serialNumber) ~= "string") then
+		return
+	end
+
+	--store the item level
+	if (type (itemLevel) == "number") then
+		_detalhes.item_level_pool [serialNumber] = {name = player, ilvl = itemLevel, time = time()}
+	end
+	
+	--store talents
+	if (type (talentsSelected) == "table") then
+		if (talentsSelected [1]) then
+			_detalhes.cached_talents [serialNumber] = talentsSelected
 		end
 	end
 	
-	_detalhes.item_level_pool [guid] = {name = player, ilvl = ilvl, time = time()}
+	--store the spec the player is playing
+	if (type (currentSpec) == "number") then
+		_detalhes.cached_specs [serialNumber] = currentSpec
+	end
 end
 
 --> test
 --/run _detalhes.ilevel:CalcItemLevel ("player", UnitGUID("player"), true)
 --/run wipe (_detalhes.item_level_pool)
+
 function ilvl_core:CalcItemLevel (unitid, guid, shout)
 	
 	if (type (unitid) == "table") then
@@ -1693,64 +1746,17 @@ function ilvl_core:CalcItemLevel (unitid, guid, shout)
 		local failed = 0
 		
 		for equip_id = 1, 17 do
-
 			if (equip_id ~= 4) then --shirt slot
 				local item = GetInventoryItemLink (unitid, equip_id)
 				if (item) then
 					local _, _, itemRarity, iLevel, _, _, _, _, equipSlot = GetItemInfo (item)
 					if (iLevel) then
-						
-						--local _, _, _, _, _, _, _, _, _, _, _, upgradeTypeID, _, numBonusIDs, bonusID1, bonusID2 = strsplit (":", item)
-						--> upgrades handle by LibItemUpgradeInfo-1.0
-						--> http://www.wowace.com/addons/libitemupgradeinfo-1-0/
-
-						if (equip_id == 16) then --main hand
-							local itemId = select (2, strsplit (":", item))
-							--print (itemId, offhand_ismain [itemId], UnitName (unitid))
-							--128867 nil Lithedora EmeraldDream
-							if (offhand_ismain [itemId]) then
-								local offHand = GetInventoryItemLink (unitid, 17)
-								if (offHand) then
-									local iName, _, itemRarity, offHandILevel, _, _, _, _, equipSlot = GetItemInfo (offHand)
-									if (offHandILevel) then
-										item = offHand
-										iLevel = offHandILevel
-									end
-								end
-							end
-							
-						elseif (equip_id == 17) then --off-hand
-							local itemId = select (2, strsplit (":", item))
-							if (artifact_offhands [itemId]) then
-								local mainHand = GetInventoryItemLink (unitid, 16)
-								if (mainHand) then
-									local iName, _, itemRarity, mainHandILevel, _, _, _, _, equipSlot = GetItemInfo (mainHand)
-									if (iLevel) then
-										item = mainHand
-										iLevel = mainHandILevel
-									end
-								end
-							end
-						end
-						
 						if (ItemUpgradeInfo) then
 							local ilvl = ItemUpgradeInfo:GetUpgradedItemLevel (item)
 							item_level = item_level + (ilvl or iLevel)
 						else
 							item_level = item_level + iLevel
 						end
-
-						--> timewarped
-						--[[
-						if (upgradeTypeID == "512" and bonusID1 == "615") then
-							item_level = item_level + 660
-							if (bonusID2 == "656") then
-								item_level = item_level + 15
-							end
-						else
-							item_level = item_level + iLevel
-						end
-						--]]
 						
 						--> 16 = main hand 17 = off hand
 						-->  if using a two-hand, ignore the off hand slot
@@ -1774,7 +1780,7 @@ function ilvl_core:CalcItemLevel (unitid, guid, shout)
 		--> register
 		if (average > 0) then
 			if (shout) then
-				_detalhes:Msg (name .. " item level: " .. average)
+				_detalhes:Msg (UnitName(unitid) .. " item level: " .. average)
 			end
 			
 			if (average > MIN_ILEVEL_TO_STORE) then
@@ -1989,7 +1995,8 @@ function ilvl_core:Loop()
 		return
 	end
 
-	if (inspecting [guid]) then
+	--> if already inspecting or the actor is in the list of trusted actors
+	if (inspecting [guid] or _detalhes.trusted_characters [guid]) then
 		return
 	end
 
@@ -2033,7 +2040,7 @@ end
 
 function ilvl_core:OnEnter()
 	if (IsInRaid()) then
-		_detalhes:SentMyItemLevel()
+		_detalhes:SendCharacterData()
 	end
 	
 	if (can_start_loop()) then
@@ -2095,7 +2102,7 @@ function _detalhes:GetTalents (guid)
 	return _detalhes.cached_talents [guid]
 end
 
-function _detalhes:GetSpec (guid)
+function _detalhes:GetSpecFromSerial (guid)
 	return _detalhes.cached_specs [guid]
 end
 

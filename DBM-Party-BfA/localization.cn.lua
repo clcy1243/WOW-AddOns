@@ -1,8 +1,11 @@
 -- Mini Dragon(projecteurs@gmail.com)
--- Last update: 2018/02/14
+-- 夏一可
+-- Blizzard Entertainment
+-- Last update: 2018/08/23
 
 if GetLocale() ~= "zhCN" then return end
 local L
+
 -----------------------
 -- <<<Atal'Dazar >>> --
 -----------------------
@@ -53,6 +56,10 @@ L= DBM:GetModLocalization(2093)
 -----------------------
 L= DBM:GetModLocalization(2094)
 
+L:SetMiscLocalization({
+	openingRP = "来来来，下注了！又来了一群受害——呃，参赛者！交给你们了，古尔戈索克和伍迪！" --official
+})
+
 -----------------------
 -- Harlan Sweete --
 -----------------------
@@ -75,13 +82,28 @@ L:SetGeneralLocalization({
 -----------------------
 L= DBM:GetModLocalization(2165)
 
+-----------------------
+-- Mummification Construct --
+-----------------------
+L= DBM:GetModLocalization(2171)
+
+-----------------------
+-- The Warring Warlords --
+-----------------------
+L= DBM:GetModLocalization(2170)
+
+-----------------------
+-- Dazar, The First King --
+-----------------------
+L= DBM:GetModLocalization(2172)
+
 ---------
 --Trash--
 ---------
 L = DBM:GetModLocalization("KingsRestTrash")
 
 L:SetGeneralLocalization({
-	name =	"国王之眠小怪"
+	name =	"诸王之眠小怪"
 })
 
 -----------------------
@@ -93,17 +115,21 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization(2153)
 
 -----------------------
--- Council --
+-- Tidesage Council --
 -----------------------
 L= DBM:GetModLocalization(2154)
 
 -----------------------
--- Priest --
+-- Lord Stormsong --
 -----------------------
 L= DBM:GetModLocalization(2155)
 
+L:SetMiscLocalization({
+	openingRP	= "看来你有客人来了，斯托颂勋爵。" --official
+})
+
 -----------------------
--- Faceless --
+-- Vol'zith the Whisperer --
 -----------------------
 L= DBM:GetModLocalization(2156)
 
@@ -120,9 +146,16 @@ L:SetGeneralLocalization({
 -- <<<Siege of Boralus >>> --
 -----------------------
 -----------------------
--- Chopper Redhook --
+-- Dread Captain Lockwood --
+-----------------------
+L= DBM:GetModLocalization(2173)
+
+-----------------------
+-- Chopper Redhook / Sergeant Bainbridge --
 -----------------------
 L= DBM:GetModLocalization(2132)
+
+L= DBM:GetModLocalization(2133)
 
 -----------------------
 -- Hadal Darkfathom --
@@ -172,11 +205,11 @@ L= DBM:GetModLocalization(2145)
 L = DBM:GetModLocalization("SethralissTrash")
 
 L:SetGeneralLocalization({
-	name =	"塞塔里斯神殿小怪"
+	name =	"塞塔里斯神庙小怪"
 })
 
 -----------------------
--- <<<The Undermine>>> --
+-- <<<MOTHERLOAD>>> --
 -----------------------
 -----------------------
 -- Coin-operated Crowd Pummeler --
@@ -204,7 +237,7 @@ L= DBM:GetModLocalization(2116)
 L = DBM:GetModLocalization("UndermineTrash")
 
 L:SetGeneralLocalization({
-	name =	"The Undermine Trash"
+	name =	"暴富矿区小怪"
 })
 
 -----------------------
@@ -226,7 +259,7 @@ L= DBM:GetModLocalization(2131)
 L= DBM:GetModLocalization(2130)
 
 -----------------------
--- Taloc the Corrupted --
+-- Unbound Monstrosity --
 -----------------------
 L= DBM:GetModLocalization(2158)
 
@@ -275,17 +308,17 @@ L:SetGeneralLocalization({
 -- <<<Waycrest Manor>>> --
 -----------------------
 -----------------------
--- Witch Council --
+-- Heartsbane Triad --
 -----------------------
 L= DBM:GetModLocalization(2125)
 
 -----------------------
--- Wicker Goliath --
+-- Soulbound Goliath --
 -----------------------
 L= DBM:GetModLocalization(2126)
 
 -----------------------
--- Gluttony --
+-- Raal the Gluttonous --
 -----------------------
 L= DBM:GetModLocalization(2127)
 
@@ -295,7 +328,7 @@ L= DBM:GetModLocalization(2127)
 L= DBM:GetModLocalization(2128)
 
 -----------------------
--- Drust King --
+-- Gorak Tul --
 -----------------------
 L= DBM:GetModLocalization(2129)
 

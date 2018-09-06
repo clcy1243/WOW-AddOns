@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Thalnos the Soulrender", 874, 688)
+local mod, CL = BigWigs:NewBoss("Thalnos the Soulrender", 1004, 688)
 if not mod then return end
 mod:RegisterEnableMob(59789)
 
@@ -21,7 +21,10 @@ end
 --
 
 function mod:GetOptions()
-	return {{-5865, "FLASH"}, 115297}
+	return {
+		{-5865, "FLASH"}, -- Spirit Gale
+		115297, -- Evict Soul
+	}
 end
 
 function mod:OnBossEnable()
@@ -46,13 +49,13 @@ end
 --
 
 function mod:SpiritGaleCast(args)
-	self:Message(-5865, "Attention", nil, CL["casting"]:format(args.spellName), args.spellId)
+	self:Message(-5865, "yellow", nil, CL["casting"]:format(args.spellName), args.spellId)
 	self:Bar(-5865, 2, CL["cast"]:format(args.spellName), args.spellId)
 end
 
 function mod:SpiritGaleYou(args)
 	if self:Me(args.destGUID) then
-		self:Message(-5865, "Personal", "Alarm", CL["underyou"]:format(args.spellName), args.spellId)
+		self:Message(-5865, "blue", "Alarm", CL["underyou"]:format(args.spellName), args.spellId)
 		self:Flash(-5865)
 	end
 end
@@ -64,7 +67,7 @@ function mod:SpiritGaleStopped(args)
 end
 
 function mod:EvictSoul(args)
-	self:TargetMessage(args.spellId, args.destName, "Urgent", "Info")
+	self:TargetMessage(args.spellId, args.destName, "orange", "Info")
 	self:TargetBar(args.spellId, 6, args.destName)
 	self:CDBar(args.spellId, 41)
 end

@@ -2,7 +2,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("The Four Horsemen", 535, 1609)
+local mod, CL = BigWigs:NewBoss("The Four Horsemen", 533, 1609)
 if not mod then return end
 mod:RegisterEnableMob(16063, 16064, 16065, 30549) -- Zeliek, Thane, Blaumeux, Baron
 mod.toggleOptions = {"mark", 28884, 28863, 28883, "stages"}
@@ -50,9 +50,9 @@ end
 function mod:OnEngage()
 	marks = 1
 	deaths = 0
-	self:Message("mark", "Attention", nil, L["startwarn"], false)
+	self:Message("mark", "yellow", nil, L["startwarn"], false)
 	self:Bar("mark", 17, L["markbar"]:format(marks), 28835)
-	self:DelayedMessage("mark", 12, "Urgent", L["markwarn2"]:format(marks))
+	self:DelayedMessage("mark", 12, "orange", L["markwarn2"]:format(marks))
 end
 
 --------------------------------------------------------------------------------
@@ -62,24 +62,24 @@ end
 function mod:Deaths()
 	deaths = deaths + 1
 	if deaths < 4 then
-		self:Message("stages", "Positive", nil, CL.mob_killed:format(deaths, 4), false)
+		self:Message("stages", "green", nil, CL.mob_killed:format(deaths, 4), false)
 	else
 		self:Win()
 	end
 end
 
 function mod:VoidZone(args)
-	self:Message(28863, "Important")
+	self:Message(28863, "red")
 	self:Bar(28863, 12)
 end
 
 function mod:Meteor(args)
-	self:Message(28884, "Important")
+	self:Message(28884, "red")
 	self:Bar(28884, 12)
 end
 
 function mod:Wrath(args)
-	self:Message(28883, "Important")
+	self:Message(28883, "red")
 	self:Bar(28883, 12)
 end
 
@@ -88,10 +88,10 @@ do
 	function mod:Mark(args)
 		local t = GetTime()
 		if t-5 > last then
-			self:Message("mark", "Important", nil, L["markwarn1"]:format(marks), 28835)
+			self:Message("mark", "red", nil, L["markwarn1"]:format(marks), 28835)
 			marks = marks + 1
 			self:Bar("mark", 12, L["markbar"]:format(marks), 28835)
-			self:DelayedMessage("mark", 7, "Urgent", L["markwarn2"]:format(marks))
+			self:DelayedMessage("mark", 7, "orange", L["markwarn2"]:format(marks))
 			last = t
 		end
 	end

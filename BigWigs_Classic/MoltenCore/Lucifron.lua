@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Lucifron", 696, 1519)
+local mod = BigWigs:NewBoss("Lucifron", 409, 1519)
 if not mod then return end
 mod:RegisterEnableMob(12118)
 mod.toggleOptions = {19702, 19703, {20604, "ICON"}}
@@ -43,17 +43,17 @@ end
 
 function mod:ImpendingDoom(args)
 	self:CDBar(args.spellId, 20)
-	self:Message(args.spellId, "Important")
+	self:Message(args.spellId, "red")
 end
 
 function mod:LucifronsCurse(args)
 	self:Bar(args.spellId, 20)
-	self:Message(args.spellId, "Attention")
+	self:Message(args.spellId, "yellow")
 end
 
 function mod:MindControl(args)
 	self:Bar(args.spellId, 15, L.mc_bar:format(args.destName))
-	self:TargetMessage(args.spellId, args.destName, "Attention")
+	self:TargetMessage(args.spellId, args.destName, "yellow")
 	self:PrimaryIcon(args.spellId, args.destName)
 end
 

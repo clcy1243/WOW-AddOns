@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("God-King Skovald", 1041, 1488)
+local mod, CL = BigWigs:NewBoss("God-King Skovald", 1477, 1488)
 if not mod then return end
 mod:RegisterEnableMob(95675)
 mod.engageId = 1808
@@ -16,6 +16,7 @@ local L = mod:GetLocale()
 if L then
 	L.warmup_text = "God-King Skovald Active"
 	L.warmup_trigger = "The vanquishers have already taken possession of it, Skovald, as was their right. Your protest comes too late."
+	L.warmup_trigger_2 = "If these false champions will not yield the aegis by choice... then they will surrender it in death!"
 end
 
 --------------------------------------------------------------------------------
@@ -50,23 +51,34 @@ function mod:OnEngage()
 	self:CDBar(193659, 8.5) -- Felblaze Rush
 end
 
+function mod:OnWin()
+	local odynMod = BigWigs:GetBossModule("Odyn", true)
+	if odynMod then
+		odynMod:Enable() -- Making sure to pickup the Odyn's yell to start the RP bar
+	end
+end
+
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function mod:Warmup(_, msg)
+function mod:Warmup(event, msg)
 	if msg == L.warmup_trigger then
+		self:UnregisterEvent(event)
 		self:Bar("warmup", 20, L.warmup_text, "achievement_dungeon_hallsofvalor")
+	elseif msg == L.warmup_trigger_2 then -- for engages after a wipe
+		self:UnregisterEvent(event)
+		self:Bar("warmup", 10, L.warmup_text, "achievement_dungeon_hallsofvalor")
 	end
 end
 
 function mod:SavageBlade(args)
-	self:Message(args.spellId, "Attention", self:Tank() and "Warning")
+	self:Message(args.spellId, "yellow", self:Tank() and "Warning")
 	self:CDBar(args.spellId, 18) -- pull:24.3, 24.3, 17.8, 20.9 / hc pull:48.6, 19.5 / m pull:47.3, 24.3, 37.6
 end
 
 function mod:Ragnarok(args)
-	self:Message(args.spellId, "Urgent", "Long")
+	self:Message(args.spellId, "orange", "Long")
 	self:CDBar(args.spellId, 63) -- pull:11.4, 63.5
 end
 
@@ -76,7 +88,7 @@ do
 			self:Say(193659)
 		end
 		self:PrimaryIcon(193659, player)
-		self:TargetMessage(193659, player, "Important", "Alarm")
+		self:TargetMessage(193659, player, "red", "Alarm")
 	end
 	function mod:FelblazeRush(args)
 		self:GetBossTarget(printTarget, 0.4, args.sourceGUID)
@@ -90,10 +102,12 @@ end
 do
 	local prev = 0
 	function mod:InfernalFlamesDamage(args)
-		local t = GetTime()
-		if self:Me(args.destGUID) and t-prev > 2 then
-			prev = t
-			self:Message(args.spellId, "Personal", "Alarm", CL.underyou:format(args.spellName))
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			if t-prev > 2 then
+				prev = t
+				self:Message(args.spellId, "blue", "Alarm", CL.underyou:format(args.spellName))
+			end
 		end
 	end
 end

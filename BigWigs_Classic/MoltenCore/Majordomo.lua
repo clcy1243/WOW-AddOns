@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Majordomo Executus", 696, 1527)
+local mod, CL = BigWigs:NewBoss("Majordomo Executus", 409, 1527)
 if not mod then return end
 mod:RegisterEnableMob(12018, 11663, 11664)
 mod.toggleOptions = {20619, 21075}
@@ -42,15 +42,15 @@ end
 
 function mod:MagicReflection(args)
 	self:Bar(args.spellId, 10)
-	self:Message(args.spellId, "Important", "Info")
+	self:Message(args.spellId, "red", "Info")
 	self:Bar(args.spellId, 30, L.power_next, "ability_warlock_improvedsoulleech")
-	self:DelayedMessage(args.spellId, 25, "Urgent", CL.custom_sec:format(L.power_next, 5))
+	self:DelayedMessage(args.spellId, 25, "orange", CL.custom_sec:format(L.power_next, 5))
 end
 
 function mod:DamageShield(args)
 	self:Bar(args.spellId, 10)
-	self:Message(args.spellId, "Important", "Info")
+	self:Message(args.spellId, "red", "Info")
 	self:Bar(args.spellId, 30, L.power_next, "ability_warlock_improvedsoulleech")
-	self:DelayedMessage(args.spellId, 25, "Urgent", CL.custom_sec:format(L.power_next, 5))
+	self:DelayedMessage(args.spellId, 25, "orange", CL.custom_sec:format(L.power_next, 5))
 end
 

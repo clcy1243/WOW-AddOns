@@ -1,12 +1,10 @@
-lightweight tag c5b868e4db13411c92b67287fdc202040b9037df r79-release
+lightweight tag 4579f817fbd0dae109a01e4fd595c19f5743189d r82-release
 Author:	KevinSK <shinozakisama@live.com>
-Date:	Wed Feb 7 08:06:22 2018 +0800
+Date:	Mon Sep 3 13:40:32 2018 +0800
 
-commit c5b868e4db13411c92b67287fdc202040b9037df
+commit 4579f817fbd0dae109a01e4fd595c19f5743189d
 Author: KevinSK <shinozakisama@live.com>
-Date:   Wed Feb 7 08:06:22 2018 +0800
+Date:   Mon Sep 3 13:40:32 2018 +0800
 
-    New AR calculation
-    
-    Added endTime and leaveTime for AR calculation.
+    fix bugs
 

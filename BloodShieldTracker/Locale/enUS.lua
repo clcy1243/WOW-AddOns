@@ -229,6 +229,7 @@ L["Sound"] = true
 L["Specializations"] = true
 L["StatusBarTexture"] = "Statusbar Texture"
 L["Target Swing Timer"] = true
+L["Target Swing Timer Bar"] = true
 L["TargetSwingTimer_Desc"] = "A swing timer that tracks the main hand swings of your target."
 L["Text Color"] = true
 L["Text Format"] = true

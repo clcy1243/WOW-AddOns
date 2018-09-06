@@ -1,7 +1,7 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: RSA [|c56F58CBAPaladin|r]
 ## Notes: RSA Paladin Module. This is needed to announce Paladin Spells.
-## Author: Raeli, Jenneth, Xadurk
+## Author: Raeli
 ## Dependencies: RSA
 ## LoadOnDemand: 1
 

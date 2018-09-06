@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1161, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 23 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(76877)
 mod:SetEncounterID(1691)
 mod:SetZone()
@@ -58,9 +58,8 @@ mod.vb.firstWarned = false
 local petrifyDebuff = DBM:GetSpellInfo(155323)
 local debuffFilter
 do
-	local UnitDebuff = UnitDebuff
 	debuffFilter = function(uId)
-		if UnitDebuff(uId, petrifyDebuff) then
+		if DBM:UnitDebuff(uId, petrifyDebuff) then
 			return true
 		end
 	end
@@ -113,7 +112,6 @@ local function clearRampage(self)
 end
 
 function mod:OnCombatStart(delay)
-	petrifyDebuff = DBM:GetSpellInfo(155323)
 	self.vb.smashCount = 0
 	self.vb.sliceCount = 0
 	self.vb.petrifyCount = 0
@@ -188,7 +186,7 @@ function mod:SPELL_CAST_START(args)
 				end
 			end
 		end
-		if not UnitDebuff("player", petrifyDebuff) then
+		if not DBM:UnitDebuff("player", petrifyDebuff) then
 			specWarnInfernoSlice:Play("gathershare")
 		end
 	elseif spellId == 155301 then
@@ -293,7 +291,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 173195 then--Cave In
 		warnCrumblingRoar:Show()
 	end

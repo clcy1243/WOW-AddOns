@@ -1,8 +1,8 @@
-﻿--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Module declaration
 --
 
-local mod = BigWigs:NewBoss("Broodlord Lashlayer", 755, 1531)
+local mod = BigWigs:NewBoss("Broodlord Lashlayer", 469, 1531)
 if not mod then return end
 mod:RegisterEnableMob(12017)
 mod.toggleOptions = {{40220, "ICON"}}
@@ -27,7 +27,7 @@ end
 --
 
 function mod:MortalStrike(args)
-	self:TargetMessage(40220, args.destName, "Attention")
+	self:TargetMessage(40220, args.destName, "yellow")
 	self:PrimaryIcon(40220, args.destName)
 	self:TargetBar(40220, 5, args.destName)
 end

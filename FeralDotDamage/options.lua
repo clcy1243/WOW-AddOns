@@ -478,15 +478,13 @@ function ns:DefaultOptions()
 					bg_inset = 0,
 				},
 				
-				specificSpell = {
-				
+				specificSpell = {				
 					[ns.predator_spid] = {
 						
 						predatorIconRed = false,
 						color = { 1, 0, 0, 1 },
 					},
-					[ns.dikiyrev_spid] = {
-						
+					[ns.dikiyrev_spid] = {					
 						CP_Pandemia = true,
 						CP_Pandemia_anim = true,
 						ShowGlow = false,
@@ -500,21 +498,19 @@ function ns:DefaultOptions()
 					spellList = {
 						[ns.berserk_spid] 		= { sort = 1, on = true },
 						[ns.tigrinoe_spid] 		= { sort = 2, on = true },					
-						[ns.skullbuch_spid] 		= { sort = 3, on = true },
+						[ns.skullbuch_spid] 	= { sort = 3, on = true },
 						[ns.dash_spid] 			= { sort = 4, on = true },
 						[ns.survival_spid] 		= { sort = 5, on = true },
 						[ns.predator_spid] 		= { sort = 6, on = true },
 						[ns.trollberserk_spid] 	= { sort = 7, on = true },
-						[ns.krovaviekogti_spid] 	= { sort = 8, on = true },
+						[ns.krovaviekogti_spid] = { sort = 8, on = true },
 						[ns.sremit_rivok_spid] 	= { sort = 9, on = true },
-						[ns.astralskachek_spid] 	= { sort = 10, on = true },
-						[ns.trevogniyrev_spid] 	= { sort = 11, on = true },
-						[ns.clearcast_id] 		= { sort = 12, on = true },
-						[ns.dikiyrev_spid] 		= { sort = 13, on = true },
-						[ns.eluneguid_spid] 		= { sort = 14, on = true },
-						[ns.ashamane_spid]		= { sort = 15, on = true },
-						[ns.ydarkogtiami_spid]   = { sort = 16, on = true },
-						[ns.maim_spid]   		= { sort = 17, on = true },
+						[ns.trevogniyrev_spid] 	= { sort = 10, on = true },
+						[ns.clearcast_id] 		= { sort = 11, on = true },
+						[ns.dikiyrev_spid] 		= { sort = 12, on = true },
+						[ns.feralFrenzy_spid]	= { sort = 13, on = true },
+						[ns.ydarkogtiami_spid]  = { sort = 14, on = true },
+						[ns.maim_spid]   		= { sort = 15, on = true },
 					}
 				},
 			},

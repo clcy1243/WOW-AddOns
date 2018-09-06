@@ -1,0 +1,8 @@
+2016-11-05  rowaasr13  <rowaasr13>
+
+[3be3a7c04269] [v1]
+* GarrisonMissionManager_LoadOnLogin.toc:
+
+intial release; there will probably be no changes to this except TOC updates
+
+

@@ -92,8 +92,8 @@ end
 
 if event == "ZONE_CHANGED_NEW_AREA" then
 
-SetMapToCurrentZone()
-if GetCurrentMapAreaID()==535 and nxramexna==1 then
+--SetMapToCurrentZone()
+if racheckzoneId({162,163,164,165,166,167,162,163,164,165,166,167},C_Map.GetBestMapForUnit("player")) and nxramexna==1 then
 racnxnotinnax=nil
 elseif nxramexna==1 and racnxnotinnax==nil then
 racnxnotinnax=GetTime()

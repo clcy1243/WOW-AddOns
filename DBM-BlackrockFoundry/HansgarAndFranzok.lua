@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1155, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 25 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 36 $"):sub(12, -3))
 mod:SetCreatureID(76974, 76973)
 mod:SetEncounterID(1693)
 mod:SetZone()
@@ -92,7 +92,7 @@ function mod:SPELL_CAST_START(args)
 		timerDisruptingRoarCD:Start()
 		DBM:GetBossUnitId(args.sourceName)
 		specWarnDisruptingRoar:Play("stopcast")
-		local _, _, _, _, startTime, endTime = UnitCastingInfo(DBM:GetBossUnitId(args.sourceName))
+		local _, _, _, startTime, endTime = UnitCastingInfo(DBM:GetBossUnitId(args.sourceName))
 		local time = ((endTime or 0) - (startTime or 0)) / 1000
 		if time then
 			timerDisruptingRoar:Start(time)
@@ -104,7 +104,7 @@ function mod:SPELL_CAST_START(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if (spellId == 156220 or spellId == 156883) and self.vb.bossUp == "NoBody" then--Tactical Retreat (156883 has lots of invalid casts, so self.vb.bossUp to filter)
 		self.vb.phase = self.vb.phase + 1
 		DBM:Debug("Tactical Retreat "..UnitName(uId)..". Phase:"..self.vb.phase)

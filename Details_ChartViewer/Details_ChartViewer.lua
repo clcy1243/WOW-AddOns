@@ -61,11 +61,6 @@ local function CreatePluginFrames (data)
 			
 			ChartViewer:RefreshScale()
 			
-			if (ChartViewer.welcome_panel) then
-				ChartViewer.welcome_panel:Show()
-				ChartViewer.welcome_panel = nil
-			end
-			
 		elseif (event == "PLUGIN_DISABLED") then
 			ChartViewer:HideButton()
 		
@@ -473,8 +468,6 @@ end
 		
 		ChartViewer.CanShowOrHideButtonEvents = {
 			["GROUP_ROSTER_UPDATE"] = true,
-			["PARTY_MEMBERS_CHANGED"] = true,
-			["PARTY_CONVERTED_TO_RAID"] = true,
 			["ZONE_CHANGED_NEW_AREA"] = true,
 			["PLAYER_ENTERING_WORLD"] = true,
 		}
@@ -666,7 +659,7 @@ end
 											data_name = name:gsub ((".*%~"), "")
 											boss_index = boss_index + 1
 										else
-											data_name = "#" .. boss_index
+											data_name = "segment #" .. boss_index
 											boss_index = boss_index + 1
 										end
 										
@@ -687,7 +680,7 @@ end
 										data_name = capture_name
 										boss_index = boss_index + 1
 									else
-										data_name = "#" .. boss_index
+										data_name = "segment #" .. boss_index
 										boss_index = boss_index + 1
 									end
 									
@@ -714,6 +707,8 @@ end
 					local combat_time = chart [3]
 					local line_name = chart [4]
 					local texture = chart [5]
+					
+					--todo: apply pre smoothness here
 					
 					g:AddLine (chart_data, chart_color, line_name, combat_time, texture) --, "SMA"
 				end
@@ -761,11 +756,53 @@ end
 			
 			--ChartViewerWindowFrame:Show()
 			DetailsPluginContainerWindow.OpenPlugin (ChartViewer)
+			
+			if (ChartViewer.welcome_panel) then
+				ChartViewer.welcome_panel:Show()
+				ChartViewer.welcome_panel = nil
+			end
 		end
 		
 	
 ----------> Create the icon
-		ChartViewer.ToolbarButton = _detalhes.ToolBar:NewPluginToolbarButton (ChartViewer.OpenWindow, [[Interface\Addons\Details_ChartViewer\icon]], Loc ["STRING_PLUGIN_NAME"], Loc ["STRING_TOOLTIP"], 14, 14, "CHARTVIEWER_BUTTON")
+
+	local cooltip_menu = function()
+		
+		local CoolTip = GameCooltip2
+		
+		CoolTip:Reset()
+		CoolTip:SetType ("menu")
+		
+		CoolTip:SetOption ("TextSize", Details.font_sizes.menus)
+		CoolTip:SetOption ("TextFont", Details.font_faces.menus)		
+
+		CoolTip:SetOption ("LineHeightSizeOffset", 3)
+		CoolTip:SetOption ("VerticalOffset", 2)
+		CoolTip:SetOption ("VerticalPadding", -4)
+		CoolTip:SetOption ("FrameHeightSizeOffset", -3)
+		
+		Details:SetTooltipMinWidth()
+		
+		--build the menu with the available tabs
+			for index, tab in ipairs (ChartViewer.tabs) do 
+				CoolTip:AddLine (tab.name .. " Graphic")
+				CoolTip:AddIcon ([[Interface\Addons\Details_ChartViewer\icon]], 1, 1, 16, 16, 0, 1, 0, 1, "orange")
+				
+				CoolTip:AddMenu (1, function() 
+					ChartViewer:OpenWindow()
+					local tab = ChartViewer:TabGetFrame (index)
+					tab:Click()
+					CoolTip:Hide()
+				end, "main")
+			end
+			
+		--apply the backdrop settings to the menu
+		Details:FormatCooltipBackdrop()
+		CoolTip:SetOwner (CHARTVIEWER_BUTTON, "bottom", "top", 0, 0)
+		CoolTip:ShowCooltip()
+	end	
+
+		ChartViewer.ToolbarButton = _detalhes.ToolBar:NewPluginToolbarButton (ChartViewer.OpenWindow, [[Interface\Addons\Details_ChartViewer\icon]], Loc ["STRING_PLUGIN_NAME"], Loc ["STRING_TOOLTIP"], 14, 14, "CHARTVIEWER_BUTTON", cooltip_menu)
 		ChartViewer.ToolbarButton.shadow = true
 		
 end
@@ -911,19 +948,29 @@ local create_add_tab_panel = function()
 	
 	local fw = ChartViewer:GetFramework()
 	
-	local panel = fw:CreatePanel (ChartViewerWindowFrame, 260, 180, {bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 16,
-	insets = {left = 0, right = 0, top = 0, bottom = 0}, edgeFile = [[Interface\DialogFrame\UI-DialogBox-Border]], edgeSize = 10})
+	local panel = fw:CreatePanel (ChartViewerWindowFrame, 360, 280)
 	ChartViewer.NewTabPanel = panel
-	
-	panel:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]], tileSize = 64, tile = true})
-	panel:SetBackdropColor (0.2, 0.2, 0.2, .6)
-	panel:SetBackdropBorderColor (0, 0, 0, 1)	
 	
 	panel:SetPoint ("center", ChartViewerWindowFrame, "center")
 	
 	panel:SetFrameStrata ("FULLSCREEN")
 	
-	local x_start = 15
+	Details:FormatBackground (panel)
+	
+	local titlebar = CreateFrame ("frame", nil, panel.widget)
+	titlebar:SetPoint ("topleft", panel.widget, "topleft", 2, -3)
+	titlebar:SetPoint ("topright", panel.widget, "topright", -2, -3)
+	titlebar:SetHeight (20)
+	titlebar:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]], tileSize = 64, tile = true})
+	titlebar:SetBackdropColor (.5, .5, .5, 1)
+	titlebar:SetBackdropBorderColor (0, 0, 0, 1)
+	--> title
+	local titleLabel = _detalhes.gump:NewLabel (titlebar, titlebar, nil, "titulo", "Add Chart", "GameFontHighlightLeft", 12, {227/255, 186/255, 4/255})
+	titleLabel:SetPoint ("center", titlebar , "center")
+	titleLabel:SetPoint ("top", titlebar , "top", 0, -5)
+	
+	
+	local x_start = 10
 	
 	--<
 	local tab_size = {
@@ -939,6 +986,7 @@ local create_add_tab_panel = function()
 		local name_textentry = fw:CreateTextEntry (panel, func, 150, 20) -- , member, name)
 		name_textentry:SetPoint ("left", name_label, "right", 2, 0)
 		ChartViewer.name_textentry = name_textentry
+		name_textentry:SetTemplate (ChartViewer:GetFramework():GetTemplate ("dropdown", "OPTIONS_DROPDOWN_TEMPLATE"))
 		
 	-- type
 		--label
@@ -961,6 +1009,7 @@ local create_add_tab_panel = function()
 		local type_dropdown = fw:CreateDropDown (panel, type_options_func, 1, 150, 20) -- , member, name
 		type_dropdown:SetPoint ("left", type_label, "right", 2, 0)
 		ChartViewer.type_dropdown = type_dropdown
+		type_dropdown:SetTemplate (ChartViewer:GetFramework():GetTemplate ("dropdown", "OPTIONS_DROPDOWN_TEMPLATE"))
 		
 	-- data
 		--label
@@ -1024,6 +1073,7 @@ local create_add_tab_panel = function()
 		local data_dropdown = fw:CreateDropDown (panel, data_options_func, 1, 150, 20)
 		data_dropdown:SetPoint ("left", data_label, "right", 2, 0)
 		ChartViewer.data_dropdown = data_dropdown
+		data_dropdown:SetTemplate (ChartViewer:GetFramework():GetTemplate ("dropdown", "OPTIONS_DROPDOWN_TEMPLATE"))
 		
 	-- line texture
 		--label
@@ -1042,6 +1092,7 @@ local create_add_tab_panel = function()
 		local texture_dropdown = fw:CreateDropDown (panel, texture_options_func, 1, 150, 20)
 		texture_dropdown:SetPoint ("left", texture_label, "right", 2, 0)
 		ChartViewer.texture_dropdown = texture_dropdown
+		texture_dropdown:SetTemplate (ChartViewer:GetFramework():GetTemplate ("dropdown", "OPTIONS_DROPDOWN_TEMPLATE"))
 		
 		local internal_options = {
 			["MULTICHARTS~Your Team Damage~Enemy Team Damage"] = {colors = {["Your Team Damage"] = {1, 1, 1}, ["Enemy Team Damage"] = {1, 0.6, 0.2}}, iType = "arena-DAMAGER", name = "Arena Damage"},
@@ -1077,6 +1128,8 @@ local create_add_tab_panel = function()
 			return t
 		end
 	
+	-- todo: smoothness process selection
+	
 	-- create button
 		local create_func = function()
 			local tab_name = name_textentry.text
@@ -1096,22 +1149,23 @@ local create_add_tab_panel = function()
 			panel:Hide()
 		end
 		local create_button = fw:CreateButton (panel, create_func, 86, 16, "Create")
-		create_button:InstallCustomTexture()
 		ChartViewer.create_button = create_button
+		create_button:SetTemplate (ChartViewer:GetFramework():GetTemplate ("button", "DETAILS_PLUGIN_BUTTON_TEMPLATE"))
 		
 		local cancel_button = fw:CreateButton (panel, function() name_textentry:ClearFocus(); panel:Hide(); ChartViewer.NewTabPanel.editing = nil end, 86, 16, "Cancel")
-		cancel_button:InstallCustomTexture()
-		
+		cancel_button:SetTemplate (ChartViewer:GetFramework():GetTemplate ("button", "DETAILS_PLUGIN_BUTTON_TEMPLATE"))
+
 		create_button:SetIcon ([[Interface\Buttons\UI-CheckBox-Check]], nil, nil, nil, {0.125, 0.875, 0.125, 0.875}, nil, 4, 2)
 		cancel_button:SetIcon ([[Interface\Buttons\UI-GroupLoot-Pass-Down]], nil, nil, nil, {0.125, 0.875, 0.125, 0.875}, nil, 4, 2)
 	
 	-- align
-		name_label:SetPoint ("topleft", panel, "topleft", x_start, -20)
-		type_label:SetPoint ("topleft", panel, "topleft", x_start, -45)
-		data_label:SetPoint ("topleft", panel, "topleft", x_start, -70)
-		texture_label:SetPoint ("topleft", panel, "topleft", x_start, -95)
+		local y = -26
+		name_label:SetPoint ("topleft", panel, "topleft", x_start, y*2)
+		type_label:SetPoint ("topleft", panel, "topleft", x_start, y*3)
+		data_label:SetPoint ("topleft", panel, "topleft", x_start, y*4)
+		texture_label:SetPoint ("topleft", panel, "topleft", x_start, y*5)
 		
-		create_button:SetPoint ("topleft", panel, "topleft", 10, -140)
+		create_button:SetPoint ("topleft", panel, "topleft", 10, y*7)
 		cancel_button:SetPoint ("left", create_button, "right", 20, 0)
 	
 	ChartViewer.OpenAddTabPanel = function()
@@ -1196,8 +1250,6 @@ function ChartViewer:OnEvent (_, event, ...)
 				
 				--> register wow events
 				CVF:RegisterEvent ("GROUP_ROSTER_UPDATE")
-				CVF:RegisterEvent ("PARTY_MEMBERS_CHANGED")
-				CVF:RegisterEvent ("PARTY_CONVERTED_TO_RAID")
 				CVF:RegisterEvent ("ZONE_CHANGED_NEW_AREA")
 				CVF:RegisterEvent ("PLAYER_ENTERING_WORLD")
 				

@@ -1,7 +1,7 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: RSA [|c50C41F3BDeath Knight|r]
 ## Notes: RSA Death Knight Module. This is needed to announce Death Knight Spells.
-## Author: Raeli, Jenneth, Xadurk
+## Author: Raeli
 ## Dependencies: RSA
 ## LoadOnDemand: 1
 

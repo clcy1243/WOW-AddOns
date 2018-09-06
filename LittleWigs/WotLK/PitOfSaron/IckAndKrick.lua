@@ -3,9 +3,13 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Ick & Krick", 602, 609)
+local mod, CL = BigWigs:NewBoss("Ick & Krick", 658, 609)
 if not mod then return end
 mod:RegisterEnableMob(36476, 36477)
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local barrage = nil
 local pursuitWarned = {}
@@ -16,7 +20,7 @@ local pursuitWarned = {}
 
 function mod:GetOptions()
 	return {
-		70274, -- Toxic Waste
+		{70274, "ICON", "FLASH"}, -- Toxic Waste
 		68989, -- Poison Nova
 		69263, -- Explosive Barrage
 		68987, -- Pursuit
@@ -26,7 +30,7 @@ end
 function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Barrage", 69263)
 	self:Log("SPELL_AURA_REMOVED", "BarrageEnd", 69263)
-	self:Log("SPELL_AURA_APPLIED", "ToxicWaste", 70274)
+	self:Log("SPELL_AURA_APPLIED", "ToxicWaste", 69024, 70274)
 	self:Log("SPELL_CAST_START", "PoisonNova", 68989)
 	self:Death("Win", 36476)
 
@@ -45,7 +49,7 @@ end
 function mod:Barrage(args)
 	if barrage then return end
 	barrage = true
-	self:Message(args.spellId, "Important")
+	self:Message(args.spellId, "red")
 	self:Bar(args.spellId, 18)
 end
 
@@ -56,24 +60,23 @@ end
 
 function mod:ToxicWaste(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(args.spellId, args.destName, "Personal", "Alarm")
-		self:Flash(args.spellId)
+		self:Message(70274, "blue", "Alarm", CL.underyou:format(args.spellName))
+		self:Flash(70274)
 	end
 end
 
 function mod:PoisonNova(args)
-	self:Message(args.spellId, "Urgent", nil, CL.casting:format(args.spellName))
+	self:Message(args.spellId, "orange", nil, CL.casting:format(args.spellName))
 	self:Bar(args.spellId, 5)
 end
 
 function mod:UNIT_AURA(event, unit)
-	local name = UnitDebuff(unit, self:SpellName(68987))
+	local name = self:UnitDebuff(unit, 68987) -- Pursuit
 	local n = self:UnitName(unit)
 	if pursuitWarned[n] and not name then
 		pursuitWarned[n] = nil
 	elseif name and not pursuitWarned[n] then
-		self:TargetMessage(68987, n, "Attention", "Alert")
+		self:TargetMessage(68987, n, "yellow", "Alert")
 		pursuitWarned[n] = true
 	end
 end
-

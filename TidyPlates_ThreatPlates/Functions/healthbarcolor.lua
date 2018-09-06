@@ -1,5 +1,5 @@
-local ADDON_NAME, NAMESPACE = ...
-local ThreatPlates = NAMESPACE.ThreatPlates
+local ADDON_NAME, Addon = ...
+local ThreatPlates = Addon.ThreatPlates
 
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
@@ -20,16 +20,12 @@ local FACTION_BAR_COLORS = FACTION_BAR_COLORS
 
 -- ThreatPlates APIs
 local TidyPlatesThreat = TidyPlatesThreat
-local SetStyle = TidyPlatesThreat.SetStyle
-local GetUniqueNameplateSetting = ThreatPlates.GetUniqueNameplateSetting
-local TOTEMS = ThreatPlates.TOTEMS
-local OnThreatTable = ThreatPlates.OnThreatTable
+local TOTEMS = Addon.TOTEMS
 local RGB_P = ThreatPlates.RGB_P
 local IsFriend
 local IsGuildmate
 local ShowQuestUnit
 local IsQuestUnit
-local GetThreatStyle
 
 local reference = {
   FRIENDLY = { NPC = "FriendlyNPC", PLAYER = "FriendlyPlayer", },
@@ -66,18 +62,6 @@ function CS:GetSmudgeColorRGB(colorA, colorB, perc)
     return r,g,b
 end
 
-
-local function UnitIsOffTanked(unit)
-  local targetOf = unit.unitid.."target"
-  local targetIsTank = UnitIsUnit(targetOf, "pet") or ("TANK" == UnitGroupRolesAssigned(targetOf))
-
-  if targetIsTank and unit.threatValue < 2 then
-    return true
-  end
-
-  return false
-end
-
 -- Threat System is OP, player is in combat, style is tank or dps
 local function GetThreatColor(unit, style)
   local db = TidyPlatesThreat.db.profile
@@ -87,16 +71,16 @@ local function GetThreatColor(unit, style)
     local show_offtank = db.threat.toggle.OffTank
 
     if db.threat.nonCombat then
-      if OnThreatTable(unit) then
+      if Addon:OnThreatTable(unit) then
         local threatSituation = unit.threatSituation
-        if style == "tank" and show_offtank and UnitIsOffTanked(unit) then
+        if style == "tank" and show_offtank and Addon:UnitIsOffTanked(unit) then
           threatSituation = "OFFTANK"
         end
         c = db.settings[style].threatcolor[threatSituation]
       end
     else
       local threatSituation = unit.threatSituation
-      if style == "tank" and show_offtank and UnitIsOffTanked(unit) then
+      if style == "tank" and show_offtank and Addon:UnitIsOffTanked(unit) then
         threatSituation = "OFFTANK"
       end
       c = db.settings[style].threatcolor[threatSituation]
@@ -189,16 +173,15 @@ end
 --  dps = ThreatHealthbarColor,
 --}
 
-local function SetHealthbarColor(unit)
-  if not unit.unitid then return end
+function Addon:SetHealthbarColor(unit)
+  local style = unit.style
 
-  local style = unit.TP_Style or SetStyle(unit)
-  local unique_setting = unit.TP_UniqueSetting or GetUniqueNameplateSetting(unit)
+  local unique_setting = unit.CustomPlateSettings
+
   if style == "NameOnly" or style == "NameOnly-Unique" or style == "empty" or style == "etotem" then return end
 
   ShowQuestUnit = ShowQuestUnit or ThreatPlates.ShowQuestUnit
   IsQuestUnit = IsQuestUnit or ThreatPlates.IsQuestUnit
-  GetThreatStyle = GetThreatStyle or ThreatPlates.GetThreatStyle
   IsFriend = IsFriend or ThreatPlates.IsFriend
   IsGuildmate = IsGuildmate or ThreatPlates.IsGuildmate
 
@@ -224,7 +207,7 @@ local function SetHealthbarColor(unit)
         c = db_color.TappedUnit
       elseif unique_setting.UseThreatColor then
         -- Threat System is should also be used for custom nameplate (in combat with thread system on)
-        c = GetThreatColor(unit, GetThreatStyle(unit))
+        c = GetThreatColor(unit, Addon:GetThreatStyle(unit))
       end
 
       if not c and unique_setting.useColor then
@@ -242,9 +225,8 @@ local function SetHealthbarColor(unit)
   elseif style == "totem" then
     -- currently, no raid marked color (or quest color) for totems, also no custom nameplates
     local tS = db.totemSettings[TOTEMS[unit.name]]
-    local allow_hp_color = tS[2]
-    if allow_hp_color then
-      c = tS.color
+    if tS.ShowHPColor then
+      c = tS.Color
     end
     -- otherwise color defaults to WoW defaults
   else
@@ -302,5 +284,3 @@ end
 ThreatPlates.GetColorByHealthDeficit = GetColorByHealthDeficit
 ThreatPlates.GetColorByClass = GetColorByClass
 ThreatPlates.GetColorByReaction = GetColorByReaction
-ThreatPlates.UnitIsOffTanked = UnitIsOffTanked
-TidyPlatesThreat.SetHealthbarColor = SetHealthbarColor

@@ -1,4 +1,4 @@
-local RSA = LibStub("AceAddon-3.0"):GetAddon("RSA")
+local RSA =  RSA or LibStub("AceAddon-3.0"):GetAddon("RSA")
 local L = LibStub("AceLocale-3.0"):GetLocale("RSA")
 
 local gsub = string.gsub
@@ -22,14 +22,17 @@ local function WipeCache()
 	wipe(cache_SpellLink)
 end
 
-local function MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlag, destGUID, destName, destFlags, destRaidFlags, spellID, spellName, spellSchool, ex1, ex2, ex3, ex4)
+local function MonitorAndAnnounce(self, timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlag, destGUID, destName, destFlags, destRaidFlags, spellID, spellName, spellSchool, ex1, ex2, ex3, ex4)
 	local extraSpellID, extraSpellName, extraSchool = ex1, ex2, ex3
 	local missType = ex1
 	local full_destName = destName
 
 	if RSA.db.profile.General.GlobalAnnouncements.RemoveServerNames == true then
-		if destName then
-			destName = gsub(destName, "-.*", "")
+		if destName and destGUID then
+			local realmName = select(7,GetPlayerInfoByGUID(destGUID))
+			if realmName then
+					destName = gsub(destName, "-"..realmName, "")
+			end
 		end
 	end
 
@@ -82,10 +85,10 @@ local function MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceG
 	end		
 
 	if spell_data.linkID ~= nil then
-		spellinfo = GetSpellInfo(spell_data.linkID)
+		local spellinfo = GetSpellInfo(spell_data.linkID)
 		cache_SpellInfo[spellID] = spellinfo 
 		
-		spelllink = GetSpellLink(spell_data.linkID)
+		local spelllink = GetSpellLink(spell_data.linkID)
 		cache_SpellLink[spellID] = spelllink 	
 	end
 	
@@ -133,13 +136,15 @@ local function MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceG
 	end
 
 	local spell_profile = config.player_profile.Spells[spell_data.profile]
-
-	local message = spell_profile.Messages[spell_data.section or 'Start']
+	local TotalMessages = #spell_profile.Messages[spell_data.section or 'Start']
+	if TotalMessages == 0 then return end
+	local RandomMessageNumber = math.random(TotalMessages)
+	local message = spell_profile.Messages[spell_data.section or 'Start'][RandomMessageNumber]
 	if spell_replacements.MISSTYPE then
 		if missType == "IMMUNE" then
 			replacements["[MISSTYPE]"] = L["Immune"]
 			if spell_profile.Messages[spell_data.immuneSection] then
-				message = spell_profile.Messages[spell_data.immuneSection]
+				message = spell_profile.Messages[spell_data.immuneSection][RandomMessageNumber]
 			end
 		elseif missType == "MISS" then
 			replacements["[MISSTYPE]"] = L["missed"]
@@ -166,6 +171,9 @@ local function MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceG
 	
 	if message ~= "" then
 		if spell_profile.Local == true then
+			if spell_data.groupRequired == true then
+				if not (GetNumSubgroupMembers() > 0 or GetNumGroupMembers() > 0) then return end				
+			end
 			RSA.Print_LibSink(gsub(message, ".%a+.", replacements))
 		end
 		if spell_profile.Yell == true then
@@ -182,11 +190,14 @@ local function MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceG
 		if spell_profile.Say == true then
 				RSA.Print_Say(gsub(message, ".%a+.", replacements))			
 		end
+		if spell_profile.Emote == true then
+			RSA.Print_Emote(gsub(message, ".%a+.", replacements))			
+	end
 		if spell_profile.SmartGroup == true then
 			RSA.Print_SmartGroup(gsub(message, ".%a+.", replacements))
 		end
 		if spell_profile.Party == true then
-			if spell_profile.SmartGroup == true and GetNumGroupMembers() > 0 and InstanceType ~= "arena" then return end
+			if spell_profile.SmartGroup == true and GetNumGroupMembers() > 0 then return end
 			RSA.Print_Party(gsub(message, ".%a+.", replacements))
 		end
 		if spell_profile.Raid == true then

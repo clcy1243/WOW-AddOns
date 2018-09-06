@@ -3,9 +3,13 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Armsmaster Harlan", 871, 654)
+local mod, CL = BigWigs:NewBoss("Armsmaster Harlan", 1001, 654)
 if not mod then return end
 mod:RegisterEnableMob(58632)
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local helpCount = 1
 
@@ -15,8 +19,6 @@ local helpCount = 1
 
 local L = mod:GetLocale()
 if L then
-	L.engage_yell = "Ah-hah! Another chance to test my might."
-
 	L.cleave = "{-5377} ({15284})" -- Dragon's Reach (Cleave)
 	L.cleave_desc = -5377
 	L.cleave_icon = 111217
@@ -33,7 +35,11 @@ end
 --
 
 function mod:GetOptions()
-	return {"cleave", {"blades", "FLASH"}, "help"}
+	return {
+		"cleave",
+		{"blades", "FLASH"},
+		"help",
+	}
 end
 
 function mod:OnBossEnable()
@@ -62,31 +68,31 @@ end
 --
 
 function mod:Cleave()
-	self:Message("cleave", "Attention", nil, 845)
+	self:Message("cleave", "yellow", nil, 845)
 	self:Bar("cleave", 7.1, 845) -- 7.2 - 7.3
 end
 
 function mod:BladesCastStart(args)
-	self:Message("blades", "Urgent", "Alert", CL["casting"]:format(args.spellName), args.spellId)
+	self:Message("blades", "orange", "Alert", CL["casting"]:format(args.spellName), args.spellId)
 	self:Bar("blades", 6, CL["cast"]:format(args.spellName), args.spellId)
 	self:Flash("blades")
 	self:StopBar(845)
 end
 
 function mod:BladesChannel(args)
-	self:Message("blades", "Urgent", nil, CL["duration"]:format(args.spellName, "22"), args.spellId)
+	self:Message("blades", "orange", nil, CL["duration"]:format(args.spellName, "22"), args.spellId)
 	self:Bar("blades", 22, args.spellId)
 end
 
 function mod:BladesEnd(args)
-	self:Message("blades", "Attention", nil, CL["over"]:format(args.spellName), args.spellId)
+	self:Message("blades", "yellow", nil, CL["over"]:format(args.spellName), args.spellId)
 	self:Bar("blades", 33, args.spellId)
 end
 
 do
 	local timers = {30, 25, 22, 20, 18, 16, 14}
 	function mod:Adds()
-		self:Message("help", "Urgent", "Info", L["help"], L.help_icon)
+		self:Message("help", "orange", "Info", L["help"], L.help_icon)
 		self:Bar("help", timers[helpCount] or 13, L["help"], L.help_icon)
 		helpCount = helpCount + 1
 	end

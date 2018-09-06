@@ -1,7 +1,13 @@
-changeset:   182:eb64a0a7aca5
-tag:         v4.65
-user:        elchefe
-date:        Mon Apr 03 22:37:34 2017 +0200
-summary:     packager did not work because of (very very old) bug in .pkgmeta...
+changeset:   197:dce28f894213
+tag:         v4.70
+user:        Elvenbane <elvenbane@clanyawa.com>
+date:        Mon Jul 30 11:45:16 2018 -0500
+summary:     version increment
+
+
+changeset:   196:6279895ba565
+user:        Elvenbane <elvenbane@clanyawa.com>
+date:        Mon Jul 30 11:44:48 2018 -0500
+summary:     Switch GCD back to the spell being cast
 
 

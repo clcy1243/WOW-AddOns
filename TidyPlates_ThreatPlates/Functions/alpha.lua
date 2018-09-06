@@ -1,5 +1,5 @@
-local ADDON_NAME, NAMESPACE = ...
-local ThreatPlates = NAMESPACE.ThreatPlates
+local ADDON_NAME, Addon = ...
+local ThreatPlates = Addon.ThreatPlates
 
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
@@ -12,10 +12,6 @@ local UnitExists = UnitExists
 
 -- ThreatPlates APIs
 local TidyPlatesThreat = TidyPlatesThreat
-local UnitIsOffTanked = ThreatPlates.UnitIsOffTanked
-local GetUniqueNameplateSetting = ThreatPlates.GetUniqueNameplateSetting
-local SetStyle = TidyPlatesThreat.SetStyle
-local GetThreatStyle = ThreatPlates.GetThreatStyle
 
 local function TransparencySituational(unit)
 	local db = TidyPlatesThreat.db.profile.nameplate
@@ -23,7 +19,7 @@ local function TransparencySituational(unit)
 	-- Do checks for situational transparency settings:
 	if unit.isMarked and db.toggle.MarkedA then
 		return db.alpha.Marked
-	elseif unit.isMouseover and db.toggle.MouseoverUnitAlpha then
+	elseif unit.isMouseover and not unit.isTarget and db.toggle.MouseoverUnitAlpha then
 		return db.alpha.MouseoverUnit
 	elseif unit.isCasting then
 		local unit_friendly = (unit.reaction == "FRIENDLY")
@@ -38,23 +34,25 @@ local function TransparencySituational(unit)
 end
 
 local function TransparencyGeneral(unit)
-	-- Do checks for situational transparency settings:
-	local tranparency = TransparencySituational(unit)
-	if tranparency then
-		return tranparency
+  -- Target always has priority
+  if not unit.isTarget then
+    -- Do checks for situational transparency settings:
+    local tranparency = TransparencySituational(unit)
+    if tranparency then
+      return tranparency
+    end
   end
 
 	-- Do checks for target settings:
 	local db = TidyPlatesThreat.db.profile.nameplate
-	local target_exists = UnitExists("target")
 
-	local target_alpha
-	if target_exists then
-		if unit.isTarget and db.toggle.TargetA then
-			target_alpha = db.alpha.Target
-		elseif not unit.isTarget and db.toggle.NonTargetA then
-				target_alpha = db.alpha.NonTarget
-		end
+  local target_alpha
+	if UnitExists("target") then
+    if unit.isTarget and db.toggle.TargetA then
+      target_alpha = db.alpha.Target
+    elseif not unit.isTarget and db.toggle.NonTargetA then
+      target_alpha = db.alpha.NonTarget
+    end
 	elseif db.toggle.NoTargetA then
 		target_alpha = db.alpha.NoTarget
 	end
@@ -87,7 +85,7 @@ local function TransparencyThreat(unit, style)
 	end
 
   local threatSituation = unit.threatSituation
-  if style == "tank" and db.toggle.OffTank and UnitIsOffTanked(unit) then
+  if style == "tank" and db.toggle.OffTank and Addon:UnitIsOffTanked(unit) then
     threatSituation = "OFFTANK"
 	end
 
@@ -99,7 +97,7 @@ local function TransparencyThreat(unit, style)
 end
 
 local function AlphaNormal(unit, non_combat_transparency)
-  local style = GetThreatStyle(unit)
+  local style = Addon:GetThreatStyle(unit)
   if style == "normal" then
     return non_combat_transparency or TransparencyGeneral(unit)
   else -- dps, tank
@@ -108,7 +106,7 @@ local function AlphaNormal(unit, non_combat_transparency)
 end
 
 local function AlphaUnique(unit)
-	local unique_setting = GetUniqueNameplateSetting(unit)
+	local unique_setting = unit.CustomPlateSettings
 
 	if unique_setting.overrideAlpha then
 		return AlphaNormal(unit)
@@ -120,7 +118,7 @@ local function AlphaUnique(unit)
 end
 
 local function AlphaUniqueNameOnly(unit)
-	local unique_setting = GetUniqueNameplateSetting(unit)
+	local unique_setting = unit.CustomPlateSettings
 
   if unique_setting.overrideAlpha then
     local db = TidyPlatesThreat.db.profile.HeadlineView
@@ -157,26 +155,11 @@ local ALPHA_FUNCTIONS = {
 	totem = TransparencyGeneral,
 	unique = AlphaUnique,
 	empty = TransparencyEmpty,
-	etotem = TransparencyEmpty,
+	etotem = TransparencyGeneral,
 	NameOnly = TransparencyNameOnly,
 	["NameOnly-Unique"] = AlphaUniqueNameOnly,
 }
 
-local function SetAlpha(unit)
-	if not unit.unitid then return end -- unitid is used in UnitIsOffTanked
-
-	-- sometimes SetAlpha is called without calling OnUpdate/OnContextUpdate first, so TP_Style may not be initialized
-	local style = unit.TP_Style or SetStyle(unit)
-
-  local alpha_func = ALPHA_FUNCTIONS[style]
-
-  local alpha = alpha_func(unit, style)
-  -- There is a bug in TidyPlates which hides the nameplate forever if alpha is set to 0 at some point
-  if alpha <= 0 then
-    return 0.01
-  end
-
-  return alpha
+function Addon:SetAlpha(unit)
+  return ALPHA_FUNCTIONS[unit.style](unit, unit.style)
 end
-
-TidyPlatesThreat.SetAlpha = SetAlpha

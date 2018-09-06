@@ -993,7 +993,7 @@
 		["timerColor"] = {1, 1, 1, 1},
 		["regionType"] = "aurabar",
 		["stacks"] = true,
-		["texture"] = "Blizzard",
+		["texture"] = "Skyline",
 		["textFont"] = "Friz Quadrata TT",
 		["zoom"] = 0,
 		["spark"] = false,
@@ -1504,6 +1504,10 @@
 					add.trigger.spellIds[1] = spellid
 					add.trigger.names[1] = spellname
 					add.trigger.unit = "target"
+					
+					--set as own only to avoid being active by other players
+					add.trigger.ownOnly = true
+					
 					_detalhes.table.overwrite (new_aura, add)
 
 				elseif (target == 3) then --Debuff on Focus
@@ -1727,7 +1731,13 @@
 		DetailsAuraPanel.Frame = DetailsAuraPanel
 		DetailsAuraPanel.__name = L["STRING_CREATEAURA"]
 		DetailsAuraPanel.real_name = "DETAILS_CREATEAURA"
-		DetailsAuraPanel.__icon = [[Interface\BUTTONS\UI-GroupLoot-DE-Up]]
+		
+		if (_G.WeakAuras) then 
+			DetailsAuraPanel.__icon = [[Interface\AddOns\WeakAuras\Media\Textures\icon]]
+		else
+			DetailsAuraPanel.__icon = [[Interface\BUTTONS\UI-GroupLoot-DE-Up]]
+		end
+		
 		DetailsPluginContainerWindow.EmbedPlugin (DetailsAuraPanel, DetailsAuraPanel, true)
 	
 		function DetailsAuraPanel.RefreshWindow()
@@ -1975,7 +1985,7 @@
 				{name = "Buff on You", value = 11}, --4
 				{name = "Buff on Target", value = 12},
 				{name = "Buff on Focus", value = 13},
-				{name = "Spell Cast Started", value = 21},
+				{name = "Spell Cast Started", value = 21}, --7
 				{name = "Spell Cast Successful", value = 22},
 				{name = "DBM Time Bar", value = 31},
 				{name = "BigWigs Time Bar", value = 32},
@@ -2265,10 +2275,66 @@
 				return t
 			end
 			
-			local weakauras_folder_label = fw:CreateLabel (f, "Weak Auras Group: ", nil, nil, "GameFontNormal")
+			local weakauras_folder_label = fw:CreateLabel (f, "WeakAuras Group: ", nil, nil, "GameFontNormal")
 			local weakauras_folder = fw:CreateDropDown (f, weakauras_folder_options, 1, 150, 20, "WeakaurasFolderDropdown", "$parentWeakaurasFolder")
 			weakauras_folder:SetTemplate (slider_template)
 			weakauras_folder:SetPoint ("left", weakauras_folder_label, "right", 2, 0)
+			
+			--make new group
+			local create_wa_group = function()
+			
+				local weakauras_newgroup_textentry = f.NewWeakaurasGroupTextEntry
+			
+				if (not WeakAurasSaved or not WeakAurasSaved.displays) then
+					print ("nop, weakauras not found")
+					return
+				end
+			
+				local groupName = weakauras_newgroup_textentry.text
+				
+				if (string.len (groupName) == 0) then
+					print ("nop, group name is too small")
+					return
+				end
+				
+				if (WeakAurasSaved.displays [groupName]) then
+					print ("nop, group already exists")
+					return
+				end
+				
+				--make a copy of the prototype
+				local newGroup = _detalhes.table.copy ({}, group_prototype)
+				
+				--set group settings
+				newGroup.id = groupName
+				newGroup.animate = false
+				newGroup.grow = "DOWN"
+				
+				--add the gorup
+				WeakAuras.Add (newGroup)
+				
+				--clear the text box
+				weakauras_newgroup_textentry.text = ""
+				weakauras_newgroup_textentry:ClearFocus()
+				
+				--select the new group in the dropdown
+				weakauras_folder:Refresh()
+				weakauras_folder:Select (groupName)
+			end			
+			
+			local weakauras_newgroup_label = fw:CreateLabel (f, "New WeakAuras Group: ", nil, nil, "GameFontNormal")
+			local weakauras_newgroup_textentry = fw:CreateTextEntry (f, create_wa_group, 150, 20, "NewWeakaurasGroupTextEntry", "$parentNewWeakaurasGroup")
+			weakauras_newgroup_textentry:SetTemplate (slider_template)
+			weakauras_newgroup_textentry:SetPoint ("left", weakauras_newgroup_label, "right", 2, 0)
+			f.weakauras_newgroup = weakauras_newgroup_textentry
+			weakauras_newgroup_textentry.tooltip = "Enter the name of the new group"
+			
+			local weakauras_newgroup_button = fw:CreateButton (f, create_wa_group, 106, 20, "Create Group")
+			weakauras_newgroup_button:SetTemplate (slider_template)
+			weakauras_newgroup_button:SetTemplate (_detalhes.gump:GetTemplate ("button", "DETAILS_PLUGIN_BUTTON_TEMPLATE"))
+			weakauras_newgroup_button:SetWidth (100)
+			weakauras_newgroup_button:SetPoint ("left", weakauras_newgroup_textentry, "right", 2, 0)
+			
 			
 			--create
 			local create_func = function()
@@ -2347,10 +2413,12 @@
 			iscooldown_label:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*11) + (47)) * -1)
 			icon_size_label:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*12) + (47)) * -1)
 			
-			aura_addon_label:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*20) + (60)) * -1)
-			weakauras_folder_label:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*21) + (60)) * -1)
+			aura_addon_label:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*17) + (60)) * -1)
+			weakauras_folder_label:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*18) + (60)) * -1)
+			weakauras_newgroup_label:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*19) + (60)) * -1)
 			
-			create_button:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*23) + (60)) * -1)
+			
+			create_button:SetPoint ("topleft", f, "topleft", x2_start, ((y_start*21) + (60)) * -1)
 			cancel_button:SetPoint ("left", create_button, "right", 20, 0)
 			
 			function f:UpdateLabels()
@@ -2406,6 +2474,7 @@
 					stack_label:SetText ("Trigger Remaining Time:")
 					f.StackSlider:SetValue (4)
 					f.StackSlider.tooltip = "Will trigger when the bar remaining time reach this value."
+					f.IconSizeSlider:SetValue (64)
 					f.SpellName:Disable()
 					f.UseSpellId:Disable()
 					
@@ -2922,7 +2991,7 @@
 				end
 			end
 			
-			if (not have_plugins_enabled) then
+			if (not have_plugins_enabled and false) then
 				local nopluginLabel = f:CreateFontString (nil, "overlay", "GameFontNormal")
 				local nopluginIcon = f:CreateTexture (nil, "overlay")
 				nopluginIcon:SetPoint ("bottomleft", f, "bottomleft", 10, 10)
@@ -3528,6 +3597,87 @@
 			
 			-----------------------------------------------
 			
+			local npc_ids_module = {
+				name = "Npc IDs",
+				desc = "Show a list of known npc IDs",
+				filters_widgets = function()
+					if (not DetailsForgeEncounterNpcIDsFilterPanel) then
+					
+						local w = CreateFrame ("frame", "DetailsForgeEncounterNpcIDsFilterPanel", f)
+						w:SetSize (600, 20)
+						w:SetPoint ("topleft", f, "topleft", 164, -40)
+						--npc name filter
+						local label = w:CreateFontString (nil, "overlay", "GameFontHighlightSmall")
+						label:SetText ("Npc Name" .. ": ")
+						label:SetPoint ("left", w, "left", 5, 0)
+						local entry = fw:CreateTextEntry (w, nil, 120, 20, "entry", "DetailsForgeEncounterNpcIDsFilter")
+						entry:SetHook ("OnTextChanged", function() f:refresh() end)
+						entry:SetPoint ("left", label, "right", 2, 0)
+						entry:SetTemplate (_detalhes.gump:GetTemplate ("button", "OPTIONS_BUTTON_TEMPLATE"))
+						--
+					end
+					return DetailsForgeEncounterNpcIDsFilterPanel
+				end,
+				search = function()
+					local t = {}
+					
+					local filter_name = DetailsForgeEncounterNpcIDsFilter:GetText()
+					local lower_FilterNpcName = lower (filter_name)
+					
+					local npcPool = _detalhes.npcid_pool
+					for npcID, npcName in pairs (npcPool) do
+						local can_add = true
+						
+						if (lower_FilterNpcName ~= "") then
+							if (not lower (npcName):find (lower_FilterNpcName)) then
+								can_add = false
+							end
+						end
+						
+						if (can_add) then
+							tinsert (t, {npcID, npcName})
+						end
+						
+						table.sort (t, DetailsFramework.SortOrder2R)
+					end
+					
+					return t
+				end,
+				
+				header = {
+					{name = L["STRING_FORGE_HEADER_INDEX"], width = 40, type = "text", func = no_func},
+					{name = "NpcID", width = 100, type = "entry", func = no_func},
+					{name = "Npc Name", width = 200, type = "entry", func = no_func},
+				},
+				
+				fill_panel = false,
+				fill_gettotal = function (self) return #self.module.data end,
+				fill_fillrows = function (index, self) 
+					local data = self.module.data [index]
+					if (data) then
+						local events = ""
+						if (EncounterSpellEvents and EncounterSpellEvents [data[1]]) then
+							for token, _ in pairs (EncounterSpellEvents [data[1]].token) do
+								token = token:gsub ("SPELL_", "")
+								events = events .. token .. ",  "
+							end
+							events = events:sub (1, #events - 3)
+						end
+
+						return {
+							index,
+							data[1],
+							data[2]
+						}
+					else
+						return nothing_to_show
+					end
+				end,
+				fill_name = "DetailsForgeNpcIDsFillPanel",
+			}	
+			
+			-----------------------------------------------
+			
 			local dbm_open_aura_creator = function (row)
 				local data = all_modules [3].data [row]
 				
@@ -3654,7 +3804,6 @@
 				end,
 				fill_name = "DetailsForgeDBMBarsFillPanel",
 			}
-
 			
 			-----------------------------------------------
 			
@@ -3845,9 +3994,14 @@
 			function f:refresh()
 				select_module (nil, nil, current_module)
 			end
+			
+			f.SelectModule = select_module
+			f.AllModules = all_modules
 
 			f:InstallModule (encounter_spells_module)
 			f:InstallModule (all_spells_module)
+			
+			f:InstallModule (npc_ids_module)
 			
 			f:InstallModule (dbm_timers_module)
 			f:InstallModule (bigwigs_timers_module)
@@ -3857,8 +4011,8 @@
 			f:InstallModule (all_pets_module)
 
 			local brackets = {
-				[3] = true, 
-				[5] = true
+				[4] = true, 
+				[6] = true
 			}
 			local lastButton
 			
@@ -3989,6 +4143,8 @@ local create_deathrecap_line = function (parent, n)
 	_detalhes.gump:SetFontColor (amount, "red")
 	_detalhes.gump:SetFontColor (timeAt, "gray")
 	_detalhes.gump:SetFontColor (sourceName, "yellow")
+	
+	_detalhes.gump:SetFontSize (sourceName, 10)
 
 	--text alpha
 	timeAt:SetAlpha (textAlpha)
@@ -4227,6 +4383,8 @@ function _detalhes.OpenDetailsDeathRecap (segment, RecapID)
 				DeathRecapFrame.Unavailable:Show()
 				return
 			end
+			
+			
 			--get the death events from the blizzard's recap
 			ArtificialDeathLog = _detalhes.BuildDeathTableFromRecap (RecapID)
 		end
@@ -4288,9 +4446,11 @@ function _detalhes.OpenDetailsDeathRecap (segment, RecapID)
 				end
 			end
 
-			
 			--tem menos que 10 eventos com grande dano dentro dos ultimos 5 segundos
 			--precisa preencher com danos pequenos
+			
+			--print ("1 BiggestDamageHits:", #BiggestDamageHits)
+			
 			if (#BiggestDamageHits < 10) then
 				for i = #events, 1, -1 do
 					local event = events [i]
@@ -4321,7 +4481,7 @@ function _detalhes.OpenDetailsDeathRecap (segment, RecapID)
 			table.sort (BiggestDamageHits, function (t1, t2) 
 				return t1[4] > t2[4]
 			end)
-			
+
 			local events = BiggestDamageHits
 			
 			local maxHP = t [5]
@@ -4339,18 +4499,61 @@ function _detalhes.OpenDetailsDeathRecap (segment, RecapID)
 				local source = event [6]
 				local overkill = event [10] or 0
 				
+				--print ("3 loop", i, type (evType), evType)
+				
 				if (type (evType) == "boolean" and evType) then
 					
 					local line = Details.DeathRecap.Lines [lineIndex]
-					
+					--print ("4 loop", i, line)
 					if (line) then
 						line.timeAt:SetText (format ("%.1f", eventTime - timeOfDeath) .. "s")
 						line.spellIcon:SetTexture (spellIcon)
 						line.TopFader:Hide()
 						--line.spellIcon:SetTexCoord (.1, .9, .1, .9)
-						
 						--line.sourceName:SetText ("|cFFC6B0D9" .. source .. "|r")
-						line.sourceName:SetText (spellName)
+						
+						--parse source and cut the length of the string after setting the spellname and source
+						local sourceClass = _detalhes:GetClass (source)
+						local sourceSpec = _detalhes:GetSpec (source)
+						
+						if (not sourceClass) then
+							local combat = Details:GetCurrentCombat()
+							if (combat) then
+								local sourceActor = combat:GetActor (1, source)
+								if (sourceActor) then
+									sourceClass = sourceActor.classe
+								end
+							end
+						end
+						
+						if (not sourceSpec) then
+							local combat = Details:GetCurrentCombat()
+							if (combat) then
+								local sourceActor = combat:GetActor (1, source)
+								if (sourceActor) then
+									sourceSpec = sourceActor.spec
+								end
+							end
+						end
+						
+						--> remove real name or owner name
+						source = _detalhes:GetOnlyName (source)
+						--> remove owner name
+						source = source:gsub ((" <.*"), "")
+						
+						--> if a player?
+						if (_detalhes.player_class [sourceClass]) then
+							source = _detalhes:AddClassOrSpecIcon (source, sourceClass, sourceSpec, 16, true)
+							
+						elseif (sourceClass == "PET") then
+							source = _detalhes:AddClassOrSpecIcon (source, sourceClass)
+						
+						end
+
+						--> remove the dot signal from the spell name
+						spellName = spellName:gsub (L["STRING_DOT"], "")
+						
+						line.sourceName:SetText (spellName .. " (" .. "|cFFC6B0D9" .. source .. "|r" .. ")")
 						
 						if (amount > 1000) then
 							--line.amount:SetText ("-" .. _detalhes:ToK (amount))
@@ -4397,4 +4600,173 @@ end)
 
 
 
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> plater integration
+
+local plater_integration_frame = CreateFrame ("frame", "DetailsPlaterFrame", UIParent)
+plater_integration_frame.DamageTaken = {}
+
+--> aprox. 6 updates per second
+local CONST_REALTIME_UPDATE_TIME = 0.166
+--> how many samples to store, 30 x .166 aprox 5 seconds buffer
+local CONST_BUFFER_SIZE = 30
+--> Dps division factor
+PLATER_DPS_SAMPLE_SIZE = CONST_BUFFER_SIZE * CONST_REALTIME_UPDATE_TIME
+
+--> separate CLEU events from the Tick event for performance
+plater_integration_frame.OnTickFrame = CreateFrame ("frame", "DetailsPlaterFrameOnTicker", UIParent)
+
+--> on tick function
+plater_integration_frame.OnTickFrameFunc = function (self, deltaTime)
+	if (self.NextUpdate < 0) then
+		for targetGUID, damageTable in pairs (plater_integration_frame.DamageTaken) do
+		
+			--> total damage
+			local totalDamage = damageTable.TotalDamageTaken
+			local totalDamageFromPlayer = damageTable.TotalDamageTakenFromPlayer
+			
+			--> damage on this update
+			local damageOnThisUpdate = totalDamage - damageTable.LastTotalDamageTaken
+			local damageOnThisUpdateFromPlayer = totalDamageFromPlayer - damageTable.LastTotalDamageTakenFromPlayer
+			
+			--> update the last damage taken
+			damageTable.LastTotalDamageTaken = totalDamage
+			damageTable.LastTotalDamageTakenFromPlayer = totalDamageFromPlayer
+			
+			--> sum the current damage 
+			damageTable.CurrentDamage = damageTable.CurrentDamage + damageOnThisUpdate
+			damageTable.CurrentDamageFromPlayer = damageTable.CurrentDamageFromPlayer + damageOnThisUpdateFromPlayer
+			
+			--> add to the buffer the damage added
+			tinsert (damageTable.RealTimeBuffer, 1, damageOnThisUpdate)
+			tinsert (damageTable.RealTimeBufferFromPlayer, 1, damageOnThisUpdateFromPlayer)
+			
+			--> remove the damage from the buffer
+			local damageRemoved = tremove (damageTable.RealTimeBuffer, CONST_BUFFER_SIZE + 1)
+			if (damageRemoved) then
+				damageTable.CurrentDamage = max (damageTable.CurrentDamage - damageRemoved, 0)
+			end
+			
+			local damageRemovedFromPlayer = tremove (damageTable.RealTimeBufferFromPlayer, CONST_BUFFER_SIZE + 1)
+			if (damageRemovedFromPlayer) then
+				damageTable.CurrentDamageFromPlayer = max (damageTable.CurrentDamageFromPlayer - damageRemovedFromPlayer, 0)
+			end
+		end
+		
+		--update time
+		self.NextUpdate = CONST_REALTIME_UPDATE_TIME
+	else
+		self.NextUpdate = self.NextUpdate - deltaTime
+	end
+end
+
+
+--> parse the damage taken by unit
+function plater_integration_frame.AddDamageToGUID (sourceGUID, targetGUID, time, amount)
+	local damageTable = plater_integration_frame.DamageTaken [targetGUID]
 	
+	if (not damageTable) then
+		plater_integration_frame.DamageTaken [targetGUID] = {
+			LastEvent = time,
+			
+			TotalDamageTaken = amount,
+			TotalDamageTakenFromPlayer = 0,
+			
+			--for real time
+				RealTimeBuffer = {},
+				RealTimeBufferFromPlayer = {},
+				LastTotalDamageTaken = 0,
+				LastTotalDamageTakenFromPlayer = 0,
+				CurrentDamage = 0,
+				CurrentDamageFromPlayer = 0,
+		}
+		
+		--> is the damage from the player it self?
+		if (sourceGUID == plater_integration_frame.PlayerGUID) then
+			plater_integration_frame.DamageTaken [targetGUID].TotalDamageTakenFromPlayer = amount
+		end
+	else
+		damageTable.LastEvent = time
+		damageTable.TotalDamageTaken = damageTable.TotalDamageTaken + amount
+		
+		if (sourceGUID == plater_integration_frame.PlayerGUID) then
+			damageTable.TotalDamageTakenFromPlayer = damageTable.TotalDamageTakenFromPlayer + amount
+		end
+	end
+end
+
+plater_integration_frame:SetScript ("OnEvent", function (self)
+	local time, token, hidding, sourceGUID, sourceName, sourceFlag, sourceFlag2, targetGUID, targetName, targetFlag, targetFlag2, spellID, spellName, spellType, amount, overKill, school, resisted, blocked, absorbed, isCritical = CombatLogGetCurrentEventInfo()
+	
+	--> tamage taken by the GUID unit
+	if (token == "SPELL_DAMAGE" or token == "SPELL_PERIODIC_DAMAGE" or token == "RANGE_DAMAGE" or token == "DAMAGE_SHIELD") then
+		plater_integration_frame.AddDamageToGUID (sourceGUID, targetGUID, time, amount)
+		
+	elseif (token == "SWING_DAMAGE") then
+		--the damage is passed in the spellID argument position
+		plater_integration_frame.AddDamageToGUID (sourceGUID, targetGUID, time, spellID)
+	end
+end)
+
+function Details:RefreshPlaterIntegration()
+
+	if (Plater and Details.plater.realtime_dps_enabled or Details.plater.realtime_dps_player_enabled or Details.plater.damage_taken_enabled) then
+		
+		--> wipe the cache
+		wipe (plater_integration_frame.DamageTaken)
+		
+		--> read cleu events
+		plater_integration_frame:RegisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
+		
+		--> start the real time dps updater
+		plater_integration_frame.OnTickFrame.NextUpdate = CONST_REALTIME_UPDATE_TIME
+		plater_integration_frame.OnTickFrame:SetScript ("OnUpdate", plater_integration_frame.OnTickFrameFunc)
+
+		--> cache the player serial
+		plater_integration_frame.PlayerGUID = UnitGUID ("player")
+		
+		--> cancel the timer if already have one
+		if (plater_integration_frame.CleanUpTimer and not plater_integration_frame.CleanUpTimer._cancelled) then
+			plater_integration_frame.CleanUpTimer:Cancel()
+		end
+		
+		--> cleanup the old tables
+		plater_integration_frame.CleanUpTimer = C_Timer.NewTicker (10, function()
+			local now = time()
+			for GUID, damageTable in pairs (plater_integration_frame.DamageTaken) do
+				if (damageTable.LastEvent + 9.9 < now) then
+					plater_integration_frame.DamageTaken [GUID] = nil
+				end
+			end
+		end)
+		
+	else
+		--> unregister the cleu
+		plater_integration_frame:UnregisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
+		
+		--> stop the real time updater
+		plater_integration_frame.OnTickFrame:SetScript ("OnUpdate", nil)
+		
+		--> stop the cleanup process
+		if (plater_integration_frame.CleanUpTimer and not plater_integration_frame.CleanUpTimer._cancelled) then
+			plater_integration_frame.CleanUpTimer:Cancel()
+		end
+	end
+	
+	
+	
+end
+
+
+
+
+
+
+
+
+
+
+
+

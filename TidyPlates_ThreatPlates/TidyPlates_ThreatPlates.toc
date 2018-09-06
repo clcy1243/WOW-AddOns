@@ -1,8 +1,8 @@
-﻿## Interface: 70300
-## Title: Tidy Plates: |cff89F559Threat Plates|r
-## Version: 8.6.3
-## Notes: Tidy Plates theme for threat reactive nameplates.
-## Notes-deDE: Tidy-Plates-Design für bedrohungsreaktive Namensplaketten.
+﻿## Interface: 80000
+## Title: Threat Plates
+## Version: 9.0.12
+## Notes: Threat-reactive nameplates.
+## Notes-deDE: Bedrohungsreaktive Namensplaketten.
 ## Author: Suicidal Katt, Blacksalsify
 ## SavedVariables: ThreatPlatesDB
 ## RequiredDeps:
@@ -10,16 +10,18 @@
 ## X-Website: https://wow.curseforge.com/projects/tidy-plates-threat-plates
 ## X-License: GNU General Public License
 
-# Integration of TidyPlates for standalone version
-TidyPlatesInternal\TidyPlates.xml
-
 Libs\Libs.xml
 Locales\Locales.xml
 
 Init.lua
-Constants.lua
-Database.lua
 Media.lua
+Constants.lua
+Elements\Elements.xml
+
+# Integration of TidyPlates for standalone version
+TidyPlatesInternal\TidyPlates.xml
+
+Database.lua
 Core.lua
 Commands.lua
 Options.lua

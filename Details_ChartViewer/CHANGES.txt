@@ -1,7 +1,7 @@
-changeset:   54:7ef9ce8c3a75
-tag:         v7.3.5.054
+changeset:   58:66674eee76b3
+tag:         v8.0.1.058
 user:        Tercio
-date:        Thu Jan 18 14:52:38 2018 -0200
-summary:     - Using the new default button templates from Details!
+date:        Fri Jul 20 18:32:21 2018 -0300
+summary:     - 8.0.1 Update.
 
 

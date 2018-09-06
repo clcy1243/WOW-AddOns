@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("HellfireCitadelTrash", "DBM-HellfireCitadel")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 --mod:SetModelID(47785)
 mod:SetZone()
 mod.isTrashMod = true
@@ -68,7 +68,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnSeverSoulOther:Show(args.destName)
 			specWarnSeverSoulOther:Play("tauntboss")
 		end
-	elseif spellId == 188476 and not args:IsPlayer() and not UnitDebuff("player", args.spellName) then
+	elseif spellId == 188476 and not args:IsPlayer() and not DBM:UnitDebuff("player", args.spellName) then
 		local uId = DBM:GetRaidUnitId(args.destName)
 		if self:IsTanking(uId) then
 			specWarnBadBreathOther:Show(args.destName)

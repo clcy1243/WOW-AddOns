@@ -2,7 +2,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Flamegor", 755, 1534)
+local mod, CL = BigWigs:NewBoss("Flamegor", 469, 1534)
 if not mod then return end
 mod:RegisterEnableMob(11981)
 mod.toggleOptions = {23339, 22539, 23342}
@@ -32,24 +32,24 @@ end
 --
 
 function mod:WingBuffet(args)
-	self:Message(args.spellId, "Important")
-	self:DelayedMessage(args.spellId, 27, "Urgent", CL.custom_sec:format(args.spellName, 5))
+	self:Message(args.spellId, "red")
+	self:DelayedMessage(args.spellId, 27, "orange", CL.custom_sec:format(args.spellName, 5))
 	self:Bar(args.spellId, 32)
 end
 
 function mod:ShadowFlame(args)
-	self:Message(args.spellId, "Important")
+	self:Message(args.spellId, "red")
 end
 
 function mod:Enrage(args)
-	self:Message(args.spellId, "Urgent")
+	self:Message(args.spellId, "orange")
 	self:Bar(args.spellId, 10)
 end
 
 function mod:EnrageRemoved(args)
 	if args.extraSpellId == 23342 then
-		self:StopBar(args.extraSpellId)
-		self:Message(args.extraSpellId, "Urgent", nil, CL.removed:format(args.extraSpellName))
+		self:StopBar(23342)
+		self:Message(23342, "orange", nil, CL.removed:format(args.extraSpellName))
 	end
 end
 

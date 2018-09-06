@@ -312,8 +312,4 @@ L["Yaris Darkclaw <Recruiter>"] = "Yaris Dunkelklaue <Rekrutierer>"
 L["Yushi <Seal of Broken Fate Shipment>"] = "Yushi <Lieferung: Siegel des verheerten Schicksals>"
 L["Zen'kiki"] = "Zen'kiki"
 
--- ToC
-L["Description"] = "Zeigt die Positionen von NSCs und anderen interessanten Orten in Klassenordenshallen."
-L["Title"] = "HandyNotes - Legion Klassenordenshallen"
-
 end

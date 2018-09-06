@@ -1,14 +1,14 @@
-tag 114c87b20848e37b23af573633121af15197b75e v1.9.8
+tag 8288d72182a1c46f7fd08d0d72145ed572c26346 v1.9.11
 Author:	Talyrius <contact@talyrius.net>
-Date:	Thu Aug 31 00:13:41 2017 -0700
+Date:	Fri Aug 17 08:41:01 2018 -0700
 
-Tagging as v1.9.8.
+Tagging as v1.9.11.
 
-commit 10a4840c051011d70e32c1fbbd3da77c0bcc583b
-Author: Talyrius <contact@talyrius.net>
-Date:   Thu Aug 31 00:11:38 2017 -0700
+commit 3a6e77981efa0a334a24a6abc6e17bf739737272
+Author: Steffen <smb@users.noreply.github.com>
+Date:   Fri Aug 17 17:33:16 2018 +0200
 
-    Pull request #219 omitted some PlaySound calls.
+    Fix for strmatch errors with empty call stack in BugGrabber handling (#293)
     
-    Fixes #222.
+    Fixes #289.
 

@@ -19,8 +19,10 @@ local races = {
    "Pandaren",
    "Lightforged Draenei",
    "Void Elf",
+   "Dark Iron Dwarf",
    "Highmountain Tauren",
    "Nightborne",
+   "Mag'har Orc",
 }
 
 local raceID = {
@@ -41,13 +43,15 @@ local raceID = {
    ["Highmountain Tauren"] = 28,
    ["Void Elf"] = 29,
    ["Lightforged Draenei"] = 30,
+   ["Dark Iron Dwarf"] = 34,
+   ["Mag'har Orc"] = 36,
 }
 
 -- UnitRace returns differently for the following races, so need to include exceptions
 raceID["Scourge"] = raceID["Undead"]
 -- most are just with the space removed
 for i, race in ipairs(races) do
-	raceID[race:gsub("%s", "")] = raceID[race]
+	raceID[race:gsub("[%A]", "")] = raceID[race]
 end
 
 local gender = {
@@ -290,7 +294,17 @@ function ModelFramePrototype:TryOn(item, slot, itemAppearanceModID)
 end
 
 function ModelFramePrototype:Undress()
-	self.model:Undress()
+	-- the worst of hacks to prevent certain armor model pieces from getting stuck on the character
+	for i, slotName in ipairs(mog.slots) do
+		local slot = GetInventorySlotInfo(slotName);
+		local item = GetInventoryItemLink("player", slot);
+		if item then
+			self:TryOn(item);
+			self:UndressSlot(slot);
+		end
+	end
+	self:UndressSlot(GetInventorySlotInfo("MainHandSlot"));
+	self:UndressSlot(GetInventorySlotInfo("SecondaryHandSlot"));
 end
 
 function ModelFramePrototype:UndressSlot(slot)

@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Ormorok the Tree-Shaper", 520, 620)
+local mod, CL = BigWigs:NewBoss("Ormorok the Tree-Shaper", 576, 620)
 if not mod then return end
 mod:RegisterEnableMob(26794)
 
@@ -31,7 +31,7 @@ end
 --
 
 function mod:SpellReflection(args)
-	self:Message(args.spellId, "Attention")
+	self:Message(args.spellId, "yellow")
 	self:Bar(args.spellId, 15)
 end
 
@@ -40,6 +40,6 @@ function mod:SpellReflectionRemoved(args)
 end
 
 function mod:Frenzy()
-	self:Message(48017, "Important")
+	self:Message(48017, "red")
 end
 

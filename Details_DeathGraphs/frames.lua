@@ -185,7 +185,7 @@ do
 				if (DeathGraphs.db.showing_type == 1) then
 					DeathGraphs:RefreshPlayerScroll()
 				elseif (DeathGraphs.db.showing_type == 2) then
-					DeathGraphs:ShowEndurance (boss)
+					DeathGraphs:ShowEndurance (boss, true)
 				end
 				
 				DeathGraphs:RefreshBossScroll()
@@ -873,11 +873,10 @@ do
 			self:SetBackdropColor (unpack (BUTTON_BACKGROUND_COLORHIGHLIGHT))
 			capsule.label2:SetTextColor (1, 1, 1)
 
-			GameCooltip:Reset()
-			GameCooltip:SetOption ("ButtonsYMod", 0)
-			GameCooltip:SetOption ("YSpacingMod", -5)
-			GameCooltip:SetOption ("IgnoreButtonAutoHeight", true)
-			GameCooltip:SetColor (1, 0.5, 0.5, 0.5, 0.5)
+			GameCooltip:Preset (2)
+			GameCooltip:SetOwner (self, "topleft", "topright")
+			
+			GameCooltip:SetOption ("FixedWidth", 300)
 
 			local total_encounters = capsule.encounters
 			local points_earned = capsule.points
@@ -900,9 +899,6 @@ do
 				end
 			end
 			
-			GameCooltip:SetBackdrop (1, _detalhes.tooltip_backdrop, cooltip_block_bg, _detalhes.tooltip_border_color)
-			
-			GameCooltip:SetOwner (self, "topleft", "topright")
 			GameCooltip:Show()
 		end
 		
@@ -1037,9 +1033,10 @@ do
 		local reverse_sort = function (t1, t2)
 			return t1[4] < t2[4]
 		end
-	
-		function DeathGraphs:ShowEndurance (boss)
-
+		
+		--> if from dropdown, ignore all auto boss selection
+		function DeathGraphs:ShowEndurance (boss, fromDropdown)
+		
 			player_scroll:Show()
 			player_scroll:Hide()
 			segments_scroll:Show()
@@ -1080,29 +1077,30 @@ do
 			end
 			
 			--> get the boss from the latest segment
-				local currentCombat = Details:GetCurrentCombat()
-				if (currentCombat) then
-					if (currentCombat.is_boss) then
-						--> get the map index
-						local mapID = currentCombat.is_boss.mapid
-						--> get the boss index within the raid
-						local bossIndex = Details:GetBossIndex (mapID, currentCombat.is_boss.id, nil, currentCombat.is_boss.name)
-						if (bossIndex) then
-							--> get the EJID
-							local EJID = Details.EncounterInformation [mapID] and _detalhes.EncounterInformation [mapID].encounter_ids [bossIndex]
-							if (EJID) then
-								--> if the EJID exists build the hash
-								local bossDificulty = currentCombat.is_boss.diff
-								local hash = tostring (EJID) .. tostring (bossDificulty)
-								if (hash) then
-									boss = hash
+				if (not fromDropdown) then
+					local currentCombat = Details:GetCurrentCombat()
+					if (currentCombat) then
+						if (currentCombat.is_boss) then
+							--> get the map index
+							local mapID = currentCombat.is_boss.mapid
+							--> get the boss index within the raid
+							local bossIndex = Details:GetBossIndex (mapID, currentCombat.is_boss.id, nil, currentCombat.is_boss.name)
+							if (bossIndex) then
+								--> get the EJID
+								local EJID = Details.EncounterInformation [mapID] and _detalhes.EncounterInformation [mapID].encounter_ids [bossIndex]
+								if (EJID) then
+									--> if the EJID exists build the hash
+									local bossDificulty = currentCombat.is_boss.diff
+									local hash = tostring (EJID) .. tostring (bossDificulty)
+									if (hash) then
+										boss = hash
+									end
 								end
 							end
 						end
 					end
 				end
 			--
-			
 			
 			if (not boss) then
 				return
@@ -1376,21 +1374,23 @@ do
 		local current_encounter_button = framework:NewButton (f, _, "$parentModeCurrentEncounterButton", "ModeCurrentEncounterButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_CURRENT, nil, nil, "Current Encounter", 1)
 		current_encounter_button:SetPoint ("bottomleft", f, "bottomleft", 10, mode_buttons_y_pos)
 		current_encounter_button:SetTemplate (framework:GetTemplate ("button", "ADL_MENUBUTTON_TEMPLATE"))
-		current_encounter_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Raid-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
+		
+		current_encounter_button:SetIcon ([[Interface\WORLDSTATEFRAME\SkullBones]], nil, nil, nil, {4/64, 28/64, 4/64, 28/64}, "orange", nil, 2)
 		--current_encounter_button:SetTextColor ("orange")
 		
 		--> timeline
 		local timeline_button = framework:NewButton (f, _, "$parentModeTimelineButton", "ModeTimelineButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_TIMELINE, nil, nil, "Timeline", 1, options_button_template)
 		timeline_button:SetPoint ("bottomleft", current_encounter_button, "bottomright", 5, 0)
 		timeline_button:SetTemplate (framework:GetTemplate ("button", "ADL_MENUBUTTON_TEMPLATE"))
-		timeline_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Talents-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
+		timeline_button:SetIcon ([[Interface\CHATFRAME\ChatFrameExpandArrow]], nil, nil, nil, {0, 1, 0, 1}, "orange", nil, 2)
 		--timeline_button:SetTextColor ("orange")
 		
 		--> endurance
 		local endurance_button = framework:NewButton (f, _, "$parentModeEnduranceButton", "ModeEnduranceButton", mode_buttons_width, mode_buttons_height, change_mode, BUTTON_INDEX_ENDURANCE, nil, nil, "Endurance", 1, options_button_template)
 		endurance_button:SetPoint ("bottomleft", timeline_button, "bottomright", 5, 0)
 		endurance_button:SetTemplate (framework:GetTemplate ("button", "ADL_MENUBUTTON_TEMPLATE"))
-		endurance_button:SetIcon ([[Interface\Buttons\UI-MicroButton-Mounts-Up]], nil, nil, nil, {0, 1, 0.4, 1}, nil, nil, 2)
+		endurance_button:SetIcon ([[Interface\RAIDFRAME\Raid-Icon-Rez]], nil, nil, nil, {0, 1, 0, 1}, "orange", nil, 2)
+		
 		--endurance_button:SetTextColor ("orange")
 		
 		--> overall ~overall

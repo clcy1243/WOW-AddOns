@@ -50,6 +50,10 @@ L= DBM:GetModLocalization(2093)
 -----------------------
 L= DBM:GetModLocalization(2094)
 
+L:SetMiscLocalization({
+	openingRP = "Gather 'round and place yer bets! We got a new set of vict-- uh... competitors! Take it away, Gurgthok and Wodin!"
+})
+
 -----------------------
 -- Harlan Sweete --
 -----------------------
@@ -72,6 +76,21 @@ L:SetGeneralLocalization({
 -----------------------
 L= DBM:GetModLocalization(2165)
 
+-----------------------
+-- Mummification Construct --
+-----------------------
+L= DBM:GetModLocalization(2171)
+
+-----------------------
+-- The Warring Warlords --
+-----------------------
+L= DBM:GetModLocalization(2170)
+
+-----------------------
+-- Dazar, The First King --
+-----------------------
+L= DBM:GetModLocalization(2172)
+
 ---------
 --Trash--
 ---------
@@ -90,17 +109,21 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization(2153)
 
 -----------------------
--- Council --
+-- Tidesage Council --
 -----------------------
 L= DBM:GetModLocalization(2154)
 
 -----------------------
--- Priest --
+-- Lord Stormsong --
 -----------------------
 L= DBM:GetModLocalization(2155)
 
+L:SetMiscLocalization({
+	openingRP	= "It would seem you have guests, Lord Stormsong."
+})
+
 -----------------------
--- Faceless --
+-- Vol'zith the Whisperer --
 -----------------------
 L= DBM:GetModLocalization(2156)
 
@@ -117,9 +140,16 @@ L:SetGeneralLocalization({
 -- <<<Siege of Boralus >>> --
 -----------------------
 -----------------------
--- Chopper Redhook --
+-- Dread Captain Lockwood --
+-----------------------
+L= DBM:GetModLocalization(2173)
+
+-----------------------
+-- Chopper Redhook / Sergeant Bainbridge --
 -----------------------
 L= DBM:GetModLocalization(2132)
+
+L= DBM:GetModLocalization(2133)
 
 -----------------------
 -- Hadal Darkfathom --
@@ -127,7 +157,7 @@ L= DBM:GetModLocalization(2132)
 L= DBM:GetModLocalization(2134)
 
 -----------------------
--- Lady Ashvane --
+-- Kraken --
 -----------------------
 L= DBM:GetModLocalization(2140)
 
@@ -173,7 +203,7 @@ L:SetGeneralLocalization({
 })
 
 -----------------------
--- <<<The Undermine>>> --
+-- <<<MOTHERLOAD>>> --
 -----------------------
 -----------------------
 -- Coin-operated Crowd Pummeler --
@@ -201,7 +231,7 @@ L= DBM:GetModLocalization(2116)
 L = DBM:GetModLocalization("UndermineTrash")
 
 L:SetGeneralLocalization({
-	name =	"The Undermine Trash"
+	name =	"The MOTHERLODE!! Trash"
 })
 
 -----------------------
@@ -223,7 +253,7 @@ L= DBM:GetModLocalization(2131)
 L= DBM:GetModLocalization(2130)
 
 -----------------------
--- Taloc the Corrupted --
+-- Unbound Monstrosity --
 -----------------------
 L= DBM:GetModLocalization(2158)
 

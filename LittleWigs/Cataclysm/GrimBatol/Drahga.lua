@@ -3,9 +3,11 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Drahga Shadowburner", 757, 133)
+local mod, CL = BigWigs:NewBoss("Drahga Shadowburner", 670, 133)
 if not mod then return end
 mod:RegisterEnableMob(40319)
+mod.engageId = 1048
+mod.respawnTime = 30
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -23,8 +25,6 @@ function mod:OnBossEnable()
 	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE", "InvocationOfFlame")
 	-- heroic
 	self:Log("SPELL_CAST_START", "DevouringFlames", 90950)
-
-	self:Death("Win", 40319)
 end
 
 function mod:VerifyEnable()
@@ -37,11 +37,11 @@ end
 
 function mod:InvocationOfFlame(_, msg)
 	if msg:find(self:SpellName(75218)) then
-		self:Message(75218, "Attention", "Alarm", CL.add_spawned)
+		self:Message(75218, "yellow", "Alarm", CL.add_spawned)
 	end
 end
 
 function mod:DevouringFlames(args)
-	self:Message(args.spellId, "Important", "Long")
+	self:Message(args.spellId, "red", "Long")
 end
 

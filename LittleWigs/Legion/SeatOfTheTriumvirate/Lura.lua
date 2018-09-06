@@ -8,7 +8,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("L'ura", 1178, 1982)
+local mod, CL = BigWigs:NewBoss("L'ura", 1753, 1982)
 if not mod then return end
 mod:RegisterEnableMob(124729) -- L'ura
 mod.engageId = 2068
@@ -62,38 +62,40 @@ end
 -- Event Handlers
 --
 
-function mod:Warmup(_, msg)
+function mod:Warmup(event, msg)
 	if msg == L.warmup_trigger then
+		self:UnregisterEvent(event)
 		self:Bar("warmup", 30.2, L.warmup_text, "spell_priest_divinestar_shadow")
-	elseif msg == L.warmup_trigger_2 and self:BarTimeLeft(L.warmup_text) == 0 then
+	elseif msg == L.warmup_trigger_2 then
+		self:UnregisterEvent(event)
 		self:Bar("warmup", 8.47, L.warmup_text, "spell_priest_divinestar_shadow")
 	end
 end
 
 function mod:CalltotheVoid(args)
-	self:Message(args.spellId, "Important", "Warning")
+	self:Message(args.spellId, "red", "Warning")
 	self:CDBar(245164, 11) -- Fragment of Despair
 end
 
 function mod:NaarusLament(args)
-	self:Message(args.spellId, "Neutral", "Info")
+	self:Message(args.spellId, "cyan", "Info")
 end
 
 function mod:UmbralCadence(args)
-	self:Message(args.spellId, "Attention", "Alert")
+	self:Message(args.spellId, "yellow", "Alert")
 	self:CDBar(args.spellId, 10.5)
 end
 
 function mod:FragmentofDespair(args)
-	self:Message(args.spellId, "Important", "Warning", CL.incoming:format(args.spellName))
+	self:Message(args.spellId, "red", "Warning", CL.incoming:format(args.spellName))
 end
 
 function mod:Backlash(args)
-	self:Message(args.spellId, "Positive", "Long")
+	self:Message(args.spellId, "green", "Long")
 	self:Bar(args.spellId, 12.5)
 end
 
 function mod:GrandShift(args)
-	self:Message(args.spellId, "Urgent", "Alarm")
+	self:Message(args.spellId, "orange", "Alarm")
 	self:Bar(args.spellId, 14.5)
 end

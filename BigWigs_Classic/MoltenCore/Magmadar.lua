@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Magmadar", 696, 1520)
+local mod, CL = BigWigs:NewBoss("Magmadar", 409, 1520)
 if not mod then return end
 mod:RegisterEnableMob(11982)
 mod.toggleOptions = {19408, 19451, 19428}
@@ -33,17 +33,17 @@ end
 
 function mod:Panic(args)
 	self:CDBar(args.spellId, 31) -- 31-38
-	self:Message(args.spellId, "Positive")
+	self:Message(args.spellId, "green")
 end
 
 function mod:Enrage(args)
 	self:Bar(args.spellId, 8, CL.cast:format(args.spellName))
-	self:Message(args.spellId, "Attention", "Info")
+	self:Message(args.spellId, "yellow", "Info")
 end
 
 function mod:Conflagration(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "Personal", "Alert", CL.underyou:format(args.spellName))
+		self:Message(args.spellId, "blue", "Alert", CL.underyou:format(args.spellName))
 	end
 end
 

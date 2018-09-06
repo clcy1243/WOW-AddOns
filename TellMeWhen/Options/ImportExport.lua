@@ -7,7 +7,7 @@
 --		Banjankri of Blackrock, Predeter of Proudmoore, Xenyr of Aszune
 
 -- Currently maintained by
--- Cybeloras of Aerie Peak/Detheroc/Mal'Ganis
+-- Cybeloras of Aerie Peak
 -- --------------------
 
 
@@ -442,7 +442,6 @@ end)
 
 
 
-profile.Export_DescriptionAppend = L["EXPORT_SPECIALDESC2"]:format("6.0.3+")
 function profile:Export_SetButtonAttributes(editbox, info)
 	local text = L["fPROFILE"]:format(TMW.db:GetCurrentProfile())
 	info.text = text
@@ -461,7 +460,6 @@ end
 ---------- Gloabl Groups ----------
 local globalgroups = SharableDataType:New("globalgroups", 20)
 
-globalgroups.Export_DescriptionAppend = L["EXPORT_SPECIALDESC2"]:format("7.0.0+")
 function globalgroups:Export_SetButtonAttributes(editbox, info)
 	local text = L["fGROUPS"]:format(L["EXPORT_ALLGLOBALGROUPS"])
 	info.text = text
@@ -1025,10 +1023,8 @@ String.displayDescription = L["IMPORT_FROMSTRING_DESC"]
 function String:HandleTopLevelMenu()
 	local t = strtrim(EDITBOX:GetText())
 
-	-- There is an escaped link. Unescape it.
-	if t:find("||H") then
-		t = t:gsub("||", "|")
-	end
+	-- Unescape escaped pipes. Any pipes pasted into an editbox in wow will be escaped.
+	t = t:gsub("||", "|")
 
 	local editboxResults = t ~= "" and TMW:DeserializeData(t)
 
@@ -1067,7 +1063,7 @@ function Comm:DeserializeReceivedData()
 		for k, who in pairs(TMW.Received) do
 			-- deserialize received data now because we dont do it as they are received; AceSerializer is only embedded in _Options
 			if type(k) == "string" and who then
-				local results = TMW:DeserializeData(k)
+				local results = TMW:DeserializeData(k, true)
 				if results then
 					for _, result in pairs(results) do
 						tinsert(DeserializedData, result)
@@ -1165,7 +1161,9 @@ String.Export_DescriptionPrepend = L["EXPORT_TOSTRING_DESC"]
 function String:Export(type, settings, defaults, ...)
 	local strings = TMW:GetSettingsStrings(nil, type, settings, defaults, ...)
 
-	local str = table.concat(strings, "\r\n\r\n"):gsub("|", "||")
+	local str = table.concat(strings, "\r\n\r\n")
+		-- Escape any pipes so they can be copied correctly out of the textbox.
+		:gsub("|", "||")
 
 	str = TMW:MakeSerializedDataPretty(str)
 	TMW.LastExportedString = str

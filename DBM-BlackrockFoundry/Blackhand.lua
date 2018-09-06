@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(959, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 23 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(77325)--68168
 mod:SetEncounterID(1704)
 mod:SetZone()
@@ -101,7 +101,7 @@ mod.vb.deprisCount = 0
 mod.vb.slagCastCount = 0
 local slagPlayerCount = 0--Doesn't seem to be any value in syncing this, this value is always 0 except for 0.2-2 seconds at most, recovery wouldn't give an accurate count.
 local smashTank = nil
-local UnitDebuff, UnitName, UnitClass, UnitPowerMax = UnitDebuff, UnitName, UnitClass, UnitPowerMax
+local UnitName, UnitClass, UnitPowerMax = UnitName, UnitClass, UnitPowerMax
 local markTargets = {}
 local slagTargets = {}
 local mortarsWarned = {}
@@ -121,7 +121,7 @@ end
 
 local function massiveOver(self)
 	smashTank = nil
-	if not UnitDebuff("player", slagDebuff1) and not UnitDebuff("player", slagDebuff2) then
+	if not DBM:UnitDebuff("player", slagDebuff1) and not DBM:UnitDebuff("player", slagDebuff2) then
 		DBM.RangeCheck:Hide()
 	end
 end
@@ -139,7 +139,7 @@ local function warnMarked(self)
 	end
 	table.wipe(markTargets)
 	--Begin Check Marked function
-	if not UnitDebuff("player", mfdDebuff) then
+	if not DBM:UnitDebuff("player", mfdDebuff) then
 		specWarnMarkedforDeathOther:Play("156096")
 	end
 	--Sort by raidid since combat log order may diff person to person
@@ -152,7 +152,7 @@ local function warnMarked(self)
 	local expectedTotal = self:IsMythic() and 3 or 2
 	if numGroupMembers < 3 then return end--Future proofing solo raid. can't assign 3 positions if less than 3 people
 	for i = 1, numGroupMembers do
-		if UnitDebuff("raid"..i, mfdDebuff) then
+		if DBM:UnitDebuff("raid"..i, mfdDebuff) then
 			mfdFound = mfdFound + 1
 			if UnitName("raid"..i) == playerName then
 				if mfdFound == 1 then
@@ -197,7 +197,7 @@ local function checkSlag(self)
 	local tempTable = {}
 	for i = 1, numGroupMembers do
 		local unitID = "raid"..i
-		if UnitDebuff(unitID, slagDebuff1) then--Tank excluded on purpose to match BW helper
+		if DBM:UnitDebuff(unitID, slagDebuff1) then--Tank excluded on purpose to match BW helper
 			slagFound = slagFound + 1
 			if self:IsMeleeDps(unitID) then
 				DBM:Debug("Slag found on melee"..totalMelee, 2)
@@ -259,7 +259,6 @@ function mod:NoteTestFunction(count)
 end
 
 function mod:OnCombatStart(delay)
-	mfdDebuff, slagDebuff1, slagDebuff2 = DBM:GetSpellInfo(156096), DBM:GetSpellInfo(157000), DBM:GetSpellInfo(159179)
 	table.wipe(markTargets)
 	table.wipe(slagTargets)
 	table.wipe(mortarsWarned)
@@ -334,7 +333,7 @@ function mod:SPELL_CAST_START(args)
 			if smashTank == UnitName("player") then
 				DBM.RangeCheck:Show(6)
 			--Don't open radar for massive smash if you are one of bomb targets
-			elseif not UnitDebuff("player", slagDebuff1) and not UnitDebuff("player", slagDebuff2) then
+			elseif not DBM:UnitDebuff("player", slagDebuff1) and not DBM:UnitDebuff("player", slagDebuff2) then
 				DBM.RangeCheck:Show(6, tankFilter)
 			end
 			self:Schedule(4, massiveOver, self)
@@ -427,7 +426,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self:IsMythic() and slagPlayerCount == 2 then--Counter 2, do checkSlag immediately, this of course means function has to run for everyone instead of just player, but that's harmless
 			checkSlag(self)
 		end
-		if args:IsPlayer() then
+		if args:IsPlayer() and self:AntiSpam(3, 6) then
 			specWarnAttachSlagBombs:Show()
 			if not self:IsMythic() then
 				yellAttachSlagBombs:Yell()
@@ -446,7 +445,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			self:Schedule(2, warnSlag, self)
 		end
-		if args:IsPlayer() then
+		if args:IsPlayer() and self:AntiSpam(3, 6) then
 			specWarnAttachSlagBombs:Show()
 			yellAttachSlagBombs:Yell()
 			if self.Options.RangeFrame then
@@ -519,7 +518,7 @@ function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if (spellId == 156031 or spellId == 156998) and self:AntiSpam(2, 2) then--156031 phase 1, 156991 phase 2. 156998 is also usuable for phase 2 but 156991
 		self.vb.slagCastCount = self.vb.slagCastCount + 1
 		specWarnThrowSlagBombs:Show(self.vb.slagCastCount)

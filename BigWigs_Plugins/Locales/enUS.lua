@@ -1,11 +1,15 @@
 local L = BigWigsAPI:NewLocale("BigWigs: Plugins", "enUS")
 
 L.general = "General"
+L.comma = ", "
 
 L.positionX = "X Position"
 L.positionY = "Y Position"
 L.positionExact = "Exact Positioning"
 L.positionDesc = "Type in the box or move the slider if you need exact positioning from the anchor."
+L.width = "Width"
+L.height = "Height"
+L.sizeDesc = "Normally you set the size by dragging the anchor. If you need an exact size you can use this slider or type the value into the box, which has no maximum."
 
 -----------------------------------------------------------------------
 -- AltPower.lua
@@ -15,6 +19,28 @@ L.altPowerTitle = "AltPower"
 L.toggleDisplayPrint = "The display will show next time. To disable it completely for this encounter, you need to toggle it off in the encounter options."
 L.disabled = "Disabled"
 L.disabledDisplayDesc = "Disable the display for all modules that use it."
+
+-----------------------------------------------------------------------
+-- AutoReply.lua
+--
+
+L.autoReply = "Auto Reply"
+L.autoReplyDesc = "Automatically reply to whispers when engaged in a boss encounter."
+L.responseType = "Response Type"
+L.autoReplyFinalReply = "Also whisper when leaving combat"
+L.guildAndFriends = "Guild & Friends"
+L.everyoneElse = "Everyone else"
+
+L.autoReplyBasic = "I'm busy in combat with a boss encounter."
+L.autoReplyNormal = "I'm busy in combat with '%s'."
+L.autoReplyAdvanced = "I'm busy in combat with '%s' (%s) and %d/%d people are alive."
+L.autoReplyExtreme = "I'm busy in combat with '%s' (%s) and %d/%d people are alive: %s"
+
+L.autoReplyLeftCombatBasic = "I am no longer in combat with a boss encounter."
+L.autoReplyLeftCombatNormalWin = "I won against '%s'."
+L.autoReplyLeftCombatNormalWipe = "I lost against '%s'."
+L.autoReplyLeftCombatAdvancedWin = "I won against '%s' with %d/%d people alive."
+L.autoReplyLeftCombatAdvancedWipe = "I lost against '%s' at: %s"
 
 -----------------------------------------------------------------------
 -- Bars.lua
@@ -43,14 +69,16 @@ L.disable = "Disable"
 L.disableDesc = "Permanently disables the boss encounter ability option that spawned this bar."
 
 L.emphasizeAt = "Emphasize at... (seconds)"
-L.scale = "Scale"
 L.growingUpwards = "Grow upwards"
 L.growingUpwardsDesc = "Toggle growing upwards or downwards from the anchor."
 L.texture = "Texture"
 L.emphasize = "Emphasize"
+L.emphasizeMultiplier = "Size Multiplier"
+L.emphasizeMultiplierDesc = "If you disable the bars moving to the emphasize anchor, this option will decide what size the emphasized bars will be by multiplying the size of the normal bars."
+
 L.enable = "Enable"
 L.move = "Move"
-L.moveDesc = "Moves emphasized bars to the Emphasize anchor. If this option is off, emphasized bars will simply change scale and color."
+L.moveDesc = "Moves emphasized bars to the Emphasize anchor. If this option is off, emphasized bars will simply change size and color."
 L.regularBars = "Regular bars"
 L.emphasizedBars = "Emphasized bars"
 L.align = "Align"
@@ -63,11 +91,17 @@ L.time = "Time"
 L.timeDesc = "Whether to show or hide the time left on the bars."
 L.icon = "Icon"
 L.iconDesc = "Shows or hides the bar icons."
+L.iconPosition = "Icon Position"
+L.iconPositionDesc = "Choose where on the bar the icon should be positioned."
 L.font = "Font"
 L.restart = "Restart"
 L.restartDesc = "Restarts emphasized bars so they start from the beginning and count from 10."
 L.fill = "Fill"
 L.fillDesc = "Fills the bars up instead of draining them."
+L.spacing = "Spacing"
+L.spacingDesc = "Change the space between each bar."
+L.visibleBarLimit = "Visible bar limit"
+L.visibleBarLimitDesc = "Set the maximum amount of bars that are visible at the same time."
 
 L.localTimer = "Local"
 L.timerFinished = "%s: Timer [%s] finished."
@@ -123,12 +157,18 @@ L.resetDesc = "Resets the above colors to their defaults."
 L.resetAll = "Reset all"
 L.resetAllDesc = "If you've customized colors for any boss encounter settings, this button will reset ALL of them so the colors defined here will be used instead."
 
-L.Important = "Important"
-L.Personal = "Personal"
-L.Urgent = "Urgent"
-L.Attention = "Attention"
-L.Positive = "Positive"
-L.Neutral = "Neutral"
+L.red = "Red"
+L.redDesc = "General encounter warnings."
+L.blue = "Blue"
+L.blueDesc = "Warnings for things that affect you directly such as a debuff being applied to you."
+L.orange = "Orange"
+L.yellow = "Yellow"
+L.green = "Green"
+L.greenDesc = "Warnings for good things that happen such as a debuff being removed from you."
+L.cyan = "Cyan"
+L.cyanDesc = "Warnings for encounter status changes such as advancing to the next stage."
+L.purple = "Purple"
+L.purpleDesc = "Warnings for tank specific abilities such as stacks of a tank debuff."
 
 -----------------------------------------------------------------------
 -- Emphasize.lua
@@ -165,7 +205,6 @@ L.messages = "Messages"
 L.normalMessages = "Normal messages"
 L.emphasizedMessages = "Emphasized messages"
 L.output = "Output"
-L.emphasizedCountdown = "Emphasized countdown"
 
 L.useColors = "Use colors"
 L.useColorsDesc = "Toggles white only messages ignoring coloring."
@@ -230,9 +269,12 @@ L.combatLog = "Automatic Combat Logging"
 L.combatLogDesc = "Automatically start logging combat when a pull timer is started and end it when the encounter ends."
 
 L.pull = "Pull"
-L.pulling = "Pulling!"
+L.engageSoundTitle = "Play a sound when a boss encounter has started"
+L.pullStartedSoundTitle = "Play a sound when the pull timer is started"
+L.pullFinishedSoundTitle = "Play a sound when the pull timer is finished"
 L.pullStarted = "Pull timer started by %s user %s."
 L.pullStopped = "Pull timer cancelled by %s."
+L.pullStoppedCombat = "Pull timer cancelled because you entered combat."
 L.pullIn = "Pull in %d sec"
 L.sendPull = "Sending a pull timer to BigWigs and DBM users."
 L.wrongPullFormat = "Must be between 1 and 60 seconds. A correct example is: /pull 5"
@@ -250,14 +292,6 @@ L.secondary = "Secondary"
 L.secondaryDesc = "The second raid target icon that a encounter script should use."
 
 -----------------------------------------------------------------------
--- Respawn.lua
---
-
-L.respawn = "Respawn"
-L.showRespawnBar = "Show respawn bar"
-L.showRespawnBarDesc = "Show a bar after you wipe on a boss displaying the time until the boss respawns."
-
------------------------------------------------------------------------
 -- Sound.lua
 --
 
@@ -268,11 +302,6 @@ L.Info = "Info"
 L.Alert = "Alert"
 L.Long = "Long"
 L.Warning = "Warning"
-
-L.Beware = "Beware (Algalon)"
-L.FlagTaken = "Flag Taken (PvP)"
-L.Destruction = "Destruction (Kil'jaeden)"
-L.RunAway = "Run Away Little Girl (Big Bad Wolf)"
 
 L.sound = "Sound"
 L.soundDesc = "Messages might come with a sound. Some people find it easier to listen for these after they've learned which sound goes with which message, as opposed to reading the actual messages."
@@ -316,3 +345,13 @@ L.victoryMessageBigWigsDesc = "The BigWigs message is a simple \"boss has been d
 L.victoryMessageBlizzard = "Show the Blizzard message"
 L.victoryMessageBlizzardDesc = "The Blizzard message is a very large \"boss has been defeated\" animation in the middle of your screen."
 L.defeated = "%s has been defeated"
+
+-----------------------------------------------------------------------
+-- Wipe.lua
+--
+
+L.wipe = "Wipe"
+L.wipeSoundTitle = "Play a sound when you wipe"
+L.respawn = "Respawn"
+L.showRespawnBar = "Show respawn bar"
+L.showRespawnBarDesc = "Show a bar after you wipe on a boss displaying the time until the boss respawns."

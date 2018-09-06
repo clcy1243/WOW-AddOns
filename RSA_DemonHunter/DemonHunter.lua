@@ -20,15 +20,15 @@ function RSA_DemonHunter:OnEnable()
 		SPELL_CAST_SUCCESS = {
 			[202138] = { -- SIGIL OF CHAINS
 				profile = 'SigilOfChains',
-				section = 'Success'
+				section = 'Cast'
 			},
 			[207684] = { -- SIGIL OF MISERY
 				profile = 'SigilOfMisery',
-				section = 'Success'
+				section = 'Cast'
 			},
 			[202137] = { -- SIGIL OF SILENCE
 				profile = 'SigilOfSilence',
-				section = 'Success'
+				section = 'Cast'
 			},
 			[187827] = { -- METAMORPHOSIS VENGEANCE TANK
 				profile = 'MetamorphosisTank',
@@ -46,9 +46,13 @@ function RSA_DemonHunter:OnEnable()
 				profile = 'Blur',
 				linkID = 198589
 			},
+			[196555] = { -- Netherwalk
+				profile = 'Netherwalk',
+			},
 			[209261] = { -- LAST RESORT
 				profile = 'LastResort',
 				tracker = 2,
+				section = "Cast",
 				linkID = 209258
 			},
 			[162264] = { -- METAMORPHOSIS HAVOC DPS
@@ -83,6 +87,7 @@ function RSA_DemonHunter:OnEnable()
 			},
 			[185245] = { -- TORMENT
 				profile = 'Torment',
+				section = "Cast",
 				replacements = { TARGET = 1 }
 			},
 			[179057] = { -- CHAOS NOVA
@@ -100,6 +105,10 @@ function RSA_DemonHunter:OnEnable()
 				profile = 'Blur',
 				section = 'End',
 				linkID = 198589
+			},
+			[196555] = { -- Netherwalk
+				profile = 'Netherwalk',
+				section = 'End',
 			},
 			--[[[187827] = { -- LAST RESORT
 				profile = 'LastResort',
@@ -152,20 +161,35 @@ function RSA_DemonHunter:OnEnable()
 		},
 		SPELL_INTERRUPT = {
 			[183752] = { -- CONSUME MAGIC
-				profile = 'ConsumeMagic',
+				profile = 'Disrupt',
+				section = "Interrupt",
 				replacements = { TARGET = 1, extraSpellName = "[TARSPELL]", extraSpellLink = "[TARLINK]" }
 			}
 		},
+		SPELL_DISPEL = {
+			[278326] = { -- Consume Magic
+				profile = 'Consume',
+				section = "Dispel",
+				replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
+			},
+		},
+		SPELL_DISPEL_FAILED = {
+			[278326] = { -- Consume Magic
+				profile = 'Consume',
+				section = 'Resist',
+				replacements = { TARGET = 1}
+			},
+		},
 		SPELL_MISSED = {
 			[183752] = {-- CONSUME MAGIC
-				profile = 'ConsumeMagic',
-				section = 'End',
+				profile = 'Disrupt',
+				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
 			},
 			[185245] = {-- TORMENT
 				profile = 'Torment',
-				section = 'End',
+				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
 			},
@@ -173,7 +197,8 @@ function RSA_DemonHunter:OnEnable()
 	}
 	RSA.MonitorConfig(MonitorConfig_DemonHunter, UnitGUID("player"))
 	local MonitorAndAnnounce = RSA.MonitorAndAnnounce
-	local function DemonHunter_Spells(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
+	local function DemonHunter_Spells()
+		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4 = CombatLogGetCurrentEventInfo()
 		if RSA.AffiliationMine(sourceFlags) then
 			if (event == "SPELL_CAST_SUCCESS" and RSA.db.profile.Modules.Reminders_Loaded == true) then -- Reminder Refreshed
 				local ReminderSpell = RSA.db.profile.DemonHunter.Reminders.SpellName
@@ -187,7 +212,7 @@ function RSA_DemonHunter:OnEnable()
 					end
 				end
 			end -- BUFF REMINDER
-			MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
+			MonitorAndAnnounce(self, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4)
 		end -- IF SOURCE IS PLAYER
 	end -- END ENTIRELY
 	RSA.CombatLogMonitor:SetScript("OnEvent", DemonHunter_Spells)

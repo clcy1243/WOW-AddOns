@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1210, "DBM-Party-WoD", 5, 556)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(83846)
 mod:SetEncounterID(1756)
 mod:SetZone()
@@ -50,7 +50,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 169120 then
 		warnFontofLife:Show()
 		timerFontOfLife:Start()

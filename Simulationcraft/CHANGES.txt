@@ -1,22 +1,10 @@
-lightweight tag df729f159abfad4943627229eed572147b63c188 v1.9.1
+lightweight tag 6733347fec1c4bb65eb2e3720cb82c715eda992f v1.10.6
 Author:	Dave Hendler <sollaires@gmail.com>
-Date:	Tue Jan 30 14:42:35 2018 -0800
+Date:	Sun Aug 26 17:47:31 2018 -0700
 
-commit df729f159abfad4943627229eed572147b63c188
+commit 6733347fec1c4bb65eb2e3720cb82c715eda992f
 Author: Dave Hendler <sollaires@gmail.com>
-Date:   Tue Jan 30 14:42:35 2018 -0800
+Date:   Sun Aug 26 17:47:31 2018 -0700
 
-    Update release version
-
-commit 0498a3f7f1923c5a23104e0129ec810f61935890
-Author: Dave Hendler <sollaires@gmail.com>
-Date:   Tue Jan 30 14:42:24 2018 -0800
-
-    Make spacing more consistent
-
-commit 332e6998f217bdd89d129255cfba88f38e126bce
-Author: Dave Hendler <sollaires@gmail.com>
-Date:   Tue Jan 30 14:40:58 2018 -0800
-
-    Fix dumb typo of variable name
+    1.10.6 - Support for Maghar Orcs and Dark Iron Dwarves
 

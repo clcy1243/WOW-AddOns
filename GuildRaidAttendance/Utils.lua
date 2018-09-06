@@ -15,7 +15,7 @@ function GRA:IsAdmin()
 			GRA:Debug("|cff87CEEBGRA:IsAdmin: |r" .. line)
 			-- multi-admin
 			gra.admins = {strsplit(",", string.sub(line, 6))}
-			if tContains(gra.admins, UnitName("player")) then
+			if GRA:TContains(gra.admins, UnitName("player")) then
 			-- if string.sub(line, 6) == UnitName("player") then
 				gra.isAdmin = true
 				GRA:FireEvent("GRA_PERMISSION", true)
@@ -61,6 +61,9 @@ function GRA:CheckPermissions()
 	end
 end
 
+------------------------------------------------
+-- General
+------------------------------------------------
 function GRA:RGBtoHEX(r, g, b)
 	return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
 end
@@ -95,6 +98,23 @@ function GRA:Calc(ex)
 	return status, result
 end
 
+------------------------------------------------
+-- Table
+------------------------------------------------
+function GRA:TContains(t, v)
+	for _, value in pairs(t) do
+		if value == v then return true end
+	end
+	return false
+end
+
+function GRA:TContainsKey(t, k)
+	if t[k] ~= nil then
+		return true
+	end
+	return false
+end
+
 function GRA:Getn(t)
 	local count = 0
 	for k, v in pairs(t) do
@@ -124,6 +144,17 @@ function GRA:Copy(t)
 	return newTbl
 end
 
+-- function GRA:Copy(from, to)
+-- 	for k, v in pairs(from) do
+--         if type(v) == "table" then  
+--             to[k] = {}
+--             GRA:Copy(v, to[k])
+--         else  
+--             to[k] = v
+--         end  
+-- 	end
+-- end
+
 function GRA:Remove(t, v)
 	for i = 1, #t do
 		if t[i] == v then
@@ -136,7 +167,7 @@ end
 function GRA:RemoveElementsByKeys(tbl, keys) -- keys is a table
 	local newTbl = {}
 	for k, v in pairs(tbl) do
-		if tContains(keys, k) ~= 1 then -- not contains
+		if not GRA:TContains(keys, k) then
 			newTbl[k] = tbl[k]
 		end
 	end
@@ -162,19 +193,24 @@ function GRA:Sort(t, k1, order1, k2, order2)
 	return t
 end
 
-function GRA:TableToString(tbl)
+function GRA:TableToString(tbl, sep, noEndDot)
 	-- if string then return it
 	if type(tbl) == "string" then return tbl end
 	if type(tbl) ~= "table" or #tbl == 0 then return "" end
 	
+	if not sep then sep = ", " end
+
 	s = tbl[1]
 	for i = 2, #tbl do
-		s = s .. ", " .. tbl[i]
+		s = s .. sep .. tbl[i]
 	end
-	s = s .. "."
+	if not noEndDot then s = s .. "." end
 	return s
 end
 
+------------------------------------------------
+-- GRA Data
+------------------------------------------------
 function GRA:GetPlayers()
 	local players = {}
 	for pName, pTable in pairs(_G[GRA_R_Roster]) do
@@ -233,6 +269,35 @@ function GRA:GetClassColoredName(fullName, class)
 	end
 end
 
+function GRA:GetPlayersInRaid()
+	if IsInRaid() then
+		local raidInfo = {}
+		for i = 1, 40 do
+			local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)
+			if name then
+				if not raidInfo[subgroup] then raidInfo[subgroup] = {} end
+				if not string.find(name, "-") then name = name .. "-" .. GetRealmName() end
+				table.insert(raidInfo[subgroup], name)
+			 end
+		end
+		return raidInfo
+	end
+end
+
+function GRA:GetDifficultyInfo(difficultyID)
+	if difficultyID == 14  or difficultyID == 3 or difficultyID == 4 then
+		return "N"
+	elseif difficultyID == 15 or difficultyID == 5 or difficultyID == 6 then
+		return "H"
+	elseif difficultyID == 16 then
+		return "M"
+	elseif difficultyID == 17 or difficultyID == 7 then
+		return "LFR"
+	else
+		return "?"
+	end
+end
+
 local classTable = {}
 FillLocalizedClassList(classTable)
 function GRA:GetLocalizedClassName(class)
@@ -284,11 +349,11 @@ function GRA:GetAttendeesAndAbsentees(d, filterMainAlt)
 		for i = #absentees, 1, -1 do
 			local n = absentees[i]
 			if _G[GRA_R_Roster][n] and _G[GRA_R_Roster][n]["altOf"] then -- is alt
-				if GRA:GetIndex(absentees, _G[GRA_R_Roster][n]["altOf"]) then
+				if GRA:TContains(absentees, _G[GRA_R_Roster][n]["altOf"]) then
 					-- main already exists in absentees, remove it
 					table.remove(absentees, i)
 				else
-					if tContains(attendees, _G[GRA_R_Roster][n]["altOf"]) then
+					if GRA:TContains(attendees, _G[GRA_R_Roster][n]["altOf"]) then
 						-- main exists in attendees, remove it from absentees
 						table.remove(absentees, i)
 					else
@@ -297,7 +362,7 @@ function GRA:GetAttendeesAndAbsentees(d, filterMainAlt)
 					end
 				end
 			else -- is main
-				if tContains(attendees, n) then
+				if GRA:TContains(attendees, n) then
 					-- main exists in attendees, remove it from absentees
 					table.remove(absentees, i)
 				end
@@ -308,6 +373,35 @@ function GRA:GetAttendeesAndAbsentees(d, filterMainAlt)
 	return attendees, absentees
 end
 
+------------------------------------------------
+-- Date & Time
+------------------------------------------------
+local monthNames = CALENDAR_FULLDATE_MONTH_NAMES
+function GRA:GetMonthNames(isShort, forceEnglish)
+	if forceEnglish then
+		monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}
+	end
+	if isShort and not(GetLocale() == "zhCN" or GetLocale() == "zhTW") then
+		for i,n in pairs(monthNames) do
+			monthNames[i] = string.sub(n, 1, 3)
+		end
+	end
+	return monthNames
+end
+
+local weekdayNames = CALENDAR_WEEKDAY_NAMES
+function GRA:GetWeekdayNames(isShort, forceEnglish)
+	if forceEnglish then
+		weekdayNames = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
+	end
+	if isShort and not(GetLocale() == "zhCN" or GetLocale() == "zhTW") then
+		for i,n in pairs(weekdayNames) do
+			weekdayNames[i] = string.sub(n, 1, 3)
+		end
+	end
+	return weekdayNames
+end
+
 -- d: date string/number, "20170321" or 20170321
 function GRA:DateToWeekday(d)
 	local year = string.sub(d, 1, 4)
@@ -316,12 +410,31 @@ function GRA:DateToWeekday(d)
 
 	local sec = time({["day"]=day, ["month"]=month, ["year"]=year})
 	local t = date("*t", sec)
-	local weekdayNames = {CalendarGetWeekdayNames()}
-	if GRA_FORCE_ENGLISH then weekdayNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"} end
+	local wdNames = GRA:GetWeekdayNames(true, GRA_FORCE_ENGLISH)
 	
-	return weekdayNames[t.wday], t.wday
+	return wdNames[t.wday], t.wday
 end
 
+-- http://lua-users.org/wiki/DayOfWeekAndDaysInMonthExample
+local days_in_month = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+
+local function isLeapYear(year)
+	return year % 400 == 0 or (year % 4 == 0 and year % 100 ~= 0)
+end
+
+-- return numdays, firstday
+function GRA:GetAbsMonthInfo(month, year)
+	local numdays, firstday
+	if month == 2 and isLeapYear(year) then
+		numdays = 29
+	else
+		numdays = days_in_month[month]
+	end
+	firstday = date("%w", time({["day"]=1, ["month"]=month, ["year"]=year})) + 1
+	return numdays, firstday
+end
+
+-- date header for GRA Attendance Sheet
 function GRA:FormatDateHeader(d)
 	-- weekdayNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
 	local year = string.sub(d, 1, 4)

@@ -8,7 +8,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Zuraal", 1178, 1979)
+local mod, CL = BigWigs:NewBoss("Zuraal", 1753, 1979)
 if not mod then return end
 mod:RegisterEnableMob(122313) -- Zuraal the Ascended
 mod.engageId = 2065
@@ -46,7 +46,7 @@ function mod:OnEngage()
 end
 
 function mod:OnWin()
-	local trashMod = BigWigs:GetBossModule("Seat of the Triumvirate Trash")
+	local trashMod = BigWigs:GetBossModule("Seat of the Triumvirate Trash", true)
 	if trashMod then
 		trashMod:Enable() -- Making sure to pickup the Alleria yell to start the RP bar
 	end
@@ -57,27 +57,27 @@ end
 --
 
 function mod:NullPalm(args)
-	self:Message(args.spellId, "Important", "Alarm")
+	self:Message(args.spellId, "red", "Alarm")
 	self:CDBar(args.spellId, 55)
 end
 
 function mod:Decimate(args)
-	self:Message(args.spellId, "Urgent", "Warning")
+	self:Message(args.spellId, "orange", "Warning")
 	self:CDBar(args.spellId, 12.5)
 end
 
 function mod:CoalescedVoid(args)
-	self:Message(244602, "Attention", "Alert")
+	self:Message(244602, "yellow", "Alert")
 	self:CDBar(244602, 55)
 end
 
 function mod:UmbraShift(args)
-	self:TargetMessage(args.spellId, args.destName, "Personal", "Warning")
+	self:TargetMessage(args.spellId, args.destName, "blue", "Warning")
 	self:CDBar(args.spellId, 55)
 end
 
 function mod:Fixate(args)
-	self:TargetMessage(args.spellId, args.destName, "Personal", "Warning")
+	self:TargetMessage(args.spellId, args.destName, "blue", "Warning")
 	if self:Me(args.destGUID) then
 		self:Say(args.spellId)
 	end
@@ -89,12 +89,12 @@ function mod:VoidTear(args)
 	self:StopBar(244602) -- Coalesced Void
 	self:StopBar(244433) -- Umbra Shift
 
-	self:Message(args.spellId, "Positive", "Long", args.spellName)
+	self:Message(args.spellId, "green", "Long", args.spellName)
 	self:Bar(args.spellId, 20)
 end
 
 function mod:VoidTearRemoved(args)
-	self:Message(args.spellId, "Neutral", "Info", CL.removed:format(args.spellName))
+	self:Message(args.spellId, "cyan", "Info", CL.removed:format(args.spellName))
 	self:CDBar(246134, 10.5) -- Null Palm _start
 	self:CDBar(244579, 18) -- Decimate _start
 	self:CDBar(244602, 20) -- Coalesced Void _success

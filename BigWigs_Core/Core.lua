@@ -7,6 +7,9 @@ local addon = LibStub("AceAddon-3.0"):NewAddon("BigWigs", "AceTimer-3.0")
 addon:SetEnabledState(false)
 addon:SetDefaultModuleState(false)
 
+local adb = LibStub("AceDB-3.0")
+local lds = LibStub("LibDualSpec-1.0")
+
 local C -- = BigWigs.C, set from Constants.lua
 local L = BigWigsAPI:GetLocale("BigWigs")
 local CL = BigWigsAPI:GetLocale("BigWigs: Common")
@@ -20,13 +23,13 @@ local bwUtilityFrame = CreateFrame("Frame")
 local bossCore, pluginCore
 
 -- Try to grab unhooked copies of critical loading funcs (hooked by some crappy addons)
-local GetPlayerMapAreaID = loader.GetPlayerMapAreaID
+local GetBestMapForUnit = loader.GetBestMapForUnit
 local SendAddonMessage = loader.SendAddonMessage
-local GetAreaMapInfo = loader.GetAreaMapInfo
 local GetInstanceInfo = loader.GetInstanceInfo
 
 -- Upvalues
 local next, type = next, type
+local UnitGUID = UnitGUID
 
 -------------------------------------------------------------------------------
 -- Event handling
@@ -87,7 +90,9 @@ function addon:ENCOUNTER_START(_, id)
 		if module.engageId == id then
 			if not module.enabledState then
 				module:Enable()
-				module:Engage()
+				if UnitGUID("boss1") then -- Only if _START fired after IEEU
+					module:Engage()
+				end
 			end
 		end
 	end
@@ -100,61 +105,55 @@ end
 local enablezones, enablemobs = {}, {}
 local monitoring = nil
 
-local function enableBossModule(module, noSync)
-	if not module:IsEnabled() and (not module.lastKill or (GetTime() - module.lastKill) > (module.worldBoss and 5 or 150)) then
+local function enableBossModule(module, sync)
+	if not module:IsEnabled() then
 		module:Enable()
-		if not noSync and not module.worldBoss then
+		if sync and not module.worldBoss then
 			module:Sync("Enable", module:GetName())
 		end
 	end
 end
 
-local function shouldReallyEnable(unit, moduleName, mobId, noSync)
+local function shouldReallyEnable(unit, moduleName, mobId, sync)
 	local module = bossCore:GetModule(moduleName)
 	if not module or module:IsEnabled() then return end
 	if (not module.VerifyEnable or module:VerifyEnable(unit, mobId)) then
-		enableBossModule(module, noSync)
+		enableBossModule(module, sync)
 	end
 end
 
-local function targetSeen(unit, targetModule, mobId, noSync)
+local function targetSeen(unit, targetModule, mobId, sync)
 	if type(targetModule) == "string" then
-		shouldReallyEnable(unit, targetModule, mobId, noSync)
+		shouldReallyEnable(unit, targetModule, mobId, sync)
 	else
 		for i = 1, #targetModule do
 			local module = targetModule[i]
-			shouldReallyEnable(unit, module, mobId, noSync)
+			shouldReallyEnable(unit, module, mobId, sync)
 		end
 	end
 end
 
-local function targetCheck(unit, noSync)
+local function targetCheck(unit, sync)
 	if not UnitName(unit) or UnitIsCorpse(unit) or UnitIsDead(unit) or UnitPlayerControlled(unit) then return end
 	local _, _, _, _, _, mobId = strsplit("-", (UnitGUID(unit)))
 	local id = tonumber(mobId)
 	if id and enablemobs[id] then
-		targetSeen(unit, enablemobs[id], id, noSync)
+		targetSeen(unit, enablemobs[id], id, sync)
 	end
 end
 
-local function updateMouseover() targetCheck("mouseover") end
+local function updateMouseover() targetCheck("mouseover", true) end
 local function unitTargetChanged(event, target)
-	targetCheck(target .. "target", true)
+	targetCheck(target .. "target")
 end
 
 local function zoneChanged()
-	local id
-	if not IsInInstance() then
-		local mapId = GetPlayerMapAreaID("player")
+	local _, instanceType, _, _, _, _, _, id = GetInstanceInfo()
+	if instanceType == "none" then
+		local mapId = GetBestMapForUnit("player")
 		if mapId then
 			id = -mapId
-		else
-			local _, _, _, _, _, _, _, instanceId = GetInstanceInfo()
-			id = instanceId
 		end
-	else
-		local _, _, _, _, _, _, _, instanceId = GetInstanceInfo()
-		id = instanceId
 	end
 	if enablezones[id] then
 		if not monitoring then
@@ -163,6 +162,7 @@ local function zoneChanged()
 			addon:RegisterEvent("UNIT_TARGET", unitTargetChanged)
 			targetCheck("target")
 			targetCheck("mouseover")
+			targetCheck("boss1")
 		end
 	elseif monitoring then
 		monitoring = nil
@@ -199,7 +199,7 @@ end
 do
 	local callbackRegistered = nil
 	local messages = {}
-	local colors = {"Important", "Personal", "Urgent", "Attention", "Positive", "Neutral"}
+	local colors = {"red", "blue", "orange", "yellow", "green", "cyan", "purple"}
 	local sounds = {"Long", "Info", "Alert", "Alarm", "Warning", false, false, false, false, false}
 
 	local function barStopped(event, bar)
@@ -244,17 +244,10 @@ end
 --
 
 local function bossComm(_, msg, extra, sender)
-	if msg == "Engage" and extra then
-		local m = addon:GetBossModule(extra, true)
-		if not m or m.isEngaged or m.engageId or not m:IsEnabled() then
-			return
-		end
-		m:UnregisterEvent("PLAYER_REGEN_DISABLED")
-		m:Engage()
-	elseif msg == "Enable" and extra then
+	if msg == "Enable" and extra then
 		local m = addon:GetBossModule(extra, true)
 		if m and not m:IsEnabled() and sender ~= pName then
-			enableBossModule(m, true)
+			enableBossModule(m)
 		end
 	end
 end
@@ -307,8 +300,8 @@ do
 				watchedMovies = {},
 			},
 		}
-		local db = LibStub("AceDB-3.0"):New("BigWigs3DB", defaults, true)
-		LibStub("LibDualSpec-1.0"):EnhanceDatabase(db, "BigWigs3DB")
+		local db = adb:New("BigWigs3DB", defaults, true)
+		lds:EnhanceDatabase(db, "BigWigs3DB")
 
 		db.RegisterCallback(self, "OnProfileChanged", profileUpdate)
 		db.RegisterCallback(self, "OnProfileCopied", profileUpdate)
@@ -384,7 +377,7 @@ do
 	-- Adding core generic toggles
 	addon:RegisterBossOption("berserk", L.berserk, L.berserk_desc, nil, 136224) -- 136224 = "Interface\\Icons\\spell_shadow_unholyfrenzy"
 	addon:RegisterBossOption("altpower", L.altpower, L.altpower_desc, nil, 429383) -- 429383 = "Interface\\Icons\\spell_arcane_invocation"
-	addon:RegisterBossOption("infobox", L.infobox, L.infobox_desc)
+	addon:RegisterBossOption("infobox", L.infobox, L.infobox_desc, nil, 443374) -- Interface\\Icons\\INV_MISC_CAT_TRINKET05
 	addon:RegisterBossOption("stages", L.stages, L.stages_desc)
 	addon:RegisterBossOption("warmup", L.warmup, L.warmup_desc)
 end
@@ -410,9 +403,10 @@ end
 
 do
 	local GetSpellInfo, C_EncounterJournal_GetSectionInfo = GetSpellInfo, C_EncounterJournal.GetSectionInfo
+	local EJ_GetEncounterInfo = EJ_GetEncounterInfo
 
 	local errorAlreadyRegistered = "%q already exists as a module in BigWigs, but something is trying to register it again."
-	local function new(core, moduleName, mapId, journalId, instanceId)
+	local function new(core, moduleName, loadId, journalId)
 		if core:GetModule(moduleName, true) then
 			addon:Print(errorAlreadyRegistered:format(moduleName))
 		else
@@ -428,9 +422,20 @@ do
 			m.RegisterEvent = addon.RegisterEvent
 			m.UnregisterEvent = addon.UnregisterEvent
 
-			m.zoneId = mapId
-			m.journalId = journalId
-			m.instanceId = instanceId
+			if journalId then
+				m.journalId = journalId
+				m.displayName = EJ_GetEncounterInfo(journalId)
+			else
+				m.displayName = moduleName
+			end
+
+			if loadId then
+				if loadId > 0 then
+					m.instanceId = loadId
+				else
+					m.mapId = -loadId
+				end
+			end
 			return m, CL
 		end
 	end
@@ -456,13 +461,12 @@ do
 		if not C then C = addon.C end
 		if not defaultToggles then
 			defaultToggles = setmetatable({
-				berserk = C.BAR + C.MESSAGE,
-				bosskill = C.MESSAGE,
+				berserk = C.BAR + C.MESSAGE + C.SOUND,
 				proximity = C.PROXIMITY,
 				altpower = C.ALTPOWER,
 				infobox = C.INFOBOX,
 			}, {__index = function()
-				return C.BAR + C.MESSAGE + C.VOICE
+				return C.BAR + C.CASTBAR + C.MESSAGE + C.ICON + C.SOUND + C.SAY + C.SAY_COUNTDOWN + C.PROXIMITY + C.FLASH + C.ALTPOWER + C.VOICE + C.INFOBOX
 			end})
 		end
 
@@ -546,11 +550,6 @@ do
 	end
 
 	function addon:RegisterBossModule(module)
-		if module.journalId then
-			module.displayName = EJ_GetEncounterInfo(module.journalId)
-		end
-		if not module.displayName then module.displayName = module.moduleName end
-
 		module.SetupOptions = moduleOptions
 
 		-- Call the module's OnRegister (which is our OnInitialize replacement)
@@ -561,7 +560,7 @@ do
 
 		self:SendMessage("BigWigs_BossModuleRegistered", module.moduleName, module)
 
-		local id = module.worldBoss and module.zoneId or module.instanceId or GetAreaMapInfo(module.zoneId)
+		local id = module.instanceId or -(module.mapId)
 		if not enablezones[id] then
 			enablezones[id] = true
 		end
@@ -584,6 +583,24 @@ do
 		if pluginCore:IsEnabled() then
 			module:Enable() -- Support LoD plugins that load after we're enabled (e.g. zone based)
 		end
+	end
+
+	function addon:AddColors(moduleName, options)
+		local module = self:GetBossModule(moduleName, true)
+		if not module then
+			-- addon:Error(("AddColors: Invalid module %q."):format(moduleName))
+			return
+		end
+		module.colorOptions = options
+	end
+
+	function addon:AddSounds(moduleName, options)
+		local module = self:GetBossModule(moduleName, true)
+		if not module then
+			-- addon:Error(("AddSounds: Invalid module %q."):format(moduleName))
+			return
+		end
+		module.soundOptions = options
 	end
 end
 
@@ -616,4 +633,3 @@ function pluginCore:OnDisable()
 end
 
 BigWigs = addon -- Set global
-

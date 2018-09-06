@@ -112,7 +112,18 @@
 	
 		local boss_found = function (index, name, zone, mapid, diff, encounterid)
 		
-			local ejid = EJ_GetCurrentInstance()
+			local mapID = C_Map.GetBestMapForUnit ("player")
+			local ejid
+			if (mapID) then
+				ejid = EJ_GetInstanceForMap (mapID)
+			end
+			
+			if (not mapID) then
+				--print ("Details! exeption handled: zone has no map")
+				return
+			end
+		
+			--local ejid = EJ_GetCurrentInstance()
 			if (ejid == 0) then
 				ejid = _detalhes:GetInstanceEJID()
 			end
@@ -300,7 +311,7 @@
 		-- ~start ~inicio ~novo �ovo
 		function _detalhes:EntrarEmCombate (...)
 			if (_detalhes.debug) then
-				--_detalhes:Msg ("(debug) |cFFFFFF00started a new combat|r|cFFFF7700", _detalhes.encounter_table and _detalhes.encounter_table.name or "")
+				_detalhes:Msg ("(debug) |cFFFFFF00started a new combat|r|cFFFF7700", _detalhes.encounter_table and _detalhes.encounter_table.name or "")
 				--local from = debugstack (2, 1, 0)
 				--print (from)
 			end
@@ -432,6 +443,19 @@
 			end
 		end
 		
+		function _detalhes:ScheduleSyncPlayerActorData()
+			if ((IsInGroup() or IsInRaid()) and (_detalhes.zone_type == "party" or _detalhes.zone_type == "raid")) then
+				--> do not sync if in battleground or arena
+				_detalhes:SendCharacterData()
+			end
+		end
+		
+		function _detalhes:EndCombat()
+			if (_detalhes.in_combat) then
+				_detalhes:SairDoCombate()
+			end
+		end
+		
 		-- ~end ~leave
 		function _detalhes:SairDoCombate (bossKilled, from_encounter_end)
 		
@@ -519,7 +543,17 @@
 				local encounterID, encounterName, difficultyID, raidSize, endStatus = unpack (from_encounter_end)
 				if (encounterID) then
 					local ZoneName, InstanceType, DifficultyID, DifficultyName, _, _, _, ZoneMapID = GetInstanceInfo()
-					local ejid = EJ_GetCurrentInstance()
+					
+					local mapID = C_Map.GetBestMapForUnit ("player")
+					
+					if (not mapID) then
+						mapID = 0
+					end
+					
+					local ejid = EJ_GetInstanceForMap (mapID)
+					
+					--local ejid = EJ_GetCurrentInstance()
+					
 					if (ejid == 0) then
 						ejid = _detalhes:GetInstanceEJID()
 					end
@@ -550,6 +584,9 @@
 					_detalhes.tabela_vigente.is_mythic_dungeon_run_id = _detalhes.mythic_dungeon_id
 				end
 			end
+			
+			--> send item level after a combat if is in raid or party group
+			C_Timer.After (1, _detalhes.ScheduleSyncPlayerActorData)
 			
 			if (not _detalhes.tabela_vigente.is_boss) then
 
@@ -713,12 +750,26 @@
 			local tempo_do_combate = _detalhes.tabela_vigente:GetCombatTime()
 			local invalid_combat
 			
-			if ((tempo_do_combate >= _detalhes.minimum_combat_time or not _detalhes.tabela_historico.tabelas[1]) and not _detalhes.tabela_vigente.discard_segment) then
+			local zoneName, zoneType = GetInstanceInfo()
+			if (not _detalhes.tabela_vigente.discard_segment and (zoneType == "none" or tempo_do_combate >= _detalhes.minimum_combat_time or not _detalhes.tabela_historico.tabelas[1])) then
 				_detalhes.tabela_historico:adicionar (_detalhes.tabela_vigente) --move a tabela atual para dentro do hist�rico
-				
-				_detalhes:CanSendMissData()
+				--8.0.1 miss data isn't required at the moment, spells like akari's soul has been removed from the game
+				--_detalhes:CanSendMissData()
 			else
 				invalid_combat = _detalhes.tabela_vigente
+				
+				--> tutorial about the combat time < then 'minimum_combat_time'
+				local hasSeenTutorial = _detalhes:GetTutorialCVar ("MIN_COMBAT_TIME")
+				if (not hasSeenTutorial) then
+					local lower_instance = _detalhes:GetLowerInstanceNumber()
+					if (lower_instance) then
+						lower_instance = _detalhes:GetInstance (lower_instance)
+						if (lower_instance) then
+							lower_instance:InstanceAlert ("combat ignored: less than 5 seconds.", {[[Interface\BUTTONS\UI-GROUPLOOT-PASS-DOWN]], 18, 18, false, 0, 1, 0, 1}, 20, {function() Details:Msg ("combat ignored: elapsed time less than 5 seconds."); Details:Msg ("add '|cFFFFFF00Details.minimum_combat_time = 2;|r' on Auto Run Code to change the minimum time.") end})
+							_detalhes:SetTutorialCVar ("MIN_COMBAT_TIME", true)
+						end
+					end
+				end
 				
 				--in case of a forced discard segment, just check a second time if we have a previous combat.
 				if (not _detalhes.tabela_historico.tabelas[1]) then
@@ -1588,7 +1639,7 @@
 					if (instancia.rows_showing == 0 and instancia:GetSegment() == -1) then -- -1 overall data
 						if (not instancia:IsShowingOverallDataWarning()) then
 							local tutorial = _detalhes:GetTutorialCVar ("OVERALLDATA_WARNING1") or 0
-							if (tutorial < 10) then
+							if ((type (tutorial) == "number") and (tutorial < 6)) then
 								_detalhes:SetTutorialCVar ("OVERALLDATA_WARNING1", tutorial + 1)
 								instancia:ShowOverallDataWarning (true)
 							end

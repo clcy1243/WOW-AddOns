@@ -23,8 +23,10 @@ function RSA_Rogue:OnEnable()
 			},
 			[57934] = { -- TRICKS OF THE TRADE
 				profile = 'Tricks',
+				section = 'Cast',
 				replacements = { TARGET = 1 }
-			}
+			},
+			
 		},
 		SPELL_AURA_APPLIED = {
 			[6770] = { -- SAP
@@ -35,9 +37,21 @@ function RSA_Rogue:OnEnable()
 				profile = 'Blind',
 				replacements = { TARGET = 1 }
 			},
+			[199743] = { -- Parley
+				profile = 'Blind',
+				replacements = { TARGET = 1 }
+			},
 			[31224] = { -- CLOAK OF SHADOWS
 				profile = 'CloakOfShadows'
-			}
+			},
+			[115834] = { -- Shroud of Concealment
+				profile = 'Shroud',
+				tracker = 2,
+			},
+			[199804] = { -- Between The Eyes
+				profile = 'BetweenTheEyes',
+				replacements = { TARGET = 1 }
+			},
 		},
 		SPELL_AURA_REMOVED = {
 			[6770] = { -- SAP
@@ -50,33 +64,62 @@ function RSA_Rogue:OnEnable()
 				section = 'End',
 				replacements = { TARGET = 1 }
 			},
+			[199743] = { -- Parley
+				profile = 'Blind',
+				section = 'End',
+				replacements = { TARGET = 1 }
+			},
 			[31224] = { -- CLOAK OF SHADOWS
 				profile = 'CloakOfShadows',
 				section = 'End'
 			},
 			[57934] = { -- TRICKS OF THE TRADE
 				profile = 'Tricks',
-				section = 'End'
-			}
+				section = 'End',
+			},
+			[115834] = { -- Shroud of Concealment
+				profile = 'Shroud',
+				tracker = 1,
+				section = 'End',
+			},
+			[199804] = { -- Between The Eyes
+				profile = 'BetweenTheEyes',
+				replacements = { TARGET = 1 },
+				section = 'End',
+			},
 		},
 		SPELL_INTERRUPT = {
 			[1766] = { -- KICK
 				profile = 'Kick',
+				section = 'Interrupt',
 				replacements = { TARGET = 1, extraSpellName = "[TARSPELL]", extraSpellLink = "[TARLINK]" }
 			}
 		},
 		SPELL_MISSED = {
 			[1766] = {-- KICK
 				profile = 'Kick',
-				section = 'End',
+				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
 			},
 		},
+		[2094] = { -- BLIND
+			profile = 'Blind',
+			section = 'Resist',
+			immuneSection = "Immune",
+			replacements = { TARGET = 1 }
+		},
+		[199743] = { -- Parley
+			profile = 'Blind',
+			section = 'Resist',
+			immuneSection = "Immune",
+			replacements = { TARGET = 1 }
+		},
 	}
 	RSA.MonitorConfig(MonitorConfig_Rogue, UnitGUID("player"))
 	local MonitorAndAnnounce = RSA.MonitorAndAnnounce
-	local function Rogue_Spells(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
+	local function Rogue_Spells()
+		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4 = CombatLogGetCurrentEventInfo()
 		if RSA.AffiliationMine(sourceFlags) then
 			if (event == "SPELL_CAST_SUCCESS" and RSA.db.profile.Modules.Reminders_Loaded == true) then -- Reminder Refreshed
 				local ReminderSpell = RSA.db.profile.Rogue.Reminders.SpellName
@@ -90,7 +133,7 @@ function RSA_Rogue:OnEnable()
 					end
 				end
 			end -- BUFF REMINDER
-			MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
+			MonitorAndAnnounce(self, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4)
 		end -- IF SOURCE IS PLAYER
 	end -- END ENTIRELY
 	RSA.CombatLogMonitor:SetScript("OnEvent", Rogue_Spells)

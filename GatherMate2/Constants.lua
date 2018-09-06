@@ -106,6 +106,16 @@ local node_ids = {
 		[NL["Fever of Stormrays"]]				= 185,
 		[NL["Highmountain Salmon School"]]		= 186,
 		[NL["Mossgill Perch School"]]			= 187,
+		-- BfA Pools
+		[NL["Frenzied Fangtooth School"]]		= 188,
+		[NL["Great Sea Catfish School"]]		= 189,
+		[NL["Lane Snapper School"]]				= 190,
+		[NL["Rasboralus School"]]				= 191,
+		[NL["Redtail Loach School"]]			= 192,
+		[NL["Sand Shifter School"]]				= 193,
+		[NL["Slimy Mackerel School"]]			= 194,
+		[NL["Tiragarde Perch School"]]			= 195,
+		[NL["U'taka School"]]					= 196,
 	},
 	["Mining"] = {
 		[NL["Copper Vein"]] 					= 201,
@@ -173,6 +183,15 @@ local node_ids = {
 		[NL["Empyrium Deposit"]]				= 259,
 		[NL["Rich Empyrium Deposit"]]			= 260,
 		[NL["Empyrium Seam"]]					= 261,
+-- bfa nodes
+		[NL["Monelite Deposit"]]				= 262,
+		[NL["Rich Monelite Deposit"]]			= 263,
+		[NL["Monelite Seam"]]					= 264,
+		[NL["Platinum Deposit"]]				= 265,
+		[NL["Rich Platinum Deposit"]]			= 266,
+		[NL["Storm Silver Deposit"]]			= 267,
+		[NL["Rich Storm Silver Deposit"]]		= 268,
+		[NL["Storm Silver Seam"]]				= 269,
 	},
 	["Extract Gas"] = {
 		[NL["Windy Cloud"]] 					= 301,
@@ -272,6 +291,14 @@ local node_ids = {
 		[NL["Fel-Encrusted Herb"]]				= 482,
 		[NL["Fel-Encrusted Herb Cluster"]]		= 483,
 		[NL["Astral Glory"]]					= 484,
+-- bfa nodes
+		[NL["Akunda's Bite"]]					= 485,
+		[NL["Anchor Weed"]]						= 486,
+		[NL["Riverbud"]]						= 487,
+		[NL["Sea Stalks"]]						= 488,
+		[NL["Siren's Sting"]]					= 489,
+		[NL["Star Moss"]]						= 490,
+		[NL["Winter's Kiss"]]					= 491,
 	},
 	["Treasure"] = {
 		[NL["Giant Clam"]] 						= 501,
@@ -359,6 +386,9 @@ local node_ids = {
 		[NL["Demonic Archaeology Find"]]		= 617,
 		[NL["Highborne Archaeology Find"]]		= 618,
 		[NL["Highmountain Tauren Archaeology Find"]]	= 619,
+		-- bfa
+		[NL["Drust Archaeology Find"]]			= 620,
+		[NL["Zandalari Archaeology Find"]]		= 621,
 	},
 	["Logging"] = {
 		[NL["Small Timber"]]					= 701,
@@ -412,6 +442,10 @@ local rare_spawns = {
 	[553] = {[552]=true}, -- ancient mana chunk
 	[554] = {[552]=true,[553]=true}, -- ancient mana crystal
 	[483] = {[482]=true}, -- Fel-encrusted Herb Cluster
+	[263] = {[262]=true}, -- rich monelite deposit
+	[266] = {[265]=true}, -- rich platinum deposit
+	[268] = {[267]=true}, -- rich storm silver deposit
+	[486] = {[485]=true,[487]=true,[488]=true,[491]=true}, -- anchor weed
 }
 Collector.rareNodes = rare_spawns
 -- Format zone = { "Database", "new node id"}
@@ -532,6 +566,15 @@ local node_textures = {
 		[185] = icon_path.."Fish\\fish_hook.tga",
 		[186] = icon_path.."Fish\\fish_hook.tga",
 		[187] = icon_path.."Fish\\fish_hook.tga",
+		[188] = icon_path.."Fish\\frenzied_fangtooth.tga",
+		[189] = icon_path.."Fish\\great_sea_catfish.tga",
+		[190] = icon_path.."Fish\\lane_snapper.tga",
+		[191] = icon_path.."Fish\\rasboralus.tga",
+		[192] = icon_path.."Fish\\redtail_loach.tga",
+		[193] = icon_path.."Fish\\sand_shifter.tga",
+		[194] = icon_path.."Fish\\slimy_mackerel.tga",
+		[195] = icon_path.."Fish\\tiragarde_perch.tga",
+		[196] = icon_path.."Fish\\utaka.tga",
 	},
 	["Mining"] = {
 		[201] = icon_path.."Mine\\copper.tga",
@@ -595,6 +638,14 @@ local node_textures = {
 		[259] = icon_path.."Mine\\empyrium.tga",
 		[260] = icon_path.."Mine\\empyrium.tga",
 		[261] = icon_path.."Mine\\empyrium.tga",
+		[262] = icon_path.."Mine\\monelite.tga",
+		[263] = icon_path.."Mine\\monelite.tga",
+		[264] = icon_path.."Mine\\monelite.tga",
+		[265] = icon_path.."Mine\\platinum.tga",
+		[266] = icon_path.."Mine\\platinum.tga",
+		[267] = icon_path.."Mine\\stormsilver.tga",
+		[268] = icon_path.."Mine\\stormsilver.tga",
+		[269] = icon_path.."Mine\\stormsilver.tga",
 	},
 	["Extract Gas"] = {
 		[301] = icon_path.."Gas\\windy_cloud.tga",
@@ -689,7 +740,14 @@ local node_textures = {
 		[481] = icon_path.."Herb\\starlightrose.tga",
 		[482] = icon_path.."Herb\\felherb.tga",
 		[483] = icon_path.."Herb\\felherb.tga",
-		[484] = icon_path.."Herb\\felherb.tga", -- PH
+		[484] = icon_path.."Herb\\astralglory.tga",
+		[485] = icon_path.."Herb\\akundas_bite.tga",
+		[486] = icon_path.."Herb\\anchor_weed.tga",
+		[487] = icon_path.."Herb\\riverbud.tga",
+		[488] = icon_path.."Herb\\seastalk.tga",
+		[489] = icon_path.."Herb\\sirens_pollen.tga",
+		[490] = icon_path.."Herb\\star_moss.tga",
+		[491] = icon_path.."Herb\\winters_kiss.tga",
 	},
 	["Treasure"] = {
 		[501] = icon_path.."Treasure\\clam.tga",
@@ -772,6 +830,8 @@ local node_textures = {
 		[617] = icon_path.."Archaeology\\shovel.tga",
 		[618] = icon_path.."Archaeology\\shovel.tga",
 		[619] = icon_path.."Archaeology\\shovel.tga",
+		[620] = icon_path.."Archaeology\\shovel.tga",
+		[621] = icon_path.."Archaeology\\shovel.tga",
 	},
 	["Logging"] = {
 		[701] = icon_path.."Logging\\timber.tga",
@@ -788,6 +848,7 @@ local CATA    = 4
 local MOP     = 5
 local WOD     = 6
 local LEGION  = 7
+local BFA     = 8
 local node_expansion = {
 	["Mining"] = {
 		[201] = CLASSIC,
@@ -851,6 +912,14 @@ local node_expansion = {
 		[259] = LEGION,
 		[260] = LEGION,
 		[261] = LEGION,
+		[262] = BFA,
+		[263] = BFA,
+		[264] = BFA,
+		[265] = BFA,
+		[266] = BFA,
+		[267] = BFA,
+		[268] = BFA,
+		[269] = BFA,
 	},
 	["Herb Gathering"] = {
 		[401] = CLASSIC,
@@ -937,6 +1006,13 @@ local node_expansion = {
 		[482] = LEGION,
 		[483] = LEGION,
 		[484] = LEGION,
+		[485] = BFA,
+		[486] = BFA,
+		[487] = BFA,
+		[488] = BFA,
+		[489] = BFA,
+		[490] = BFA,
+		[491] = BFA,
 	},
 }
 GatherMate.nodeExpansion = node_expansion
@@ -986,9 +1062,13 @@ local minimap_shapes = {
 Display.minimapShapes = minimap_shapes
 
 local map_phasing = {
-	[683] = 606,
-	[748] = 720,
-	[770] = 700
 }
 
 GatherMate.phasing = map_phasing
+
+local map_blacklist = {
+	[582] = true, -- Alliance Garrison
+	[590] = true, -- Horde Garrison
+}
+
+GatherMate.mapBlacklist = map_blacklist

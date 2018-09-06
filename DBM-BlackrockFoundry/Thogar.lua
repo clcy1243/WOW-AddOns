@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1147, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 25 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 36 $"):sub(12, -3))
 mod:SetCreatureID(76906)--81315 Crack-Shot, 81197 Raider, 77487 Grom'kar Firemender, 80791 Grom'kar Man-at-Arms, 81318 Iron Gunnery Sergeant, 77560 Obliterator Cannon, 81612 Deforester
 mod:SetEncounterID(1692)
 mod:SetZone()
@@ -68,7 +68,6 @@ mod:AddDropdownOption("InfoFrameSpeed", {"Immediately", "Delayed"}, "Delayed", "
 mod.vb.trainCount = 0
 mod.vb.infoCount = 0
 local GetTime, UnitPosition = GetTime, UnitPosition
-local UnitDebuff = UnitDebuff
 local MovingTrain, Cannon = DBM:GetSpellInfo(176312), DBM:GetSpellInfo(62357)
 local Reinforcements, ManOArms, Deforester = DBM:EJ_GetSectionInfo(9537), DBM:EJ_GetSectionInfo(9549), DBM:EJ_GetSectionInfo(10329)
 local fakeYellTime = 0
@@ -527,7 +526,7 @@ function mod:BombTarget(targetname, uId, bossuId)
 	if targetname == UnitName("player") then
 		specWarnDelayedSiegeBomb:Show()
 		specWarnDelayedSiegeBomb:Play("bombrun")
-		local _, _, _, _, startTime, endTime = UnitCastingInfo(bossuId)
+		local _, _, _, startTime, endTime = UnitCastingInfo(bossuId)
 		local time = ((endTime or 0) - (startTime or 0)) / 1000
 		if time then
 			specWarnDelayedSiegeBombMove:Schedule(time - 0.5, 1)
@@ -559,7 +558,6 @@ function mod:GrenadeTarget(targetname, uId)
 end
 
 function mod:OnCombatStart(delay)
-	MovingTrain, Cannon = DBM:GetSpellInfo(176312), DBM:GetSpellInfo(62357)
 	fakeYellTime = 0
 	bombFrom = nil
 	self.vb.trainCount = 0
@@ -630,7 +628,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				specWarnEnkindle:Show(amount)
 				specWarnEnkindle:Play("stackhigh")
 			else--Taunt as soon as stacks are clear, regardless of stack count.
-				local _, _, _, _, _, duration, expires = UnitDebuff("player", args.spellName)
+				local _, _, _, _, duration, expires = DBM:UnitDebuff("player", args.spellName)
 				local debuffTime = 0
 				if expires then
 					debuffTime = expires - GetTime()

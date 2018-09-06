@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Harbaron", 1042, 1512)
+local mod, CL = BigWigs:NewBoss("Harbaron", 1492, 1512)
 if not mod then return end
 mod:RegisterEnableMob(96754)
 mod.engageId = 1823
@@ -49,7 +49,7 @@ do
 		if self:Me(guid) then
 			self:Say(194325)
 		end
-		self:TargetMessage(194325, player, "Important", "Warning")
+		self:TargetMessage(194325, player, "red", "Warning")
 	end
 	function mod:Fragment(args)
 		self:GetBossTarget(printTarget, 0.4, args.sourceGUID)
@@ -63,20 +63,22 @@ end
 
 function mod:SummonShackledServitor(args)
 	self:CDBar(args.spellId, 25) -- cd varies between 23-26
-	self:Message(args.spellId, "Attention", "Info", CL.incoming:format(args.spellName))
+	self:Message(args.spellId, "yellow", "Info", CL.incoming:format(args.spellName))
 end
 
 function mod:CosmicScythe(args)
-	self:Message(args.spellId, "Urgent", "Alert")
+	self:Message(args.spellId, "orange", "Alert")
 end
 
 do
 	local prev = 0
 	function mod:NetherRipDamage(args)
-		local t = GetTime()
-		if t-prev > 2 and self:Me(args.destGUID) then
-			prev = t
-			self:Message(194668, "Personal", "Alarm", CL.underyou:format(args.spellName))
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			if t-prev > 2 then
+				prev = t
+				self:Message(194668, "blue", "Alarm", CL.underyou:format(args.spellName))
+			end
 		end
 	end
 end

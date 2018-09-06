@@ -3,9 +3,11 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("General Umbriss", 757, 131)
+local mod, CL = BigWigs:NewBoss("General Umbriss", 670, 131)
 if not mod then return end
 mod:RegisterEnableMob(39625)
+mod.engageId = 1051
+mod.respawnTime = 30
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -28,8 +30,6 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPIED", "Frenzy", 74853)
 	self:Log("SPELL_AURA_APPIED", "Wound", 74846)
 	self:Log("SPELL_AURA_REMOVED", "WoundRemoved", 74846)
-
-	self:Death("Win", 39625)
 end
 
 function mod:VerifyEnable()
@@ -43,35 +43,35 @@ end
 function mod:Blitz(_, msg, _, _, _, player)
 	if msg:find(self:SpellName(74670)) then
 		if player then
-			self:TargetMessage(74670, player, "Important", "Alert")
+			self:TargetMessage(74670, player, "red", "Alert")
 			self:PrimaryIcon(74670, player)
 			self:ScheduleTimer("PrimaryIcon", 3.5, 74670)
 		else
-			self:Message(74670, "Important", "Alert")
+			self:Message(74670, "red", "Alert")
 		end
 	end
 end
 
 function mod:Siege(args)
-	self:Message(args.spellId, "Urgent")
+	self:Message(args.spellId, "orange")
 end
 
-function mod:UNIT_HEALTH_FREQUENT(unit)
+function mod:UNIT_HEALTH_FREQUENT(event, unit)
 	if self:MobId(UnitGUID(unit)) == 39625 then
 		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
 		if hp < 36 then
-			self:UnregisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
-			self:Message(74853, "Attention", nil, CL.soon:format(self:SpellName(74853)))
+			self:UnregisterUnitEvent(event, unit)
+			self:Message(74853, "yellow", nil, CL.soon:format(self:SpellName(74853)))
 		end
 	end
 end
 
 function mod:Frenzy(args)
-	self:Message(args.spellId, "Attention", "Long")
+	self:Message(args.spellId, "yellow", "Long")
 end
 
 function mod:Wound(args)
-	self:TargetMessage(args.spellId, args.destName, "Attention")
+	self:TargetMessage(args.spellId, args.destName, "yellow")
 	self:TargetBar(args.spellId, 10, args.destName)
 end
 

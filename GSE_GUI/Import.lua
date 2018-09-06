@@ -85,11 +85,8 @@ function GSE.GUIImportSequence()
     end
     local success, message = GSE.ImportSequence(importstring, legacy, importframe.AutoCreateIcon)
     if success then
-      StaticPopup_Show ("GSE-MacroImportSuccess")
+
       GSE.GUIImportFrame:Hide()
-      local event = {}
-      event.action = "openviewer"
-      table.insert(GSE.OOCQueue, event)
     else
       StaticPopup_Show ("GSE-MacroImportFailure")
     end
@@ -97,11 +94,7 @@ function GSE.GUIImportSequence()
     -- either a compressed import or a failed copy
     local success = GSE.ImportSerialisedSequence(importstring, importframe.AutoCreateIcon)
     if success then
-      StaticPopup_Show ("GSE-MacroImportSuccess")
-      GSE.GUIImportFrame:Hide()
-      local event = {}
-      event.action = "openviewer"
-      table.insert(GSE.OOCQueue, event)
+       GSE.GUIImportFrame:Hide()
     else
       StaticPopup_Show ("GSE-MacroImportFailure")
     end

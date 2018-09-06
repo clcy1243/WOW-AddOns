@@ -3,10 +3,16 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("King Deepbeard", 1046, 1491)
+local mod, CL = BigWigs:NewBoss("King Deepbeard", 1456, 1491)
 if not mod then return end
 mod:RegisterEnableMob(91797)
 mod.engageId = 1812
+
+--------------------------------------------------------------------------------
+-- Locals
+--
+
+local bubblesOnMe = false
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -33,6 +39,7 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage()
+	bubblesOnMe = false
 	self:Bar(193051, 20) -- Call the Seas
 	self:CDBar(193018, 12) -- Gaseous Bubbles
 	self:CDBar(193093, 6) -- Ground Slam
@@ -45,7 +52,7 @@ end
 --
 
 function mod:CallTheSeas(args)
-	self:Message(args.spellId, "Attention", "Long")
+	self:Message(args.spellId, "yellow", "Long")
 	self:Bar(args.spellId, 30) -- pull:20.5, 30.4, 30.3
 end
 
@@ -55,7 +62,8 @@ end
 
 function mod:GaseousBubblesApplied(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(args.spellId, args.destName, "Personal", "Warning")
+		bubblesOnMe = true
+		self:TargetMessage(args.spellId, args.destName, "blue", "Warning")
 		self:TargetBar(args.spellId, 20, args.destName)
 		self:Flash(args.spellId)
 	end
@@ -63,28 +71,32 @@ end
 
 function mod:GaseousBubblesRemoved(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "Personal", "Warning", CL.removed:format(args.spellName))
+		bubblesOnMe = false
+		self:Message(args.spellId, "blue", "Warning", CL.removed:format(args.spellName))
 		self:StopBar(args.spellName, args.destName)
 	end
 end
 
 function mod:GroundSlam(args)
-	self:Message(args.spellId, "Urgent", "Info", CL.incoming:format(args.spellName))
+	self:Message(args.spellId, "orange", "Info", CL.incoming:format(args.spellName))
 	self:CDBar(args.spellId, 18) -- pull:5.9, 18.2, 20.6, 19.4
 end
 
 function mod:Quake(args)
-	self:Message(args.spellId, "Important", "Alert")
+	self:Message(args.spellId, "red", "Alert")
 	self:Bar(args.spellId, 21) -- pull:15.6, 21.9, 21.8, 21.8
 end
 
 do
 	local prev = 0
 	function mod:Aftershock(args)
-		local t = GetTime()
-		if self:Me(args.destGUID) and (UnitDebuff("player", self:SpellName(193018)) and t-prev > 6 or t-prev > 1.5) then -- players with Gaseous Bubbles may (and should) be taking damage intentionally
-			prev = t
-			self:Message(193152, "Personal", "Alert", CL.underyou:format(args.spellName))
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			-- players with Gaseous Bubbles may (and should) be taking damage intentionally
+			if t-prev > (bubblesOnMe and 6 or 1.5) then
+				prev = t
+				self:Message(193152, "blue", "Alert", CL.underyou:format(args.spellName))
+			end
 		end
 	end
 end

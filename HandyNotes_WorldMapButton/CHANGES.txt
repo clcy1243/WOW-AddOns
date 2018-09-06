@@ -1,0 +1,10 @@
+lightweight tag 50e306330de28b005397e1812e7434ed16dc6d12 80000.01-Release
+Author:	fuba <q3fuba@hotmail.de>
+Date:	Fri Jul 20 13:01:56 2018 +0200
+
+commit 50e306330de28b005397e1812e7434ed16dc6d12
+Author: fuba <q3fuba@hotmail.de>
+Date:   Fri Jul 20 13:01:56 2018 +0200
+
+    80000.01-Release
+

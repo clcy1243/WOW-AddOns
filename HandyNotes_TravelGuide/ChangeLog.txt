@@ -1,6 +1,36 @@
 Revision History:
 =================
 
+* v1.9.3 (Apr 12, 2018)
+-----------------------
+- added Dalaran and Pandaria portals to Stormwind
+- updated deDE.lua and applied fix to other locale .lua's
+- updated DB.lua
+- renamed enUS.lua to enEN.lua
+- fixed spelling errors
+
+* v1.9.2 (Apr 10, 2018)
+-----------------------
+- fixed enUS.lua file
+- added blank locale file for future translations
+- fixed spelling errors
+
+* v1.9.1 (Apr 8, 2018)
+-----------------------
+- added German (de lib) contributed by Dathwada
+
+* v1.9 (Apr 7, 2018)
+-----------------------
+- added various missed portals
+- added Warlords of Draenor data
+- fixed spelling errors
+- neatened DB.lua
+
+* v1.8 (Mar 6, 2018)
+-----------------------
+- added portals in Dalaran-Northrend
+- adjusted string in Handler.lua forcing English string instead of localized
+
 * v1.7 (Feb 11, 2018)
 -----------------------
 - updated for 7.3.5

@@ -7,7 +7,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Thalena", 1066, 1702)
+local mod, CL = BigWigs:NewBoss("Thalena", 1544, 1702)
 if not mod then return end
 mod:RegisterEnableMob(102431)
 mod.engageId = 1855
@@ -57,7 +57,7 @@ end
 --
 
 function mod:Essence(args)
-	self:TargetMessage(202779, args.destName, "Positive", "Info")
+	self:TargetMessage(202779, args.destName, "green", "Info")
 	self:TargetBar(202779, 30, args.destName, L.essence) -- Are 4 bars (at max) too much?
 	if self:Me(args.destGUID) then
 		self:Say(202779, L.essence)
@@ -66,23 +66,25 @@ end
 
 function mod:EssenceRemoved(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(202779, args.destName, "Personal", "Alert", CL.removed:format(L.essence))
+		self:TargetMessage(202779, args.destName, "blue", "Alert", CL.removed:format(L.essence))
 		self:Flash(202779)
 	end
 end
 
 function mod:BloodCall(args)
-	self:Message(args.spellId, "Attention", "Long")
+	self:Message(args.spellId, "yellow", "Long")
 	self:Bar(args.spellId, 30)
 end
 
 do
 	local prev = 0
 	function mod:BloodSwarmDamage(args)
-		local t = GetTime()
-		if t-prev > 2 and self:Me(args.destGUID) then
-			prev = t
-			self:Message(args.spellId, "Personal", "Alarm", CL.underyou:format(args.spellName))
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			if t-prev > 2 then
+				prev = t
+				self:Message(args.spellId, "blue", "Alarm", CL.underyou:format(args.spellName))
+			end
 		end
 	end
 end

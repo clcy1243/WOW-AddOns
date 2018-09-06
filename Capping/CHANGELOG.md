@@ -1,6 +1,8 @@
 # Capping
 
-## [v7.3.2](https://github.com/BigWigsMods/Capping/tree/v7.3.2) (2017-09-01)
-[Full Changelog](https://github.com/BigWigsMods/Capping/compare/v7.3.1...v7.3.2)
+## [v8.0.11](https://github.com/BigWigsMods/Capping/tree/v8.0.11) (2018-08-10)
+[Full Changelog](https://github.com/BigWigsMods/Capping/compare/v8.0.10...v8.0.11)
 
-- Fix a regression in fd0b27d0bb9691a1cf3b579b5737f9db011f7e8f causing an error, closes #8  
+- Another attempt to fix the issue where the queue ready timer would persist after zoning into the bg.  
+- More score predictor improvements.  
+- Change bar icon for score bar.  

@@ -87,19 +87,18 @@ sendRosterBtn:SetScript("OnClick", function()
 	confirm:SetPoint("TOPRIGHT", sendRosterBtn)
 end)
 
--- local exportBtn = GRA:CreateButton(rosterAdminFrame, L["Export"], nil, {61, 18}, "GRA_FONT_SMALL")
--- exportBtn:SetEnabled(false)
--- exportBtn:SetPoint("LEFT", importBtn, "RIGHT", -1, 0)
--- exportBtn:SetScript("OnClick", function()
--- 	gra.exportFrame:Show()
--- end)
+local exportBtn = GRA:CreateButton(rosterAdminFrame, L["Export to CSV (WIP)"], "red", {configFrame:GetWidth()-10, 20}, "GRA_FONT_SMALL")
+exportBtn:SetPoint("TOPLEFT", editBtn, "BOTTOMLEFT", 0, -5)
+exportBtn:SetEnabled(false)
 
+--[[
 local epgpOptionsBtn = GRA:CreateButton(rosterAdminFrame, L["EPGP Options"], "red", {91, 20}, "GRA_FONT_SMALL")
 epgpOptionsBtn:SetPoint("TOPLEFT", editBtn, "BOTTOMLEFT", 0, -5)
 epgpOptionsBtn:SetScript("OnClick", function()
 	configFrame:Hide()
 	gra.epgpOptionsFrame:Show()
 end)
+epgpOptionsBtn:SetEnabled(true)
 
 local dkpOptionsBtn = GRA:CreateButton(rosterAdminFrame, L["DKP Options"], "red", {91, 20}, "GRA_FONT_SMALL")
 dkpOptionsBtn:SetPoint("LEFT", epgpOptionsBtn, "RIGHT", -1, 0)
@@ -107,6 +106,8 @@ dkpOptionsBtn:SetScript("OnClick", function()
 	configFrame:Hide()
 	gra.dkpOptionsFrame:Show()
 end)
+dkpOptionsBtn:SetEnabled(true)
+]]
 
 -----------------------------------------
 -- attendance sheet settings
@@ -303,7 +304,7 @@ end)
 
 local function RefreshRaidSchedule()
 	for i = 1, 7 do
-		if tContains(_G[GRA_R_Config]["raidInfo"]["days"], i) then -- raid day
+		if GRA:TContains(_G[GRA_R_Config]["raidInfo"]["days"], i) then -- raid day
 			days[i]:SetChecked(true)
 		else
 			days[i]:SetChecked(false)
@@ -357,9 +358,9 @@ appearanceBtn:SetScript("OnClick", function()
 	gra.appearanceFrame:Show()
 end)
 
-local lootDistrBtn = GRA:CreateButton(configFrame, L["Loot Distr"], "red", {91, 20}, "GRA_FONT_SMALL")
-lootDistrBtn:SetPoint("LEFT", appearanceBtn, "RIGHT", -1, 0)
-lootDistrBtn:SetScript("OnClick", function()
+local pLootBtn = GRA:CreateButton(configFrame, L["PLoot Helper"], "red", {91, 20}, "GRA_FONT_SMALL")
+pLootBtn:SetPoint("LEFT", appearanceBtn, "RIGHT", -1, 0)
+pLootBtn:SetScript("OnClick", function()
 	gra.profilesFrame:Hide()
 	if gra.lootDistrConfigFrame:IsVisible() then
 		gra.lootDistrConfigFrame:Hide()
@@ -367,6 +368,7 @@ lootDistrBtn:SetScript("OnClick", function()
 		gra.lootDistrConfigFrame:Show()
 	end
 end)
+pLootBtn:SetEnabled(false) -- TODO: remake this module
 
 -- String: version
 local version = configFrame:CreateFontString(nil, "OVERLAY", "GRA_FONT_SMALL")
@@ -378,12 +380,12 @@ memUsage:SetPoint("TOPLEFT", miscSection, 0, -65)
 local memUsageTimer
 
 -----------------------------------------
--- reload & reset
+-- help, anchor, profile
 -----------------------------------------
 local profilesBtn = GRA:CreateButton(configFrame, L["Profiles"], "red", {57, 20}, "GRA_FONT_SMALL")
 profilesBtn:SetPoint("BOTTOMRIGHT", -5, 5)
 profilesBtn:SetScript("OnClick", function()
-	gra.lootDistrConfigFrame:Hide()
+	-- gra.lootDistrConfigFrame:Hide()
 	if gra.profilesFrame:IsVisible() then
 		gra.profilesFrame:Hide()
 	else
@@ -395,7 +397,7 @@ local anchorBtn = GRA:CreateButton(configFrame, L["Anchor"], "red", {57, 20}, "G
 anchorBtn:SetPoint("RIGHT", profilesBtn, "LEFT", -5, 0)
 anchorBtn:SetScript("OnClick", function()
 	GRA:ShowHidePopupsAnchor()
-	GRA:ShowHideFloatButtonsAnchor()
+	-- GRA:ShowHideFloatButtonsAnchor()
 end)
 
 local helpBtn = GRA:CreateButton(configFrame, L["Help"], "red", {57, 20}, "GRA_FONT_SMALL")
@@ -404,7 +406,7 @@ helpBtn:SetScript("OnClick", function()
 	-- configFrame:Hide()
 	gra.helpFrame:Show()
 	ActionButton_HideOverlayGlow(helpBtn)
-	GRA_A_Variables["helpViewed"] = true
+	-- GRA_A_Variables["helpViewed"] = true -- TODO: take it back when help is complete
 end)
 
 -----------------------------------------
@@ -492,7 +494,7 @@ end)
 
 configFrame:SetScript("OnShow", function(self)
 	if not GRA_A_Variables["helpViewed"] then
-		ActionButton_ShowOverlayGlow(helpBtn)
+		-- ActionButton_ShowOverlayGlow(helpBtn) -- TODO: take it back when help is complete
 	end
 	EnableMiniMode(GRA_Variables["minimalMode"])
 	rosterUserLastUpdatedText:SetText(L["Last updated time: "] .. "|cff0080FF" .. (_G[GRA_R_Config]["lastUpdatedTime"] or L["never"]))

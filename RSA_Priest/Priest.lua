@@ -3,23 +3,71 @@
 -----------------------------------------------
 local RSA = LibStub("AceAddon-3.0"):GetAddon("RSA")
 local L = LibStub("AceLocale-3.0"):GetLocale("RSA")
+local LRI = LibStub("LibResInfo-1.0",true)
 local RSA_Priest = RSA:NewModule("Priest")
+
+local spellinfo,spelllinkinfo,extraspellinfo,extraspellinfolink,missinfo,GSTarget
+
 function RSA_Priest:OnInitialize()
 	if RSA.db.profile.General.Class == "PRIEST" then
 		RSA_Priest:SetEnabledState(true)
 	else
 		RSA_Priest:SetEnabledState(false)
 	end
-end -- End OnInitialize
-local spellinfo,spelllinkinfo,extraspellinfo,extraspellinfolink,missinfo,GSTarget
+end
 
-
-
+function RSA.Resurrect(_, _, target, _, caster)
+	if caster ~= "player" then return end
+	local dest = UnitName(target)
+	local pName = UnitName("player")
+	local spell = 2006
+	local messagemax = #RSA.db.profile.Priest.Spells.Resurrection.Messages.Start
+	if messagemax == 0 then return end
+	local messagerandom = math.random(messagemax)
+	local message = RSA.db.profile.Priest.Spells.Resurrection.Messages.Start[messagerandom]
+	local full_destName,dest = RSA.RemoveServerNames(dest)
+	spellinfo = GetSpellInfo(spell) spelllinkinfo = GetSpellLink(spell)
+	RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
+	if message ~= "" then
+		if RSA.db.profile.Priest.Spells.Resurrection.Local == true then
+			RSA.Print_LibSink(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Priest.Spells.Resurrection.Yell == true then
+			RSA.Print_Yell(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Priest.Spells.Resurrection.Whisper == true and dest ~= pName then
+			RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
+			RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+			RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
+		end
+		if RSA.db.profile.Priest.Spells.Resurrection.CustomChannel.Enabled == true then
+			RSA.Print_Channel(string.gsub(message, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.Resurrection.CustomChannel.Channel)
+		end
+		if RSA.db.profile.Priest.Spells.Resurrection.Say == true then
+			RSA.Print_Say(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true then
+			RSA.Print_SmartGroup(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Priest.Spells.Resurrection.Party == true then
+			if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true and GetNumGroupMembers() == 0 then return end
+				RSA.Print_Party(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Priest.Spells.Resurrection.Raid == true then
+			if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true and GetNumGroupMembers() > 0 then return end
+			RSA.Print_Raid(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+	end	
+end
 
 function RSA_Priest:OnEnable()
+	if LRI then LRI.RegisterCallback(RSA, "LibResInfo_ResCastStarted", "Resurrect") end
 	RSA.db.profile.Modules.Priest = true -- Set state to loaded, to know if we should announce when a spell is refreshed.
+	local pName = UnitName("player")
 	local Config_MC = { -- Mind Control and Dominant Mind shadow talent
 		profile = 'MindControl',
+		section = "Cast",
+		targetNotMe = 1,
 		replacements = { TARGET = 1 }
 	}
 	local Config_MC_End = { -- Mind Control and Dominant Mind shadow talent
@@ -28,9 +76,35 @@ function RSA_Priest:OnEnable()
 		targetNotMe = 1,
 		replacements = { TARGET = 1 }
 	}
-	local pName = UnitName("player")
+	local Config_Fade = { -- Fade and Greater Fade
+		profile = 'Fade',
+	}
+	local Config_Fade_End = { -- Fade and Greater Fade
+		profile = 'Fade',
+		section = 'End'
+	}
+	local Config_Purify = { -- Purify & Purify Disease
+		profile = 'Purify',
+		section = "Dispel",
+		replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
+	}
 	local MonitorConfig_Priest = {
 		player_profile = RSA.db.profile.Priest,
+		SPELL_RESURRECT = {
+			[2006] = { -- Resurrection
+				profile = 'Resurrection',
+				section = 'End',
+				replacements = { TARGET = 1 },
+			},
+		},
+		SPELL_HEAL = {
+			[197336] = { -- Ray Of Hope
+				profile = 'RayOfHope',
+				section = "Heal",
+				linkID = 197268,
+				replacements = { TARGET = 1, AMOUNT = 1 }
+			},
+		},
 		SPELL_AURA_APPLIED = {
 			[605] = Config_MC, -- Mind Control
 			[205364] = Config_MC, -- Mind Control
@@ -38,41 +112,59 @@ function RSA_Priest:OnEnable()
 				profile = 'ShackleUndead',
 				replacements = { TARGET = 1 }
 			},
-			--[[[605] = { -- MIND CONTROL
-				profile = 'MindControl',
-				replacements = { TARGET = 1 }
-			},]]--
 			[15286] = { -- VAMPIRIC EMBRACE
 				profile = 'VampiricEmbrace',
 				replacements = { TARGET = 1 }
 			},
 			[65081] = { -- BODY AND SOUL
 				profile = 'BodyAndSoul',
+				section = "Cast",
 				replacements = { TARGET = 1 }
 			},
-			[109964] = { -- SPIRIT SHELL
-				profile = 'SpiritShell'
+			[197871] = { -- Dark Archangel
+				profile = 'DarkAngel',
 			},
-			[112833] = { -- SPECTRAL GUISE
-				profile = 'SpectralGuise'
+			[197862] = { -- Archangel
+				profile = 'Archangel',
+			},	
+			[213610] = { -- Holy Ward
+				profile = 'HolyWard',
+				replacements = { TARGET = 1 },
 			},
+			[197268] = { -- Ray Of Hope
+				profile = 'RayOfHope',
+				replacements = { TARGET = 1 },
+			},		
 		},
 		SPELL_CAST_START = {
 			[212036] = { -- MASS RESURRECTION
 				profile = 'MassRess'
 			},
+			[32375] = { -- MASS DISPEL
+				profile = 'MassDispel',
+				section = "Start",
+			},
 		},
 		SPELL_CAST_SUCCESS = {
+			[586] = Config_Fade, -- Fade
+			[213602] = Config_Fade, -- Greater Fade
 			[212036] = { -- MASS RESURRECTION
 				profile = 'MassRess',
 				section = 'End'
 			},
+			[2006] = { -- Resurrection
+				profile = 'Resurrection',
+				section = 'End',
+				replacements = { TARGET = 1 },
+			},
 			[73325] = { -- LEAP OF FAITH
 				profile = 'LeapOfFaith',
+				section = "Cast",
 				replacements = { TARGET = 1 }
 			},
 			[32375] = { -- MASS DISPEL
-				profile = 'MassDispel'
+				profile = 'MassDispel',
+				section = "Cast",
 			},
 			[62618] = { -- POWER WORD: BARRIER
 				profile = 'PowerWordBarrier'
@@ -88,24 +180,21 @@ function RSA_Priest:OnEnable()
 				profile = 'PainSuppression',
 				replacements = { TARGET = 1 }
 			},
-			[10060] = { -- POWER INFUSION
-				profile = 'PowerInfusion'
-			},
-			[586] = { -- FADE
-				profile = 'Fade'
-			},
 			[64044] = { -- PSYCHIC HORROR
 				profile = 'PsychicHorror',
 				replacements = { TARGET = 1 }
 			},
 			[34433] = { -- SHADOWFIEND (normal)
-				profile = 'Shadowfiend'
+				profile = 'Shadowfiend',
+				section = "Cast"
 			},
 			[123040] = { -- Mindbender Discipline
-				profile = 'Shadowfiend'
+				profile = 'Shadowfiend',
+				section = "Cast"
 			},
 			[200174] = { -- Mindbender Shadow
-				profile = 'Shadowfiend'
+				profile = 'Shadowfiend',
+				section = "Cast"
 			},
 			[47788] = { -- GUARDIAN SPIRIT
 				profile = 'GuardianSpirit',
@@ -123,6 +212,8 @@ function RSA_Priest:OnEnable()
 			},
 		},
 		SPELL_AURA_REMOVED = {
+			[586] = Config_Fade_End, -- Fade
+			[213602] = Config_Fade_End, -- Greater Fade
 			[605] = Config_MC_End, -- Mind Control
 			[205364] = Config_MC_End, -- Mind Control
 			[15286] = { -- VAMPIRIC EMBRACE
@@ -148,14 +239,6 @@ function RSA_Priest:OnEnable()
 				section = 'End',
 				replacements = { TARGET = 1 }
 			},
-			[10060] = { -- POWER INFUSION
-				profile = 'PowerInfusion',
-				section = 'End'
-			},
-			[586] = { -- FADE
-				profile = 'Fade',
-				section = 'End'
-			},
 			[15487] = { -- SILENCE
 				profile = 'Silence',
 				section = 'End',
@@ -166,19 +249,9 @@ function RSA_Priest:OnEnable()
 				section = 'End',
 				replacements = { TARGET = 1 }
 			},
-			[112833] = { -- SPECTRAL GUISE
-				profile = 'SpectralGuise',
-				section = 'End'
-			},
 			--[[[47788] = { -- GUARDIAN SPIRIT
 				profile = 'GuardianSpirit',
 				section = 'End',
-				replacements = { TARGET = 1 }
-			},]]--
-			--[[[605] = { -- MIND CONTROL
-				profile = 'MindControl',
-				section = 'End',
-				targetNotMe = 1,
 				replacements = { TARGET = 1 }
 			},]]--
 			[64901] = { -- SYMBOL OF HOPE
@@ -186,27 +259,47 @@ function RSA_Priest:OnEnable()
 				section = 'End',
 				targetIsMe = 1
 			},
+			[197871] = { -- Dark Archangel
+				profile = 'DarkAngel',
+				section = 'End',
+				targetIsMe = 1
+			},
+			[197862] = { -- Archangel
+				profile = 'Archangel',
+				section = 'End',
+				
+			},	
+			[213610] = { -- Holy Ward
+				profile = 'HolyWard',
+				replacements = { TARGET = 1 },
+				section = 'End',
+			},
+			[197268] = { -- Ray Of Hope
+				profile = 'RayOfHope',
+				section = 'End',
+				replacements = { TARGET = 1 },
+			},	
 		},
 		SPELL_DISPEL = {
 			[528] = { -- DISPEL MAGIC
 				profile = 'DispelMagic',
+				section = "Dispel",
 				replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
 			},
-			[527] = { -- PURIFY
-				profile = 'Purify',
-				replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
-			}
+			[527] = Config_Purify,
+			[213634] = Config_Purify,
 		},
 		SPELL_DISPEL_FAILED = {
 			[528] = { -- DISPEL MAGIC
 				profile = 'DispelMagic',
-				section = 'End',
+				section = 'Resist',
 				replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
 			},
 		},
 		SPELL_INTERRUPT = {
 			[220543] = { -- SILENCE
 				profile = 'Silence',
+				section = "Interrupt",
 				replacements = { TARGET = 1, extraSpellName = "[TARSPELL]", extraSpellLink = "[TARLINK]" }
 			},
 		},
@@ -217,9 +310,8 @@ function RSA_Priest:OnEnable()
 	local RSA_PWBTimer = CreateFrame("Frame", "RSA:PWBTimer") -- Because Power Word: Barrier has no event for end message.
 	local PWBTimeElapsed = 0.0
 	local RSA_PsychicScream = false
-	local ResTarget = L["Unknown"]
-	local Ressed
-	local function Priest_Spells(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
+	local function Priest_Spells()
+		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4 = CombatLogGetCurrentEventInfo()
 		if RSA.AffiliationMine(sourceFlags) then
 			if (event == "SPELL_CAST_SUCCESS" and RSA.db.profile.Modules.Reminders_Loaded == true) then -- Reminder Refreshed
 				local ReminderSpell = RSA.db.profile.Priest.Reminders.SpellName
@@ -239,29 +331,33 @@ function RSA_Priest:OnEnable()
 					spelllinkinfo = GetSpellLink(spellID)
 					RSA_Silenced = true
 					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
-					if RSA.db.profile.Priest.Spells.Silence.Messages.Debuff ~= "" then
+					local messagemax = #RSA.db.profile.Priest.Spells.Silence.Messages.Cast
+					if messagemax == 0 then return end
+					local messagerandom = math.random(messagemax)
+					local message = RSA.db.profile.Priest.Spells.Silence.Messages.Cast[messagerandom]
+					if message ~= "" then
 						if RSA.db.profile.Priest.Spells.Silence.Local == true then
-							RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.Silence.Messages.Debuff, ".%a+.", RSA.String_Replace))
+							RSA.Print_LibSink(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.Silence.Yell == true then
-							RSA.Print_Yell(string.gsub(RSA.db.profile.Priest.Spells.Silence.Messages.Debuff, ".%a+.", RSA.String_Replace))
+							RSA.Print_Yell(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.Silence.CustomChannel.Enabled == true then
-							RSA.Print_Channel(string.gsub(RSA.db.profile.Priest.Spells.Silence.Messages.Debuff, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.Silence.CustomChannel.Channel)
+							RSA.Print_Channel(string.gsub(message, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.Silence.CustomChannel.Channel)
 						end
 						if RSA.db.profile.Priest.Spells.Silence.Say == true then
-							RSA.Print_Say(string.gsub(RSA.db.profile.Priest.Spells.Silence.Messages.Debuff, ".%a+.", RSA.String_Replace))
+							RSA.Print_Say(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.Silence.SmartGroup == true then
-							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Priest.Spells.Silence.Messages.Debuff, ".%a+.", RSA.String_Replace))
+							RSA.Print_SmartGroup(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.Silence.Party == true then
-							if RSA.db.profile.Priest.Spells.Silence.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-							RSA.Print_Party(string.gsub(RSA.db.profile.Priest.Spells.Silence.Messages.Debuff, ".%a+.", RSA.String_Replace))
+							if RSA.db.profile.Priest.Spells.Silence.SmartGroup == true and GetNumGroupMembers() == 0 then return end
+								RSA.Print_Party(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.Silence.Raid == true then
 							if RSA.db.profile.Priest.Spells.Silence.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-							RSA.Print_Raid(string.gsub(RSA.db.profile.Priest.Spells.Silence.Messages.Debuff, ".%a+.", RSA.String_Replace))
+							RSA.Print_Raid(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 					end
 				end -- SILENCE
@@ -282,28 +378,34 @@ function RSA_Priest:OnEnable()
 							spellinfo = GetSpellInfo(spellID)
 							spelllinkinfo = GetSpellLink(spellID)
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo,}
-							if RSA.db.profile.Priest.Spells.PowerWordBarrier.Local == true then
-								RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End, ".%a+.", RSA.String_Replace))
-							end
-							if RSA.db.profile.Priest.Spells.PowerWordBarrier.Yell == true then
-								RSA.Print_Yell(string.gsub(RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End, ".%a+.", RSA.String_Replace))
-							end
-							if RSA.db.profile.Priest.Spells.PowerWordBarrier.CustomChannel.Enabled == true then
-								RSA.Print_Channel(string.gsub(RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.PowerWordBarrier.CustomChannel.Channel)
-							end
-							if RSA.db.profile.Priest.Spells.PowerWordBarrier.Say == true then
-								RSA.Print_Say(string.gsub(RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End, ".%a+.", RSA.String_Replace))
-							end
-							if RSA.db.profile.Priest.Spells.PowerWordBarrier.SmartGroup == true then
-								RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End, ".%a+.", RSA.String_Replace))
-							end
-							if RSA.db.profile.Priest.Spells.PowerWordBarrier.Party == true then
-								if RSA.db.profile.Priest.Spells.PowerWordBarrier.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-								RSA.Print_Party(string.gsub(RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End, ".%a+.", RSA.String_Replace))
-							end
-							if RSA.db.profile.Priest.Spells.PowerWordBarrier.Raid == true then
-								if RSA.db.profile.Priest.Spells.PowerWordBarrier.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-								RSA.Print_Raid(string.gsub(RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End, ".%a+.", RSA.String_Replace))
+							local messagemax = #RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End
+							if messagemax == 0 then return end
+							local messagerandom = math.random(messagemax)
+							local message = RSA.db.profile.Priest.Spells.PowerWordBarrier.Messages.End[messagerandom]
+							if message ~= "" then
+								if RSA.db.profile.Priest.Spells.PowerWordBarrier.Local == true then
+									RSA.Print_LibSink(string.gsub(message, ".%a+.", RSA.String_Replace))
+								end
+								if RSA.db.profile.Priest.Spells.PowerWordBarrier.Yell == true then
+									RSA.Print_Yell(string.gsub(message, ".%a+.", RSA.String_Replace))
+								end
+								if RSA.db.profile.Priest.Spells.PowerWordBarrier.CustomChannel.Enabled == true then
+									RSA.Print_Channel(string.gsub(message, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.PowerWordBarrier.CustomChannel.Channel)
+								end
+								if RSA.db.profile.Priest.Spells.PowerWordBarrier.Say == true then
+									RSA.Print_Say(string.gsub(message, ".%a+.", RSA.String_Replace))
+								end
+								if RSA.db.profile.Priest.Spells.PowerWordBarrier.SmartGroup == true then
+									RSA.Print_SmartGroup(string.gsub(message, ".%a+.", RSA.String_Replace))
+								end
+								if RSA.db.profile.Priest.Spells.PowerWordBarrier.Party == true then
+									if RSA.db.profile.Priest.Spells.PowerWordBarrier.SmartGroup == true and GetNumGroupMembers() == 0 then return end
+										RSA.Print_Party(string.gsub(message, ".%a+.", RSA.String_Replace))
+								end
+								if RSA.db.profile.Priest.Spells.PowerWordBarrier.Raid == true then
+									if RSA.db.profile.Priest.Spells.PowerWordBarrier.SmartGroup == true and GetNumGroupMembers() > 0 then return end
+									RSA.Print_Raid(string.gsub(message, ".%a+.", RSA.String_Replace))
+								end
 							end
 						end
 						RSA_PWBTimer:SetScript("OnUpdate", PWBTimer)
@@ -315,102 +417,114 @@ function RSA_Priest:OnEnable()
 			end -- IF EVENT IS SPELL_CAST_SUCCESS
 			if event == "SPELL_AURA_REMOVED" then			
 				if spellID == 47788 and GSTarget == destGUID then -- Guardian Spirit, temporary until I figure out a better method. Should prevent announcement due to artifact trait on the player, but still announce on the player if they cast it on themselves
-					local full_destName,dest = RSA.RemoveServerNames(dest)
 					spellinfo = GetSpellInfo(spellID)
 					spelllinkinfo = GetSpellLink(spellID)
 					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
-					if RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End ~= "" then
+					local messagemax = #RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End
+					if messagemax == 0 then return end
+					local messagerandom = math.random(messagemax)
+					local message = RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End[messagerandom]
+					local full_destName,dest = RSA.RemoveServerNames(dest)
+					if message ~= "" then
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.Local == true then
-							RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_LibSink(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.Yell == true then
-							RSA.Print_Yell(string.gsub(RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Yell(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
-						if RSA.db.profile.Priest.Spells.GuardianSpirit.Whisper == true and RSA.Whisperable(destFlags) then
+						if RSA.db.profile.Priest.Spells.GuardianSpirit.Whisper == true and dest ~= pName then
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End, ".%a+.", RSA.String_Replace), full_destName)
+							RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 						end
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.CustomChannel.Enabled == true then
-							RSA.Print_Channel(string.gsub(RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.GuardianSpirit.CustomChannel.Channel)
+							RSA.Print_Channel(string.gsub(message, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.GuardianSpirit.CustomChannel.Channel)
 						end
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.Say == true then
-							RSA.Print_Say(string.gsub(RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Say(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.SmartGroup == true then
-							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_SmartGroup(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.Party == true then
-							if RSA.db.profile.Priest.Spells.GuardianSpirit.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-							RSA.Print_Party(string.gsub(RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End, ".%a+.", RSA.String_Replace))
+							if RSA.db.profile.Priest.Spells.GuardianSpirit.SmartGroup == true and GetNumGroupMembers() == 0 then return end
+								RSA.Print_Party(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.Raid == true then
 							if RSA.db.profile.Priest.Spells.GuardianSpirit.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-							RSA.Print_Raid(string.gsub(RSA.db.profile.Priest.Spells.GuardianSpirit.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Raid(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
-					end				
+					end			
 				end
 				if (spellID == 8122 and RSA_PsychicScream == false) then -- PSYCHIC SCREAM
 					RSA_PsychicScream = true
 					spellinfo = GetSpellInfo(spellID)
 					spelllinkinfo = GetSpellLink(spellID)
-					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest}
-					if RSA.db.profile.Priest.Spells.PsychicScream.Messages.End ~= "" then
+					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
+					local messagemax = #RSA.db.profile.Priest.Spells.PsychicScream.Messages.End
+					if messagemax == 0 then return end
+					local messagerandom = math.random(messagemax)
+					local message = RSA.db.profile.Priest.Spells.PsychicScream.Messages.End[messagerandom]
+					if message ~= "" then
 						if RSA.db.profile.Priest.Spells.PsychicScream.Local == true then
-							RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.PsychicScream.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_LibSink(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.PsychicScream.Yell == true then
-							RSA.Print_Yell(string.gsub(RSA.db.profile.Priest.Spells.PsychicScream.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Yell(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.PsychicScream.CustomChannel.Enabled == true then
-							RSA.Print_Channel(string.gsub(RSA.db.profile.Priest.Spells.PsychicScream.Messages.End, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.PsychicScream.CustomChannel.Channel)
+							RSA.Print_Channel(string.gsub(message, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.PsychicScream.CustomChannel.Channel)
 						end
 						if RSA.db.profile.Priest.Spells.PsychicScream.Say == true then
-							RSA.Print_Say(string.gsub(RSA.db.profile.Priest.Spells.PsychicScream.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Say(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.PsychicScream.SmartGroup == true then
-							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Priest.Spells.PsychicScream.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_SmartGroup(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.PsychicScream.Party == true then
-							if RSA.db.profile.Priest.Spells.PsychicScream.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-							RSA.Print_Party(string.gsub(RSA.db.profile.Priest.Spells.PsychicScream.Messages.End, ".%a+.", RSA.String_Replace))
+							if RSA.db.profile.Priest.Spells.PsychicScream.SmartGroup == true and GetNumGroupMembers() == 0 then return end
+								RSA.Print_Party(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.PsychicScream.Raid == true then
 							if RSA.db.profile.Priest.Spells.PsychicScream.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-							RSA.Print_Raid(string.gsub(RSA.db.profile.Priest.Spells.PsychicScream.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Raid(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
-					end
+					end	
 				end -- PSYCHIC SCREAM
 				if (spellID == 226943 and RSA_PsychicScream == false) then -- Mind Bomb
 					RSA_PsychicScream = true
 					spellinfo = GetSpellInfo(spellID)
 					spelllinkinfo = GetSpellLink(spellID)
-					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo,}
-					if RSA.db.profile.Priest.Spells.MindBomb.Messages.End ~= "" then
+					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
+					local messagemax = #RSA.db.profile.Priest.Spells.MindBomb.Messages.End
+					if messagemax == 0 then return end
+					local messagerandom = math.random(messagemax)
+					local message = RSA.db.profile.Priest.Spells.MindBomb.Messages.End[messagerandom]
+					if message ~= "" then
 						if RSA.db.profile.Priest.Spells.MindBomb.Local == true then
-							RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_LibSink(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.MindBomb.Yell == true then
-							RSA.Print_Yell(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Yell(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Enabled == true then
-							RSA.Print_Channel(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Channel)
+							RSA.Print_Channel(string.gsub(message, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.MindBomb.CustomChannel.Channel)
 						end
 						if RSA.db.profile.Priest.Spells.MindBomb.Say == true then
-							RSA.Print_Say(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Say(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.MindBomb.SmartGroup == true then
-							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_SmartGroup(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.MindBomb.Party == true then
-							if RSA.db.profile.Priest.Spells.MindBomb.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-							RSA.Print_Party(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+							if RSA.db.profile.Priest.Spells.MindBomb.SmartGroup == true and GetNumGroupMembers() == 0 then return end
+								RSA.Print_Party(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
 						if RSA.db.profile.Priest.Spells.MindBomb.Raid == true then
 							if RSA.db.profile.Priest.Spells.MindBomb.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-							RSA.Print_Raid(string.gsub(RSA.db.profile.Priest.Spells.MindBomb.Messages.End, ".%a+.", RSA.String_Replace))
+							RSA.Print_Raid(string.gsub(message, ".%a+.", RSA.String_Replace))
 						end
-					end
+					end	
 				end -- Mind Bomb
 				if spellID == 15487 then -- SILENCE
 					RSA_Silenced = false -- announcement done in unified core
@@ -421,111 +535,13 @@ function RSA_Priest:OnEnable()
 					RSA_Silenced = true -- announcement done in unified core
 				end -- SILENCE
 			end -- IF EVENT IS SPELL_INTERRUPT
-			MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
+			MonitorAndAnnounce(self, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4)
 		end -- IF SOURCE IS PLAYER
 	end -- END ENTIRELY
 	RSA.CombatLogMonitor:SetScript("OnEvent", Priest_Spells)
-	------------------------------
-	---- Resurrection Monitor ----
-	------------------------------
-	local function Priest_Resurrection(_, event, source, spell, rank, dest, _)
-		if UnitName(source) == pName then
-			if spell == GetSpellInfo(2006) and RSA.db.profile.Priest.Spells.Resurrection.Messages.Start ~= "" then -- RESURRECTION
-				if event == "UNIT_SPELLCAST_SENT" then
-					Ressed = false
-					if (dest == L["Unknown"] or dest == nil) then
-						if UnitExists("target") ~= 1 or (UnitHealth("target") > 1 and UnitIsDeadOrGhost("target") ~= 1) then
-							if GameTooltipTextLeft1:GetText() == nil then
-								dest = L["Unknown"]
-								ResTarget = L["Unknown"]
-							else
-								dest = string.gsub(GameTooltipTextLeft1:GetText(), L["Corpse of "], "")
-								ResTarget = string.gsub(GameTooltipTextLeft1:GetText(), L["Corpse of "], "")
-							end
-						else
-							dest = UnitName("target")
-							ResTarget = UnitName("target")
-						end
-					else
-						ResTarget = dest
-					end
-					local full_destName,dest = RSA.RemoveServerNames(ResTarget)
-					spellinfo = GetSpellInfo(spell) spelllinkinfo = GetSpellLink(spell)
-					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
-					if RSA.db.profile.Priest.Spells.Resurrection.Messages.Start ~= "" then
-						if RSA.db.profile.Priest.Spells.Resurrection.Local == true then
-							RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Yell == true then
-							RSA.Print_Yell(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Whisper == true and dest ~= pName then
-							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.Start, ".%a+.", RSA.String_Replace), full_destName)
-							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.CustomChannel.Enabled == true then
-							RSA.Print_Channel(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.Start, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.Resurrection.CustomChannel.Channel)
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Say == true then
-							RSA.Print_Say(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true then
-							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Party == true then
-							if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-							RSA.Print_Party(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Raid == true then
-							if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-							RSA.Print_Raid(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-					end
-				elseif event == "UNIT_SPELLCAST_SUCCEEDED" and Ressed ~= true then
-					dest = ResTarget
-					Ressed = true
-					local full_destName,dest = RSA.RemoveServerNames(ResTarget)
-					if RSA.db.profile.Priest.Spells.Resurrection.Messages.End ~= "" then
-						if RSA.db.profile.Priest.Spells.Resurrection.Local == true then
-							RSA.Print_LibSink(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Yell == true then
-							RSA.Print_Yell(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Whisper == true and dest ~= pName then
-							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.End, ".%a+.", RSA.String_Replace), full_destName)
-							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.CustomChannel.Enabled == true then
-							RSA.Print_Channel(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.End, ".%a+.", RSA.String_Replace), RSA.db.profile.Priest.Spells.Resurrection.CustomChannel.Channel)
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Say == true then
-							RSA.Print_Say(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true then
-							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Party == true then
-							if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-							RSA.Print_Party(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Priest.Spells.Resurrection.Raid == true then
-							if RSA.db.profile.Priest.Spells.Resurrection.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-							RSA.Print_Raid(string.gsub(RSA.db.profile.Priest.Spells.Resurrection.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-					end
-				end
-			end -- RESURRECTION
-		end
-	end -- END FUNCTION
-	RSA.ResMon = RSA.ResMon or CreateFrame("Frame", "RSA:RM")
-	RSA.ResMon:RegisterEvent("UNIT_SPELLCAST_SENT")
-	RSA.ResMon:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	RSA.ResMon:SetScript("OnEvent", Priest_Resurrection)
-end -- END ON ENABLED
+end
+
 function RSA_Priest:OnDisable()
 	RSA.CombatLogMonitor:SetScript("OnEvent", nil)
-	RSA.ResMon:SetScript("OnEvent", nil)
+	if LRI then LRI.UnregisterAllCallbacks(RSA) end
 end

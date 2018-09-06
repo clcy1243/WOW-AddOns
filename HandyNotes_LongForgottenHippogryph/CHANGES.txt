@@ -1,18 +1,18 @@
-tag f47046c2e105c190863868661aa49fc6c7d7ed93 v2
+tag cffe19249b60005d9014c81be7763c167e5de798 v3
 Author:	David Lynch <kemayo@gmail.com>
-Date:	Mon Nov 28 13:36:05 2016 -0600
+Date:	Fri Jul 20 11:31:42 2018 -0500
 
-Tagging v2
+Tagging v3
 
-commit 629ab9521477c8134a49bc0d72066ab75b8a6827
+commit dcc5de8840f872c49592096fff72a6388613f7fb
 Author: David Lynch <kemayo@gmail.com>
-Date:   Sun Nov 27 15:29:07 2016 -0600
+Date:   Fri Jul 20 11:31:27 2018 -0500
 
-    Clean out some clustered nodes
+    Fix hiding nodes
 
-commit 6d7cab52e372ab45a327587fcfb1c318b67f5b9f
-Author: David Lynch <dlynch@wmf1453.local>
-Date:   Sat Nov 26 23:43:31 2016 -0600
+commit b6ee0d76fc7f7aa192be3ea728497315aaf44269
+Author: David Lynch <kemayo@gmail.com>
+Date:   Fri Jul 20 11:28:13 2018 -0500
 
-    Expand from wowhead comments
+    Fix for Battle for Azeroth
 

@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Brother Korloff", 874, 671)
+local mod, CL = BigWigs:NewBoss("Brother Korloff", 1004, 671)
 if not mod then return end
 mod:RegisterEnableMob(59223)
 
@@ -27,7 +27,11 @@ end
 --
 
 function mod:GetOptions()
-	return {"fists", 114460, "firestorm"}
+	return {
+		"fists",
+		{114460, "FLASH"}, -- Scorched Earth
+		"firestorm",
+	}
 end
 
 function mod:OnBossEnable()
@@ -52,21 +56,20 @@ end
 --
 
 function mod:BlazingFists(args)
-	self:Message("fists", "Urgent", "Alert", args.spellId)
+	self:Message("fists", "orange", "Alert", args.spellId)
 	self:Bar("fists", 6, CL["cast"]:format(args.spellName), args.spellId)
 	self:Bar("fists", 30, args.spellId)
 end
 
 function mod:ScorchedEarthYou(args)
 	if self:Me(args.destGUID) then
-		self:Message(114460, "Personal", "Alarm", CL["underyou"]:format(args.spellName))
+		self:Message(114460, "blue", "Alarm", CL["underyou"]:format(args.spellName))
 		self:Flash(114460)
 	end
 end
 
 function mod:FirestormKick(args)
-	self:Message("firestorm", "Attention", nil, args.spellId)
+	self:Message("firestorm", "yellow", nil, args.spellId)
 	self:Bar("firestorm", 6, CL["cast"]:format(args.spellName), args.spellId)
 	self:Bar("firestorm", 25.2, args.spellId)
 end
-

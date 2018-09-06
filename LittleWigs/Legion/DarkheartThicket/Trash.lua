@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Darkheart Thicket Trash", 1067)
+local mod, CL = BigWigs:NewBoss("Darkheart Thicket Trash", 1466)
 if not mod then return end
 mod.displayName = CL.trash
 mod:RegisterEnableMob(
@@ -39,7 +39,7 @@ function mod:GetOptions()
 		200658, -- Star Shower
 
 		--[[ Dreadsoul Poisoner ]]--
-		{200684, "SAY"}, -- Nightmare Toxin
+		{200684, "SAY", "SAY_COUNTDOWN"}, -- Nightmare Toxin
 
 		--[[ Crazed Razorbeak ]]--
 		200768, -- Propelling Charge
@@ -98,7 +98,7 @@ do
 		local t = GetTime()
 		if t - (prevTable[args.spellId] or 0) > 1 then
 			prevTable[args.spellId] = t
-			self:Message(args.spellId, "Attention", self:Interrupter() and "Alarm", CL.casting:format(args.spellName))
+			self:Message(args.spellId, "yellow", self:Interrupter() and "Alarm", CL.casting:format(args.spellName))
 		end
 	end
 
@@ -107,7 +107,7 @@ do
 		local t = GetTime()
 		if t - (prevTable[args.spellId] or 0) > 1 then
 			prevTable[args.spellId] = t
-			self:Message(args.spellId, "Urgent", "Warning", CL.casting:format(args.spellName))
+			self:Message(args.spellId, "orange", "Warning", CL.casting:format(args.spellName))
 		end
 	end
 end
@@ -117,7 +117,7 @@ function mod:NightmareToxinApplied(args)
 		self:Say(args.spellId)
 		self:SayCountdown(args.spellId, 3, nil, 2)
 	end
-	self:TargetMessage(args.spellId, args.destName, "Important", "Alert", nil, nil, self:Dispeller("poison"))
+	self:TargetMessage(args.spellId, args.destName, "red", "Alert", nil, nil, self:Dispeller("poison"))
 	self:TargetBar(args.spellId, 3, args.destName)
 end
 
@@ -132,15 +132,17 @@ end
 do
 	local prev = 0
 	function mod:CorruptionPool(args)
-		local t = GetTime()
-		if self:Me(args.destGUID) and t-prev > 1.5 then
-			prev = t
-			self:Message(args.spellId, "Personal", "Warning", CL.underyou:format(args.spellName))
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			if t-prev > 1.5 then
+				prev = t
+				self:Message(args.spellId, "blue", "Warning", CL.underyou:format(args.spellName))
+			end
 		end
 	end
 end
 
 -- Bloodtainted Fury
 function mod:BloodBomb(args)
-	self:Message(args.spellId, "Urgent", "Alert")
+	self:Message(args.spellId, "orange", "Alert")
 end

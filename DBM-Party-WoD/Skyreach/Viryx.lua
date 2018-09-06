@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(968, "DBM-Party-WoD", 7, 476)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(76266)
 mod:SetEncounterID(1701)
 mod:SetZone()
@@ -87,7 +87,7 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 153954 then--Cast Down (4-5 sec before pre warning)
 		specWarnCastDownSoon:Show()
 		self:BossTargetScanner(76266, "CastDownTarget", 0.05, 15)

@@ -54,25 +54,36 @@ end
 
 function GSE:ZONE_CHANGED_NEW_AREA()
   local name, type, difficulty, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance, mapID, instanceGroupSize = GetInstanceInfo()
-  if type == "arena" or type == "pvp" then
+  if type == "pvp" then
     GSE.PVPFlag = true
   else
     GSE.PVPFlag = false
   end
-  if difficulty == 23 then
+  if difficulty == 23 then -- Mythic 5 player
     GSE.inMythic = true
   else
     GSE.inMythic = false
   end
-  if difficulty == 1 then
+  if difficulty == 1 then -- Normal
     GSE.inDungeon = true
   else
     GSE.inDungeon = false
   end
-  if difficulty == 2 or difficult == 24 then
+  if difficulty == 2 then -- Heroic
     GSE.inHeroic = true
   else
     GSE.inHeroic = false
+  end
+  if difficulty == 8 then -- Mythic+
+    GSE.inMythicPlus = true
+  else
+    GSE.inMythicPlus = false
+  end
+
+  if difficulty == 24 or difficulty == 33 then -- Timewalking  24 Dungeon, 33 raid
+    GSE.inTimeWalking = true
+  else
+    GSE.inTimeWalking = false
   end
   if type == "raid" then
     GSE.inRaid = true
@@ -84,16 +95,23 @@ function GSE:ZONE_CHANGED_NEW_AREA()
   else
     GSE.inParty = false
   end
-  GSE.PrintDebugMessage("PVP: " .. tostring(GSE.PVPFlag) .. " inMythic: " .. tostring(GSE.inMythic) .. " inRaid: " .. tostring(GSE.inRaid) .. " inDungeon " .. tostring(GSE.inDungeon) .. " inHeroic " .. tostring(GSE.inHeroic), Statics.DebugModules["API"])
+  if type == "arena" then
+    GSE.inArena = true
+  else
+    GSE.inArena = false
+  end
+  GSE.PrintDebugMessage("PVP: " .. tostring(GSE.PVPFlag) .. " inMythic: " .. tostring(GSE.inMythic) .. " inRaid: " .. tostring(GSE.inRaid) .. " inDungeon " .. tostring(GSE.inDungeon) .. " inHeroic " .. tostring(GSE.inHeroic) .. " inArena " .. tostring(GSE.inArena) .. " inTimeWalking " .. tostring(GSE.inTimeWalking) .. " inMythicPlus " .. tostring(GSE.inMythicPlus),  Statics.DebugModules["API"])
   GSE.ReloadSequences()
 end
 
 function GSE:PLAYER_ENTERING_WORLD()
+  GSE.PerformOneOffEvents()
   GSE.PrintAvailable = true
   GSE.PerformPrint()
 end
 
 function GSE:ADDON_LOADED(event, addon)
+
   if GSE.isEmpty(GSELibrary) then
     GSELibrary = {}
   end
@@ -182,13 +200,9 @@ function GSE:ADDON_LOADED(event, addon)
     GSEOptions.MacroResetModifiers["AnyAlt"] = nil
   end
 
-  -- Added in 2.2
-  if GSE.isEmpty(GSEOptions.UseVerboseFormat) then
-    GSEOptions.UseVerboseFormat = true
-  end
 end
 
-function GSE:UNIT_SPELLCAST_SUCCEEDED(event, unit, spell)
+function GSE:UNIT_SPELLCAST_SUCCEEDED(event, unit, action)
   if unit == "player" then
     local _, GCD_Timer = GetSpellCooldown(61304)
     GCD = true
@@ -196,8 +210,13 @@ function GSE:UNIT_SPELLCAST_SUCCEEDED(event, unit, spell)
     GSE.PrintDebugMessage("GCD Delay:" .. " " .. GCD_Timer)
     GSE.CurrentGCD = GCD_Timer
 
-    if GSE.RecorderActive then
-      GSE.GUIRecordFrame.RecordSequenceBox:SetText(GSE.GUIRecordFrame.RecordSequenceBox:GetText() .. "/cast " .. spell .. "\n")
+    local elements = GSE.split(action, "-")
+    local spell,_,_,_,_,_=GetSpellInfo(elements[6])
+    local fskilltype, fspellid = GetSpellBookItemInfo(spell)
+    if not GSE.isEmpty(fskilltype) then
+      if GSE.RecorderActive then
+        GSE.GUIRecordFrame.RecordSequenceBox:SetText(GSE.GUIRecordFrame.RecordSequenceBox:GetText() .. "/cast " .. spell .. "\n")
+      end
     end
   end
 end
@@ -277,13 +296,22 @@ function GSE:GSSlash(input)
     GSE.CleanOrphanSequences()
     GSE.CleanMacroLibrary(true)
   elseif string.lower(string.sub(string.lower(input),1,6)) == "export" then
-    GSE.Print(GSE.ExportSequence(string.sub(string.lower(input),8)))
+    GSE.Print(GSE.ExportSequence(string.sub(string.lower(input),8, true, "STRING", true)))
   elseif string.lower(input) == "showdebugoutput" then
-    StaticPopup_Show ("GS-DebugOutput")
+      StaticPopup_Show ("GS-DebugOutput")
   elseif string.lower(input) == "record" then
-    GSE.GUIRecordFrame:Show()
+    if GSE.UnsavedOptions["GUI"] then
+      GSE.GUIRecordFrame:Show()
+    else
+      GSE.printNoGui()
+    end
   elseif string.lower(input) == "debug" then
-    GSE.GUIShowDebugWindow()
+    if GSE.UnsavedOptions["GUI"] then
+      GSE.GUIShowDebugWindow()
+    else
+      GSE.printNoGui()
+    end
+
   elseif string.lower(input) == "compilemissingspells" then
     GSE.Print("Compiling Language Table errors.  If the game hangs please be patient.")
     GSE.ReportUnfoundSpells()
@@ -300,9 +328,19 @@ function GSE:GSSlash(input)
   elseif string.lower(input) == "checkmacrosforerrors" then
     GSE.ScanMacrosForErrors()
   elseif string.lower(input) == "compressstring" then
-    GSE.GUICompressFrame:Show()
+    if GSE.UnsavedOptions["GUI"] then
+      GSE.GUICompressFrame:Show()
+    else
+      GSE.printNoGui()
+    end
+
   else
-    GSE.GUIShowViewer()
+    if GSE.UnsavedOptions["GUI"] then
+      GSE.GUIShowViewer()
+    else
+      GSE.printNoGui()
+    end
+
   end
 end
 
@@ -338,15 +376,20 @@ function GSE:ProcessOOCQueue()
         GSE.OOCAddSequenceToCollection(v.sequencename, v.sequence, v.classid)
       elseif v.action == "Replace" then
         if GSE.isEmpty(GSELibrary[v.classid][v.sequencename]) then
-          GSE.OOCAddSequenceToCollection(v.sequencename, v.sequence, v.classid)
+          GSE.AddSequenceToCollection(v.sequencename, v.sequence, v.classid)
         else
           GSELibrary[v.classid][v.sequencename] = v.sequence
         end
-        GSE.OOCUpdateSequence(v.sequencename, v.sequence.MacroVersions[GSE.GetActiveSequenceVersion(v.sequencename)])
+        if v.checkmacro then
+          GSE.CheckMacroCreated(v.sequencename, v.checkmacro)
+        end
+        GSE.UpdateSequence(v.sequencename, v.sequence.MacroVersions[GSE.GetActiveSequenceVersion(v.sequencename)])
       elseif v.action == "openviewer" then
         GSE.GUIShowViewer()
       elseif v.action == "CheckMacroCreated" then
         GSE.OOCCheckMacroCreated(v.sequencename, v.create)
+      elseif v.action == "MergeSequence"then
+        GSE.OOCPerformMergeAction(v.mergeaction, v.classid, v.sequencename, v.newSequence)
       end
       GSE.OOCQueue[k] = nil
     end

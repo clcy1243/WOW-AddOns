@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Assault on Violet Hold Trash", 1066)
+local mod, CL = BigWigs:NewBoss("Assault on Violet Hold Trash", 1544)
 if not mod then return end
 mod.displayName = CL.trash
 mod:RegisterEnableMob(
@@ -64,11 +64,11 @@ end
 --
 
 function mod:Casts(args)
-	self:Message(args.spellId, "Important", "Alert")
+	self:Message(args.spellId, "red", "Alert")
 end
 
 function mod:FelPrison(args)
-	self:TargetMessage(args.spellId, args.destName, "Urgent", "Alarm", nil, nil, true)
+	self:TargetMessage(args.spellId, args.destName, "orange", "Alarm", nil, nil, true)
 end
 
 -- Lieutenant Sinclari

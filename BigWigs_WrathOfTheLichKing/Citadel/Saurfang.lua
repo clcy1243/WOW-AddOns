@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Deathbringer Saurfang", 604, 1628)
+local mod = BigWigs:NewBoss("Deathbringer Saurfang", 631, 1628)
 if not mod then return end
 mod:RegisterEnableMob(37813, 37200, 37830, 37187, 37920) -- Deathbringer Saurfang, Muradin, Marine, Overlord Saurfang, Kor'kron Reaver
 mod.toggleOptions = {"warmup", "adds", 72410, 72385, {72293, "ICON", "FLASH"}, 72737, "proximity", "berserk"}
@@ -13,6 +13,7 @@ mod.toggleOptions = {"warmup", "adds", 72410, 72385, {72293, "ICON", "FLASH"}, 7
 
 local killed = nil
 local count = 1
+local prevWin = 0
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -35,6 +36,10 @@ L = mod:GetLocale()
 -- Initialization
 --
 
+function mod:VerifyEnable()
+	return (GetTime() - prevWin) > 300 and BigWigsLoader.GetBestMapForUnit("player") == 188 -- Floor 3, Deathbringer's Rise
+end
+
 function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "Adds", 72173)
 	self:Log("SPELL_AURA_APPLIED", "RuneofBlood", 72410)
@@ -53,7 +58,7 @@ end
 function mod:OnEngage()
 	self:OpenProximity("proximity", 11)
 	self:Berserk(self:Heroic() and 360 or 480)
-	self:DelayedMessage("adds", 35, "Urgent", L["adds_warning"])
+	self:DelayedMessage("adds", 35, "orange", L["adds_warning"])
 	self:Bar("adds", 40, L["adds"], 72173)
 	count = 1
 end
@@ -68,9 +73,8 @@ function mod:WarmupAlliance()
 	self:Bar("warmup", 48, self.displayName, "achievement_boss_saurfang")
 end
 
-function mod:VerifyEnable()
-	BigWigsLoader.SetMapToCurrentZone()
-	return not self.lastKill and BigWigsLoader.GetCurrentMapDungeonLevel() == 2
+function mod:OnWin()
+	prevWin = GetTime()
 end
 
 --------------------------------------------------------------------------------
@@ -80,7 +84,7 @@ end
 do
 	local bbTargets, scheduled = mod:NewTargetList(), nil
 	local function boilingWarn()
-		mod:TargetMessage(72385, bbTargets, "Urgent")
+		mod:TargetMessage(72385, bbTargets, "orange")
 		scheduled = nil
 	end
 	function mod:BoilingBlood(args)
@@ -92,18 +96,18 @@ do
 end
 
 function mod:Adds(args)
-	self:Message("adds", "Positive", "Alarm", L["adds_message"], args.spellId)
-	self:DelayedMessage("adds", 35, "Urgent", L["adds_warning"])
+	self:Message("adds", "green", "Alarm", L["adds_message"], args.spellId)
+	self:DelayedMessage("adds", 35, "orange", L["adds_warning"])
 	self:Bar("adds", 40, L["adds"], args.spellId)
 end
 
 function mod:RuneofBlood(args)
-	self:TargetMessage(72410, args.destName, "Attention")
+	self:TargetMessage(72410, args.destName, "yellow")
 	self:CDBar(72410, 20)
 end
 
 function mod:Mark(args)
-	self:StackMessage(72293, args.destName, count, "Attention", "Alert")
+	self:StackMessage(72293, args.destName, count, "yellow", "Alert")
 	count = count + 1
 	self:PrimaryIcon(72293, args.destName)
 	if self:Me(args.destGUID) then
@@ -112,6 +116,6 @@ function mod:Mark(args)
 end
 
 function mod:Frenzy(args)
-	self:Message(72737, "Important", "Long")
+	self:Message(72737, "red", "Long")
 end
 

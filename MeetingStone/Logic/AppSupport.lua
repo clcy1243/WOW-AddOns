@@ -17,6 +17,7 @@ function AppSupport:OnEnable()
     self:StatInit()
     self:ChallengeInit()
     self:DataInit()
+    self:RaidInit()
 end
 
 function AppSupport:OnDisable()
@@ -71,46 +72,46 @@ function AppSupport:StatInit()
     --     return count
     -- end)
 
-    RegisterStat('OrderHallQuestCount', 'GARRISON_MISSION_COMPLETE_RESPONSE', function()
-        return tonumber((GetStatistic(11236)))
-    end)
+    -- RegisterStat('OrderHallQuestCount', 'GARRISON_MISSION_COMPLETE_RESPONSE', function()
+    --     return tonumber((GetStatistic(11236)))
+    -- end)
 
     ---- Achievement
-    RegisterStat('AchievementPoint', 'ACHIEVEMENT_EARNED', function()
-        local value = 0
-        for id = 10439, 13000 do
-            local _, _, points, completed, _, _, _, _, _, _, _, isGuild = GetAchievementInfo(id)
-            if not isGuild and completed then
-                value = value + points
-            end
-        end
-        return value
-    end)
+    -- RegisterStat('AchievementPoint', 'ACHIEVEMENT_EARNED', function()
+    --     local value = 0
+    --     for id = 10439, 13000 do
+    --         local _, _, points, completed, _, _, _, _, _, _, _, isGuild = GetAchievementInfo(id)
+    --         if not isGuild and completed then
+    --             value = value + points
+    --         end
+    --     end
+    --     return value
+    -- end)
 
     ---- Mount
-    RegisterStat('MountCount', 'COMPANION_LEARNED', function()
-        local count = 0
-        for _, mountId in ipairs(C_MountJournal.GetMountIDs()) do
-            local _, id, _, _, _, _, _, _, _, _, collected = C_MountJournal.GetMountInfoByID(mountId)
-            if collected and MOUNT_MAP[id] then
-                count = count + 1
-            end
-        end
-        return count
-    end)
+    -- RegisterStat('MountCount', 'COMPANION_LEARNED', function()
+    --     local count = 0
+    --     for _, mountId in ipairs(C_MountJournal.GetMountIDs()) do
+    --         local _, id, _, _, _, _, _, _, _, _, collected = C_MountJournal.GetMountInfoByID(mountId)
+    --         if collected and MOUNT_MAP[id] then
+    --             count = count + 1
+    --         end
+    --     end
+    --     return count
+    -- end)
 
     ----
-    RegisterStat('ArtifactPower', {'ARTIFACT_XP_UPDATE', 'PLAYER_EQUIPMENT_CHANGED'}, function()
-        local count = 0
-        local id, _, _, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
-        if not id then
-            return
-        end
-        for i = 1, pointsSpent - 1 do
-            count = count + C_ArtifactUI.GetCostForPointAtRank(i, artifactTier)
-        end
-        return count + xp, id
-    end)
+    -- RegisterStat('ArtifactPower', {'ARTIFACT_XP_UPDATE', 'PLAYER_EQUIPMENT_CHANGED'}, function()
+    --     local count = 0
+    --     local id, _, _, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
+    --     if not id then
+    --         return
+    --     end
+    --     for i = 1, pointsSpent - 1 do
+    --         count = count + C_ArtifactUI.GetCostForPointAtRank(i, artifactTier)
+    --     end
+    --     return count + xp, id
+    -- end)
 
     for key, api in pairs(statApis) do
         local value, id = api()
@@ -161,7 +162,7 @@ function AppSupport:DataInit()
     end
 
     RegisterData('Zone', {'ZONE_CHANGED_NEW_AREA', 'ZONE_CHANGED_INDOORS', 'ZONE_CHANGED'}, GetZoneText, COMMIT_INTERVAL)
-    RegisterData('ItemPush2', 'CHAT_MSG_LOOT', GetLegendaryItem, 0, true)
+    -- RegisterData('ItemPush2', 'CHAT_MSG_LOOT', GetLegendaryItem, 0, true)
 end
 
 ---- Group Member
@@ -310,13 +311,11 @@ function AppSupport:CHALLENGE_MODE_COMPLETED()
     local itemLevel = math.floor( select(2, GetAverageItemLevel()) )
     local combatData = CombatStat:GetCombatData()
 
-    self.lastMapId = nil
-
     
 
-    CombatStat:Disable()
-    -- App:SendServer('APP_CHALLENGE', mapId, level, time, class, itemLevel, UnitRole('player'), unpack(self:GetChallengeMembers()))
     App:SendServer('APP_CHALLENGE2', mapId, level, time, class, itemLevel, UnitRole('player'), self:GetChallengeMembers(), combatData)
+    CombatStat:Disable()
+    self.lastMapId = nil
 end
 
 function AppSupport:CHALLENGE_MODE_START()
@@ -353,4 +352,71 @@ function AppSupport:StartCombatStat()
     if self.lastMapId then
         CombatStat:Enable()
     end
+end
+
+---- raid
+
+function AppSupport:RaidInit()
+    self:RegisterEvent('ENCOUNTER_END')
+    self:RegisterEvent('ENCOUNTER_START')
+end
+
+function AppSupport:ENCOUNTER_START(_, id, name, difficulty, size)
+    if not self:GetInstanceId() then
+        
+        return
+    end
+    CombatStat:Reset()
+    CombatStat:Enable()
+    self.encounterStartStamp = time()
+    
+end
+
+function AppSupport:ENCOUNTER_END(_, bossId, name, difficulty, maxPlayers, status)
+    local instanceId = self:GetInstanceId()
+    if not instanceId then
+        return
+    end
+    if status == 1 then
+        local class = select(3, UnitClass('player'))
+        local itemLevel = math.floor( select(2, GetAverageItemLevel()) )
+        local combatData = CombatStat:GetCombatData()
+        local hash, leaderGuid = self:GetRaidInfo()
+
+        App:SendServer('APP_RAID', instanceId, bossId, difficulty, maxPlayers, class, itemLevel, hash, leaderGuid, combatData, UnitRole('player'), time() - self.encounterStartStamp)
+        
+    end
+    CombatStat:Disable()
+end
+
+function AppSupport:GetInstanceId()
+    local name, type, difficulty, _, maxPlayers, _, isDynamicInstance, mapId, instanceGroupSize = GetInstanceInfo()
+    return APP_RAID_DIFFICULTIES[difficulty] and APP_RAID_MAPS[mapId] and mapId or nil
+end
+
+function AppSupport:GetRaidInfo()
+    local units = {}
+    local leaderGuid
+    local hash
+    local hasError = false
+
+    for _, unit in IterateGroupUnits() do
+        if UnitExists(unit) then
+            local guid = UnitGUID(unit)
+            if guid then
+                if UnitIsGroupLeader(unit) then
+                    leaderGuid = guid
+                end
+                table.insert(units, unit)
+            else
+                hasError = true
+            end
+        end
+    end
+
+    if not hasError then
+        table.sort(units)
+        hash = crc32(table.concat(units, ',')), leaderGuid
+    end
+    return hash, leaderGuid
 end

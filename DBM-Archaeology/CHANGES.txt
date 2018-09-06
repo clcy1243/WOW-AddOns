@@ -1,59 +1,66 @@
 ------------------------------------------------------------------------
-r28 | mysticalos@icloud.com | 2017-08-29 03:58:46 -0500 (Tue, 29 Aug 2017) | 1 line
+r29 | mysticalos@icloud.com | 2018-07-17 11:39:07 +0000 (Tue, 17 Jul 2018) | 1 line
+Changed paths:
+   M /trunk/Archaeology.lua
+   M /trunk/DBM-Archaeology.toc
+
+8.0 Update
+------------------------------------------------------------------------
+r28 | mysticalos@icloud.com | 2017-08-29 08:58:46 +0000 (Tue, 29 Aug 2017) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 Bump TOCs
 ------------------------------------------------------------------------
-r27 | mysticalos@icloud.com | 2017-03-28 04:17:37 -0500 (Tue, 28 Mar 2017) | 1 line
+r27 | mysticalos@icloud.com | 2017-03-28 09:17:37 +0000 (Tue, 28 Mar 2017) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 Bump Toc
 ------------------------------------------------------------------------
-r26 | mysticalos@icloud.com | 2017-03-18 04:06:13 -0500 (Sat, 18 Mar 2017) | 1 line
+r26 | mysticalos@icloud.com | 2017-03-18 09:06:13 +0000 (Sat, 18 Mar 2017) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Add legion keystone items
 ------------------------------------------------------------------------
-r25 | mysticalos@icloud.com | 2017-01-04 01:15:37 -0600 (Wed, 04 Jan 2017) | 1 line
+r25 | mysticalos@icloud.com | 2017-01-04 07:15:37 +0000 (Wed, 04 Jan 2017) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 Just a test push
 ------------------------------------------------------------------------
-r24 | mysticalos | 2016-10-25 10:54:20 -0500 (Tue, 25 Oct 2016) | 1 line
+r24 | mysticalos | 2016-10-25 15:54:20 +0000 (Tue, 25 Oct 2016) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 Bump TOC
 ------------------------------------------------------------------------
-r23 | mysticalos | 2016-07-19 09:40:15 -0500 (Tue, 19 Jul 2016) | 1 line
+r23 | mysticalos | 2016-07-19 14:40:15 +0000 (Tue, 19 Jul 2016) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 toc
 ------------------------------------------------------------------------
-r22 | mysticalos | 2015-06-23 02:34:50 -0500 (Tue, 23 Jun 2015) | 1 line
+r22 | mysticalos | 2015-06-23 07:34:50 +0000 (Tue, 23 Jun 2015) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 Bump toc
 ------------------------------------------------------------------------
-r21 | mysticalos | 2015-02-24 04:03:56 -0600 (Tue, 24 Feb 2015) | 1 line
+r21 | mysticalos | 2015-02-24 10:03:56 +0000 (Tue, 24 Feb 2015) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 1 hour is close enough, I'm going to bed before realms go down. Bumping TOCs
 ------------------------------------------------------------------------
-r20 | mysticalos | 2014-12-17 15:34:22 -0600 (Wed, 17 Dec 2014) | 1 line
+r20 | mysticalos | 2014-12-17 21:34:22 +0000 (Wed, 17 Dec 2014) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Added draenor keystones
 ------------------------------------------------------------------------
-r19 | mysticalos | 2014-10-13 19:21:34 -0500 (Mon, 13 Oct 2014) | 2 lines
+r19 | mysticalos | 2014-10-14 00:21:34 +0000 (Tue, 14 Oct 2014) | 2 lines
 Changed paths:
    M /trunk/Archaeology.lua
    M /trunk/DBM-Archaeology.toc
@@ -61,13 +68,13 @@ Changed paths:
 ToC
 use ogg sound paths in 6.0
 ------------------------------------------------------------------------
-r18 | mysticalos | 2013-09-09 13:31:13 -0500 (Mon, 09 Sep 2013) | 1 line
+r18 | mysticalos | 2013-09-09 18:31:13 +0000 (Mon, 09 Sep 2013) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 TOC
 ------------------------------------------------------------------------
-r17 | mysticalos | 2013-07-23 00:09:34 -0500 (Tue, 23 Jul 2013) | 5 lines
+r17 | mysticalos | 2013-07-23 05:09:34 +0000 (Tue, 23 Jul 2013) | 5 lines
 Changed paths:
    M /trunk/Archaeology.lua
 
@@ -77,69 +84,69 @@ Changed paths:
 *Refactored some code to reduce redundancy
 *No longer scans loot in instances since keystones can't be found there
 ------------------------------------------------------------------------
-r16 | mysticalos | 2013-05-20 17:43:49 -0500 (Mon, 20 May 2013) | 1 line
+r16 | mysticalos | 2013-05-20 22:43:49 +0000 (Mon, 20 May 2013) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
    M /trunk/DBM-Archaeology.toc
 
 Toc update to 50300
 ------------------------------------------------------------------------
-r15 | mysticalos | 2013-03-06 16:25:15 -0600 (Wed, 06 Mar 2013) | 1 line
+r15 | mysticalos | 2013-03-06 22:25:15 +0000 (Wed, 06 Mar 2013) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Add mantid keystone
 ------------------------------------------------------------------------
-r14 | mysticalos | 2013-03-04 20:26:36 -0600 (Mon, 04 Mar 2013) | 1 line
+r14 | mysticalos | 2013-03-05 02:26:36 +0000 (Tue, 05 Mar 2013) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 Update TOC
 ------------------------------------------------------------------------
-r13 | mysticalos | 2013-01-04 15:08:32 -0600 (Fri, 04 Jan 2013) | 1 line
+r13 | mysticalos | 2013-01-04 21:08:32 +0000 (Fri, 04 Jan 2013) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 Bump ToC
 ------------------------------------------------------------------------
-r12 | mysticalos | 2012-09-29 07:52:33 -0500 (Sat, 29 Sep 2012) | 1 line
+r12 | mysticalos | 2012-09-29 12:52:33 +0000 (Sat, 29 Sep 2012) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Add the 2 new keystones
 ------------------------------------------------------------------------
-r11 | mysticalos | 2012-08-27 22:41:00 -0500 (Mon, 27 Aug 2012) | 1 line
+r11 | mysticalos | 2012-08-28 03:41:00 +0000 (Tue, 28 Aug 2012) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Comment cleanup
 ------------------------------------------------------------------------
-r10 | mysticalos | 2012-08-27 22:40:01 -0500 (Mon, 27 Aug 2012) | 1 line
+r10 | mysticalos | 2012-08-28 03:40:01 +0000 (Tue, 28 Aug 2012) | 1 line
 Changed paths:
    M /trunk/DBM-Archaeology.toc
 
 Bump ToC
 ------------------------------------------------------------------------
-r9 | mysticalos | 2012-03-05 16:44:26 -0600 (Mon, 05 Mar 2012) | 1 line
+r9 | mysticalos | 2012-03-05 22:44:26 +0000 (Mon, 05 Mar 2012) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Ignore events that aren't from player in Yogg box Alert
 ------------------------------------------------------------------------
-r8 | mysticalos | 2011-11-28 23:38:29 -0600 (Mon, 28 Nov 2011) | 1 line
+r8 | mysticalos | 2011-11-29 05:38:29 +0000 (Tue, 29 Nov 2011) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
    M /trunk/DBM-Archaeology.toc
 
 Bump TOC to 40300
 ------------------------------------------------------------------------
-r7 | mysticalos | 2011-11-14 10:22:50 -0600 (Mon, 14 Nov 2011) | 1 line
+r7 | mysticalos | 2011-11-14 16:22:50 +0000 (Mon, 14 Nov 2011) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Use correct soundfile for yogg box, oops
 ------------------------------------------------------------------------
-r6 | mysticalos | 2011-11-14 10:15:25 -0600 (Mon, 14 Nov 2011) | 1 line
+r6 | mysticalos | 2011-11-14 16:15:25 +0000 (Mon, 14 Nov 2011) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
    M /trunk/localization.de.lua
@@ -148,25 +155,25 @@ Changed paths:
 
 Google translation local updates heh
 ------------------------------------------------------------------------
-r5 | mysticalos | 2011-11-14 10:03:07 -0600 (Mon, 14 Nov 2011) | 1 line
+r5 | mysticalos | 2011-11-14 16:03:07 +0000 (Mon, 14 Nov 2011) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Code improvement
 ------------------------------------------------------------------------
-r4 | mysticalos | 2011-11-14 10:00:08 -0600 (Mon, 14 Nov 2011) | 1 line
+r4 | mysticalos | 2011-11-14 16:00:08 +0000 (Mon, 14 Nov 2011) | 1 line
 Changed paths:
    M /trunk/Archaeology.lua
 
 Add in support for yogg saron puzzle box
 ------------------------------------------------------------------------
-r3 | mysticalos | 2011-11-14 09:52:57 -0600 (Mon, 14 Nov 2011) | 1 line
+r3 | mysticalos | 2011-11-14 15:52:57 +0000 (Mon, 14 Nov 2011) | 1 line
 Changed paths:
    A /trunk/.pkgmeta
 
 Add pkgmeta
 ------------------------------------------------------------------------
-r2 | mysticalos | 2011-11-14 09:50:01 -0600 (Mon, 14 Nov 2011) | 1 line
+r2 | mysticalos | 2011-11-14 15:50:01 +0000 (Mon, 14 Nov 2011) | 1 line
 Changed paths:
    A /trunk/Archaeology.lua
    A /trunk/DBM-Archaeology.toc
@@ -181,7 +188,7 @@ Changed paths:
 
 Switch project over to SVN
 ------------------------------------------------------------------------
-r1 | svn | 2011-11-14 09:43:08 -0600 (Mon, 14 Nov 2011) | 1 line
+r1 | svn | 2011-11-14 15:43:08 +0000 (Mon, 14 Nov 2011) | 1 line
 Changed paths:
    A /branches
    A /tags

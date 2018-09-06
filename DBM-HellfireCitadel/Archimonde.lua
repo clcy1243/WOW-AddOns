@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1438, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(91331)--Doomfire Spirit (92208), Hellfire Deathcaller (92740), Felborne Overfiend (93615), Dreadstalker (93616), Infernal doombringer (94412)
 mod:SetEncounterID(1799)
 mod:SetZone()
@@ -79,9 +79,9 @@ local yellNetherBanish				= mod:NewFadesYell(186961)
 local specWarnTouchofShadows		= mod:NewSpecialWarningInterruptCount(190050, nil, nil, nil, 1, 5)
 local specWarnVoidStarFixate		= mod:NewSpecialWarningYou(189895, nil, nil, nil, 1, 5)
 local yellVoidStarFixate			= mod:NewYell(189895, nil, false)
-local specWarnNetherStorm			= mod:NewSpecialWarningMove(187255)
+local specWarnNetherStorm			= mod:NewSpecialWarningMove(187255, nil, nil, nil, 1, 2)
 --Phase 3.5
-local specWarnRainofChaos			= mod:NewSpecialWarningCount(189953, nil, nil, nil, 2)
+local specWarnRainofChaos			= mod:NewSpecialWarningCount(189953, nil, nil, nil, 2, 2)
 --Mythic
 local specWarnDarkConduitSoon		= mod:NewSpecialWarningSoon(190394, "Ranged", nil, nil, 1, 2)
 local specWarnSeethingCorruption	= mod:NewSpecialWarningCount(190506, nil, nil, nil, 2, 2)
@@ -90,11 +90,11 @@ local specWarnMarkOfLegionSoak		= mod:NewSpecialWarningSoakPos(187050, nil, nil,
 local yellDoomFireFades				= mod:NewFadesYell(183586, nil, false)
 local yellMarkOfLegion				= mod:NewFadesYell(187050, 28836)
 local yellMarkOfLegionPoS			= mod:NewPosYell(187050, 28836)
-local specWarnSourceofChaosYou		= mod:NewSpecialWarningYou(190703)
+local specWarnSourceofChaosYou		= mod:NewSpecialWarningYou(190703, nil, nil, nil, 2, 2)
 local yellSourceofChaos				= mod:NewYell(190703)
-local specWarnSourceofChaos			= mod:NewSpecialWarningSwitchCount(190703, "Dps")--Maybe exclude ranged or healers. Not sure if just dps is enough to soak it, at very least dps have to kill it
-local specWarnInfernals				= mod:NewSpecialWarningSwitchCount(187111, "-Healer")--Tanks should probably help pick these up and spread them
-local specWarnTwistedDarkness		= mod:NewSpecialWarningSwitchCount(190821, "RangedDps")
+local specWarnSourceofChaos			= mod:NewSpecialWarningSwitchCount(190703, "Dps", nil, nil, 2, 2)--Maybe exclude ranged or healers. Not sure if just dps is enough to soak it, at very least dps have to kill it
+local specWarnInfernals				= mod:NewSpecialWarningSwitchCount(187111, "-Healer", nil, nil, 2, 2)--Tanks should probably help pick these up and spread them
+local specWarnTwistedDarkness		= mod:NewSpecialWarningSwitchCount(190821, "RangedDps", nil, nil, 2, 2)
 
 --Phase 1: The Defiler
 mod:AddTimerLine(SCENARIO_STAGE:format(1))
@@ -194,17 +194,17 @@ local legionTargets = {}
 local felburstTargets = {}
 local playerName = UnitName("player")
 local playerBanished = false
-local UnitDebuff, UnitDetailedThreatSituation, UnitClass, UnitIsUnit = UnitDebuff, UnitDetailedThreatSituation, UnitClass, UnitIsUnit
+local UnitDetailedThreatSituation, UnitClass, UnitIsUnit = UnitDetailedThreatSituation, UnitClass, UnitIsUnit
 local NetherBanish, shackledDebuff, felburstDebuff, markOfLegionDebuff = DBM:GetSpellInfo(186961), DBM:GetSpellInfo(184964), DBM:GetSpellInfo(183634), DBM:GetSpellInfo(187050)
 local netherFilter, markOfLegionFilter
 do
 	netherFilter = function(uId)
-		if UnitDebuff(uId, NetherBanish) then
+		if DBM:UnitDebuff(uId, NetherBanish) then
 			return true
 		end
 	end
 	markOfLegionFilter = function(uId)
-		if UnitDebuff(uId, markOfLegionDebuff) then
+		if DBM:UnitDebuff(uId, markOfLegionDebuff) then
 			return true
 		end
 	end
@@ -227,7 +227,7 @@ do
 			if i == 9 then break end--It's a wipe, plus can't do more than 8 of these with icons
 			local name = felburstTargets[i]
 			local uId = DBM:GetRaidUnitId(name)
-			if uId and UnitDebuff(uId, felburstDebuff) then
+			if uId and DBM:UnitDebuff(uId, felburstDebuff) then
 				total = total + 1
 				addLine(name, i)
 			end
@@ -235,7 +235,7 @@ do
 		for i = 1, #shacklesTargets do
 			local name = shacklesTargets[i]
 			local uId = DBM:GetRaidUnitId(name)
-			if uId and UnitDebuff(uId, shackledDebuff) then
+			if uId and DBM:UnitDebuff(uId, shackledDebuff) then
 				total = total + 1
 				addLine(name, i)
 			end
@@ -255,7 +255,7 @@ local function updateRangeFrame(self)
 		DBM.RangeCheck:Show(6)
 	elseif self.vb.netherPortal then
 		--Blue post says 8, but pretty sure it's 10. The visual was bigger than 8
-		if UnitDebuff("player", NetherBanish) then
+		if DBM:UnitDebuff("player", NetherBanish) then
 			DBM.RangeCheck:Show(10)
 		else
 			DBM.RangeCheck:Show(10, netherFilter)
@@ -263,7 +263,7 @@ local function updateRangeFrame(self)
 	elseif (self.vb.darkConduit or self.vb.phase < 2) and self:IsRanged() then--Fel burst in phase 1, dark conduit in phase 3 mythic
 		DBM.RangeCheck:Show(8)
 	elseif self.vb.markOfLegionRemaining > 0 then
-		if UnitDebuff("player", markOfLegionDebuff) then
+		if DBM:UnitDebuff("player", markOfLegionDebuff) then
 			DBM.RangeCheck:Show(10, nil, nil, 4, true)
 		else
 			DBM.RangeCheck:Show(10, markOfLegionFilter)
@@ -296,7 +296,7 @@ end
 local function showMarkOfLegion(self, spellName)
 	warnMarkOfLegion:Show(self.vb.markOfLegionCast, table.concat(legionTargets, "<, >"))
 	if localMarkBehavior == "NoAssignment" then return end
-	local playerHasMark = UnitDebuff("player", spellName)
+	local playerHasMark = DBM:UnitDebuff("player", spellName)
 	for i = 1, #legionTargets do
 		local name = legionTargets[i]
 		if not name then break end
@@ -438,7 +438,7 @@ local function showMarkOfLegion(self, spellName)
 		local marks = #legionTargets or 4
 		for i = 1, DBM:GetNumRealGroupMembers() do
 			local unitID = 'raid'..i
-			if not UnitDebuff(unitID, spellName) then
+			if not DBM:UnitDebuff(unitID, spellName) then
 				soakers = soakers + 1
 			end
 			if UnitIsUnit("player", unitID) then
@@ -682,7 +682,6 @@ end
 
 --/run DBM:GetModByName("1438"):OnCombatStart(0)
 function mod:OnCombatStart(delay)
-	NetherBanish, shackledDebuff, felburstDebuff, markOfLegionDebuff = DBM:GetSpellInfo(186961), DBM:GetSpellInfo(184964), DBM:GetSpellInfo(183634), DBM:GetSpellInfo(187050)
 	self.vb.phase = 1
 	self.vb.demonicCount = 0
 	self.vb.demonicFeedback = false
@@ -809,6 +808,7 @@ function mod:SPELL_CAST_START(args)
 		self.vb.rainOfChaos = self.vb.rainOfChaos + 1
 		if not playerBanished or not self.Options.FilterOtherPhase then
 			specWarnRainofChaos:Show(self.vb.rainOfChaos)
+			specWarnRainofChaos:Play("killmob")
 		end
 		timerRainofChaosCD:Start(nil, self.vb.rainOfChaos+1)
 		if self.vb.phase < 3.5 then
@@ -847,6 +847,7 @@ function mod:SPELL_CAST_START(args)
 		self:Unschedule(sourceOfChaosCheck)
 		self.vb.sourceOfChaosCast = self.vb.sourceOfChaosCast + 1
 		specWarnSourceofChaos:Show(self.vb.sourceOfChaosCast)
+		specWarnSourceofChaos:Play("killmob")
 		local cooldown = sourceofChaosTimers[self.vb.sourceOfChaosCast+1]
 		if cooldown then
 			timerSourceofChaosCD:Start(cooldown, self.vb.sourceOfChaosCast+1)
@@ -857,6 +858,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 190821 then--Stars
 		self.vb.twistedDarknessCast = self.vb.twistedDarknessCast + 1
 		specWarnTwistedDarkness:Show(self.vb.twistedDarknessCast)
+		specWarnTwistedDarkness:Play("killmob")
 		local cooldown = twistedDarknessTimers[self.vb.twistedDarknessCast+1]
 		if cooldown then
 			timerTwistedDarknessCD:Start(cooldown, self.vb.twistedDarknessCast+1)
@@ -916,7 +918,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnFelBurst:Show()
 		else
-			if self:CheckNearby(30, args.destName) and not UnitDebuff("player", args.spellName) and not self:IsTank() then--Range subject to adjustment
+			if self:CheckNearby(30, args.destName) and not DBM:UnitDebuff("player", args.spellName) and not self:IsTank() then--Range subject to adjustment
 				specWarnFelBurstNear:CombinedShow(0.3, args.destName)--Combined show to prevent spam in a spread, if a spread happens targets are all together and requires even MORE people to soak.
 				specWarnFelBurstNear:CancelVoice()--Avoid spam
 				specWarnFelBurstNear:ScheduleVoice(0.3, "gathershare")
@@ -1076,7 +1078,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			self:Schedule(0.5, showMarkOfLegion, self, args.spellName)
 		end
 		local uId = DBM:GetRaidUnitId(args.destName)
-		local _, _, _, _, _, duration, expires, _, _ = UnitDebuff(uId, args.spellName)
+		local _, _, _, _, duration, expires, _, _ = DBM:UnitDebuff(uId, args.spellName)
 		if expires then
 			if args:IsPlayer() then
 				local remaining = expires-GetTime()
@@ -1094,10 +1096,13 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 190703 then
 		if args:IsPlayer() then
 			specWarnSourceofChaosYou:Show()
+			specWarnSourceofChaosYou:Play("targetyou")
+			specWarnSourceofChaosYou:ScheduleVoice(1.5, "keepmove")
 			yellSourceofChaos:Yell()
 		end
 	elseif spellId == 187255 and args:IsPlayer() and self:AntiSpam(2, 2) then
 		specWarnNetherStorm:Show()
+		specWarnNetherStorm:Play("runaway")
 	elseif spellId == 183963 and args:IsPlayer() and self:AntiSpam(5, 6) then
 		warnLight:Show()
 	elseif spellId == 183586 and args:IsPlayer() then
@@ -1105,7 +1110,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnDoomFireStack:Cancel()--Just a little anti spam
 		warnDoomFireStack:Schedule(2, args.destName, amount)
 		yellDoomFireFades:Cancel()
-		local _, _, _, _, _, duration, expires, _, _ = UnitDebuff("player", args.spellName)
+		local _, _, _, _, duration, expires, _, _ = DBM:UnitDebuff("player", args.spellName)
 		if expires then
 			if args:IsPlayer() then
 				local remaining = expires-GetTime()
@@ -1180,6 +1185,7 @@ function mod:SPELL_SUMMON(args)
 		if self:AntiSpam(15, 5) and self:IsMythic() then
 			self.vb.InfernalsCast = self.vb.InfernalsCast + 1
 			specWarnInfernals:Show(self.vb.InfernalsCast)
+			specWarnInfernals:Play("killmob")
 			local cooldown = infernalTimers[self.vb.InfernalsCast+1]
 			if cooldown then
 				timerInfernalsCD:Start(cooldown, self.vb.InfernalsCast+1)
@@ -1212,7 +1218,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 187621 then
 		local unitGUID = UnitGUID(uId)
 		--timerShadowBlastCD ommited because it's used near instantly on spawn.
@@ -1319,6 +1325,7 @@ end
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 187255 and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
 		specWarnNetherStorm:Show()
+		specWarnNetherStorm:Play("runaway")
 	end
 end
 mod.SPELL_ABSORBED = mod.SPELL_PERIODIC_DAMAGE

@@ -1,8 +1,8 @@
 local mod	= DBM:NewMod(2082, "DBM-Party-BfA", 1, 968)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 17282 $"):sub(12, -3))
-mod:SetCreatureID(128956)
+mod:SetRevision(("$Revision: 17710 $"):sub(12, -3))
+mod:SetCreatureID(122967)
 mod:SetEncounterID(2084)
 mod:SetZone()
 
@@ -24,7 +24,7 @@ local specWarnClaws					= mod:NewSpecialWarningDefensive(255579, "Tank", nil, ni
 --local specWarnGTFO				= mod:NewSpecialWarningGTFO(238028, nil, nil, nil, 1, 2)
 
 local timerTransfusionCD			= mod:NewNextTimer(34, 255577, nil, nil, nil, 5)
-local timerGildedClawsCD			= mod:NewNextTimer(20, 255579, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)
+local timerGildedClawsCD			= mod:NewCDTimer(34, 255579, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)
 local timerMoltenGoldCD				= mod:NewNextTimer(34, 255591, nil, nil, nil, 3)
 
 local taintedBlood = DBM:GetSpellInfo(255558)
@@ -40,7 +40,7 @@ function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 255577 then
 		timerTransfusionCD:Start()
-		local _, _, _, _, _, _, expireTime = UnitDebuff("player", taintedBlood)
+		local _, _, _, _, _, expireTime = DBM:UnitDebuff("player", taintedBlood)
 		local remaining
 		if expireTime then
 			remaining = expireTime-GetTime()
@@ -82,7 +82,7 @@ function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 257939 then
 
 	end

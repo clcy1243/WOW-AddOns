@@ -1,131 +1,138 @@
------------------------
--- Target Art Widget --
------------------------
-local ADDON_NAME, NAMESPACE = ...
-local ThreatPlates = NAMESPACE.ThreatPlates
+---------------------------------------------------------------------------------------------------
+-- Target Art Widget
+---------------------------------------------------------------------------------------------------
+local ADDON_NAME, Addon = ...
+local ThreatPlates = Addon.ThreatPlates
+
+local Widget = Addon:NewWidget("TargetArt")
 
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
 ---------------------------------------------------------------------------------------------------
-local UnitGUID = UnitGUID
 
-local path = "Interface\\AddOns\\TidyPlates_ThreatPlates\\Widgets\\TargetArtWidget\\"
--- local WidgetList = {}
+-- WoW APIs
+local CreateFrame = CreateFrame
+local UnitIsUnit = UnitIsUnit
+local GetNamePlateForUnit = C_NamePlate.GetNamePlateForUnit
+
+-- ThreatPlates APIs
+local TidyPlatesThreat = TidyPlatesThreat
+
+local PATH = "Interface\\AddOns\\TidyPlates_ThreatPlates\\Widgets\\TargetArtWidget\\"
+
+local BACKDROP = {
+  default = {
+    edgeFile = ThreatPlates.Art .. "TP_WhiteSquare",
+    edgeSize = 1.8,
+    offset = 4,
+  },
+  squarethin = {
+    edgeFile = ThreatPlates.Art .. "TP_WhiteSquare",
+    edgeSize = 1,
+    offset = 3,
+  }
+}
+
+local CurrentTarget
 
 ---------------------------------------------------------------------------------------------------
--- Threat Plates functions
+-- Target Art Widget Functions
 ---------------------------------------------------------------------------------------------------
 
-local function enabled()
-	return TidyPlatesThreat.db.profile.targetWidget.ON
-end
+function Widget:PLAYER_TARGET_CHANGED()
+  if CurrentTarget then
+    CurrentTarget:Hide()
+    CurrentTarget = nil
+  end
 
--- hides/destroys all widgets of this type created by Threat Plates
--- local function ClearAllWidgets()
--- 	for _, widget in pairs(WidgetList) do
--- 		widget:Hide()
--- 	end
--- 	WidgetList = {}
--- end
--- ThreatPlatesWidgets.ClearAllTargetArtWidgets = ClearAllWidgets
-
----------------------------------------------------------------------------------------------------
--- Widget Functions for TidyPlates
----------------------------------------------------------------------------------------------------
-
-local function UpdateSettings(frame)
-  local db = TidyPlatesThreat.db.profile.targetWidget
-
-  -- probably this should be moved to UpdateWidgetFrame
-  if db.ON then
-    frame.Icon:SetTexture(path..db.theme)
-    frame.Icon:SetVertexColor(db.r, db.g, db.b, db.a)
-		frame.Icon:SetDrawLayer("BACKGROUND", 0)
-
---    if db.theme == "default" or db.theme == "squarethin" then
---      frame.Icon:SetDrawLayer("ARTWORK", -7)
---    else
---      frame.Icon:SetDrawLayer("ARTWORK", 7)
---    end
-
-    frame:Show()
-    frame.Icon:Show()
-  else
-    frame:_Hide()
-    --frame.Icon:Hide()
+  local plate = GetNamePlateForUnit("target")
+  if plate and plate.TPFrame.Active then
+    CurrentTarget = plate.TPFrame.widgets.TargetArt
+    CurrentTarget:SetShown(CurrentTarget.Active)
   end
 end
 
-local function UpdateWidgetFrame(frame, unit)
-  frame:Show()
-  frame.Icon:Show()
+---------------------------------------------------------------------------------------------------
+-- Widget functions for creation and update
+---------------------------------------------------------------------------------------------------
+
+function Widget:Create(tp_frame)
+  -- Required Widget Code
+  local widget_frame = CreateFrame("Frame", nil, tp_frame)
+  widget_frame:Hide()
+
+  -- Custom Code
+  --------------------------------------
+  widget_frame:SetFrameLevel(tp_frame:GetFrameLevel() + 6)
+  widget_frame.LeftTexture = widget_frame:CreateTexture(nil, "BACKGROUND", 0)
+  widget_frame.LeftTexture:SetPoint("RIGHT", tp_frame, "LEFT")
+  widget_frame.LeftTexture:SetSize(64, 64)
+  widget_frame.RightTexture = widget_frame:CreateTexture(nil, "BACKGROUND", 0)
+  widget_frame.RightTexture:SetPoint("LEFT", tp_frame, "RIGHT")
+  widget_frame.RightTexture:SetSize(64, 64)
+  --------------------------------------
+  -- End Custom Code
+
+  return widget_frame
 end
 
--- Context
-local function UpdateWidgetContext(frame, unit)
-	local guid = unit.guid
-	frame.guid = guid
-
-	-- Add to Widget List
-	-- if guid then
-	-- 	WidgetList[guid] = frame
-	-- end
-
-	-- Custom Code II
-	--------------------------------------
-	if UnitGUID("target") == guid then
-		UpdateWidgetFrame(frame, unit)
-	else
-		frame:_Hide()
-    --frame.Icon:Hide()
-	end
-	--------------------------------------
-	-- End Custom Code
+function Widget:IsEnabled()
+  return TidyPlatesThreat.db.profile.targetWidget.ON
 end
 
-local function ClearWidgetContext(frame)
-	local guid = frame.guid
-	if guid then
-		-- WidgetList[guid] = nil
-		frame.guid = nil
-	end
+function Widget:OnEnable()
+  self:RegisterEvent("PLAYER_TARGET_CHANGED")
 end
 
-local function CreateWidgetFrame(parent)
-	-- Required Widget Code
-	local frame = CreateFrame("Frame", nil, parent)
-	frame:Hide()
-
-	-- Custom Code III
-	--------------------------------------
-	-- framelevel of Target Highlight must be the same as visual.target (target highlight of TidyPlates)
-  -- that is: extended.healthbar.textFrame, texture target (BACKGROUND)
-	frame:SetFrameLevel(parent:GetFrameLevel() + 6)
-	frame:SetSize(256, 64)
-	frame:SetPoint("CENTER", parent, "CENTER")
-
-  --frame.Icon = parent.visual.name:GetParent():CreateTexture(nil, "ARTWORK")
-	frame.Icon = frame:CreateTexture(nil, "BACKGROUND", 0)
-  frame.Icon:SetAllPoints(frame)
-  --frame.Icon:Hide()
-
-  UpdateSettings(frame)
-  frame.UpdateConfig = UpdateSettings
-	--------------------------------------
-	-- End Custom Code
-
-	-- Required Widget Code
-	frame.UpdateContext = UpdateWidgetContext
-	frame.Update = UpdateWidgetFrame
-	frame._Hide = frame.Hide
-	-- Have to add frame.Icon:Hide() also here as the frame is no longer the parent of the icon since a fix to widget layering
-	frame.Hide = function()
-		ClearWidgetContext(frame)
-		--frame.Icon:Hide()
-		frame:_Hide()
-	end
-
-	return frame
+function Widget:EnabledForStyle(style, unit)
+  return not (style == "NameOnly" or style == "NameOnly-Unique" or style == "etotem")
 end
 
-ThreatPlatesWidgets.RegisterWidget("TargetArtWidgetTPTP", CreateWidgetFrame, true, enabled)
+function Widget:OnUnitAdded(widget_frame, unit)
+  local db = TidyPlatesThreat.db.profile.targetWidget
+
+  if db.theme == "default" or db.theme == "squarethin" then
+    local backdrop = BACKDROP[db.theme]
+    widget_frame:SetPoint("TOPLEFT", widget_frame:GetParent().visual.healthbar, "TOPLEFT", - backdrop.offset, backdrop.offset)
+    widget_frame:SetPoint("BOTTOMRIGHT", widget_frame:GetParent().visual.healthbar, "BOTTOMRIGHT", backdrop.offset, - backdrop.offset)
+    widget_frame:SetBackdrop({
+      --edgeFile = PATH .. db.theme,
+      edgeFile = backdrop.edgeFile,
+      edgeSize = backdrop.edgeSize,
+      insets = { left = 0, right = 0, top = 0, bottom = 0 }
+    })
+    widget_frame:SetBackdropBorderColor(db.r, db.g, db.b, db.a)
+
+    widget_frame.LeftTexture:Hide()
+    widget_frame.RightTexture:Hide()
+  else
+    widget_frame.LeftTexture:SetTexture(PATH .. db.theme)
+    widget_frame.LeftTexture:SetTexCoord(0, 0.25, 0, 1)
+    widget_frame.LeftTexture:SetVertexColor(db.r, db.g, db.b, db.a)
+    widget_frame.LeftTexture:Show()
+
+    widget_frame.RightTexture:SetTexture(PATH .. db.theme)
+    widget_frame.RightTexture:SetTexCoord(0.75, 1, 0, 1)
+    widget_frame.RightTexture:SetVertexColor(db.r, db.g, db.b, db.a)
+    widget_frame.RightTexture:Show()
+
+    widget_frame:SetBackdrop(nil)
+  end
+
+  if UnitIsUnit("target", unit.unitid) then
+    widget_frame:Show()
+    CurrentTarget = widget_frame
+  else
+    widget_frame:Hide()
+  end
+
+  -- self:OnTargetChanged(widget_frame, unit)
+end
+
+--function Widget:OnTargetChanged(widget_frame, unit)
+--  if UnitIsUnit("target", unit.unitid) then
+--    widget_frame:Show()
+--  else
+--    widget_frame:Hide()
+--  end
+--end

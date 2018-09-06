@@ -1,15 +1,13 @@
 ﻿local mod	= DBM:NewMod("ArtifactHealer", "DBM-Challenges", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 98 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 105 $"):sub(12, -3))
 mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 
 mod:RegisterEvents(
 	"SPELL_AURA_APPLIED 235984 237188",
 	"SPELL_AURA_APPLIED_DOSE 235833",
 	"UNIT_DIED"
---	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5",--need all 5?
---	"SCENARIO_UPDATE"
 )
 mod.noStatistics = true
 --Notes:
@@ -25,7 +23,7 @@ local specWarnArcaneBlitz		= mod:NewSpecialWarningStack(235833, nil, 4, nil, nil
 local specWarnIgniteSoul		= mod:NewSpecialWarningYou(237188, nil, nil, nil, 3, 2)
 
 --local timerEarthquakeCD		= mod:NewNextTimer(60, 237950, nil, nil, nil, 2)
-local timerIgniteSoulCD			= mod:NewAITimer(25, 237188, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)
+local timerIgniteSoulCD			= mod:NewAITimer(18, 237188, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)
 
 local countdownIngiteSoul		= mod:NewCountdownFades("AltTwo9", 237188)
 

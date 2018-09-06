@@ -12,12 +12,13 @@ local L = BigWigsAPI:GetLocale("BigWigs: Plugins")
 --
 
 plugin.defaultDB = {
-	Important = { ["*"] = { ["*"] = { 1, 0.2, 0.2 } } }, -- Red
-	Personal = { ["*"] = { ["*"] = { 0.2, 0.4, 1 } } }, -- Blue
-	Urgent = { ["*"] = { ["*"] = { 1, 0.5, 0.1 } } }, -- Orange
-	Attention = { ["*"] = { ["*"] = { 1, 1, 0.1 } } }, -- Yellow
-	Positive = { ["*"] = { ["*"] = { 0.2, 1, 0.2 } } }, -- Green
-	Neutral = { ["*"] = { ["*"] = { 0.2, 1, 1 } } }, -- Cyan
+	red = { ["*"] = { ["*"] = { 1, 0.2, 0.2 } } },
+	blue = { ["*"] = { ["*"] = { 0.2, 0.4, 1 } } },
+	orange = { ["*"] = { ["*"] = { 1, 0.5, 0.1 } } },
+	yellow = { ["*"] = { ["*"] = { 1, 1, 0.1 } } },
+	green = { ["*"] = { ["*"] = { 0.2, 1, 0.2 } } },
+	cyan = { ["*"] = { ["*"] = { 0.2, 1, 1 } } },
+	purple = { ["*"] = { ["*"] = { 0.5, 0, 0.5 } } },
 
 	barBackground = { ["*"] = { ["*"] = { 0.5, 0.5, 0.5, 0.3 } } },
 	barText = { ["*"] = { ["*"] = { 1, 1, 1, 1 } } },
@@ -26,15 +27,6 @@ plugin.defaultDB = {
 	barEmphasized = { ["*"] = { ["*"] = { 1, 0, 0, 1 } } },
 
 	flash = { ["*"] = { ["*"] = { 0, 0, 1 } } },
-}
-
-local colorWrapper = {
-	red = "Important",
-	blue = "Personal",
-	orange = "Urgent",
-	yellow = "Attention",
-	green = "Positive",
-	cyan = "Neutral",
 }
 
 local function copyTable(to, from)
@@ -74,6 +66,28 @@ local function reset(info)
 		plugin.db.profile[k][name][key] = nil
 	end
 end
+local function hidden(info)
+	local name, key = unpack(info.arg)
+	local module = BigWigs:GetBossModule(name:sub(16), true)
+	if not module or not module.colorOptions then -- no module entry? show all colors
+		return false
+	end
+	local optionColors = module.colorOptions[key]
+	if not optionColors then
+		return true
+	end
+	local optionName = info[#info]
+	if type(optionColors) == "table" then
+		for _, color in next, optionColors do
+			if color == optionName then
+				return false
+			end
+		end
+	else
+		return optionName ~= optionColors
+	end
+	return true
+end
 
 local function resetAll()
 	plugin.db:ResetProfile()
@@ -93,35 +107,54 @@ local colorOptions = {
 			inline = true,
 			order = 1,
 			args = {
-				Important = {
-					name = L.Important,
+				red = {
+					name = L.red,
+					desc = L.redDesc,
 					type = "color",
+					hidden = hidden,
 					order = 1,
 				},
-				Personal = {
-					name = L.Personal,
+				blue = {
+					name = L.blue,
+					desc = L.blueDesc,
 					type = "color",
+					hidden = hidden,
 					order = 2,
 				},
-				Urgent = {
-					name = L.Urgent,
+				orange = {
+					name = L.orange,
+					desc = L.redDesc,
 					type = "color",
+					hidden = hidden,
 					order = 3,
 				},
-				Attention = {
-					name = L.Attention,
+				green = {
+					name = L.green,
+					desc = L.greenDesc,
 					type = "color",
+					hidden = hidden,
 					order = 4,
 				},
-				Positive = {
-					name = L.Positive,
+				yellow = {
+					name = L.yellow,
+					desc = L.redDesc,
 					type = "color",
+					hidden = hidden,
 					order = 5,
 				},
-				Neutral = {
-					name = L.Neutral,
+				cyan = {
+					name = L.cyan,
+					desc = L.cyanDesc,
 					type = "color",
+					hidden = hidden,
 					order = 6,
+				},
+				purple = {
+					name = L.purple,
+					desc = L.purpleDesc,
+					type = "color",
+					hidden = hidden,
+					order = 7,
 				},
 			},
 		},
@@ -237,7 +270,6 @@ plugin.pluginOptions.args.resetAll = {
 
 local white = { 1, 1, 1 }
 function plugin:GetColorTable(hint, module, key)
-	hint = colorWrapper[hint] or hint
 	if not self.db.profile[hint] then return white end
 	local name
 	if not module or not key then
@@ -258,4 +290,3 @@ end
 function plugin:GetColor(hint, module, key)
 	return unpack(self:GetColorTable(hint, module, key))
 end
-

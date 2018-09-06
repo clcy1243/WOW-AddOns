@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1395, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(91349)--91305 Fel Iron Summoner
 mod:SetEncounterID(1795)
 mod:SetZone()
@@ -47,7 +47,7 @@ local warnFelseeker					= mod:NewCountAnnounce(181735, 3)
 
 --Adds
 ----Doom Lords
-local specWarnCurseofLegion			= mod:NewSpecialWarningYou(181275)
+local specWarnCurseofLegion			= mod:NewSpecialWarningYou(181275, nil, nil, nil, 1, 2)
 local yellCurseofLegion				= mod:NewFadesYell(181275)--Don't need to know when it's applied, only when it's fading does it do aoe/add spawn
 local specWarnMarkOfDoom			= mod:NewSpecialWarningYou(181099, nil, nil, nil, 1, 2)
 local yellMarkOfDoom				= mod:NewPosYell(181099, 31348)-- This need to know at apply, only player needs to know when it's fading
@@ -65,10 +65,10 @@ local specWarnFelPillar				= mod:NewSpecialWarningDodge(190070, nil, nil, 3, 1, 
 local specWarnGlaiveCombo			= mod:NewSpecialWarningDefensive(181354, "Tank", nil, nil, 3, 2)--Active mitigation or die mechanic
 local specWarnMassiveBlastOther		= mod:NewSpecialWarningTaunt(181359, nil, nil, nil, 1, 2)
 local specWarnFelHellStorm			= mod:NewSpecialWarningSpell(181557, nil, nil, nil, 2, 2)
-local specWarnGaze					= mod:NewSpecialWarningYou(181597)
+local specWarnGaze					= mod:NewSpecialWarningYou(181597, nil, nil, nil, 1, 2)
 local yellGaze						= mod:NewPosYell(181597, 134029)
 local specWarnFelSeeker				= mod:NewSpecialWarningDodge(181735, nil, nil, nil, 2, 2)
-local specWarnShadowForce			= mod:NewSpecialWarningSpell(181799, nil, nil, nil, 3)
+local specWarnShadowForce			= mod:NewSpecialWarningSpell(181799, nil, nil, nil, 3, 2)
 
 --Adds
 mod:AddTimerLine(OTHER)
@@ -130,21 +130,20 @@ local doomSpikeTargets = {}
 local AddsSeen = {}
 local playerName = UnitName("player")
 local doomName, guldanName, doomSpikeName, gaze1, gaze2 = DBM:GetSpellInfo(181099), DBM:GetSpellInfo(186362), DBM:GetSpellInfo(181119), DBM:GetSpellInfo(181597), DBM:GetSpellInfo(182006)
-local UnitDebuff = UnitDebuff
 local doomFilter, guldanFilter, doomSpikeFilter
 do
 	doomFilter = function(uId)
-		if UnitDebuff(uId, doomName) then
+		if DBM:UnitDebuff(uId, doomName) then
 			return true
 		end
 	end
 	guldanFilter = function(uId)
-		if UnitDebuff(uId, guldanName) then
+		if DBM:UnitDebuff(uId, guldanName) then
 			return true
 		end
 	end
 	doomSpikeFilter = function(uId)
-		if UnitDebuff(uId, guldanName) then
+		if DBM:UnitDebuff(uId, guldanName) then
 			return true
 		end
 	end
@@ -153,19 +152,19 @@ end
 local function updateRangeFrame(self)
 	if not self.Options.RangeFrame then return end
 	if self:IsTank() and #doomSpikeTargets > 0 then
-		if UnitDebuff("Player", doomSpikeName) then
+		if DBM:UnitDebuff("Player", doomSpikeName) then
 			DBM.RangeCheck:Show(30)
 		else
 			DBM.RangeCheck:Show(30, doomSpikeFilter)
 		end
 	elseif self.vb.DoomTargetCount > 0 then
-		if UnitDebuff("Player", doomName) then
+		if DBM:UnitDebuff("Player", doomName) then
 			DBM.RangeCheck:Show(20)
 		else
 			DBM.RangeCheck:Show(20, doomFilter)
 		end
 	elseif #guldanTargets > 0 then
-		if UnitDebuff("Player", guldanName) then
+		if DBM:UnitDebuff("Player", guldanName) then
 			DBM.RangeCheck:Show(15)
 		else
 			DBM.RangeCheck:Show(15, guldanFilter)
@@ -205,7 +204,7 @@ do
 			local name = gazeTargets[i]
 			local uId = DBM:GetRaidUnitId(name)
 			if not uId then break end
-			if UnitDebuff(uId, gaze1) or UnitDebuff(uId, gaze2) then
+			if DBM:UnitDebuff(uId, gaze1, gaze2) then
 				total = total + 1
 				addLine("|cFF9932CD"..name.."|r", i)
 			end
@@ -215,7 +214,7 @@ do
 			local name = guldanTargets[i]
 			local uId = DBM:GetRaidUnitId(name)
 			if not uId then break end
-			local _, _, _, currentStack = UnitDebuff(uId, guldanName)
+			local _, _, currentStack = DBM:UnitDebuff(uId, guldanName)
 			if currentStack then
 				total2 = total2 + 1
 				addLine(name, currentStack)
@@ -358,7 +357,6 @@ local function updateAllTimers(self, delay)
 end
 
 function mod:OnCombatStart(delay)
-	doomName, guldanName, doomSpikeName, gaze1, gaze2 = DBM:GetSpellInfo(181099), DBM:GetSpellInfo(186362), DBM:GetSpellInfo(181119), DBM:GetSpellInfo(181597), DBM:GetSpellInfo(182006)
 	table.wipe(doomTargets)
 	table.wipe(gazeTargets)
 	table.wipe(AddsSeen)
@@ -430,6 +428,7 @@ function mod:SPELL_CAST_START(args)
 		if self:IsTank() and self.vb.phase == 3 then return end--Doesn't target tanks in phase 3, ever.
 		countdownShadowForce:Start(52.5)
 		specWarnShadowForce:Show()
+		specWarnShadowForce:Play("keepmove")
 		updateAllTimers(self, 8)
 	elseif spellId == 181099 then
 		table.wipe(doomTargets)
@@ -499,7 +498,8 @@ function mod:SPELL_AURA_APPLIED(args)
 	if spellId == 181275 then
 		if args:IsPlayer() then
 			specWarnCurseofLegion:Show()
-			local _, _, _, _, _, _, expires = UnitDebuff("Player", args.spellName)
+			specWarnCurseofLegion:Play("targetyou")
+			local _, _, _, _, _, expires = DBM:UnitDebuff("Player", args.spellName)
 			local debuffTime = expires - GetTime()
 			yellCurseofLegion:Schedule(debuffTime - 1, 1)
 			yellCurseofLegion:Schedule(debuffTime - 2, 2)
@@ -555,7 +555,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnGaze:Show()
 			specWarnGaze:Play("targetyou")
 		else
-			if not UnitDebuff("player", args.spellName) then
+			if not DBM:UnitDebuff("player", args.spellName) then
 				specWarnGaze:ScheduleVoice(0.3, "gathershare")
 			end
 		end
@@ -566,7 +566,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		local amount = args.amount or 1
 		if amount % 3 == 0 or amount > 6 then
 			warnDoomSpike:Show(args.destName, amount)
-			if not UnitDebuff("player", args.spellName) and not UnitIsDeadOrGhost("player") and self:AntiSpam(3, 6) then
+			if not DBM:UnitDebuff("player", args.spellName) and not UnitIsDeadOrGhost("player") and self:AntiSpam(3, 6) then
 				specWarnDoomSpikeOther:Show(args.destName)
 			end
 		end
@@ -776,7 +776,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, npc)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 181735 then--0.1 seconds faster than combat log event for 10 yard cast.
 		specWarnFelSeeker:Show()
 		timerFelSeekerCD:Start()

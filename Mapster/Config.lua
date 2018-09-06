@@ -1,5 +1,5 @@
 --[[
-Copyright (c) 2009-2016, Hendrik "Nevcairiel" Leppkes < h.leppkes@gmail.com >
+Copyright (c) 2009-2018, Hendrik "Nevcairiel" Leppkes < h.leppkes@gmail.com >
 All rights reserved.
 ]]
 
@@ -66,8 +66,6 @@ local function getOptions()
 							type = "range",
 							name = L["Faded Alpha"],
 							desc = L["The transparency of the map while you are moving and the map is faded."],
-							get = function() return WORLD_MAP_MIN_ALPHA end,
-							set = function(_, v) SetCVar("mapAnimMinAlpha", v); WORLD_MAP_MIN_ALPHA = v end,
 							min = 0, max = 1, bigStep = 0.01,
 							isPercent = true,
 							disabled = function() return not GetCVarBool("mapFade") end,
@@ -168,12 +166,12 @@ end
 
 function Mapster:SetupMapButton()
 	-- create button on the worldmap to toggle the options
-	self.optionsButton = CreateFrame("Button", "MapsterOptionsButton", WorldMapTitleButton, "UIPanelButtonTemplate")
+	self.optionsButton = CreateFrame("Button", "MapsterOptionsButton", WorldMapFrame.BorderFrame, "UIPanelButtonTemplate")
 	self.optionsButton:SetWidth(95)
 	self.optionsButton:SetHeight(18)
 	self.optionsButton:SetText("Mapster")
 	self.optionsButton:ClearAllPoints()
-	self.optionsButton:SetPoint("TOPRIGHT", WorldMapTitleButton, "TOPRIGHT", 0, -3)
+	self.optionsButton:SetPoint("TOPRIGHT", WorldMapFrameTitleBg, "TOPRIGHT", -21, 1)
 
 	if self.db.profile.hideMapButton then
 		self.optionsButton:Hide()

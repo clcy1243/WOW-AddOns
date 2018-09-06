@@ -2,7 +2,6 @@ local L = LibStub("AceLocale-3.0"):NewLocale("WorldQuestTrackerAddon", "frFR")
 if not L then return end 
 
 L["S_APOWER_AVAILABLE"] = "Disponible"
-L["S_APOWER_DOWNVALUE"] = "Les quêtes avec %s ont plus de temps que votre recherche actuelle."
 L["S_APOWER_NEXTLEVEL"] = "Niveau suivant"
 L["S_ENABLED"] = "Activé"
 L["S_ERROR_NOTIMELEFT"] = "Cette quête n'a pas de temps restant."
@@ -34,7 +33,6 @@ L["S_GROUPFINDER_ACTIONS_UNLISTING"] = "désinscription..."
 L["S_GROUPFINDER_ACTIONS_WAITING"] = "en attente..."
 L["S_GROUPFINDER_AUTOOPEN_RARENPC_TARGETED"] = "Ouverture auto. lors du ciblage d'une élite."
 L["S_GROUPFINDER_ENABLED"] = "Ouverture auto. pour chaque nouvelle quête"
-L["S_GROUPFINDER_INVASION_ENABLED"] = "Ouverture auto. sur un point d'invasion"
 L["S_GROUPFINDER_LEAVEOPTIONS"] = "Option de sortie de groupe"
 L["S_GROUPFINDER_LEAVEOPTIONS_AFTERX"] = "Quitter après x secondes"
 L["S_GROUPFINDER_LEAVEOPTIONS_ASKX"] = "Pas de sortie auto., mais demander après x secondes"
@@ -56,7 +54,6 @@ L["S_GROUPFINDER_SECONDS"] = "Secondes"
 L["S_GROUPFINDER_TITLE"] = "Recherche de groupe"
 L["S_GROUPFINDER_TUTORIAL1"] = "Faites vos expéditions rapidement grâce à un groupe!"
 L["S_MAPBAR_AUTOWORLDMAP"] = "Carte du monde (mode auto)"
-L["S_MAPBAR_AUTOWORLDMAP_DESC"] = "Quand vous êtes à Dalaran ou au Hall de classe, presser la touche 'M' affiche directement les îles brisées"
 L["S_MAPBAR_FILTER"] = "Filtre"
 L["S_MAPBAR_FILTERMENU_FACTIONOBJECTIVES"] = "Objectifs de faction"
 L["S_MAPBAR_FILTERMENU_FACTIONOBJECTIVES_DESC"] = "Afficher les quêtes de faction, même si elles sont filtrées."
@@ -126,8 +123,8 @@ L["S_RAREFINDER_TOOLTIP_REMOVE"] = [=[Supprimer
 ]=]
 L["S_RAREFINDER_TOOLTIP_SEACHREALM"] = "Chercher sur d'autres royaumes"
 L["S_RAREFINDER_TOOLTIP_SPOTTEDBY"] = "Repéré par"
---Translation missing 
--- L["S_RAREFINDER_TOOLTIP_TIMEAGO"] = ""
+--[[Translation missing --]]
+--[[ L["S_RAREFINDER_TOOLTIP_TIMEAGO"] = ""--]] 
 L["S_SHAREPANEL_THANKS"] = [=[Merci de partager World Quest Tracker !
 Envoyez notre lien à vos amis sur Facebook, Twitter, à l'Élysée...]=]
 L["S_SHAREPANEL_TITLE"] = "For All Those About to Rock!"
@@ -138,13 +135,7 @@ L["S_SUMMARYPANEL_LIFETIMESTATISTICS_CHARACTER"] = "Statistiques de votre person
 L["S_SUMMARYPANEL_OTHERCHARACTERS"] = "Autres personnages"
 L["S_TUTORIAL_AMOUNT"] = "Indique le montant à recevoir"
 L["S_TUTORIAL_CLICKTOTRACK"] = "Cliquez pour suivre une quête."
-L["S_TUTORIAL_CLOSE"] = "Ferme le tutorial"
-L["S_TUTORIAL_FACTIONBOUNTY"] = "Indique que la quête compte pour la faction choisie."
-L["S_TUTORIAL_FACTIONBOUNTY_AMOUNTQUESTS"] = "Indique le nombre de quêtes qui sont sur la carte et de la faction choisie."
-L["S_TUTORIAL_HOWTOADDTRACKER"] = "Clic gauche pour suivre une quête. Sur le suivi, vous pouvez |cFFFFFFFFclic droit|r pour ne plus la suivre."
 L["S_TUTORIAL_PARTY"] = "Dans un groupe, une étoile bleue indique les quêtes que tous le groupe fait !"
-L["S_TUTORIAL_RARITY"] = "indique la rareté (commun, rare, épique)"
-L["S_TUTORIAL_REWARD"] = "indique la récompense (équipement, or, pouvoir d'artefact, ressources, composants)"
 L["S_TUTORIAL_TIMELEFT"] = "Indique le temps restant (+4 heures, +90 minutes, +30 minutes, moins de 30 minutes)"
 L["S_TUTORIAL_WORLDMAPBUTTON"] = "Ce bouton vous apporte la carte des îles brisées."
 L["S_UNKNOWNQUEST"] = "Quête inconnue"

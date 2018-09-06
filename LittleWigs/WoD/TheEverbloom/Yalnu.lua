@@ -3,18 +3,11 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Yalnu", 1008, 1210)
+local mod, CL = BigWigs:NewBoss("Yalnu", 1279, 1210)
 if not mod then return end
 mod:RegisterEnableMob(83846)
-
---------------------------------------------------------------------------------
--- Localization
---
-
-local L = mod:GetLocale()
-if L then
-	
-end
+mod.engageId = 1756
+--mod.respawnTime = 0 -- wiping teleports you out, then you can retry immediately
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -29,13 +22,9 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
-
 	self:Log("SPELL_CAST_START", "Genesis", 169613)
 	self:Log("SPELL_CAST_START", "ColossalBlow", 169179)
 	self:Log("SPELL_CAST_SUCCESS", "Entanglement", 169251)
-
-	self:Death("Win", 83846)
 end
 
 function mod:OnEngage()
@@ -47,16 +36,15 @@ end
 --
 
 function mod:Genesis(args)
-	self:Message(args.spellId, "Attention", "Long")
+	self:Message(args.spellId, "yellow", "Long")
 	self:Bar(args.spellId, 17, CL.cast:format(args.spellName))
 	self:Bar(args.spellId, 60)
 end
 
 function mod:ColossalBlow(args)
-	self:Message(args.spellId, "Urgent", "Warning")
+	self:Message(args.spellId, "orange", "Warning")
 end
 
 function mod:Entanglement(args)
-	self:Message(args.spellId, "Positive", "Info")
+	self:Message(args.spellId, "green", "Info")
 end
-

@@ -25,7 +25,7 @@ function SlashCmdList.DETAILS (msg, editbox)
 	elseif (command == Loc ["STRING_SLASH_NEW"] or command == "new") then
 		_detalhes:CriarInstancia (nil, true)
 		
-	elseif (command == Loc ["STRING_SLASH_HISTORY"] or command == "history" or command == "score" or command == "rank" or command == "ranking" or command == "statistics") then
+	elseif (command == Loc ["STRING_SLASH_HISTORY"] or command == "history" or command == "score" or command == "rank" or command == "ranking" or command == "statistics" or command == "stats") then
 		_detalhes:OpenRaidHistoryWindow()
 	
 	elseif (command == Loc ["STRING_SLASH_TOGGLE"] or command == "toggle") then
@@ -52,6 +52,39 @@ function SlashCmdList.DETAILS (msg, editbox)
 			end
 		else
 			_detalhes:ShutDownAllInstances()
+		end
+	
+	elseif (command == "softhide") then
+		for instanceID, instance in _detalhes:ListInstances() do
+			if (instance:IsEnabled()) then
+				if (instance.hide_in_combat_type > 1) then
+					instance:SetWindowAlphaForCombat (true)
+				end
+			end
+		end
+	
+	elseif (command == "softshow") then
+		for instanceID, instance in _detalhes:ListInstances() do
+			if (instance:IsEnabled()) then
+				if (instance.hide_in_combat_type > 1) then
+					instance:SetWindowAlphaForCombat (false)
+				end
+			end
+		end
+	
+	elseif (command == "softtoggle") then
+		for instanceID, instance in _detalhes:ListInstances() do
+			if (instance:IsEnabled()) then
+				if (instance.hide_in_combat_type > 1) then
+					if (instance.baseframe:GetAlpha() > 0.1) then
+						--show
+						instance:SetWindowAlphaForCombat (true)
+					else
+						--hide
+						instance:SetWindowAlphaForCombat (false)
+					end
+				end
+			end
 		end
 	
 	elseif (command == Loc ["STRING_SLASH_SHOW"] or command == Loc ["STRING_SLASH_SHOW_ALIAS1"] or command == "show") then
@@ -128,6 +161,10 @@ function SlashCmdList.DETAILS (msg, editbox)
 		
 	elseif (command == Loc ["STRING_SLASH_CHANGES"] or command == Loc ["STRING_SLASH_CHANGES_ALIAS1"] or command == Loc ["STRING_SLASH_CHANGES_ALIAS2"] or command == "news" or command == "updates") then
 		_detalhes:OpenNewsWindow()
+	
+	elseif (command == "spells") then
+		Details.OpenForge()
+		DetailsForgePanel.SelectModule (_, _, 2)
 	
 	elseif (command == "feedback") then
 		_detalhes.OpenFeedbackWindow()
@@ -375,51 +412,6 @@ function SlashCmdList.DETAILS (msg, editbox)
 		print ("GetTime()", GetTime())
 		print ("time()", time())
 
-	elseif (msg == "buffs") then
-	
-		for buffIndex = 1, 41 do
-		
-			--local name, _, _, _, _, _, _, unitCaster, _, _, spellid  = UnitAura ("player", buffIndex, nil, "HELPFUL")
-			--if (name) then
-			--	print (name, unitCaster, spellid)
-			--end
-			
-			local name, _, _, _, _, _, _, unitCaster, _, _, spellid  = UnitAura ("raid1", buffIndex, nil, "HELPFUL")
-			if (name) then
-				print (name, unitCaster, spellid)
-			end
-			
-			local name, _, _, _, _, _, _, unitCaster, _, _, spellid  = UnitAura ("raid2", buffIndex, nil, "HELPFUL")
-			if (name) then
-				print (name, unitCaster, spellid)
-			end
-		
-		end
-	
-		
-	elseif (msg == "malkorok") then
-	
-		print ("nome | count | unitCaster | spellId |  isBossDebuff | value1 | value2 | value3")
-	
-		do
-			local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId, canApplyAura, isBossDebuff, value1, value2, value3  = UnitDebuff ("player", 1)
-			if (name) then
-				print (name, " | ", count, " | ", unitCaster, " | ",spellId, " | ", isBossDebuff, " | ", value1, " | ", value2, " | ", value3)
-			end
-		end
-		do
-			local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId, canApplyAura, isBossDebuff, value1, value2, value3  = UnitDebuff ("player", 2)
-			if (name) then
-				print (name, " | ", count, " | ", unitCaster, " | ",spellId, " | ", isBossDebuff, " | ", value1, " | ", value2, " | ", value3)
-			end
-		end
-		do
-			local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId, canApplyAura, isBossDebuff, value1, value2, value3  = UnitDebuff ("player", 3)
-			if (name) then
-				print (name, " | ", count, " | ", unitCaster, " | ",spellId, " | ", isBossDebuff, " | ", value1, " | ", value2, " | ", value3)
-			end
-		end
-		
 	elseif (msg == "copy") then
 		_G.DetailsCopy:Show()
 		_G.DetailsCopy.MyObject.text:HighlightText()
@@ -877,6 +869,15 @@ function SlashCmdList.DETAILS (msg, editbox)
 		print ("running... this is a debug command, details wont work until next /reload.")
 		_detalhes:PrepareTablesForSave()
 	
+	elseif (msg == "buffs") then
+		for i = 1, 40 do
+			local name, texture, count, debuffType, duration, expirationTime, caster, canStealOrPurge, nameplateShowPersonal, spellid = UnitBuff ("player", i)
+			if (not name) then
+				return
+			end
+			print (spellid, name)
+		end
+	
 	elseif (msg == "id") then
 		local one, two = rest:match("^(%S*)%s*(.-)$")
 		if (one ~= "") then
@@ -1148,7 +1149,7 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		print ("total loot", total)
 		_detalhes_global.ALOOT  = r
 	
-	elseif (msg == "ilvl2") then
+	elseif (msg == "ilvl" or msg == "itemlevel" or msg == "ilevel") then
 
 		local item_amount = 16
 		local item_level = 0
@@ -1160,60 +1161,23 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 			["INVTYPE_RANGEDRIGHT"] = true,
 		}
 		
+		local ItemUpgradeInfo = LibStub ("LibItemUpgradeInfo-1.0")
+		
+		_detalhes:Msg ("======== Item Level Debug ========")
+		
 		for equip_id = 1, 17 do
-
 			if (equip_id ~= 4) then --shirt slot
 				local item = GetInventoryItemLink (unitid, equip_id)
 				if (item) then
-					local iName, _, itemRarity, iLevel, _, _, _, _, equipSlot = GetItemInfo (item)
+					local _, _, itemRarity, iLevel, _, _, _, _, equipSlot = GetItemInfo (item)
 					if (iLevel) then
-						
-						--local _, _, _, _, _, _, _, _, _, _, _, upgradeTypeID, _, numBonusIDs, bonusID1, bonusID2 = strsplit (":", item)
-						--> upgrades handle by LibItemUpgradeInfo-1.0
-						--> http://www.wowace.com/addons/libitemupgradeinfo-1-0/
-						
-						local artifact_offhands = {
-							["133959"] = true, --mage fire
-							["128293"] = true, --dk frost
-							["127830"] = true, --dh havoc
-							["128831"] = true, --dh vengeance
-							["128859"] = true, --druid feral
-							["128822"] = true, --druid guardian
-							["133948"] = true, --monk ww
-							["128866"] = true, --paladin prot
-							["133958"] = true, --priest shadow
-							["128869"] = true, --rogue assassination
-							["134552"] = true, --rogue outlaw
-							["128479"] = true, --rogue subtlety
-							["128936"] = true, --shaman elemental
-							["128873"] = true, --shaman en
-							["128934"] = true, --shaman resto
-							["137246"] = true, --warlock demo
-							["128289"] = true, --warrior prot
-						}
-
-						if (equip_id == 17) then -- and false
-							local itemId = select (2, strsplit (":", item))
-							if (artifact_offhands [itemId]) then
-								local mainHand = GetInventoryItemLink (unitid, 16)
-								if (mainHand) then
-									local iName, _, itemRarity, mainHandILevel, _, _, _, _, equipSlot = GetItemInfo (mainHand)
-									if (iLevel) then
-										item = mainHand
-										iLevel = mainHandILevel
-									end
-								end
-							end
-						end
-						
-						local ItemUpgradeInfo = LibStub ("LibItemUpgradeInfo-1.0")
 						if (ItemUpgradeInfo) then
 							local ilvl = ItemUpgradeInfo:GetUpgradedItemLevel (item)
 							item_level = item_level + (ilvl or iLevel)
-							print (item, ilvl, iLevel)
+							print (ilvl, item)
 						else
 							item_level = item_level + iLevel
-							print (iName, iLevel, "-|cFFFF0000lib not found|r-")
+							print (iLevel, item)
 						end
 						
 						--> 16 = main hand 17 = off hand
@@ -1233,41 +1197,9 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		end
 		
 		local average = item_level / item_amount
-		print ("gear score:", item_level, "item amount:", item_amount, "ilvl:", average)
-	
-	elseif (msg == "ilvl") then
-	
-		--
-		local ilvl_frame = CreateFrame ("GameTooltip", "details_ilvl_tooltip", UIParent, "GameTooltipTemplate");
-		local get_ilvl = function (itemLink)
-			ilvl_frame:SetOwner (UIParent, "ANCHOR_NONE")
-			ilvl_frame:ClearLines()
-			ilvl_frame:SetHyperlink (itemLink)
-			
-			for i = 1, 13 do
-				local text = _G ["details_ilvl_tooltipTextLeft" .. i] and _G ["details_ilvl_tooltipTextLeft" .. i]:GetText()
-				if (text and text:find (ITEM_UPGRADE_STAT_AVERAGE_ITEM_LEVEL)) then
-					print ("ItemLevel:", text:gsub (ITEM_UPGRADE_STAT_AVERAGE_ITEM_LEVEL, ""))
-					break
-				end
-			end
-		end
-		
-		local item = GetInventoryItemLink ("player", 14)
-		get_ilvl (item)
+		_detalhes:Msg ("gear score: " .. item_level, "| item amount:", item_amount, "| ilvl:", average)
 
-		print (item)
-		local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
-		local SlotNames = "Trinket1"
-		local Slot = GetInventoryItemLink ("player", GetInventorySlotInfo (("%sSlot"):format (SlotNames)))
-		print (Slot)
-		--local upgrade, max, delta = ItemUpgradeInfo:GetItemUpgradeInfo (item)
-		local upgrade, max, delta = ItemUpgradeInfo:GetItemUpgradeInfo (item)
-		local ilvl = ItemUpgradeInfo:GetUpgradedItemLevel (item)
-		
-		print (ilvl, upgrade, max, delta)
-		
-		print (GetItemInfo (item))
+		_detalhes.ilevel:CalcItemLevel ("player", UnitGUID("player"), true)
 		
 	elseif (msg == "score") then
 		
@@ -1391,6 +1323,38 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		
 		instance:InstanceAlert ("Boss Defeated! Show Ranking", icon, 10, func, true)
 	
+	elseif (msg == "spec") then
+	
+	local spec = GetSpecialization()
+	if (spec) then
+		local specID = GetSpecializationInfo (spec)
+		if (specID and specID ~= 0) then
+			print ("Current SpecID: ", specID)
+		end
+	end
+		
+	
+	elseif (msg == "senditemlevel") then
+		_detalhes:SendCharacterData()
+		print ("Item level dispatched.")
+	
+	elseif (msg == "talents") then
+		local talents = {}
+		for i = 1, 7 do
+			for o = 1, 3 do
+				local talentID, name, texture, selected, available = GetTalentInfo (i, o, 1)
+				if (selected) then
+					tinsert (talents, talentID)
+					break
+				end
+			end
+		end
+		
+		print ("talentID", "name", "texture", "selected", "available", "spellID", "unknown", "row", "column", "unknown", "unknown")
+		for i = 1, #talents do
+			print (GetTalentInfoByID (talents [i]))
+		end
+	
 	elseif (msg == "merge") then
 		
 		--> at this point, details! should not be in combat
@@ -1503,8 +1467,10 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 			
 			
 		end
-		
-		
+	
+	--BFA BETA
+	elseif (msg == "update") then
+		_detalhes:CopyPaste ([[https://www.wowinterface.com/downloads/info23056-DetailsDamageMeter8.07.3.5.html]])
 	
 	else
 		
@@ -1512,8 +1478,60 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		--	_detalhes:CriarInstancia()
 		--end
 		
+		if (command) then
+			--> check if the line passed is a parameters in the default profile
+			if (_detalhes.default_profile [command]) then
+				if (rest and (rest ~= "" and rest ~= " ")) then
+					local whichType = type (_detalhes.default_profile [command])
+					
+					--> attempt to cast the passed value to the same value as the type in the profile
+					if (whichType == "number") then
+						rest = tonumber (rest)
+						if (rest) then
+							_detalhes [command] = rest
+							print (Loc ["STRING_DETAILS1"] .. "config '" .. command .. "' set to " .. rest)
+						else
+							print (Loc ["STRING_DETAILS1"] .. "config '" .. command .. "' expects a number")
+						end
+						
+					elseif (whichType == "string") then
+						rest = tostring (rest)
+						if (rest) then
+							_detalhes [command] = rest
+							print (Loc ["STRING_DETAILS1"] .. "config '" .. command .. "' set to " .. rest)
+						else
+							print (Loc ["STRING_DETAILS1"] .. "config '" .. command .. "' expects a string")
+						end
+						
+					elseif (whichType == "boolean") then
+						if (rest == "true") then
+							_detalhes [command] = true
+							print (Loc ["STRING_DETAILS1"] .. "config '" .. command .. "' set to true")
+							
+						elseif (rest == "false") then
+							_detalhes [command] = false
+							print (Loc ["STRING_DETAILS1"] .. "config '" .. command .. "' set to false")
+							
+						else
+							print (Loc ["STRING_DETAILS1"] .. "config '" .. command .. "' expects true or false")
+						end
+					end
+				
+				else
+					local value = _detalhes [command]
+					if (type (value) == "boolean") then
+						value = value and "true" or "false"
+					end
+					print (Loc ["STRING_DETAILS1"] .. "config '" .. command .. "' current value is: " .. value)
+				end
+				
+				return
+			end
+			
+		end
+		
 		print (" ")
-		print (Loc ["STRING_DETAILS1"] .. "(" .. _detalhes.userversion .. ") " ..  Loc ["STRING_COMMAND_LIST"])
+		print (Loc ["STRING_DETAILS1"] .. "" .. _detalhes.userversion .. " [|cFFFFFF00CORE: " .. _detalhes.realversion .. "|r] " ..  Loc ["STRING_COMMAND_LIST"] .. ":")
 		
 		print ("|cffffaeae/details|r |cffffff33" .. Loc ["STRING_SLASH_NEW"] .. "|r: " .. Loc ["STRING_SLASH_NEW_DESC"])
 		print ("|cffffaeae/details|r |cffffff33" .. Loc ["STRING_SLASH_SHOW"] .. " " .. Loc ["STRING_SLASH_HIDE"] .. " " .. Loc ["STRING_SLASH_TOGGLE"] .. "|r|cfffcffb0 <" .. Loc ["STRING_WINDOW_NUMBER"] .. ">|r: " .. Loc ["STRING_SLASH_SHOWHIDETOGGLE_DESC"])

@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Prince Taldaram", 522, 581)
+local mod, CL = BigWigs:NewBoss("Prince Taldaram", 619, 581)
 if not mod then return end
 mod:RegisterEnableMob(29308)
 
@@ -31,17 +31,17 @@ end
 --
 
 function mod:EmbraceOfTheVampyr(args)
-	self:TargetMessage(59513, args.destName, "Important", "Warning", nil, nil, true)
+	self:TargetMessage(59513, args.destName, "red", "Warning", nil, nil, true)
 	self:Bar(59513, 20)
 end
 
 function mod:EmbraceOfTheVampyrRemoved(args)
-	self:Message(59513, "Positive", nil, CL.over:format(args.spellName))
+	self:Message(59513, "green", nil, CL.over:format(args.spellName))
 	self:StopBar(args.spellName)
 end
 
 function mod:ConjureFlameSphere(args)
-	self:Message(args.spellId, "Important")
+	self:Message(args.spellId, "red")
 	self:Bar(args.spellId, 10)
 end
 

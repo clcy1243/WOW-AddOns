@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1236, "DBM-Party-WoD", 4, 558)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(80805, 80816, 80808)
 mod:SetEncounterID(1748)
 mod:SetZone()
@@ -68,7 +68,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			end
 		end
 		if unitid then
-			local _, _, _, _, _, duration, expires, _, _ = UnitBuff(unitid, args.spellName)
+			local _, _, _, _, duration, expires = DBM:UnitBuff(unitid, args.spellName)
 			if expires then
 				timerSanguineSphere:Start(expires-GetTime(), args.destName)
 			end
@@ -96,7 +96,7 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 164956 and self:AntiSpam(5, 2) then
 		specWarnLavaSwipe:Show()
 		if self:IsHeroic() then

@@ -1,10 +1,10 @@
-local ADDON_NAME, NAMESPACE = ...
+local ADDON_NAME, Addon = ...
 
 ---------------------------------------------------------------------------------------------------
 -- Define table that contains all addon-global variables and functions
 ---------------------------------------------------------------------------------------------------
-NAMESPACE.ThreatPlates = {}
-local ThreatPlates = NAMESPACE.ThreatPlates
+Addon.ThreatPlates = {}
+local ThreatPlates = Addon.ThreatPlates
 
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
@@ -23,11 +23,9 @@ ThreatPlates.Media = LibStub("LibSharedMedia-3.0")
 
 ---------------------------------------------------------------------------------------------------
 -- Define AceAddon TidyPlatesThreat
--- TODO: There's a collision with the addon TidyPlates: Threat because of the same Ace3 addon name
 ---------------------------------------------------------------------------------------------------
-
 TidyPlatesThreat = LibStub("AceAddon-3.0"):NewAddon("TidyPlatesThreat", "AceConsole-3.0", "AceEvent-3.0")
--- Global for DBM to differentiate between Tidy Plates: Threat Plates and Tidy Plates: Threat
+-- Global for DBM to differentiate between Threat Plates and Tidy Plates: Threat
 TidyPlatesThreatDBM = true
 
 --------------------------------------------------------------------------------------------------
@@ -73,24 +71,6 @@ ThreatPlates.Meta = function(value)
 		meta = GetAddOnMetadata("TidyPlates_ThreatPlates",value)
 	end
 	return meta or ""
-end
-
-ThreatPlates.Class = function()
-	local _,class = UnitClass("Player")
-	return class
-end
-
-ThreatPlates.Active = function()
-	local val = GetSpecialization()
-	return val
-end
-
-ThreatPlates.TotemNameBySpellID = function(number)
-	local name = GetSpellInfo(number)
-	if not name then
-		return ""
-	end
-	return name
 end
 
 do
@@ -144,9 +124,42 @@ ThreatPlates.CopyTable = function(input)
 	return output
 end
 
+Addon.MergeIntoTable = function(target, source)
+  for k,v in pairs(source) do
+    if type(v) == "table" then
+      Addon.MergeIntoTable(target[k], v)
+    else
+      target[k] = v
+    end
+  end
+end
+
+Addon.ConcatTables = function(base_table, table_to_concat)
+	local concat_result = ThreatPlates.CopyTable(base_table)
+
+	for i = 1, #table_to_concat do
+		concat_result[#concat_result + 1] = table_to_concat[i]
+	end
+
+	return concat_result
+end
+
 --------------------------------------------------------------------------------------------------
 -- Some functions to fix TidyPlates bugs
 ---------------------------------------------------------------------------------------------------
+
+ThreatPlates.Dump = function(value, index)
+	if not IsAddOnLoaded("Blizzard_DebugTools") then
+		LoadAddOn("Blizzard_DebugTools")
+	end
+	local i
+	if index and type(index) == "number" then
+	  i = index
+	else
+	  i = 1
+	end
+	DevTools_Dump(value, i)
+end
 
 -- With TidyPlates:
 --local function FixUpdateUnitCondition(unit)
@@ -200,26 +213,30 @@ local function DEBUG_PRINT_TABLE(data)
   end
 end
 
-local function DEBUG_PRINT_UNIT(unit)
+local function DEBUG_PRINT_UNIT(unit, full_info)
 	DEBUG("Unit:", unit.name)
-	DEBUG("  -------------------------------------------------------------")
-	DEBUG_PRINT_TABLE(unit)
-	if unit.unitid then
---		DEBUG("  isFriend = ", TidyPlatesUtilityInternal.IsFriend(unit.name))
---		DEBUG("  isGuildmate = ", TidyPlatesUtilityInternal.IsGuildmate(unit.name))
-		DEBUG("  IsOtherPlayersPet = ", UnitIsOtherPlayersPet(unit))
-		DEBUG("  IsBattlePet = ", UnitIsBattlePet(unit.unitid))
-		DEBUG("  PlayerControlled = ", UnitPlayerControlled(unit.unitid))
-		DEBUG("  CanAttack = ", UnitCanAttack("player", unit.unitid))
-		DEBUG("  Reaction = ", UnitReaction("player", unit.unitid))
-		local r, g, b, a = UnitSelectionColor(unit.unitid, true)
-		DEBUG("  SelectionColor: r =", ceil(r * 255), ", g =", ceil(g * 255), ", b =", ceil(b * 255), ", a =", ceil(a * 255))
-		DEBUG("  --------------------------------------------------------------")
-	else
-		DEBUG("  <no unit id>")
-		DEBUG("  --------------------------------------------------------------")
-	end
+	DEBUG("-------------------------------------------------------------")
+	for key, val in pairs(unit) do
+		DEBUG(key .. ":", val)
+  end
+
+  if full_info and unit.unitid then
+    --		DEBUG("  isFriend = ", TidyPlatesUtilityInternal.IsFriend(unit.name))
+    --		DEBUG("  isGuildmate = ", TidyPlatesUtilityInternal.IsGuildmate(unit.name))
+    DEBUG("  IsOtherPlayersPet = ", UnitIsOtherPlayersPet(unit))
+    DEBUG("  IsBattlePet = ", UnitIsBattlePet(unit.unitid))
+    DEBUG("  PlayerControlled = ", UnitPlayerControlled(unit.unitid))
+    DEBUG("  CanAttack = ", UnitCanAttack("player", unit.unitid))
+    DEBUG("  Reaction = ", UnitReaction("player", unit.unitid))
+    local r, g, b, a = UnitSelectionColor(unit.unitid, true)
+    DEBUG("  SelectionColor: r =", ceil(r * 255), ", g =", ceil(g * 255), ", b =", ceil(b * 255), ", a =", ceil(a * 255))
+  else
+    DEBUG("  <no unit id>")
+  end
+
+  DEBUG("--------------------------------------------------------------")
 end
+
 
 local function DEBUG_PRINT_TARGET(unit)
   if unit.isTarget then

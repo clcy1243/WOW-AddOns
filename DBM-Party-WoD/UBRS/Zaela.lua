@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1234, "DBM-Party-WoD", 8, 559)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(77120)
 mod:SetEncounterID(1762)
 mod:SetZone()
@@ -56,7 +56,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 155705 then
 		warnReboundingBlade:Show()
 		timerReboundingBladeCD:Start()

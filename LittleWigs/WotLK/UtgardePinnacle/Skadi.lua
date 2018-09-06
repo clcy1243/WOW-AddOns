@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Skadi the Ruthless", 524, 643)
+local mod, CL = BigWigs:NewBoss("Skadi the Ruthless", 575, 643)
 if not mod then return end
 mod:RegisterEnableMob(26693)
 mod.engageId = 2029
@@ -15,7 +15,7 @@ mod.respawnTime = 30
 
 function mod:GetOptions()
 	return {
-		59322, -- Whirlwind
+		{59322, "SAY"}, -- Whirlwind
 	}
 end
 
@@ -31,7 +31,7 @@ end
 
 do
 	local function printTarget(self, player, guid)
-		self:TargetMessage(59322, player, "Urgent", "Info", nil, nil, true)
+		self:TargetMessage(59322, player, "orange", "Info", nil, nil, true)
 		if self:Me(guid) then
 			self:Say(59322)
 		end
@@ -51,7 +51,7 @@ do
 			local t = GetTime()
 			if t-prev > 1.5 then
 				prev = t
-				self:Message(59322, "Personal", "Alarm", CL.underyou:format(args.spellName))
+				self:Message(59322, "blue", "Alarm", CL.underyou:format(args.spellName))
 			end
 		end
 	end

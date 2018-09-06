@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Helix Gearbreaker", 756, 90)
+local mod, CL = BigWigs:NewBoss("Helix Gearbreaker", 36, 90)
 if not mod then return end
 mod:RegisterEnableMob(47296, 47297) -- Helix Gearbreaker, Lumbering Oaf
 
@@ -31,7 +31,7 @@ end
 --
 
 function mod:ChestBomb(args)
-	self:TargetMessage(args.spellId, args.destName, "Important", "Alert")
+	self:TargetMessage(args.spellId, args.destName, "red", "Alert")
 	self:TargetBar(args.spellId, 10, args.destName)
 	self:PrimaryIcon(args.spellId, args.destName)
 	if self:Me(args.destGUID) then

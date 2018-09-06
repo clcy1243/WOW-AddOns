@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("The Curator", 1115, 1836)
+local mod, CL = BigWigs:NewBoss("The Curator", 1651, 1836)
 if not mod then return end
 mod:RegisterEnableMob(114247)
 mod.engageId = 1964
@@ -22,18 +22,18 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
+	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "PowerDischarge", "boss1")
 	self:Log("SPELL_CAST_SUCCESS", "SummonVolatileEnergy", 227267)
-	self:Log("SPELL_CAST_SUCCESS", "PowerDischarge", 227279)
-	self:Log("SPELL_AURA_APPLIED", "PowerDischargeDamage", 227465)
 	self:Log("SPELL_PERIODIC_DAMAGE", "PowerDischargeDamage", 227465)
 	self:Log("SPELL_PERIODIC_MISSED", "PowerDischargeDamage", 227465)
 	self:Log("SPELL_AURA_APPLIED", "Evocation", 227254)
+	self:Log("SPELL_AURA_REMOVED", "EvocationOver", 227254)
 end
 
 function mod:OnEngage()
 	self:Bar(227267, 5) -- Summon Volatile Energy
 	self:CDBar(227279, 12) -- Power Discharge
+	self:CDBar(227254, 68) -- Evocation
 end
 
 --------------------------------------------------------------------------------
@@ -41,36 +41,38 @@ end
 --
 
 function mod:SummonVolatileEnergy(args)
-	self:Message(args.spellId, "Attention", "Info")
+	self:Message(args.spellId, "yellow", "Info")
 	self:Bar(args.spellId, 9.7)
 end
 
-do
-	local prev = 0
-	function mod:PowerDischarge(args)
-		local t = GetTime()
-		if t-prev > 2 then
-			prev = t
-			self:Message(args.spellId, "Urgent", "Alert")
-			self:CDBar(args.spellId, 12)
-		end
+function mod:PowerDischarge(_, _, _, spellId)
+	if spellId == 227278 then
+		self:Message(227279, "orange", "Alert")
+		self:CDBar(227279, 12)
 	end
 end
 
 do
 	local prev = 0
 	function mod:PowerDischargeDamage(args)
-		local t = GetTime()
-		if t-prev > 2 and self:Me(args.destGUID) then
-			prev = t
-			self:Message(227279, "Personal", "Alarm", CL.underyou:format(args.spellName))
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			if t-prev > 2 then
+				prev = t
+				self:Message(227279, "blue", "Alarm", CL.underyou:format(args.spellName))
+			end
 		end
 	end
 end
 
 function mod:Evocation(args)
-	self:Message(args.spellId, "Positive", "Long")
-	self:Bar(args.spellId, 20, CL.cast:format(args.spellName))
+	self:Message(args.spellId, "green", "Long")
+	self:CastBar(args.spellId, 20)
 	self:StopBar(227267) -- Summon Volatile Energy
 	self:StopBar(227279) -- Power Discharges
+end
+
+function mod:EvocationOver(args)
+	self:Message(args.spellId, "cyan", "Info", CL.over:format(args.spellName))
+	self:CDBar(args.spellId, 69)
 end

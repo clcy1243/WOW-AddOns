@@ -5,10 +5,10 @@
 	wodrratimerkromog=nil
 	rscupdhpcheckhr=GetTime()
 
-SetMapToCurrentZone()
-if GetCurrentMapAreaID()==988 or GetCurrentMapAreaID()==1026 then
+--SetMapToCurrentZone()
+if racheckzoneId({596,597,598,599,600},C_Map.GetBestMapForUnit("player")) or racheckzoneId({661,662,663,664,665,666,667,668,669,670},C_Map.GetBestMapForUnit("player")) then
 	RaidAchievement_wodrra:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	RaidAchievement_wodrra:RegisterEvent("UNIT_POWER")
+	RaidAchievement_wodrra:RegisterEvent("UNIT_POWER_UPDATE")
 	RaidAchievement_wodrra:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE")
 end
 	RaidAchievement_wodrra:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -57,7 +57,7 @@ end
 function wodrra_OnUpdate(curtime)
 
 
-if rscupdhpcheckhr and GetTime()>rscupdhpcheckhr and GetCurrentMapAreaID()==1026 and UnitGUID("boss3") then
+if rscupdhpcheckhr and GetTime()>rscupdhpcheckhr and racheckzoneId({661,662,663,664,665,666,667,668,669,670},C_Map.GetBestMapForUnit("player")) and UnitGUID("boss3") then
 	rscupdhpcheckhr=GetTime()+2
 	if wodrraspisokon[5]==1 and wodrraachdone1 then
 	if (raGetUnitID(UnitGUID("boss3"))==90018) then
@@ -88,14 +88,14 @@ end
 
 if rpradelayzonech and curtime>rpradelayzonech then
 rpradelayzonech=nil
-SetMapToCurrentZone()
-if GetCurrentMapAreaID()==988 or GetCurrentMapAreaID()==1026 then
+--SetMapToCurrentZone()
+if racheckzoneId({596,597,598,599,600},C_Map.GetBestMapForUnit("player")) or racheckzoneId({661,662,663,664,665,666,667,668,669,670},C_Map.GetBestMapForUnit("player")) then
 RaidAchievement_wodrra:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-RaidAchievement_wodrra:RegisterEvent("UNIT_POWER")
+RaidAchievement_wodrra:RegisterEvent("UNIT_POWER_UPDATE")
 RaidAchievement_wodrra:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE")
 else
 RaidAchievement_wodrra:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-RaidAchievement_wodrra:UnregisterEvent("UNIT_POWER")
+RaidAchievement_wodrra:UnregisterEvent("UNIT_POWER_UPDATE")
 RaidAchievement_wodrra:UnregisterEvent("CHAT_MSG_RAID_BOSS_EMOTE")
 end
 end
@@ -214,7 +214,7 @@ end
 end
 
 
-if event == "UNIT_POWER" then
+if event == "UNIT_POWER_UPDATE" then
 if UnitName("boss1") and UnitName("boss1")~="" then
 
 
@@ -233,7 +233,7 @@ local arg1, arg2, arg3,arg4,arg5,arg6,argNEW1,arg7,arg8,arg9,argNEW2,arg10,arg11
 --ТУТ АЧИВЫ
 
 --BRF (2 dung)
-if GetCurrentMapAreaID()==988 then
+if racheckzoneId({596,597,598,599,600},C_Map.GetBestMapForUnit("player")) then
 
 if arg2=="UNIT_DIED" then
   if wodrraspisokon[1]==1 and wodrraachdone1 then
@@ -294,7 +294,7 @@ end
 --
 --
 
-if GetCurrentMapAreaID()==1026 then
+if racheckzoneId({661,662,663,664,665,666,667,668,669,670},C_Map.GetBestMapForUnit("player")) then
 if arg2=="UNIT_DIED" then
   if wodrraspisokon[6]==1 and wodrraachdone1 then
      local id=raGetUnitID(arg7)

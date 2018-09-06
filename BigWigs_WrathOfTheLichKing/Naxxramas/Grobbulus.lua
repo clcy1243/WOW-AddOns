@@ -2,7 +2,7 @@
 -- Module declaration
 --
 
-local mod = BigWigs:NewBoss("Grobbulus", 535, 1611)
+local mod = BigWigs:NewBoss("Grobbulus", 533, 1611)
 if not mod then return end
 mod:RegisterEnableMob(15931)
 mod.toggleOptions = {{28169, "ICON", "FLASH"}, 28240, "berserk"}
@@ -40,7 +40,7 @@ end
 --
 
 function mod:Inject(args)
-	self:TargetMessage(args.spellId, args.destName, "Personal", "Alert", L["bomb_message"])
+	self:TargetMessage(args.spellId, args.destName, "blue", "Alert", L["bomb_message"])
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
 	end
@@ -49,7 +49,7 @@ function mod:Inject(args)
 end
 
 function mod:Cloud(args)
-	self:Message(args.spellId, "Attention")
+	self:Message(args.spellId, "yellow")
 	self:Bar(args.spellId, 15)
 end
 

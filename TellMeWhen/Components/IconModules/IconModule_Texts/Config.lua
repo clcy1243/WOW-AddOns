@@ -7,7 +7,7 @@
 --		Banjankri of Blackrock, Predeter of Proudmoore, Xenyr of Aszune
 
 -- Currently maintained by
--- Cybeloras of Aerie Peak/Detheroc/Mal'Ganis
+-- Cybeloras of Aerie Peak
 -- --------------------
 
 
@@ -37,7 +37,6 @@ if not TEXT then return end
 
 
 local clientVersion = select(4, GetBuildInfo())
-local wow_701 = clientVersion >= 70100 or GetBuildInfo() == "7.1.0" -- they haven't updated the interface number yet.
 
 
 
@@ -212,11 +211,8 @@ TMW:NewClass("Config_TextLayout_ListItem", "Config_Frame") {
 			for id, displaySettings in TMW:InNLengthTable(layoutSettings) do
 				local frame = self:GetTextDisplayFrame(id)
 
-				if wow_701 or self.Layout:GetChecked() then
-					frame:Show()
-
-					numShown = id
-				end
+				frame:Show()
+				numShown = id
 			end
 		end
 
@@ -1087,7 +1083,6 @@ textlayout:RegisterMenuBuilder(1, function(Item_textlayout)
 end)
 
 
-textlayout.Export_DescriptionAppend = L["EXPORT_SPECIALDESC2"]:format("6.0.0+")
 function textlayout:Export_SetButtonAttributes(editbox, info)
 	local IMPORTS, EXPORTS = editbox:GetAvailableImportExportTypes()
 	local GUID = EXPORTS[self.type]

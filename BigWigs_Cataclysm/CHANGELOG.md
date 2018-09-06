@@ -1,9 +1,7 @@
 # BigWigs [Cataclysm]
 
-## [v7.3.0](https://github.com/BigWigsMods/BigWigs_Cataclysm/tree/v7.3.0) (2017-08-30)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Cataclysm/compare/v7.2.0...v7.3.0)
+## [v8.0.3](https://github.com/BigWigsMods/BigWigs_Cataclysm/tree/v8.0.3) (2018-07-28)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Cataclysm/compare/v8.0.2...v8.0.3)
 
-- bump toc  
-- Update a comment  
-- Update koKR for toc (#5)  
-- update zhCN. (#4)  
+- Firelands/Ragnaros: Fix Molten Seed and update UnitDebuff usage.  
+- Firelands/Alysrazor: Update UnitBuff usage.  

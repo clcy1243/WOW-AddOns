@@ -16,7 +16,11 @@ L[" macros per character.  You currently have "] = " 宏/角色.你目前已有 
 L[" saved as version "] = " 保存至版本 "
 L[" sent"] = " 发送"
 L[" tried to overwrite the version already loaded from "] = " 试图覆盖已经加载的版本 "
+--[[Translation missing --]]
+--[[ L[" was imported as a new macro."] = ""--]] 
 L[" was imported with the following errors."] = " 导入时出现以下错误."
+--[[Translation missing --]]
+--[[ L[" was updated to new version."] = ""--]] 
 L[". This version was not loaded."] = ". 未加载此版本."
 L["/gs |r to get started."] = "/gs |r 以开始."
 L["/gs checkmacrosforerrors|r will loop through your macros and check for corrupt macro versions.  This will then show how to correct these issues."] = "/ gs checkmacrosforerrors |r 将循环访问你的宏并检查是否存在损坏的宏版本.同时显示如何纠正这些问题."
@@ -43,11 +47,17 @@ L["A sequence collision has occured.  Your local version of "] = "发生了一�
 L["Actions"] = "动作"
 L["Active Version: "] = "活动版本: "
 L["Addin Version %s contained versions for the following macros:"] = "加载版本 %s 包含于以下宏:"
+--[[Translation missing --]]
+--[[ L["All macros are now stored as upper case names.  You may need to re-add your old macros to your action bars."] = ""--]] 
 L["Alt Keys."] = "Alt键."
 L["Any Alt Key"] = "任意Alt键"
 L["Any Control Key"] = "任意Ctrl键"
 L["Any Shift Key"] = "任意Shift键"
 L["Are you sure you want to delete %s?  This will delete the macro and all versions.  This action cannot be undone."] = "你确定要删除 %s?  这将删除该宏和所有版本.  本操作无法撤销."
+--[[Translation missing --]]
+--[[ L["Arena"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Arena setting changed to Default."] = ""--]] 
 L["As GS-E is updated, there may be left over macros that no longer relate to sequences.  This will check for these automatically on logout.  Alternatively this check can be run via /gs cleanorphans"] = "GS-E已更新,可能会有遗留的不再使用的宏. 登出时会自动检查. 另外这个检查可以通过输入 / GS cleanorphans 运行 "
 L["Author"] = "作者"
 L["Author Colour"] = "作者颜色"
@@ -62,6 +72,8 @@ L["By setting this value the Sequence Editor will show every macro for every cla
 L["By setting this value the Sequence Editor will show every macro for your class.  Turning this off will only show the class macros for your current specialisation."] = "勾选此项,序列编辑器将显示职业的全部专精的宏.否则只显示当前专精的宏."
 L["Cancel"] = "撤销/取消"
 L["CheckMacroCreated"] = "检测已创建宏"
+--[[Translation missing --]]
+--[[ L["Choose import action:"] = ""--]] 
 L["Choose Language"] = "选择语言"
 L["Classwide Macro"] = "职业通用宏"
 L["Clear"] = "清除"
@@ -76,6 +88,8 @@ L["Command Colour"] = "命令颜色"
 L["Completely New GS Macro."] = "全新的GS宏."
 L["Conditionals Colour"] = "条件颜色"
 L["Configuration"] = "结构"
+--[[Translation missing --]]
+--[[ L["Continue"] = ""--]] 
 L["Contributed by: "] = "贡献者: "
 L["Control Keys."] = "Ctrl键."
 L["Copy this link and open it in a Browser."] = "复制此链接并在浏览器中打开它."
@@ -87,6 +101,8 @@ L["Debug"] = "调试"
 L["Debug Mode Options"] = "调试模式设置"
 L["Debug Output Options"] = "调试输出设置"
 L["Debug Sequence Execution"] = "调试序列执行"
+--[[Translation missing --]]
+--[[ L["Default Import Action"] = ""--]] 
 L["Default Version"] = "默认版本"
 L["Delete"] = "删除"
 L["Delete Icon"] = "删除图标"
@@ -96,6 +112,7 @@ L["Different helpTxt"] = "不同的帮助脚本"
 L["Disable"] = "禁用"
 L["Disable Sequence"] = "禁用序列"
 L["Display debug messages in Chat Window"] = "在聊天窗口中显示调试信息"
+L["Don't Translate Sequences"] = "不要翻译序列"
 L["Dungeon"] = "地下城版本"
 L["Edit"] = "编辑"
 L["Editor Colours"] = "编辑器颜色"
@@ -104,11 +121,16 @@ L["Enable"] = "启用"
 L["Enable Debug for the following Modules"] = "启用调试给以下模块"
 L["Enable Mod Debug Mode"] = "启用模块调试模式"
 L["Enable Sequence"] = "启用宏"
+L["Enable this option to stop automatically translating sequences from enUS to local language."] = "启用这个选项以停止自动将序列从英文翻译为本地语言."
 L["Error found in version %i of %s."] = "版本 %i 在序列 %s 中被发现错误."
 L["Export"] = "导出"
 L["Export a Sequence"] = "导出序列"
+--[[Translation missing --]]
+--[[ L["Extra Macro Versions of %s has been added."] = ""--]] 
 L["Filter Macro Selection"] = "宏过滤选择器"
 L["Finished scanning for errors.  If no other messages then no errors were found."] = "完成错误扫描.如果没有其他提示消息,则没有发现错误."
+--[[Translation missing --]]
+--[[ L["Format export for WLM Forums"] = ""--]] 
 L["FYou cannot delete this version of a sequence.  This version will be reloaded as it is contained in "] = "F你不能删除此版本的序列.这个版本将被重新加载,因为它包含在 "
 L["Gameplay Options"] = "游戏选项"
 L["General"] = "常规"
@@ -151,6 +173,8 @@ L["Hide Login Message"] = "隐藏加载信息"
 L["Hides the message that GSE is loaded."] = "隐藏GSE加载的信息."
 L["Icon Colour"] = "图标颜色"
 L["If you load Gnome Sequencer - Enhanced and the Sequence Editor and want to create new macros from scratch, this will enable a first cut sequenced template that you can load into the editor as a starting point.  This enables a Hello World macro called Draik01.  You will need to do a /console reloadui after this for this to take effect."] = "如果你加载 Gnome Sequencer - Enhanced(侏儒序列器-增强) 和 Sequence Editor(序列编辑器) 并希望从头开始创建新的宏, 这将启用一个初始序列模板,你可以加载到编辑器作为起点.  它会启动一个名为Draik01的宏作为Hellow World宏.  你需要输入 /console reloadui 之后使之生效."
+--[[Translation missing --]]
+--[[ L["Ignore"] = ""--]] 
 L["Import"] = "导入"
 L["Import Macro from Forums"] = "从论坛导入宏"
 L["Imported new sequence "] = "导入新序列 "
@@ -176,6 +200,8 @@ L["Legacy GS/GSE1 Macro"] = "遗留的 GS/GSE1 宏"
 L["Like a /castsequence macro, it cycles through a series of commands when the button is pushed. However, unlike castsequence, it uses macro text for the commands instead of spells, and it advances every time the button is pushed instead of stopping when it can't cast something."] = "像一个 /castsequence 宏, 它在按下按钮时循环执行一系列命令. 然而, 与 /castsequence 不同, 它严格使用宏文本作为命令而不是根据法术状态, 并且它每次按下按钮时都会前进而不在它不能释放时停止."
 L["Load"] = "读取"
 L["Load Sequence"] = "读取序列"
+--[[Translation missing --]]
+--[[ L["Local Macro"] = ""--]] 
 L["Macro Collection to Import."] = "宏集合导入."
 L["Macro found by the name %sWW%s. Rename this macro to a different name to be able to use it.  WOW has a hidden button called WW that is executed instead of this macro."] = "宏被命名为 %sWW%s .重命名此宏以能使用此宏.魔兽世界有一个隐藏的名为\"WW\"的按钮,使用此宏实际上会点击该按钮而不是使用此宏. "
 L["Macro Icon"] = "宏图标"
@@ -186,16 +212,28 @@ L["Macro Version %d deleted."] = "宏版本%d 已删除."
 L["Make Active"] = "使它活动"
 L["Manage Versions"] = "管理版本"
 L["Matching helpTxt"] = "匹配帮助文本"
+--[[Translation missing --]]
+--[[ L["Merge"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["MergeSequence"] = ""--]] 
 L["Middle Mouse Button"] = "鼠标中键"
 L["Mouse Button 4"] = "鼠标键4"
 L["Mouse Button 5"] = "鼠标键5"
 L["Mouse Buttons."] = "鼠标键."
 L["Moved %s to class %s."] = "移动 %s 到职业 %s ."
 L["Mythic"] = "史诗使用版本"
+--[[Translation missing --]]
+--[[ L["Mythic+"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Mythic+ setting changed to Default."] = ""--]] 
 L["Neck"] = "颈部"
 L["New"] = "新"
+--[[Translation missing --]]
+--[[ L["New Sequence Name"] = ""--]] 
 L["No"] = "否"
 L["No Active Version"] = "无活动版本"
+--[[Translation missing --]]
+--[[ L["No changes were made to "] = ""--]] 
 L["No Help Information "] = "无帮助信息 "
 L["No Help Information Available"] = "没有帮助信息可用"
 L["No Sequences present so none displayed in the list."] = "当前没有序列,因此列表中无内容."
@@ -236,11 +274,15 @@ L["Priority List (1 12 123 1234)"] = "优先级列表 (1 12 123 1234)"
 L["PVP"] = "PVP使用版本"
 L["PVP setting changed to Default."] = "PVP设置更改为默认值."
 L["Raid"] = "Raid使用版本"
+L["Random - It will select .... a spell, any spell"] = [=[随机 - 将会选择一个...一个法术,任意法术
+]=]
 L["Ready to Send"] = "准备发送"
 L["Received Sequence "] = "接收序列 "
 L["Record"] = "记录"
 L["Record Macro"] = "记录宏"
 L["Registered Addons"] = "注册插件"
+--[[Translation missing --]]
+--[[ L["Rename New Macro"] = ""--]] 
 L["Replace"] = "替换"
 L["Require Target to use"] = "需要使用目标"
 L["Reset Macro when out of combat"] = "当离开战斗时重置宏"
@@ -262,9 +304,13 @@ L["Send To"] = "发送至"
 L["Sequence"] = "序列(宏主体)"
 L["Sequence %s saved."] = "序列 %s 已保存."
 L["Sequence Author set to Unknown"] = "序列作者设置为未知"
+--[[Translation missing --]]
+--[[ L["Sequence Compare"] = ""--]] 
 L["Sequence Debugger"] = "序列调试器"
 L["Sequence Editor"] = "序列编辑器"
 L["Sequence Name"] = "序列名"
+--[[Translation missing --]]
+--[[ L["Sequence Name %s is in Use. Please choose a different name."] = ""--]] 
 L["Sequence Saved as version "] = "保存序列版本为 "
 L["Sequence specID set to current spec of "] = "序列天赋ID设置为当前天赋 "
 L["Sequence Viewer"] = "序列查看器"
@@ -290,9 +336,13 @@ L["String Colour"] = "字符串颜色"
 L["Talents"] = "天赋"
 L["Target"] = "目标"
 L["Target language "] = "目标语言 "
+--[[Translation missing --]]
+--[[ L["Target protection is currently %s"] = ""--]] 
 L["The command "] = "命令 "
 L["The Custom StepFunction Specified is not recognised and has been ignored."] = "指定的自定义步骤方法无法识别,并已被忽略."
 L["The GSE Out of Combat queue is %s"] = "GSE插件退出战斗序列于 %s"
+--[[Translation missing --]]
+--[[ L["The GUI has not been loaded.  Please activate this plugin amongst WoW's addons to use the GSE GUI."] = ""--]] 
 L["The Macro Translator will translate an English sequence to your local language for execution.  It can also be used to translate a sequence into a different language.  It is also used for syntax based colour markup of Sequences in the editor."] = "宏翻译器将英语序列翻译成你的本地语言以供执行. 它也可以用于将序列翻译成不同的语言. 同时可用于编辑器中基于语法的颜色标记."
 L["The Sample Macros have been reloaded."] = "示例宏已重新加载."
 L["The Sequence Editor can attempt to parse the Sequences, KeyPress and KeyRelease in realtime.  This is still experimental so can be turned off."] = "序列编辑器可以尝试实时解析序列,按键按下/释放.这仍然是实验功能所以可以关闭."
@@ -317,6 +367,10 @@ L["This version has been modified by TimothyLuke to make the power of GnomeSeque
 L["This will display debug messages for the "] = "这将显示调试消息 "
 L["This will display debug messages for the GS-E Ingame Transmission and transfer"] = "这将显示GS-E在游戏内传输和转移的调试消息"
 L["This will display debug messages in the Chat window."] = "这将在聊天窗口显示调试消息."
+--[[Translation missing --]]
+--[[ L["Timewalking"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Timewalking setting changed to Default."] = ""--]] 
 L["Title Colour"] = "标题颜色"
 L["To correct this either delete the version via the GSE Editor or enter the following command to delete this macro totally.  %s/run GSE.DeleteSequence (%i, %s)%s"] = "要纠正或删除版本,可通过GSE编辑器删除或输入下面的命令来完全删除该宏. %s/run GSE.DeleteSequence (%i, %s)%s"
 L["To get started "] = "获取上手指南 "
@@ -331,6 +385,8 @@ L["Unknown Colour"] = "未知颜色"
 L["Update"] = "更新"
 L["Update Macro Stubs"] = "升级宏存根"
 L["Update Macro Stubs."] = "升级宏存根."
+--[[Translation missing --]]
+--[[ L["Updated Macro"] = ""--]] 
 L["UpdateSequence"] = "更新序列"
 L["Updating due to new version."] = "更新至新版本."
 L["Use"] = "使用"
@@ -344,8 +400,14 @@ L["Use Neck Item in KeyRelease"] = "使用颈部物品在释放按键"
 L["Use Realtime Parsing"] = "使用实时解析"
 L["Use Second Ring in KeyRelease"] = "使用第二个戒指在释放按键"
 L["Use Second Trinket in KeyRelease"] = "使用第二个饰品在释放按键"
+--[[Translation missing --]]
+--[[ L["Use WLM Export Sequence Format"] = ""--]] 
 L["Version="] = "版本="
 L["When creating a macro, if there is not a personal character macro space, create an account wide macro."] = "创建宏时,如果没有角色宏空间,创建帐户通用的宏."
+--[[Translation missing --]]
+--[[ L["When exporting a sequence create a stub entry to import for WLM's Website."] = ""--]] 
+--[[Translation missing --]]
+--[[ L["When GSE imports a macro and it already exists locally and has local edits, what do you want the default action to be.  Merge - Add the new MacroVersions to the existing Macro.  Replace - Replace the existing macro with the new version. Ignore - ignore updates.  This default action will set the default on the Compare screen however if the GUI is not available this will be the action taken."] = ""--]] 
 L["When loading or creating a sequence, if it is a global or the macro has an unknown specID automatically create the Macro Stub in Account Macros"] = "加载或创建序列时,如果它是全局宏或宏具有未知的天赋ID,则会自动在帐户宏中创建宏存根"
 L["When loading or creating a sequence, if it is a macro of the same class automatically create the Macro Stub"] = "当加载或创建序列时,如果它是同职业的宏,则自动创建宏存根"
 L["Yes"] = "是"

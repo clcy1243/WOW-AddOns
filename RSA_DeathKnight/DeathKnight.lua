@@ -17,9 +17,11 @@ local ConsumptionCounter = 0
 local DeathKnightSpells = RSA.db.profile.DeathKnight.Spells
 
 function RSA_DeathKnight:OnEnable()
+	RSA.db.profile.Modules.DeathKnight = true -- Set state to loaded, to know if we should announce when a spell is refreshed.
+	local pName = UnitName("player")
 	local Config_DeathGrip_Missed = { -- DEATH GRIP MISSED
 		profile = 'DeathGrip',
-		section = 'End',
+		section = 'Resist',
 		immuneSection = "Immune",
 		replacements = { TARGET = 1, MISSTYPE = 1 },
 	}
@@ -28,6 +30,7 @@ function RSA_DeathKnight:OnEnable()
 		SPELL_INTERRUPT = {
 			[47528] = { -- MIND FREEZE
 				profile = 'MindFreeze',
+				section = "Interrupt",
 				replacements = { TARGET = 1, extraSpellName = "[TARSPELL]", extraSpellLink = "[TARLINK]" }
 			}
 		},
@@ -39,10 +42,12 @@ function RSA_DeathKnight:OnEnable()
 				profile = 'AMS'
 			},
 			[51052] = { -- ANTI MAGIC ZONE
-				profile = 'AMZ'
+				profile = 'AMZ',
+				section = "Cast"
 			},
 			[42650] = { -- ARMY OF THE DEAD
-				profile = 'Army'
+				profile = 'Army',
+				section = "Cast"
 			},
 			[49028] = { -- DANCING RUNE WEAPON
 				profile = 'DancingRuneWeapon'
@@ -50,34 +55,37 @@ function RSA_DeathKnight:OnEnable()
 			[48792] = { -- ICEBOUND FORTITUDE
 				profile = 'IceboundFortitude'
 			},
-			[49039] = { -- LICHBORNE
-				profile = 'Lichborne'
-			},
 			[51271] = { -- PILLAR OF FROST
 				profile = 'PillarOfFrost'
 			},
-			[61999] = { -- RAISE ALLY
-				profile = 'RaiseAlly',
-				replacements = { TARGET = 1 }
-			},
 			[55233] = { -- VAMPIRIC BLOOD
 				profile = 'VampiricBlood'
-			}
+			},
+			[49576] = { -- DEATH GRIP
+				profile = 'DeathGrip',
+				section = "Cast",
+				replacements = { TARGET = 1 }
+			},
+		},
+		SPELL_RESURRECT = {
+			[61999] = { -- RAISE ALLY
+				profile = 'RaiseAlly',
+				section = "Cast",
+				replacements = { TARGET = 1 }
+			},
 		},
 		SPELL_AURA_APPLIED = {
 			[108194] = { -- ASPHYXIATE
 				profile = 'Asphyxiate',
 				replacements = { TARGET = 1 }
 			},
-			[119975] ={ -- CONVERSION
-				profile = 'Conversion'
+			[221562] = { -- ASPHYXIATE
+				profile = 'Asphyxiate',
+				replacements = { TARGET = 1 }
 			},
 			[56222] ={ -- DARK COMMAND
 				profile = 'DarkCommand',
-				replacements = { TARGET = 1 }
-			},
-			[49560] = { -- DEATH GRIP
-				profile = 'DeathGrip',
+				section = "Cast",
 				replacements = { TARGET = 1 }
 			},
 			[116888] = { -- PURGATORY
@@ -101,8 +109,9 @@ function RSA_DeathKnight:OnEnable()
 				replacements = { TARGET = 1 },
 				section = 'End'
 			},
-			[119975] ={ -- CONVERSION
-				profile = 'Conversion',
+			[221562] = { -- ASPHYXIATE
+				profile = 'Asphyxiate',
+				replacements = { TARGET = 1 },
 				section = 'End'
 			},
 			[81256] = { -- DANCING RUNE WEAPON
@@ -111,10 +120,6 @@ function RSA_DeathKnight:OnEnable()
 			},
 			[48792] = { -- ICEBOUND FORTITUDE
 				profile = 'IceboundFortitude',
-				section = 'End'
-			},
-			[49039] = { -- LICHBORNE
-				profile = 'Lichborne',
 				section = 'End'
 			},
 			[51271] = { -- PILLAR OF FROST
@@ -140,9 +145,14 @@ function RSA_DeathKnight:OnEnable()
 			}
 		},
 		SPELL_MISSED = {
-			[49560] = Config_DeathGrip_Missed,
 			[49576] = Config_DeathGrip_Missed,
 			[108194] = {-- Asphyxiate
+				profile = 'Asphyxiate',
+				section = 'Resist',
+				immuneSection = "Immune",
+				replacements = { TARGET = 1, MISSTYPE = 1 },
+			},
+			[221562] = {-- Asphyxiate
 				profile = 'Asphyxiate',
 				section = 'Resist',
 				immuneSection = "Immune",
@@ -156,13 +166,13 @@ function RSA_DeathKnight:OnEnable()
 			},
 			[56222] = {-- DARK COMMAND
 				profile = 'DarkCommand',
-				section = 'End',
+				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
 			},
 			[47528] = {-- MIND FREEZE
 				profile = 'MindFreeze',
-				section = 'End',
+				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
 			},
@@ -170,10 +180,9 @@ function RSA_DeathKnight:OnEnable()
 	}
 	RSA.MonitorConfig(MonitorConfig_DeathKnight, UnitGUID("player"))
 	local MonitorAndAnnounce = RSA.MonitorAndAnnounce
-	RSA.db.profile.Modules.DeathKnight = true -- Set state to loaded, to know if we should announce when a spell is refreshed.
-	local pName = UnitName("player")
 	local spellinfo,spelllinkinfo,extraspellinfo,extraspellinfolink,missinfo
-	local function DeathKnight_Spells(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
+	local function DeathKnight_Spells()
+		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4 = CombatLogGetCurrentEventInfo()
 		if RSA.AffiliationMine(sourceFlags) then
 			if (event == "SPELL_CAST_SUCCESS" and RSA.db.profile.Modules.Reminders_Loaded == true) then -- Reminder Refreshed
 				local ReminderSpell = RSA.db.profile.DeathKnight.Reminders.SpellName
@@ -197,36 +206,39 @@ function RSA_DeathKnight:OnEnable()
 				ConsumptionCounter = ConsumptionCounter +1
 			end
 			if event == "SPELL_HEAL" and spellID == 205224 then -- CONSUMPTION
-				spellinfo = GetSpellInfo(205223) spelllinkinfo = GetSpellLink(205223)
-				RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo,["[AMOUNT]"] = ConsumptionAmount,}
-				ConsumptionCounter = ConsumptionCounter -1
-				if DeathKnightSpells.Consumption.Messages.Heal ~= "" and ConsumptionCounter == 0 then
-					if DeathKnightSpells.Consumption.Local == true then
-						RSA.Print_LibSink(string.gsub(DeathKnightSpells.Consumption.Messages.Heal, ".%a+.", RSA.String_Replace))
+				local messagemax = #RSA.db.profile.DeathKnight.Spells.Consumption.Messages.Heal
+				if messagemax == 0 then return end
+				local messagerandom = math.random(messagemax)
+				local message = RSA.db.profile.DeathKnight.Spells.Consumption.Messages.Heal[messagerandom]
+				spellinfo = GetSpellInfo(spellID) spelllinkinfo = GetSpellLink(spellID)
+				RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
+				if message ~= "" then
+					if RSA.db.profile.DeathKnight.Spells.Consumption.Local == true then
+						RSA.Print_LibSink(string.gsub(message, ".%a+.", RSA.String_Replace))
 					end
-					if DeathKnightSpells.Consumption.Yell == true then
-						RSA.Print_Yell(string.gsub(DeathKnightSpells.Consumption.Messages.Heal, ".%a+.", RSA.String_Replace))
+					if RSA.db.profile.DeathKnight.Spells.Consumption.Yell == true then
+						RSA.Print_Yell(string.gsub(message, ".%a+.", RSA.String_Replace))
 					end
-					if DeathKnightSpells.Consumption.CustomChannel.Enabled == true then
-						RSA.Print_Channel(string.gsub(DeathKnightSpells.Consumption.Messages.Heal, ".%a+.", RSA.String_Replace), DeathKnightSpells.Consumption.CustomChannel.Channel)
+					if RSA.db.profile.DeathKnight.Spells.Consumption.CustomChannel.Enabled == true then
+						RSA.Print_Channel(string.gsub(message, ".%a+.", RSA.String_Replace), RSA.db.profile.DeathKnight.Spells.Consumption.CustomChannel.Channel)
 					end
-					if DeathKnightSpells.Consumption.Say == true then
-						RSA.Print_Say(string.gsub(DeathKnightSpells.Consumption.Messages.Heal, ".%a+.", RSA.String_Replace))
+					if RSA.db.profile.DeathKnight.Spells.Consumption.Say == true then
+						RSA.Print_Say(string.gsub(message, ".%a+.", RSA.String_Replace))
 					end
-					if DeathKnightSpells.Consumption.SmartGroup == true then
-						RSA.Print_SmartGroup(string.gsub(DeathKnightSpells.Consumption.Messages.Heal, ".%a+.", RSA.String_Replace))
+					if RSA.db.profile.DeathKnight.Spells.Consumption.SmartGroup == true then
+						RSA.Print_SmartGroup(string.gsub(message, ".%a+.", RSA.String_Replace))
 					end
-					if DeathKnightSpells.Consumption.Party == true then
-						if DeathKnightSpells.Consumption.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-						RSA.Print_Party(string.gsub(DeathKnightSpells.Consumption.Messages.Heal, ".%a+.", RSA.String_Replace))
+					if RSA.db.profile.DeathKnight.Spells.Consumption.Party == true then
+						if RSA.db.profile.DeathKnight.Spells.Consumption.SmartGroup == true and GetNumGroupMembers() == 0 then return end
+							RSA.Print_Party(string.gsub(message, ".%a+.", RSA.String_Replace))
 					end
-					if DeathKnightSpells.Consumption.Raid == true then
-						if DeathKnightSpells.Consumption.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-						RSA.Print_Raid(string.gsub(DeathKnightSpells.Consumption.Messages.Heal, ".%a+.", RSA.String_Replace))
+					if RSA.db.profile.DeathKnight.Spells.Consumption.Raid == true then
+						if RSA.db.profile.DeathKnight.Spells.Consumption.SmartGroup == true and GetNumGroupMembers() > 0 then return end
+						RSA.Print_Raid(string.gsub(message, ".%a+.", RSA.String_Replace))
 					end
 				end
 			end
-			MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
+			MonitorAndAnnounce(self, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, ex2, ex3, ex4)
 		end -- IF SOURCE IS PLAYER
 	end -- END ENTIRELY
 	RSA.CombatLogMonitor:SetScript("OnEvent", DeathKnight_Spells)

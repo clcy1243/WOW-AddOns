@@ -3,9 +3,11 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Grand Warlock Nethekurse", 710, 566)
+local mod, CL = BigWigs:NewBoss("Grand Warlock Nethekurse", 540, 566)
 if not mod then return end
 mod:RegisterEnableMob(16807)
+mod.engageId = 1936
+-- mod.respawnTime = 0 -- resets, doesn't respawn
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -26,9 +28,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_MISSED", "ConsumptionDamage", 35951)
 	self:Log("SPELL_AURA_APPLIED", "DarkSpin", 30502)
 
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
-
-	self:Death("Win", 16807)
+	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
 end
 
 --------------------------------------------------------------------------------
@@ -40,31 +40,30 @@ function mod:DeathCoil(args)
 end
 
 function mod:DeathCoilApplied(args)
-	self:TargetMessage(args.spellId, args.destName, "Urgent")
+	self:TargetMessage(args.spellId, args.destName, "orange")
 end
 
 do
 	local prev = 0
 	function mod:ConsumptionDamage(args) -- Lesser Shadow Fissure spellcast
-		local t = GetTime()
-		if t-prev > 1.5 and self:Me(args.destGUID) then
-			prev = t
-			self:Message(30496, "Personal", "Alarm", CL.underyou:format(self:SpellName(30496)))
+		if self:Me(args.destGUID) then
+			local t = GetTime()
+			if t-prev > 1.5 then
+				prev = t
+				self:Message(30496, "blue", "Alarm", CL.underyou:format(self:SpellName(30496)))
+			end
 		end
 	end
 end
 
 function mod:DarkSpin(args)
-	self:Message(args.spellId, "Important", "Info", "25% - ".. args.spellName)
+	self:Message(args.spellId, "red", "Info", CL.percent:format(25, args.spellName))
 end
 
-function mod:UNIT_HEALTH_FREQUENT(unit)
-	if self:MobId(UnitGUID(unit)) == 16807 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-		if hp < 30.5 then
-			self:UnregisterUnitEvent("UNIT_HEALTH_FREQUENT", "target", "focus")
-			self:Message(30502, "Positive", nil, CL.soon:format(self:SpellName(30502)), false)
-		end
+function mod:UNIT_HEALTH_FREQUENT(event, unit)
+	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+	if hp < 30 then
+		self:UnregisterUnitEvent(event, unit)
+		self:Message(30502, "green", nil, CL.soon:format(self:SpellName(30502)), false) -- Dark Spin
 	end
 end
-

@@ -1,4 +1,4 @@
-﻿-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 --  Module Declaration
 
 local mod = BigWigs:NewBoss("Xevozz", 536)
@@ -30,5 +30,5 @@ end
 --  Event Handlers
 
 function mod:Sphere(_, spellId)
-	self:Message(54102, L["sphere_message"], "Important", spellId)
+	self:Message(54102, L["sphere_message"], "red", spellId)
 end

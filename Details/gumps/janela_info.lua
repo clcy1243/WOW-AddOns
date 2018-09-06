@@ -459,6 +459,7 @@ function gump:CriaDetalheInfo (index)
 	
 	info.bg = _CreateFrame ("StatusBar", "DetailsPlayerDetailsWindow_DetalheInfoBG" .. index, _detalhes.janela_info.container_detalhes)
 	info.bg:SetStatusBarTexture ("Interface\\AddOns\\Details\\images\\bar_detalhes2")
+	info.bg:SetStatusBarColor (1, 1, 1, .84)
 	info.bg:SetMinMaxValues (0, 100)
 	info.bg:SetValue (100)
 	info.bg:SetSize (320, 47)
@@ -1277,34 +1278,60 @@ local elvui_skin = function()
 	end
 	
 	--scrollbar
-	window.container_barras.cima:SetNormalTexture ([[Interface\Buttons\Arrow-Up-Up]])
-	window.container_barras.cima:SetPushedTexture ([[Interface\Buttons\Arrow-Up-Down]])
-	window.container_barras.cima:SetDisabledTexture ([[Interface\Buttons\Arrow-Up-Disabled]])
-	window.container_barras.cima:GetNormalTexture():ClearAllPoints()
-	window.container_barras.cima:GetPushedTexture():ClearAllPoints()
-	window.container_barras.cima:GetDisabledTexture():ClearAllPoints()
-	window.container_barras.cima:GetNormalTexture():SetPoint ("center", window.container_barras.cima, "center", 1, 1)
-	window.container_barras.cima:GetPushedTexture():SetPoint ("center", window.container_barras.cima, "center", 1, 1)
-	window.container_barras.cima:GetDisabledTexture():SetPoint ("center", window.container_barras.cima, "center", 1, 1)
-	window.container_barras.cima:SetSize (16, 16)
-	window.container_barras.cima:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
-	window.container_barras.cima:SetBackdropColor (0, 0, 0, 0.3)
-	window.container_barras.cima:SetBackdropBorderColor (0, 0, 0, 1)
+	do
+		--get textures
+		local normalTexture = window.container_barras.cima:GetNormalTexture()
+		local pushedTexture = window.container_barras.cima:GetPushedTexture()
+		local disabledTexture = window.container_barras.cima:GetDisabledTexture()
+		
+		--set the new textures
+		normalTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Up]])
+		pushedTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Down]])
+		disabledTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Disabled]])
+		
+		normalTexture:SetPoint ("topleft", window.container_barras.cima, "topleft", 1, 0)
+		normalTexture:SetPoint ("bottomright", window.container_barras.cima, "bottomright", 1, 0)
+		pushedTexture:SetPoint ("topleft", window.container_barras.cima, "topleft", 1, 0)
+		pushedTexture:SetPoint ("bottomright", window.container_barras.cima, "bottomright", 1, 0)
+		disabledTexture:SetPoint ("topleft", window.container_barras.cima, "topleft", 1, 0)
+		disabledTexture:SetPoint ("bottomright", window.container_barras.cima, "bottomright", 1, 0)
+		
+		disabledTexture:SetAlpha (0.5)
+
+		window.container_barras.cima:SetSize (16, 16)
+		window.container_barras.cima:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
+		window.container_barras.cima:SetBackdropColor (0, 0, 0, 0.3)
+		window.container_barras.cima:SetBackdropBorderColor (0, 0, 0, 1)
+	end
 	
-	window.container_barras.baixo:SetNormalTexture ([[Interface\Buttons\Arrow-Down-Up]])
-	window.container_barras.baixo:SetPushedTexture ([[Interface\Buttons\Arrow-Down-Down]])
-	window.container_barras.baixo:SetDisabledTexture ([[Interface\Buttons\Arrow-Down-Disabled]])
-	window.container_barras.baixo:GetNormalTexture():ClearAllPoints()
-	window.container_barras.baixo:GetPushedTexture():ClearAllPoints()
-	window.container_barras.baixo:GetDisabledTexture():ClearAllPoints()
-	window.container_barras.baixo:GetNormalTexture():SetPoint ("center", window.container_barras.baixo, "center", 1, -5)
-	window.container_barras.baixo:GetPushedTexture():SetPoint ("center", window.container_barras.baixo, "center", 1, -5)
-	window.container_barras.baixo:GetDisabledTexture():SetPoint ("center", window.container_barras.baixo, "center", 1, -5)
-	window.container_barras.baixo:SetSize (16, 16)
-	window.container_barras.baixo:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
-	window.container_barras.baixo:SetBackdropColor (0, 0, 0, 0.35)
-	window.container_barras.baixo:SetBackdropBorderColor (0, 0, 0, 1)
-	
+	do
+		--get textures
+		local normalTexture = window.container_barras.baixo:GetNormalTexture()
+		local pushedTexture = window.container_barras.baixo:GetPushedTexture()
+		local disabledTexture = window.container_barras.baixo:GetDisabledTexture()
+		
+		--set the new textures
+		normalTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Up]])
+		pushedTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Down]])
+		disabledTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Disabled]])
+		
+		normalTexture:SetPoint ("topleft", window.container_barras.baixo, "topleft", 1, -4)
+		normalTexture:SetPoint ("bottomright", window.container_barras.baixo, "bottomright", 1, -4)
+		
+		pushedTexture:SetPoint ("topleft", window.container_barras.baixo, "topleft", 1, -4)
+		pushedTexture:SetPoint ("bottomright", window.container_barras.baixo, "bottomright", 1, -4)
+
+		disabledTexture:SetPoint ("topleft", window.container_barras.baixo, "topleft", 1, -4)
+		disabledTexture:SetPoint ("bottomright", window.container_barras.baixo, "bottomright", 1, -4)
+		
+		disabledTexture:SetAlpha (0.5)
+		
+		window.container_barras.baixo:SetSize (16, 16)
+		window.container_barras.baixo:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
+		window.container_barras.baixo:SetBackdropColor (0, 0, 0, 0.3)
+		window.container_barras.baixo:SetBackdropBorderColor (0, 0, 0, 1)
+	end
+
 	window.container_barras.slider:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
 	window.container_barras.slider:SetBackdropColor (0, 0, 0, 0.35)
 	window.container_barras.slider:SetBackdropBorderColor (0, 0, 0, 1)
@@ -1312,40 +1339,73 @@ local elvui_skin = function()
 	window.container_barras.slider:Altura (164)
 	window.container_barras.slider:cimaPoint (0, 13)
 	window.container_barras.slider:baixoPoint (0, -13)
+	
 	window.container_barras.slider.thumb:SetTexture ([[Interface\AddOns\Details\images\icons2]])
 	window.container_barras.slider.thumb:SetTexCoord (482/512, 492/512, 104/512, 120/512)
 	window.container_barras.slider.thumb:SetSize (12, 12)
 	window.container_barras.slider.thumb:SetVertexColor (0.6, 0.6, 0.6, 0.95)
 	
 	--
-	window.container_alvos.cima:SetNormalTexture ([[Interface\Buttons\Arrow-Up-Up]])
-	window.container_alvos.cima:SetPushedTexture ([[Interface\Buttons\Arrow-Up-Down]])
-	window.container_alvos.cima:SetDisabledTexture ([[Interface\Buttons\Arrow-Up-Disabled]])
-	window.container_alvos.cima:GetNormalTexture():ClearAllPoints()
-	window.container_alvos.cima:GetPushedTexture():ClearAllPoints()
-	window.container_alvos.cima:GetDisabledTexture():ClearAllPoints()
-	window.container_alvos.cima:GetNormalTexture():SetPoint ("center", window.container_alvos.cima, "center", 1, 1)
-	window.container_alvos.cima:GetPushedTexture():SetPoint ("center", window.container_alvos.cima, "center", 1, 1)
-	window.container_alvos.cima:GetDisabledTexture():SetPoint ("center", window.container_alvos.cima, "center", 1, 1)
-	window.container_alvos.cima:SetSize (16, 16)
-	window.container_alvos.cima:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
-	window.container_alvos.cima:SetBackdropColor (0, 0, 0, 0.3)
-	window.container_alvos.cima:SetBackdropBorderColor (0, 0, 0, 1)
 	
-	window.container_alvos.baixo:SetNormalTexture ([[Interface\Buttons\Arrow-Down-Up]])
-	window.container_alvos.baixo:SetPushedTexture ([[Interface\Buttons\Arrow-Down-Down]])
-	window.container_alvos.baixo:SetDisabledTexture ([[Interface\Buttons\Arrow-Down-Disabled]])
-	window.container_alvos.baixo:GetNormalTexture():ClearAllPoints()
-	window.container_alvos.baixo:GetPushedTexture():ClearAllPoints()
-	window.container_alvos.baixo:GetDisabledTexture():ClearAllPoints()
-	window.container_alvos.baixo:GetNormalTexture():SetPoint ("center", window.container_alvos.baixo, "center", 1, -5)
-	window.container_alvos.baixo:GetPushedTexture():SetPoint ("center", window.container_alvos.baixo, "center", 1, -5)
-	window.container_alvos.baixo:GetDisabledTexture():SetPoint ("center", window.container_alvos.baixo, "center", 1, -5)
-	window.container_alvos.baixo:SetSize (16, 16)
-	window.container_alvos.baixo:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
-	window.container_alvos.baixo:SetBackdropColor (0, 0, 0, 0.35)
-	window.container_alvos.baixo:SetBackdropBorderColor (0, 0, 0, 1)
 	
+	do
+		local f = window.container_alvos
+		
+		--get textures
+		local normalTexture = f.cima:GetNormalTexture()
+		local pushedTexture = f.cima:GetPushedTexture()
+		local disabledTexture = f.cima:GetDisabledTexture()
+		
+		--set the new textures
+		normalTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Up]])
+		pushedTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Down]])
+		disabledTexture:SetTexture ([[Interface\Buttons\Arrow-Up-Disabled]])
+		
+		normalTexture:SetPoint ("topleft", f.cima, "topleft", 1, 0)
+		normalTexture:SetPoint ("bottomright", f.cima, "bottomright", 1, 0)
+		pushedTexture:SetPoint ("topleft", f.cima, "topleft", 1, 0)
+		pushedTexture:SetPoint ("bottomright", f.cima, "bottomright", 1, 0)
+		disabledTexture:SetPoint ("topleft", f.cima, "topleft", 1, 0)
+		disabledTexture:SetPoint ("bottomright", f.cima, "bottomright", 1, 0)
+		
+		disabledTexture:SetAlpha (0.5)
+
+		f.cima:SetSize (16, 16)
+		f.cima:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
+		f.cima:SetBackdropColor (0, 0, 0, 0.3)
+		f.cima:SetBackdropBorderColor (0, 0, 0, 1)
+	end
+	
+	do
+		local f = window.container_alvos
+		
+		--get textures
+		local normalTexture = f.baixo:GetNormalTexture()
+		local pushedTexture = f.baixo:GetPushedTexture()
+		local disabledTexture = f.baixo:GetDisabledTexture()
+		
+		--set the new textures
+		normalTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Up]])
+		pushedTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Down]])
+		disabledTexture:SetTexture ([[Interface\Buttons\Arrow-Down-Disabled]])
+		
+		normalTexture:SetPoint ("topleft", f.baixo, "topleft", 1, -4)
+		normalTexture:SetPoint ("bottomright", f.baixo, "bottomright", 1, -4)
+		
+		pushedTexture:SetPoint ("topleft", f.baixo, "topleft", 1, -4)
+		pushedTexture:SetPoint ("bottomright", f.baixo, "bottomright", 1, -4)
+
+		disabledTexture:SetPoint ("topleft", f.baixo, "topleft", 1, -4)
+		disabledTexture:SetPoint ("bottomright", f.baixo, "bottomright", 1, -4)
+		
+		disabledTexture:SetAlpha (0.5)
+		
+		f.baixo:SetSize (16, 16)
+		f.baixo:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
+		f.baixo:SetBackdropColor (0, 0, 0, 0.3)
+		f.baixo:SetBackdropBorderColor (0, 0, 0, 1)
+	end
+
 	window.container_alvos.slider:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]]})
 	window.container_alvos.slider:SetBackdropColor (0, 0, 0, 0.35)
 	window.container_alvos.slider:SetBackdropBorderColor (0, 0, 0, 1)
@@ -1383,7 +1443,7 @@ local elvui_skin = function()
 end
 _detalhes:InstallPDWSkin ("ElvUI", {func = elvui_skin, author = "Details! Team", version = "v1.0", desc = "Skin compatible with ElvUI addon."})
 
---> search key: ~create ~inicio
+--> search key: ~create ~inicio ~start
 function gump:CriaJanelaInfo()
 
 	--> cria a janela em si
@@ -1411,6 +1471,9 @@ function gump:CriaJanelaInfo()
 	local SWW = este_gump.SummaryWindowWidgets
 	SWW:SetAllPoints()
 	tinsert (SummaryWidgets, SWW)
+	
+	local scaleBar = Details.gump:CreateScaleBar (este_gump, Details.player_details_window)
+	este_gump:SetScale (Details.player_details_window.scale)
 	
 	--classic:
 	--este_gump:SetWidth (590)
@@ -1542,17 +1605,27 @@ function gump:CriaJanelaInfo()
 	
 -------------------------------------------------
 
-
 	local alpha_bgs = 1
 
 	-- backgrounds das 5 boxes do lado direito
 		local right_background_X = 457
+		local right_background_Y = {-85, -136, -191, -246, -301}
+		
+		for i = 1, 5 do
+			local right_background1 = CreateFrame ("frame", "DetailsPlayerDetailsWindow_right_background" .. i, SWW)
+			right_background1:EnableMouse (false)
+			right_background1:SetPoint ("topleft", este_gump, "topleft", right_background_X, right_background_Y [i])
+			right_background1:SetSize (220, 43)
+			Details.gump:ApplyStandardBackdrop (right_background1)
+			este_gump ["right_background" .. i] = right_background1
+		end
+
+--[=[		
 		local right_background1 = SWW:CreateTexture ("DetailsPlayerDetailsWindow_right_background1", "background")
 		right_background1:SetTexture ([[Interface\DialogFrame\UI-DialogBox-Background-Dark]])
 		right_background1:SetPoint ("topleft", este_gump, "topleft", right_background_X, -85)
 		right_background1:SetSize (220, 43)
 		right_background1:SetAlpha (alpha_bgs)
-		este_gump.right_background1 = right_background1
 		
 		local right_background2 = SWW:CreateTexture ("DetailsPlayerDetailsWindow_right_background2", "background")
 		right_background2:SetTexture ([[Interface\DialogFrame\UI-DialogBox-Background-Dark]])
@@ -1581,7 +1654,8 @@ function gump:CriaJanelaInfo()
 		right_background5:SetSize (220, 48)
 		right_background5:SetAlpha (alpha_bgs)
 		este_gump.right_background5 = right_background5
-	
+--]=]
+
 	-- fundos especiais de friendly fire e outros
 		este_gump.bg1_sec_texture = SWW:CreateTexture ("DetailsPlayerDetailsWindow_BG1_SEC_Texture", "BORDER")
 		este_gump.bg1_sec_texture:SetDrawLayer ("BORDER", 4)
@@ -1630,16 +1704,26 @@ function gump:CriaJanelaInfo()
 	--> cria o container onde vai abrigar os alvos do jogador
 	cria_container_alvos (este_gump, SWW)
 
-	local leftbars1_backgound = SWW:CreateTexture (nil, "background")
-	leftbars1_backgound:SetTexture ([[Interface\DialogFrame\UI-DialogBox-Background-Dark]])
+--	local leftbars1_backgound = SWW:CreateTexture (nil, "background")
+--	leftbars1_backgound:SetTexture ([[Interface\DialogFrame\UI-DialogBox-Background-Dark]])
+--	leftbars1_backgound:SetSize (303, 149)
+--	leftbars1_backgound:SetAlpha (alpha_bgs)
+--	este_gump.leftbars1_backgound = leftbars1_backgound
+	
+	local leftbars1_backgound = CreateFrame ("frame", "DetailsPlayerDetailsWindow_Left_SpellsBackground", SWW)
+	leftbars1_backgound:EnableMouse (false)
 	leftbars1_backgound:SetSize (303, 149)
 	leftbars1_backgound:SetAlpha (alpha_bgs)
+	leftbars1_backgound:SetFrameLevel (SWW:GetFrameLevel())
+	Details.gump:ApplyStandardBackdrop (leftbars1_backgound)
 	este_gump.leftbars1_backgound = leftbars1_backgound
 	
-	local leftbars2_backgound = SWW:CreateTexture (nil, "background")
-	leftbars2_backgound:SetTexture ([[Interface\DialogFrame\UI-DialogBox-Background-Dark]])
+	local leftbars2_backgound = CreateFrame ("frame", "DetailsPlayerDetailsWindow_Left_TargetBackground", SWW)
+	leftbars2_backgound:EnableMouse (false)
 	leftbars2_backgound:SetSize (303, 122)
 	leftbars2_backgound:SetAlpha (alpha_bgs)
+	leftbars2_backgound:SetFrameLevel (SWW:GetFrameLevel())
+	Details.gump:ApplyStandardBackdrop (leftbars2_backgound)
 	este_gump.leftbars2_backgound = leftbars2_backgound
 	
 	leftbars1_backgound:SetPoint ("topleft", este_gump.container_barras, "topleft", -3, 3)
@@ -1710,23 +1794,12 @@ function gump:CriaJanelaInfo()
 				end
 			end,
 			nil --[5] oncreate
-			)
+	)
 		
-		--> search key: ~avoidance
+		--> search key: ~avoidance --> begining of avoidance tab
 		
 		local avoidance_create = function (tab, frame)
-		
-		--> MAIN ICON
-			local mainicon = frame:CreateTexture (nil, "artwork")
-			mainicon:SetPoint ("topright", frame, "topright", -12, -12)
-			mainicon:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-ACHIEVEMENT-SHIELDS]])
-			mainicon:SetTexCoord (0, .5, .5, 1)
-			mainicon:SetSize (64, 64)
-			
-			local tankname = frame:CreateFontString (nil, "artwork", "GameFontNormal")
-			tankname:SetPoint ("right", mainicon, "left", -2, 2)
-			tab.tankname = tankname
-		
+	
 		--> Percent Desc
 			local percent_desc = frame:CreateFontString (nil, "artwork", "GameFontNormal")
 			percent_desc:SetText ("Percent values are comparisons with the previous try.")
@@ -1734,120 +1807,156 @@ function gump:CriaJanelaInfo()
 			percent_desc:SetTextColor (.5, .5, .5, 1)
 		
 		--> SUMMARY
-			local summary_texture = frame:CreateTexture (nil, "artwork")
-			summary_texture:SetPoint ("topleft", frame, "topleft", 10, -15)
-			summary_texture:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]])
-			summary_texture:SetSize (128, 16)
-			local summary_text = frame:CreateFontString (nil, "artwork", "GameFontNormal")
+		
+			local summaryBox = CreateFrame ("frame", nil, frame)
+			_detalhes.gump:ApplyStandardBackdrop (summaryBox)
+			summaryBox:SetPoint ("topleft", frame, "topleft", 10, -15)
+			summaryBox:SetSize (200, 160)
+			
+			local y = -5
+			local padding = 16
+
+			local summary_text = summaryBox:CreateFontString (nil, "artwork", "GameFontNormal")
 			summary_text:SetText ("Summary")
-			summary_text :SetPoint ("left", summary_texture, "left", 2, 0)
+			summary_text :SetPoint ("topleft", summaryBox, "topleft", 5, y)
+			
+			y = y - padding
 		
 			--total damage received
-			local damagereceived = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			damagereceived:SetPoint ("topleft", frame, "topleft", 15, -35)
+			local damagereceived = summaryBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			damagereceived:SetPoint ("topleft", summaryBox, "topleft", 15, y)
 			damagereceived:SetText ("Total Damage Taken:") --> localize-me
 			damagereceived:SetTextColor (.8, .8, .8, 1)
-			local damagereceived_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+
+			local damagereceived_amt = summaryBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			damagereceived_amt:SetPoint ("left", damagereceived,  "right", 2, 0)
 			damagereceived_amt:SetText ("0")
 			tab.damagereceived = damagereceived_amt
 		
+			y = y - padding
+			
 			--per second
-			local damagepersecond = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			damagepersecond:SetPoint ("topleft", frame, "topleft", 20, -50)
+			local damagepersecond = summaryBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			damagepersecond:SetPoint ("topleft", summaryBox, "topleft", 20, y)
 			damagepersecond:SetText ("Per Second:") --> localize-me
-			local damagepersecond_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			
+			local damagepersecond_amt = summaryBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			damagepersecond_amt:SetPoint ("left", damagepersecond,  "right", 2, 0)
 			damagepersecond_amt:SetText ("0")
 			tab.damagepersecond = damagepersecond_amt
 			
+			y = y - padding		
+			
 			--total absorbs
-			local absorbstotal = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			absorbstotal:SetPoint ("topleft", frame, "topleft", 15, -65)
+			local absorbstotal = summaryBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			absorbstotal:SetPoint ("topleft", summaryBox, "topleft", 15, y)
 			absorbstotal:SetText ("Total Absorbs:") --> localize-me
 			absorbstotal:SetTextColor (.8, .8, .8, 1)
-			local absorbstotal_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			
+			local absorbstotal_amt = summaryBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			absorbstotal_amt:SetPoint ("left", absorbstotal,  "right", 2, 0)
 			absorbstotal_amt:SetText ("0")
 			tab.absorbstotal = absorbstotal_amt
 			
+			y = y - padding
+			
 			--per second
-			local absorbstotalpersecond = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			absorbstotalpersecond:SetPoint ("topleft", frame, "topleft", 20, -80)
+			local absorbstotalpersecond = summaryBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			absorbstotalpersecond:SetPoint ("topleft", summaryBox, "topleft", 20, y)
 			absorbstotalpersecond:SetText ("Per Second:") --> localize-me
-			local absorbstotalpersecond_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			
+			local absorbstotalpersecond_amt = summaryBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			absorbstotalpersecond_amt:SetPoint ("left", absorbstotalpersecond,  "right", 2, 0)
 			absorbstotalpersecond_amt:SetText ("0")
 			tab.absorbstotalpersecond = absorbstotalpersecond_amt
 		
+
 		--> MELEE
 		
-			local melee_texture = frame:CreateTexture (nil, "artwork")
-			melee_texture:SetPoint ("topleft", frame, "topleft", 10, -100)
-			melee_texture:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]])
-			melee_texture:SetSize (128, 16)
-			local melee_text = frame:CreateFontString (nil, "artwork", "GameFontNormal")
+			y = -5
+		
+			local meleeBox = CreateFrame ("frame", nil, frame)
+			_detalhes.gump:ApplyStandardBackdrop (meleeBox)
+			meleeBox:SetPoint ("topleft", summaryBox, "bottomleft", 0, -5)
+			meleeBox:SetSize (200, 160)
+
+			local melee_text = meleeBox:CreateFontString (nil, "artwork", "GameFontNormal")
 			melee_text:SetText ("Melee")
-			melee_text :SetPoint ("left", melee_texture, "left", 2, 0)
+			melee_text :SetPoint ("topleft", meleeBox, "topleft", 5, y)
+			
+			y = y - padding
 			
 			--dodge
-			local dodge = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			dodge:SetPoint ("topleft", frame, "topleft", 15, -120)
+			local dodge = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			dodge:SetPoint ("topleft", meleeBox, "topleft", 15, y)
 			dodge:SetText ("Dodge:") --> localize-me
 			dodge:SetTextColor (.8, .8, .8, 1)
-			local dodge_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local dodge_amt = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			dodge_amt:SetPoint ("left", dodge,  "right", 2, 0)
 			dodge_amt:SetText ("0")
 			tab.dodge = dodge_amt
-
-			local dodgepersecond = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			dodgepersecond:SetPoint ("topleft", frame, "topleft", 20, -135)
+			
+			y = y - padding
+			
+			local dodgepersecond = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			dodgepersecond:SetPoint ("topleft", meleeBox, "topleft", 20, y)
 			dodgepersecond:SetText ("Per Second:") --> localize-me
-			local dodgepersecond_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			
+			local dodgepersecond_amt = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			dodgepersecond_amt:SetPoint ("left", dodgepersecond,  "right", 2, 0)
 			dodgepersecond_amt:SetText ("0")
 			tab.dodgepersecond = dodgepersecond_amt
 			
+			y = y - padding
+			
 			-- parry
-			local parry = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			parry:SetPoint ("topleft", frame, "topleft", 15, -150)
+			local parry = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			parry:SetPoint ("topleft", meleeBox, "topleft", 15, y)
 			parry:SetText ("Parry:") --> localize-me
 			parry:SetTextColor (.8, .8, .8, 1)
-			local parry_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local parry_amt = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			parry_amt:SetPoint ("left", parry,  "right", 2, 0)
 			parry_amt:SetText ("0")
 			tab.parry = parry_amt
 			
-			local parrypersecond = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			parrypersecond:SetPoint ("topleft", frame, "topleft", 20, -165)
+			y = y - padding
+			
+			local parrypersecond = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			parrypersecond:SetPoint ("topleft", meleeBox, "topleft", 20, y)
 			parrypersecond:SetText ("Per Second:") --> localize-me
-			local parrypersecond_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local parrypersecond_amt = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			parrypersecond_amt:SetPoint ("left", parrypersecond,  "right", 2, 0)
 			parrypersecond_amt:SetText ("0")
 			tab.parrypersecond = parrypersecond_amt
 
+			y = y - padding
+			
 			-- block
-			local block = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			block:SetPoint ("topleft", frame, "topleft", 15, -180)
+			local block = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			block:SetPoint ("topleft", meleeBox, "topleft", 15, y)
 			block:SetText ("Block:") --> localize-me
 			block:SetTextColor (.8, .8, .8, 1)
-			local block_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local block_amt = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			block_amt:SetPoint ("left", block,  "right", 2, 0)
 			block_amt:SetText ("0")
 			tab.block = block_amt
 			
-			local blockpersecond = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			blockpersecond:SetPoint ("topleft", frame, "topleft", 20, -195)
+			y = y - padding
+			
+			local blockpersecond = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			blockpersecond:SetPoint ("topleft", meleeBox, "topleft", 20, y)
 			blockpersecond:SetText ("Per Second:") --> localize-me
-			local blockpersecond_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local blockpersecond_amt = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			blockpersecond_amt:SetPoint ("left", blockpersecond,  "right", 2, 0)
 			blockpersecond_amt:SetText ("0")
 			tab.blockpersecond = blockpersecond_amt
 			
-			local blockeddamage = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			blockeddamage:SetPoint ("topleft", frame, "topleft", 20, -210)
+			y = y - padding
+			
+			local blockeddamage = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			blockeddamage:SetPoint ("topleft", meleeBox, "topleft", 20, y)
 			blockeddamage:SetText ("Damage Blocked:") --> localize-me
-			local blockeddamage_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local blockeddamage_amt = meleeBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			blockeddamage_amt:SetPoint ("left", blockeddamage,  "right", 2, 0)
 			blockeddamage_amt:SetText ("0")
 			tab.blockeddamage_amt = blockeddamage_amt
@@ -1855,105 +1964,133 @@ function gump:CriaJanelaInfo()
 			
 		--> ABSORBS
 		
-			local absorb_texture = frame:CreateTexture (nil, "artwork")
-			absorb_texture:SetPoint ("topleft", frame, "topleft", 200, -15)
-			absorb_texture:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]])
-			absorb_texture:SetSize (128, 16)
-			local absorb_text = frame:CreateFontString (nil, "artwork", "GameFontNormal")
+			y = -5
+			
+			local absorbsBox = CreateFrame ("frame", nil, frame)
+			_detalhes.gump:ApplyStandardBackdrop (absorbsBox)
+			absorbsBox:SetPoint ("topleft", summaryBox, "topright", 10, 0)
+			absorbsBox:SetSize (200, 160)
+			
+			local absorb_text = absorbsBox:CreateFontString (nil, "artwork", "GameFontNormal")
 			absorb_text:SetText ("Absorb")
-			absorb_text :SetPoint ("left", absorb_texture, "left", 2, 0)
+			absorb_text :SetPoint ("topleft", absorbsBox, "topleft", 5, y)
+		
+			y = y - padding
 		
 			--full absorbs
-			local fullsbsorbed = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			fullsbsorbed:SetPoint ("topleft", frame, "topleft", 205, -35)
+			local fullsbsorbed = absorbsBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			fullsbsorbed:SetPoint ("topleft", absorbsBox, "topleft", 20, y)
 			fullsbsorbed:SetText ("Full Absorbs:") --> localize-me
 			fullsbsorbed:SetTextColor (.8, .8, .8, 1)
-			local fullsbsorbed_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local fullsbsorbed_amt = absorbsBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			fullsbsorbed_amt:SetPoint ("left", fullsbsorbed,  "right", 2, 0)
 			fullsbsorbed_amt:SetText ("0")
 			tab.fullsbsorbed = fullsbsorbed_amt
 			
+			y = y - padding
+			
 			--partially absorbs
-			local partiallyabsorbed = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			partiallyabsorbed:SetPoint ("topleft", frame, "topleft", 205, -50)
+			local partiallyabsorbed = absorbsBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			partiallyabsorbed:SetPoint ("topleft", absorbsBox, "topleft", 20, y)
 			partiallyabsorbed:SetText ("Partially Absorbed:") --> localize-me
 			partiallyabsorbed:SetTextColor (.8, .8, .8, 1)
-			local partiallyabsorbed_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local partiallyabsorbed_amt = absorbsBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			partiallyabsorbed_amt:SetPoint ("left", partiallyabsorbed,  "right", 2, 0)
 			partiallyabsorbed_amt:SetText ("0")
 			tab.partiallyabsorbed = partiallyabsorbed_amt
 		
+			y = y - padding
+		
 			--partially absorbs per second
-			local partiallyabsorbedpersecond = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			partiallyabsorbedpersecond:SetPoint ("topleft", frame, "topleft", 210, -65)
+			local partiallyabsorbedpersecond = absorbsBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			partiallyabsorbedpersecond:SetPoint ("topleft", absorbsBox, "topleft", 25, y)
 			partiallyabsorbedpersecond:SetText ("Average:") --> localize-me
-			local partiallyabsorbedpersecond_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local partiallyabsorbedpersecond_amt = absorbsBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			partiallyabsorbedpersecond_amt:SetPoint ("left", partiallyabsorbedpersecond,  "right", 2, 0)
 			partiallyabsorbedpersecond_amt:SetText ("0")
 			tab.partiallyabsorbedpersecond = partiallyabsorbedpersecond_amt
 			
+			y = y - padding
+			
 			--no absorbs
-			local noabsorbs = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			noabsorbs:SetPoint ("topleft", frame, "topleft", 205, -80)
+			local noabsorbs = absorbsBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			noabsorbs:SetPoint ("topleft", absorbsBox, "topleft", 20, y)
 			noabsorbs:SetText ("No Absorption:") --> localize-me
 			noabsorbs:SetTextColor (.8, .8, .8, 1)
-			local noabsorbs_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local noabsorbs_amt = absorbsBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			noabsorbs_amt:SetPoint ("left", noabsorbs,  "right", 2, 0)
 			noabsorbs_amt:SetText ("0")
 			tab.noabsorbs = noabsorbs_amt
 		
+		
 		--> HEALING
 		
-			local healing_texture = frame:CreateTexture (nil, "artwork")
-			healing_texture:SetPoint ("topleft", frame, "topleft", 200, -100)
-			healing_texture:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]])
-			healing_texture:SetSize (128, 16)
-			local healing_text = frame:CreateFontString (nil, "artwork", "GameFontNormal")
+			y = -5
+		
+			local healingBox = CreateFrame ("frame", nil, frame)
+			_detalhes.gump:ApplyStandardBackdrop (healingBox)
+			healingBox:SetPoint ("topleft", absorbsBox, "bottomleft", 0, -5)
+			healingBox:SetSize (200, 160)
+
+			local healing_text = healingBox:CreateFontString (nil, "artwork", "GameFontNormal")
 			healing_text:SetText ("Healing")
-			healing_text :SetPoint ("left", healing_texture, "left", 2, 0)
+			healing_text :SetPoint ("topleft", healingBox, "topleft", 5, y)
+			
+			y = y - padding
 			
 			--self healing
-			local selfhealing = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			selfhealing:SetPoint ("topleft", frame, "topleft", 205, -120)
+			local selfhealing = healingBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			selfhealing:SetPoint ("topleft", healingBox, "topleft", 20, y)
 			selfhealing:SetText ("Self Healing:") --> localize-me
 			selfhealing:SetTextColor (.8, .8, .8, 1)
-			local selfhealing_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local selfhealing_amt = healingBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			selfhealing_amt:SetPoint ("left", selfhealing,  "right", 2, 0)
 			selfhealing_amt:SetText ("0")
 			tab.selfhealing = selfhealing_amt
 
+			y = y - padding
+			
 			--self healing per second
-			local selfhealingpersecond = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-			selfhealingpersecond:SetPoint ("topleft", frame, "topleft", 210, -135)
+			local selfhealingpersecond = healingBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			selfhealingpersecond:SetPoint ("topleft", healingBox, "topleft", 25, y)
 			selfhealingpersecond:SetText ("Per Second:") --> localize-me
-			local selfhealingpersecond_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+			local selfhealingpersecond_amt = healingBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 			selfhealingpersecond_amt:SetPoint ("left", selfhealingpersecond,  "right", 2, 0)
 			selfhealingpersecond_amt:SetText ("0")
 			tab.selfhealingpersecond = selfhealingpersecond_amt
 		
+			y = y - padding
+		
 			for i = 1, 5 do 
-				local healer = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
-				healer:SetPoint ("topleft", frame, "topleft", 205, -160 + ((i-1)*15)*-1)
+				local healer = healingBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+				healer:SetPoint ("topleft", healingBox, "topleft", 20, y + ((i-1)*15)*-1)
 				healer:SetText ("healer name:") --> localize-me
 				healer:SetTextColor (.8, .8, .8, 1)
-				local healer_amt = frame:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
+				local healer_amt = healingBox:CreateFontString (nil, "artwork", "GameFontHighlightSmall")
 				healer_amt:SetPoint ("left", healer,  "right", 2, 0)
 				healer_amt:SetText ("0")
 				tab ["healer" .. i] = {healer, healer_amt}
 			end
 			
+			
+			
+			
 		--SPELLS
-			local spells_texture = frame:CreateTexture (nil, "artwork")
-			spells_texture:SetPoint ("topleft", frame, "topleft", 400, -80)
-			spells_texture:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]])
-			spells_texture:SetSize (128, 16)
-			local spells_text = frame:CreateFontString (nil, "artwork", "GameFontNormal")
+		
+			y = -5
+		
+			local spellsBox = CreateFrame ("frame", nil, frame)
+			_detalhes.gump:ApplyStandardBackdrop (spellsBox)
+			spellsBox:SetPoint ("topleft", absorbsBox, "topright", 10, 0)
+			spellsBox:SetSize (346, 160 * 2 + 5)
+		
+			local spells_text = spellsBox:CreateFontString (nil, "artwork", "GameFontNormal")
 			spells_text:SetText ("Spells")
-			spells_text :SetPoint ("left", spells_texture, "left", 2, 0)
+			spells_text :SetPoint ("topleft", spellsBox, "topleft", 5, y)
 			
 			local frame_tooltip_onenter = function (self)
 				if (self.spellid) then
-					self:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 512, edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 8})
+					--self:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 512, edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 8})
 					self:SetBackdropColor (.5, .5, .5, .5)
 					GameTooltip:SetOwner (self, "ANCHOR_TOPLEFT")
 					_detalhes:GameTooltipSetSpellByID (self.spellid)
@@ -1962,17 +2099,23 @@ function gump:CriaJanelaInfo()
 			end
 			local frame_tooltip_onleave = function (self)
 				if (self.spellid) then
-					self:SetBackdrop (nil)
+					self:SetBackdropColor (.5, .5, .5, .1)
 					GameTooltip:Hide()
 				end
 			end
 			
-			for i = 1, 10 do 
-				local frame_tooltip = CreateFrame ("frame", nil, frame)
-				frame_tooltip:SetPoint ("topleft", frame, "topleft", 405, -100 + ((i-1)*15)*-1)
-				frame_tooltip:SetSize (150, 14)
+			y = y - padding
+			
+			for i = 1, 40 do 
+				local frame_tooltip = CreateFrame ("frame", nil, spellsBox)
+				frame_tooltip:SetPoint ("topleft", spellsBox, "topleft", 5, y + ((i-1)*17)*-1)
+				frame_tooltip:SetSize (spellsBox:GetWidth()-10, 16)
 				frame_tooltip:SetScript ("OnEnter", frame_tooltip_onenter)
 				frame_tooltip:SetScript ("OnLeave", frame_tooltip_onleave)
+				frame_tooltip:Hide()
+				
+				frame_tooltip:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 512})
+				frame_tooltip:SetBackdropColor (.5, .5, .5, .1)
 				
 				local icon = frame_tooltip:CreateTexture (nil, "artwork")
 				icon:SetSize (14, 14)
@@ -2033,44 +2176,6 @@ function gump:CriaJanelaInfo()
 			return ps, diff
 		end
 		
-		-- ~buff
-		local spells_by_class = { --buffss uptime
-			["DRUID"] = {
-				[132402] = true, --savage defense
-				[135286] = true, -- tooth and claw
-			},
-			["DEATHKNIGHT"] = {
-				[145677] = true, --riposte
-				[77535] = true, --blood shield
-				--[49222] = true, --bone shield
-				[51460] = true, --runic corruption
-			},
-			["MONK"] = {
-				[115295] = true, --guard
-				[115307] = true, --shuffle
-				[115308] = true, --elusive brew
-				--[128939] = true, --elusive brew
-				[125359] = true, --tiger power
-			},
-			["PALADIN"] = {
-				[132403] = true, --shield of the righteous
-				[114163] = true, --eternal-flame
-				[20925] = true, --sacred shield
-			},
-			["WARRIOR"] = {
-				[145672] = true, --riposte
-				[2565] = true, -- shield Block
-				[871] = true, --shield wall
-				[112048] = true, --shield barrier
-			},
-			["DEMONHUNTER"] = {
-				[178740] = true, --immolation aura --178741
-				[203819] = true, --Demon Spikes
-				[187827] = true, --Metamorphosis
-				[218256] = true, --Empower Wards
-			},
-		}
-		
 		local avoidance_fill = function (tab, player, combat)
 
 			local elapsed_time = combat:GetCombatTime()
@@ -2084,7 +2189,6 @@ function gump:CriaJanelaInfo()
 			if (n:find ("-")) then
 				n = n:gsub (("-.*"), "")
 			end
-			tab.tankname:SetText ("Avoidance of\n" .. n) --> localize-me
 
 			--> damage taken
 				local playerdamage = combat (1, player.nome)
@@ -2231,9 +2335,10 @@ function gump:CriaJanelaInfo()
 						local label1, label2 = unpack (tab ["healer" .. i])
 						if (myReceivedHeal [i]) then
 							local name = myReceivedHeal [i][1]
-							if (name:find ("-")) then
-								name = name:gsub (("-.*"), "")
-							end
+							
+							name = _detalhes:GetOnlyName (name)
+							--name = _detalhes:RemoveOwnerName (name)
+							
 							label1:SetText (name .. ":")
 							local class = myReceivedHeal [i][3]
 							if (class) then
@@ -2274,58 +2379,44 @@ function gump:CriaJanelaInfo()
 				
 			--> Spells
 				--> cooldowns
-				
 				local index_used = 1
-				
 				local misc_player = combat (4, player.nome)
+				local encounter_time = combat:GetCombatTime()
 				
 				if (misc_player) then
 					if (misc_player.cooldowns_defensive_spells) then
 						local minha_tabela = misc_player.cooldowns_defensive_spells._ActorTable
+						local buffUpdateSpells = misc_player.buff_uptime_spells -- ._ActorTable
+
 						local cooldowns_usados = {}
 						
 						for _spellid, _tabela in pairs (minha_tabela) do
 							cooldowns_usados [#cooldowns_usados+1] = {_spellid, _tabela.counter}
 						end
-						table.sort (cooldowns_usados, _detalhes.Sort2)
+
+						if (#cooldowns_usados > 0) then
+
+							table.sort (cooldowns_usados, _detalhes.Sort2)
 						
-						if (#cooldowns_usados > 1) then
 							for i = 1, #cooldowns_usados do
 								local esta_habilidade = cooldowns_usados[i]
 								local nome_magia, _, icone_magia = _GetSpellInfo (esta_habilidade[1])
 								
-								local label1, label2, icon1, framebg = unpack (tab ["spell" .. i])
-								framebg.spellid = esta_habilidade[1]
-								
-								label1:SetText (nome_magia .. ":")
-								label2:SetText (esta_habilidade[2])
-								icon1:SetTexture (icone_magia)
-								icon1:SetTexCoord (0.0625, 0.953125, 0.0625, 0.953125)
-								
-								index_used = index_used + 1
-							end
-						end
-					end
-				end
-
-				--> buffs uptime
-				if (index_used < 11) then
-					if (misc_player.buff_uptime_spells) then
-						local minha_tabela = misc_player.buff_uptime_spells._ActorTable
-						
-						local encounter_time = combat:GetCombatTime()
-						
-						for _spellid, _tabela in pairs (minha_tabela) do
-							if (spells_by_class [player.classe] [_spellid] and index_used <= 10) then 
-								local nome_magia, _, icone_magia = GetSpellInfo (_spellid)
 								local label1, label2, icon1, framebg = unpack (tab ["spell" .. index_used])
+								framebg.spellid = esta_habilidade[1]
+								framebg:Show()
 								
-								framebg.spellid = _spellid
-								
-								local t = _tabela.uptime / encounter_time * 100
+								--> attempt to get the buff update
+								local spellInfo = buffUpdateSpells:GetSpell (framebg.spellid)
+								if (spellInfo) then
+									label2:SetText (esta_habilidade[2] .. " (" .. floor (spellInfo.uptime / encounter_time * 100) .. "% uptime)")
+								else
+									label2:SetText (esta_habilidade[2])
+								end
+
+								--> update the line
 								label1:SetText (nome_magia .. ":")
-								local minutos, segundos = _math_floor (_tabela.uptime / 60), _math_floor (_tabela.uptime % 60)
-								label2:SetText (minutos .. "m " .. segundos .. "s" .. " (" .. _math_floor (t) .. "%)")
+								
 								icon1:SetTexture (icone_magia)
 								icon1:SetTexCoord (0.0625, 0.953125, 0.0625, 0.953125)
 								
@@ -2335,11 +2426,58 @@ function gump:CriaJanelaInfo()
 					end
 				end
 				
-				for i = index_used, 10 do
+				local cooldownInfo = DetailsFramework.CooldownsInfo
+				
+				--> see cooldowns that other players used in this actor
+				for playerName, _ in pairs (combat.raid_roster) do
+					if (playerName ~= player.nome) then
+						local miscPlayer = combat (4, playerName)
+						if (miscPlayer) then
+							if (miscPlayer.cooldowns_defensive_spells) then
+								local cooldowns = miscPlayer.cooldowns_defensive_spells
+								for spellID, spellTable in cooldowns:ListActors() do
+									local targets = spellTable.targets
+									if (targets) then
+										for targetName, amountCasted in pairs (targets) do
+											if (targetName == player.nome) then
+												local spellName, _, spellIcon = _GetSpellInfo (spellID)
+												local label1, label2, icon1, framebg = unpack (tab ["spell" .. index_used])
+												framebg.spellid = spellID
+												framebg:Show()
+												
+												--> attempt to get the buff update
+												local info = cooldownInfo [spellID]
+												local cooldownDuration = info and info.duration or 0
+												
+												if (cooldownDuration > 0) then
+													label2:SetText (amountCasted .. " (" .. "|cFFFFFF00" .. miscPlayer.nome .. "|r " .. floor (cooldownDuration / encounter_time * 100) .. "% uptime)")
+												else
+													label2:SetText (amountCasted)
+												end
+												
+												--> update the line
+												label1:SetText (spellName .. ":")
+												
+												icon1:SetTexture (spellIcon)
+												icon1:SetTexCoord (0.0625, 0.953125, 0.0625, 0.953125)
+												
+												index_used = index_used + 1
+											end
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+				
+				
+				for i = index_used, 40 do
 					local label1, label2, icon1, framebg = unpack (tab ["spell" .. i])
 					
 					framebg.spellid = nil
-					label1:SetText ("-- -- -- --")
+					framebg:Hide()
+					label1:SetText ("")
 					label2:SetText ("")
 					icon1:SetTexture (nil)
 				end
@@ -2408,8 +2546,8 @@ function gump:CriaJanelaInfo()
 		
 		local scroll_createline = function (self, index)
 			local line = CreateFrame ("button", "$parentLine" .. index, self)
-			line:SetPoint ("topleft", self, "topleft", 0, -((index-1)*(scroll_line_height+1)))
-			line:SetSize (scroll_width, scroll_line_height)
+			line:SetPoint ("topleft", self, "topleft", 1, -((index-1)*(scroll_line_height+1)))
+			line:SetSize (scroll_width -2, scroll_line_height)
 			line:SetScript ("OnEnter", line_onenter)
 			line:SetScript ("OnLeave", line_onleave)
 			line:SetScript ("OnClick", line_onclick)
@@ -2418,7 +2556,7 @@ function gump:CriaJanelaInfo()
 			line:SetBackdropColor (0, 0, 0, 0.2)
 			
 			local icon = line:CreateTexture ("$parentIcon", "overlay")
-			icon:SetSize (scroll_line_height, scroll_line_height)
+			icon:SetSize (scroll_line_height -2 , scroll_line_height - 2)
 			local name = line:CreateFontString ("$parentName", "overlay", "GameFontNormal")
 			local uptime = line:CreateFontString ("$parentName", "overlay", "GameFontNormal")
 			local apply = line:CreateFontString ("$parentName", "overlay", "GameFontNormal")
@@ -2471,6 +2609,9 @@ function gump:CriaJanelaInfo()
 					local line = self:GetLine (i)
 					line.spellID = aura.spellID
 					line.Icon:SetTexture (aura [1])
+					
+					line.Icon:SetTexCoord (.1, .9, .1, .9)
+
 					line.Name:SetText (aura [2])
 					line.Uptime:SetText (DF:IntegerToTimer (aura [3]) .. " (|cFFBBAAAA" .. floor (aura [6]) .. "%|r)")
 					line.Apply:SetText (aura [4])
@@ -2531,9 +2672,7 @@ function gump:CriaJanelaInfo()
 			local line = buffScroll:CreateLine (scroll_createline)
 			line.AuraType = "BUFF"
 		end
-		buffScroll:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16})
-		buffScroll:SetBackdropColor (0, 0, 0, .4)		
-		
+		DF:ReskinSlider (buffScroll)
 		tab.BuffScroll = buffScroll
 		
 		--debuff scroll
@@ -2556,16 +2695,14 @@ function gump:CriaJanelaInfo()
 		waLabel2:SetPoint (728, -10)
 		create_titledesc_frame (waLabel2.widget, "create weak aura")
 
-		
 		local debuffScroll = DF:CreateScrollBox (frame, "$parentDebuffUptimeScroll", scroll_buff_refresh, {}, scroll_width, 340, scroll_line_amount, scroll_line_height)
 		debuffScroll:SetPoint ("topleft", frame, "topleft", 405, -30)
 		for i = 1, scroll_line_amount do 
 			local line = debuffScroll:CreateLine (scroll_createline)
 			line.AuraType = "DEBUFF"
 		end
-		debuffScroll:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16})
-		debuffScroll:SetBackdropColor (0, 0, 0, .4)		
-		
+		DF:ReskinSlider (debuffScroll)
+
 		tab.DebuffScroll = debuffScroll
 	end
 	
@@ -4066,6 +4203,7 @@ function gump:CriaJanelaInfo()
 				bar:SetPoint ("topright", parent, "topright", -4, y)
 				bar:SetStatusBarTexture ([[Interface\AddOns\Details\images\bar_serenity]])
 				bar:SetStatusBarColor (.5, .5, .5, 1)
+				bar:SetAlpha (ALPHA_BLEND_AMOUNT)
 				
 				bar:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
 				bar:SetBackdropColor (1, 1, 1, 0.1)
@@ -4350,6 +4488,9 @@ function gump:CriaJanelaInfo()
 			frame1:SetBackdropColor (unpack (frame_backdrop_color))
 			frame1:SetBackdropBorderColor (unpack (frame_backdrop_border_color))
 			
+			--override backdrop settings and use the framework defaults
+			Details.gump:ApplyStandardBackdrop (frame1)
+			
 			frame1.bars = {}
 			frame1.tab = tab
 			frame1.tooltip = create_tooltip ("DetailsPlayerComparisonBox1Tooltip")
@@ -4380,6 +4521,9 @@ function gump:CriaJanelaInfo()
 			target1.tooltip = create_tooltip_target ("DetailsPlayerComparisonTarget1Tooltip")
 			target1.tooltip:SetWidth (spell_compare_frame_width[1])
 			
+			--override backdrop settings and use the framework defaults
+			Details.gump:ApplyStandardBackdrop (target1)
+			
 			--criar as barras do target1
 			for i = 1, targetBars do
 				create_bar ("DetailsPlayerComparisonTarget1Bar"..i, target1, i, true, true)
@@ -4396,6 +4540,9 @@ function gump:CriaJanelaInfo()
 			frame2:SetBackdrop (frame_backdrop)
 			frame2:SetBackdropColor (unpack (frame_backdrop_color))
 			frame2:SetBackdropBorderColor (unpack (frame_backdrop_border_color))
+			
+			--override backdrop settings and use the framework defaults
+			Details.gump:ApplyStandardBackdrop (frame2)
 			
 			frame2.bars = {}
 			frame2.tooltip = create_tooltip ("DetailsPlayerComparisonBox2Tooltip")
@@ -4440,6 +4587,9 @@ function gump:CriaJanelaInfo()
 			target2.tooltip = create_tooltip_target ("DetailsPlayerComparisonTarget2Tooltip")
 			target2.tooltip:SetWidth (spell_compare_frame_width[2])
 			
+			--override backdrop settings and use the framework defaults
+			Details.gump:ApplyStandardBackdrop (target2)
+			
 			--criar as barras do target2
 			for i = 1, targetBars do
 				create_bar ("DetailsPlayerComparisonTarget2Bar"..i, target2, i, nil, true)
@@ -4452,6 +4602,9 @@ function gump:CriaJanelaInfo()
 			frame3:SetBackdrop (frame_backdrop)
 			frame3:SetBackdropColor (unpack (frame_backdrop_color))
 			frame3:SetBackdropBorderColor (unpack (frame_backdrop_border_color))
+			
+			--override backdrop settings and use the framework defaults
+			Details.gump:ApplyStandardBackdrop (frame3)
 			
 			frame3.bars = {}
 			frame3.tooltip = create_tooltip ("DetailsPlayerComparisonBox3Tooltip")
@@ -4495,6 +4648,9 @@ function gump:CriaJanelaInfo()
 			target3.tooltip = create_tooltip_target ("DetailsPlayerComparisonTarget3Tooltip")
 			target3.tooltip:SetWidth (spell_compare_frame_width[3])
 			
+			--override backdrop settings and use the framework defaults
+			Details.gump:ApplyStandardBackdrop (target3)
+			
 			--criar as barras do target1
 			for i = 1, targetBars do
 				create_bar ("DetailsPlayerComparisonTarget3Bar"..i, target3, i, nil, true)
@@ -4534,7 +4690,7 @@ function gump:CriaJanelaInfo()
 							end
 						end
 						
-						local match_percentage = same_spells / my_spells_total * 100
+						local match_percentage = same_spells / max (my_spells_total, 0.000001) * 100
 
 						if (match_percentage > 30) then
 							tinsert (tabOBject.players, actor)
@@ -4608,8 +4764,6 @@ function gump:CriaJanelaInfo()
 			end
 			
 			if (amt_positive < 2) then
-				--_detalhes.player_details_tabs[1]:Hide()
-				--_detalhes.player_details_tabs[1]:SetPoint ("BOTTOMLEFT", info.container_barras, "TOPLEFT",  390 - (67 * (2-1)), 1)
 				_detalhes.player_details_tabs[1]:SetPoint ("BOTTOMLEFT", info.container_barras, "TOPLEFT",  490 - (94 * (1-0)), 1)
 			end
 			
@@ -4638,7 +4792,7 @@ function _detalhes:CreatePlayerDetailsTab (tabname, localized_name, condition, f
 	if (not tabname) then
 		tabname = "unnamed"
 	end
-
+	
 	local index = #_detalhes.player_details_tabs
 	
 	local newtab = CreateFrame ("button", "DetailsInfoWindowTab" .. index, info, "ChatTabTemplate")
@@ -4648,11 +4802,9 @@ function _detalhes:CreatePlayerDetailsTab (tabname, localized_name, condition, f
 	newtab:SetWidth (100)
 	newtab.middleTexture:SetWidth (70)
 	
-	
-	
 	newtab:SetText (localized_name)
 	_G ["DetailsInfoWindowTab" .. index .. "Text"]:SetWidth (70)
-
+	
 	newtab:SetFrameStrata ("HIGH")
 	newtab:SetFrameLevel (info:GetFrameLevel()+1)
 	newtab:Hide()
@@ -4686,28 +4838,19 @@ function _detalhes:CreatePlayerDetailsTab (tabname, localized_name, condition, f
 	end
 	
 	newtab.frame:SetBackdrop({
-			--bgFile = [[Interface\ACHIEVEMENTFRAME\UI-GuildAchievement-Parchment-Horizontal-Desaturated]], tile = true, tileSize = 512,
-			--edgeFile = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-WoodBorder]], edgeSize = 32,
-			edgeFile = [[Interface\Buttons\WHITE8X8]], 
-			edgeSize = 1, 
-			--bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], 
-			bgFile = [[Interface\AddOns\Details\images\background]],
-			tileSize = 64, 
-			tile = true,
-			insets = {left = 0, right = 0, top = 0, bottom = 0}}
-		)
-		
-		--newtab.frame:SetBackdropColor (.5, .50, .50, 1)
-		newtab.frame:SetBackdropColor (0, 0, 0, 0.3)
-		newtab.frame:SetBackdropBorderColor (.3, .3, .3, 0)
-		
-		--local f = CreateFrame ("frame", nil, newtab)
-		--f:Set
-	
-	
+		edgeFile = [[Interface\Buttons\WHITE8X8]], 
+		edgeSize = 1, 
+		bgFile = [[Interface\AddOns\Details\images\background]],
+		tileSize = 64, 
+		tile = true,
+		insets = {left = 0, right = 0, top = 0, bottom = 0}}
+	)
+
+	newtab.frame:SetBackdropColor (0, 0, 0, 0.3)
+	newtab.frame:SetBackdropBorderColor (.3, .3, .3, 0)
+
 	newtab.frame:SetPoint ("TOPLEFT", info.container_barras, "TOPLEFT", 0, 2)
 	newtab.frame:SetPoint ("bottomright", info, "bottomright", -3, 3)
-	--newtab.frame:SetPoint ("TOPLEFT", info, "TOPLEFT", 19, -76)
 	newtab.frame:SetSize (569, 274)
 	
 	newtab.frame:Hide()
@@ -5260,7 +5403,7 @@ local target_on_enter = function (self)
 	
 	if (barra.show and type (barra.show) == "number") then
 		local actor = barra.other_actor or info.jogador
-		local spell = actor.spells:PegaHabilidade (barra.show)
+		local spell = actor.spells and actor.spells:PegaHabilidade (barra.show)
 		if (spell) then
 		
 			local ActorTargetsSortTable = {}
@@ -5450,7 +5593,7 @@ function gump:CriaNovaBarraInfo2 (instancia, index)
 	esta_barra.icone:SetHeight (14)
 	esta_barra.icone:SetPoint ("RIGHT", esta_barra.textura, "LEFT", 18, 0)
 	
-	esta_barra:SetAlpha (0.9)
+	esta_barra:SetAlpha (ALPHA_BLEND_AMOUNT)
 	esta_barra.icone:SetAlpha (1)
 	
 	esta_barra.isAlvo = true

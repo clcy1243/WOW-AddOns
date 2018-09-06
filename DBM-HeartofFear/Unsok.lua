@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(737, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 114 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 122 $"):sub(12, -3))
 mod:SetCreatureID(62511)
 mod:SetEncounterID(1499)
 mod:SetZone()
@@ -130,7 +130,6 @@ local function warnAmberExplosionCast(spellId)
 end
 
 function mod:OnCombatStart(delay)
-	amberExplosion = DBM:GetSpellInfo(122402)
 	warnedWill = true--avoid wierd bug on pull
 	willNumber = 100
 	Phase = 1
@@ -271,7 +270,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnReshapeLife:Show(args.spellName, args.destName, constructCount)
 		if args:IsPlayer() then
 			self:RegisterShortTermEvents(
-				"UNIT_POWER player"
+				"UNIT_POWER_FREQUENT player"
 			)
 			playerIsConstruct = true
 			warnedWill = true -- fix bad low will special warning on entering Construct. After entering vehicle, this will be return to false. (on alt.power changes)
@@ -410,7 +409,7 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
-function mod:UNIT_POWER(uId)
+function mod:UNIT_POWER_FREQUENT(uId)
 	local playerWill = UnitPower(uId, ALTERNATE_POWER_INDEX)
 	if playerWill > willNumber then willNumber = playerWill end--Will power has gone up since last warning so reset that warning.
 	if playerWill == 80 and willNumber > 80 then
@@ -436,7 +435,7 @@ function mod:UNIT_POWER(uId)
 	end
 end
 
-function mod:UNIT_SPELLCAST_STOP(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_STOP(uId, _, spellId)
 	if spellId == 122402 then--SPELL_INTERRUPT not always fires, so use UNIT_SPELLCAST_STOP
 		timerAmberExplosion:Cancel()
 		self:UnscheduleMethod("AmberExplosionAMWarning")

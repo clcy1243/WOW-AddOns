@@ -3,9 +3,13 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("High Inquisitor Whitemane", 874, 674)
+local mod, CL = BigWigs:NewBoss("High Inquisitor Whitemane", 1004, 674)
 if not mod then return end
 mod:RegisterEnableMob(3977, 60040) -- Whitemane, Durand
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local deaths = 0
 
@@ -26,7 +30,11 @@ end
 --
 
 function mod:GetOptions()
-	return {113134, "steel", "stages"}
+	return {
+		113134, -- Mass Ressurection
+		"steel",
+		"stages",
+	}
 end
 
 function mod:OnBossEnable()
@@ -44,7 +52,7 @@ end
 
 function mod:OnEngage()
 	deaths = 0
-	self:Message("stages", "Positive", nil, CL.other:format(CL.phase:format(1), self:SpellName(-5635)), false) -- Phase 1: Commander Duran
+	self:Message("stages", "green", nil, CL.other:format(CL.phase:format(1), self:SpellName(-5635)), false) -- Phase 1: Commander Duran
 	self:Bar("steel", 10.8, 115629)
 end
 
@@ -53,7 +61,7 @@ end
 --
 
 function mod:MassRes(args)
-	self:Message(args.spellId, "Urgent", "Alarm")
+	self:Message(args.spellId, "orange", "Alarm")
 	self:Bar(args.spellId, 10)
 end
 
@@ -64,13 +72,13 @@ function mod:MassResStopped(args)
 end
 
 function mod:Sleep(args)
-	self:Message("stages", "Positive", nil, CL["phase"]:format(3), args.spellId)
+	self:Message("stages", "green", nil, CL["phase"]:format(3), args.spellId)
 	self:Bar("stages", 10, args.spellId)
 end
 
-function mod:Steel(_, _, _, _, spellId)
+function mod:Steel(_, _, _, spellId)
 	if spellId == 115627 then
-		self:Message("steel", "Attention", nil, 115629)
+		self:Message("steel", "yellow", nil, 115629)
 		self:CDBar("steel", 26, 115629) -- 26.x - 27.x
 	end
 end
@@ -78,7 +86,7 @@ end
 function mod:Deaths()
 	deaths = deaths + 1
 	if deaths == 1 then
-		self:Message("stages", "Positive", nil, CL.other:format(CL.phase:format(2), self:SpellName(-5638)), false) -- Phase 2: High Inquisitor Whitemane
+		self:Message("stages", "green", nil, CL.other:format(CL.phase:format(2), self:SpellName(-5638)), false) -- Phase 2: High Inquisitor Whitemane
 		self:StopBar(115629)
 	elseif deaths == 3 then
 		self:Win()

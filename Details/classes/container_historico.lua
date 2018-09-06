@@ -15,6 +15,32 @@ local barra_total =		_detalhes.barra_total
 local container_pets =		_detalhes.container_pets
 local timeMachine =		_detalhes.timeMachine
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> API
+
+--> reset only the overall data
+function _detalhes:ResetSegmentOverallData()
+	return historico:resetar_overall()
+end
+
+--> reset segments and overall data
+function _detalhes:ResetSegmentData()
+	return historico:resetar()
+end
+
+--> returns the current active segment
+function _detalhes:GetCurrentCombat()
+	return _detalhes.tabela_vigente
+end
+
+--> returns a private table containing all stored segments
+function _detalhes:GetCombatSegments()
+	return _detalhes.tabela_historico.tabelas
+end
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> internal
+
 function historico:NovoHistorico()
 	local esta_tabela = {tabelas = {}}
 	_setmetatable (esta_tabela, historico)
@@ -22,7 +48,9 @@ function historico:NovoHistorico()
 end
 
 function historico:adicionar_overall (tabela)
-	if (tabela:GetCombatTime() <= 10) then
+
+	local zoneName, zoneType = GetInstanceInfo()
+	if (zoneType ~= "none" and tabela:GetCombatTime() <= _detalhes.minimum_overall_combat_time) then
 		return
 	end
 
@@ -116,13 +144,6 @@ function historico:adicionar_overall (tabela)
 		end
 	end
 	
-end
-
-function _detalhes:GetCurrentCombat()
-	return _detalhes.tabela_vigente
-end
-function _detalhes:GetCombatSegments()
-	return _detalhes.tabela_historico.tabelas
 end
 
 function _detalhes:ScheduleAddCombatToOverall (combat)

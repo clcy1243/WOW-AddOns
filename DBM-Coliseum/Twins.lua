@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("ValkTwins", "DBM-Coliseum")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 259 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 280 $"):sub(12, -3))
 mod:SetCreatureID(34497, 34496)
 mod:SetEncounterID(1089)
 mod:SetModelID(29240)
@@ -19,7 +19,7 @@ mod:RegisterEventsInCombat(
 
 local warnSpecial					= mod:NewAnnounce("WarnSpecialSpellSoon", 3)
 local warnTouchDebuff				= mod:NewAnnounce("WarningTouchDebuff", 2, 66823)
-local warnPoweroftheTwins			= mod:NewAnnounce("WarningPoweroftheTwins", 4, nil, "Healer", 2)
+local warnPoweroftheTwins			= mod:NewAnnounce("WarningPoweroftheTwins2", 4, nil, "Healer")
 
 local specWarnSpecial				= mod:NewSpecialWarning("SpecWarnSpecial")--Change Color, No voice ideas for this
 local specWarnSwitch				= mod:NewSpecialWarning("SpecWarnSwitchTarget", nil, nil, nil, 1, 2)
@@ -39,7 +39,7 @@ mod:AddBoolOption("SpecialWarnOnDebuff", false, "announce")
 mod:AddBoolOption("SetIconOnDebuffTarget", false)
 mod:AddInfoFrameOption(235117, true)
 
-local lightEssence, darkEssence = DBM:GetSpellInfo(67223), DBM:GetSpellInfo(67176)
+local lightEssence, darkEssence = DBM:GetSpellInfo(65686), DBM:GetSpellInfo(65684)
 local debuffTargets					= {}
 mod.vb.debuffIcon					= 8
 
@@ -51,7 +51,6 @@ local shieldHealth = {
 }
 
 function mod:OnCombatStart(delay)
-	lightEssence, darkEssence = DBM:GetSpellInfo(67223), DBM:GetSpellInfo(67176)
 	timerSpecial:Start(-delay)
 	warnSpecial:Schedule(40-delay)
 	timerAchieve:Start(-delay)
@@ -71,10 +70,10 @@ end
 
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 66046 then
-		local debuff = UnitDebuff("player", lightEssence)
+		local debuff = DBM:UnitDebuff("player", lightEssence)
 		self:SpecialAbility(debuff)
 	elseif args.spellId == 66058 then
-		local debuff = UnitDebuff("player", darkEssence)
+		local debuff = DBM:UnitDebuff("player", darkEssence)
 		self:SpecialAbility(debuff)
 	elseif args.spellId == 65875 then
 		timerHeal:Start()

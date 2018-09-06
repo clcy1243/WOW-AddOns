@@ -10,6 +10,44 @@ local function DebugPrint(errorMessage)
    end
 end
 
+--Load localization number scaling factors and sort descending
+local scaleFactors = {}
+for k,v in pairs(L["NumberScaleFactors"]) do
+   table.insert(scaleFactors,{factor=v[1],symbol=v[2]})
+end
+table.sort(scaleFactors, function(a,b) return a.factor>b.factor end)
+
+--Returns the value to devide by and the symbol to append
+function AddonTable.GetScaleFactor(number)
+   if type(number) ~= "number" then return end
+   for _,numberScale in pairs(scaleFactors) do
+      if number >= numberScale.factor then
+         return numberScale.factor,numberScale.symbol
+      end
+   end
+end
+
+--Rounds the number display to 4 characters (excluding unit separator, including unit multiplier)
+function AddonTable.RoundNumber(number)
+   if type(number) ~= "number" then return number end
+   local digits = string.len(number)
+   if digits > 4 then
+      local trimDigits = digits-3
+      --remove trimmed digits, by rounding up or down
+      local mod = number % 10^trimDigits
+      if mod < 10^trimDigits/2 then
+         number = number - mod
+      else
+         number = number + (10^trimDigits-mod)
+      end
+      local factor, unit = AddonTable.GetScaleFactor(number)
+      if not (factor or unit) then DebugPrint("Error getting number scaling factors") return end
+      local rounded = number/factor
+      return rounded..unit  
+   end
+   return number   
+end
+
 --Lookup table to convert internal item tables to a visible section name
 local tableToContainer = {
    ["ArtifactItems"] = L["Artifact Power"],

@@ -295,7 +295,7 @@ function C:GetTreeGroupFramesFrame(parent)
 	end
 	f.UpdateScrollElement = function(self, parent)
 
-		self.buttonParent:SetHeight(self.realHeight)
+		self.buttonParent:SetHeight(self.realHeight or 0)
 		
 		if ( self.buttonParent:GetHeight() - parent:GetHeight() ) > 0 then
 			self.scroll:SetMinMaxValues(0, ( self.buttonParent:GetHeight() - parent:GetHeight() )+50)

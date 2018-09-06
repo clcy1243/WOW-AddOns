@@ -3,22 +3,68 @@
 ------------------------------------------------
 local RSA = LibStub("AceAddon-3.0"):GetAddon("RSA")
 local L = LibStub("AceLocale-3.0"):GetLocale("RSA")
+local LRI = LibStub("LibResInfo-1.0",true)
 local RSA_Paladin = RSA:NewModule("Paladin")
-function RSA_Paladin:OnInitialize()
-	if RSA.db.profile.General.Class == "PALADIN" then
-		RSA_Paladin:SetEnabledState(true)
-	else
-		RSA_Paladin:SetEnabledState(false)
-	end
-end -- End OnInitialize
 
 local spellinfo,spelllinkinfo,extraspellinfo,extraspellinfolink,missinfo
 local Config_DivineShield
 local Config_DivineShield_End
 local MonitorConfig_Paladin
 
+function RSA_Paladin:OnInitialize()
+	if RSA.db.profile.General.Class == "PALADIN" then
+		RSA_Paladin:SetEnabledState(true)
+	else
+		RSA_Paladin:SetEnabledState(false)
+	end	
+end
+
+function RSA.Resurrect(_, _, target, _, caster)
+	if caster ~= "player" then return end
+	local dest = UnitName(target)
+	local pName = UnitName("player")
+	local spell = 7328
+	local messagemax = #RSA.db.profile.Paladin.Spells.Redemption.Messages.Start
+	if messagemax == 0 then return end
+	local messagerandom = math.random(messagemax)
+	local message = RSA.db.profile.Paladin.Spells.Redemption.Messages.Start[messagerandom]
+	local full_destName,dest = RSA.RemoveServerNames(dest)
+	spellinfo = GetSpellInfo(spell) spelllinkinfo = GetSpellLink(spell)
+	RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
+	if message ~= "" then
+		if RSA.db.profile.Paladin.Spells.Redemption.Local == true then
+			RSA.Print_LibSink(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Paladin.Spells.Redemption.Yell == true then
+			RSA.Print_Yell(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Paladin.Spells.Redemption.Whisper == true and dest ~= pName then
+			RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
+			RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+			RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
+		end
+		if RSA.db.profile.Paladin.Spells.Redemption.CustomChannel.Enabled == true then
+			RSA.Print_Channel(string.gsub(message, ".%a+.", RSA.String_Replace), RSA.db.profile.Paladin.Spells.Redemption.CustomChannel.Channel)
+		end
+		if RSA.db.profile.Paladin.Spells.Redemption.Say == true then
+			RSA.Print_Say(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true then
+			RSA.Print_SmartGroup(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Paladin.Spells.Redemption.Party == true then
+			if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true and GetNumGroupMembers() == 0 then return end
+				RSA.Print_Party(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+		if RSA.db.profile.Paladin.Spells.Redemption.Raid == true then
+			if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true and GetNumGroupMembers() > 0 then return end
+			RSA.Print_Raid(string.gsub(message, ".%a+.", RSA.String_Replace))
+		end
+	end	
+end
+
 local function FinalStandCheck() -- Checks if we announce Divine Shield or Final Stand.
-	local _,_,_,selected = GetTalentInfo(5,3,1) -- Row 5, Column 3, Spec 2(0,1,2) (Final Stand)
+	local _,_,_,selected = GetTalentInfo(5,2,1) -- Row 5 (1-7), Column 2 (1-3), Always 1 (Final Stand)
 	local talents = RSA.Talents()
 	if selected == true and talents == 2 then -- 1 Holy, 2 Protection, 3 Retribution
 		Config_DivineShield = {
@@ -46,8 +92,10 @@ local function FinalStandCheck() -- Checks if we announce Divine Shield or Final
 	MonitorConfig_Paladin.SPELL_AURA_APPLIED[642] = Config_DivineShield
 	MonitorConfig_Paladin.SPELL_AURA_REMOVED[642] = Config_DivineShield_End
 end
+RSA.FinalStandCheck = FinalStandCheck -- Set the function globally so RSA_Options can force an update when the setting is changed.
 
 function RSA_Paladin:OnEnable()
+	if LRI then LRI.RegisterCallback(RSA, "LibResInfo_ResCastStarted", "Resurrect") end
 	RSA.db.profile.Modules.Paladin = true -- Set state to loaded, to know if we should announce when a spell is refreshed.
 	local pName = UnitName("player")
 	local Config_AvengingWrath = { -- AVENGING WRATH
@@ -75,6 +123,7 @@ function RSA_Paladin:OnEnable()
 	}
 	local Config_Cleanse = {-- CLEANSE & CLEANSE TOXINS
 		profile = 'Cleanse',
+		section = 'Dispel',
 		replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
 	}
 	local Config_BoS = { -- Blessing of Sacrifice & Ultimate Sacrifice honour talent
@@ -109,6 +158,7 @@ function RSA_Paladin:OnEnable()
 			},
 			[633] = { -- LAY ON HANDS
 				profile = 'LayOnHands',
+				section = 'Heal',
 				replacements = { TARGET = 1, AMOUNT = 1 }
 			},	
 		},
@@ -148,6 +198,13 @@ function RSA_Paladin:OnEnable()
 				replacements = { TARGET = 1 }
 			},
 		},
+		SPELL_RESURRECT = {
+			[7328] = { -- Redemption
+				profile = 'Redemption',
+				section = 'End',
+				replacements = { TARGET = 1 },
+			},
+		},
 		SPELL_AURA_APPLIED = {
 			[642] = Config_DivineShield, -- DIVINE SHIELD		
 			[1022] = Config_BoP, -- BLESSING OF PROTECTION
@@ -167,6 +224,7 @@ function RSA_Paladin:OnEnable()
 			},
 			[62124] = { -- HAND OF RECKONING
 				profile = 'HandOfReckoning',
+				section = 'Cast',
 				replacements = { TARGET = 1 }
 			},
 			[228049] = { -- Guardian of the Forgotten Queen
@@ -300,29 +358,37 @@ function RSA_Paladin:OnEnable()
 		SPELL_INTERRUPT = {
 			[96231] = { -- REBUKE
 				profile = 'Rebuke',
+				section = 'Interrupt',
 				replacements = { TARGET = 1, extraSpellName = "[TARSPELL]", extraSpellLink = "[TARLINK]" }
 			},
 			[31935] = { -- AVENGERS SHIELD
 				profile = 'AvengersShield',
+				section = 'Interrupt',
 				replacements = { TARGET = 1, extraSpellName = "[TARSPELL]", extraSpellLink = "[TARLINK]" }
 			},
 		},
 		SPELL_MISSED = {
 			[96231] = {-- REBUKE
 				profile = 'Rebuke',
-				section = 'End',
+				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
 			},
+			[20066] = { -- REPENTANCE
+				profile = 'Repentance',
+				section = 'Resist',
+				immuneSection = "Immune",
+				replacements = { TARGET = 1, MISSTYPE = 1 }
+			},
 			[31935] = {-- AVENGERS SHIELD
 				profile = 'AvengersShield',
-				section = 'End',
+				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
 			},
 			[62124] = {-- HAND OF RECKONING
 				profile = 'HandOfReckoning',
-				section = 'End',
+				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
 			},
@@ -336,9 +402,10 @@ function RSA_Paladin:OnEnable()
 	local ArdentDefenderHealed = false
 	local ResTarget = L["Unknown"]
 	local Ressed
-	local function Paladin_Spells(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4)
+	local function Paladin_Spells()
+		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4 = CombatLogGetCurrentEventInfo()
 		if RSA.AffiliationMine(sourceFlags) then
-			if (event == "SPELL_CAST_SUCCESS" and RSA.db.profile.Modules.Reminders_Loaded == true) then -- Reminder Refreshed
+			if (event == "SPELL_CAST_SUCCESS" and RSA.db.profile.Modules.Reminders_Loaded == true) then -- Reminder Refreshed				
 				local ReminderSpell = RSA.db.profile.Paladin.Reminders.SpellName
 				if spellName == ReminderSpell and (dest == pName or dest == nil) then
 					RSA.Reminder:SetScript("OnUpdate", nil)
@@ -350,123 +417,19 @@ function RSA_Paladin:OnEnable()
 					end
 				end
 			end -- BUFF REMINDER
-			--[[if spellID == 642 then
-				FinalStandCheck()
-			end]]--
-			MonitorAndAnnounce(self, _, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4)
+			MonitorAndAnnounce(self, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4)
 		end -- IF SOURCE IS PLAYER
 	end -- END ENTIRELY
 	RSA.CombatLogMonitor:SetScript("OnEvent", Paladin_Spells)
-	------------------------------
-	---- Resurrection Monitor ----
-	------------------------------
-	local function Paladin_Redemption(_, event, source, spell, rank, dest, spellID)
-		if UnitName(source) == pName then
-			if spell == GetSpellInfo(7328) and RSA.db.profile.Paladin.Spells.Redemption.Messages.Start ~= "" then -- REDEMPTION
-				if event == "UNIT_SPELLCAST_SENT" then
-					Ressed = false
-					if (dest == L["Unknown"] or dest == nil) then
-						if UnitExists("target") ~= 1 or (UnitHealth("target") > 1 and UnitIsDeadOrGhost("target") ~= 1) then
-							if GameTooltipTextLeft1:GetText() == nil then
-								dest = L["Unknown"]
-								ResTarget = L["Unknown"]
-							else
-								dest = string.gsub(GameTooltipTextLeft1:GetText(), L["Corpse of "], "")
-								ResTarget = string.gsub(GameTooltipTextLeft1:GetText(), L["Corpse of "], "")
-							end
-						else
-							dest = UnitName("target")
-							ResTarget = UnitName("target")
-						end
-					else
-						ResTarget = dest
-					end
-					local full_destName,dest = RSA.RemoveServerNames(dest)
-					spellinfo = GetSpellInfo(spell) spelllinkinfo = GetSpellLink(spell)
-					RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
-					if RSA.db.profile.Paladin.Spells.Redemption.Messages.Start ~= "" then
-						if RSA.db.profile.Paladin.Spells.Redemption.Local == true then
-							RSA.Print_LibSink(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Yell == true then
-							RSA.Print_Yell(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Whisper == true and dest ~= pName then
-							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.Start, ".%a+.", RSA.String_Replace), full_destName)
-							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.CustomChannel.Enabled == true then
-							RSA.Print_Channel(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.Start, ".%a+.", RSA.String_Replace), RSA.db.profile.Paladin.Spells.Redemption.CustomChannel.Channel)
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Say == true then
-							RSA.Print_Say(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true then
-							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Party == true then
-							if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-								RSA.Print_Party(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Raid == true then
-							if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-							RSA.Print_Raid(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.Start, ".%a+.", RSA.String_Replace))
-						end
-					end
-				elseif event == "UNIT_SPELLCAST_SUCCEEDED" and Ressed ~= true then
-					dest = ResTarget
-					Ressed = true
-					local full_destName,dest = RSA.RemoveServerNames(dest)
-					if RSA.db.profile.Paladin.Spells.Redemption.Messages.End ~= "" then
-						if RSA.db.profile.Paladin.Spells.Redemption.Local == true then
-							RSA.Print_LibSink(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Yell == true then
-							RSA.Print_Yell(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Whisper == true and dest ~= pName then
-							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.End, ".%a+.", RSA.String_Replace), full_destName)
-							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.CustomChannel.Enabled == true then
-							RSA.Print_Channel(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.End, ".%a+.", RSA.String_Replace), RSA.db.profile.Paladin.Spells.Redemption.CustomChannel.Channel)
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Say == true then
-							RSA.Print_Say(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true then
-							RSA.Print_SmartGroup(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Party == true then
-							if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true and GetNumGroupMembers() == 0 and InstanceType ~= "arena" then return end
-								RSA.Print_Party(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-						if RSA.db.profile.Paladin.Spells.Redemption.Raid == true then
-							if RSA.db.profile.Paladin.Spells.Redemption.SmartGroup == true and GetNumGroupMembers() > 0 then return end
-							RSA.Print_Raid(string.gsub(RSA.db.profile.Paladin.Spells.Redemption.Messages.End, ".%a+.", RSA.String_Replace))
-						end
-					end
-				end
-			end -- REDEMPTION
-		end -- IF SOURCE IS PLAYER
-	end -- END FUNCTION
-	RSA.ResMon = RSA.ResMon or CreateFrame("Frame", "RSA:RM")
-	RSA.ResMon:RegisterEvent("UNIT_SPELLCAST_SENT")
-	RSA.ResMon:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	RSA.ResMon:SetScript("OnEvent", Paladin_Redemption)
 	
 	RSA.TalentMon = RSA.TalentMon or CreateFrame("Frame", "RSA:TalentMonitor")
 	RSA.TalentMon:RegisterEvent("PLAYER_TALENT_UPDATE")
-	RSA.TalentMon:RegisterEvent("PLAYER_ENTERED_WORLD")
+	RSA.TalentMon:RegisterEvent("PLAYER_ENTERING_WORLD")
 	RSA.TalentMon:SetScript("OnEvent", FinalStandCheck)
-end -- END ON ENABLED
+end
 
 function RSA_Paladin:OnDisable()
 	RSA.CombatLogMonitor:SetScript("OnEvent", nil)
-	RSA.ResMon:SetScript("OnEvent", nil)
-	RSA.
-	TalentMon:SetScript("OnEvent", nil)
+	RSA.TalentMon:SetScript("OnEvent", nil)
+	if LRI then LRI.UnregisterAllCallbacks(RSA) end
 end
-RSA.FinalStandCheck = FinalStandCheck -- Set the function globally so RSA_Options can force an update when the setting is changed.

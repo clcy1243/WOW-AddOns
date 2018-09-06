@@ -11,7 +11,7 @@
 -- Xenyr of Aszune
 
 -- Currently maintained by
--- Cybeloras of Aerie Peak/Detheroc/Mal'Ganis
+-- Cybeloras of Aerie Peak
 -- --------------------
 
 local TMW = TMW
@@ -31,6 +31,9 @@ local huge = math.huge
 local isNumber = TMW.isNumber
 local strlowerCache = TMW.strlowerCache
 local GetSpellTexture = TMW.GetSpellTexture
+
+local GetSpellInfo 
+    = GetSpellInfo
 
 local classSpellNameCache
 
@@ -173,10 +176,9 @@ local resetsOnCast = {
 	[11129] = { -- Combustion
 		[108853] = 1, -- Inferno Blast
 	},
-	[11958] = { -- coldsnap
+	[235219] = { -- coldsnap
 		[45438] = 1, -- iceblock
-		[31661] = 1, -- dragon's breath
-		[12043] = 1, -- presence of mind
+		[11426] = 1, -- ice barrier
 		[120] = 1, -- cone of cold
 		[122] = 1, -- frost nova
 	},
@@ -227,7 +229,9 @@ local spellBlacklist = {
 }
 
 
-function Type:COMBAT_LOG_EVENT_UNFILTERED(e, _, cleuEvent, _, sourceGUID, _, _, _, destGUID, _, destFlags, _, spellID, spellName)
+function Type:COMBAT_LOG_EVENT_UNFILTERED(e)
+	local _, cleuEvent, _, sourceGUID, _, _, _, destGUID, _, destFlags, _, spellID, spellName = CombatLogGetCurrentEventInfo()
+	
 	if cleuEvent == "SPELL_CAST_SUCCESS"
 	or cleuEvent == "SPELL_AURA_APPLIED"
 	or cleuEvent == "SPELL_AURA_REFRESH"
@@ -318,7 +322,7 @@ function Type:COMBAT_LOG_EVENT_UNFILTERED(e, _, cleuEvent, _, sourceGUID, _, _, 
 	end
 end
 
-function Type:UNIT_SPELLCAST_SUCCEEDED(event, unit, spellName, _, _, spellID)
+function Type:UNIT_SPELLCAST_SUCCEEDED(event, unit, _, spellID)
 	local sourceGUID = UnitGUID(unit)
 	if sourceGUID then
 		-- For some reason, this is firing for unit "npc," (yes, there is a comma there).
@@ -329,6 +333,7 @@ function Type:UNIT_SPELLCAST_SUCCEEDED(event, unit, spellName, _, _, spellID)
 		-- so remove all errors and just ignore things without GUIDs.
 		
 		local c = Cooldowns[sourceGUID]
+		local spellName = GetSpellInfo(spellID)
 		spellName = strlowerCache[spellName]
 		
 		c[spellName] = spellID

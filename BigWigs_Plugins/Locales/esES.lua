@@ -1,6 +1,11 @@
 local L = BigWigsAPI:NewLocale("BigWigs: Plugins", "esES") or BigWigsAPI:NewLocale("BigWigs: Plugins", "esMX")
 if not L then return end
 
+L.comma = ", "
+L.width = "Ancho"
+L.height = "Alto"
+L.sizeDesc = "Normalmente ajusta el tamaño deslizando por la barra. Si necesitas un tamaño exacto puedes usar este deslizador o teclea el valor dentro de la caja, no tiene máximo."
+
 L.abilityName = "Nombre de habilidad"
 L.abilityNameDesc = "Muestra/oculta el nombre de la habilidad encima de la ventana"
 L.Alarm = "Alarma"
@@ -9,12 +14,10 @@ L.align = "Alineación"
 L.alignText = "Alinear texto"
 L.alignTime = "Alinear tiempo"
 L.altPowerTitle = "PoderAlternativo"
-L.Attention = "Atención"
 L.background = "Fondo"
 L.backgroundDesc = "Muestra/oculta el fondo"
 L.bars = "Barras"
 L.bestTimeBar = "Mejor tiempo"
-L.Beware = "Cuidado (Algalon)"
 L.bigWigsBarStyleName_Default = "Por defecto"
 L.blockEmotes = "Bloquear emotes del centro de la pantalla"
 L.blockEmotesDesc = [=[Algunos jefes muestran emotes para ciertas habilidades, estos mensajes son demasiado largos y descriptivos. Intentamos acortarlos, y ajustarlos para que no interfieran con el juego, y que no te digan específicamente que tienes que hacer.
@@ -73,7 +76,6 @@ L.customBarStarted = "Barra personal '%s' lanzada por el jugador %s %s."
 L.customRange = "Indicador de rango personalizado"
 L.customSoundDesc = "Reproduce el sonido seleccionado en lugar de uno suministrado por el módulo"
 L.defeated = "%s ha sido derrotado"
-L.Destruction = "Destrucción (Kil'jaeden)"
 L.disable = "Desactivar"
 L.disabled = "Desactivado"
 L.disabledDisplayDesc = "Desactivar la ventana de proximidad para todos los módulos que la utilizan."
@@ -84,7 +86,6 @@ L.emphasize = "Enfatizar"
 L.emphasizeAt = "Enfatizar en... (segundos)"
 L.emphasized = "Enfatizado"
 L.emphasizedBars = "Barras enfatizadas"
-L.emphasizedCountdown = "Cuenta atrás enfatizada"
 L.emphasizedCountdownSinkDescription = "Redirecciona la salida de este addon al sistema de cuenta atrás enfatizada de BigWigs. Este método de visualización soporta texto y colores, y puede mostrar solo un mensaje cada vez."
 L.emphasizedMessages = "Mensajes enfatizados"
 L.emphasizedSinkDescription = "Guía fuera de este addon siguiendo los mensajes enfatizados mostrados de BigWigs. Estos soportan texto y colores, y solo pueden mostrarse uno a la vez."
@@ -95,7 +96,6 @@ L.fadeTime = "Tiempo de desaparición"
 L.fadeTimeDesc = "Cuando tiempo tardará en desaparecer un mensaje, en segundos"
 L.fill = "Llenar"
 L.fillDesc = "Llena las barras o las drena."
-L.FlagTaken = "Bandera tomada (PvP)"
 L.flash = "Flash"
 L.font = "Fuente"
 L.fontColor = "Color de la fuente"
@@ -106,7 +106,6 @@ L.growingUpwardsDesc = "Alterna el crecimiento hacia arriba o abajo desde el pun
 L.icon = "Icono"
 L.iconDesc = "Muestra u oculta los iconos de las barras."
 L.icons = "Iconos"
-L.Important = "Importante"
 L.Info = "Info"
 L.interceptMouseDesc = "Activa las barras para permitir clics de ratón"
 L.left = "Izquierda"
@@ -124,19 +123,16 @@ L.monochromeDesc = "Cambia a monocromo el indicador, quitando cualquier suavizad
 L.move = "Mover"
 L.moveDesc = "Mueve las barras enfatizadas al anclaje de Enfatizar. Si esta opción está desactivada, las barras enfatizadas simplemente cambiarán el tamaño y el color."
 L.movieBlocked = "Ya has visto esta cinemática antes, omitiéndola."
-L.Neutral = "Neutral"
 L.newBestTime = "¡Nueva muerte más rápida!"
 L.none = "Ninguno"
 L.normal = "Normal"
 L.normalMessages = "Mensajes normales"
 L.outline = "Contorno"
 L.output = "Salida"
-L.Personal = "Personal"
 L.positionDesc = "Introduce o mueve el deslizador si necesitas posicionar de manera precisa desde el anclaje."
 L.positionExact = "Posicionamiento preciso"
 L.positionX = "Posición X"
 L.positionY = "Posición Y"
-L.Positive = "Positivo"
 L.primary = "Primario"
 L.primaryDesc = "El primer objetivo de la raid el cual deberia usar este icono"
 L.printBestTimeOption = "Notificar muerte más rápida"
@@ -148,9 +144,12 @@ L.proximity_name = "Proximidad"
 L.proximityTitle = "%d m / %d |4jugador:jugadores;"
 L.pull = "Pull"
 L.pullIn = "Pull en %d seg"
-L.pulling = "¡Puleando!"
+L.engageSoundTitle = "Reproduce un sonido cuando un encuentro ha comenzado"
+L.pullStartedSoundTitle = "Reproduce un sonido cuando el contador de pull ha empezado"
+L.pullFinishedSoundTitle = "Reproduce un sonido cuando el contador de pull ha finalizado"
 L.pullStarted = "Cuenta atrás para el Pull lanzada por el jugador %s %s."
 L.pullStopped = "Pull cancelado por %s."
+L.pullStoppedCombat = "Contador de Pull cancelado porque has entrado en combate."
 L.raidIconsDesc = [=[Algunos encuentros usan los iconos de raid para marcar jugadores de interés especial para tu grupo. Por ejemplo los efectos tipo 'bomba' y control mental. Si la cambias a desactivado, no marcarás a nadie.
 
 |cffff4411¡Solo aplica las marcas si eres ayudante o lider!|r]=]
@@ -177,8 +176,6 @@ L.respawn = "Reaparece"
 L.restart = "Reiniciar"
 L.restartDesc = "Reinicia las barras enfatizadas para que empiecen desde el principio y el recuento desde 10."
 L.right = "Derecha"
-L.RunAway = "Corre pequeña (El Lobo Feroz)"
-L.scale = "Escala"
 L.secondary = "Secundario"
 L.secondaryDesc = "El secundario objetivo de la raid el cual debería usar este icono"
 L.sendBreak = "Enviando un descanso a los jugadores con BigWigs y DBM."
@@ -224,7 +221,6 @@ L.tooltip = "Tooltip"
 L.tooltipDesc = "Muestra/oculta la descripción del hechizo si la ventana de proximidad esta ligada a una habilidad del jefe."
 L.uppercase = "MAYUSCULAS"
 L.uppercaseDesc = "Mayúsculas en todos los mensajes relacionados con una opción super enfatizada."
-L.Urgent = "Urgente"
 L.useColors = "Usar colores"
 L.useColorsDesc = "Mensajes de color blanco ignorando los colores."
 L.useIcons = "Usar iconos"
@@ -238,21 +234,75 @@ L.victoryMessageBlizzardDesc = "El mensaje de Blizzard es una animación de gran
 L.victoryMessages = "Mostrar mensajes de jefe derrotado"
 L.victorySound = "Reproduce un sonido de victoria"
 L.Warning = "Advertencia"
+L.wipe = "Wipe"
+L.wipeSoundTitle = "Reproduce un sonido cuando hay wipe"
 L.wrongBreakFormat = "Debe ser entre 1 y 60 minutos. Por ejemplo: /break 5"
 L.wrongCustomBarFormat = "Formato incorrecto. Un ejemplo seria: /raidbar 20 text"
 L.wrongPullFormat = "Debe ser entre 1 y 60. Un ejemplo sería: /pull 5"
 L.wrongTime = "Tiempo especificado inválido. <time> puede ser bien un número en segundos, un par M:S, o Min. Por ejemplo 5, 1:20 o 2m."
 
 -----------------------------------------------------------------------
+-- AutoReply.lua
+--
+
+L.autoReply = "Auto Respuesta"
+L.autoReplyDesc = "Automáticamente responde a los que te susurran cuando estás ocupado durante un encuentro."
+L.responseType = "Tipo de respuesta"
+L.autoReplyFinalReply = "También susurra cuando acabas el combate"
+L.guildAndFriends = "Hermandad y Amimgos"
+L.everyoneElse = "Todos los demás"
+
+L.autoReplyBasic = "Estoy ocupado combatiendo contra un jefe."
+L.autoReplyNormal = "Estoy ocupado luchando contra '%s'."
+L.autoReplyAdvanced = "Estoy ocupado luchando contra '%s' (%s) y %d/%d personas están vivas."
+L.autoReplyExtreme = "Estoy ocupado luchando contra '%s' (%s) y %d/%d personas están vivas: %s"
+
+L.autoReplyLeftCombatBasic = "Ya no estoy en combate con ningún jefe."
+L.autoReplyLeftCombatNormalWin = "Gané contra '%s'."
+L.autoReplyLeftCombatNormalWipe = "Perdí contra '%s'."
+L.autoReplyLeftCombatAdvancedWin = "Gané contra '%s' con %d/%d personas vivas."
+L.autoReplyLeftCombatAdvancedWipe = "Perdí contra '%s' en: %s"
+
+-----------------------------------------------------------------------
+-- Bars.lua
+--
+
+L.spacing = "Espaciado"
+L.spacingDesc = "Cambia el espacio entre cada barra."
+L.emphasizeMultiplier = "Multiplicador de tamaño"
+L.emphasizeMultiplierDesc = "Si desactivas las barras moviéndose al anclaje enfatizado, esta opción decidirá que tamaño tendrán las barras enfatizadas multiplicando el tamaño de las barras normales."
+L.iconPosition = "Posición del icono"
+L.iconPositionDesc = "Elige dónde en la barra se posicionará el icono."
+L.visibleBarLimit = "Límite de barras visibles"
+L.visibleBarLimitDesc = "Ajusta la máxima cantidad de barras que serán visibles al mismo tiempo."
+
+-----------------------------------------------------------------------
+-- Colors.lua
+--
+
+L.red = "Rojo"
+L.redDesc = "Avisos Generales para encuentros."
+L.blue = "Azul"
+L.blueDesc = "Avisos para cosas que te afecta a ti directamente como un debuff siendo aplicado a ti."
+L.orange = "Naranja"
+L.yellow = "Amarillo"
+L.green = "Verde"
+L.greenDesc = "Avisos para cosas buenas que ocurren, como un debuff siendo eliminado de ti."
+L.cyan = "Cian"
+L.cyanDesc = "Avisos para cambios de estados durante un encuentro como el avance a la siguiente fase."
+L.purple = "Púrpura"
+L.purpleDesc = "Avisos para habilidades específicas para tanques como acumulaciones de un debuff en un tanque."
+
+-----------------------------------------------------------------------
 -- InfoBox.lua
 --
 
---L.infoBox = "InfoBox"
+L.infoBox = "InfoBox"
 
 -----------------------------------------------------------------------
 -- Statistics.lua
 --
 
---L.printHealthOption = "Boss Health"
---L.healthPrint = "Health: %s."
---L.healthFormat = "%s (%.1f%%)"
+L.printHealthOption = "Salud del jefe"
+L.healthPrint = "Salud: %s."
+L.healthFormat = "%s (%.1f%%)"

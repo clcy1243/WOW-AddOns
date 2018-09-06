@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1396, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 24 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(90378)
 mod:SetEncounterID(1786)
 mod:SetZone()
@@ -77,7 +77,6 @@ local AddsSeen = {}
 local HowlByGUID = {}--Not syncable, but keeps separate count for each add cleanly
 
 function mod:OnCombatStart(delay)
-	felCorruption = DBM:GetSpellInfo(182159)
 	table.wipe(HowlByGUID)
 	self.vb.berserkerCount = 0
 	self.vb.deathThrowsCount = 0

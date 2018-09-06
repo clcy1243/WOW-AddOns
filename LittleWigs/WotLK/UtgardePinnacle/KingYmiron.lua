@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("King Ymiron", 524, 644)
+local mod, CL = BigWigs:NewBoss("King Ymiron", 575, 644)
 if not mod then return end
 mod:RegisterEnableMob(26861)
 
@@ -19,10 +19,10 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:Log("SPELL_CAST_START", "BaneCast", 48294, 59301)
+	self:Log("SPELL_CAST_START", "BaneCast", 48294, 59301) -- normal, heroic
 	self:Log("SPELL_AURA_APPLIED", "BaneApplied", 48294, 59301)
 	self:Log("SPELL_AURA_REMOVED", "BaneRemoved", 48294, 59301)
-	self:Log("SPELL_AURA_APPLIED", "FetidRot", 48291, 59300)
+	self:Log("SPELL_AURA_APPLIED", "FetidRot", 48291, 59300) -- normal, heroic
 	self:Log("SPELL_AURA_REMOVED", "FetidRotRemoved", 48291, 59300)
 
 	self:Death("Win", 26861)
@@ -33,7 +33,7 @@ end
 --
 
 function mod:BaneCast(args)
-	self:Message(59301, "Urgent", nil, CL.casting:format(args.spellName))
+	self:Message(59301, "orange", nil, CL.casting:format(args.spellName))
 end
 
 function mod:BaneApplied(args)
@@ -44,13 +44,13 @@ end
 
 function mod:BaneRemoved(args)
 	if self:MobId(args.destGUID) == 26861 then -- Boss only
-		self:Message(59301, "Positive", nil, CL.over:format(args.spellName))
+		self:Message(59301, "green", nil, CL.over:format(args.spellName))
 		self:StopBar(args.spellName)
 	end
 end
 
 function mod:FetidRot(args)
-	self:TargetMessage(59300, args.destName, "Urgent")
+	self:TargetMessage(59300, args.destName, "orange")
 	self:TargetBar(59300, 9, args.destName)
 end
 

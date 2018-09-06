@@ -3,7 +3,7 @@
 -- Module declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Amanitar", 522, 583)
+local mod, CL = BigWigs:NewBoss("Amanitar", 619, 583)
 if not mod then return end
 mod:RegisterEnableMob(30258)
 
@@ -28,6 +28,6 @@ end
 --
 
 function mod:Mini(args)
-	self:Message(args.spellId, "Attention", "Info", CL.casting:format(args.spellName))
+	self:Message(args.spellId, "yellow", "Info", CL.casting:format(args.spellName))
 end
 

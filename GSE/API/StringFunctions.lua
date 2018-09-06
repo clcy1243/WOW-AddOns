@@ -200,3 +200,32 @@ end
 function GSE.TrimWhiteSpace(str)
   return (string.gsub(str, "^%s*(.-)%s*$", "%1"))
 end
+
+function GSE.Dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. GSE.Dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
+function GSE.FindGlobalObject(name)
+    local a = _G
+    for key in string.gmatch(name, "([^%.]+)(%.?)") do
+        if a[key] then
+            a = a[key]
+        else
+            return nil
+        end
+    end
+    return a
+end
+
+function GSE.ObjectExists(name)
+    return type(GSE.FindGlobalObject(name)) ~= 'nil'
+end

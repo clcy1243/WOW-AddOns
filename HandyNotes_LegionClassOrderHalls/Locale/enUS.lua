@@ -313,8 +313,4 @@ L["Yaris Darkclaw <Recruiter>"] = "Yaris Darkclaw <Recruiter>"
 L["Yushi <Seal of Broken Fate Shipment>"] = "Yushi <Seal of Broken Fate Shipment>"
 L["Zen'kiki"] = "Zen'kiki"
 
--- ToC
-L["Description"] = "Shows the NPC locations and major POIs in Class Order Halls"
-L["Title"] = "HandyNotes - Legion Class Order Halls"
-
 end

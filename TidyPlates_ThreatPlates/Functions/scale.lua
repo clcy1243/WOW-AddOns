@@ -1,5 +1,5 @@
-local ADDON_NAME, NAMESPACE = ...
-local ThreatPlates = NAMESPACE.ThreatPlates
+local ADDON_NAME, Addon = ...
+local ThreatPlates = Addon.ThreatPlates
 
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
@@ -12,10 +12,6 @@ local UnitExists = UnitExists
 
 -- ThreatPlates APIs
 local TidyPlatesThreat = TidyPlatesThreat
-local UnitIsOffTanked = ThreatPlates.UnitIsOffTanked
-local GetUniqueNameplateSetting = ThreatPlates.GetUniqueNameplateSetting
-local SetStyle = TidyPlatesThreat.SetStyle
-local GetThreatStyle = ThreatPlates.GetThreatStyle
 
 local function ScaleSituational(unit)
 	local db = TidyPlatesThreat.db.profile.nameplate
@@ -23,7 +19,7 @@ local function ScaleSituational(unit)
 	-- Do checks for situational scale settings:
 	if unit.isMarked and db.toggle.MarkedS then
 		return db.scale.Marked
-	elseif unit.isMouseover and db.toggle.MouseoverUnitScale then
+	elseif unit.isMouseover and not unit.isTarget and db.toggle.MouseoverUnitScale then
 		return db.scale.MouseoverUnit
 	elseif unit.isCasting then
 		local unit_friendly = (unit.reaction == "FRIENDLY")
@@ -38,18 +34,20 @@ local function ScaleSituational(unit)
 end
 
 local function ScaleGeneral(unit)
-	-- Do checks for situational scale settings:
-	local scale = ScaleSituational(unit)
-	if scale then
-		return scale
+	-- Target always has priority
+	if not unit.isTarget then
+		-- Do checks for situational scale settings:
+		local scale = ScaleSituational(unit)
+		if scale then
+			return scale
+		end
 	end
 
 	-- Do checks for target settings:
 	local db = TidyPlatesThreat.db.profile.nameplate
-	local target_exists = UnitExists("target")
 
 	local target_scale
-	if target_exists then
+	if UnitExists("target") then
 		if unit.isTarget and db.toggle.TargetS then
 			target_scale = db.scale.Target
 		elseif not unit.isTarget and db.toggle.NonTargetS then
@@ -70,7 +68,6 @@ local function ScaleGeneral(unit)
 		return (db.scale[unit.TP_DetailedUnitType] or 1) + target_scale
 	end
 
-
   return db.scale[unit.TP_DetailedUnitType] or 1 -- This should also return for totems.
 end
 
@@ -89,7 +86,7 @@ local function ScaleThreat(unit, style)
 	end
 
 	local threatSituation = unit.threatSituation
-	if style == "tank" and db.toggle.OffTank and UnitIsOffTanked(unit) then
+	if style == "tank" and db.toggle.OffTank and Addon:UnitIsOffTanked(unit) then
 		threatSituation = "OFFTANK"
 	end
 
@@ -101,7 +98,7 @@ local function ScaleThreat(unit, style)
 end
 
 local function ScaleNormal(unit, non_combat_scale)
-	local style = GetThreatStyle(unit)
+	local style = Addon:GetThreatStyle(unit)
 	if style == "normal" then
 		return non_combat_scale or ScaleGeneral(unit)
 	else -- dps, tank
@@ -110,7 +107,7 @@ local function ScaleNormal(unit, non_combat_scale)
 end
 
 local function ScaleUnique(unit)
-	local unique_setting = GetUniqueNameplateSetting(unit)
+	local unique_setting = unit.CustomPlateSettings
 
 	if unique_setting.overrideScale then
 		return  ScaleNormal(unit)
@@ -122,7 +119,7 @@ local function ScaleUnique(unit)
 end
 
 local function ScaleUniqueNameOnly(unit)
-	local unique_setting = GetUniqueNameplateSetting(unit)
+	local unique_setting = unit.CustomPlateSettings
 
 	if unique_setting.overrideScale then
 		local db = TidyPlatesThreat.db.profile.HeadlineView
@@ -159,21 +156,13 @@ local SCALE_FUNCTIONS = {
 	totem = ScaleGeneral,
 	unique = ScaleUnique,
 	empty = ScaleEmpty,
-	etotem = ScaleEmpty,
+	etotem = ScaleGeneral,
 	NameOnly = ScaleNameOnly,
 	["NameOnly-Unique"] = ScaleUniqueNameOnly,
 }
 
-local function SetScale(unit)
-	if not unit.unitid then return end -- unitid is used in UnitIsOffTanked
-
-	-- sometimes SetScale is called without calling OnUpdate/OnContextUpdate first, so TP_Style may not be initialized
-	-- true for SetAlpha, not sure for SetScale
-	local style = unit.TP_Style or SetStyle(unit)
-
-  local scale_func = SCALE_FUNCTIONS[style]
-
-  local scale = scale_func(unit, style)
+function Addon:SetScale(unit)
+  local scale = SCALE_FUNCTIONS[unit.style](unit, unit.style)
 
 	-- scale may be set to 0 in the options dialog
 	if scale < 0.3 then
@@ -182,5 +171,3 @@ local function SetScale(unit)
 
 	return scale
 end
-
-TidyPlatesThreat.SetScale = SetScale

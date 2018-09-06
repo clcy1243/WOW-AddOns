@@ -3,6 +3,7 @@ local icon = LibStub("LibDBIcon-1.0")
 local LibQTip = LibStub('LibQTip-1.0')
 local ToyPlusToyDB = {}
 ToyPlusToyDB.toyName, ToyPlusToyDB.toyIcon, ToyPlusToyDB.itemID = {}, {}, {}
+ToyPlusToyDB.lastTime = time()
 
 local ToyPlusLDB = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("ToyPlusLDB", {
 	type = "data source",
@@ -308,6 +309,8 @@ function ToyPlus:Broker(self)
 end
 
 function ToyPlus:ToysUpdated()
+	if ToyPlusToyDB.lastTime == time() then return end
+	ToyPlusToyDB.lastTime = time()
 	if InCombatLockdown() then return end
 	local toyFrame = _G["ToyPlusFrame"]
 	local toyPopout = _G["ToyPlus_Popout"]
@@ -399,10 +402,11 @@ function ToyPlus:ToggleRows()
 end
 
 function ToyPlus:RefreshToys() -- Add Toys to DB
+	local saveSearch = "" --Save filter then wipe it
+	if ToyBox then saveSearch = ToyBox.searchBox:GetText(); ToyBox.searchBox:SetText("") end
 	C_ToyBox.SetCollectedShown(true)
 	C_ToyBox.SetAllSourceTypeFilters(true)
 	C_ToyBox.SetFilterString("")
-	if ToyBox then ToyBox.searchBox:SetText("") end --Ensure proper filtering
 
 	local toyTotal = C_ToyBox.GetNumTotalDisplayedToys()
 	local toyTotalLearned = C_ToyBox.GetNumLearnedDisplayedToys()
@@ -411,12 +415,14 @@ function ToyPlus:RefreshToys() -- Add Toys to DB
 		wipe(ToyPlus.db.global.toyName); wipe(ToyPlus.db.global.itemID); wipe(ToyPlus.db.global.toyIcon)
 		for i = 1, toyTotal do
 			local itemNo = C_ToyBox.GetToyFromIndex(i)
-			local itemID, toyName, toyIcon, toyFave = C_ToyBox.GetToyInfo(itemNo)
-			if PlayerHasToy(itemID) then
-				ToyPlus.db.global.toyName[toyNum] = toyName
-				ToyPlus.db.global.itemID[toyNum] = itemID
-				ToyPlus.db.global.toyIcon[toyNum] = toyIcon
-				toyNum=toyNum+1
+			if itemNo ~= -1 then
+				local itemID, toyName, toyIcon, toyFave = C_ToyBox.GetToyInfo(itemNo)
+				if itemID and PlayerHasToy(itemID) then
+					ToyPlus.db.global.toyName[toyNum] = toyName
+					ToyPlus.db.global.itemID[toyNum] = itemID
+					ToyPlus.db.global.toyIcon[toyNum] = toyIcon
+					toyNum=toyNum+1
+				end
 			end
 		end
 	end
@@ -438,6 +444,7 @@ function ToyPlus:RefreshToys() -- Add Toys to DB
 			tinsert(ToyPlusToyDB.itemID, self.db.global.itemID[i])
 		end
 	end
+	if ToyBox then ToyBox.searchBox:SetText(saveSearch); C_ToyBox.SetFilterString(saveSearch) end
 end
 
 function ToyPlus:Launch()

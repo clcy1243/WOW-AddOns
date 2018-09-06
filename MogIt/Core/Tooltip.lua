@@ -1,23 +1,23 @@
-local MogIt,mog = ...;
+local MogIt, mog = ...;
 local L = mog.L;
 
 local IsDressableItem = IsDressableItem;
 local GetScreenWidth = GetScreenWidth;
 local GetScreenHeight = GetScreenHeight;
 
-local class = L.classBits[select(2,UnitClass("PLAYER"))];
+local class = L.classBits[select(2, UnitClass("PLAYER"))];
 
 
 --// Tooltip
-mog.tooltip = CreateFrame("Frame","MogItTooltip",UIParent,"TooltipBorderedFrameTemplate");
+mog.tooltip = CreateFrame("Frame", "MogItTooltip", UIParent, "TooltipBorderedFrameTemplate");
 mog.tooltip:Hide();
 mog.tooltip:SetClampedToScreen(true);
 mog.tooltip:SetFrameStrata("TOOLTIP");
 
-mog.tooltip:SetScript("OnShow",function(self)
+mog.tooltip:SetScript("OnShow", function(self)
 	if mog.db.profile.tooltipMouse and not InCombatLockdown() then
-		SetOverrideBinding(mog.tooltip,true,"MOUSEWHEELUP","MogIt_TooltipScrollUp");
-		SetOverrideBinding(mog.tooltip,true,"MOUSEWHEELDOWN","MogIt_TooltipScrollDown");
+		SetOverrideBinding(mog.tooltip, true, "MOUSEWHEELUP", "MogIt_TooltipScrollUp");
+		SetOverrideBinding(mog.tooltip, true, "MOUSEWHEELDOWN", "MogIt_TooltipScrollDown");
 	end
 end);
 
@@ -33,9 +33,10 @@ mog.tooltip:SetScript("OnEvent", function(self, event, arg1)
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		ClearOverrideBindings(mog.tooltip);
 	elseif event == "PLAYER_REGEN_ENABLED" then
+		if self:IsForbidden() then return end
 		if self:IsShown() and mog.db.profile.tooltipMouse then
-			SetOverrideBinding(mog.tooltip,true,"MOUSEWHEELUP","MogIt_TooltipScrollUp");
-			SetOverrideBinding(mog.tooltip,true,"MOUSEWHEELDOWN","MogIt_TooltipScrollDown");
+			SetOverrideBinding(mog.tooltip, true, "MOUSEWHEELUP", "MogIt_TooltipScrollUp");
+			SetOverrideBinding(mog.tooltip, true, "MOUSEWHEELDOWN", "MogIt_TooltipScrollDown");
 		end
 	end
 end);
@@ -46,9 +47,9 @@ mog.tooltip:RegisterEvent("PLAYER_REGEN_ENABLED");
 
 
 --// Model
-mog.tooltip.model = CreateFrame("DressUpModel",nil,mog.tooltip);
-mog.tooltip.model:SetPoint("TOPLEFT",mog.tooltip,"TOPLEFT",5,-5);
-mog.tooltip.model:SetPoint("BOTTOMRIGHT",mog.tooltip,"BOTTOMRIGHT",-5,5);
+mog.tooltip.model = CreateFrame("DressUpModel", nil, mog.tooltip);
+mog.tooltip.model:SetPoint("TOPLEFT", mog.tooltip, "TOPLEFT", 5, -5);
+mog.tooltip.model:SetPoint("BOTTOMRIGHT", mog.tooltip, "BOTTOMRIGHT", -5, 5);
 mog.tooltip.model:SetAnimation(0, 0);
 mog.tooltip.model:SetLight(true, false, 0, 0.8, -1, 1, 1, 1, 1, 0.3, 1, 1, 1);
 mog.tooltip.model.ResetModel = function(self)
@@ -60,10 +61,20 @@ mog.tooltip.model.ResetModel = function(self)
 		self:Dress();
 	end
 	if not db.tooltipDress then
-		self:Undress();
+		-- the worst of hacks to prevent certain armor model pieces from getting stuck on the character
+		for i, slotName in ipairs(mog.slots) do
+			local slot = GetInventorySlotInfo(slotName);
+			local item = GetInventoryItemLink("player", slot);
+			if item then
+				self:TryOn(item);
+				self:UndressSlot(slot);
+			end
+		end
+		self:UndressSlot(GetInventorySlotInfo("MainHandSlot"));
+		self:UndressSlot(GetInventorySlotInfo("SecondaryHandSlot"));
 	end
 end
-mog.tooltip.model:SetScript("OnShow",mog.tooltip.model.ResetModel);
+mog.tooltip.model:SetScript("OnShow", mog.tooltip.model.ResetModel);
 
 
 function mog.tooltip:ShowItem(itemLink)
@@ -171,6 +182,8 @@ function mog.tooltip:ShowItem(itemLink)
 end
 
 function mog.tooltip.HideItem(self)
+	mog.tooltip.owner = nil;
+	mog.tooltip.repos:Hide();
 	mog.tooltip.check:Show();
 end
 --//
@@ -179,7 +192,8 @@ end
 --// GameTooltip
 mog.tooltip.check = CreateFrame("Frame");
 mog.tooltip.check:Hide();
-mog.tooltip.check:SetScript("OnUpdate",function(self)
+mog.tooltip.check:SetScript("OnUpdate", function(self)
+	if (mog.tooltip.owner and mog.tooltip.owner:IsForbidden()) then return end
 	if (mog.tooltip.owner and not (mog.tooltip.owner:IsShown() and mog.tooltip.owner:GetItem())) or not mog.tooltip.owner then
 		mog.tooltip:Hide();
 		mog.tooltip.item = nil;
@@ -189,20 +203,20 @@ end);
 
 mog.tooltip.repos = CreateFrame("Frame");
 mog.tooltip.repos:Hide();
-mog.tooltip.repos:SetScript("OnUpdate",function(self)
+mog.tooltip.repos:SetScript("OnUpdate", function(self)
 	local x,y = mog.tooltip.owner:GetCenter();
 	if x and y then
 		mog.tooltip:ClearAllPoints();
-		local mogpoint,ownerpoint;
+		local mogpoint, ownerpoint;
 		if mog.db.profile.tooltipAnchor == "vertical" then
-			if y/GetScreenHeight() > 0.5 then
+			if y / GetScreenHeight() > 0.5 then
 				mogpoint = "TOP";
 				ownerpoint = "BOTTOM";
 			else
 				mogpoint = "BOTTOM";
 				ownerpoint = "TOP";
 			end
-			if x/GetScreenWidth() > 0.5 then
+			if x / GetScreenWidth() > 0.5 then
 				mogpoint = mogpoint.."LEFT";
 				ownerpoint = ownerpoint.."LEFT";
 			else
@@ -210,14 +224,14 @@ mog.tooltip.repos:SetScript("OnUpdate",function(self)
 				ownerpoint = ownerpoint.."RIGHT";
 			end
 		else
-			if x/GetScreenWidth() > 0.5 then
+			if x / GetScreenWidth() > 0.5 then
 				mogpoint = "RIGHT";
 				ownerpoint = "LEFT";
 			else
 				mogpoint = "LEFT";
 				ownerpoint = "RIGHT";
 			end
-			if y/GetScreenHeight() > 0.5 then
+			if y / GetScreenHeight() > 0.5 then
 				mogpoint = "TOP"..mogpoint;
 				ownerpoint = "TOP"..ownerpoint;
 			else
@@ -225,7 +239,7 @@ mog.tooltip.repos:SetScript("OnUpdate",function(self)
 				ownerpoint = "BOTTOM"..ownerpoint;
 			end
 		end
-		mog.tooltip:SetPoint(mogpoint,mog.tooltip.owner,ownerpoint);
+		mog.tooltip:SetPoint(mogpoint, mog.tooltip.owner, ownerpoint);
 		self:Hide();
 	end
 end);
@@ -234,9 +248,9 @@ GameTooltip:HookScript("OnTooltipSetItem", function(self)
 	local _, itemLink = self:GetItem();
 	mog.tooltip:ShowItem(itemLink);
 end);
-GameTooltip:HookScript("OnHide",mog.tooltip.HideItem);
+GameTooltip:HookScript("OnHide", mog.tooltip.HideItem);
 
--- temporary hacks for tooltips where GameTooltip:GetItem() returns a broken link
+-- hacks for tooltips where GameTooltip:GetItem() returns a broken link
 hooksecurefunc(GameTooltip, "SetQuestItem", function(self, itemType, index)
 	mog.tooltip:ShowItem(GetQuestItemLink(itemType, index));
 	GameTooltip:Show();

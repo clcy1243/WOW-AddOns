@@ -3,18 +3,11 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Archmage Sol", 1008, 1208)
+local mod, CL = BigWigs:NewBoss("Archmage Sol", 1279, 1208)
 if not mod then return end
 mod:RegisterEnableMob(82682)
-
---------------------------------------------------------------------------------
--- Localization
---
-
-local L = mod:GetLocale()
-if L then
-	
-end
+mod.engageId = 1751
+mod.respawnTime = 15
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -30,18 +23,14 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
-
 	self:Log("SPELL_CAST_START", "ParasiticGrowth", 168885)
 	self:Log("SPELL_AURA_APPLIED", "MagicSchools", 166475, 166476, 166477) -- Fire, Frost, Arcane
 	self:Log("SPELL_AURA_APPLIED", "FrozenRain", 166726)
 	self:Log("SPELL_CAST_SUCCESS", "Firebloom", 166492)
-
-	self:Death("Win", 82682)
 end
 
 function mod:OnEngage()
-	self:Message("stages", "Neutral", nil, 166475) -- Fire
+	self:Message("stages", "cyan", nil, 166475) -- Fire
 	self:CDBar(168885, 33) -- Parasitic Growth
 end
 
@@ -50,12 +39,12 @@ end
 --
 
 function mod:ParasiticGrowth(args)
-	self:Message(args.spellId, "Urgent", "Warning")
+	self:Message(args.spellId, "orange", "Warning")
 	self:Bar(args.spellId, 34)
 end
 
 function mod:MagicSchools(args)
-	self:Message("stages", "Neutral", nil, args.spellId)
+	self:Message("stages", "cyan", nil, args.spellId)
 end
 
 do
@@ -64,7 +53,7 @@ do
 		local t = GetTime()
 		if t-prev > 7 then
 			prev = t
-			self:Message(args.spellId, "Important", "Alert")
+			self:Message(args.spellId, "red", "Alert")
 			self:Flash(args.spellId)
 		end
 	end
@@ -72,7 +61,6 @@ end
 
 function mod:FrozenRain(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "Personal", "Alarm", CL.you:format(args.spellName))
+		self:Message(args.spellId, "blue", "Alarm", CL.you:format(args.spellName))
 	end
 end
-

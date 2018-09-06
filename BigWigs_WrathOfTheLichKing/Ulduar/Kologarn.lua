@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Kologarn", 529, 1642)
+local mod, CL = BigWigs:NewBoss("Kologarn", 603, 1642)
 if not mod then return end
 mod:RegisterEnableMob(32930)
 mod.engageId = 1137
@@ -62,20 +62,16 @@ end
 --
 
 function mod:CrunchArmor(args)
-	self:StackMessage(63355, args.destName, args.amount, "Urgent", "Info")
+	self:StackMessage(63355, args.destName, args.amount, "orange", "Info")
 end
 
 do
 	local grip = mod:NewTargetList()
-	local function gripWarn(self)
-		self:TargetMessage(64290, grip, "Attention", "Alert")
-		self:Bar(64290, 10)
-	end
-
 	function mod:StoneGrip(args)
 		grip[#grip + 1] = args.destName
 		if #grip == 1 then
-			self:ScheduleTimer(gripWarn, 0.2, self)
+			self:Bar(64290, 10)
+			self:ScheduleTimer("TargetMessage", 0.2, 64290, grip, "yellow", "Alert")
 		end
 	end
 end
@@ -91,25 +87,25 @@ end
 
 function mod:ArmsDie(args)
 	if args.mobId == 32933 then -- Left
-		self:Message("arm", "Attention", nil, L["left_dies"], L.arm_icon)
+		self:Message("arm", "yellow", nil, L["left_dies"], L.arm_icon)
 		self:Bar("arm", 45, L["left_wipe_bar"], L.arm_icon)
 		self:StopBar(63983) -- Arm Sweep
 	elseif args.mobId == 32934 then -- Right
-		self:Message("arm", "Attention", nil, L["right_dies"], L.arm_icon)
+		self:Message("arm", "yellow", nil, L["right_dies"], L.arm_icon)
 		self:Bar("arm", 45, L["right_wipe_bar"], L.arm_icon)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 63983 then -- Arm Sweep
-		self:Message(63983, "Attention")
+		self:Message(63983, "yellow")
 		self:Bar(63983, 21)
 	end
 end
 
 function mod:BigWigs_BossComm(_, msg, _, sender)
 	if msg == "EyeBeamWarn" then
-		self:TargetMessage("eyebeam", sender, "Positive", "Info", eyeBeam, 63976)
+		self:TargetMessage("eyebeam", sender, "green", "Info", eyeBeam, 63976)
 		self:TargetBar("eyebeam", 11, sender, eyeBeam, 63976)
 		self:CDBar("eyebeam", 20, eyeBeam, 63976)
 		self:PrimaryIcon("eyebeam", sender)

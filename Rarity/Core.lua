@@ -1,6 +1,15 @@
 Rarity = LibStub("AceAddon-3.0"):NewAddon("Rarity", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0", "LibSink-2.0", "AceBucket-3.0", "LibBars-1.0", "AceSerializer-3.0")
-Rarity.MINOR_VERSION = tonumber(("$Revision: 627 $"):match("%d+"))
+-- Rarity.MINOR_VERSION = tonumber(("$Revision: 650 $"):match("%d+"))  -- Disabled after switching entirely to Git (from SVN)
+local projectVersion, noReplacements = (GetAddOnMetadata("Rarity", "Version"):match("r%d+") or "r0"):gsub("r", "") -- e.g., r654	1 (the second value can be discarded)
+Rarity.MINOR_VERSION = tonumber(projectVersion)
 local FORCE_PROFILE_RESET_BEFORE_REVISION = 1 -- Set this to one higher than the Revision on the line above this
+
+-- Set DEBUG flag to never cause a profile reset while testing, even in the case of errors with the above version calculation. Can also be used for other things later, though I haven't thought of anything in particular just yet...
+local isDebugVersion = false
+--[===[@debug@
+isDebugVersion = true
+--@end-debug@]===]
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Rarity")
 local R = Rarity
 local qtip = LibStub("LibQTip-1.0")
@@ -18,7 +27,7 @@ local lbz = LibStub("LibBabble-Zone-3.0"):GetUnstrictLookupTable()
 local lbsz = LibStub("LibBabble-SubZone-3.0"):GetUnstrictLookupTable()
 local lbct = LibStub("LibBabble-CreatureType-3.0"):GetUnstrictLookupTable()
 local lbb = LibStub("LibBabble-Boss-3.0"):GetUnstrictLookupTable()
-local hbd = LibStub("HereBeDragons-1.0")
+local hbd = LibStub("HereBeDragons-2.0")
 local compress = LibStub("LibCompress")
 ---
 
@@ -64,28 +73,86 @@ local tradeSkillOpen = false
 local mailOpen = false
 
 local prevSpell, curSpell, foundTarget, gatherEvents, ga
-local miningSpell = (GetSpellInfo(2575))
-local herbSpell = (GetSpellInfo(2366))
-local fishSpell = (GetSpellInfo(131474))
-local gasSpell = (GetSpellInfo(30427))
-local openSpell = (GetSpellInfo(3365))
-local openNoTextSpell = (GetSpellInfo(22810))
-local pickSpell = (GetSpellInfo(1804))
-local archSpell = (GetSpellInfo(73979))
-local skinSpell = (GetSpellInfo(8613))
-local disenchantSpell = (GetSpellInfo(13262))
+
+-- Maps spells of interest to their respective spell IDs (useful since both info is used by Blizzard APIs and the addon itself) - Only some of these are actually used right now, but who knows what the future will bring?
+-- Note: Spell names are no longer needed, and dealing with them is actually more complicated after the 8.0.1 API changes. They're only used for readability's sake
 local spells = {
-	[miningSpell] = "Mining",
-	[herbSpell] = "Herb Gathering",
-	[fishSpell] = "Fishing",
-	[gasSpell] = "Extract Gas",
-	[openSpell] = "Treasure",
-	[openNoTextSpell] = "Treasure",
-	[pickSpell] = "Treasure",
-	[archSpell] = "Archaeology",
- [skinSpell] = "Skinning",
-	[disenchantSpell] = "Disenchant",
+
+	-- Tested (confirmed working in 8.0.1)
+	[921] = "Pick Pocket",
+	[3365] = "Opening",
+	[13262] = "Disenchant",
+	[22810] = "Opening - No Text",
+	[30427] = "Extract Gas",
+	[73979] = "Searching for Artifacts",
+	[131474] = "Fishing",
+	[158743] = "Fishing",
+	[144528] = "Opening", -- Timeless Chest (Timeless Isle: Kukuru's Grotto)
+	[195125] = "Skinning",
+	[195258] = "Mother's Skinning Knife", -- Legion Toy with the same effect as regular skinning, but with a 40y range
+	[231932] = "Opening", -- Wyrmtongue Cache (Broken Shore: Secret Treasure Lair)
+	[265843] = "Mining",
+	[265825] = "Herb Gathering",
+	
+	-- Not tested (but added just in case)
+	[7731] = "Fishing",
+	[7732] = "Fishing",
+	[7620] = "Fishing",
+	[18248] = "Fishing",
+	[33095] = "Fishing",
+	[51294] = "Fishing",
+	[88868] = "Fishing",
+	[110410] = "Fishing",
+	[2575] = "Mining",
+	[265853] = "Mining",
+	[2575] = "Mining",
+	[158754] = "Mining",
+	[2576] = "Mining",
+	[195122] = "Mining",
+	[3564] = "Mining",
+	[10248] = "Mining",
+	[29354] = "Mining",
+	[50310] = "Mining",
+	[74517] = "Mining",
+	[265837] = "Mining",
+	[102161] = "Mining",
+	[265845] = "Mining",
+	[265841] = "Mining",
+	[265839] = "Mining",
+	[265847] = "Mining",
+	[265849] = "Mining",
+	[265851] = "Mining",
+	[2366] = "Herb Gathering",
+	[265835] = "Herb Gathering",
+	[158745] = "Herb Gathering",
+	[195114] = "Herb Gathering",
+	[2368] = "Herb Gathering",
+	[3570] = "Herb Gathering",
+	[28695] = "Herb Gathering",
+	[11993] = "Herb Gathering",
+	[50300] = "Herb Gathering",
+	[110413] = "Herb Gathering",
+	[74519] = "Herb Gathering",
+	[265819] = "Herb Gathering",
+	[265821] = "Herb Gathering",
+	[265823] = "Herb Gathering",
+	[265827] = "Herb Gathering",
+	[265829] = "Herb Gathering",
+	[265831] = "Herb Gathering",
+	[265834] = "Herb Gathering",
+	[8613] = "Skinning",
+	[8617] = "Skinning",
+	[8618] = "Skinning",
+	[32678] = "Skinning",
+	[50305] = "Skinning",
+	[74522] = "Skinning",
+	[102216] = "Skinning",
+	[158756] = "Skinning",
+	
+	-- Not tested (and disabled until they are needed)
+	-- [1804] = "Pick Lock",
 }
+
 local tooltipLeftText1 = _G["GameTooltipTextLeft1"]
 local fishing = false
 local opening = false
@@ -143,6 +210,8 @@ R.coins = {
 	[1129] = true, -- Seal of Inevitable Fate
 	-- Legion
 	[1273] = true, -- Seal of Broken Fate
+	-- Battle for Azeroth
+	[1580] = true, -- Seal of Wartorn Fate
 }
 
 R.fishnodes = {
@@ -256,6 +325,17 @@ R.fishnodes = {
 	[L["Fever of Stormrays"]]		= true,
 	[L["Highmountain Salmon School"]]	= true,
 	[L["Mossgill Perch School"]]	= true,
+	-- Battle for Azeroth	
+	[L["Frenzied Fangtooth School"]] = true,
+	[L["Great Sea Catfish School"]] = true,
+	[L["Lane Snapper School"]] = true,
+	[L["Rasboralus School"]] = true,
+	[L["Redtail Loach School"]] = true,
+	[L["Sand Shifter School"]] = true,
+	[L["Slimy Mackerel School"]] = true,
+	[L["Tiragarde Perch School"]] = true,
+	[L["U'taka School"]] = true,
+	
 }
 
 R.miningnodes = {
@@ -331,7 +411,13 @@ R.opennodes = {
 	[L["Curious Wyrmtongue Cache"]] = true,
 }
 
-
+-- Embedded mapIDs: It's best to avoid hardcoding these in case of yet another re-mapping on Blizzard's end...
+local UIMAPIDS = {
+	FROSTFIRE_RIDGE = 525,
+	KROKUUN = 830,
+	MACAREE = 882,
+	ANTORAN_WASTES = 885,
+}
 
 --[[
       CONSTANTS ----------------------------------------------------------------------------------------------------------------
@@ -404,6 +490,8 @@ local format = _G.format
 local strsub = _G.strsub
 local strlen = _G.strlen
 local bit_band = _G.bit.band
+local min = min
+local tostring = tostring
 
 local UnitGUID = _G.UnitGUID
 local UnitName = _G.UnitName
@@ -426,14 +514,24 @@ local GetSelectedArtifactInfo = _G.GetSelectedArtifactInfo
 local GetStatistic = _G.GetStatistic
 local GetLootSourceInfo = _G.GetLootSourceInfo
 local pet_journal = _G.C_PetJournal
-local GetCurrentMapAreaID = _G.GetCurrentMapAreaID
+local GetBestMapForUnit = _G.C_Map.GetBestMapForUnit
+local GetMapInfo = _G.C_Map.GetMapInfo
 local mount_journal = _G.C_MountJournal
+local C_Timer = C_Timer
+local IsSpellKnown = IsSpellKnown
 
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
 local COMBATLOG_OBJECT_AFFILIATION_MINE = _G.COMBATLOG_OBJECT_AFFILIATION_MINE
 local COMBATLOG_OBJECT_AFFILIATION_PARTY = _G.COMBATLOG_OBJECT_AFFILIATION_PARTY
 local COMBATLOG_OBJECT_AFFILIATION_RAID = _G.COMBATLOG_OBJECT_AFFILIATION_RAID
 
+
+-- Helper function (to look up map names more easily)
+-- Returns the localized map name, or nil if the uiMapID is invalid
+local function GetMapNameByID(uiMapID)
+	local UiMapDetails = GetMapInfo(uiMapID)
+	return UiMapDetails and UiMapDetails.name or nil
+end
 
 
 --[[
@@ -527,7 +625,7 @@ do
 	 self:RegisterEvent("UNIT_SPELLCAST_FAILED", "SpellFailed") -- Fishing detection
 	 self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "SpellFailed") -- Fishing detection
   self:RegisterEvent("LOOT_CLOSED", "GatherCompleted") -- Fishing detection
-  self:RegisterEvent("ARTIFACT_HISTORY_READY", "ScanAllArch")
+  self:RegisterEvent("RESEARCH_ARTIFACT_HISTORY_READY", "ScanAllArch")
   self:RegisterEvent("PLAYER_LOGOUT", "OnEvent")
   self:RegisterEvent("AUCTION_HOUSE_CLOSED", "OnEvent")
   self:RegisterEvent("AUCTION_HOUSE_SHOW", "OnEvent")
@@ -541,6 +639,7 @@ do
   self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnCombatEnded")
   self:RegisterEvent("PET_BATTLE_OPENING_START", "OnPetBattleStart")
   self:RegisterEvent("PET_BATTLE_CLOSE", "OnPetBattleEnd")
+  self:RegisterEvent("ISLAND_COMPLETED", "OnIslandCompleted")
   self:RegisterBucketEvent("LFG_LIST_SEARCH_RESULT_UPDATED", 1, "GroupFinderResultsUpdated")
   self:RegisterBucketEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED", 1, "GroupFinderResultsUpdated")
   self:RegisterBucketEvent("UPDATE_INSTANCE_INFO", 1, "OnEvent")
@@ -564,7 +663,7 @@ do
   RequestArtifactCompletionHistory() -- Request archaeology info from the server
 		RequestRaidInfo() -- Request raid lock info from the server
 		RequestLFDPlayerLockInfo() -- Request LFD data from the server; this is used for holiday boss detection
-		OpenCalendar() -- Request calendar info from the server
+		C_Calendar.OpenCalendar() -- Request calendar info from the server
 
 		-- Prepare a master list of all the items Rarity may need info for
 		table.wipe(R.itemsMasterList)
@@ -671,14 +770,16 @@ do
 		-- Delayed calendar init a few times
 		self:ScheduleTimer(function()
 			if type(CalendarFrame) ~= "table" or not CalendarFrame:IsShown() then
-				local _, month, _, year = CalendarGetDate()
-				CalendarSetAbsMonth(month, year)
+				local CalendarTime = C_Calendar.GetDate()
+				local month, year = CalendarTime.month, CalendarTime.year
+				C_Calendar.SetAbsMonth(month, year)
 			end
 		end, 7)
 		self:ScheduleTimer(function()
 			if type(CalendarFrame) ~= "table" or not CalendarFrame:IsShown() then
-				local _, month, _, year = CalendarGetDate()
-				CalendarSetAbsMonth(month, year)
+				local CalendarTime = C_Calendar.GetDate()
+				local month, year = CalendarTime.month, CalendarTime.year
+				C_Calendar.SetAbsMonth(month, year)
 			end
 		end, 20)
 
@@ -824,7 +925,7 @@ end
 
 function R:CheckForceReset(report)
 	-- Require a profile reset after a hardcoded revision
-	if (self.db.profile.lastRevision or 0) < FORCE_PROFILE_RESET_BEFORE_REVISION then
+	if (self.db.profile.lastRevision or 0) < FORCE_PROFILE_RESET_BEFORE_REVISION and not isDebugVersion then
 		self.db:RegisterDefaults(self.defaults)
 		
 		-- Save as many settings as we can
@@ -1045,7 +1146,7 @@ function R:GetZone(v)
 	local inMyZone = false
 	local zoneColor = gray
 	local numZones = 0
-	local currentZone = GetCurrentMapAreaID()
+	local currentZone = GetBestMapForUnit("player")
 	if v.coords ~= nil and type(v.coords) == "table" then
 		local zoneList = {}
 		for _, zoneValue in pairs(v.coords) do
@@ -1323,7 +1424,7 @@ function R:UpdateInterestingThings()
 
 	-- Store an internal table listing every MapID
 	if self.db.profile.mapIds == nil then self.db.profile.mapIds = {} else table.wipe(self.db.profile.mapIds) end
-	for map_id = 1, 5000 do
+	for map_id = 1, 5000 do -- 5000 seems arbitrarily high; right now (8.0.1) there are barely 100 uiMapIDs... but it shouldn't matter if the misses are skipped
 		if GetMapNameByID(map_id) ~= nil then self.db.profile.mapIds[map_id] = GetMapNameByID(map_id) end
 	end
 
@@ -1399,18 +1500,47 @@ function R:UpdateInterestingThings()
 						end
 						table.insert(Rarity.collection_items, vv)
 					end
-					if vv.tooltipNpcs and type(vv.tooltipNpcs) == "table" then
-      for kkk, vvv in pairs(vv.tooltipNpcs) do
-       if npcs_to_items[vvv] == nil then npcs_to_items[vvv] = {} end
-       table.insert(npcs_to_items[vvv], vv)
-      end
-					end
-    end
-   end
-  end
- end
-end
+				
+				if vv.tooltipNpcs and type(vv.tooltipNpcs) == "table" then -- Item has tooltipNpcs -> Check if they should be displayed
+				
+						local showTooltipNpcs = true -- If no filters exist, always show the tooltip for relevant NPCs
+						
+						if vv.showTooltipCondition and type(vv.showTooltipCondition) == "table" -- This item has filter conditions to help decide when the tooltipNpcs should be added
+						and vv.showTooltipCondition.filter and type(vv.showTooltipCondition.filter) == "function" and vv.showTooltipCondition.value -- Filter has the correct format and can be applied
+						then -- Check filter conditions to see if tooltipNpcs should be added
+							
+							showTooltipNpcs = false -- Hide the additional tooltip info by default (filters will overwrite this if they can find a match, below)
+							
+							-- Each filter requires separate handling here
+							if vv.showTooltipCondition.filter == IsSpellKnown then -- Filter if a (relevant) spell with the given name is not known	
 
+								for spellID, spellName in pairs(spells) do -- Try to find any match for the given spell (a single one will do)
+
+									if spellName == vv.showTooltipCondition.value then -- The value is a relevant spell -> Check if filter condition is true
+									
+										--	Player hasn't learned the required spell -> Stop trying to find other matches and turn off the filter
+										showTooltipNpcs = IsSpellKnown(spellID)
+										if showTooltipNpcs then break end -- No point in checking the other spells; A single match is enough to decide to not filter them										
+									end
+								end
+							end
+						
+						-- There aren't any other Filter types at the moment... but there could be!
+						end 
+						
+						-- Add entries to the list of relevant NPCs for this item
+						if showTooltipNpcs then
+							for kkk, vvv in pairs(vv.tooltipNpcs) do
+								if npcs_to_items[vvv] == nil then npcs_to_items[vvv] = {} end
+								table.insert(npcs_to_items[vvv], vv)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
 
 function R:GetNPCIDFromGUID(guid)
 	if guid then
@@ -1483,6 +1613,22 @@ end
       OBTAIN DETECTION ---------------------------------------------------------------------------------------------------------
       -- Some easy, some fairly arcane methods to detect when we've obtained something we're looking for
   ]]
+  
+local isSessionLocked = false
+
+local function UnlockTrackingSession()
+	Rarity:Debug("Unlocking session to continue scanning for new LOOT_READY events" )
+	isSessionLocked = false
+end
+
+local function LockTrackingSession(delay)
+	delay = delay or 1 -- 1 second seems to be a suitable default value (as both events fire within 0.5-0.8s of each other)
+	
+	-- Lock the current session (and set the timer to unlock it again)
+	Rarity:Debug("Locking session for " .. tostring(delay) .. " second(s) to prevent duplicate attempts from being counted")
+	isSessionLocked = true
+	C_Timer.After(delay, UnlockTrackingSession) -- Unlock via timer
+end
 
 function R:OnEvent(event, ...)
 
@@ -1490,11 +1636,19 @@ function R:OnEvent(event, ...)
  -- You opened a loot window on a corpse or fishing node
  -------------------------------------------------------------------------------------
 	if event == "LOOT_READY" then
+	
 		self:Debug("LOOT_READY with target: "..(UnitGUID("target") or "NO TARGET"))
-  local zone = GetRealZoneText()
-  local subzone = GetSubZoneText()
-  local zone_t = LibStub("LibBabble-Zone-3.0"):GetReverseLookupTable()[zone]
-  local subzone_t = LibStub("LibBabble-SubZone-3.0"):GetReverseLookupTable()[subzone]
+		
+		-- In 8.0.1, two LOOT_READY events fire when the loot window opens. We'll just ignore subsequent events for a short time to prevent double counting
+		if isSessionLocked then -- One attempt is already being counted and we don't want another one for this loot event -> Ignore this call
+			Rarity:Debug("Session is locked; ignoring this LOOT_READY event")
+			return
+		else LockTrackingSession(1) end
+
+		local zone = GetRealZoneText()
+		local subzone = GetSubZoneText()
+		local zone_t = LibStub("LibBabble-Zone-3.0"):GetReverseLookupTable()[zone]
+		local subzone_t = LibStub("LibBabble-SubZone-3.0"):GetReverseLookupTable()[subzone]
 
 		if fishing and opening then
 			self:Debug("Opened something")
@@ -1506,6 +1660,7 @@ function R:OnEvent(event, ...)
 
   -- Handle opening Crane Nest
   if fishing and opening and lastNode and (lastNode == L["Crane Nest"]) then
+	Rarity:Debug("Detected Opening on " .. L["Crane Nest"] .. " (method = SPECIAL)")  
    local v = self.db.profile.groups.pets["Azure Crane Chick"]
    if v and type(v) == "table" and v.enabled ~= false then
     if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
@@ -1515,6 +1670,7 @@ function R:OnEvent(event, ...)
 
   -- Handle opening Timeless Chest
   if fishing and opening and lastNode and (lastNode == L["Timeless Chest"]) then
+ 	Rarity:Debug("Detected Opening on " .. L["Timeless Chest"] .. " (method = SPECIAL)")
    local v = self.db.profile.groups.pets["Bonkers"]
    if v and type(v) == "table" and v.enabled ~= false then
     if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
@@ -1523,7 +1679,8 @@ function R:OnEvent(event, ...)
   end
 
   -- Handle opening Snow Mound
-  if fishing and opening and lastNode and (lastNode == L["Snow Mound"]) and GetCurrentMapAreaID() == 941 then -- Make sure we're in Frostfire Ridge (there are Snow Mounds in other zones, particularly Ulduar in the Hodir room)
+  if fishing and opening and lastNode and (lastNode == L["Snow Mound"]) and GetBestMapForUnit("player") == UIMAPIDS.FROSTFIRE_RIDGE then -- Make sure we're in Frostfire Ridge (there are Snow Mounds in other zones, particularly Ulduar in the Hodir room)
+  	Rarity:Debug("Detected Opening on " .. L["Snow Mound"] .. " (method = SPECIAL)")
    local v = self.db.profile.groups.pets["Grumpling"]
    if v and type(v) == "table" and v.enabled ~= false then
     if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
@@ -1534,8 +1691,9 @@ function R:OnEvent(event, ...)
 		-- Handle opening Curious Wyrmtongue Cache
 		if fishing and opening and lastNode and (lastNode == L["Curious Wyrmtongue Cache"]) then
   	local names = {"Scraps", "Pilfered Sweeper"}
+			Rarity:Debug("Detected Opening on " .. L["Curious Wyrmtongue Cache"] .. " (method = SPECIAL)")
 			for _, name in pairs(names) do
-				local v = self.db.profile.groups.items[name]
+				local v = self.db.profile.groups.items[name] or self.db.profile.groups.pets[name]
 				if v and type(v) == "table" and v.enabled ~= false then
 					if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
 					self:OutputAttempts(v)
@@ -1544,7 +1702,7 @@ function R:OnEvent(event, ...)
 		end
 
 		-- Handle opening Glimmering Treasure Chest
-		if fishing and opening and lastNode and (lastNode == L["Glimmering Treasure Chest"]) and select(8, GetInstanceInfo()) == 1626 then
+		if fishing and opening and lastNode and (lastNode == L["Glimmering Treasure Chest"]) and select(8, GetInstanceInfo()) == 1626 then -- Player is in Withered Army scenario and looted the reward chest
 			local bigChest = false
 			for _, slot in pairs(GetLootInfo()) do
 				if slot.item == L["Ancient Mana"] and slot.quantity == 100 then
@@ -1553,6 +1711,7 @@ function R:OnEvent(event, ...)
 			end
 
 			if bigChest == true then
+				self:Debug("Detected " .. lastNode .. ": Adding toy drop attempts")
 				local names = {"Arcano-Shower", "Displacer Meditation Stone", "Kaldorei Light Globe", "Unstable Powder Box", "Wisp in a Bottle", "Ley Spider Eggs"}
 				for _, name in pairs(names) do
 					local v = self.db.profile.groups.items[name]
@@ -1574,8 +1733,9 @@ function R:OnEvent(event, ...)
   if fishing and opening == false then
    if isPool then self:Debug("Successfully fished from a pool")
    else self:Debug("Successfully fished") end
-   if fishzones[tostring(GetCurrentMapAreaID())] or fishzones[zone] or fishzones[subzone] or fishzones[zone_t] or fishzones[subzone_t] then
+   if fishzones[tostring(GetBestMapForUnit("player"))] or fishzones[zone] or fishzones[subzone] or fishzones[zone_t] or fishzones[subzone_t] then
     -- We're interested in fishing in this zone; let's find the item(s) involved
+	Rarity:Debug("We're interested in fishing in this zone; let's find the item(s) involved")
     for k, v in pairs(self.db.profile.groups) do
      if type(v) == "table" then
       for kk, vv in pairs(v) do
@@ -1584,8 +1744,9 @@ function R:OnEvent(event, ...)
          local found = false
          if vv.method == FISHING and vv.zones ~= nil and type(vv.zones) == "table" then
           for kkk, vvv in pairs(vv.zones) do
-           if vvv == tostring(GetCurrentMapAreaID()) or vvv == zone or vvv == lbz[zone] or vvv == subzone or vvv == lbsz[subzone] or vvv == zone_t or vvv == subzone_t or vvv == lbz[zone_t] or vvv == subzone or vvv == lbsz[subzone_t] then
+           if vvv == tostring(GetBestMapForUnit("player")) or vvv == zone or vvv == lbz[zone] or vvv == subzone or vvv == lbsz[subzone] or vvv == zone_t or vvv == subzone_t or vvv == lbz[zone_t] or vvv == subzone or vvv == lbsz[subzone_t] then
             if (vv.requiresPool and isPool) or not vv.requiresPool then
+			Rarity:Debug("Found interesting item for this zone: " .. tostring(vv.name))
              found = true
             end
            end
@@ -1610,13 +1771,36 @@ function R:OnEvent(event, ...)
   isPool = false
 
   -- Handle mining Elementium
-  if prevSpell == miningSpell and (lastNode == L["Elementium Vein"] or lastNode == L["Rich Elementium Vein"]) then
+  if spells[prevSpell] == "Mining" and (lastNode == L["Elementium Vein"] or lastNode == L["Rich Elementium Vein"]) then
+		Rarity:Debug("Detected Mining on " .. lastNode .. " (method = SPECIAL)")
    local v = self.db.profile.groups.pets["Elementium Geode"]
    if v and type(v) == "table" and v.enabled ~= false then
     if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
     self:OutputAttempts(v)
    end
   end
+
+  -- Handle skinning on Argus (Fossorial Bile Larva)
+	if (spells[prevSpell] == "Skinning" or spells[prevSpell] == "Mother's Skinning Knife") -- Skinned something
+	and (GetBestMapForUnit("player") == UIMAPIDS.KROKUUN or GetBestMapForUnit("player") == UIMAPIDS.MACAREE or GetBestMapForUnit("player") == UIMAPIDS.ANTORAN_WASTES) then -- Player is on Argus -> Can obtain the pet from skinning creatures
+		Rarity:Debug("Detected skinning on Argus - Can obtain " .. L["Fossorial Bile Larva"] .. " (method = SPECIAL)")
+		local v = self.db.profile.groups.pets["Fossorial Bile Larva"]
+		if v and type(v) == "table" and v.enabled ~= false then -- Add an attempt
+			v.attempts = v.attempts ~= nil and v.attempts + 1 or 1 -- Defaults to 1 if this is the first attempt
+			self:OutputAttempts(v)
+		end
+	end
+  
+    -- Handle herb gathering on Argus (Fel Lasher)
+	if spells[prevSpell] == "Herb Gathering" -- Gathered a herbalism node
+	and (GetBestMapForUnit("player") == UIMAPIDS.KROKUUN or GetBestMapForUnit("player") == UIMAPIDS.MACAREE or GetBestMapForUnit("player") == UIMAPIDS.ANTORAN_WASTES) then -- Player is on Argus -> Can obtain the pet from gathering herbalism nodes
+		Rarity:Debug("Detected herb gathering on Argus - Can obtain " .. L["Fel Lasher"] .. " (method = SPECIAL)")
+		local v = self.db.profile.groups.pets["Fel Lasher"]
+		if v and type(v) == "table" and v.enabled ~= false then -- Add an attempt
+			v.attempts = v.attempts ~= nil and v.attempts + 1 or 1 -- Defaults to 1 if this is the first attempt
+			self:OutputAttempts(v)
+		end
+	end
 
   -- HANDLE NORMAL NPC LOOTING
 		local numItems = GetNumLootItems()
@@ -1742,13 +1926,16 @@ function R:CheckNpcInterest(guid, zone, subzone, zone_t, subzone_t, curSpell, re
  local npcid = self:GetNPCIDFromGUID(guid)
  if npcs[npcid] == nil then -- Not an NPC we need, abort
 		self:Debug("NPC ID not on the list of needed NPCs: "..(npcid or "nil"))
-  -- Not a zone we need, abort
-  if zones[tostring(GetCurrentMapAreaID())] == nil and zones[zone] == nil and zones[lbz[zone] or "."] == nil and zones[lbsz[subzone] or "."] == nil and zones[zone_t] == nil and zones[subzone_t] == nil and zones[lbz[zone_t] or "."] == nil and zones[lbsz[subzone_t] or "."] == nil then return end
+  
+  if zones[tostring(GetBestMapForUnit("player"))] == nil and zones[zone] == nil and zones[lbz[zone] or "."] == nil and zones[lbsz[subzone] or "."] == nil and zones[zone_t] == nil and zones[subzone_t] == nil and zones[lbz[zone_t] or "."] == nil and zones[lbsz[subzone_t] or "."] == nil then -- Not a zone we need, abort
+		self:Debug("Map ID not on the list of needed zones: " .. tostring(GetBestMapForUnit("player")))
+		return
+	end
  else
 		self:Debug("NPC ID is one we need: "..(npcid or "nil"))
 	end
 
- -- If the loot is the result of certain spell casts (mining, herbing, opening, pick lock, archaeology, disenchanting, etc), stop here
+ -- If the loot is the result of certain spell casts (mining, herbing, opening, pick lock, archaeology, disenchanting, etc), stop here -> This is to avoid multiple attempts, since those methods are handled separately!
  if spells[curSpell] then
 		self:Debug("Aborting because we were casting a disallowed spell: "..curSpell)
 		return
@@ -1794,7 +1981,7 @@ function R:CheckNpcInterest(guid, zone, subzone, zone_t, subzone_t, curSpell, re
       local found = false
       if vv.method == ZONE and vv.zones ~= nil and type(vv.zones) == "table" then
        for kkk, vvv in pairs(vv.zones) do
-								if tonumber(vvv) ~= nil and tonumber(vvv) == GetCurrentMapAreaID() then found = true end
+								if tonumber(vvv) ~= nil and tonumber(vvv) == GetBestMapForUnit("player") then found = true end
         if vvv == zone or vvv == lbz[zone] or vvv == subzone or vvv == lbsz[subzone] or vvv == zone_t or vvv == subzone_t or vvv == lbz[zone_t] or vvv == subzone or vvv == lbsz[subzone_t] then found = true end
        end
       end
@@ -1964,7 +2151,11 @@ end
 -- Handle boss kills. You may not ever open a loot window on a boss, so we need to watch the combat log for its death.
 -- This event also handles some special cases.
 -------------------------------------------------------------------------------------
-function R:OnCombat(event, timestamp, eventType, hideCaster, srcGuid, srcName, srcFlags, srcRaidFlags, dstGuid, dstName, dstFlags, dstRaidFlags, spellId, spellName, spellSchool, auraType, ...)
+function R:OnCombat()
+
+	-- Extract event payload (it's no longer being passed by the event iself as of 8.0.1)
+	local timestamp, eventType, hideCaster, srcGuid, srcName, srcFlags, srcRaidFlags, dstGuid, dstName, dstFlags, dstRaidFlags, spellId, spellName, spellSchool, auraType = CombatLogGetCurrentEventInfo()
+
  if eventType == "UNIT_DIED" then -- A unit died near you
   local npcid = self:GetNPCIDFromGUID(dstGuid)
   if bosses[npcid] then -- It's a boss we're interested in
@@ -2067,16 +2258,20 @@ local function cancelFish()
 	opening = false
 end
 
-function R:SpellStarted(event, unit, spellcast, rank, target)
+function R:SpellStarted(event, unit, target, castGUID, spellID)
 	if unit ~= "player" then return end
 	foundTarget = false
 	ga ="No"
-	if spells[spellcast] then
-		curSpell = spellcast
-		prevSpell = spellcast
-  if spellcast == fishSpell or spellcast == openSpell then
+	
+	Rarity:Debug("Detected UNIT_SPELLCAST_SENT for unit = player, spellID = " .. tostring(spellID) .. ", castGUID = " .. tostring(castGUID) .. ", target = " .. tostring(target)) -- TODO: Remove?
+	
+	if spells[spellID] then -- An entry exists for this spell in the LUT -> It's one that needs to be tracked
+		Rarity:Debug("Detected relevant spell: " .. tostring(spellID) .. " ~ " .. tostring(spells[spellID]))
+		curSpell = spellID
+		prevSpell = spellID
+  if spells[spellID] == "Fishing" or spells[spellID] == "Opening" then
    self:Debug("Fishing or opening something")
-			if spellcast == openSpell then
+			if spells[spellID] == "Opening" then
 				self:Debug("Opening detected")
 				opening = true
 			else
@@ -2153,7 +2348,7 @@ end
 -------------------------------------------------------------------------------------
 
 function R:ScanAllArch(event)
- self:UnregisterEvent("ARTIFACT_HISTORY_READY")
+ self:UnregisterEvent("RESEARCH_ARTIFACT_HISTORY_READY")
  self:ScanArchFragments(event)
  self:ScanArchProjects(event)
 end
@@ -2239,9 +2434,21 @@ end
 -------------------------------------------------------------------------------------
 -- Criteria in a dungeon completed, currently used for Reins of the Infinite Timereaver detection as a special case
 -------------------------------------------------------------------------------------
+local timewalkingCriteriaLUT = {
+	[24801] = "Ozumot",
+	[24803] = "Murozond",
+	[24784] = "Trial of the King", -- [126952] = "Trial of the King", -- Object: Legacy of the Clan Leaders
+	[19256] = "Gekkan", -- Object: Ancient Mogu Treasure
+	[19244] = "Master Snowdrift", -- [123096] = "Master Snowdrift", -- Object: Snowdrift's Possessions
+	[34410] = "Taran Zhu", --[123095] = "Taran Zhu", -- Object: Taran Zhu's Personal Stash
+}
 
 function R:OnCriteriaComplete(event, id)
-	if id == 24801 --[[ Ozumat ]] or id == 24803 --[[ Murozond ]] then
+
+	local encounterName = timewalkingCriteriaLUT[id]
+	R:Debug("Detected achievement criteria completion: " .. tostring(id))
+	if encounterName then -- Is an encounter that can't otherwise be detected (due to the mount dropping from an object, and not a lootable NPC)
+		R:Debug("Completed criteria for relevant encounter: " .. tostring(encounterName))
 		local v = self.db.profile.groups.mounts["Reins of the Infinite Timereaver"]
 		if v and type(v) == "table" and v.enabled ~= false and R:IsAttemptAllowed(v) then
 			if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
@@ -2255,6 +2462,7 @@ end
 -- While it might work to change their method from NPC to BOSS, at this time I'm not sure if that wouldn't cause problems elsewhere... so I won't touch it
 -------------------------------------------------------------------------------------
 local encounterLUT = {
+	[1140] = "Stormforged Rune", -- The Assembly of Iron
 	[1133] = "Blessed Seed", -- Freya
 	[1135] = "Ominous Pile of Snow", -- Hodir
 	[1138] = "Overcomplicated Controller", -- Mimiron
@@ -2262,11 +2470,13 @@ local encounterLUT = {
 }
 
 function R:OnEncounterEnd(event, encounterID, encounterName, difficultyID, raidSize, endStatus)
-
+	
+	R:Debug("ENCOUNTER_END with encounterID = " .. tonumber(encounterID or "0") .. ", name = " .. tostring(encounterName) .. ", endStatus = " .. tostring(endStatus))
+	
 	local item = encounterLUT[encounterID]
 	if item and type(item) == "string" then -- This encounter has an entry in the LUT and needs special handling
 	
-		R:Debug("Detected raid encounter with id = " .. tonumber(encounterID or "0") .. ", name = " .. encounterName .. ", endStatus = " .. endStatus)
+		R:Debug("Found item of interest for this encounter: " .. tostring(item))
 		local v = self.db.profile.groups.pets[item] -- v = value = number of attempts for this item
 		
 		if endStatus == 1 then -- Encounter succeeded -> Check if number of attempts should be increased
@@ -2276,6 +2486,96 @@ function R:OnEncounterEnd(event, encounterID, encounterName, difficultyID, raidS
 			end
 		end
 		
+	end
+
+end
+
+-------------------------------------------------------------------------------------
+-- ISLAND_COMPLETED handling: Used for detecting Island Expeditions in Battle for Azeroth
+-- The collectibles are awarded randomly once the scenario has ended and appear in the "Pose" screen, right after this event is fired (indicated by a subsequent LFG_COMPLETION_REWARD event)
+-------------------------------------------------------------------------------------
+
+do
+
+	local islandMapIDs = { -- These IDs can be found in DBFilesClient\Map.db2
+		[1813] = "Un'gol Ruins",
+		[1897] = "Molten Cay",
+		[1883] = "Whispering Reef",
+		[1882] = "Verdant Wilds",
+		[1892] = "Rotting Mire",
+		[1893] = "Dread Chain",
+		[1898] = "Skittering Hollow",
+	}
+
+	local islandExpeditionCollectibles = { -- List of collectibles (so we don't have to search the item DB for them)
+		-- Pets
+		"Scuttle",
+		"Captain Nibs",
+		"Barnaby",
+		"Poro",
+		"Octopode Fry",
+		"Inky",
+		"Sparkleshell Sandcrawler",
+		"Kindleweb Spiderling",
+		"Mischievous Zephyr",
+		"Littlehoof",
+		"Snapper",
+		"Sunscale Hatchling",
+		"Bloodstone Tunneler",
+		"Snort",
+		"Muskflank Calfling",
+		"Juvenile Brineshell",
+		"Kunchong Hatchling",
+		"Coldlight Surfrunner",
+		"Voru'kar Leecher",
+		"Tinder Pup",
+		"Sandshell Chitterer",
+		"Deathsting Scorpid",
+		"Thistlebrush Bud",
+		"Giggling Flame",
+		"Laughing Stonekin",
+		"Playful Frostkin",
+		"False Knucklebump",
+		"Craghoof Kid",
+		
+		-- Toys
+		"Oomgut Ritual Drum",
+		"Whiskerwax Candle",
+		-- "Yaungol Oil Stove", -- NYI?
+		"Jinyu Light Globe",
+		"Enchanted Soup Stone",
+		"Magic Monkey Banana",
+		"Bad Mojo Banana",
+		"Regenerating Banana Bunch",
+		
+		-- Mounts
+		"Surf Jelly",
+		"Squawks",
+		"Qinsho's Eternal Hound",
+		"Craghorn Chasm-Leaper",
+		"Twilight Avenger",
+	}
+
+	function R:OnIslandCompleted(event, mapID, winner)
+		
+		R:Debug("Detected completion for Island Expedition: " .. (islandMapIDs[mapID] or "Unknown Map") .. " (mapID = " .. tostring(mapID) .. ")")
+		
+		if islandMapIDs[mapID] then -- Is a relevant map -> Add attempts for all collectibles (for now, I'm assuming they just drop from everything at the same rate. This may have to be revised once more data is available...)
+		
+			R:Debug("Found this Island Expedition to be relevant -> Adding attempts for all known collectibles...")
+
+			for index, name in pairs(islandExpeditionCollectibles) do -- Add an attempt for each item
+				
+				local v = self.db.profile.groups.items[name] or self.db.profile.groups.pets[name] or self.db.profile.groups.mounts[name]
+				if v and type(v) == "table" and v.enabled ~= false then
+					if v.attempts == nil then v.attempts = 1 else v.attempts = v.attempts + 1 end
+					self:OutputAttempts(v)
+				end		
+
+			end
+			
+		end
+
 	end
 
 end
@@ -2437,7 +2737,7 @@ _G.GameTooltip:HookScript("OnTooltipSetUnit", function(self)
  local subzone = GetSubZoneText()
  local zone_t = LibStub("LibBabble-Zone-3.0"):GetReverseLookupTable()[zone]
  local subzone_t = LibStub("LibBabble-SubZone-3.0"):GetReverseLookupTable()[subzone]
- if zones[tostring(GetCurrentMapAreaID())] or zones[zone] or zones[lbz[zone] or "."] or zones[lbsz[subzone] or "."] or zones[zone_t] or zones[subzone_t] or zones[lbz[zone_t] or "."] or zones[lbsz[subzone_t] or "."] then
+ if zones[tostring(GetBestMapForUnit("player"))] or zones[zone] or zones[lbz[zone] or "."] or zones[lbsz[subzone] or "."] or zones[zone_t] or zones[subzone_t] or zones[lbz[zone_t] or "."] or zones[lbsz[subzone_t] or "."] then
 		for k, v in pairs(R.db.profile.groups) do
 			if type(v) == "table" then
 				for kk, vv in pairs(v) do
@@ -2445,7 +2745,7 @@ _G.GameTooltip:HookScript("OnTooltipSetUnit", function(self)
 						local found = false
 						if vv.method == ZONE and vv.zones ~= nil and type(vv.zones) == "table" then
 							for kkk, vvv in pairs(vv.zones) do
-								if tonumber(vvv) ~= nil and tonumber(vvv) == GetCurrentMapAreaID() then found = true end
+								if tonumber(vvv) ~= nil and tonumber(vvv) == GetBestMapForUnit("player") then found = true end
 								if vvv == zone or vvv == lbz[zone] or vvv == subzone or vvv == lbsz[subzone] or vvv == zone_t or vvv == subzone_t or vvv == lbz[zone_t] or vvv == subzone or vvv == lbsz[subzone_t] then found = true end
 							end
 						end
@@ -2628,6 +2928,9 @@ do
   if trackedItem.attempts then attempts = trackedItem.attempts end
   if trackedItem.lastAttempts then attempts = attempts - trackedItem.lastAttempts end
   if trackedItem.realAttempts and trackedItem.found and not trackedItem.repeatable then attempts = trackedItem.realAttempts end
+  
+  attempts = min(attempts, 2^31-1) -- Workaround to stop invalid attempt counts from breaking the addon; the correct count can be obtained by updating manually. It should also be restored automatically (at some point...) if the addon loads without errors. See issue: https://github.com/SacredDuckwhale/Rarity/issues/43) - This is mostly relevant for the two Archaeology mounts that may have invalid entries after the API was changed and not updated in the addon for quite some time
+  
   if trackedItem.found and not trackedItem.repeatable then
 			if trackedItem.method == COLLECTION then
 				dataobj.text = L["Collection complete!"]
@@ -2904,7 +3207,7 @@ do
 
 		-- Zone(s)
 		local zoneText = ""
-		local currentZone = GetCurrentMapAreaID()
+		local currentZone = GetBestMapForUnit("player")
 		if item.coords ~= nil and type(item.coords) == "table" then
 			local zoneList = {}
 			for _, zoneValue in pairs(item.coords) do
@@ -3083,7 +3386,7 @@ do
 					if numCoords <= 0 then s = s..L["You already defeated all of them."]
 					else s = s..format(L["You already defeated %d of them."], totalCoords - numCoords).." " end
 				end
-				if TomTom ~= nil and TomTom.AddMFWaypoint ~= nil then
+				if TomTom ~= nil and TomTom.AddWaypoint ~= nil then
 					if numCoords > 0 then
 						if totalCoords > numCoords then s = s..L["Ctrl-Click to create the remaining TomTom waypoint(s)."]
 						else s = s..L["Ctrl-Click to create TomTom waypoint(s)."]
@@ -3170,11 +3473,11 @@ do
 					else
 						good = true
 					end
-					if good and TomTom ~= nil and TomTom.AddMFWaypoint ~= nil and coord.m ~= nil and coord.x ~= nil and coord.y ~= nil then
+					if good and TomTom ~= nil and TomTom.AddWaypoint ~= nil and coord.m ~= nil and coord.x ~= nil and coord.y ~= nil then
 						local extraName = ""
 						if coord.n ~= nil then extraName = " ("..coord.n..")" end
 						if coord.i ~= true then
-							TomTom:AddMFWaypoint(coord.m, coord.f or nil, coord.x / 100.0, coord.y / 100.0, { title = "Rarity"..": "..item.name..extraName })
+							TomTom:AddWaypoint(coord.m, coord.x / 100.0, coord.y / 100.0, { title = "Rarity"..": "..item.name..extraName })
 							added = added + 1
 						end
 						if coord.i == true then instance = instance + 1 end
@@ -3959,7 +4262,7 @@ function R:ScanExistingItems(reason)
   local c = GetNumArtifactsByRace(x)
   local a = 0
   for y = 1, c do
-   local t = select(9, GetArtifactInfoByRace(x, y))
+   local t = select(10, GetArtifactInfoByRace(x, y))
    a = a + t
    s = s + t
   end
@@ -4078,14 +4381,17 @@ function R:ScanCalendar(reason)
  self:Debug("Scanning calendar ("..reason..")")
 
 	table.wipe(Rarity.holiday_textures)
-	local _, month, day, year = CalendarGetDate()
-	local curMonth, curYear = CalendarGetMonth()
+	local dateInfo = C_Calendar.GetDate() -- This is the CURRENT date (always "today")
+	local month, day, year = dateInfo.month, dateInfo.monthDay, dateInfo.year
+	local monthInfo = C_Calendar.GetMonthInfo() -- This is the CALENDAR date (as selected)
+	local curMonth, curYear = monthInfo.month, monthInfo.year -- It should be noted that this is the calendar's "current" month... the name may be misleading, but I'll keep it as it was
 	local monthOffset = -12 * (curYear - year) + month - curMonth
-	local numEvents = CalendarGetNumDayEvents(monthOffset, day)
+	local numEvents = C_Calendar.GetNumDayEvents(monthOffset, day)
 	local numLoaded = 0
 
 	for i = 1, numEvents, 1 do
-		local _, _, _, calendarType, _, _, texture = CalendarGetDayEvent(monthOffset, day, i)
+		local CalendarDayEvent = C_Calendar.GetDayEvent(monthOffset, day, i)
+		local calendarType, texture = CalendarDayEvent.calendarType, CalendarDayEvent.iconTexture
 
 		if calendarType == "HOLIDAY" and texture ~= nil then
 			Rarity.holiday_textures[texture] = true

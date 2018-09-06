@@ -187,7 +187,7 @@ local function UpdateIcons(self, event, unit)
 	
 	while ( true ) do
 	
-		local name, rank, icon, count, debuffType, duration2, expirationTime, unitCaster, isStealable, _, spellID2 = UnitAura("player", i, "HELPFUL")
+		local name, icon, count, debuffType, duration2, expirationTime, unitCaster, isStealable, _, spellID2 = UnitAura("player", i, "HELPFUL")
 	
 		
 		if not name then

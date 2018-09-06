@@ -6,7 +6,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Advisor Melandrus", 1087, 1720)
+local mod, CL = BigWigs:NewBoss("Advisor Melandrus", 1571, 1720)
 if not mod then return end
 mod:RegisterEnableMob(104218)
 mod.engageId = 1870
@@ -52,7 +52,7 @@ function mod:OnEngage()
 	bladeSurgeCount = 1
 	self:CDBar(209628, 11) -- Piercing Gale
 	self:CDBar(224333, 8.4) -- Enveloping Winds
-	self:CDBar(209602, 5.2, CL.count:format(args.spellName, bladeSurgeCount)) -- Blade Surge
+	self:CDBar(209602, 5.2, CL.count:format(self:SpellName(209602), bladeSurgeCount)) -- Blade Surge
 	self:CDBar(209676, 23) -- Slicing Maelstrom
 end
 
@@ -68,14 +68,14 @@ function mod:Warmup(event, msg)
 end
 
 function mod:BladeSurge(args)
-	self:Message(args.spellId, "Important", "Info", CL.count:format(args.spellName, bladeSurgeCount))
+	self:Message(args.spellId, "red", "Info", CL.count:format(args.spellName, bladeSurgeCount))
 	bladeSurgeCount = bladeSurgeCount + 1
 	self:CDBar(args.spellId, 12, CL.count:format(args.spellName, bladeSurgeCount))
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(unit, spellName, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 224327 then -- Enveloping Winds
-		self:Message(224333, "Attention", "Info", spellName)
+		self:Message(224333, "yellow", "Info", spellId, 224333)
 		self:CDBar(224333, 9.4) -- actual spellid has no icon/tooltip
 	end
 end
@@ -86,13 +86,13 @@ do
 		local t = GetTime()
 		if t-prev > 2 then
 			prev = t
-			self:Message(args.spellId, "Urgent", "Alarm")
+			self:Message(args.spellId, "orange", "Alarm")
 			self:CDBar(args.spellId, 24)
 		end
 	end
 end
 
 function mod:SlicingMaelstrom(args)
-	self:Message(args.spellId, "Attention", "Warning", CL.incoming:format(args.spellName))
+	self:Message(args.spellId, "yellow", "Warning", CL.incoming:format(args.spellName))
 	self:CDBar(args.spellId, 24)
 end

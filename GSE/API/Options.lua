@@ -43,22 +43,14 @@ function GSE.GetOptionsTable()
             get = function(info) return GSEOptions.HideLoginMessage end,
             order = 202
           },
---          realtimeparse = {
---            name = L["Use Realtime Parsing"],
---            desc = L["The Sequence Editor can attempt to parse the Sequences, KeyPress and KeyRelease in realtime.  This is still experimental so can be turned off."],
---            type = "toggle",
---            set = function(info,val) GSEOptions.RealtimeParse = val end,
---            get = function(info) return GSEOptions.RealtimeParse end,
---            order = 202
---          },
-          UseVerboseExportFormat = {
-            name = L["Use Verbose Export Sequence Format"],
-            desc = L["When exporting a sequence use a human readable verbose form."],
-            type = "toggle",
-            set = function(info,val) GSEOptions.UseVerboseFormat = val end,
-            get = function(info) return GSEOptions.UseVerboseFormat end,
-            order = 203
-          },
+         realtimetranslateparse = {
+           name = L["Don't Translate Sequences"],
+           desc = L["Enable this option to stop automatically translating sequences from enUS to local language."],
+           type = "toggle",
+           set = function(info,val) GSEOptions.RealtimeTranslateParse = val end,
+           get = function(info) return GSEOptions.RealtimeTranslateParse end,
+           order = 202
+         },
           resetOOC = {
             name = L["Reset Macro when out of combat"],
             desc = L["Resets macros back to the initial state when out of combat."],
@@ -107,6 +99,29 @@ function GSE.GetOptionsTable()
             get = function(info) return GSEOptions.setDefaultIconQuestionMark end,
             order = 310
           },
+          defaultImportAction = {
+            name = L["Default Import Action"],
+            desc = L["When GSE imports a macro and it already exists locally and has local edits, what do you want the default action to be.  Merge - Add the new MacroVersions to the existing Macro.  Replace - Replace the existing macro with the new version. Ignore - ignore updates.  This default action will set the default on the Compare screen however if the GUI is not available this will be the action taken."],
+            type = "select",
+            style = "radio",
+            values = {
+              ["MERGE"] = L["Merge"],
+              ["REPLACE"] = L["Replace"],
+              ["IGNORE"] = L["Ignore"]
+            },
+            set = function(info,val) GSEOptions.DefaultImportAction = val end,
+            get = function(info) return GSEOptions.DefaultImportAction end,
+            order = 320
+          },
+          UseVerboseExportFormat = {
+            name = L["Use WLM Export Sequence Format"],
+            desc = L["When exporting a sequence create a stub entry to import for WLM's Website."],
+--            guiHidden = true,
+            type = "toggle",
+            set = function(info,val) GSEOptions.UseWLMExportFormat = val end,
+            get = function(info) return GSEOptions.UseWLMExportFormat end,
+            order = 300
+          },
           filtertitle1 = {
             type = "header",
             name = L["Filter Macro Selection"],
@@ -144,6 +159,7 @@ function GSE.GetOptionsTable()
             get = function(info) return GSEOptions.CreateGlobalButtons end,
             order = 440
           },
+
           title2 = {
             type = "header",
             name = L["Gameplay Options"],
@@ -697,4 +713,13 @@ function GSE.GetOptionsTable()
     }
   end
   return OptionsTable
+end
+
+
+function GSE.ReportTargetProtection()
+  local disabledstr = "disabled"
+  if GSEOptions.requireTarget then
+    disabledstr = "enabled"
+  end
+  return string.format(L["Target protection is currently %s"], disabledstr)
 end

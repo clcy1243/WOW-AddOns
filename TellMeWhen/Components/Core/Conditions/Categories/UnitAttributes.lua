@@ -7,7 +7,7 @@
 --		Banjankri of Blackrock, Predeter of Proudmoore, Xenyr of Aszune
 
 -- Currently maintained by
--- Cybeloras of Aerie Peak/Detheroc/Mal'Ganis
+-- Cybeloras of Aerie Peak
 -- --------------------
 
 
@@ -117,8 +117,7 @@ ConditionCategory:RegisterCondition(4,    "VEHICLE", {
 		return
 			ConditionObject:GetUnitChangedEventString(CNDT:GetUnit(c.Unit)),
 			ConditionObject:GenerateNormalEventString("UNIT_ENTERED_VEHICLE", CNDT:GetUnit(c.Unit)),
-			ConditionObject:GenerateNormalEventString("UNIT_EXITED_VEHICLE", CNDT:GetUnit(c.Unit)),
-			ConditionObject:GenerateNormalEventString("UNIT_VEHICLE", CNDT:GetUnit(c.Unit))
+			ConditionObject:GenerateNormalEventString("UNIT_EXITED_VEHICLE", CNDT:GetUnit(c.Unit))
 	end,
 })
 

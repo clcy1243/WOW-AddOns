@@ -44,8 +44,8 @@ function GSE.SetDefaultOptions()
   GSEOptions.use6 = false
   GSEOptions.use11 = false
   GSEOptions.use12 = false
-  GSEOptions.use13 = true
-  GSEOptions.use14 = true
+  GSEOptions.use13 = false
+  GSEOptions.use14 = false
   GSEOptions.setDefaultIconQuestionMark = true
   GSEOptions.TitleColour = "|cFFFF0000"
   GSEOptions.AuthorColour = "|cFF00D1FF"
@@ -92,7 +92,9 @@ function GSE.SetDefaultOptions()
   GSEOptions.DebugPrintModConditionsOnKeyPress = false
   GSEOptions.showGSEUsers = false
   GSEOptions.showGSEoocqueue = true
-  GSEOptions.UseVerboseFormat = true
+  GSEOptions.UseVerboseExportFormat = false
+  GSEOptions.DefaultImportAction = "MERGE"
+  GSEOptions.UseWLMExportFormat = true
   GSE.resetMacroResetModifiers()
 end
 
@@ -117,3 +119,4 @@ GSE.StandardAddInPacks = {}
 GSE.UsedSequences = {}
 GSE.SequencesExec = {}
 GSE.UnsavedOptions["PartyUsers"]={}
+GSE.UnsavedOptions["GUI"] = false

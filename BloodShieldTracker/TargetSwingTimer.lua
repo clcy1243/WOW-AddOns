@@ -164,12 +164,16 @@ function module.OnUpdate(self, elapsed)
 	end
 end
 
-function module.EventHandler(frame, event, _, message, _, srcGUID, source, srcFlgs, srcRFlgs, destGUID, dest, ...)
+function module.EventHandler(frame, event, ...)
+	local timestamp, eventtype, hideCaster, 
+	srcGUID, srcName, srcFlags, srcRaidFlags,
+	destGUID, destName, destFlags, destRaidFlags,
+	param9, param10, param11, param12, param13, param14, 
+	param15, param16, param17, param18, param19, param20 = CombatLogGetCurrentEventInfo()
+	local isOffHand = eventtype == "SWING_DAMAGE" and param18 or param10
+	
 	if srcGUID ~= UnitGUID("target") or destGUID ~= UnitGUID("player") then return end
-	if message == "SWING_DAMAGE" or message == "SWING_MISSED" then
-		-- print(message, ...)
-		local pos = (message == "SWING_DAMAGE") and 12 or 4
-		local isOffHand = select(pos, ...)
+	if eventtype == "SWING_DAMAGE" or eventtype == "SWING_MISSED" then
 		local mainSpeed, ohSpeed = UnitAttackSpeed("target")
 		local bar = module.targetSwingBar
 		if not isOffHand then

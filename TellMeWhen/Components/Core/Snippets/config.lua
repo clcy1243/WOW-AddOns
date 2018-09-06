@@ -7,7 +7,7 @@
 --		Banjankri of Blackrock, Predeter of Proudmoore, Xenyr of Aszune
 
 -- Currently maintained by
--- Cybeloras of Aerie Peak/Detheroc/Mal'Ganis
+-- Cybeloras of Aerie Peak
 -- --------------------
 
 
@@ -341,8 +341,6 @@ codesnippet:RegisterMenuBuilder(1, function(Item_codesnippet)
 	end
 end)
 
-
-codesnippet.Export_DescriptionAppend = L["EXPORT_SPECIALDESC2"]:format("6.2.0+")
 
 function codesnippet:Export_SetButtonAttributes(editbox, info)
 	local IMPORTS, EXPORTS = editbox:GetAvailableImportExportTypes()

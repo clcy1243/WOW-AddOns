@@ -2,7 +2,7 @@
 -- Module declaration
 --
 
-local mod = BigWigs:NewBoss("Patchwerk", 535, 1610)
+local mod = BigWigs:NewBoss("Patchwerk", 533, 1610)
 if not mod then return end
 mod:RegisterEnableMob(16028)
 mod.toggleOptions = {28131, "berserk"}
@@ -40,6 +40,6 @@ end
 --
 
 function mod:Frenzy(args)
-	self:Message(args.spellId, "Attention", "Alarm", L["enragewarn"])
+	self:Message(args.spellId, "yellow", "Alarm", L["enragewarn"])
 end
 

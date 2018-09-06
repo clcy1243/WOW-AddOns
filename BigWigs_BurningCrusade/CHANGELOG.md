@@ -1,6 +1,6 @@
 # BigWigs [Burning Crusade]
 
-## [v7.3.0](https://github.com/BigWigsMods/BigWigs_BurningCrusade/tree/v7.3.0) (2017-08-30)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_BurningCrusade/compare/v7.2.6...v7.3.0)
+## [v8.0.2](https://github.com/BigWigsMods/BigWigs_BurningCrusade/tree/v8.0.2) (2018-07-26)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_BurningCrusade/compare/v8.0.1...v8.0.2)
 
-- bump toc  
+- Update color usage in our API calls.  

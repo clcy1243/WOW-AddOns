@@ -152,6 +152,10 @@ end
 function _detalhes:GetInstance (id)
 	return _detalhes.tabela_instancias [id]
 end
+--> user friendly alias
+function _detalhes:GetWindow (id)
+	return _detalhes.tabela_instancias [id]
+end
 
 function _detalhes:GetId()
 	return self.meu_id
@@ -281,7 +285,11 @@ end
 function _detalhes:IsAtiva()
 	return self.ativa
 end
+
 --> english alias
+function _detalhes:IsShown()
+	return self.ativa
+end
 function _detalhes:IsEnabled()
 	return self.ativa
 end
@@ -333,6 +341,10 @@ end
 		end
 	end
 
+	--> alias
+	function _detalhes:HideWindow()
+		return self:DesativarInstancia()
+	end
 	function _detalhes:ShutDown()
 		return self:DesativarInstancia()
 	end
@@ -344,9 +356,18 @@ end
 --> desativando a inst�ncia ela fica em stand by e apenas hida a janela ~shutdown ~close ~fechar
 	function _detalhes:DesativarInstancia()
 	
-		local lower = _detalhes:GetLowerInstanceNumber()
-
 		self.ativa = false
+		_detalhes.opened_windows = _detalhes.opened_windows-1
+	
+		if (not self.baseframe) then
+			--> windown isn't initialized yet
+			if (_detalhes.debug) then
+				_detalhes:Msg ("(debug) called HideWindow() but the window isn't initialized yet.")
+			end
+			return
+		end
+	
+		local lower = _detalhes:GetLowerInstanceNumber()
 		_detalhes:GetLowerInstanceNumber()
 		
 		if (lower == self.meu_id) then
@@ -358,7 +379,6 @@ end
 			_detalhes.switch:CloseMe()
 		end
 		
-		_detalhes.opened_windows = _detalhes.opened_windows-1
 		self:ResetaGump()
 		
 		--gump:Fade (self.baseframe.cabecalho.atributo_icon, _unpack (_detalhes.windows_fade_in))
@@ -475,7 +495,11 @@ end
 				local instance1 = _detalhes:GetInstance (1)
 				local instance2 = _detalhes:GetInstance (2)
 				
-				_detalhes:CheckCoupleWindows (instance1, instance2)
+				if (instance1 and instance2) then
+					if (not instance1.ignore_mass_showhide and not instance2.ignore_mass_showhide) then
+						_detalhes:CheckCoupleWindows (instance1, instance2)
+					end
+				end
 			end
 		end
 	end
@@ -534,6 +558,9 @@ end
 	end
 
 	--> alias
+	function _detalhes:ShowWindow (temp)
+		return self:AtivarInstancia (temp)
+	end
 	function _detalhes:EnableInstance (temp)
 		return self:AtivarInstancia (temp)
 	end
@@ -1045,7 +1072,9 @@ function _detalhes:agrupar_janelas (lados)
 		end
 	end
 	
-	instancia.break_snap_button:SetAlpha (1)
+	if (not _detalhes.disable_lock_ungroup_buttons) then
+		instancia.break_snap_button:SetAlpha (1)
+	end
 	
 	if (_detalhes.tutorial.unlock_button < 4) then
 	
@@ -2330,6 +2359,8 @@ function _detalhes:TrocaTabela (instancia, segmento, atributo, sub_atributo, ini
 		
 		_detalhes:InstanceCall (_detalhes.CheckPsUpdate)
 		_detalhes:SendEvent ("DETAILS_INSTANCE_CHANGEATTRIBUTE", nil, instancia, atributo, sub_atributo)
+		
+		instancia:ChangeIcon()
 	end
 
 	if (_detalhes.janela_info:IsShown() and instancia == _detalhes.janela_info.instancia) then	
@@ -2496,7 +2527,7 @@ function _detalhes:MontaAtributosOption (instancia, func)
 			end
 		else
 			--> wallpaper = main window
-			CoolTip:SetWallpaper (2, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
+			--CoolTip:SetWallpaper (2, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
 		end
 		
 		local options = sub_atributos [i].lista
@@ -2545,7 +2576,7 @@ function _detalhes:MontaAtributosOption (instancia, func)
 	if (_detalhes.tooltip.submenu_wallpaper) then
 		CoolTip:SetWallpaper (2, [[Interface\TALENTFRAME\WarriorArm-TopLeft]], menu_wallpaper_custom_color, wallpaper_bg_color)
 	else
-		CoolTip:SetWallpaper (2, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
+		--CoolTip:SetWallpaper (2, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
 	end
 
 	if (#_detalhes.custom == 0) then
@@ -2559,10 +2590,11 @@ function _detalhes:MontaAtributosOption (instancia, func)
 	end
 
 	CoolTip:SetOption ("StatusBarTexture", [[Interface\AddOns\Details\images\bar4_vidro]])
-	CoolTip:SetOption ("ButtonsYMod", -5)
-	CoolTip:SetOption ("ButtonsYModSub", -5)
-	CoolTip:SetOption ("HeighMod", 6)
-	CoolTip:SetOption ("HeighModSub", 6)
+	CoolTip:SetOption ("ButtonsYMod", -7)
+	CoolTip:SetOption ("HeighMod", 7)
+	
+	CoolTip:SetOption ("ButtonsYModSub", -7)
+	CoolTip:SetOption ("HeighModSub", 7)
 	
 	CoolTip:SetOption ("SelectedTopAnchorMod", -2)
 	CoolTip:SetOption ("SelectedBottomAnchorMod", 2)
@@ -2577,7 +2609,8 @@ function _detalhes:MontaAtributosOption (instancia, func)
 	end
 	CoolTip:SetLastSelected (1, last_selected)
 	
-	CoolTip:SetWallpaper (1, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
+	--removed the menu backdrop
+	--CoolTip:SetWallpaper (1, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
 	
 	return menu_principal, sub_menus
 end
@@ -2604,6 +2637,8 @@ function _detalhes:ChangeIcon (icon)
 		self.baseframe.cabecalho.atributo_icon:SetWidth (icon_size[1])
 		self.baseframe.cabecalho.atributo_icon:SetHeight (icon_size[2])
 		local icon_anchor = skin.icon_anchor_plugins
+		
+		self.baseframe.cabecalho.atributo_icon:ClearAllPoints()
 		self.baseframe.cabecalho.atributo_icon:SetPoint ("TOPRIGHT", self.baseframe.cabecalho.ball_point, "TOPRIGHT", icon_anchor[1], icon_anchor[2])
 		
 	elseif (self.modo == modo_alone) then --> solo
@@ -2622,6 +2657,8 @@ function _detalhes:ChangeIcon (icon)
 				self.baseframe.cabecalho.atributo_icon:SetWidth (icon_size[1])
 				self.baseframe.cabecalho.atributo_icon:SetHeight (icon_size[2])
 				local icon_anchor = skin.icon_anchor_plugins
+				
+				self.baseframe.cabecalho.atributo_icon:ClearAllPoints()
 				self.baseframe.cabecalho.atributo_icon:SetPoint ("TOPRIGHT", self.baseframe.cabecalho.ball_point, "TOPRIGHT", icon_anchor[1], icon_anchor[2])
 			end
 		else
@@ -2634,14 +2671,26 @@ function _detalhes:ChangeIcon (icon)
 			--self.baseframe.cabecalho.atributo_icon:SetTexture (icones [self.sub_atributo] [1])
 			--self.baseframe.cabecalho.atributo_icon:SetTexCoord ( unpack (icones [self.sub_atributo] [2]) )
 			
-			self.baseframe.cabecalho.atributo_icon:SetTexture (skin.file)
-			self.baseframe.cabecalho.atributo_icon:SetTexCoord ( (0.03125 * (self.atributo-1)) + half, (0.03125 * self.atributo) - half, 0.35693359375, 0.38720703125)
+			--default
+			--self.baseframe.cabecalho.atributo_icon:SetTexture (skin.file)
+			--self.baseframe.cabecalho.atributo_icon:SetTexCoord ( (0.03125 * (self.atributo-1)) + half, (0.03125 * self.atributo) - half, 0.35693359375, 0.38720703125)
 			
-			local icon_anchor = skin.icon_anchor_main
-			self.baseframe.cabecalho.atributo_icon:SetPoint ("TOPRIGHT", self.baseframe.cabecalho.ball_point, "TOPRIGHT", icon_anchor[1], icon_anchor[2])
+			--set the attribute icon
+			self.baseframe.cabecalho.atributo_icon:SetTexture (menu_icones [self.atributo])
+			local p = 0.125 --> 32/256
+			self.baseframe.cabecalho.atributo_icon:SetTexCoord (p * (self.sub_atributo-1), p * (self.sub_atributo), 0, 1)
+			self.baseframe.cabecalho.atributo_icon:SetSize (16, 16)
 			
-			self.baseframe.cabecalho.atributo_icon:SetWidth (32)
-			self.baseframe.cabecalho.atributo_icon:SetHeight (32)
+			self.baseframe.cabecalho.atributo_icon:ClearAllPoints()
+			if (self.menu_attribute_string) then
+				self.baseframe.cabecalho.atributo_icon:SetPoint ("right", self.menu_attribute_string.widget, "left", -4, -1)
+			end
+
+		--	local icon_anchor = skin.icon_anchor_main
+		--	self.baseframe.cabecalho.atributo_icon:SetPoint ("TOPRIGHT", self.baseframe.cabecalho.ball_point, "TOPRIGHT", icon_anchor[1], icon_anchor[2])
+			
+		--	self.baseframe.cabecalho.atributo_icon:SetWidth (32)
+		--	self.baseframe.cabecalho.atributo_icon:SetHeight (32)
 		end
 		
 	elseif (self.modo == modo_raid) then --> raid
@@ -2963,13 +3012,12 @@ function _detalhes:monta_relatorio (este_relatorio, custom)
 				break
 			end
 		end
+		
 		if (already_exists) then
-			local t = _detalhes.latest_report_table [already_exists]
+			--push it to  front
+			local t = tremove (_detalhes.latest_report_table, already_exists)
 			t [4] = amt
-			if (already_exists > 5) then
-				tremove (_detalhes.latest_report_table, already_exists)
-				tinsert (_detalhes.latest_report_table, 1, t)
-			end
+			tinsert (_detalhes.latest_report_table, 1, t)
 		else
 			if (self.atributo == 5) then
 				local custom_name = self:GetCustomObject():GetName()
@@ -2978,6 +3026,7 @@ function _detalhes:monta_relatorio (este_relatorio, custom)
 				tinsert (_detalhes.latest_report_table, 1, {self.meu_id, self.atributo, self.sub_atributo, amt, _detalhes.report_where})
 			end
 		end
+		
 		tremove (_detalhes.latest_report_table, 11)
 	end
 	

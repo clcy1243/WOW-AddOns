@@ -1,8 +1,0 @@
-------------------------------------------------------------------------
-r1453 | Resike | 2018-02-12 21:30:49 +0000 (Mon, 12 Feb 2018) | 1 line
-Changed paths:
-   M /trunk/TrackerModules/TrackerModule_PowerGains.lua
-
-- SPELL_ENERGIZE fix for power gained modules.
-------------------------------------------------------------------------
-

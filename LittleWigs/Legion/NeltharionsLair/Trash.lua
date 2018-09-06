@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewBoss("Neltharions Lair Trash", 1065)
+local mod, CL = BigWigs:NewBoss("Neltharions Lair Trash", 1458)
 if not mod then return end
 mod.displayName = CL.trash
 mod:RegisterEnableMob(
@@ -66,20 +66,20 @@ end
 
 -- Mightstone Breaker
 function mod:Avalanche(args)
-	self:Message(args.spellId, "Attention", "Long")
+	self:Message(args.spellId, "yellow", "Long")
 end
 
 -- Vileshard Hulk
 function mod:PiercingShards(args)
-	self:Message(args.spellId, "Urgent", "Warning", CL.casting:format(args.spellName))
+	self:Message(args.spellId, "orange", "Warning", CL.casting:format(args.spellName))
 end
 
 -- Rockback Gnasher
 function mod:StoneGaze(args)
-	self:Message(args.spellId, "Important", "Alarm", CL.casting:format(args.spellName))
+	self:Message(args.spellId, "red", "Alarm", CL.casting:format(args.spellName))
 end
 
 -- Rockbound Trapper
 function mod:Bound(args)
-	self:Message(args.spellId, "Important", "Alarm", CL.casting:format(args.spellName))
+	self:Message(args.spellId, "red", "Alarm", CL.casting:format(args.spellName))
 end

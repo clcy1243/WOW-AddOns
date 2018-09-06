@@ -1,6 +1,6 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: WowLua
-## Version: v70300-1.0.1
+## Version: v80000-1.0.0
 ## Author: Cladhaire
 ## Notes: Interactive Lua interpreter and scratchpad
 ## LoadManagers: AddonLoader

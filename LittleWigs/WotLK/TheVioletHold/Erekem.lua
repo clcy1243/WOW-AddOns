@@ -1,4 +1,4 @@
-﻿-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 --  Module Declaration
 
 local mod, CL = BigWigs:NewBoss("Erekem", 536)
@@ -22,5 +22,5 @@ end
 --  Event Handlers
 
 function mod:ChainHeal(_, spellId, _, _, spellName)
-	self:Message(54481, CL["casting"]:format(spellName), "Urgent", spellId)
+	self:Message(54481, CL["casting"]:format(spellName), "orange", spellId)
 end

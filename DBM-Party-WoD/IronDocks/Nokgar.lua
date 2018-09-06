@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1235, "DBM-Party-WoD", 4, 558)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 29 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
 mod:SetCreatureID(81297, 81305)
 mod:SetEncounterID(1749)
 mod:SetZone()
@@ -49,7 +49,7 @@ function mod:SPELL_AURA_REMOVED(args)
 end
 
 --Not detectable in phase 1. Seems only cleanly detectable in phase 2, in phase 1 boss has no "boss" unitid so cast hidden.
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 164635 then
 		specWarnBurningArrows:Show()
 		specWarnBurningArrows:Play("watchstep")

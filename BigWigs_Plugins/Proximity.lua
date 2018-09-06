@@ -40,9 +40,11 @@ plugin.displayName = L.proximity_name
 local L_proximityTitle = L.proximityTitle
 
 local media = LibStub("LibSharedMedia-3.0")
+local FONT = media.MediaType and media.MediaType.FONT or "font"
+local SOUND = media.MediaType and media.MediaType.SOUND or "sound"
 
-local mute = "Interface\\AddOns\\BigWigs\\Textures\\icons\\mute"
-local unmute = "Interface\\AddOns\\BigWigs\\Textures\\icons\\unmute"
+local mute = "Interface\\AddOns\\BigWigs\\Media\\Textures\\icons\\mute"
+local unmute = "Interface\\AddOns\\BigWigs\\Media\\Textures\\icons\\unmute"
 
 local inConfigMode = nil
 local activeRange, activeRangeRadius, activeRangeSquared, activeRangeSquaredTwoFive = 0, 0, 0, 0
@@ -61,6 +63,7 @@ local proxAnchor, proxTitle, proxCircle, proxPulseOut, proxPulseIn = nil, nil, n
 
 -- Upvalues
 local CTimerAfter = BigWigsLoader.CTimerAfter
+local GameTooltip = CreateFrame("GameTooltip", "BigWigsProximityTooltip", UIParent, "GameTooltipTemplate")
 local UnitPosition, GetPlayerFacing = UnitPosition, GetPlayerFacing
 local GetRaidTargetIndex, GetNumGroupMembers, GetTime = GetRaidTargetIndex, GetNumGroupMembers, GetTime
 local IsInRaid, IsInGroup, InCombatLockdown = IsInRaid, IsInGroup, InCombatLockdown
@@ -239,7 +242,7 @@ function plugin:RestyleWindow()
 			end
 		end
 	end
-	proxAnchor.text:SetFont(media:Fetch("font", db.font), db.fontSize)
+	proxAnchor.text:SetFont(media:Fetch(FONT, db.font), db.fontSize)
 	if db.lock then
 		locked = nil
 		lockDisplay()
@@ -789,7 +792,7 @@ local function updateBlipIcons()
 			blip.hasIcon = true
 		elseif not icon and blip.hasIcon then
 			blip.hasIcon = nil
-			blip:SetTexture("Interface\\AddOns\\BigWigs\\Textures\\blip")
+			blip:SetTexture("Interface\\AddOns\\BigWigs\\Media\\Textures\\blip")
 			local _, class = UnitClass(n)
 			if class then
 				local c = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
@@ -807,7 +810,7 @@ local function updateBlipColors()
 		local n = unitList[i]
 		if not GetRaidTargetIndex(n) then
 			local blip = blipList[n]
-			blip:SetTexture("Interface\\AddOns\\BigWigs\\Textures\\blip")
+			blip:SetTexture("Interface\\AddOns\\BigWigs\\Media\\Textures\\blip")
 			local _, class = UnitClass(n)
 			if class then
 				local c = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
@@ -828,7 +831,7 @@ local function updateProfile()
 	db = plugin.db.profile
 
 	if not db.font then
-		db.font = media:GetDefault("font")
+		db.font = media:GetDefault(FONT)
 	end
 	if not db.fontSize then
 		local _, size = GameFontNormalHuge:GetFont()
@@ -867,11 +870,6 @@ do
 		proxAnchor:SetMinResize(100, 30)
 		proxAnchor:SetClampedToScreen(true)
 		proxAnchor:EnableMouse(true)
-		proxAnchor:SetScript("OnMouseUp", function(self, button)
-			if inConfigMode and button == "LeftButton" then
-				plugin:SendMessage("BigWigs_SetConfigureTarget", plugin)
-			end
-		end)
 
 		local tooltipFrame = CreateFrame("Frame", nil, proxAnchor)
 		tooltipFrame:SetWidth(db.width)
@@ -905,7 +903,7 @@ do
 			customProximityOpen, customProximityTarget, customProximityReverse = nil, nil, nil
 			plugin:Close(true)
 		end)
-		close:SetNormalTexture("Interface\\AddOns\\BigWigs\\Textures\\icons\\close")
+		close:SetNormalTexture("Interface\\AddOns\\BigWigs\\Media\\Textures\\icons\\close")
 		proxAnchor.close = close
 
 		local sound = CreateFrame("Button", nil, proxAnchor)
@@ -941,7 +939,7 @@ do
 
 		local rangeCircle = proxAnchor:CreateTexture(nil, "ARTWORK")
 		rangeCircle:SetPoint("CENTER")
-		rangeCircle:SetTexture("Interface\\AddOns\\BigWigs\\Textures\\alert_circle")
+		rangeCircle:SetTexture("Interface\\AddOns\\BigWigs\\Media\\Textures\\alert_circle")
 		rangeCircle:SetBlendMode("ADD")
 		proxAnchor.rangeCircle = rangeCircle
 		proxCircle = rangeCircle
@@ -1024,7 +1022,7 @@ do
 		proxAnchor.drag = drag
 
 		local tex = drag:CreateTexture(nil, "OVERLAY")
-		tex:SetTexture("Interface\\AddOns\\BigWigs\\Textures\\draghandle")
+		tex:SetTexture("Interface\\AddOns\\BigWigs\\Media\\Textures\\draghandle")
 		tex:SetWidth(16)
 		tex:SetHeight(16)
 		tex:SetBlendMode("ADD")
@@ -1038,14 +1036,14 @@ do
 		for i = 1, 40 do
 			local blip = proxAnchor:CreateTexture(nil, "OVERLAY")
 			blip:SetSize(16, 16)
-			blip:SetTexture("Interface\\AddOns\\BigWigs\\Textures\\blip")
+			blip:SetTexture("Interface\\AddOns\\BigWigs\\Media\\Textures\\blip")
 			blipList[rList[i]] = blip
 		end
 		local pList = plugin:GetPartyList()
 		for i = 1, 5 do
 			local blip = proxAnchor:CreateTexture(nil, "OVERLAY")
 			blip:SetSize(16, 16)
-			blip:SetTexture("Interface\\AddOns\\BigWigs\\Textures\\blip")
+			blip:SetTexture("Interface\\AddOns\\BigWigs\\Media\\Textures\\blip")
 			blipList[pList[i]] = blip
 		end
 
@@ -1078,7 +1076,6 @@ do
 
 		self:RegisterMessage("BigWigs_StartConfigureMode")
 		self:RegisterMessage("BigWigs_StopConfigureMode")
-		self:RegisterMessage("BigWigs_SetConfigureTarget")
 		self:RegisterMessage("BigWigs_ProfileUpdate", updateProfile)
 		self:RegisterMessage("BigWigs_ResetPositions", resetAnchor)
 		updateProfile()
@@ -1110,14 +1107,6 @@ function plugin:BigWigs_StopConfigureMode()
 	self:Close(true)
 end
 
-function plugin:BigWigs_SetConfigureTarget(event, module)
-	if module == self then
-		proxAnchor.background:SetColorTexture(0.2, 1, 0.2, 0.3)
-	else
-		proxAnchor.background:SetColorTexture(0, 0, 0, 0.3)
-	end
-end
-
 do
 	local disabled = function() return plugin.db.profile.disabled end
 	plugin.pluginOptions = {
@@ -1126,11 +1115,11 @@ do
 		get = function(info)
 			local key = info[#info]
 			if key == "font" then
-				for i, v in next, media:List("font") do
+				for i, v in next, media:List(FONT) do
 					if v == db.font then return i end
 				end
 			elseif key == "soundName" then
-				for i, v in next, media:List("sound") do
+				for i, v in next, media:List(SOUND) do
 					if v == db.soundName then return i end
 				end
 			else
@@ -1140,9 +1129,9 @@ do
 		set = function(info, value)
 			local key = info[#info]
 			if key == "font" then
-				db.font = media:List("font")[value]
+				db.font = media:List(FONT)[value]
 			elseif key == "soundName" then
-				db.soundName = media:List("sound")[value]
+				db.soundName = media:List(SOUND)[value]
 			else
 				db[key] = value
 			end
@@ -1166,7 +1155,7 @@ do
 				type = "select",
 				name = L.font,
 				order = 3,
-				values = media:List("font"),
+				values = media:List(FONT),
 				width = "full",
 				itemControl = "DDI-Font",
 			},
@@ -1183,7 +1172,7 @@ do
 				type = "select",
 				name = L.sound,
 				order = 5,
-				values = media:List("sound"),
+				values = media:List(SOUND),
 				width = "full",
 				itemControl = "DDI-Sound"
 				--disabled = disabled,
