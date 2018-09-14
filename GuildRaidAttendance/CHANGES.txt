@@ -1,10 +1,15 @@
-lightweight tag 4579f817fbd0dae109a01e4fd595c19f5743189d r82-release
+lightweight tag d0d80308919b825beedcc3777626586e2e27b1d2 r83-release
 Author:	KevinSK <shinozakisama@live.com>
-Date:	Mon Sep 3 13:40:32 2018 +0800
+Date:	Fri Sep 7 15:38:55 2018 +0800
 
-commit 4579f817fbd0dae109a01e4fd595c19f5743189d
+commit d0d80308919b825beedcc3777626586e2e27b1d2
 Author: KevinSK <shinozakisama@live.com>
-Date:   Mon Sep 3 13:40:32 2018 +0800
+Date:   Fri Sep 7 15:38:55 2018 +0800
 
     fix bugs
+    
+    * Fixed member deletion bugs (RosterEditor).
+    * Fixed ENCOUNTER_END popups.
+    * Fixed Attendances tab auto refresh.
+    + Added role count text in AttendanceFrame.
 

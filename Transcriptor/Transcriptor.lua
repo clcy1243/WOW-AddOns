@@ -215,6 +215,7 @@ do
 			[235117] = true, -- Unstable Soul (Maiden of Vigilance)
 			[238028] = true, -- Light Remanence (Maiden of Vigilance)
 			[238408] = true, -- Fel Remanence (Maiden of Vigilance)
+			[270620] = true, -- Psionic Blast (Zek'voz/Uldir || Mind Controlled player)
 		}
 		local events = {
 			"SPELL_AURA_[AR][^#]+#(%d+)#([^#]+%-[^#]+)#([^#]+)#([^#]*)#([^#]+)#(%d+)#([^#]+)#", -- SPELL_AURA_[AR] to filter _BROKEN
@@ -242,17 +243,21 @@ do
 						local flags = tonumber(flagsText)
 						local tbl = tables[j]
 						local sortedTbl = sortedTables[j]
-						if id and flags and band(flags, mineOrPartyOrRaid) ~= 0 and not ignoreList[id] and not playerSpellBlacklist[id] and not total[id] and #sortedTbl < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
-							local srcGUIDType = strsplit("-", srcGUID)
-							local destGUIDType = strsplit("-", destGUID)
-							local trim = destGUID and find(destGUID, "^P[le][at]")
-							if srcGUID == destGUID then
-								tbl[id] = "|cFF81BEF7".. name:gsub("%-.+", "*") .."(".. srcGUIDType ..") >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."(".. destGUIDType ..")|r"
-							else
-								tbl[id] = "|cFF3ADF00".. name:gsub("%-.+", "*") .."(".. srcGUIDType ..") >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."(".. destGUIDType ..")|r"
+						if id and flags and band(flags, mineOrPartyOrRaid) ~= 0 and not ignoreList[id] and not playerSpellBlacklist[id] and #sortedTbl < 15 then -- Check total to avoid duplicates and lock to a max of 15 for sanity
+							if not total[id] or destGUIDType ~= "" then
+								local srcGUIDType = strsplit("-", srcGUID)
+								local destGUIDType = strsplit("-", destGUID)
+								local trim = destGUID and find(destGUID, "^P[le][at]")
+								if srcGUID == destGUID then
+									tbl[id] = "|cFF81BEF7".. name:gsub("%-.+", "*") .."(".. srcGUIDType ..") >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."(".. destGUIDType ..")|r"
+								else
+									tbl[id] = "|cFF3ADF00".. name:gsub("%-.+", "*") .."(".. srcGUIDType ..") >> ".. (trim and tarName:gsub("%-.+", "*") or tarName) .."(".. destGUIDType ..")|r"
+								end
+								if not total[id] then
+									total[id] = true
+									sortedTbl[#sortedTbl+1] = id
+								end
 							end
-							total[id] = true
-							sortedTbl[#sortedTbl+1] = id
 						end
 					end
 				end
@@ -550,6 +555,11 @@ local sh = {}
 	We don't care about other widgets, for now
 ]]
 do
+	local blackList = {
+		[1309] = true,
+		[1313] = true,
+		[1319] = true,
+	}
 	local GetIconAndTextWidgetVisualizationInfo = C_UIWidgetManager and C_UIWidgetManager.GetIconAndTextWidgetVisualizationInfo
 	function sh.UPDATE_UI_WIDGET(tbl)
 		if tbl.widgetSetID == 1 and tbl.widgetType == 0 then
@@ -565,7 +575,7 @@ do
 				end
 			end
 			return txt
-		else
+		elseif not blackList[tbl.widgetID] then
 			local txt
 			for k, v in next, tbl do
 				if not txt then
@@ -882,14 +892,14 @@ do
 		if safeUnit(unit) then
 			local spellName, _, _, startTime, endTime = UnitCastingInfo(unit)
 			local time = ((endTime or 0) - (startTime or 0)) / 1000
-			return format("%s(%s) - %s - %ss [[%s]]", UnitName(unit), UnitName(unit.."target"), spellName, time, strjoin(":", tostringall(unit, ...)))
+			return format("%s(%s) - %s - %ss [[%s]]", UnitName(unit), UnitName(unit.."target"), spellName or "NIL", time, strjoin(":", tostringall(unit, ...)))
 		end
 	end
 	function sh.UNIT_SPELLCAST_CHANNEL_START(unit, ...)
 		if safeUnit(unit) then
 			local spellName, _, _, startTime, endTime = UnitChannelInfo(unit)
 			local time = ((endTime or 0) - (startTime or 0)) / 1000
-			return format("%s(%s) - %s - %ss [[%s]]", UnitName(unit), UnitName(unit.."target"), spellName, time, strjoin(":", tostringall(unit, ...)))
+			return format("%s(%s) - %s - %ss [[%s]]", UnitName(unit), UnitName(unit.."target"), spellName or "NIL", time, strjoin(":", tostringall(unit, ...)))
 		end
 	end
 end
@@ -931,12 +941,10 @@ do
 	}
 	function sh.UNIT_POWER_UPDATE(unit, typeName)
 		if not allowedPowerUnits[unit] then return end
-		local typeIndex = UnitPowerType(unit)
-		local mainPower = UnitPower(unit)
-		local maxPower = UnitPowerMax(unit)
-		local alternatePower = UnitPower(unit, 10)
-		local alternatePowerMax = UnitPowerMax(unit, 10)
-		return strjoin("#", unit, UnitName(unit), typeName, typeIndex, mainPower, maxPower, alternatePower, alternatePowerMax)
+		local powerType = format("TYPE:%s/%d", typeName, UnitPowerType(unit))
+		local mainPower = format("MAIN:%d/%d", UnitPower(unit), UnitPowerMax(unit))
+		local altPower = format("ALT:%d/%d", UnitPower(unit, 10), UnitPowerMax(unit, 10))
+		return strjoin("#", unit, UnitName(unit), powerType, mainPower, altPower)
 	end
 end
 

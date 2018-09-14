@@ -1,10 +1,9 @@
 # LittleWigs
 
-## [v8.0.17](https://github.com/BigWigsMods/LittleWigs/tree/v8.0.17) (2018-09-05)
-[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v8.0.16...v8.0.17)
+## [v8.0.19](https://github.com/BigWigsMods/LittleWigs/tree/v8.0.19) (2018-09-12)
+[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v8.0.18...v8.0.19)
 
-- Fix option flags  
-- TempleOfSethraliss/Galvazzt: Add infobox for Galvanize.  
-- TempleOfSethraliss/Galvazzt: Fix Galvanize warning.  
-- Freehold/Booty: added missing options key  
-- Freehold/Booty: added a warmup timer for Trothak  
+- BfA/KingsRest/Mchimba: Fix Entomb over message, timer fixes.  
+- BfA/AtalDazar/Yazma: Fix everything  
+- BfA/AtalDazar/Trash: add Bwonsamdi's Mantle, Mending Word and Fiery Enchant (#326)  
+- WaycrestManor/Heartsbane: Cleanup  

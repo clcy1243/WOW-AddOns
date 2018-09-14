@@ -12,14 +12,18 @@ local mod, CL = BigWigs:NewBoss("Zek'voz, Herald of N'zoth", 1861, 2169)
 if not mod then return end
 mod:RegisterEnableMob(134445) -- Zek'voz
 mod.engageId = 2136
---mod.respawnTime = 30
+mod.respawnTime = 30
 
 --------------------------------------------------------------------------------
 -- Locals
 --
 
 local stage = 1
-local nextStageWarning = 70
+local nextStageWarning = 68
+local lastPower = 0
+local eyeBeamCount = 0
+local roilingDeceitCount = 0
+local roilingDeceitTargets = {}
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -27,8 +31,10 @@ local nextStageWarning = 70
 
 local L = mod:GetLocale()
 if L then
-	L.stage2_yell = "Yogg-Saron data loading." -- Full Yell: Disc accessed. Yogg-Saron data loading.
-	L.stage3_yell = "Corrupted data loading." -- Full Yell: Disc accessed. Corrupted data loading.
+	L.surging_darkness_eruption = "Eruption (%d)"
+	L.mythic_adds = "Mythic Adds"
+	L.mythic_adds_desc = "Show timers when adds will spawn in Mythic (Both Qiraji Warrior and Anub'ar Voidweaver spawn at the same time)."
+	L.mythic_adds_icon = "inv_misc_ahnqirajtrinket_01"
 end
 
 --------------------------------------------------------------------------------
@@ -44,7 +50,7 @@ function mod:GetOptions()
 		{265248, "TANK"}, -- Shatter
 
 		--[[ Stage 1 ]]--
-		{264382, "SAY"}, -- Eye Beam
+		{264382, "SAY", "ICON"}, -- Eye Beam
 		-18390, -- Qiraji Warrior
 
 		--[[ Stage 2 ]]--
@@ -55,16 +61,19 @@ function mod:GetOptions()
 		--[[ Stage 3 ]]--
 		267239, -- Orb of Corruption
 		{265662, "SAY_COUNTDOWN"}, -- Corruptor's Pact
+
+		--[[ Mythic ]]--
+		"mythic_adds",
 	},{
 		["stages"] = "general",
 		[264382] = CL.stage:format(1),
 		[265360] = CL.stage:format(2),
 		[267239] = CL.stage:format(3),
+		["mythic_adds"] = CL.mythic,
 	}
 end
 
 function mod:OnBossEnable()
-	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1")
 
 	--[[ General ]]--
@@ -85,17 +94,32 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "OrbofCorruption", 267239)
 	self:Log("SPELL_AURA_APPLIED", "CorruptorsPact", 265662)
 	self:Log("SPELL_AURA_REMOVED", "CorruptorsPactRemoved", 265662)
+
+	--[[ Mythic ]]--
+	self:Log("SPELL_CAST_SUCCESS", "MythicAdds", 271099)
 end
 
 function mod:OnEngage()
 	stage = 1
-	self:Bar(265231, 15.5) -- Void Lash (Initial)
-	self:Bar(265530, 30.5) -- Surging Darkness
-	self:Bar(-18390, 70, nil, 275772) -- Qiraji Warrior
-	self:CDBar(264382, 96) -- Eye Beam
+	nextStageWarning = self:Mythic() and 43 or 68
+	lastPower = 0
+	eyeBeamCount = 0
+	roilingDeceitCount = 0
+	roilingDeceitTargets = {}
 
-	nextStageWarning = 73
+	self:Bar(265231, 15.4) -- Void Lash (Initial)
+	self:Bar(265530, 25) -- Surging Darkness
+	self:CDBar(264382, 51.8) -- Eye Beam
+
+	if self:Mythic() then
+		self:CDBar(265360, 31) -- Roiling Deceit -- Until APPLIED not START
+		self:Bar("mythic_adds", 60, CL.adds, L.mythic_adds_icon)
+	elseif not self:LFR() then
+		self:Bar(-18390, 55.5, nil, 275772) -- Qiraji Warrior
+	end
+
 	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterUnitEvent("UNIT_POWER_FREQUENT", nil, "boss1")
 end
 
 --------------------------------------------------------------------------------
@@ -104,37 +128,48 @@ end
 
 function mod:UNIT_HEALTH_FREQUENT(event, unit)
 	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-	if hp < nextStageWarning then
+	if hp < nextStageWarning then -- Mythic: 40%, other: 65% and 30%
 		local nextStage = stage + 1
 		self:Message("stages", "green", nil, CL.soon:format(CL.stage:format(nextStage)), false)
-		nextStageWarning = nextStageWarning - 30
-		if nextStageWarning < 40 then
+		nextStageWarning = nextStageWarning - 35
+		if nextStageWarning < 35 then
 			self:UnregisterUnitEvent(event, unit)
 		end
 	end
 end
 
-function mod:CHAT_MSG_MONSTER_YELL(_, msg)
-	if msg:find(L.stage2_yell) then
-		stage = 2
+function mod:UNIT_POWER_FREQUENT(event, unit)
+	local power = UnitPower(unit)
+	if power < lastPower and lastPower ~= 100 then
+		stage = stage + 1
 		self:Message("stages", "green", "Long", CL.stage:format(stage), false)
-		self:StopBar(-18390) -- Qiraji Warrior
-		self:StopBar(264382) -- Eye Beam
-		self:CDBar(265360, 27) -- Roiling Deceit
-		self:Bar(265231, 30) -- Void Lash (Initial)
-		self:Bar(265530, 60.5) -- Surging Darkness
-	elseif msg:find(L.stage3_yell) then
-		stage = 3
-		self:Message("stages", "green", "Long", CL.stage:format(stage), false)
-		self:StopBar(-18397) -- Anub'ar Voidweaver
-		self:StopBar(265360) -- Roiling Deceit
-		self:Bar(267239, 17.5) -- Orb of Corruption
-		self:Bar(265231, 35) -- Void Lash (Initial)
-		self:Bar(265530, 60.5) -- Surging Darkness
+		self:Bar(265530, 80) -- Surging Darkness
+		if self:Mythic() then
+			self:StopBar(-18390) -- Qiraji Warrior
+			self:StopBar(-18397) -- Anub'ar Voidweaver
+			self:Bar(267239, 15) -- Orb of Corruption
+			self:Bar(265231, 35) -- Void Lash (Initial)
+		elseif stage == 2 then
+			self:StopBar(-18390) -- Qiraji Warrior
+			self:StopBar(264382) -- Eye Beam
+			if not self:LFR() then
+				self:Bar(-18397, 20.5, nil, 267180) -- Anub'ar Voidweaver
+			end
+			self:CDBar(265360, 27) -- Roiling Deceit -- Until APPLIED not START
+			self:Bar(265231, 30) -- Void Lash (Initial)
+		elseif stage == 3 then
+			self:UnregisterUnitEvent(event, unit)
+			self:StopBar(-18397) -- Anub'ar Voidweaver
+			self:StopBar(265360) -- Roiling Deceit
+			self:Bar(267239, 12) -- Orb of Corruption
+			self:Bar(265231, 30) -- Void Lash (Initial)
+		end
 	end
+	lastPower = power
 end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
+	if self:Mythic() then return end -- Adds are handled better in Mythic
 	if spellId == 266913 then -- Spawn Qiraji Warrior
 		self:Message(-18390, "cyan", nil, nil, 275772)
 		self:PlaySound(-18390, "long")
@@ -142,7 +177,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	elseif spellId == 267192 then -- Spawn Anub'ar Caster
 		self:Message(-18397, "cyan", nil, nil, 267180)
 		self:PlaySound(-18397, "long")
-		self:Bar(-18397, 62, nil, 267180)
+		self:Bar(-18397, 80, nil, 267180)
 	end
 end
 
@@ -150,7 +185,14 @@ end
 function mod:SurgingDarkness(args)
 	self:Message(args.spellId, "red")
 	self:PlaySound(args.spellId, "long")
-	self:Bar(args.spellId, 63.5)
+	self:Bar(args.spellId, 83)
+	-- XXX Lots of Bars, try to rework into a less intrusive manner
+	self:CDBar(args.spellId, self:Mythic() and 8 or 10.5, L.surging_darkness_eruption:format(1))
+	self:CDBar(args.spellId, self:Mythic() and 12 or 17, L.surging_darkness_eruption:format(2))
+	self:CDBar(args.spellId, self:Mythic() and 16 or 23.5, L.surging_darkness_eruption:format(3))
+	if self:Mythic() then
+		self:CDBar(args.spellId, 20, L.surging_darkness_eruption:format(4))
+	end
 end
 
 function mod:VoidLash(args)
@@ -160,7 +202,7 @@ function mod:VoidLash(args)
 		self:Bar(265248, 4) -- Shatter
 		self:Bar(265231, 6.5) -- Void Lash (Secondary)
 	else -- Secondary
-		self:Bar(265231, 31.5) -- Void Lash (Initial)
+		self:Bar(265231, 31.2) -- Void Lash (Time to initial 37.7 - 6.5)
 	end
 end
 
@@ -171,58 +213,64 @@ end
 
 --[[ Stage 1 ]]--
 do
-	local prev = 0
 	local function printTarget(self, name, guid)
-		self:TargetMessage2(264382, "yellow", name)
+		local count = CL.count:format(self:SpellName(264382), eyeBeamCount)
+		self:TargetMessage2(264382, "yellow", name, nil, count)
 		self:PlaySound(264382, "alert")
+		self:PrimaryIcon(264382, name)
 		if self:Me(guid) then
-			self:Say(264382)
+			self:Say(264382, count)
+		end
+		if eyeBeamCount == 3 then
+			self:ScheduleTimer("PrimaryIcon", 3, 264382)
 		end
 	end
 	function mod:EyeBeam(args)
-		self:GetBossTarget(printTarget, 0.1, args.sourceGUID)
-		self:CastBar(args.spellId, 3)
-		local t = GetTime()
-		if t-prev > 15 then -- Casts it in sets of 3, we only need the cooldown between the sets
-			prev = t
-			self:CDBar(args.spellId, 46)
+		self:GetBossTarget(printTarget, 0.5, args.sourceGUID)
+		self:CastBar(args.spellId, self:Mythic() and 1.5 or 3)
+		eyeBeamCount = eyeBeamCount + 1
+		if eyeBeamCount == 4 then
+			eyeBeamCount = 1
+		elseif eyeBeamCount == 3 then
+			self:CDBar(args.spellId, self:Mythic() and 52.5 or 32.8)
 		end
 	end
 end
 
 --[[ Stage 2 ]]--
 do
-	local prev, targetFound = 0, false
 	local function printTarget(self, name, guid)
-		if not self:Tank(name) then
-			targetFound = true
-			self:TargetMessage2(265360, "yellow", name)
-			if self:Me(guid) then
-				self:PlaySound(265360, "warning")
-				self:Say(265360)
-			end
+		roilingDeceitTargets[guid] = true
+		local count = CL.count:format(self:SpellName(265360), roilingDeceitCount)
+		self:TargetMessage2(265360, "yellow", name, nil, count)
+		if self:Me(guid) then
+			self:PlaySound(265360, "warning")
+			self:Say(265360, count)
 		end
 	end
 	function mod:RoilingDeceit(args)
-		targetFound = false
-		self:GetBossTarget(printTarget, 0.1, args.sourceGUID)
-		local t = GetTime()
-		if t-prev > 15 then -- Casts it in sets of 3, we only need the cooldown between the sets
-			prev = t
-			self:CDBar(265360, 46)
+		self:GetBossTarget(printTarget, 1, args.sourceGUID)
+		roilingDeceitCount = roilingDeceitCount + 1
+		if roilingDeceitCount == 4 then
+			roilingDeceitCount = 1
+		elseif roilingDeceitCount == 3 then
+			self:CDBar(265360, 52.7)
 		end
 	end
 
 	function mod:RoilingDeceitApplied(args)
-		if not targetFound then
+		if not roilingDeceitTargets[args.destGUID] then -- Backup for target scan
 			self:TargetMessage2(args.spellId, "yellow", args.destName)
 			if self:Me(args.destGUID) then
 				self:PlaySound(args.spellId, "warning")
 				self:SayCountdown(args.spellId, 12)
 				self:Say(args.spellId)
 			end
-		elseif self:Me(args.destGUID) then
-			self:SayCountdown(args.spellId, 12)
+		else
+			roilingDeceitTargets[args.destGUID] = nil
+			if self:Me(args.destGUID) then
+				self:SayCountdown(args.spellId, 12)
+			end
 		end
 	end
 
@@ -234,9 +282,12 @@ do
 end
 
 function mod:VoidBolt(args)
-	if self:Interrupter(args.sourceGUID) then
+	local canDo, ready = self:Interrupter(args.sourceGUID)
+	if canDo then
 		self:Message(args.spellId, "yellow")
-		self:PlaySound(args.spellId, "alert")
+		if ready then
+			self:PlaySound(args.spellId, "alert")
+		end
 	end
 end
 
@@ -244,7 +295,7 @@ end
 function mod:OrbofCorruption(args)
 	self:Message(args.spellId, "yellow")
 	self:PlaySound(args.spellId, "alert")
-	self:Bar(args.spellId, 90)
+	--self:Bar(args.spellId, 90) -- XXX Does not get cast again?
 end
 
 function mod:CorruptorsPact(args)
@@ -259,4 +310,11 @@ function mod:CorruptorsPactRemoved(args)
 	if self:Me(args.destGUID) then
 		self:CancelSayCountdown(args.spellId)
 	end
+end
+
+--[[ Mythic ]]--
+function mod:MythicAdds()
+	self:Message("mythic_adds", "cyan", nil, CL.incoming:format(CL.adds), L.mythic_adds_icon)
+	self:PlaySound("mythic_adds", "long")
+	self:Bar("mythic_adds", 120, CL.adds, L.mythic_adds_icon)
 end

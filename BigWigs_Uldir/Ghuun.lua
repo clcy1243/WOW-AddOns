@@ -57,12 +57,11 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1")
-
 	-- Stage 1
-	self:Log("SPELL_CAST_SUCCESS", "ExplosiveCorruptionSuccess", 272505)
-	self:Log("SPELL_AURA_APPLIED", "ExplosiveCorruptionApplied", 272506)
-	self:Log("SPELL_AURA_REMOVED", "ExplosiveCorruptionRemoved", 272506)
+	self:Log("SPELL_CAST_SUCCESS", "ExplosiveCorruptionSuccess", 275756, 272505) -- Stage 1 + 2, Stage 3
+	self:Log("SPELL_AURA_APPLIED", "ExplosiveCorruptionApplied", 274262, 272506) -- Stage 1 + 2, Stage 3 + Orb Hit
+	self:Log("SPELL_MISSED", "ExplosiveCorruptionRemoved", 274262, 272506) -- Incase it's immuned
+	self:Log("SPELL_AURA_REMOVED", "ExplosiveCorruptionRemoved", 274262, 272506)
 	self:Log("SPELL_CAST_START", "ThousandMaws", 267509)
 	self:Log("SPELL_CAST_START", "Torment", 267427)
 	self:Log("SPELL_CAST_START", "MassiveSmash", 267412)
@@ -76,6 +75,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "CorruptingBiteApplied", 270443) -- Stage 2 start
 	self:Log("SPELL_AURA_APPLIED", "GrowingCorruption", 270447)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "GrowingCorruption", 270447)
+	self:Log("SPELL_CAST_SUCCESS", "WaveofCorruption", 270373)
 	self:Log("SPELL_CAST_SUCCESS", "BloodFeastSuccess", 263235)
 	self:Log("SPELL_AURA_REMOVED", "BloodFeastRemoved", 263235)
 	self:Log("SPELL_CAST_START", "MindNumbingChatter", 263307)
@@ -103,15 +103,6 @@ end
 -- Event Handlers
 --
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
-	if spellId == 270373 then -- Wave of Corruption
-		self:Message(spellId, "yellow")
-		self:PlaySound(spellId, "alarm")
-		waveOfCorruptionCount = waveOfCorruptionCount + 1
-		self:Bar(spellId, waveOfCorruptionCount % 2 == 0 and 20.5 or 40.5)
-	end
-end
-
 -- Stage 1
 function mod:CorruptingBiteApplied()
 	stage = 2
@@ -124,24 +115,44 @@ function mod:CorruptingBiteApplied()
 	self:Bar(263235, 47) -- Blood Feast
 end
 
-function mod:ExplosiveCorruptionSuccess(args)
-	self:TargetMessage2(272506, "orange", args.destName)
+do
+	local castOnMe = nil
+	function mod:ExplosiveCorruptionSuccess(args)
+		if args.spellId == 272505 then -- Initial application in stage 3 on heroic
+			if self:Me(args.destGUID) then
+				castOnMe = true
+			end
+			self:TargetMessage2(272506, "orange", args.destName)
+		end
+		self:CDBar(272506, stage == 1 and 26 or stage == 2 and 15.9 or 13.4)
+	end
+
+	local playerList = mod:NewTargetList()
+	function mod:ExplosiveCorruptionApplied(args)
+		if args.spellId == 274262 then -- Initial debuff
+			playerList[#playerList+1] = args.destName
+			if self:Me(args.destGUID) then
+				self:PlaySound(272506, "alarm")
+				self:Say(272506)
+				self:SayCountdown(272506, 4)
+			end
+			self:TargetsMessage(272506, "orange", playerList, 3, nil, nil, 2) -- Travel time
+		elseif self:Me(args.destGUID) then -- Secondary Target or Stage 3 initial application
+			if castOnMe == true then
+				castOnMe = false
+			else
+				self:TargetMessage2(272506, "blue", args.destName)
+			end
+			self:Say(272506)
+			self:SayCountdown(272506, 4)
+		end
+	end
+
+	function mod:ExplosiveCorruptionRemoved(args)
 		if self:Me(args.destGUID) then
-		self:PlaySound(272506, "warning")
-	end
-	self:CDBar(272506, stage == 1 and 13 or 13.4)
-end
-
-function mod:ExplosiveCorruptionApplied(args)
-	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
-		self:SayCountdown(args.spellId, 5)
-	end
-end
-
-function mod:ExplosiveCorruptionRemoved(args)
-	if self:Me(args.destGUID) then
-		self:CancelSayCountdown(args.spellId)
+			castOnMe = false
+			self:CancelSayCountdown(272506)
+		end
 	end
 end
 
@@ -214,14 +225,21 @@ function mod:GrowingCorruption(args)
 	self:PlaySound(args.spellId, "alarm")
 end
 
+function mod:WaveofCorruption(args)
+	self:Message(args.spellId, "yellow")
+	self:PlaySound(args.spellId, "alarm")
+	waveOfCorruptionCount = waveOfCorruptionCount + 1
+	self:Bar(args.spellId, stage == 3 and 25.5 or waveOfCorruptionCount % 2 == 0 and 15 or 31)
+end
+
 function mod:BloodFeastSuccess(args)
 	self:PlaySound(args.spellId, "warning")
 	self:TargetMessage2(args.spellId, "red", args.destName)
 	if self:Me(args.destGUID) then
 		self:Say(args.spellId)
-		self:SayCountdown(args.spellId, 8)
+		self:SayCountdown(args.spellId, 10)
 	end
-	self:CDBar(args.spellId, 62)
+	self:CDBar(args.spellId, 46.3)
 	self:CDBar(263307, 20) -- Mind-Numbing Chatter
 end
 
@@ -256,22 +274,22 @@ function mod:Collapse(args)
 	waveOfCorruptionCount = 1
 
 	self:CastBar("stages", 20, args.spellName, args.spellId) -- Collapse
-	self:Bar(274582, 25.5) -- Malignant Growth
 	self:Bar(272506, 30) -- Explosive Corruption
-	self:Bar(275160, 32.5) -- Gaze of G'huun
-	self:Bar(270373, 37.5) -- Wave of Corruption
+	self:Bar(274582, 34) -- Malignant Growth
+	self:Bar(275160, 47.5) -- Gaze of G'huun
+	self:Bar(270373, 50.5) -- Wave of Corruption
 end
 
 function mod:MalignantGrowth(args)
 	self:Message(args.spellId, "red")
 	self:PlaySound(args.spellId, "alarm")
-	self:Bar(args.spellId, 20.5)
+	self:Bar(args.spellId, 25.5)
 end
 
 function mod:GazeofGhuun(args)
 	self:Message(args.spellId, "orange")
 	self:PlaySound(args.spellId, "warning")
-	self:Bar(args.spellId, 21.9)
+	self:Bar(args.spellId, 25.9)
 end
 
 do

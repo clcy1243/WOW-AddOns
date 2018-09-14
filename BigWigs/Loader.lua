@@ -10,7 +10,7 @@ local ldbi = LibStub("LibDBIcon-1.0")
 -- Generate our version variables
 --
 
-local BIGWIGS_VERSION = 105
+local BIGWIGS_VERSION = 113
 local BIGWIGS_RELEASE_STRING, BIGWIGS_VERSION_STRING = "", ""
 local versionQueryString, versionResponseString = "Q^%d^%s", "V^%d^%s"
 
@@ -21,7 +21,7 @@ do
 	local RELEASE = "RELEASE"
 
 	local releaseType = RELEASE
-	local myGitHash = "eb5cfed" -- The ZIP packager will replace this with the Git hash.
+	local myGitHash = "15e801c" -- The ZIP packager will replace this with the Git hash.
 	local releaseString = ""
 	--[===[@alpha@
 	-- The following code will only be present in alpha ZIPs.
@@ -87,6 +87,7 @@ local fakeZones = { -- Fake zones used as GUI menus
 	[-424]=true, -- Pandaria
 	[-572]=true, -- Draenor
 	[-619]=true, -- Broken Isles
+	[-947]=true, -- Azeroth
 }
 
 do
@@ -160,6 +161,7 @@ do
 		[1712] = l, -- Antorus, the Burning Throne
 		[1779] = l, -- Invasion Points
 		--[[ BigWigs: Battle for Azeroth ]]--
+		[-947] = bfa, -- Azeroth (Fake Menu)
 		[1861] = bfa, -- Uldir
 
 		--[[ LittleWigs: Classic ]]--
@@ -262,6 +264,7 @@ do
 		[-376] = -424, [-379] = -424, [-504] = -424, [-507] = -424, [-554] = -424, -- Pandaria
 		[-542] = -572, [-543] = -572, [-534] = -572, -- Draenor
 		[-630] = -619, [-634] = -619, [-641] = -619, [-650] = -619, [-680] = -619, -- Broken Isles
+		[-942] = -947, -- Azeroth/BfA
 	}
 end
 
@@ -973,8 +976,8 @@ end
 
 do
 	-- This is a crapfest mainly because DBM's actual handling of versions is a crapfest, I'll try explain how this works...
-	local DBMdotRevision = "17762" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
-	local DBMdotDisplayVersion = "8.0.6" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
+	local DBMdotRevision = "17821" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
+	local DBMdotDisplayVersion = "8.0.8" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
 	local DBMdotReleaseRevision = DBMdotRevision -- This is manually changed by them every release, they use it to track the highest release version, a new DBM release is the only time it will change.
 
 	local timer, prevUpgradedUser = nil, nil
@@ -1208,7 +1211,7 @@ do
 				local msg = L.warnSeveralReleases:format(diff)
 				sysprint(msg)
 				Popup(msg)
-				RaidNotice_AddMessage(RaidWarningFrame, msg, {r=1,g=1,b=1}, 20)
+				RaidNotice_AddMessage(RaidWarningFrame, msg, {r=1,g=1,b=1}, 40)
 			end, 1)
 		elseif warnedReallyOutOfDate > 1 and hasWarned < 2 then
 			if verTimer then verTimer:Cancel() end

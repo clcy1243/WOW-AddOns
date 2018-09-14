@@ -27,29 +27,26 @@ local infoboxHeight = 100
 local db = nil
 local inTestMode = false
 
-function plugin:RestyleWindow(dirty)
+function plugin:RestyleWindow()
 	if db.lock then
 		display:EnableMouse(false)
 	else
 		display:EnableMouse(true)
 	end
 
-	local font, size, flags = GameFontNormal:GetFont()
-	local curFont = media:Fetch(FONT, db.font)
-	if dirty or curFont ~= font or db.fontSize ~= size or db.fontOutline ~= flags then
-		local newFlags
-		if db.monochrome and db.fontOutline ~= "" then
-			newFlags = "MONOCHROME," .. db.fontOutline
-		elseif db.monochrome then
-			newFlags = "MONOCHROME"
-		else
-			newFlags = db.fontOutline
-		end
+	local font = media:Fetch(FONT, db.fontName)
+	local flags
+	if db.monochrome and db.fontOutline ~= "" then
+		flags = "MONOCHROME," .. db.fontOutline
+	elseif db.monochrome then
+		flags = "MONOCHROME"
+	else
+		flags = db.fontOutline
+	end
 
-		display.title:SetFont(curFont, db.fontSize, newFlags)
-		for i = 1, 10 do
-			display.text[i]:SetFont(curFont, db.fontSize, newFlags)
-		end
+	display.title:SetFont(font, db.fontSize, flags)
+	for i = 1, 10 do
+		display.text[i]:SetFont(font, db.fontSize, flags)
 	end
 end
 
@@ -57,18 +54,13 @@ end
 -- Options
 --
 
-do
-	local font = media:GetDefault(FONT)
-	local _, size, flags = GameFontNormal:GetFont()
-
-	plugin.defaultDB = {
-		disabled = false,
-		lock = false,
-		font = font,
-		fontSize = size,
-		fontOutline = flags,
-	}
-end
+plugin.defaultDB = {
+	disabled = false,
+	lock = false,
+	--fontName = plugin:GetDefaultFont(),
+	--fontSize = 12,
+	fontOutline = "",
+}
 
 -------------------------------------------------------------------------------
 -- Frame Creation
@@ -92,10 +84,10 @@ do
 		inTestMode = false
 		opener = nil
 		nameList = {}
-		for i = 1, 10 do
+		for i = 1, 40 do
 			self.text[i]:SetText("")
 		end
-		for i = 1, 9, 2 do
+		for i = 1, 40, 2 do
 			self.bar[i]:Hide()
 		end
 		self.title:SetText(L.infoBox)
@@ -105,6 +97,27 @@ do
 	bg:SetAllPoints(display)
 	bg:SetColorTexture(0, 0, 0, 0.3)
 	display.background = bg
+
+	local xxx1 = display:CreateTexture()
+	xxx1:SetPoint("LEFT", display, "RIGHT")
+	xxx1:SetColorTexture(0, 0, 0, 0.3)
+	xxx1:SetSize(infoboxWidth, infoboxHeight)
+	xxx1:Hide()
+	display.xxx1 = xxx1
+
+	local xxx2 = display:CreateTexture()
+	xxx2:SetPoint("TOP", display, "BOTTOM")
+	xxx2:SetColorTexture(0, 0, 0, 0.3)
+	xxx2:SetSize(infoboxWidth, infoboxHeight)
+	xxx2:Hide()
+	display.xxx2 = xxx2
+
+	local xxx3 = display:CreateTexture()
+	xxx3:SetPoint("TOPLEFT", display, "BOTTOMRIGHT")
+	xxx3:SetColorTexture(0, 0, 0, 0.3)
+	xxx3:SetSize(infoboxWidth, infoboxHeight)
+	xxx3:Hide()
+	display.xxx3 = xxx3
 
 	local close = CreateFrame("Button", nil, display)
 	close:SetPoint("BOTTOMRIGHT", display, "TOPRIGHT", -2, 2)
@@ -116,13 +129,19 @@ do
 		plugin:Close()
 	end)
 
-	local header = display:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	local header = display:CreateFontString(nil, "OVERLAY")
+	header:SetFont(plugin:GetDefaultFont(12))
+	header:SetShadowOffset(1, -1)
+	header:SetTextColor(1,0.82,0,1)
 	header:SetPoint("BOTTOMLEFT", display, "TOPLEFT", 2, 2)
 	display.title = header
 
 	display.text = {}
-	for i = 1, 10 do
-		local text = display:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	for i = 1, 20 do
+		local text = display:CreateFontString(nil, "OVERLAY")
+		text:SetFont(plugin:GetDefaultFont(12))
+		text:SetShadowOffset(1, -1)
+		text:SetTextColor(1,0.82,0,1)
 		text:SetSize(infoboxWidth/2, infoboxHeight/5)
 		if i == 1 then
 			text:SetPoint("TOPLEFT", display, "TOPLEFT", 5, 0)
@@ -136,15 +155,32 @@ do
 		end
 		display.text[i] = text
 	end
+	for i = 21, 40 do
+		local text = display:CreateFontString(nil, "OVERLAY")
+		text:SetFont(plugin:GetDefaultFont(12))
+		text:SetShadowOffset(1, -1)
+		text:SetTextColor(1,0.82,0,1)
+		text:SetSize(infoboxWidth/2, infoboxHeight/5)
+		if i % 2 == 0 then
+			text:SetPoint("LEFT", display.text[i-1], "RIGHT", -5, 0)
+			text:SetJustifyH("RIGHT")
+		else
+			text:SetPoint("LEFT", display.text[i-19], "RIGHT")
+			text:SetJustifyH("LEFT")
+		end
+		display.text[i] = text
+	end
 
 	local bgLayer, bgLevel = bg:GetDrawLayer()
 	display.bar = {}
-	for i = 1, 9, 2 do
+	for i = 1, 40, 2 do
 		local bar = display:CreateTexture(nil, bgLayer, nil, bgLevel + 1)
 		bar:SetSize(infoboxWidth, infoboxHeight/5-1)
 		bar:SetColorTexture(0, 1, 0, 0.3)
 		if i == 1 then
 			bar:SetPoint("TOPLEFT", display, "TOPLEFT", 0, -1)
+		elseif i == 21 then
+			bar:SetPoint("TOPLEFT", display, "TOPRIGHT", 0, -1)
 		else
 			bar:SetPoint("TOPLEFT", display.bar[i-1], "BOTTOMLEFT", 0, -1)
 		end
@@ -211,7 +247,7 @@ end
 -- Event Handlers
 --
 
-function plugin:BigWigs_ShowInfoBox(_, module, title)
+function plugin:BigWigs_ShowInfoBox(_, module, title, TEMP)
 	if opener then
 		display:Hide()
 	end
@@ -222,6 +258,16 @@ function plugin:BigWigs_ShowInfoBox(_, module, title)
 	end
 	display.title:SetText(title)
 	display:Show()
+
+	if TEMP then
+		display.xxx1:Show()
+		display.xxx2:Show()
+		display.xxx3:Show()
+	else
+		display.xxx1:Hide()
+		display.xxx2:Hide()
+		display.xxx3:Hide()
+	end
 end
 
 function plugin:BigWigs_SetInfoBoxTitle(_, _, text)
@@ -273,7 +319,11 @@ do
 	local sortingTbl = nil
 	local function sortFunc(x,y)
 		local px, py = sortingTbl[x] or -1, sortingTbl[y] or -1
-		return px > py
+		if px == py then
+			return x > y
+		else
+			return px > py
+		end
 	end
 	local tsort = table.sort
 	local colors = plugin:GetColoredNameTable()

@@ -1243,6 +1243,7 @@ do
 end
 
 do
+	local GetSpellCooldown = GetSpellCooldown
 	local canInterrupt = false
 	local spellList = {
 		106839, -- Skull Bash (Druid)
@@ -1274,14 +1275,26 @@ do
 	-- @string[opt] guid if not nil, will only return true if the GUID matches your target or focus.
 	-- @return boolean
 	function boss:Interrupter(guid)
-		-- We will probably need to make this smarter
-		if guid then
-			if canInterrupt and (UnitGUID("target") == guid or UnitGUID("focus") == guid) then
-				return canInterrupt
+		if canInterrupt then
+			local ready = true
+			local start, duration = GetSpellCooldown(canInterrupt)
+			if start > 0 then -- On cooldown currently
+				local endTime = start + duration
+				local t = GetTime()
+				if endTime - t > 1 then -- Greater than 1 second remaining on cooldown, not ready
+					ready = false
+				end
 			end
-			return
+
+			if guid then
+				if UnitGUID("target") == guid or UnitGUID("focus") == guid then
+					return canInterrupt, ready
+				end
+				return
+			end
+
+			return canInterrupt, ready
 		end
-		return canInterrupt
 	end
 end
 
@@ -1436,9 +1449,9 @@ end
 --- Open the "Info Box" display.
 -- @param key the option key to check
 -- @string title the title of the window
-function boss:OpenInfo(key, title)
+function boss:OpenInfo(key, title, TEMP)
 	if checkFlag(self, key, C.INFOBOX) then
-		self:SendMessage("BigWigs_ShowInfoBox", self, title)
+		self:SendMessage("BigWigs_ShowInfoBox", self, title, TEMP)
 	end
 end
 

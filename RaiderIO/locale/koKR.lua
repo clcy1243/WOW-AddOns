@@ -14,7 +14,9 @@ L["ALWAYS_SHOW_EXTENDED_INFO_DESC"] = "보조키(Shift/Ctrl/Alt)를 누르고 �
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED"] = ""--]] 
 --[[Translation missing --]]
---[[ L["API_DEPRECATED_ANONYMOUS_FUNCTION"] = ""--]] 
+--[[ L["API_DEPRECATED_UNKNOWN_ADDON"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["API_DEPRECATED_UNKNOWN_FILE"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED_WITH"] = ""--]] 
 L["BEST_FOR_DUNGEON"] = "던전 최고 기록"
@@ -28,39 +30,29 @@ L["COPY_RAIDERIO_PROFILE_URL"] = "Raider.IO URL 복사"
 L["COPY_RAIDERIO_URL"] = "Raider.IO URL 복사"
 L["DPS"] = "|cffFF3636공격전담|r"
 L["DPS_SCORE"] = "|cffFF3636공격전담|r 점수"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_AD"] = ""--]] 
+L["DUNGEON_SHORT_NAME_AD"] = "아탈"
 L["DUNGEON_SHORT_NAME_ARC"] = "비전로"
 L["DUNGEON_SHORT_NAME_BRH"] = "검떼"
 L["DUNGEON_SHORT_NAME_COEN"] = "대성당"
 L["DUNGEON_SHORT_NAME_COS"] = "별궁"
 L["DUNGEON_SHORT_NAME_DHT"] = "어숲"
 L["DUNGEON_SHORT_NAME_EOA"] = "아즈"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_FH"] = ""--]] 
+L["DUNGEON_SHORT_NAME_FH"] = "자유"
 L["DUNGEON_SHORT_NAME_HOV"] = "용맹"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_KR"] = ""--]] 
+L["DUNGEON_SHORT_NAME_KR"] = "왕안"
 L["DUNGEON_SHORT_NAME_LOWR"] = "하층"
 L["DUNGEON_SHORT_NAME_MOS"] = "아귀"
 L["DUNGEON_SHORT_NAME_NL"] = "넬타"
 L["DUNGEON_SHORT_NAME_SEAT"] = "삼두정"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_SIEGE"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_SOTS"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_TD"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_TM"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_TOS"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_UNDR"] = ""--]] 
+L["DUNGEON_SHORT_NAME_SIEGE"] = "보랄"
+L["DUNGEON_SHORT_NAME_SOTS"] = "폭사"
+L["DUNGEON_SHORT_NAME_TD"] = "톨다"
+L["DUNGEON_SHORT_NAME_TM"] = "광산"
+L["DUNGEON_SHORT_NAME_TOS"] = "세스"
+L["DUNGEON_SHORT_NAME_UNDR"] = "썩굴"
 L["DUNGEON_SHORT_NAME_UPPR"] = "상층"
 L["DUNGEON_SHORT_NAME_VOTW"] = "금고"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_WM"] = ""--]] 
+L["DUNGEON_SHORT_NAME_WM"] = "저택"
 L["ENABLE_AUTO_FRAME_POSITION"] = "내 프로필 프레임 위치 자동화"
 L["ENABLE_AUTO_FRAME_POSITION_DESC"] = "활성화시 프로필 툴팁이 파티 구성하기나 플레이어 툴팁 옆에 유지됩니다."
 L["ENABLE_LOCK_PROFILE_FRAME"] = "내 프로필 고정"

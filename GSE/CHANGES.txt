@@ -1,22 +1,16 @@
-lightweight tag da81149c8c3131481d15d6a1a83f84052ba9de0c GSE_2.3.09
-Author:	Timothy Minahan <timothy@minahan.net>
-Date:	Mon Sep 3 10:40:41 2018 +0930
+lightweight tag 18b7a466237c9a35824aa9893db1529c9ed71709 GSE_2.3.10
+Author:	GitHub <noreply@github.com>
+Date:	Fri Sep 7 18:04:19 2018 +0930
 
-commit da81149c8c3131481d15d6a1a83f84052ba9de0c
+commit 18b7a466237c9a35824aa9893db1529c9ed71709
 Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 3 10:40:41 2018 +0930
+Date:   Fri Sep 7 18:04:19 2018 +0930
 
-    remove extra debugging  #445
+    Update PluginShell.toc
 
-commit 64627120e2d2fd49e8c937b8be975b1bc02ec450
+commit 8080a719ba1020ea6280e4f38782b5f5fbe509de
 Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 3 10:39:44 2018 +0930
+Date:   Wed Sep 5 11:50:24 2018 +0930
 
-    Fixes for MythicPlus and Timewalking settings #445
-
-commit 9fe2cd3f2148a4abd0c17fb1b54097aa68a7eab4
-Author: Timothy Minahan <timothy@minahan.net>
-Date:   Mon Sep 3 09:44:21 2018 +0930
-
-    fix for Replace on #464
+    Fixes for #469
 

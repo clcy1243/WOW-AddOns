@@ -1,7 +1,7 @@
 local addonName, ns = ...
 
 -- if we're on the developer version the addon behaves slightly different
-ns.DEBUG_MODE = not not (GetAddOnMetadata(addonName, "Version") or ""):find("v201809051759", nil, true)
+ns.DEBUG_MODE = not not (GetAddOnMetadata(addonName, "Version") or ""):find("v201809130600", nil, true)
 
 -- micro-optimization for more speed
 local unpack = unpack
@@ -34,6 +34,7 @@ local PLAYER_REGION
 local IS_DB_OUTDATED = {}
 local OUTDATED_DAYS = {}
 local OUTDATED_HOURS = {}
+local INVALID_DATA_MESSAGE_SENT = false
 
 -- constants
 local CONST_REALM_SLUGS = ns.realmSlugs
@@ -765,8 +766,17 @@ do
 	end
 
 	function AddProvider(data)
+		assert(type(data) == "table", "Raider.IO has been requested to load an invalid database.")
+		if type(data.data) == "nil" then
+			-- when this isn't set we assume this is an old pre BFA S1 dataset, so we want to ignore it
+			if not INVALID_DATA_MESSAGE_SENT then
+				DEFAULT_CHAT_FRAME:AddMessage(format(L.API_INVALID_DATABASE, data.name or "<UNKNOWN>"), 1, 1, 0)
+				INVALID_DATA_MESSAGE_SENT = true
+			end
+			return
+		end
 		-- make sure the object is what we expect it to be like
-		assert(type(data) == "table" and type(data.name) == "string" and type(data.data) == "number" and type(data.region) == "string" and type(data.faction) == "number", "Raider.IO has been requested to load a database that isn't supported.")
+		assert(type(data.name) == "string" and type(data.data) == "number" and type(data.region) == "string" and type(data.faction) == "number", "Raider.IO has been requested to load a database that isn't supported.")
 		-- queue it for later inspection
 		dataProviderQueue[#dataProviderQueue + 1] = data
 	end
@@ -900,6 +910,7 @@ do
 						if numSigned then
 							if numSigned == true then
 								best.dungeon = status.dungeon
+								best.level = status.level or 0
 							elseif numSigned > 0 then
 								local highestDungeon
 								for j = 1, numSigned do
@@ -909,7 +920,7 @@ do
 									end
 								end
 								best.dungeon = highestDungeon
-								best.level = highestDungeon.level
+								best.level = highestDungeon.level or 0
 							end
 						end
 						if not best.dungeon then
@@ -918,13 +929,13 @@ do
 					end
 
 					-- if we have a dungeon, but no level assigned to it, try to read one from our profile
-					if best.dungeon and not best.level then
-						best.level = profile.dungeons[best.dungeon.index]
+					if best.dungeon and (not best.level or best.level < 1) then
+						best.level = profile.dungeons[best.dungeon.index] or 0
 					end
 
 					-- if no dungeon, or the level is undefined or 0, drop showing both as it's irrelevant information
 					if not best.dungeon or (best.level and best.level < 1) then
-						best.dungeon, best.level = nil
+						best.dungeon, best.level = nil, 0
 					end
 
 					-- Jah: Disabled for now, as everyone who did a +15 in Legion will have one in BFA since we are sharing achievements
@@ -1176,7 +1187,7 @@ do
 			-- store tooltip args for refresh purposes
 			local tooltipCache = tooltipArgs[tooltip]
 			if isCached then
-				tooltipCache[1], tooltipCache[2], tooltipCache[3], tooltipCache[4], tooltipCache[5], tooltipCache[6], tooltipCache[7], tooltipCache[8] = true, tooltip, outputFlag, unitOrNameOrNameAndRealm, realmOrNil, factionOrNil
+				tooltipCache[1], tooltipCache[2], tooltipCache[3], tooltipCache[4], tooltipCache[5], tooltipCache[6], tooltipCache[7], tooltipCache[8] = true, tooltip, outputFlag, unitOrNameOrNameAndRealm, realmOrNil, factionOrNil, arg1, ...
 			else
 				tooltipCache[1], tooltipCache[2], tooltipCache[3], tooltipCache[4], tooltipCache[5], tooltipCache[6], tooltipCache[7], tooltipCache[8] = false, {tooltip, outputFlag, unitOrNameOrNameAndRealm, realmOrNil, factionOrNil, arg1, ...}
 			end
@@ -1254,7 +1265,7 @@ do
 			if modBitIsArg then
 				arg3 = modBit
 			else
-				arg2[3] = modBit
+				arg2[2] = modBit
 			end
 		end
 		-- finalize by calling the show tooltip API with the same arguments as earlier
@@ -1579,7 +1590,7 @@ do
 						local _, activityID, _, title, description = C_LFGList.GetActiveEntryInfo()
 						local keystoneLevel = GetKeystoneLevel(title) or GetKeystoneLevel(description) or 0
 						ShowTooltip(GameTooltip, bor(TooltipProfileOutput.PADDING(), ProfileOutput.ADD_LFD), fullName, nil, PLAYER_FACTION, true, LFD_ACTIVITYID_TO_DUNGEONID[activityID], keystoneLevel)
-						ns.PROFILE_UI.ShowProfile(fullName, nil, PLAYER_FACTION, GameTooltip, nil, LFD_ACTIVITYID_TO_DUNGEONID[activityID], keystoneLevel)
+						ns.PROFILE_UI.ShowProfile(fullName, nil, PLAYER_FACTION, GameTooltip, nil, activityID, keystoneLevel)
 					end
 				end
 			end
@@ -1595,7 +1606,7 @@ do
 					local keystoneLevel = GetKeystoneLevel(title) or GetKeystoneLevel(description) or 0
 					-- Update game tooltip with player info
 					ShowTooltip(tooltip, bor(TooltipProfileOutput.PADDING(), ProfileOutput.ADD_LFD), leaderName, nil, PLAYER_FACTION, true, LFD_ACTIVITYID_TO_DUNGEONID[activityID], keystoneLevel)
-					ns.PROFILE_UI.ShowProfile(leaderName, nil, PLAYER_FACTION, tooltip, nil, LFD_ACTIVITYID_TO_DUNGEONID[activityID], keystoneLevel)
+					ns.PROFILE_UI.ShowProfile(leaderName, nil, PLAYER_FACTION, tooltip, nil, activityID, keystoneLevel)
 				end
 			end
 			hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", SetSearchEntryTooltip)
@@ -2192,6 +2203,7 @@ do
 	ns.CompareDungeon = CompareDungeon
 	ns.GetDungeonWithData = GetDungeonWithData
 	ns.GetNameAndRealm = GetNameAndRealm
+	ns.GetRealmSlug = GetRealmSlug
 	ns.GetStarsForUpgrades = GetStarsForUpgrades
 	ns.ProfileOutput = ProfileOutput
 	ns.TooltipProfileOutput = TooltipProfileOutput
@@ -2233,14 +2245,17 @@ do
 	local function GetCallingAddOnName(stack)
 		local _, c1, c2, c3, c4, c5, c6 = ("[\r\n]+"):split(stack)
 		c1, c2, c3, c4, c5, c6 = GetAddOnNameAndFile(c1), GetAddOnNameAndFile(c2), GetAddOnNameAndFile(c3), GetAddOnNameAndFile(c4), GetAddOnNameAndFile(c5), GetAddOnNameAndFile(c6)
-		return c1 or c2 or c3 or c4 or c5 or c6 or L.API_DEPRECATED_ANONYMOUS_FUNCTION
+		local file = c1 or c2 or c3 or c4 or c5 or c6
+		return file and file:match("^%s*(.-)%s*[%\\%/]") or L.API_DEPRECATED_UNKNOWN_ADDON, file or L.API_DEPRECATED_UNKNOWN_FILE
 	end
 
 	-- writes a notification about the particular API call but only once per session
 	local function Notify(funcName, newFuncName, stack)
 		if notified[funcName] then return end
+		local addon, file = GetCallingAddOnName(stack)
+		if not addon then return end
 		notified[funcName] = true
-		DEFAULT_CHAT_FRAME:AddMessage(format(L[newFuncName and "API_DEPRECATED_WITH" or "API_DEPRECATED"], funcName, newFuncName, GetCallingAddOnName(stack)), 1, 1, 0)
+		DEFAULT_CHAT_FRAME:AddMessage(format(L[newFuncName and "API_DEPRECATED_WITH" or "API_DEPRECATED"], addon, funcName, addon, newFuncName or file, file), 1, 1, 0)
 	end
 
 	-- wraps the deprecated function and calls the new API with the appropriate arguments

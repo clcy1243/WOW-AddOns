@@ -5,7 +5,6 @@ BigWigs:AddColors("Taloc", {
 	[271296] = "red",
 	[271728] = "orange",
 	[271895] = {"blue","yellow"},
-	[271965] = "green",
 	[275189] = "yellow",
 	[275205] = {"blue","orange"},
 	[275270] = "blue",
@@ -21,6 +20,7 @@ BigWigs:AddColors("MOTHER", {
 	[268253] = {"blue","yellow"},
 	[269051] = {"cyan","red"},
 	[274205] = {"blue","green"},
+	[279662] = {"blue","yellow"},
 })
 
 BigWigs:AddColors("Fetid Devourer", {
@@ -28,7 +28,7 @@ BigWigs:AddColors("Fetid Devourer", {
 	[262288] = "orange",
 	[262292] = "yellow",
 	[262313] = {"blue","orange"},
-	[262314] = "blue",
+	[262314] = {"blue","orange"},
 	[262364] = {"cyan","red"},
 	[262378] = "cyan",
 })
@@ -44,29 +44,36 @@ BigWigs:AddColors("Zek'voz, Herald of N'zoth", {
 	[265662] = "blue",
 	[267180] = "yellow",
 	[267239] = "yellow",
+	["mythic_adds"] = "cyan",
 	["stages"] = "green",
 })
 
 BigWigs:AddColors("Vectis", {
+	[265143] = "blue",
 	[265178] = {"blue","purple"},
+	[265206] = "orange",
 	[265212] = {"blue","orange"},
 	[265217] = "cyan",
 	[266459] = "red",
 	[267242] = "orange",
+	[274990] = "blue",
 })
 
 BigWigs:AddColors("Zul", {
+	[-18530] = "cyan",
 	[269936] = "blue",
 	[273288] = "yellow",
 	[273350] = "orange",
-	[273360] = "orange",
+	[273361] = "orange",
 	[273365] = {"blue","yellow"},
 	[273451] = "red",
-	[273889] = "cyan",
-	[274168] = "green",
 	[274271] = {"blue","orange"},
 	[274358] = {"blue","purple"},
 	[276299] = "yellow",
+	["bloodhexer"] = "cyan",
+	["crawg"] = "cyan",
+	["crusher"] = "cyan",
+	["stages"] = "green",
 })
 
 BigWigs:AddColors("Mythrax the Unraveler", {
@@ -78,6 +85,8 @@ BigWigs:AddColors("Mythrax the Unraveler", {
 	[273810] = "yellow",
 	[273949] = "red",
 	[274230] = "green",
+	[279013] = "red",
+	["stages"] = {"cyan","green"},
 })
 
 BigWigs:AddColors("G'huun", {

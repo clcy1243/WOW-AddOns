@@ -14,7 +14,9 @@ L["ALWAYS_SHOW_EXTENDED_INFO_DESC"] = "Puedes mantener pulsado Mayús, Control o
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED"] = ""--]] 
 --[[Translation missing --]]
---[[ L["API_DEPRECATED_ANONYMOUS_FUNCTION"] = ""--]] 
+--[[ L["API_DEPRECATED_UNKNOWN_ADDON"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["API_DEPRECATED_UNKNOWN_FILE"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED_WITH"] = ""--]] 
 L["BEST_FOR_DUNGEON"] = "Mejor M+ en esta mazmorra"

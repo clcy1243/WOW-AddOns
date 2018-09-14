@@ -1,78 +1,10 @@
-lightweight tag 7527fcf23ad2cb838b5f627ac2e0be44da716204 v201809051759
+lightweight tag 7d398ff3edeacaa3991b2a604ab177da07c91b68 v201809130600
 Author:	Jah Raphael <jahraphael@yahoo.com>
-Date:	Wed Sep 5 18:26:20 2018 +0000
+Date:	Thu Sep 13 07:35:29 2018 +0000
 
-commit 7527fcf23ad2cb838b5f627ac2e0be44da716204
+commit 7d398ff3edeacaa3991b2a604ab177da07c91b68
 Author: Jah Raphael <jahraphael@yahoo.com>
-Date:   Wed Sep 5 18:26:20 2018 +0000
+Date:   Thu Sep 13 07:35:29 2018 +0000
 
     [Raider.IO] Database Refresh
-
-commit b91ae4231dbbbad57dfe4a11f45732dd9c0c3d4a
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 18:46:01 2018 +0200
-
-    - The documentation forgot to add the outputFlag to the example. Zero means it will fallback to a default return player profile.
-
-commit 63145adea197157bc01dc165593e97e6a4a5450c
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 18:32:34 2018 +0200
-
-    - Adjusted a variable reference, where we overshot into the character name instead of the outputFlag before it.
-
-commit 4d38374a909af82b3f1fdb9b44bec996a6bbeeda
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 17:55:44 2018 +0200
-
-    - Adjusted the best dungeon logic to avoid showing empty dungeons or invalid dungeons that have no level. It's odd situations that I think only can occur early in the expansion when so many profiles have no scores or best dungeons yet.
-
-commit 4c076ec1a6a1f7bc030d6445f475493551aa235f
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 17:12:36 2018 +0200
-
-    - Adjusted how the guild best frame is shown, drawn, positioned and refreshed. Should work properly once more!
-    
-    - Readjusted the TOC file so that the client data isn't nilled later by the client.lua.
-
-commit 098b71c9019fdf67d9ce4be2f060fa7493d840dd
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 16:38:40 2018 +0200
-
-    - Adjusted the gitignore a bit.
-
-commit 0d3f75f37646bc292994a2b9e4cdca1197602536
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 16:36:01 2018 +0200
-
-    - Adding the client files to the ignore list, as the client will update those with personal data, we should never have to push anything to those as they are empty shells.
-
-commit a365e30360c071fc7dafc0ff7a9cdbe28c8e1a09
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 16:32:56 2018 +0200
-
-    - No need for git to sync the changes, that come from the client, that got them from git.
-
-commit d5d3b14f0fa1fe3d479824216ceb7cb8c038ff1a
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 16:26:05 2018 +0200
-
-    - Adjusted the new link matching for keystone detection.
-
-commit 51be61797b4cd6a1f7902fa65928550c093b41e9
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 15:57:05 2018 +0200
-
-    - Adjusted the way keystone tooltips work and are sorted.
-
-commit 51be61797b4cd6a1f7902fa65928550c093b41e9
-Author: Vlad <vladix@gmail.com>
-Date:   Wed Sep 5 15:57:05 2018 +0200
-
-    - Adjusted the way keystone tooltips work and are sorted.
-
-commit 432b8441fe3f65a38d8275a80a8f31212f96c53a
-Author: François "Isak" Wroblewski <wroblewski.francois@gmail.com>
-Date:   Wed Sep 5 11:05:29 2018 +0200
-
-    Avoid indexing nil value
 

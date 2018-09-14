@@ -59,8 +59,38 @@ local function quartiles(t)
 	return q1, q3, temp[1], temp[count], count
 end
 
-local function isWin(log)
-	local killed, encounter = nil, nil
+local diffShort = {
+	[1] = "5N",
+	[2] = "5H",
+	[3] = "10N",
+	[4] = "25N",
+	[5] = "10H",
+	[6] = "25H",
+	[7] = "25LFR",
+	[8] = "5M+",
+	[14] = "N",
+	[15] = "H",
+	[16] = "M",
+	[17] = "LFR",
+	[18] = "40E",
+	[19] = "5E",
+	[23] = "5M",
+	[24] = "5TW",
+}
+
+local function parseLogInfo(logName, log)
+	-- logNameFormat = "[%s]@[%s] - Zone:%d Difficulty:%d,%s Type:%s " .. format("Version: %s.%s", wowVersion, buildRevision)
+	-- "[2018-09-04]@[18:11:58] - Zone:1763 Difficulty:8,5Challenge Type:party Version: 8.0.1.27547"
+	local year, month, day, hour, min, sec, map, diff, _, _, version = logName:match("^%[(%d+)-(%d+)-(%d+)%]@%[(%d+):(%d+):(%d+)%] %- Zone:(%d+) Difficulty:(%d+),(.+) Type:(.+) Version: (.+)$")
+	if not version then
+		-- try previous format
+		-- logNameFormat = "[%s]@[%s] - %d/%d/%s/%s/%s@%s" .. format(" (%s) (%s.%s)", version, wowVersion, buildRevision)
+		-- "[2017-06-20]@[23:26:47] - 1147/1676/Tomb of Sargeras/Tomb of Sargeras/The Twisting Nether@Heroic (v7.2.0) (7.2.5.24367)"
+		year, month, day, hour, min, sec, map, diff, version = logName:match("^%[(%d+)-(%d+)-(%d+)%]@%[(%d+):(%d+):(%d+)%] %- %d+/(%d+)/.-/.-/.-@(.-) %(.-%) %((.-)%)$")
+	end
+	if not version then return end
+
+	local killed, encounter, duration = nil, nil, 0
 	if log.COMBAT then
 		-- should probably handle multiple encounters in one log, but meh
 		for _, line in next, log.COMBAT do
@@ -73,17 +103,17 @@ local function isWin(log)
 			end
 		end
 	end
-	local duration = log.total and tonumber(log.total[#log.total]:match("^<(.-)%s")) or 0
-	return killed, duration, encounter
-end
+	if log.total and #log.total > 0 then
+		duration = tonumber(log.total[#log.total]:match("^<(.-)%s")) or 0
+	end
 
-local function parseLogName(logName)
-	-- logNameFormat = "[date("%Y-%m-%d")]@[date("%H:%M:%S")] - %d/%d/%s/%s/%s@%s (version) (wowVersion.buildRevision)"
-	local year, month, day, hour, min, sec, info = logName:match("^%[(%d+)-(%d+)-(%d+)%]@%[(%d+):(%d+):(%d+)%] %- (.+@[^ ]+)")
-	if not info then return end
+	local diffName = diffShort[tonumber(diff)] or GetDifficultyInfo(diff) or diff
+	local zone = GetRealZoneText(map) or tostring(map)
+	local info = ("%s - |cffffffff%s|r (%s)"):format(zone, encounter or UNKNOWN, diffName)
 	local timestamp = time({day=day,month=month,year=year,hour=hour,min=min,sec=sec})
 
-	return info, timestamp
+	-- I should probably cache this stuff
+	return info, timestamp, zone, encounter, killed, duration
 end
 
 -------------------------------------------------------------------------------
@@ -116,8 +146,8 @@ L["%d stored events over %.01f seconds. %s"] = true
 L["Ignored Events"] = true
 L["Clear All"] = true
 
-L.win = "|cff20ff20%s " .. _G.WIN .. "|r"
-L.failed = "|cffff2020%s " .. _G.FAILED .. "|r"
+L.win = " |cff20ff20" .. _G.WIN .. "|r"
+L.failed = " |cffff2020" .. _G.FAILED .. "|r"
 
 -------------------------------------------------------------------------------
 -- Options
@@ -145,9 +175,8 @@ do
 		local numEvents = log.total and #log.total or 0
 		if numEvents == 0 then return end
 
-		local killed, duration, encounter = isWin(log)
-		local result = encounter and (killed and L.win:format(encounter) or L.failed:format(encounter)) or ""
-		local desc = L["%d stored events over %.01f seconds. %s"]:format(numEvents, duration, result)
+		local duration = tonumber(log.total[numEvents]:match("^<(.-)%s")) or 0
+		local desc = L["%d stored events over %.01f seconds. %s"]:format(numEvents, duration, "")
 		if not log.TIMERS or not plugin.db.profile.details then
 			return desc
 		end
@@ -229,157 +258,174 @@ do
 	end
 
 
-	local options = nil
+	local function get(info)
+		return plugin.db.profile[info[#info]]
+	end
+	local function set(info, value)
+		plugin.db.profile[info[#info]] = value
+	end
+	local function set_reboot(info, value)
+		plugin.db.profile[info[#info]] = value
+		plugin:Disable()
+		plugin:Enable()
+	end
+	local function delete(info)
+		if info.arg then
+			Transcriptor:Clear(info.arg)
+		else
+			Transcriptor:ClearAll()
+		end
+		GameTooltip:Hide()
+		collectgarbage()
+	end
+	local function disabled(info)
+		return InCombatLockdown()
+	end
+
+	local events = nil
 
 	function GetOptions()
-		if not options then
-			local events = {}
+		local logs = Transcriptor:GetAll()
+		local count = 0
+		for _ in next, logs do
+			count = count + 1
+		end
+
+		UpdateAddOnMemoryUsage()
+		local mem = GetAddOnMemoryUsage("Transcriptor") / 1000
+		mem = ("|cff%s%.01f MB|r"):format(mem > 60 and "ff2020" or "ffd200", mem)
+
+		if not events then
+			events = {}
 			for _, v in next, Transcriptor.events do
 				events[v] = v
 			end
+		end
 
-			local function get(info)
-				return plugin.db.profile[info[#info]]
-			end
-			local function set(info, value)
-				plugin.db.profile[info[#info]] = value
-			end
-
-			options = {
-				name = L["Transcriptor"],
-				type = "group",
-				args = {
-					heading = {
-						type = "description",
-						name = L["Automatically start Transcriptor logging when you pull a boss and stop when you win or wipe."].."\n",
-						fontSize = "medium",
-						width = "full",
-						order = 1,
-					},
-					enabled = {
-						type = "toggle",
-						name = ENABLE,
-						get = function(info) return plugin.db.profile.enabled end,
-						set = function(info, value)
-							plugin.db.profile.enabled = value
-							plugin:Disable()
-							plugin:Enable()
-						end,
-						order = 2,
-					},
-					raid = {
-						type = "toggle",
-						name = L["Raid only"],
-						desc = L["Only enable logging while in a raid instance."],
-						get = get,
-						set = set,
-						order = 3,
-					},
-					onpull = {
-						type = "toggle",
-						name = L["Start with pull timer"],
-						desc = L["Start Transcriptor logging from a pull timer at two seconds remaining."],
-						get = function(info) return plugin.db.profile.onpull end,
-						set = function(info, value)
-							plugin.db.profile.onpull = value
-							plugin:Disable()
-							plugin:Enable()
-						end,
-						order = 4,
-					},
-					delete = {
-						type = "toggle",
-						name = L["Delete short logs"],
-						desc = L["Automatically delete logs shorter than 30 seconds."],
-						get = get,
-						set = set,
-						order = 5,
-					},
-					keepone = {
-						type = "toggle",
-						name = L["Keep one log per fight"],
-						desc = L["Only keep a log for the longest attempt or latest kill of an encounter."],
-						get = get,
-						set = set,
-						order = 6,
-					},
-					details = {
-						type = "toggle",
-						name = L["Show spell cast details"],
-						desc = L["Include some spell stats and the time between casts in the log tooltip when available."],
-						get = get,
-						set = set,
-						order = 7,
-					},
-					logs = {
-						type = "group",
-						inline = true,
-						name = function()
-							local count = 0
-							for _ in next, Transcriptor:GetAll() do count = count + 1 end
-
-							UpdateAddOnMemoryUsage()
-							local mem = GetAddOnMemoryUsage("Transcriptor") / 1000
-							mem = ("|cff%s%.01f MB|r"):format(mem > 60 and "ff2020" or "ffffff", mem)
-
-							return L["Stored logs (%s / %s) - Click to delete"]:format(("|cffffffff%d|r"):format(count), mem)
-						end,
-						func = function(info)
-							Transcriptor:Clear(info.arg)
-							GameTooltip:Hide()
-							collectgarbage()
-						end,
-						width = "full",
-						order = 10,
-						args = {},
-					},
-					ignoredEvents = {
-						type = "multiselect",
-						name = L["Ignored Events"],
-						get = function(info, key) return TranscriptIgnore[key] end,
-						set = function(info, key, value)
-							TranscriptIgnore[key] = value or nil
-						end,
-						values = events,
-						width = "double",
-						order = 20,
+		local options = {
+			name = L["Transcriptor"],
+			type = "group",
+			args = {
+				heading = {
+					type = "description",
+					name = L["Automatically start Transcriptor logging when you pull a boss and stop when you win or wipe."].."\n",
+					fontSize = "medium",
+					width = "full",
+					order = 1,
+				},
+				enabled = {
+					type = "toggle",
+					name = ENABLE,
+					get = get,
+					set = set_reboot,
+					order = 2,
+				},
+				raid = {
+					type = "toggle",
+					name = L["Raid only"],
+					desc = L["Only enable logging while in a raid instance."],
+					get = get,
+					set = set,
+					order = 3,
+				},
+				onpull = {
+					type = "toggle",
+					name = L["Start with pull timer"],
+					desc = L["Start Transcriptor logging from a pull timer at two seconds remaining."],
+					get = get,
+					set = set_reboot,
+					order = 4,
+				},
+				delete = {
+					type = "toggle",
+					name = L["Delete short logs"],
+					desc = L["Automatically delete logs shorter than 30 seconds."],
+					get = get,
+					set = set,
+					order = 5,
+				},
+				keepone = {
+					type = "toggle",
+					name = L["Keep one log per fight"],
+					desc = L["Only keep a log for the longest attempt or latest kill of an encounter."],
+					get = get,
+					set = set,
+					order = 6,
+				},
+				details = {
+					type = "toggle",
+					name = L["Show spell cast details"],
+					desc = L["Include some spell stats and the time between casts in the log tooltip when available."],
+					get = get,
+					set = set,
+					order = 7,
+				},
+				clear = {
+					type = "execute",
+					name = L["Clear All"],
+					func = delete,
+					width = "full",
+					disabled = disabled,
+					hidden = function() return not next(logs) end,
+					order = 8,
+				},
+				size = {
+					type = "description",
+					name = L["Stored logs (%s / %s) - Click to delete"]:format(count, mem),
+					fontSize = "medium",
+					width = "full",
+					hidden = function() return not next(logs) end,
+					order = 9,
+				},
+				ignored = {
+					type = "group",
+					name = "|cffffffff"..L["Ignored Events"].."|r",
+					order = -1,
+					args = {
+						ignored = {
+							type = "multiselect",
+							name = L["Ignored Events"],
+							get = function(info, key) return TranscriptIgnore[key] end,
+							set = function(info, key, value)
+								TranscriptIgnore[key] = value or nil
+							end,
+							values = events,
+							width = "double",
+						},
 					},
 				},
-			}
-		end
-		wipe(options.args.logs.args)
+			},
+		}
 
-		local logs = Transcriptor:GetAll()
 		for key, log in next, logs do
-			options.args.logs.args[key] = {
-				type = "execute",
-				name = key,
-				desc = GetDescription,
-				arg = key,
-				width = "full",
-				disabled = InCombatLockdown,
-			}
-		end
+			local info, ts, zone, encounter, killed = parseLogInfo(key, log)
+			local name
+			if info then
+				local result = killed and L.win or encounter and L.failed or ""
+				name = ("[%s] %s%s"):format(date("%F %T", ts), info:gsub("^.- %- ", ""), result)
+			else
+				name = key
+				zone = UNKNOWN
+			end
 
-		if next(logs) then
-			options.args.logs.args["clear_all"] = {
+			if not options.args[zone] then
+				options.args[zone] = {
+					type = "group",
+					name = zone,
+					order = 10,
+					args = {},
+				}
+			end
+
+			options.args[zone].args[key] = {
 				type = "execute",
-				name = L["Clear All"],
-				func = function()
-					Transcriptor:ClearAll()
-					GameTooltip:Hide()
-					collectgarbage()
-				end,
+				name = name,
+				desc = GetDescription,
+				func = delete,
+				arg = key,
+				disabled = disabled,
 				width = "full",
-				order = 0,
-				disabled = InCombatLockdown,
-			}
-		else
-			options.args.logs.args["no_logs"] = {
-				type = "description",
-				name = "\n"..L["No logs recorded"].."\n",
-				fontSize = "medium",
-				width = "full",
+				order = ts,
 			}
 		end
 
@@ -407,6 +453,7 @@ end
 function plugin:BigWigs_ProfileUpdate()
 	self:Disable()
 	self:Enable()
+	self:Refresh()
 end
 
 function plugin:OnPluginEnable()
@@ -531,11 +578,12 @@ function plugin:Stop(silent)
 
 	if self.db.profile.keepone and logName then
 		local log = Transcriptor:Get(logName)
-		local encounter = parseLogName(logName)
-		if isWin(log) then
+		local encounter, _, _, _, isWin = parseLogInfo(logName, log)
+		if isWin then
 			-- delete previous logs
 			for name, log in next, Transcriptor:GetAll() do
-				if name ~= logName and name:find(encounter, nil, true) then
+				local e = parseLogInfo(name, log)
+				if name ~= logName and e == encounter then
 					Transcriptor:Clear(logName)
 				end
 			end
@@ -545,10 +593,9 @@ function plugin:Stop(silent)
 			local lastWin, lastWinTime = nil, nil
 			local longLog, longLogTime = nil, nil
 			for name, log in next, Transcriptor:GetAll() do
-				local e, t = parseLogName(name)
+				local e, t, _, _, k, d = parseLogInfo(name, log)
 				if e == encounter then
 					encounterLogs[name] = true
-					local k, d = isWin(log)
 					if k and (not lastWin or t > lastWinTime) then
 						lastWin = name
 						lastWinTime = t

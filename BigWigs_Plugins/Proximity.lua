@@ -24,8 +24,8 @@ plugin.defaultDB = {
 	soundName = "BigWigs: Alarm",
 	disabled = false,
 	proximity = true,
-	font = nil,
-	fontSize = nil,
+	fontName = plugin:GetDefaultFont(),
+	fontSize = 20,
 	textMode = true,
 }
 
@@ -242,7 +242,7 @@ function plugin:RestyleWindow()
 			end
 		end
 	end
-	proxAnchor.text:SetFont(media:Fetch(FONT, db.font), db.fontSize)
+	proxAnchor.text:SetFont(media:Fetch(FONT, db.fontName), db.fontSize)
 	if db.lock then
 		locked = nil
 		lockDisplay()
@@ -321,7 +321,6 @@ do
 
 		proxCircle:Show()
 		proxAnchor.playerDot:Show()
-		proxAnchor.rangeCircle:Show()
 		proxAnchor.text:Hide()
 	end
 
@@ -338,7 +337,6 @@ do
 	end
 
 	function testText()
-		proxAnchor.rangeCircle:Hide()
 		proxAnchor.playerDot:Hide()
 		proxAnchor.text:SetText("|cffaad372Legolasftw|r\n|cfff48cbaTirionman|r\n|cfffff468Sneakystab|r\n|cffc69b6dIamconanok|r")
 		proxAnchor.text:Show()
@@ -830,14 +828,6 @@ end
 local function updateProfile()
 	db = plugin.db.profile
 
-	if not db.font then
-		db.font = media:GetDefault(FONT)
-	end
-	if not db.fontSize then
-		local _, size = GameFontNormalHuge:GetFont()
-		db.fontSize = size
-	end
-
 	plugin:RestyleWindow()
 end
 
@@ -921,28 +911,27 @@ do
 		end)
 		proxAnchor.sound = sound
 
-		local header = proxAnchor:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+		local header = proxAnchor:CreateFontString(nil, "OVERLAY")
+		header:SetFont(plugin:GetDefaultFont(10))
+		header:SetShadowOffset(1, -1)
+		header:SetTextColor(1,1,1,1)
 		header:SetFormattedText(L_proximityTitle, 5, 3)
 		header:SetPoint("BOTTOM", proxAnchor, "TOP", 0, 4)
 		proxAnchor.title = header
 		proxTitle = header
 
-		local abilityName = proxAnchor:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		local abilityName = proxAnchor:CreateFontString(nil, "OVERLAY")
+		abilityName:SetFont(plugin:GetDefaultFont(12))
+		abilityName:SetShadowOffset(1, -1)
+		abilityName:SetTextColor(1,0.82,0,1)
 		abilityName:SetFormattedText("|T136015:20:20:-5:0:64:64:4:60:4:60|t%s", L.abilityName) -- Interface\\Icons\\spell_nature_chainlightning
 		abilityName:SetPoint("BOTTOM", header, "TOP", 0, 4)
 		proxAnchor.ability = abilityName
 
-		local text = proxAnchor:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		text:SetText("")
+		local text = proxAnchor:CreateFontString(nil, "OVERLAY")
+		text:SetShadowOffset(1, -1)
 		text:SetAllPoints(proxAnchor)
 		proxAnchor.text = text
-
-		local rangeCircle = proxAnchor:CreateTexture(nil, "ARTWORK")
-		rangeCircle:SetPoint("CENTER")
-		rangeCircle:SetTexture("Interface\\AddOns\\BigWigs\\Media\\Textures\\alert_circle")
-		rangeCircle:SetBlendMode("ADD")
-		proxAnchor.rangeCircle = rangeCircle
-		proxCircle = rangeCircle
 
 		local rangePulse = proxAnchor:CreateTexture(nil, "ARTWORK")
 		rangePulse:SetPoint("CENTER")
@@ -1116,7 +1105,7 @@ do
 			local key = info[#info]
 			if key == "font" then
 				for i, v in next, media:List(FONT) do
-					if v == db.font then return i end
+					if v == db.fontName then return i end
 				end
 			elseif key == "soundName" then
 				for i, v in next, media:List(SOUND) do
@@ -1129,7 +1118,7 @@ do
 		set = function(info, value)
 			local key = info[#info]
 			if key == "font" then
-				db.font = media:List(FONT)[value]
+				db.fontName = media:List(FONT)[value]
 			elseif key == "soundName" then
 				db.soundName = media:List(SOUND)[value]
 			else
@@ -1363,7 +1352,6 @@ do
 		updateUnits()
 
 		if db.textMode then
-			proxAnchor.rangeCircle:Hide()
 			proxAnchor.playerDot:Hide()
 			proxAnchor.text:SetText("")
 			proxAnchor.text:Show()
@@ -1371,7 +1359,6 @@ do
 			local size = min(proxAnchor:GetSize())
 			proxAnchor.rangePulse:SetSize(size, size)
 		else
-			proxAnchor.rangeCircle:Show()
 			proxAnchor.playerDot:Show()
 			proxAnchor.text:Hide()
 
