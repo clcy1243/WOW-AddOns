@@ -1,10 +1,22 @@
-lightweight tag 7d398ff3edeacaa3991b2a604ab177da07c91b68 v201809130600
+lightweight tag 226b32535c0d05f7f106cc885cc2b85596b3d823 v201809140600
 Author:	Jah Raphael <jahraphael@yahoo.com>
-Date:	Thu Sep 13 07:35:29 2018 +0000
+Date:	Fri Sep 14 08:50:43 2018 +0000
 
-commit 7d398ff3edeacaa3991b2a604ab177da07c91b68
+commit 226b32535c0d05f7f106cc885cc2b85596b3d823
 Author: Jah Raphael <jahraphael@yahoo.com>
-Date:   Thu Sep 13 07:35:29 2018 +0000
+Date:   Fri Sep 14 08:50:43 2018 +0000
 
     [Raider.IO] Database Refresh
+
+commit b58e20c10d760b06c767139a45f48ddc0bc9f399
+Author: Vlad <vladix@gmail.com>
+Date:   Thu Sep 13 21:47:51 2018 +0200
+
+    - Fixed a bug that didn't respect your option to enable/disable the LFD frame tooltips.
+
+commit b58e20c10d760b06c767139a45f48ddc0bc9f399
+Author: Vlad <vladix@gmail.com>
+Date:   Thu Sep 13 21:47:51 2018 +0200
+
+    - Fixed a bug that didn't respect your option to enable/disable the LFD frame tooltips.
 

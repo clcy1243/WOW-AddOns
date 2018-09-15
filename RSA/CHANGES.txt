@@ -1,17 +1,12 @@
-lightweight tag 021d483094f0eff8becef5f883aebb0854c1fe6c r492-Release
+lightweight tag 94a47cfba29bf2cc71039e554f7ed93536fb4040 r497-Release
 Author:	Caedilla <42666479+Caedilla@users.noreply.github.com>
-Date:	Sat Sep 1 00:48:11 2018 +0200
+Date:	Fri Sep 14 16:19:42 2018 +0200
 
-commit 021d483094f0eff8becef5f883aebb0854c1fe6c
+commit 94a47cfba29bf2cc71039e554f7ed93536fb4040
 Author: Caedilla <42666479+Caedilla@users.noreply.github.com>
-Date:   Sat Sep 1 00:48:11 2018 +0200
+Date:   Fri Sep 14 16:19:42 2018 +0200
 
-    Fixed Dispels
+    Embed Ace Comms
     
-    - Added Grimoire of Sacrifice Spell Lock to Spell Lock
-    - Added Devour Magic
-    - Detox now also includes BrM/WW version
-    - Purify now also includes Purify Disease
-    
-    Dispel messages are now configured as Dispel, not cast, to clarify they announce on Dispel, not cast.
+    Somehow removed it!
 

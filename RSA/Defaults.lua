@@ -449,6 +449,16 @@ local function DemonHunter()
 					Channel = "",
 				},
 			},
+			FelEruption = {
+				Messages = {
+					Start = {"[LINK] cast on [TARGET]!"},
+					End = {"[LINK] on [TARGET] has ended!"},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+				Local = true,
+			},
 		},
 	}
 	return DemonHunter
@@ -1685,7 +1695,7 @@ local function Rogue()
 			},
 			Tricks = {
 				Messages = {
-					Start = {"[LINK] cast on [TARGET]!"},
+					Cast = {"[LINK] cast on [TARGET]!"},
 					End = {},
 				},
 				CustomChannel = {
@@ -1728,6 +1738,15 @@ local function Rogue()
 					Channel = "",
 				},
 			},
+			KidneyShot = {
+				Messages = {
+					Start = {"[LINK] cast on [TARGET]!"},
+					End = {"[LINK] on [TARGET] has ended!"},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+			},
 		},
 	}
 	return Rogue
@@ -1744,6 +1763,7 @@ local function Shaman()
 				Messages = {
 					Start = {"[LINK] cast on [TARGET]!"},
 					End = {"[LINK] on [TARGET] ended!"},
+					Resist = {"My [LINK] [MISSTYPE] [TARGET]!"},
 					Immune = {"[TARGET] is [MISSTYPE] to my [LINK]!"},
 				},
 				CustomChannel = {
@@ -2434,4 +2454,54 @@ local function Racials()
 	return Racials
 end
 DefaultOptions.profile.Racials = Racials()
+
+local function Utilities()
+	local Utilities = {
+		Spells = {
+			Jeeves = {
+				Messages = {
+					Placed = {"[LINK] cast by [TARGET]!"},
+					End = {"[TARGET]'s [LINK] ended."},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+				SmartGroup = true,
+			},
+			Feasts = {
+				Messages = {
+					Placed = {"[LINK] placed by [TARGET]!"},
+					End = {"[TARGET]'s [LINK] ended."},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+				SmartGroup = true,
+			},
+			Drums = {
+				Messages = {
+					Start = {"[LINK] used by [TARGET]!"},
+					End = {"[LINK] faded."},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+				SmartGroup = true,
+			},
+			Cauldrons = {
+				Messages = {
+					Start = {"[TARGET] placing a [LINK]!"},
+					End = {"[LINK] ended."},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+				SmartGroup = true,
+			},
+		},
+	}
+	return Utilities
+end
+DefaultOptions.profile.Utilities = Utilities()
+
 RSA.DefaultOptions = DefaultOptions

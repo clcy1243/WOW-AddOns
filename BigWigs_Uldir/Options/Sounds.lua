@@ -26,11 +26,11 @@ BigWigs:AddSounds("MOTHER", {
 BigWigs:AddSounds("Fetid Devourer", {
 	[262277] = "alert",
 	[262288] = "alarm",
-	[262292] = "alert",
 	[262313] = {"info","warning"},
 	[262314] = "warning",
 	[262364] = {"long","warning"},
 	[262378] = "info",
+	["breath"] = "alert",
 })
 
 BigWigs:AddSounds("Zek'voz, Herald of N'zoth", {
@@ -41,6 +41,7 @@ BigWigs:AddSounds("Zek'voz, Herald of N'zoth", {
 	[265248] = "alert",
 	[265360] = "warning",
 	[265530] = "long",
+	[265646] = "warning",
 	[265662] = "long",
 	[267180] = "alert",
 	[267239] = "alert",

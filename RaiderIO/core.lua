@@ -1,7 +1,7 @@
 local addonName, ns = ...
 
 -- if we're on the developer version the addon behaves slightly different
-ns.DEBUG_MODE = not not (GetAddOnMetadata(addonName, "Version") or ""):find("v201809130600", nil, true)
+ns.DEBUG_MODE = not not (GetAddOnMetadata(addonName, "Version") or ""):find("v201809140600", nil, true)
 
 -- micro-optimization for more speed
 local unpack = unpack
@@ -1601,6 +1601,9 @@ do
 			end
 			-- search results
 			local function SetSearchEntryTooltip(tooltip, resultID, autoAcceptOption)
+				if not ns.addonConfig.enableLFGTooltips then
+					return
+				end
 				local _, activityID, title, description, _, _, _, _, _, _, _, _, leaderName = C_LFGList.GetSearchResultInfo(resultID)
 				if leaderName then
 					local keystoneLevel = GetKeystoneLevel(title) or GetKeystoneLevel(description) or 0

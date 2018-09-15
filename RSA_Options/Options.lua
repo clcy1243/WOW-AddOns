@@ -702,6 +702,15 @@ local function DemonHunter_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
+		["FelEruption"] = {
+			Profile = "FelEruption",
+			Name = GetSpellInfo(211881),
+			Desc = GetSpellDescription(211881),
+			Message_Amount = 2,
+			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
+		},
 	}
 	return Spells
 end
@@ -809,7 +818,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[13] = {
+		["MightyBash"] = {
 			Profile = "MightyBash",
 			Name = GetSpellInfo(5211),
 			Desc = GetSpellDescription(5211),
@@ -1818,7 +1827,7 @@ local function Rogue_Options()
 			Name = GetSpellInfo(57934),
 			Desc = GetSpellDescription(57934),
 			Message_Amount = 2,
-			Message_Areas = {"Start", "End"},
+			Message_Areas = {"Cast", "End"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
 		[5] = {
@@ -1839,7 +1848,7 @@ local function Rogue_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[7] = {
+		["CloakOfShadows"] = {
 			Profile = "CloakOfShadows",
 			Name = GetSpellInfo(31224),
 			Desc = GetSpellDescription(31224),
@@ -1848,10 +1857,19 @@ local function Rogue_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[7] = {
+		["BetweenTheEyes"] = {
 			Profile = "BetweenTheEyes",
 			Name = GetSpellInfo(199804),
 			Desc = GetSpellDescription(199804),
+			Message_Amount = 2,
+			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
+		},
+		["KidneyShot"] = {
+			Profile = "KidneyShot",
+			Name = GetSpellInfo(408),
+			Desc = GetSpellDescription(408),
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
@@ -1868,8 +1886,8 @@ local function Shaman_Options()
 			Profile = "Hex",
 			Name = GetSpellInfo(51514),
 			Desc = GetSpellDescription(51514),
-			Message_Amount = 3,
-			Message_Areas = {"Start", "End", "Immune"},
+			Message_Amount = 4,
+			Message_Areas = {"Start", "End", "Resist", "Immune"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
@@ -2503,6 +2521,48 @@ local function Racial_Options()
 	return Spells
 end
 
+local function Utilities_Options()
+	local Spells = {
+		["Jeeves"] = {
+			Profile = "Jeeves",
+			Name = "Repair Bots",
+			Desc = GetSpellDescription(44389),
+			Message_Amount = 1,
+			Message_Areas = {"Placed"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]","[TARGET]"},
+		},
+		["Feasts"] = {
+			Profile = "Feasts",
+			Name = "Feasts",
+			Desc = GetSpellDescription(259410),
+			Message_Amount = 1,
+			Message_Areas = {"Placed"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]","[TARGET]"},
+		},
+		["Drums"] = {
+			Profile = "Drums",
+			Name = "Drums",
+			Desc = GetSpellDescription(256740),
+			Message_Amount = 1,
+			Message_Areas = {"Start"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]","[TARGET]"},
+		},
+		["Cauldrons"] = {
+			Profile = "Cauldrons",
+			Name = "Cauldrons",
+			Desc = GetSpellDescription(276972),
+			Message_Amount = 1,
+			Message_Areas = {"Start"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]","[TARGET]"},
+		},
+	}
+	return Spells
+end
+
 function RSA:FixDB()
 	local Profiles = {
 		[1] = "DeathKnight",
@@ -2555,6 +2615,11 @@ local function Spell_Options(NonClass)
 			Spells = Racial_Options()
 			ProfileName = "Racials"
 			OptionName = L["Racials"]
+		end
+		if NonClass == "Utilities" then
+			Spells = Utilities_Options()
+			ProfileName = "Utilities"
+			OptionName = L["Utilities"]
 		end
 	elseif PlayerClass == "DEATHKNIGHT" then
 		Spells = DeathKnight_Options()
@@ -2915,12 +2980,9 @@ local function AddOptions()
 	Options.args.Spells.args.Class = Spell_Options()
 	--Options.args.Spells.args.Racials = Spell_Options("Racials")
 	--Options.args.Spells.args.Consumables = Consumable_Options()
-	--Options.args.Spells.args.Utilities = Utility_Options()
+	Options.args.Spells.args.Utilities = Spell_Options("Utilities")
 end
 
------------------------
----- Ace functions ----
------------------------
 function RSA_O:OnInitialize()
 	self.db = RSA.db
 	self:SetSinkStorage(self.db.profile) -- Setup Saved Variables for LibSink

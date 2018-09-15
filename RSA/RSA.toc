@@ -2,7 +2,7 @@
 ## Title: RSA [|c10FF75B3Core|r]
 ## Notes: Easy Spell Announcements! Amongst other things. This is required to run RSA.
 ## Author: Raeli
-## Version: r492-Release
+## Version: r497-Release
 ## SavedVariables: RSADB
 ## OptionalDeps: Ace3, LibDualSpec-1.0, LibSink-2.0, LibResInfo-1.0
 
@@ -22,5 +22,7 @@ Localisation\Locale-zhCN.lua
 Localisation\Locale-zhTW.lua
 Init.lua
 Defaults.lua
+Comms.lua
 Core.lua
 AnnouncementsMonitor.lua
+Modules\Utilities.lua
