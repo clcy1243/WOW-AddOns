@@ -56,36 +56,39 @@ end
 --
 
 function mod:AzeriteRoundsIncendiary(args)
-	self:Message(args.spellId, "cyan", "Info")
+	self:Message2(args.spellId, "cyan")
+	self:PlaySound(args.spellId, "info")
 	self:CDBar(256199, 27.5) -- Azerite Rounds: Blast
 end
 
 function mod:AzeriteRoundsBlast(args)
-	self:Message(args.spellId, "cyan", "Info")
+	self:Message2(args.spellId, "cyan")
+	self:PlaySound(args.spellId, "info")
 	self:Bar(256198, 27.5) -- Azerite Rounds: Incendiary
 end
 
 function mod:CrossIgnition(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:Message2(args.spellId, "yellow")
+	self:PlaySound(args.spellId, "alert")
 	crossIgnitionCount = crossIgnitionCount + 1
 	self:Bar(args.spellId, crossIgnitionCount % 2 == 0 and 21 or 34)
 	self:CastBar(args.spellId, 5.5)
 end
 
-function mod:ExplosiveBurst(args)
+function mod:ExplosiveBurst()
 	explosiveBurstCount = explosiveBurstCount + 1
 	self:Bar(256105, explosiveBurstCount % 2 == 0 and 38 or 17)
 end
 
 do
 	local playerList, isOnMe = {}, nil
-	local function warn(self, spellName)
+	local function warn(self)
 		if isOnMe then
-			self:Message(256105, "blue", nil, CL.you:format(spellName))
+			self:PersonalMessage(256105)
 			self:PlaySound(256105, "warning", "moveout")
 			self:OpenProximity(256105, 5)
 		else
-			self:Message(256105, "orange")
+			self:Message2(256105, "orange")
 			self:PlaySound(256105, "alarm")
 			self:OpenProximity(256105, 5, playerList)
 		end
@@ -101,7 +104,7 @@ do
 			self:SayCountdown(args.spellId, 4)
 		end
 		if #playerList == 1 then
-			self:ScheduleTimer(warn, 0.1, self, args.spellName)
+			self:ScheduleTimer(warn, 0.1, self)
 		end
 	end
 end
@@ -114,13 +117,15 @@ function mod:ExplosiveBurstRemoved(args)
 end
 
 function mod:Deadeye(args)
-	self:TargetMessage(args.spellId, args.destName, "red", "Warning", nil, nil, true)
+	self:TargetMessage2(args.spellId, "red", args.destName)
+	self:PlaySound(args.spellId, "warning", nil, args.destName)
 	self:Bar(args.spellId, 27.5)
 	self:CastBar(args.spellId, 5)
 end
 
 function mod:MassiveBlast(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:Message2(args.spellId, "yellow")
+	self:PlaySound(args.spellId, "alert")
 	self:Bar(args.spellId, 27.5)
 	self:CastBar(args.spellId, 4)
 end

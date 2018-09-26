@@ -19,6 +19,8 @@ L["ALWAYS_SHOW_EXTENDED_INFO_DESC"] = "Garder une des touches (shift/ctrl/alt) p
 --[[ L["API_DEPRECATED_UNKNOWN_FILE"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED_WITH"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["API_INVALID_DATABASE"] = ""--]] 
 L["BEST_FOR_DUNGEON"] = "Meilleure clé pour le donjon"
 L["BEST_RUN"] = "Meilleure clé"
 L["CHANGES_REQUIRES_UI_RELOAD"] = [=[Vos changements ont été sauvegardé, mais il faut recharger l'interface pour qu'elles prennent effets.
@@ -29,39 +31,30 @@ L["COPY_RAIDERIO_PROFILE_URL"] = "Copier le profil Raider.IO"
 L["COPY_RAIDERIO_URL"] = "Copier l'url Raider.IO"
 L["DPS"] = "DPS"
 L["DPS_SCORE"] = "Score en DPS"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_AD"] = ""--]] 
+L["DUNGEON_SHORT_NAME_AD"] = "AD"
 L["DUNGEON_SHORT_NAME_ARC"] = "ARC"
 L["DUNGEON_SHORT_NAME_BRH"] = "BRH"
 L["DUNGEON_SHORT_NAME_COEN"] = "COEN"
 L["DUNGEON_SHORT_NAME_COS"] = "COS"
 L["DUNGEON_SHORT_NAME_DHT"] = "DHT"
 L["DUNGEON_SHORT_NAME_EOA"] = "EOA"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_FH"] = ""--]] 
+L["DUNGEON_SHORT_NAME_FH"] = "FH"
 L["DUNGEON_SHORT_NAME_HOV"] = "HOV"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_KR"] = ""--]] 
+L["DUNGEON_SHORT_NAME_KR"] = "KR"
 L["DUNGEON_SHORT_NAME_LOWR"] = "LOWR"
+L["DUNGEON_SHORT_NAME_ML"] = "ML"
 L["DUNGEON_SHORT_NAME_MOS"] = "MOS"
 L["DUNGEON_SHORT_NAME_NL"] = "NL"
 L["DUNGEON_SHORT_NAME_SEAT"] = "SEAT"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_SIEGE"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_SOTS"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_TD"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_TM"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_TOS"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_UNDR"] = ""--]] 
+L["DUNGEON_SHORT_NAME_SIEGE"] = "SIEGE"
+L["DUNGEON_SHORT_NAME_SOTS"] = "SOTS"
+L["DUNGEON_SHORT_NAME_TD"] = "TD"
+L["DUNGEON_SHORT_NAME_TM"] = "ML"
+L["DUNGEON_SHORT_NAME_TOS"] = "TOS"
+L["DUNGEON_SHORT_NAME_UNDR"] = "UNDR"
 L["DUNGEON_SHORT_NAME_UPPR"] = "UPPR"
 L["DUNGEON_SHORT_NAME_VOTW"] = "VOTW"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_WM"] = ""--]] 
+L["DUNGEON_SHORT_NAME_WM"] = "WM"
 --[[Translation missing --]]
 --[[ L["ENABLE_AUTO_FRAME_POSITION"] = ""--]] 
 --[[Translation missing --]]
@@ -81,8 +74,7 @@ L["ENABLE_SIMPLE_SCORE_COLORS_DESC"] = "Utiliser les couleurs de raretés (rare,
 --[[Translation missing --]]
 --[[ L["EXPORTJSON_COPY_TEXT"] = ""--]] 
 L["GUILD_BEST_SEASON"] = "Guilde: Top Saison"
---[[Translation missing --]]
---[[ L["GUILD_BEST_TITLE"] = ""--]] 
+L["GUILD_BEST_TITLE"] = "Record Raider.IO"
 L["GUILD_BEST_WEEKLY"] = "Guilde : Top Semaine"
 L["HEALER"] = "Heal"
 L["HEALER_SCORE"] = "Score en heal"
@@ -92,8 +84,7 @@ L["KEYSTONE_COMPLETED_10"] = "+10-14 (CM)"
 L["KEYSTONE_COMPLETED_15"] = "+15 (MM)"
 --[[Translation missing --]]
 --[[ L["LEGION_MAIN_SCORE"] = ""--]] 
---[[Translation missing --]]
---[[ L["LEGION_SCORE"] = ""--]] 
+L["LEGION_SCORE"] = "Score Legion"
 --[[Translation missing --]]
 --[[ L["LOCKING_PROFILE_FRAME"] = ""--]] 
 L["MAINS_SCORE"] = "Score du personnage principal"

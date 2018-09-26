@@ -42,7 +42,7 @@ L["Custom unit name"] = "사용자지정 유닛 이름"
 L["Dest unit"] = "대상 유닛"
 L["Dest type"] = "대상 종류"
 
-L["GladiatorlosSACredits"] = "Customizable PvP Announcer addon for vocalizing many important spells and cast by your enemies.|n|n|cffFFF569Created by|r |cff9482C9Abatorlos|r |cffFFF569of Spinebreaker|r|n|cffFFF569Legion update by|r |cffC79C6EOrunno|r |cffFFF569of Moon Guard (With permission from zuhligan)|r|n|n|cffFFF569Special Thanks|r|n|cffA330C9superk521|r (Past Project Manager)|n|cffA330C9DuskAshes|r (Chinese Support)|n|cffA330C9N30Ex|r (Mists of Pandaria Support)|n|cffA330C9zuhligan|r (Warlords of Draenor & French Support)|n|cffA330C9jungwan2|r (Korean Support)|n|cffA330C9Mini_Dragon|r (Chinese support for WoD & Legion)|n|cffA330C9LordKuper|r (Russian support for Legion)"
+L["GladiatorlosSACredits"] = "Customizable PvP Announcer addon for vocalizing many important spells cast by your enemies.|n|n|cffFFF569Created by|r |cff9482C9Abatorlos|r |cffFFF569of Spinebreaker|r|n|cffFFF569Legion/BfA support by|r |cffC79C6EOrunno|r |cffFFF569of Moon Guard (With permission from zuhligan)|r|n|n|cffFFF569Special Thanks|r|n|cffA330C9superk521|r (Past Project Manager)|n|cffA330C9DuskAshes|r (Chinese Support)|n|cffA330C9N30Ex|r (Mists of Pandaria Support)|n|cffA330C9zuhligan|r (Warlords of Draenor & French Support)|n|cffA330C9jungwan2|r (Korean Support)|n|cffA330C9Mini_Dragon|r (Chinese support for WoD & Legion)|n|cffA330C9LordKuper|r (Russian support for Legion)|n|cffA330C9Tzanee - Wyrmrest Accord|r (Placeholder Voice Lines)|n|nAll feedback, questions, suggestions, and bug reports are welcome at the addon's page on Curse!"
 L["PVP Voice Alert"] = "PVP 음성 경보"
 L["Load Configuration"] = "설정 창 열기"
 L["Load Configuration Options"] = "설정 옵션 열기"
@@ -166,5 +166,10 @@ L["PurgeDesc"] = true
 L["FriendlyInterrupted"] = true
 L["FriendlyInterruptedDesc"] = true
 
-L["DisableLargeBG"] = true
-L["DisableLargeBGDesc"] = true
+L["epicbattleground"] = true
+L["epicbattlegroundDesc"] = true
+
+L["TankTauntsOFF"] = true
+L["TankTauntsOFF_Desc"] = true
+L["TankTauntsON"] = true
+L["TankTauntsON_Desc"] = true

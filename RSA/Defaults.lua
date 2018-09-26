@@ -828,6 +828,34 @@ local function Hunter()
 					Channel = "",
 				},
 			},
+			AncientHysteria = {
+				Messages = {
+					Start = {"[LINK] activated!"},
+					End = {"[LINK] faded!"},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+				SmartGroup = true,
+			},
+			SpiritMend = {
+				Messages = {
+					Cast = {"[LINK] cast on [TARGET]!"},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+			},
+			BattleRess = {
+				Messages = {
+					Cast = {"[LINK] cast on [TARGET]!"},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+				Whisper = true,
+				SmartGroup = true,
+			},
 		},
 	}
 	return Hunter
@@ -1747,6 +1775,15 @@ local function Rogue()
 					Channel = "",
 				},
 			},
+			CheapShot = {
+				Messages = {
+					Start = {"[LINK] cast on [TARGET]!"},
+					End = {"[LINK] on [TARGET] has ended!"},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+			},
 		},
 	}
 	return Rogue
@@ -1811,7 +1848,7 @@ local function Shaman()
 			},
 			HealingTide = {
 				Messages = {
-					Start = {"[LINK] placed!"},
+					Placed = {"[LINK] placed!"},
 					End = {"[LINK] faded!"},
 				},
 				CustomChannel = {
@@ -1849,7 +1886,7 @@ local function Shaman()
 			},
 			SpiritLink = {
 				Messages = {
-					Start = {"[LINK] placed!"},
+					Placed = {"[LINK] placed!"},
 					End = {"[LINK] faded!"},
 				},
 				CustomChannel = {
@@ -1859,7 +1896,7 @@ local function Shaman()
 			},
 			TremorTotem = {
 				Messages = {
-					Start = {"[LINK] placed!"},
+					Placed = {"[LINK] placed!"},
 					End = {"[LINK] faded!"},
 				},
 				CustomChannel = {
@@ -1910,7 +1947,7 @@ local function Shaman()
 			},
 			WindRushTotem = {
 				Messages = {
-					Start = {"[LINK] placed!"},
+					Placed = {"[LINK] placed!"},
 					End = {"[LINK] faded!"},
 				},
 				CustomChannel = {
@@ -1938,7 +1975,7 @@ local function Shaman()
 			},
 			AncestralProtection = {
 				Messages = {
-					Start = {"[LINK] placed!"},
+					Placed = {"[LINK] placed!"},
 					Cast = {"[LINK] resurrected [TARGET]!"},
 					End = {"[LINK] ended!"},
 				},
@@ -1949,8 +1986,8 @@ local function Shaman()
 			},
 			LightningSurge = {
 				Messages = {
-					Start = {"[LINK] activated!"},
-					Cast = {"[LINK] placed!"},
+					Placed = {"[LINK] placed!"},
+					Cast = {"[LINK] activated!"},
 					End = {"[LINK] ended!"},
 				},
 				CustomChannel = {
@@ -1959,7 +1996,7 @@ local function Shaman()
 			},
 			Cloudburst = {
 				Messages = {
-					Start = {"[LINK] placed!"},
+					Placed = {"[LINK] placed!"},
 					Heal = {"[LINK] healed for [AMOUNT]!"},
 					End = {"[LINK] ended!"},
 				},
@@ -1969,8 +2006,28 @@ local function Shaman()
 			},
 			EarthenShieldTotem = {
 				Messages = {
-					Start = {"[LINK] placed!"},
+					Placed = {"[LINK] placed!"},
 					End = {"[LINK] ended!"},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+			},
+			GroundingTotem = {
+				Messages = {
+					Placed = {"[LINK] placed!"},
+					DamageAbsorb = {"[LINK] absorbed [AMOUNT] from [TARGET]'s [TARLINK]!"},
+					EffectAbsorb = {"[LINK] absorbed [TARGET]'s [TARLINK]!"},
+					End = {"[LINK] ended and absorbed [AMOUNT] enemy!"},
+				},
+				CustomChannel = {
+					Channel = "",
+				},
+			},
+			EarthGrabTotem = {
+				Messages = {
+					Placed = {"[LINK] placed!"},
+					End = {"[LINK] faded!"},
 				},
 				CustomChannel = {
 					Channel = "",
@@ -2339,8 +2396,7 @@ local function Racials()
 			},
 			GOTN = {
 				Messages = {
-					Start = {"[LINK] cast on [TARGET]!"},
-					End = {},
+					Cast = {"[LINK] cast on [TARGET]!"},
 				},
 				CustomChannel = {
 					Channel = "",
@@ -2405,15 +2461,16 @@ local function Racials()
 					Channel = "",
 				},
 			},
-			SpacialRift = {
+			SpatialRift = {
 				Messages = {
-					Cast = {"[LINK] activated!"},
+					Placed = {"[LINK] activated!"},
+					Cast = {"Teleported to my [LINK]!"},
 				},
 				CustomChannel = {
 					Channel = "",
 				},
 			},
-			FireBlood = {
+			Fireblood = {
 				Messages = {
 					Start = {"[LINK] activated!"},
 					End = {},
@@ -2424,7 +2481,7 @@ local function Racials()
 			},
 			ArcanePulse = {
 				Messages = {
-					Start = {"[LINK] cast on [TARGET]!"},
+					Start = {"[LINK] activated!"},
 					End = {},
 				},
 				CustomChannel = {
@@ -2441,7 +2498,7 @@ local function Racials()
 			},
 			AncestralCall = {
 				Messages = {
-					Start = {"[LINK] cast on [TARGET]!"},
+					Start = {"[LINK] activated!"},
 					End = {},
 				},
 				CustomChannel = {

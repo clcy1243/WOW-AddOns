@@ -1,9 +1,0 @@
-## Interface: 70300
-## Version: 2.10
-## Title: Hard Yards
-## Author: Taraezor
-## Notes: Estimate |cFFD2691Edistance|r to target
-## SavedVariablesPerCharacter: HardYardsDB
-## Dependencies:
-
-Core.lua

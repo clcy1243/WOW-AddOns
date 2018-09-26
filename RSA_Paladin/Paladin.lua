@@ -168,10 +168,9 @@ function RSA_Paladin:OnEnable()
 			},
 		},
 		SPELL_CAST_SUCCESS = {
-			[31842] = Config_AvengingWrath, -- AVENGING WRATH
 			[31884] = Config_AvengingWrath, -- AVENGING WRATH
-			[224668] = Config_AvengingWrath, -- CRUSADE
-			[216331] = Config_AvengingWrath, -- Avenging Crusader - Holy PvP Talent		
+			[231895] = Config_AvengingWrath, -- Crusade - Ret Talent
+			[216331] = Config_AvengingWrath, -- Avenging Crusader - Holy Talent		
 			[6940] = Config_BoS, -- Blessing of Sacrifice
 			[199448] = Config_BoS, -- Ultimate Sacrifice honour talent		
 			[212056] = { -- ABSOLUTION
@@ -262,10 +261,9 @@ function RSA_Paladin:OnEnable()
 			},
 		},
 		SPELL_AURA_REMOVED = {
-			[31842] = Config_AvengingWrath_End, -- AVENGING WRATH
 			[31884] = Config_AvengingWrath_End, -- AVENGING WRATH
-			[224668] = Config_AvengingWrath_End, -- CRUSADE
-			[216331] = Config_AvengingWrath_End, -- Avenging Crusader - Holy PvP Talent
+			[231895] = Config_AvengingWrath_End, -- Crusade - Ret Talent
+			[216331] = Config_AvengingWrath_End, -- Avenging Crusader - Holy Talent
 			[1022] = Config_BoP_End, -- BLESSING OF PROTECTION
 			[204018] = Config_BoP_End, -- BLESSING OF SPELLWARDING			
 			[642] = Config_DivineShield_End, -- DIVINE SHIELD
@@ -403,7 +401,7 @@ function RSA_Paladin:OnEnable()
 	local ResTarget = L["Unknown"]
 	local Ressed
 	local function Paladin_Spells()
-		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4 = CombatLogGetCurrentEventInfo()
+		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4, ex5, ex6, ex7, ex8 = CombatLogGetCurrentEventInfo()
 		if RSA.AffiliationMine(sourceFlags) then
 			if (event == "SPELL_CAST_SUCCESS" and RSA.db.profile.Modules.Reminders_Loaded == true) then -- Reminder Refreshed				
 				local ReminderSpell = RSA.db.profile.Paladin.Reminders.SpellName
@@ -417,7 +415,7 @@ function RSA_Paladin:OnEnable()
 					end
 				end
 			end -- BUFF REMINDER
-			MonitorAndAnnounce(self, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4)
+			MonitorAndAnnounce(self, "player", timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4, ex5, ex6, ex7, ex8)
 		end -- IF SOURCE IS PLAYER
 	end -- END ENTIRELY
 	RSA.CombatLogMonitor:SetScript("OnEvent", Paladin_Spells)

@@ -1,8 +1,164 @@
-- version B2
+- version B3 (8.0.1)
 
-* Fixed the UnitAura LUA error. Note that Drinking alert in arenas will no longer function until I make a proper fix.
+* **THIS VERSION INCLUDES THE UPDATED SPELL LIBRARY, BUT NOT THE UPDATED VOICEOVERS. MANY ABILITIES BELOW WILL NOT PLAY AN ASSOCIATED ALERT UNTIL A FUTURE VERSION.**
 
-**THIS DOES NOT INCLUDE CHANGES TO THE SPELL LIBRARY OR VO, THAT IS STILL  WORK IN PROGRESS**
+Curse Project Page
+* Removed Localization links. Translation is way too out of date. Please contact translators.
+* Comments are now disabled on the www.curseforge.com page, and enabled on wow.curseforge.com instead. Simply click "View Project Page" to provide feedback.
+
+General
+* Added support for PvP Island Expeditions (toggleable via Arena option).
+* Added Bull Rush (Highmountain racial) to Special Abilities.
+* Added Fireblood (Dark Iron Dwarf racial) to Special Abilities
+* Added generic tank's Honor Talent taunt (Intimidated) that functions as a damage boost to Buff Applied/Down as a checkbox with an annoying placeholder alert.
+* Added Healthstone (Warlock tradeable consumable) to Special Abilities.
+* Added Nimble Brew (Brewmaster Honor Talent tradeable consumable) to Special Abilities.
+* Added Spatial Rift (+Spatial Warp) (Void Elf teleport racial) to Special Abilities.
+* Removed Epic Battleground toggle because I'm apparently incompetent and can't get it to work correctly.
+* Removed invalid SpellIDs.
+* Removed VOListing.txt file. Sound library changes will be documented in the change log here instead with the file name provided (exception being this update, see the folder for full list of files).
+
+Death Knight
+* Added Dancing Rune Weapon to Special Abilities.
+* Added Death Chain honor talent to Special Abilities.
+* Added Death's Advance to Special Abilities.
+* Added Death Pact to Special Abilities.
+* Added Purgatory to Buff Applied (for real this time!).
+* Added Raise Dead to Special Abilities.
+* Added Unholy Frenzy to Rune Weapon alerts.
+* Fixed Apocalypse's new spellID.
+* Fixed Sindragosa's Fury new spellID.
+* Removed Blood Mirror (no longer exists).
+* Removed Obliteration (now a passive).
+* Removed Winter is Coming (no longer exists, thank u PvP gods).
+
+Demon Hunter
+* Added Consume Magic to Purge alerts, because that's exactly what the second anti-caster hero class needed.
+* Removed Fury of the Illidari (no longer relevant).
+
+Druid
+* Added Berserk to Aura Applied.
+* Added Flourish to Special Abilities
+* Added Hibernation to Cast Start and Crowd Control Success checkbox.
+* Added Overrun (Guardian Druid Honor Talent) to Special Abilities.
+* Added Soothe to Special Abilities.
+* Added Tiger Dash to Dash alert.
+* Added Ursol's Vortex to Special Abilities.
+* Fixed Little/Middle/Big Moon's new spellIDs.
+* Removed Ashamane's Fury (no longer relevant).
+* Removed Displacer Beast (no longer exists).
+* Removed Essence of G'hanir (no longer relevant).
+* Removed Healing Touch from Big Heal alerts (no longer exists).
+* Removed Rage of the Sleeper (no longer relevant).
+
+Hunter
+* Added Aspect of the Wild to Trueshot alert in Buff Applied/Down.
+* Added Beast Within (Bestial Wrath Fear/Horror Immunity Honor Talent) to Buff Applied/Down.
+(Note that Bestial Wrath's CD is short and has a potent CDR component to it and is hardly worth alerting on its own; however the fear immunity is worth alerts.)
+* Added Coordinated Assault to Trueshot alert in Buff Applied/Down.
+* Added Hi-Explosive Trap to Special Abilities.
+* Added Interlope to Special Abilities.
+* Added Intimidation (5 second pet stun) to Buff Applied, using the 'when ally is affected' logic shared by abilities such as Cheap Shot.
+* Added Primal Rage (Hunter Bloodlust apparently) to the Bloodlust alert.
+* Added Survival Tactics (Hunter Feign Death dispel/damage reduction) to Buff Applied.
+* Fixed a missing Master's Call spellID.
+* Removed Barrage (does it really need an alert?).
+* Removed Fury of the Eagle (no longer relevant).
+* Removed Snake Hunter (no longer exists).
+* Removed Sticky Bomb (no longer exists).
+* Removed Wyvern Sting (no longer exists).
+
+Mage
+* Added Dragon's Breath to Special Abilities.
+* Added Polymorph variants: Direhorn, Bumblebee
+* Added Remove Curse (YAY!) to DPS Cure alerts.
+* Fixed Ebonbolt's new spellID.
+* Removed Comet Storm (not something you play around).
+* Removed Mark of Aluneth (no longer relevant).
+
+Monk
+* Added Double Barrel (Brewmaster Honor Talent that stuns on next Keg Smash) to Buff Applied, using the 'when ally is affected' logic shared by abilities such as Cheap Shot.
+* Added Mighty Ox Kick (Brewmaster knockback) under Special Abilities.
+* Added Surging Mist (Mistweaver Honor Talent) to Big Heal alert.
+* Removed Exploding Keg (no longer relevant).
+* Removed Sheilun's Gift (no longer relevant).
+* Removed Soothing Mist (AMA is now the default playstyle).
+* Removed Strike of the Wind Lord (RIP OoOUuUcHhH!) (no longer relevant).
+* Removed Vivify from Big Heal alert (Vivify is now like Effuse; see above).
+
+Paladin
+* Added Divine Protection to Buff Applied.
+* Added Execution Sentence to Special Abilities.
+* Added Shield of Virtue (Protection Honor Talent that silences on next Avenging Wrath) to Buff Applied, using the 'when ally is affected' logic shared by abilities such as Cheap Shot.
+* Removed Tyr's Deliverance (no longer relevant).
+* Removed Unbreakable Will (no longer exists, kek).
+
+Priest
+* Psychic Horror is back! ...And I never removed it from GSA2 to begin with, so there it is apparently!
+* Added Holy Word: Salvation to Spell Casting.
+* Added Luminous Barrier to the Power Word: Barrier alert.
+* Added Premonition to Special Abilities. No more guessing if the priest knows how to break your hexes!
+* Fixed Void Torrent's new spellID.
+* Removed Light of T'uure (no longer relevant).
+* Removed Light's Wrath (no longer relevant).
+* Removed Power Infusion (no longer exists).
+
+Rogue
+* Added Feint to Buff Applied/Down. (Note that there is no way to differentiate between Elusiveness Feint and regular Feint.)
+* Added Neurotoxin to Special Abilities.
+* Removed Curse of the Dreadblades (no longer relevant).
+* Removed Kingsbane (no longer relevant).
+
+Shaman
+* Added Icefury to Spell Casting.
+* Added Hex variants: Skeletal Hatchling, Zandalari Tendonripper, Wicker Mongrel.
+* Added Tremor Totem (welcome back!) to Special Abilities.
+* Fixed Stormkeeper's new spellID.
+* Removed Earth Shield (not something you play around anymore).
+* Removed Elemental Mastery (no longer exists).
+* Removed Gift of the Queen (no longer relevant).
+* Removed Spirit Link (the Honor Talent; not the totem).
+* Removed Voodoo Totem (no longer exists).
+* Removed Windfury Totem (no longer exists).
+
+Warlock
+* Added Dark Soul: Misery to Dark Soul alert.
+* Added Curse of Fragility to Special Abilities.
+* Added Curse of Tongues to Special Abilities.
+* Added Curse of Weakness to Special Abilities.
+* Added Summon Demonic Tyrant to Spell Casting.
+* Fixed Singe Magic's missing spellID. (stop.)
+* Discovered that there are more Spell Lock IDs I need to fix now, too.
+* Removed Warlocks from the game because I am sick of their 200 spell IDs for the exact same spell.
+* What do you mean I can't do that?
+* Oh well.
+* Removed Implosion.
+* Removed Thal'kiel's Consumption (no longer relevant).
+* Removed Whiplash (now a very frequent autocast slow instead of a knockback).
+
+Warrior
+* Added Deadly Calm (Arms Talent) and Recklessness (Fury) to the Battle Cry alert under Buff Applied.
+* Added Dragon Charge (Protection Honor Talent) to Special Abilities.
+* Added Heroic Leap under Special Abilities.
+* Added Safeguard to Buff Applied/Down.
+* Added Second Wind to Buff Applied.
+* Added Sweeping Strikes (+Down) to Buff Applied/Down.
+* Added Warpath (Protection Honor Talent) stun to Buff Applied, using the 'when ally is affected' logic shared by abilities such as Cheap Shot.
+* Removed Dragon Roar (it really isn't that special).
+* Removed Trial by Combat (no longer exists, hooray!).
+
+Localization
+* New strings:
+L["TankTauntsOFF"]
+L["TankTauntsOFF_Desc"]
+L["TankTauntsON"]
+L["TankTauntsON_Desc"]
+
+Known Issues
+* Many new spells added to the library do not have an assigned alert (obviously).
+* Spell data provided by mouseover in the options is incomplete.
+* Apparently I'm missing even more spellIDs for warlock pets.
+* I'm sure something else is horribly broken too.
 ===============================================
 - version B1
 
@@ -10,12 +166,12 @@ General
 * Functioning in Battle for Azeroth. Bear in mind that the spell/VO databases have not yet been updated, this is merely to get the addon actually working on the Beta.
 * **This version will cause errors on Live!**
 ===============================================
-- version 1.17.1
+- version 1.17.2
 
 Druid
 * Fixed Entangling Roots for feral druids talented into Earthen Grasp.
 ===============================================
-- version 1.17
+- version 1.17.1
 
 General
 * In effort to cut back on the "out-of-the-box" spam, a number of low-importance abilities are now OFF by default. Abilities such as just movement speed increases, tank cooldowns (they're already tanky!), and low-counterplay buffs are considered "low priority". If you wanted these abilities enabled, you will have to go through and re-enable them manually. Abilities that were already off by default should not need to be changed.
@@ -23,7 +179,7 @@ General
 * **Affected Abilities**
 * Aura Applied/Removed: Vampiric Blood, Tombstone (+down), Rune Tap, Dash, Cenarion Ward, Bristling Fur, Master's Call, Aspect of the Cheetah, Mending Bandage, Mana Tea, Zen Meditation (+down), Aegis of Light, Ardent Defender (+down), Guardian of Ancient Kings (+down), Archangel, Dark Archangel, Sprint, Spirit Link (+down) (not the totem), Dark Pact, Shield Wall (+down).
 * Spell Casting: Big Heals, Shackle Undead, Cataclysm.
-* Cast Success: PvP Battle Standards, Gorefiend's Grasp, Defile, Chill Streak, Sindragosa's Fury, Mana Break, Displacer Beast, Renewal, Wild Charge, Exhilaration, Murder of Crows, Snake Hunter, Presence of Mind, Comet Storm, Meteor, Ice Floes, Invoke Niuzao, Divine Steed, Shadowfiend, Desperate Prayer, Mindbender, Holy Word: Serenity, Cannonball Barrage, Exsanguinate, Storm Elemental, Fire Elemental, Earth Elemental, Wind Rush Totem, Liquid Magma Totem, Earthen Shield Totem, Commanding Shout, Dragon Roar, Ravager, Demoralizing Shout.
+* Special Abilities: PvP Battle Standards, Gorefiend's Grasp, Defile, Chill Streak, Sindragosa's Fury, Mana Break, Displacer Beast, Renewal, Wild Charge, Exhilaration, Murder of Crows, Snake Hunter, Presence of Mind, Comet Storm, Meteor, Ice Floes, Invoke Niuzao, Divine Steed, Shadowfiend, Desperate Prayer, Mindbender, Holy Word: Serenity, Cannonball Barrage, Exsanguinate, Storm Elemental, Fire Elemental, Earth Elemental, Wind Rush Totem, Liquid Magma Totem, Earthen Shield Totem, Commanding Shout, Dragon Roar, Ravager, Demoralizing Shout.
 
 A few high-priority abilities (major DPS increases, Crowd-Control, etc) have been enabled by default although current users may need to manually enable them.
 * Bloodlust, Void Form (+down), Cheat Death, Cauterize, Arcane Torrent, War Stomp, Quaking Palm, Gouge, Summon Water Elemental,
@@ -112,8 +268,8 @@ Priest
 
 Warlock
 * (PH) Added Thal'kiel's Consumption to Spell Casting.
-* (PH) Added Call Observer to Cast Success.
-* (PH) Added Summon Darkglare to Cast Success.
+* (PH) Added Call Observer to Special Abilities.
+* (PH) Added Summon Darkglare to Special Abilities.
 ===============================================
 - version 1.14.3a
 
@@ -175,8 +331,8 @@ Demon Hunter
 * Removed Rain from Above because GSA can't track it and it's pretty obvious to begin with.
 
 Mage
-* Added Presence of Mind in Cast Success.
-* Moved Ice floes from Aura Applied to Cast Success. This change was to allow for more accurate mental tracking of the number of spells ready to be affected by this ability, given that it runs on a charge based system. Of course, this also means it will alert more frequenetly.
+* Added Presence of Mind in Special Abilities.
+* Moved Ice floes from Aura Applied to Special Abilities. This change was to allow for more accurate mental tracking of the number of spells ready to be affected by this ability, given that it runs on a charge based system. Of course, this also means it will alert more frequenetly.
 ===============================================
 - version 1.14
 
@@ -185,7 +341,7 @@ Demon Hunter
 
 Mage
 * Added Cold Snap in Spell Success.
-* Added Prismatic Barrier, Blazing Barrier, and Ice Barrier in Cast Success, all under the same alert of "Mage Shield". Off by default.
+* Added Prismatic Barrier, Blazing Barrier, and Ice Barrier in Special Abilities, all under the same alert of "Mage Shield". Off by default.
 
 Monk
 * Added Strike of the Wind Lord in Spell Success. I believe its alert is very appropriate.
@@ -196,13 +352,13 @@ Paladin
 * Cleansing Light honor talent added to "Cure" alert.
 
 Priest
-* Added Spirit of the Redeemer (active Spirit of Redemption) to Cast Success and Aura Removed.
+* Added Spirit of the Redeemer (active Spirit of Redemption) to Special Abilities and Aura Removed.
 * Shadow Covenant is no longer alerted via Big Heal.
 
 Warrior
-* Added Disarm in Cast Success.
+* Added Disarm in Special Abilities.
 * Added Duel to Buff Applied/Removed. I'm not sure whether or not this will function properly, I may need to change it later.
-* Added War Banner in Cast Success.
+* Added War Banner in Special Abilities.
 ===============================================
 - version 1.13
 
@@ -212,22 +368,22 @@ General
 
 Death Knight
 * Removed Lichborne from Buff Applied/Removed (no longer exists).
-* Added Death Grip to Cast Success. Off by default.
-* Added Hook (Abomination Death Grip) to Cast Success. Off by default.
+* Added Death Grip to Special Abilities. Off by default.
+* Added Hook (Abomination Death Grip) to Special Abilities. Off by default.
 * Added Breath of Sindragosa's falloff to Aura Removed.
-* Added Wraith Walk to Cast Success.
+* Added Wraith Walk to Special Abilities.
 * Added all 4 versions of Ghoul stuns to Aura Applied.
 
 Druid
 * Added Rake Stun to Aura Applied.
-* Added Maim to Cast Success.
+* Added Maim to Special Abilities.
 
 Mage
 * Fixed Cauterize.
 
 Priest
 * Void Torrent's alert was unusually loud, I toned it down slightly. Sorry!
-* Added Leap of Faith to Cast Success. Off by default.
+* Added Leap of Faith to Special Abilities. Off by default.
 * Added Clarity of Will to the generic "Big Heal" alert.
 
 Rogue
@@ -251,29 +407,29 @@ Sorry, I meant to do this with 1.12 but forgot to.
 - version 1.12
 
 General
-* Added Horde/Alliance Battle Standard in Cast Success.
+* Added Horde/Alliance Battle Standard in Special Abilities.
 * Added several missing interrupt IDs to the friendly interrupt "Countered!" alert, it should now more reliably trigger, particularly when fighting alongside warlock comrades.
 * Added a checkbox for Interrupted Friendlies. If you or an ally are interrupted during a cast, you will hear an additional alert (the Blizzard Quest Failed ping) in addition to the normal behavior. Bear in mind that this and the Countered alert still do not work in all conditions. This feature is off by default.
 
 Demon Hunter
-* Added Fury of the Illidari in Cast Success.
+* Added Fury of the Illidari in Special Abilities.
 
 Druid
-* Added Typhoon in Cast Success. Off by default.
-* Added Prowl in Cast Success. Off by default.
+* Added Typhoon in Special Abilities. Off by default.
+* Added Prowl in Special Abilities. Off by default.
 
 Hunter
-* Added Fury of the Eagle in Cast Success.
+* Added Fury of the Eagle in Special Abilities.
 * Sticky Bomb is now Off by default.
 * Added a second Freezing Trap located in Buff Applied, this one alerts "Trapped" if a friendly player walks into Freezing Trap. Think "success", except Success could have been misleading.
-* Added Flare in Cast Success.
-* Added Camouflage in Cast Success. Off by default.
+* Added Flare in Special Abilities.
+* Added Camouflage in Special Abilities. Off by default.
 
 Mage
-* Moved Ray of Frost from Spell Casting in Cast Success (channeled abilities sometimes don't play nice in the combat log).
+* Moved Ray of Frost from Spell Casting in Special Abilities (channeled abilities sometimes don't play nice in the combat log).
 
 Monk
-* Added Soothing Mist in Cast Success. Off by default. Note that this only applies to the active version of Soothing Mist taken via Honor Talent (that functions like Pre-Legion SM, hence the name Ancient Mistweaving Arts) and is interruptable.
+* Added Soothing Mist in Special Abilities. Off by default. Note that this only applies to the active version of Soothing Mist taken via Honor Talent (that functions like Pre-Legion SM, hence the name Ancient Mistweaving Arts) and is interruptable.
 * Added Zen Focus Tea (+Down) in Buff Applied/Removed.
 
 Paladin
@@ -281,19 +437,19 @@ Paladin
 * Added Unbreakable Will (Ashbringer CC Break) in Buff Applied. Note that this only alerts successful breaks - if the CC is broken before Ashbringer completes charging, the cooldown is not triggered.
 
 Priest
-* Moved Void Torrent from Spell Casting in Cast Success (channeled, combat log, etc)
+* Moved Void Torrent from Spell Casting in Special Abilities (channeled, combat log, etc)
 * Shining Force is now Off by default.
 
 Rogue
 * Added Sap in Buff Applied.
-* Added Stealth in Cast Success. Off by default.
+* Added Stealth in Special Abilities. Off by default.
 
 Shaman
-* Added Thunderstorm in Cast Success. Off by default.
+* Added Thunderstorm in Special Abilities. Off by default.
 
 Warlock
-* Added Fellash (Shivarra Knockback) and Whiplash (Succubus Knockback) in Cast Success. Off by default.
-* Added Summon Infernal (the ground-target stun guardian CD) in Cast Success.
+* Added Fellash (Shivarra Knockback) and Whiplash (Succubus Knockback) in Special Abilities. Off by default.
+* Added Summon Infernal (the ground-target stun guardian CD) in Special Abilities.
 
 Warrior
 * Added Trial By Combat in Buff Applied. (Fury Warrior "look at me RNG saved me from certain death and I'm unkillable for a few seconds!" proc.)
@@ -310,21 +466,21 @@ Death Knight
 
 Demon Hunter
 * Fixed Imprison when Honor Talened. The Demon only version should no longer trigger alerts.
-* Moved Darkness from Aura Applied/Removed to Cast Success. Apparently I didn't understand how this ability worked at first.
-* Moved Eye Beam from Spell Casting to Cast Success (channeled abilities sometimes don't play nice in the combat log).
+* Moved Darkness from Aura Applied/Removed to Special Abilities. Apparently I didn't understand how this ability worked at first.
+* Moved Eye Beam from Spell Casting to Special Abilities (channeled abilities sometimes don't play nice in the combat log).
 
 Hunter
-* Moved Barrage from Spell Casting to Cast Success (channeled abilities sometimes don't play nice in the combat log).
+* Moved Barrage from Spell Casting to Special Abilities (channeled abilities sometimes don't play nice in the combat log).
 
 Monk
-* Moved Song of Chi-Ji from Cast Success to Spell Casting.
-* Touch of Karma has been moved from Aura Applied to Cast Success.
+* Moved Song of Chi-Ji from Special Abilities to Spell Casting.
+* Touch of Karma has been moved from Aura Applied to Special Abilities.
 * Touch of Karma (Aura Removed) has been disabled by default.
 * **Touch of Karma is logged very inconsistently to how it actually behaves and, to make matters more complicated, uses the exact same ID for all events of the ability except the DoT component. I set out with the goal of writing specific logic to accurately track enemy Touch of Karma usage, but failed to come up with a solution. This change is a step in the right direction, as it will no longer alert you for friendly Touch of Karma usage, will now announce failed Touch of Karmas (if the enemy target was in Divine Shield, for example), but will continue to alert Karma falloffs if enabled for either team (which is not logged accurately to begin with, don't trust GSA to always be correct about exactly when Karma is no longer active) and will not specifically announce failed Karmas versus effective ones. The enemy monk's Karma buff on their target frame will always be 100% accurate. If it is there, Karma is redirecting. If the link is broken for any reason, the buff will disappear and the monk is vulnerable. Combat Log does not provide this information correctly.**
 
 Rogue
-* Moved Adrenaline Rush from Buff Applied to Cast Success to remove excess callouts that occur from very brief bursts of Adrenaline Rush from the Control is King honor talent.
-* Moved Garrote - Silence and Cheap Shot from Cast Success to Aura Applied.
+* Moved Adrenaline Rush from Buff Applied to Special Abilities to remove excess callouts that occur from very brief bursts of Adrenaline Rush from the Control is King honor talent.
+* Moved Garrote - Silence and Cheap Shot from Special Abilities to Aura Applied.
 * **With new logic for alerting hostile effects on ally targets, this change allows for more accurate alerts when friendly targets are affected by spammable CCs as opposed to some alerts not occuring due to them originating from a Stealth target, or particularly bad players spamming your ears with Cheap Shot even when the target is on full DR.**
 ===============================================
 - version 1.11.1
@@ -416,7 +572,7 @@ Demon Hunter
 * Fixed Blur.
 * Fixed Darkness.
 * Added Eye Beam (Spell Casting). Off by default.
-* Added Imprison (Cast Success).
+* Added Imprison (Special Abilities).
 
 Mage
 * Added Glacial Spike (Spell Casting).
@@ -613,7 +769,7 @@ Pushing this build with only a few changes due to the Warlock fixes. Seduce has 
 * Warlock
 	+ Added Seduction (Succubus Pet)
 	+ Added Mesmerize (Shyvarra pet, if they still exist?)
-	+ Shadowfury moved from Cast Success to Spell Casting.
+	+ Shadowfury moved from Special Abilities to Spell Casting.
 	+ Fixed demon interrupts.
 ===============================================
 - version 1.2
@@ -632,11 +788,11 @@ Given that this is GSA2 and not the original GSA, I found it odd that I am still
 * Rogue
 	+ Exsanguinate added.
 * Shaman
-	+ Astral Shift moved from Cast Success to Buff Applied.
+	+ Astral Shift moved from Special Abilities to Buff Applied.
 	+ Storm Elemental's callout changed from Storm Elemental Totem to Storm Elemental.
 * Warlock
 	+ Removed Demon Bolt (forgot it's a filler now and not burst).
-	+ Call Dreadstalkers has moved from Cast Success to Spell Casting.
+	+ Call Dreadstalkers has moved from Special Abilities to Spell Casting.
 * Warrior
 	+ Battle Cry's callout changed from Recklessness to Battle Cry.
 	+ Commanding Shout's callout changed from Rallying Cry to Commanding Shout.

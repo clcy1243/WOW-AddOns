@@ -19,50 +19,43 @@ L["ALWAYS_SHOW_EXTENDED_INFO_DESC"] = "Удерживайте клавиши shi
 --[[ L["API_DEPRECATED_UNKNOWN_FILE"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED_WITH"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["API_INVALID_DATABASE"] = ""--]] 
 L["BEST_FOR_DUNGEON"] = "Лучшее прохождение тек. подзем."
 L["BEST_RUN"] = "Лучшее прохождение"
 L["CHANGES_REQUIRES_UI_RELOAD"] = [=[Изменения были сохранены, но необходимо перезагрузить интерфейс, чтобы они вступили в силу.
 
 Сделать это сейчас?]=]
---[[Translation missing --]]
---[[ L["CHECKBOX_DISPLAY_WEEKLY"] = ""--]] 
+L["CHECKBOX_DISPLAY_WEEKLY"] = "Отобразить за Неделю"
 L["COPY_RAIDERIO_PROFILE_URL"] = "Копирование ссылки на профиль Raider.IO"
 L["COPY_RAIDERIO_URL"] = "Копировать ссылку на Raider.IO-профиль"
 L["DPS"] = "Боец"
 L["DPS_SCORE"] = "Очки бойца"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_AD"] = ""--]] 
+L["DUNGEON_SHORT_NAME_AD"] = "Атал'Дазар"
 L["DUNGEON_SHORT_NAME_ARC"] = "Катакомбы Сурамара"
 L["DUNGEON_SHORT_NAME_BRH"] = "Крепость Черной Ладьи"
 L["DUNGEON_SHORT_NAME_COEN"] = "Собор Вечной Ночи"
 L["DUNGEON_SHORT_NAME_COS"] = "Квартал Звезд"
 L["DUNGEON_SHORT_NAME_DHT"] = "Чаща Темного Сердца"
 L["DUNGEON_SHORT_NAME_EOA"] = "Око Азшары"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_FH"] = ""--]] 
+L["DUNGEON_SHORT_NAME_FH"] = "Вольная Гавань"
 L["DUNGEON_SHORT_NAME_HOV"] = "Чертоги Доблести"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_KR"] = ""--]] 
+L["DUNGEON_SHORT_NAME_KR"] = "Гробница Королей"
 L["DUNGEON_SHORT_NAME_LOWR"] = "Каражан (нижняя часть)"
+L["DUNGEON_SHORT_NAME_ML"] = "Золотая Жила!!!"
 L["DUNGEON_SHORT_NAME_MOS"] = "Утроба Душ"
 L["DUNGEON_SHORT_NAME_NL"] = "Логово Нелтариона"
 L["DUNGEON_SHORT_NAME_SEAT"] = "Престол Триумвирата"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_SIEGE"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_SOTS"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_TD"] = ""--]] 
+L["DUNGEON_SHORT_NAME_SIEGE"] = "Осада Боралуса"
+L["DUNGEON_SHORT_NAME_SOTS"] = "Святилище Штормов"
+L["DUNGEON_SHORT_NAME_TD"] = "Тол Дагор"
 --[[Translation missing --]]
 --[[ L["DUNGEON_SHORT_NAME_TM"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_TOS"] = ""--]] 
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_UNDR"] = ""--]] 
+L["DUNGEON_SHORT_NAME_TOS"] = "Храм Сетралисс"
+L["DUNGEON_SHORT_NAME_UNDR"] = "Подгнилье"
 L["DUNGEON_SHORT_NAME_UPPR"] = "Каражан (верхняя часть)"
 L["DUNGEON_SHORT_NAME_VOTW"] = "Казематы Стражей"
---[[Translation missing --]]
---[[ L["DUNGEON_SHORT_NAME_WM"] = ""--]] 
+L["DUNGEON_SHORT_NAME_WM"] = "Усадьба Уэйкрестов"
 L["ENABLE_AUTO_FRAME_POSITION"] = "Автоматическое позиционирование моего М+ профиля"
 L["ENABLE_AUTO_FRAME_POSITION_DESC"] = "Включение этого параметра будет содержать подсказку M+ профиля рядом с Поиском группы или подсказкой игрока. "
 L["ENABLE_LOCK_PROFILE_FRAME"] = "Закрепить рамку М+ профиля"
@@ -75,14 +68,10 @@ L["ENABLE_NO_SCORE_COLORS_DESC"] = "Отключает раскраску очк
 --[[ L["ENABLE_RAIDERIO_CLIENT_ENHANCEMENTS_DESC"] = ""--]] 
 L["ENABLE_SIMPLE_SCORE_COLORS"] = "Использовать упрощенную окраску очков"
 L["ENABLE_SIMPLE_SCORE_COLORS_DESC"] = "Показывает очки только цветами качества предметов. Это упрощает визуальную оценку очков при беглом осмотре кандидатов."
---[[Translation missing --]]
---[[ L["EXPORTJSON_COPY_TEXT"] = ""--]] 
---[[Translation missing --]]
---[[ L["GUILD_BEST_SEASON"] = ""--]] 
---[[Translation missing --]]
---[[ L["GUILD_BEST_TITLE"] = ""--]] 
---[[Translation missing --]]
---[[ L["GUILD_BEST_WEEKLY"] = ""--]] 
+L["EXPORTJSON_COPY_TEXT"] = "Скопировать ссылку и вставить ее в |cff00C8FFhttps://raider.io|r для просмотра всех игроков."
+L["GUILD_BEST_SEASON"] = "Гильдия: Лучший Сезон"
+L["GUILD_BEST_TITLE"] = "Данные Raider.IO"
+L["GUILD_BEST_WEEKLY"] = "Гильдия: Лучшие за Неделю"
 L["HEALER"] = "Лекарь"
 L["HEALER_SCORE"] = "Очки лекаря"
 --[[Translation missing --]]
@@ -106,8 +95,7 @@ L["MODULE_TAIWAN"] = "Тайвань"
 L["MY_PROFILE_TITLE"] = "Мой M+ профиль"
 L["MYTHIC_PLUS_DB_MODULES"] = "Региональные модули базы данных очков"
 L["MYTHIC_PLUS_SCORES"] = "Очки эпохальных+ подземелий"
---[[Translation missing --]]
---[[ L["NO_GUILD_RECORD"] = ""--]] 
+L["NO_GUILD_RECORD"] = "Нет Данных Гильдии"
 L["OPEN_CONFIG"] = "Открыть настройки"
 --[[Translation missing --]]
 --[[ L["OUT_OF_SYNC_DATABASE_S"] = ""--]] 

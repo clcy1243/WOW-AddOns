@@ -1,7 +1,7 @@
 local addonName, ns = ...
 
 -- if we're on the developer version the addon behaves slightly different
-ns.DEBUG_MODE = not not (GetAddOnMetadata(addonName, "Version") or ""):find("v201809140600", nil, true)
+ns.DEBUG_MODE = not not (GetAddOnMetadata(addonName, "Version") or ""):find("v201809250600", nil, true)
 
 -- micro-optimization for more speed
 local unpack = unpack
@@ -205,11 +205,13 @@ local EGG = {
 		["Skullcrusher"] = {
 			["Aspyrox"] = "Raider.IO Creator",
 			["Ulsoga"] = "Raider.IO Creator",
-			["Dynrai"] = "Raider.IO Contributor",
-			["Divyn"] = "Raider.IO Contributor",
+			["Dynrai"] = "Raider.IO Contributor"
 		},
 		["Thrall"] = {
 			["Firstclass"] = "Author of mythicpl.us"
+		},
+		["Tichondrius"] = {
+			["Johnsamdi"] = "Raider.IO Developer"
 		}
 	},
 }
@@ -2186,7 +2188,7 @@ do
 	uiHooks[#uiHooks + 1] = function()
 		if _G.ChallengesFrame and _G.PVEFrame then
 			local function Refresh()
-				if not ns.GUILD_BEST_DATA or not ns.addonConfig.showClientGuildBest then return end
+				if not ns.addonConfig.showClientGuildBest then ns.GUILD_BEST_FRAME:Hide() return end
 				ns.GUILD_BEST_FRAME:Refresh()
 			end
 			ChallengesFrame:HookScript("OnShow", Refresh)
@@ -2258,7 +2260,7 @@ do
 		local addon, file = GetCallingAddOnName(stack)
 		if not addon then return end
 		notified[funcName] = true
-		DEFAULT_CHAT_FRAME:AddMessage(format(L[newFuncName and "API_DEPRECATED_WITH" or "API_DEPRECATED"], addon, funcName, addon, newFuncName or file, file), 1, 1, 0)
+		DEFAULT_CHAT_FRAME:AddMessage(format(L[newFuncName and "API_DEPRECATED_WITH" or "API_DEPRECATED"], addon, funcName, addon, newFuncName or file or "?", file or "?"), 1, 1, 0)
 	end
 
 	-- wraps the deprecated function and calls the new API with the appropriate arguments

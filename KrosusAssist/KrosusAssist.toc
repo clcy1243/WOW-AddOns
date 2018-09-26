@@ -1,9 +1,0 @@
-## Interface: 70200
-## Title: Krosus Assist
-## Author: Elvador
-## SavedVariables: KrosusAssistDB
-
-embeds.xml
-
-Locales.lua
-Core.lua

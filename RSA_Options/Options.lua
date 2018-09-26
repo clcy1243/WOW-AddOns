@@ -2,6 +2,7 @@ local RSA =  RSA or LibStub("AceAddon-3.0"):GetAddon("RSA")
 local L = LibStub("AceLocale-3.0"):GetLocale("RSA")
 local RSA_O = RSA:NewModule("RSA_Options", "LibSink-2.0")
 local _, PlayerClass = UnitClass('player')
+local _,_,RaceID = UnitRace("player")
 
 --[[
 local function CommunityLists()
@@ -857,7 +858,8 @@ local function Druid_Options()
 		[16] = {
 			Profile = "RemoveCorruption",
 			Name = GetSpellInfo(2782) .. " / " .. GetSpellInfo(88423),
-			Desc = GetSpellDescription(2782),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(2782) .. ":|r |cffd1d1d1" .. GetSpellDescription(2782) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(88423) .. ":|r |cffd1d1d1" .. GetSpellDescription(88423) .. "|r",
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
@@ -1044,6 +1046,31 @@ local function Hunter_Options()
 			Message_Areas = {"Cast"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
+		["AncientHysteria"] = {
+			Profile = "AncientHysteria",
+			Name = GetSpellInfo(90355),
+			Desc = GetSpellDescription(90355),
+			Message_Amount = 2,
+			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]"},
+		},
+		["SpiritMend"] = {
+			Profile = "SpiritMend",
+			Name = GetSpellInfo(90361),
+			Desc = GetSpellDescription(90361),
+			Message_Amount = 1,
+			Message_Areas = {"Cast"},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]",},
+		},
+		["BattleRess"] = {
+			Profile = "BattleRess",
+			Name = GetSpellInfo(159956),
+			Desc = GetSpellDescription(159956),
+			Message_Amount = 1,
+			Message_Areas = {"Cast"},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]",},
+		},
 	}
 	return Spells
 end
@@ -1118,7 +1145,7 @@ local function Mage_Options()
 			Name = GetSpellInfo(113724),
 			Desc = GetSpellDescription(113724),
 			Message_Amount = 1,
-			Message_Areas = {"Cast", "Start", "End"},
+			Message_Areas = {"Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
@@ -1273,7 +1300,8 @@ local function Monk_Options()
 		[14] = {
 			Profile = "Detox",
 			Name = GetSpellInfo(115450),
-			Desc = GetSpellDescription(115450),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(115450) .. ":|r |cffd1d1d1" .. GetSpellDescription(115450) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(218164) .. ":|r |cffd1d1d1" .. GetSpellDescription(218164) .. "|r",
 			Message_Amount = 1,
 			Message_Areas = {"Dispel"},
 			Message_Channels_Disabled = {["Whisper"] = true},
@@ -1367,8 +1395,9 @@ local function Paladin_Options()
 		},
 		["BoP&BoS"] = {
 			Profile = "HandOfProtection",
-			Name = GetSpellInfo(1022) .. " / " .. GetSpellInfo(204018), -- Too long to fit in game, 74234 is a spell called Protection. Should translate well enough.
-			Desc = GetSpellDescription(1022),
+			Name = GetSpellInfo(1022) .. " / " .. GetSpellInfo(204018),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(1022) .. ":|r |cffd1d1d1" .. GetSpellDescription(1022) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(204018) .. ":|r |cffd1d1d1" .. GetSpellDescription(204018) .. "|r",
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
@@ -1488,7 +1517,8 @@ local function Paladin_Options()
 		[20] = {
 			Profile = "Cleanse",
 			Name = GetSpellInfo(4987) .. " / " .. GetSpellInfo(213644),
-			Desc = GetSpellDescription(4987),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(4987) .. ":|r |cffd1d1d1" .. GetSpellDescription(4987) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(213644) .. ":|r |cffd1d1d1" .. GetSpellDescription(213644) .. "|r",
 			Message_Amount = 1,
 			Message_Areas = {"Dispel"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
@@ -1504,8 +1534,9 @@ local function Paladin_Options()
 		},
 		[22] = {
 			Profile = "AvengingWrath",
-			Name = GetSpellInfo(31884),
-			Desc = GetSpellDescription(31884),
+			Name = GetSpellInfo(31884) .. " / " .. GetSpellInfo(216331) .. " / " .. GetSpellInfo(231895),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(31884) .. ":|r |cffd1d1d1" .. GetSpellDescription(31884) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(216331) .. ":|r |cffd1d1d1" .. GetSpellDescription(216331) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(231895) .. ":|r |cffd1d1d1" .. GetSpellDescription(231895) .. "|r",
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
@@ -1668,8 +1699,9 @@ local function Priest_Options()
 		},
 		["Fade"] = {
 			Profile = "Fade",
-			Name = GetSpellInfo(586),
-			Desc = GetSpellDescription(586),
+			Name = GetSpellInfo(586) .. " / " .. GetSpellInfo(213602),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(586) .. ":|r |cffd1d1d1" .. GetSpellDescription(586) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(213602) .. ":|r |cffd1d1d1" .. GetSpellDescription(213602) .. "|r",
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
@@ -1783,7 +1815,8 @@ local function Priest_Options()
 		["Purify"] = {
 			Profile = "Purify",
 			Name = GetSpellInfo(527) .. " / " .. GetSpellInfo(213634),
-			Desc = GetSpellDescription(527),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(527) .. ":|r |cffd1d1d1" .. GetSpellDescription(527) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(213634) .. ":|r |cffd1d1d1" .. GetSpellDescription(213634) .. "|r",
 			Message_Amount = 1,
 			--Hidden = GetSpecialization() == 3,
 			Message_Areas = {"Dispel"},
@@ -1795,7 +1828,7 @@ end
 
 local function Rogue_Options()
 	local Spells = {
-		[1] = {
+		["Sap"] = {
 			Profile = "Sap",
 			Name = GetSpellInfo(6770),
 			Desc = GetSpellDescription(6770),
@@ -1804,16 +1837,17 @@ local function Rogue_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[2] = {
+		["Blind"] = {
 			Profile = "Blind",
 			Name = GetSpellInfo(2094) .. " / " .. GetSpellInfo(199743),
-			Desc = GetSpellDescription(2094),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(2094) .. ":|r |cffd1d1d1" .. GetSpellDescription(2094) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(199743) .. ":|r |cffd1d1d1" .. GetSpellDescription(199743) .. "|r",
 			Message_Amount = 4,
 			Message_Areas = {"Start", "End", "Resist", "Immune"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
-		[3] = {
+		["Kick"] = {
 			Profile = "Kick",
 			Name = GetSpellInfo(1766),
 			Desc = GetSpellDescription(1766),
@@ -1822,7 +1856,7 @@ local function Rogue_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[TARSPELL]", "[TARLINK]", "[MISSTYPE]"},
 		},
-		[4] = {
+		["Tricks"] = {
 			Profile = "Tricks",
 			Name = GetSpellInfo(57934),
 			Desc = GetSpellDescription(57934),
@@ -1830,7 +1864,7 @@ local function Rogue_Options()
 			Message_Areas = {"Cast", "End"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[5] = {
+		["SmokeBomb"] = {
 			Profile = "SmokeBomb",
 			Name = GetSpellInfo(76577),
 			Desc = GetSpellDescription(76577),
@@ -1839,7 +1873,7 @@ local function Rogue_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[6] = {
+		["Shroud"] = {
 			Profile = "Shroud",
 			Name = GetSpellInfo(115834),
 			Desc = GetSpellDescription(115834),
@@ -1875,14 +1909,22 @@ local function Rogue_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		
+		["CheapShot"] = {
+			Profile = "CheapShot",
+			Name = GetSpellInfo(1833),
+			Desc = GetSpellDescription(1833),
+			Message_Amount = 2,
+			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
+		},
 	}
 	return Spells
 end
 
 local function Shaman_Options()
 	local Spells = {
-		[1] = {
+		["Hex"] = {
 			Profile = "Hex",
 			Name = GetSpellInfo(51514),
 			Desc = GetSpellDescription(51514),
@@ -1891,7 +1933,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
-		[2] = {
+		["Heroism"] = {
 			Profile = "Heroism",
 			Name = GetSpellInfo(2825),
 			Desc = GetSpellDescription(2825),
@@ -1900,7 +1942,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[3] = {
+		["WindShear"] = {
 			Profile = "WindShear",
 			Name = GetSpellInfo(57994),
 			Desc = GetSpellDescription(57994),
@@ -1909,7 +1951,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[TARSPELL]", "[TARLINK]", "[MISSTYPE]"},
 		},
-		[4] = {
+		["Purge"] = {
 			Profile = "Purge",
 			Name = GetSpellInfo(370),
 			Desc = GetSpellDescription(370),
@@ -1918,24 +1960,25 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
-		[5] = {
+		["CleanseSpirit"] = {
 			Profile = "CleanseSpirit",
 			Name = GetSpellInfo(51886) .. " / " .. GetSpellInfo(77130),
-			Desc = GetSpellDescription(77130),
+			longDesc = true,
+			Desc = "|cffFFCC00"..GetSpellInfo(51886) .. ":|r |cffd1d1d1" .. GetSpellDescription(51886) .. "|r\n\n|cffFFCC00" .. GetSpellInfo(77130) .. ":|r |cffd1d1d1" .. GetSpellDescription(77130) .. "|r",
 			Message_Amount = 1,
 			Message_Areas = {"Dispel"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
-		[6] = {
+		["HealingTide"] = {
 			Profile = "HealingTide",
 			Name = GetSpellInfo(108280),
 			Desc = GetSpellDescription(108280),
 			Message_Amount = 2,
-			Message_Areas = {"Start", "End"},
+			Message_Areas = {"Placed", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[7] = {
+		["EarthElemental"] = {
 			Profile = "EarthElemental",
 			Name = GetSpellInfo(198103),
 			Desc = GetSpellDescription(198103),
@@ -1944,7 +1987,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[8] = {
+		["FireElemental"] = {
 			Profile = "FireElemental",
 			Name = GetSpellInfo(198067),
 			Desc = GetSpellDescription(198067),
@@ -1953,7 +1996,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[9] = {
+		["AncestralSpirit"] = {
 			Profile = "AncestralSpirit",
 			Name = GetSpellInfo(2008),
 			Desc = GetSpellDescription(2008),
@@ -1962,25 +2005,25 @@ local function Shaman_Options()
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 			Requirements = {"LRI"},
 		},
-		[10] = {
+		["SpiritLink"] = {
 			Profile = "SpiritLink",
 			Name = GetSpellInfo(98008),
 			Desc = GetSpellDescription(98008),
 			Message_Amount = 2,
-			Message_Areas = {"Start", "End"},
+			Message_Areas = {"Placed", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[11] = {
+		["TremorTotem"] = {
 			Profile = "TremorTotem",
 			Name = GetSpellInfo(8143),
 			Desc = GetSpellDescription(8143),
 			Message_Amount = 2,
-			Message_Areas = {"Start", "End"},
+			Message_Areas = {"Placed", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[12] = {
+		["Thunderstorm"] = {
 			Profile = "Thunderstorm",
 			Name = GetSpellInfo(51490),
 			Desc = GetSpellDescription(51490),
@@ -1989,7 +2032,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[13] = {
+		["FeralSpirit"] = {
 			Profile = "FeralSpirit",
 			Name = GetSpellInfo(51533),
 			Desc = GetSpellDescription(51533),
@@ -1998,7 +2041,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[14] = {
+		["Reincarnation"] = {
 			Profile = "Reincarnation",
 			Name = GetSpellInfo(21169),
 			Desc = GetSpellDescription(21169),
@@ -2007,7 +2050,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[15] = {
+		["AncestralGuidance"] = {
 			Profile = "AncestralGuidance",
 			Name = GetSpellInfo(108281),
 			Desc = GetSpellDescription(108281),
@@ -2016,7 +2059,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[16] = {
+		["AstralShift"] = {
 			Profile = "AstralShift",
 			Name = GetSpellInfo(108271),
 			Desc = GetSpellDescription(108271),
@@ -2025,16 +2068,16 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[17] = {
+		["WindRushTotem"] = {
 			Profile = "WindRushTotem",
 			Name = GetSpellInfo(192077),
 			Desc = GetSpellDescription(192077),
 			Message_Amount = 2,
-			Message_Areas = {"Start", "End"},
+			Message_Areas = {"Placed", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[18] = {
+		["Ascendance"] = {
 			Profile = "Ascendance",
 			Name = GetSpellInfo(114050),
 			Desc = GetSpellDescription(114050),
@@ -2043,7 +2086,7 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[19] = {
+		["AncestralVision"] = {
 			Profile = "AncestralVision",
 			Name = GetSpellInfo(212048),
 			Desc = GetSpellDescription(212048),
@@ -2052,39 +2095,57 @@ local function Shaman_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[20] = {
+		["AncestralProtection"] = {
 			Profile = "AncestralProtection",
 			Name = GetSpellInfo(207399),
 			Desc = GetSpellDescription(207399),
 			Message_Amount = 3,
-			Message_Areas = {"Start", "Cast", "End"},
+			Message_Areas = {"Placed", "Cast", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[21] = {
+		["LightningSurge"] = {
 			Profile = "LightningSurge", -- Capacitor Totem
 			Name = GetSpellInfo(192058),
 			Desc = GetSpellDescription(192058),
 			Message_Amount = 3,
-			Message_Areas = {"Start", "Cast", "End"},
+			Message_Areas = {"Placed", "Cast", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[22] = {
+		["Cloudburst"] = {
 			Profile = "Cloudburst",
 			Name = GetSpellInfo(157153),
 			Desc = GetSpellDescription(157153),
 			Message_Amount = 3,
-			Message_Areas = {"Start", "End", "Heal"},
+			Message_Areas = {"Placed", "End", "Heal"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[AMOUNT]"},
 		},
-		[23] = {
+		["EarthenShieldTotem"] = {
 			Profile = "EarthenShieldTotem",
 			Name = GetSpellInfo(198838),
 			Desc = GetSpellDescription(198838),
 			Message_Amount = 2,
-			Message_Areas = {"Start", "End"},
+			Message_Areas = {"Placed", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]"},
+		},
+		["GroundingTotem"] = {
+			Profile = "GroundingTotem",
+			Name = GetSpellInfo(204336),
+			Desc = GetSpellDescription(204336),
+			Message_Amount = 4,
+			Message_Areas = {"Placed", "DamageAbsorb", "EffectAbsorb", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AMOUNT]", "[TARLINK]", "[TARSPELL]"},
+		},
+		["EarthGrabTotem"] = {
+			Profile = "EarthGrabTotem",
+			Name = GetSpellInfo(51485),
+			Desc = GetSpellDescription(51485),
+			Message_Amount = 2,
+			Message_Areas = {"Placed", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
@@ -2365,153 +2426,170 @@ end
 
 local function Racial_Options()
 	local Spells = {
-		[1] = {
+		["EMFH"] = {
 			Profile = "EMFH",
 			Name = GetSpellInfo(59752),
 			Desc = GetSpellDescription(59752),
+			Race = 1,
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[2] = {
+		["Stoneform"] = {
 			Profile = "Stoneform",
 			Name = GetSpellInfo(20594),
 			Desc = GetSpellDescription(20594),
+			Race = 3,
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[3] = {
+		["Shadowmeld"] = {
 			Profile = "Shadowmeld",
 			Name = GetSpellInfo(58984),
 			Desc = GetSpellDescription(58984),
+			Race = 4,
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[4] = {
+		["EscapeArtist"] = {
 			Profile = "EscapeArtist",
 			Name = GetSpellInfo(20589),
 			Desc = GetSpellDescription(20589),
+			Race = 7,
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[5] = {
+		["GOTN"] = {
 			Profile = "GOTN",
 			Name = GetSpellInfo(28880),
 			Desc = GetSpellDescription(28880),
-			Message_Amount = 2,
-			Message_Areas = {"Start", "End"},
+			Race = 11,
+			Message_Amount = 1,
+			Message_Areas = {"Cast"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[6] = {
+		["Darkflight"] = {
 			Profile = "Darkflight",
 			Name = GetSpellInfo(68992),
 			Desc = GetSpellDescription(68992),
+			Race = 22,
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]",},
 		},
-		[7] = {
+		["BloodFury"] = {
 			Profile = "BloodFury",
 			Name = GetSpellInfo(33697),
 			Desc = GetSpellDescription(33697),
+			Race = 2,
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[8] = {
+		["WOTF"] = {
 			Profile = "WOTF",
 			Name = GetSpellInfo(7744),
 			Desc = GetSpellDescription(7744),
+			Race = 5,
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[9] = {
+		["WarStomp"] = {
 			Profile = "WarStomp",
 			Name = GetSpellInfo(20549),
 			Desc = GetSpellDescription(20549),
+			Race = 6,
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[10] = {
+		["Berserking"] = {
 			Profile = "Berserking",
 			Name = GetSpellInfo(26297),
 			Desc = GetSpellDescription(26297),
+			Race = 8,
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[11] = {
+		["ArcaneTorrent"] = {
 			Profile = "ArcaneTorrent",
-			Name = GetSpellInfo(155145),
-			Desc = GetSpellDescription(155145),
+			Name = GetSpellInfo(28730),
+			Desc = GetSpellDescription(28730),
+			Race = 10,
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[12] = {
+		["RocketJump"] = {
 			Profile = "RocketJump",
 			Name = GetSpellInfo(69070),
 			Desc = GetSpellDescription(69070),
+			Race = 9,
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[13] = {
-			Profile = "SpacialRift",
+		["SpatialRift"] = {
+			Profile = "SpatialRift",
 			Name = GetSpellInfo(256948),
 			Desc = GetSpellDescription(256948),
-			Message_Amount = 1,
-			Message_Areas = {"Cast"},
+			Race = 29,
+			Message_Amount = 2,
+			Message_Areas = {"Placed","Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[14] = {
-			Profile = "FireBlood",
+		["Fireblood"] = {
+			Profile = "Fireblood",
 			Name = GetSpellInfo(265221),
 			Desc = GetSpellDescription(265221),
+			Race = 34,
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[15] = {
+		["ArcanePulse"] = {
 			Profile = "ArcanePulse",
 			Name = GetSpellInfo(260364),
 			Desc = GetSpellDescription(260364),
+			Race = 27,
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
-			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
+			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[16] = {
+		["BullRush"] = {
 			Profile = "BullRush",
 			Name = GetSpellInfo(255654),
 			Desc = GetSpellDescription(255654),
+			Race = 28,
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[17] = {
+		["AncestralCall"] = {
 			Profile = "AncestralCall",
 			Name = GetSpellInfo(274738),
 			Desc = GetSpellDescription(274738),
+			Race = 36,
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
@@ -2563,7 +2641,7 @@ local function Utilities_Options()
 	return Spells
 end
 
-function RSA:FixDB()
+local function FixDB()
 	local Profiles = {
 		[1] = "DeathKnight",
 		[2] = "DemonHunter",
@@ -2577,6 +2655,8 @@ function RSA:FixDB()
 		[10] = "Shaman",
 		[11] = "Warlock",
 		[12] = "Warrior",
+		[13] = "Racials",
+		[14] = "Utilities",
 	}
 	local Functions = {
 		[1] = DeathKnight_Options(),
@@ -2591,15 +2671,17 @@ function RSA:FixDB()
 		[10] = Shaman_Options(),
 		[11] = Warlock_Options(),
 		[12] = Warrior_Options(),
+		[13] = Racial_Options(),
+		[14] = Utilities_Options(),
 	}
 	for c = 1,#Profiles do
 		local Spells = Functions[c]
 		local ProfileName = Profiles[c]
-		for i = 1,#Spells do
-			for k=1,Spells[i].Message_Amount do 
-				if type(RSA.db.profile[ProfileName].Spells [Spells[i].Profile].Messages[Spells[i].Message_Areas[k]]) == "string" then
+		for i,v in pairs(Spells) do
+			for k=1,Spells[i].Message_Amount do
+				if type(RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]]) == "string" then
 					if not RSA.db.profile.Fixed then RSA.Print_Self("Fixing Database") end
-					RSA.db.profile[ProfileName].Spells [Spells[i].Profile].Messages[Spells[i].Message_Areas[k]] = {RSA.db.profile[ProfileName].Spells [Spells[i].Profile].Messages[Spells[i].Message_Areas[k]]}
+					RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]] = {RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]]}
 				end
 			end
 		end
@@ -2663,16 +2745,34 @@ local function Spell_Options(NonClass)
 		[2] = "Placed",
 		[3] = "Cast",
 		[4] = "Dispel",
-		[5] = "Success",
-		[6] = "Damage",
-		[7] = "Heal",
-		[8] = "Debuff",
-		[9] = "Interrupt",
-		[10] = "Resist",
-		[11] = "Immune",
-		[12] = "Failed",
-		[13] = "End",
-		[14] = "StatueOfTheBlackOx",
+		[5] = "Damage",
+		[6] = "Heal",
+		[7] = "Debuff",
+		[8] = "DamageAbsorb",
+		[9] = "EffectAbsorb",
+		[10] = "Interrupt",
+		[11] = "Resist",
+		[12] = "Immune",
+		[13] = "Failed",
+		[14] = "End",
+		[15] = "StatueOfTheBlackOx",
+	}
+	local Area_Descriptions = {
+		[1] = "When you start casting this spell or when this spell starts.",
+		[2] = "When you have placed this in the world.",
+		[3] = "When you cast this spell.",
+		[4] = "When you dispel a buff or debuff.",
+		[5] = "When you deal damage.",
+		[6] = "When you heal.",
+		[7] = "When you debuff a unit.",
+		[8] = "When you absorb damage.",
+		[9] = "When you absorb a debuff.",
+		[10] = "When you interrupt a spell cast.",
+		[11] = "When your spell is resisted.",
+		[12] = "When the target is immune to your spell.",
+		[13] = "When the spell failed.",
+		[14] = "When the spell ends.",
+		[15] = "When you cast Provoke on your Statue of the Black Ox.",
 	}
 	local Options = {
 		name = OptionName,
@@ -2683,10 +2783,18 @@ local function Spell_Options(NonClass)
 		},
 	}
 	for i,v in pairs(Spells) do
-	--for i = 1,#Spells do
 		if Spells[i] then
 			Options.args[Spells[i].Name] = {
 				name = function() 
+					if Spells[i].Race then 
+						if RaceID ~= Spells[i].Race then
+							local name = "|cffFFCC00" .. Spells[i].Name .. "|r"
+							return name
+						else
+							local name = "|c5500DBBD" .. Spells[i].Name .. "|r"
+							return name
+						end
+					end
 					if string.len(Spells[i].Name) > 35 then
 						local name = Spells[i].Name
 						name = name:gsub("(%w)%S+%s*","%1")
@@ -2696,7 +2804,7 @@ local function Spell_Options(NonClass)
 						return Spells[i].Name
 					end
 				end,
-				desc = Spells[i].Desc,
+				desc = function() if Spells[i].longDesc then return Spells[i].Desc else return "|cffd1d1d1"..Spells[i].Desc.."|r" end end,
 				hidden = Spells[i].Hidden or false,
 				disabled = Spells[i].Hidden or false,
 				order = Spells[i].Order or 5,
@@ -2710,8 +2818,15 @@ local function Spell_Options(NonClass)
 						fontSize = "large",
 					},
 					Spell_Desc = {
-						name = "|cffFFCC00"..Spells[i].Desc.."|r",
+						name = "|cffd1d1d1"..Spells[i].Desc.."|r",
 						type = "description",
+						hidden = Spells[i].longDesc or false,
+						order = 0.02,
+					},
+					Spell_LongDesc = {
+						name = Spells[i].Desc,
+						type = "description",
+						hidden = function() if Spells[i].longDesc then return false else return true end end,
 						order = 0.02,
 					},
 					Channel_Header = {
@@ -2896,12 +3011,19 @@ local function Spell_Options(NonClass)
 			Options.args[Spells[i].Name].args[Spells[i].Message_Areas[k]] = {
 				name = L[Spells[i].Message_Areas[k]],
 				type = "group",
+				desc = L[Area_Descriptions[OrderVal]],
 				order = 110 + OrderVal,
 				args = {
+					Description = {
+						name = L[Spells[i].Message_Areas[k]].. ": |cffFFCC00".. L[Area_Descriptions[OrderVal]].."|r\n",
+						type = "description",
+						order = 0,
+						fontSize = "medium",
+					},
 					Add = {
 						name = L["Add New Message"],
 						type = "input",
-						order = 101,
+						order = 10,
 						width = "full",
 						set = function(info, value)
 							if value == " " then return end
@@ -2912,7 +3034,7 @@ local function Spell_Options(NonClass)
 					List_Description = {
 						name = "Placeholder",
 						type = "description",
-						order = 101.1,
+						order = 15,
 						fontSize = "medium",
 					},
 				},
@@ -2944,7 +3066,7 @@ local function Spell_Options(NonClass)
 					type = "input",
 					width = "full",
 					name = tostring(l),
-					order = 110,
+					order = 20,
 					get = function(info)
 						if RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]][l] == "" then
 							table.remove(RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]],l)
@@ -2978,8 +3100,8 @@ end
 local function AddOptions()
 	Options.args.General.args.LibSink = LibSink_Options()
 	Options.args.Spells.args.Class = Spell_Options()
-	--Options.args.Spells.args.Racials = Spell_Options("Racials")
-	--Options.args.Spells.args.Consumables = Consumable_Options()
+	--Options.args.Spells.args.Consumables = Spell_Options("Consumables")
+	Options.args.Spells.args.Racials = Spell_Options("Racials")
 	Options.args.Spells.args.Utilities = Spell_Options("Utilities")
 end
 
@@ -2991,8 +3113,9 @@ function RSA_O:OnInitialize()
 	self.db.RegisterCallback(RSA, "OnProfileChanged", "RefreshConfig")
 	self.db.RegisterCallback(RSA, "OnProfileCopied", "RefreshConfig")
 	self.db.RegisterCallback(RSA, "OnProfileReset", "RefreshConfig")
+
 	if not self.db.profile.Fixed then
-		RSA:FixDB()
+		FixDB()
 	end
 
 	-- Register Various Options
@@ -3006,7 +3129,7 @@ function RSA_O:OnInitialize()
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
 	LibDualSpec:EnhanceDatabase(self.db, "RSA")
 	LibDualSpec:EnhanceOptions(Profiles, self.db)
-	InterfaceAddOnsList_Update()
+	InterfaceAddOnsList_Update()	
 end
 
 function RSA:UpdateOptions()

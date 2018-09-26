@@ -1,5 +1,5 @@
 ## Interface: 80000
-## Version: v8.0.12
+## Version: v8.0.13
 ## Title: Capping
 ## Author: Funkydude
 ## Notes: Battleground timers and other PvP features.

@@ -1,4 +1,20 @@
 ﻿------------------------------------------------------
+9.0.16
+------------------------------------------------------
+* Aura for Stormbolt (Warrior) is now correctly recognized as crowd-control auras [Issue #290].
+
+------------------------------------------------------
+9.0.15
+------------------------------------------------------
+* Fixed a bug with OmniCC cooldown numbers being shown on the Auras widget [Comment #1409].
+
+------------------------------------------------------
+9.0.14
+------------------------------------------------------
+* Aura for Fear (Warlock), Bull Rush (Highmountain Tauren), War Stomp (Tauren), Polymorph (Direhorn, Mage), and Polymorph (Bumblebee, Mage) are now correctly recognized as crowd-control auras [Issue #278, #280].
+* Fixed a Lua error with scaling (e.g., in Auras or Combo Points widget) when a scaling value less or equal to 0 was entered manually [Issue #282].
+
+------------------------------------------------------
 9.0.13
 ------------------------------------------------------
 * Fixed a bug where the threat system was disabled for all mobs when threat feedback for neutral mobs was disabled [Issue #264].
@@ -13,7 +29,7 @@
 9.0.12
 ------------------------------------------------------
 * Fixed a bug with the cooldown spiral of auras being not shown consistently.
-m
+
 ------------------------------------------------------
 9.0.11
 ------------------------------------------------------

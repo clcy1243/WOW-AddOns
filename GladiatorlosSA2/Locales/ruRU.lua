@@ -42,7 +42,7 @@ L["Custom unit name"] = "Настраиваемое имя единицы"
 L["Dest unit"] = "Единица-назначение"
 L["Dest type"] = "Тип назначения"
 
-L["GladiatorlosSACredits"] = "Настраиваемый аддон для PvP-оповещений многих важный заклинаний и способностей, применяемых вашими врагами.|n|n|cffFFF569Создан|r |cff9482C9Abatorlos|r |cffFFF569из Spinebreaker|r|n|cffFFF569Обновление для Legion|r |cffC79C6EOrunno|r |cffFFF569из Moon Guard (с разрешения zuhligan)|r|n|n|cffFFF569Благодарности|r|n|cffA330C9superk521|r (прошлый менеджер проекта)|n|cffA330C9DuskAshes|r (поддержка китайской версии)|n|cffA330C9N30Ex|r (поддержка Mists of Pandaria)|n|cffA330C9zuhligan|r (поддержка Warlords of Draenor и французской версии)|n|cffA330C9jungwan2|r (поддержка корейской версии)|n|cffA330C9Mini_Dragon|r (поддержка китайской версии WoD и Legion)|n|cffA330C9LordKuper|r (Russian support for Legion)"
+L["GladiatorlosSACredits"] = "Customizable PvP Announcer addon for vocalizing many important spells cast by your enemies.|n|n|cffFFF569Created by|r |cff9482C9Abatorlos|r |cffFFF569of Spinebreaker|r|n|cffFFF569Legion/BfA support by|r |cffC79C6EOrunno|r |cffFFF569of Moon Guard (With permission from zuhligan)|r|n|n|cffFFF569Special Thanks|r|n|cffA330C9superk521|r (Past Project Manager)|n|cffA330C9DuskAshes|r (Chinese Support)|n|cffA330C9N30Ex|r (Mists of Pandaria Support)|n|cffA330C9zuhligan|r (Warlords of Draenor & French Support)|n|cffA330C9jungwan2|r (Korean Support)|n|cffA330C9Mini_Dragon|r (Chinese support for WoD & Legion)|n|cffA330C9LordKuper|r (Russian support for Legion)|n|cffA330C9Tzanee - Wyrmrest Accord|r (Placeholder Voice Lines)|n|nAll feedback, questions, suggestions, and bug reports are welcome at the addon's page on Curse!"
 L["PVP Voice Alert"] = "Голосовые оповещения в PvP"
 L["Load Configuration"] = "Загрузка конфигурации"
 L["Load Configuration Options"] = "Загрузка параметров конфигурации"
@@ -161,5 +161,10 @@ L["PurgeDesc"] = true
 L["FriendlyInterrupted"] = true
 L["FriendlyInterruptedDesc"] = true
 
-L["DisableLargeBG"] = true
-L["DisableLargeBGDesc"] = true
+L["epicbattleground"] = true
+L["epicbattlegroundDesc"] = true
+
+L["TankTauntsOFF"] = true
+L["TankTauntsOFF_Desc"] = true
+L["TankTauntsON"] = true
+L["TankTauntsON_Desc"] = true

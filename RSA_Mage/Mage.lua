@@ -169,11 +169,9 @@ function RSA_Mage:OnEnable()
 		},
 		SPELL_INTERRUPT = {
 			[2139] = Config_Counterspell, -- COUNTERSPELL
-			[119308] = Config_Counterspell, -- IMPROVED COUNTERSPELL
 		},
 		SPELL_MISSED = {
 			[2139] = Config_Counterspell_Missed, -- COUNTERSPELL
-			[119308] = Config_Counterspell_Missed, -- IMPROVED COUNTERSPELL
 			[118] = Config_Polymorph_Missed, -- SHEEP
 			[28271] = Config_Polymorph_Missed, -- TURTLE
 			[28272] = Config_Polymorph_Missed, -- PIG
@@ -192,7 +190,7 @@ function RSA_Mage:OnEnable()
 	local MonitorAndAnnounce = RSA.MonitorAndAnnounce
 	local spellinfo,spelllinkinfo,extraspellinfo,extraspellinfolink,missinfo
 	local function Mage_Spells()
-		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4 = CombatLogGetCurrentEventInfo()
+		local timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4, ex5, ex6, ex7, ex8 = CombatLogGetCurrentEventInfo()
 		if RSA.AffiliationMine(sourceFlags) then
 			if (event == "SPELL_CAST_SUCCESS" and RSA.db.profile.Modules.Reminders_Loaded == true) then -- Reminder Refreshed
 				local ReminderSpell = RSA.db.profile.Mage.Reminders.SpellName
@@ -206,7 +204,7 @@ function RSA_Mage:OnEnable()
 					end
 				end
 			end -- BUFF REMINDER
-			MonitorAndAnnounce(self, timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4)
+			MonitorAndAnnounce(self, "player", timestamp, event, hideCaster, sourceGUID, source, sourceFlags, sourceRaidFlag, destGUID, dest, destFlags, destRaidFlags, spellID, spellName, spellSchool, missType, overheal, ex3, ex4, ex5, ex6, ex7, ex8)
 		end -- IF SOURCE IS PLAYER
 	end -- END ENTIRELY
 	RSA.CombatLogMonitor:SetScript("OnEvent", Mage_Spells)

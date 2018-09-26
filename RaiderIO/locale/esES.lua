@@ -19,6 +19,8 @@ L["ALWAYS_SHOW_EXTENDED_INFO_DESC"] = "Puedes mantener pulsado Mayús, Control o
 --[[ L["API_DEPRECATED_UNKNOWN_FILE"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED_WITH"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["API_INVALID_DATABASE"] = ""--]] 
 L["BEST_FOR_DUNGEON"] = "Mejor M+ en esta mazmorra"
 L["BEST_RUN"] = "Mejor M+"
 L["CHANGES_REQUIRES_UI_RELOAD"] = [=[Se han guardado los cambios, pero se necesita reiniciar la interfaz para que surtan efecto.
@@ -44,6 +46,8 @@ L["DUNGEON_SHORT_NAME_HOV"] = "Valor"
 --[[Translation missing --]]
 --[[ L["DUNGEON_SHORT_NAME_KR"] = ""--]] 
 L["DUNGEON_SHORT_NAME_LOWR"] = "Kara-I"
+--[[Translation missing --]]
+--[[ L["DUNGEON_SHORT_NAME_ML"] = ""--]] 
 L["DUNGEON_SHORT_NAME_MOS"] = "Fauce"
 L["DUNGEON_SHORT_NAME_NL"] = "Guarida"
 L["DUNGEON_SHORT_NAME_SEAT"] = "Trono"

@@ -1,7 +1,0 @@
-## Interface: 70000
-## Title: FrenzyRegen
-## Author: Ogion
-## Version: 1.0
-## Notes: A simple addon for displaying expected healing from Frenzied regeneration 
-## SavedVariablesPerCharacter: settingsFR
-FrenzyRegen.lua

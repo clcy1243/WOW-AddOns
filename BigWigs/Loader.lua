@@ -10,7 +10,7 @@ local ldbi = LibStub("LibDBIcon-1.0")
 -- Generate our version variables
 --
 
-local BIGWIGS_VERSION = 114
+local BIGWIGS_VERSION = 118
 local BIGWIGS_RELEASE_STRING, BIGWIGS_VERSION_STRING = "", ""
 local versionQueryString, versionResponseString = "Q^%d^%s", "V^%d^%s"
 
@@ -21,7 +21,7 @@ do
 	local RELEASE = "RELEASE"
 
 	local releaseType = RELEASE
-	local myGitHash = "ef6f93b" -- The ZIP packager will replace this with the Git hash.
+	local myGitHash = "7926051" -- The ZIP packager will replace this with the Git hash.
 	local releaseString = ""
 	--[===[@alpha@
 	-- The following code will only be present in alpha ZIPs.
@@ -358,26 +358,26 @@ local dataBroker = ldb:NewDataObject("BigWigs",
 )
 
 function dataBroker.OnClick(self, button)
-	if button == "RightButton" then
+	--if button == "RightButton" then
 		loadCoreAndOpenOptions()
-	else
-		loadAndEnableCore()
-		if IsAltKeyDown() then
-			if IsControlKeyDown() then
-				BigWigs:Disable()
-			else
-				for name, module in BigWigs:IterateBossModules() do
-					if module:IsEnabled() then module:Disable() end
-				end
-				sysprint(L.modulesDisabled)
-			end
-		else
-			for name, module in BigWigs:IterateBossModules() do
-				if module:IsEnabled() then module:Reboot() end
-			end
-			sysprint(L.modulesReset)
-		end
-	end
+	--else
+	--	loadAndEnableCore()
+	--	if IsAltKeyDown() then
+	--		if IsControlKeyDown() then
+	--			BigWigs:Disable()
+	--		else
+	--			for name, module in BigWigs:IterateBossModules() do
+	--				if module:IsEnabled() then module:Disable() end
+	--			end
+	--			sysprint(L.modulesDisabled)
+	--		end
+	--	else
+	--		for name, module in BigWigs:IterateBossModules() do
+	--			if module:IsEnabled() then module:Reboot() end
+	--		end
+	--		sysprint(L.modulesReset)
+	--	end
+	--end
 end
 
 function dataBroker.OnTooltipShow(tt)
@@ -875,15 +875,6 @@ do
 		end
 	end
 
-	-- XXX temp
-	do
-		local _, t = ...
-		if not t.moved then
-			RaidNotice_AddMessage(RaidWarningFrame, "Restart WoW to finish BigWigs update", {r=1,g=1,b=1}, 300)
-		end
-	end
-	-- XXX
-
 	local L = GetLocale()
 	local locales = {
 		--ruRU = "Russian (ruRU)",
@@ -915,7 +906,7 @@ end
 do
 	local callbackMap = {}
 	function public:RegisterMessage(msg, func)
-		if self == public then
+		if self == BigWigsLoader then
 			error(".RegisterMessage(addon, message, function) attempted to register a function to BigWigsLoader, you might be using : instead of . to register the callback.")
 		end
 
@@ -936,6 +927,10 @@ do
 		callbackMap[msg][self] = func or msg
 	end
 	function public:UnregisterMessage(msg)
+		if self == BigWigsLoader then
+			error(".UnregisterMessage(addon, message, function) attempted to unregister a function from BigWigsLoader, you might be using : instead of . to register the callback.")
+		end
+
 		if type(msg) ~= "string" then error(":UnregisterMessage(message) attempted to unregister an invalid message, must be a string!") end
 		if not callbackMap[msg] then return end
 		callbackMap[msg][self] = nil
@@ -976,8 +971,8 @@ end
 
 do
 	-- This is a crapfest mainly because DBM's actual handling of versions is a crapfest, I'll try explain how this works...
-	local DBMdotRevision = "17821" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
-	local DBMdotDisplayVersion = "8.0.8" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
+	local DBMdotRevision = "17892" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
+	local DBMdotDisplayVersion = "8.0.10" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
 	local DBMdotReleaseRevision = DBMdotRevision -- This is manually changed by them every release, they use it to track the highest release version, a new DBM release is the only time it will change.
 
 	local timer, prevUpgradedUser = nil, nil
@@ -1490,4 +1485,8 @@ SlashCmdList.BigWigsVersion = function()
 	if #bad > 0 then print(L.noBossMod, unpack(bad)) end
 end
 
-BigWigsLoader = public -- Set global
+-------------------------------------------------------------------------------
+-- Global
+--
+
+BigWigsLoader = setmetatable({}, { __index = public, __newindex = function() end, __metatable = false })

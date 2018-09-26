@@ -19,6 +19,8 @@ L["ALWAYS_SHOW_EXTENDED_INFO_DESC"] = "보조키(Shift/Ctrl/Alt)를 누르고 �
 --[[ L["API_DEPRECATED_UNKNOWN_FILE"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED_WITH"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["API_INVALID_DATABASE"] = ""--]] 
 L["BEST_FOR_DUNGEON"] = "던전 최고 기록"
 L["BEST_RUN"] = "최고 기록"
 L["CHANGES_REQUIRES_UI_RELOAD"] = [=[변경 사항이 저장되었지만 변경 사항을 적용하려면 UI를 다시 불러와야 합니다.
@@ -41,6 +43,7 @@ L["DUNGEON_SHORT_NAME_FH"] = "자유"
 L["DUNGEON_SHORT_NAME_HOV"] = "용맹"
 L["DUNGEON_SHORT_NAME_KR"] = "왕안"
 L["DUNGEON_SHORT_NAME_LOWR"] = "하층"
+L["DUNGEON_SHORT_NAME_ML"] = "광산"
 L["DUNGEON_SHORT_NAME_MOS"] = "아귀"
 L["DUNGEON_SHORT_NAME_NL"] = "넬타"
 L["DUNGEON_SHORT_NAME_SEAT"] = "삼두정"

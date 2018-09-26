@@ -19,6 +19,8 @@ L["ALWAYS_SHOW_EXTENDED_INFO_DESC"] = "按下一个快捷键（shift/ctrl/alt）
 --[[ L["API_DEPRECATED_UNKNOWN_FILE"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["API_DEPRECATED_WITH"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["API_INVALID_DATABASE"] = ""--]] 
 L["BEST_FOR_DUNGEON"] = "最佳地下城"
 L["BEST_RUN"] = "最高记录"
 L["CHANGES_REQUIRES_UI_RELOAD"] = [=[您的改动已保存，但您必须重新加载（reload）才能生效。
@@ -44,6 +46,8 @@ L["DUNGEON_SHORT_NAME_HOV"] = "英灵殿"
 --[[Translation missing --]]
 --[[ L["DUNGEON_SHORT_NAME_KR"] = ""--]] 
 L["DUNGEON_SHORT_NAME_LOWR"] = "卡拉赞下层"
+--[[Translation missing --]]
+--[[ L["DUNGEON_SHORT_NAME_ML"] = ""--]] 
 L["DUNGEON_SHORT_NAME_MOS"] = "噬魂之喉"
 L["DUNGEON_SHORT_NAME_NL"] = "奈萨里奥的巢穴"
 L["DUNGEON_SHORT_NAME_SEAT"] = "执政团之座"

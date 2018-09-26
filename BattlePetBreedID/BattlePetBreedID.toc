@@ -2,8 +2,8 @@
 ## Title: Battle Pet BreedID
 ## Author: Simca@Malfurion and Hugh@Burning Blade
 ## Notes: Battle Pet BreedID displays the BreedID of pets in your journal, in battle, in chat links, and in AH tooltips.
-## Version: r177
-## X-Date: 2018-08-29T21:13:33Z
+## Version: r179
+## X-Date: 2018-09-21T6:37:56Z
 ## X-Category: Pet Battles
 ## X-Localizations: enUS
 ## SavedVariables: BPBID_Options

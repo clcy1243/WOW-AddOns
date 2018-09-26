@@ -1,5 +1,19 @@
 
+BigWigs:AddColors("Azurethos, The Winged Typhoon", {
+	[274829] = "red",
+	[274832] = "purple",
+	[274839] = "yellow",
+})
+
 BigWigs:AddColors("Doom's Howl", {
+	[271120] = "blue",
+	[271163] = "purple",
+	[271164] = "orange",
+	[271223] = "cyan",
+	[271800] = "red",
+})
+
+BigWigs:AddColors("The Lion's Roar", {
 	[271120] = "blue",
 	[271163] = "purple",
 	[271164] = "orange",

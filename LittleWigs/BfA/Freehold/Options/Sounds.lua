@@ -24,7 +24,7 @@ BigWigs:AddSounds("Harlan Sweete", {
 	[257305] = {"alarm","warning"},
 	[257314] = "warning",
 	[257316] = "long",
-	["stages"] = {"Info","info"},
+	["stages"] = "info",
 })
 
 BigWigs:AddSounds("Freehold Trash", {

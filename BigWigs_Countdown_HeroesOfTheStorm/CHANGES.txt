@@ -1,24 +1,19 @@
-tag 18f669c15a49121c315ab110baee6fed66e3e733 1.1.13
+tag 7c17a2537c3166e331cfcfed360c48e9f9a8f042 1.2.0
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Tue Sep 4 21:47:23 2018 -0500
+Date:	Sun Sep 23 17:44:40 2018 -0500
 
-Tagging as 1.1.13
+Tagging as 1.2.0
 
-commit 899d8894097c8b316ee358d5ac0758e2a0597321
+commit 3ab113b17602a3e9c37abc884f4d38febf06d319
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Tue Sep 4 21:46:16 2018 -0500
+Date:   Sun Sep 23 17:22:36 2018 -0500
 
-    Add Mephisto
-
-commit 986512bbf04b05df1c335de608d2a0b9e7dafc32
-Author: Kyle Buller <bullerk@gmail.com>
-Date:   Tue Sep 4 21:45:51 2018 -0500
-
-    Tweaks
-
-commit 815d1a81f7e75c16e8530ba11befabd6ef172e52
-Author: Kyle Buller <bullerk@gmail.com>
-Date:   Sat Aug 11 00:47:19 2018 -0500
-
-    Add missing Athena translations
+    Make the addon load on demand
+    
+    I can't think of a good reason not to go back to LoD and it
+    simplifies things. I don't like delaying registration, but if
+    options don't over-aggressively reset the value, there's nothing
+    else to use the voices anyway. :man_shrugging:
+    
+    Resolves #1
 

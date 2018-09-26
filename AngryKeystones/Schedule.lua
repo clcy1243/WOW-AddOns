@@ -55,8 +55,13 @@ local function UpdatePartyKeystones()
 				fullName = name.."-"..realm
 			end
 
-			if unitKeystones[fullName] then
-				local keystoneName = GetNameForKeystone(unitKeystones[fullName][1], unitKeystones[fullName][2])
+			if unitKeystones[fullName] ~= nil then
+				local keystoneName
+				if unitKeystones[fullName] == 0 then
+					keystoneName = NONE
+				else
+					keystoneName = GetNameForKeystone(unitKeystones[fullName][1], unitKeystones[fullName][2])
+				end
 				if keystoneName then
 					entry:Show()
 					local _, class = UnitClass("party"..i)
@@ -91,8 +96,22 @@ local function UpdateFrame()
 	Mod.AffixFrame:Show()
 	Mod.PartyFrame:Show()
 	Mod.KeystoneText:Show()
+
+	local currentAffixes = C_MythicPlus.GetCurrentAffixes()
+	if currentAffixes and #currentAffixes then
+		ChallengesFrame.WeeklyInfo.Child.Affixes[1]:ClearAllPoints()
+		ChallengesFrame.WeeklyInfo.Child.Affixes[1]:SetPoint("CENTER", ChallengesFrame.WeeklyInfo.Child.Label, "CENTER", 31 + (-31 * #currentAffixes), -45)
+	end
+
 	ChallengesFrame.WeeklyInfo.Child.WeeklyChest:ClearAllPoints()
 	ChallengesFrame.WeeklyInfo.Child.WeeklyChest:SetPoint("LEFT", 50, -30)
+	if ChallengesFrame.WeeklyInfo.Child.WeeklyChest:IsShown() then
+		ChallengesFrame.WeeklyInfo.Child.RunStatus:SetWidth(240)
+	else
+		ChallengesFrame.WeeklyInfo.Child.RunStatus:SetWidth(240)
+		ChallengesFrame.WeeklyInfo.Child.RunStatus:ClearAllPoints()
+		ChallengesFrame.WeeklyInfo.Child.RunStatus:SetPoint("TOP", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "TOP", -10, 35)
+	end
 
 	local currentKeystoneName = GetNameForKeystone(C_MythicPlus.GetOwnedKeystoneChallengeMapID(), C_MythicPlus.GetOwnedKeystoneLevel())
 	if currentKeystoneName then
@@ -107,7 +126,7 @@ local function UpdateFrame()
 			local entry = Mod.AffixFrame.Entries[i]
 			entry:Show()
 
-			local scheduleWeek = (currentWeek - 2 + i) % (#affixSchedule) + 1
+			local scheduleWeek = (currentWeek - 1 + i) % (#affixSchedule) + 1
 			local affixes = affixSchedule[scheduleWeek]
 			for j = 1, #affixes do
 				local affix = entry.Affixes[j]
@@ -174,7 +193,7 @@ function Mod:Blizzard_ChallengesUI()
 		text:SetWidth(120)
 		text:SetJustifyH("LEFT")
 		text:SetWordWrap(false)
-		text:SetText( Addon.Locale["scheduleWeek"..i] )
+		text:SetText( Addon.Locale["scheduleWeek"..i+1] )
 		text:SetPoint("LEFT")
 		entry.Text = text
 
@@ -262,8 +281,6 @@ function Mod:Blizzard_ChallengesUI()
 	end
 	frame2.Entries = entries2
 
-	ChallengesFrame.WeeklyInfo.Child.RunStatus:SetWidth(220)
-
 	local keystoneText = ChallengesFrame.WeeklyInfo.Child:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
 	keystoneText:SetPoint("BOTTOM", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "BOTTOM", 0, -25)
 	keystoneText:SetWidth(220)
@@ -304,8 +321,15 @@ function Mod:CheckAffixes()
 	end
 end
 
+local bagUpdateTimerStarted = false
 function Mod:BAG_UPDATE()
-	self:CheckCurrentKeystone(true)
+	if not bagUpdateTimerStarted then
+		bagUpdateTimerStarted = true
+		C_Timer.After(1, function()
+			Mod:CheckCurrentKeystone(true)
+			bagUpdateTimerStarted = false
+		end)
+	end
 end
 
 function Mod:CHAT_MSG_LOOT(...)
@@ -340,9 +364,11 @@ function Mod:CheckCurrentKeystone(announce)
 		currentKeystoneMapID = keystoneMapID
 		currentKeystoneLevel = keystoneLevel
 
-		local itemLink = self:GetInventoryKeystone()
-		if Addon.Config.announceKeystones and announce and itemLink and IsInGroup(LE_PARTY_CATEGORY_HOME) then
-			SendChatMessage(string.format(Addon.Locale.newKeystoneAnnounce, itemLink), "PARTY")
+		if announce and Addon.Config.announceKeystones then
+			local itemLink = self:GetInventoryKeystone()
+			if itemLink and IsInGroup(LE_PARTY_CATEGORY_HOME) then
+				SendChatMessage(string.format(Addon.Locale.newKeystoneAnnounce, itemLink), "PARTY")
+			end
 		end
 
 		self:SendCurrentKeystone()
@@ -368,15 +394,16 @@ function Mod:ReceiveAddOnComm(message, type, sender)
 		requestPartyKeystones = false
 		self:SendCurrentKeystone()
 	elseif message == "0" then
-		if unitKeystones[sender] ~= nil then
-			unitKeystones[sender] = nil
+		if unitKeystones[sender] ~= 0 then
+			unitKeystones[sender] = 0
 			UpdatePartyKeystones()
 		end
 	else
 		local arg1, arg2 = message:match("^(%d+):(%d+)$")
 		local keystoneMapID = arg1 and tonumber(arg1)
 		local keystoneLevel = arg2 and tonumber(arg2)
-		if keystoneMapID and keystoneLevel and not (unitKeystones[sender] and unitKeystones[sender][1] == keystoneMapID and unitKeystones[sender][2] == keystoneLevel) then
+		if keystoneMapID and keystoneLevel and (unitKeystones[sender] == nil or unitKeystones[sender] == 0
+				or not (unitKeystones[sender][1] == keystoneMapID and unitKeystones[sender][2] == keystoneLevel)) then
 			unitKeystones[sender] = { keystoneMapID, keystoneLevel }
 			UpdatePartyKeystones()
 		end

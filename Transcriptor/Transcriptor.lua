@@ -216,6 +216,12 @@ do
 			[238028] = true, -- Light Remanence (Maiden of Vigilance)
 			[238408] = true, -- Fel Remanence (Maiden of Vigilance)
 			[270620] = true, -- Psionic Blast (Zek'voz/Uldir || Mind Controlled player)
+			[272407] = true, -- Oblivion Sphere (Mythrax/Uldir || Orb spawning on player)
+			[263372] = true, -- Power Matrix (G'huun/Uldir || Holding the orb)
+			[263436] = true, -- Imperfect Physiology (G'huun/Uldir || After the orb)
+			[263373] = true, -- Deposit Power Matrix (G'huun/Uldir)
+			[263416] = true, -- Throw Power Matrix (G'huun/Uldir)
+			[269455] = true, -- Collect Power Matrix (G'huun/Uldir)
 		}
 		local events = {
 			"SPELL_AURA_[AR][^#]+#(%d+)#([^#]+%-[^#]+)#([^#]+)#([^#]*)#([^#]+)#(%d+)#([^#]+)#", -- SPELL_AURA_[AR] to filter _BROKEN
@@ -556,9 +562,12 @@ local sh = {}
 ]]
 do
 	local blackList = {
-		[1309] = true,
-		[1313] = true,
-		[1319] = true,
+		[1309] = true, -- C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(1309)
+		[1311] = true, -- C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(1311)
+		[1313] = true, -- C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(1313)
+		[1315] = true, -- C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(1315)
+		[1317] = true, -- C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(1317)
+		[1319] = true, -- C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(1319)
 	}
 	local GetIconAndTextWidgetVisualizationInfo = C_UIWidgetManager and C_UIWidgetManager.GetIconAndTextWidgetVisualizationInfo
 	function sh.UPDATE_UI_WIDGET(tbl)
@@ -1032,24 +1041,35 @@ do
 	local UnitAura = UnitAura
 	local units = {
 		"boss1", "boss2", "boss3", "boss4", "boss5",
-		"target", "mouseover", "focus",
+		"player", "target", "mouseover", "focus",
+		"playerpet", "targetpet", "mouseoverpet", "focuspet",
 		"nameplate1", "nameplate2", "nameplate3", "nameplate4", "nameplate5", "nameplate6", "nameplate7", "nameplate8", "nameplate9", "nameplate10",
 		"nameplate11", "nameplate12", "nameplate13", "nameplate14", "nameplate15", "nameplate16", "nameplate17", "nameplate18", "nameplate19", "nameplate20",
 		"nameplate21", "nameplate22", "nameplate23", "nameplate24", "nameplate25", "nameplate26", "nameplate27", "nameplate28", "nameplate29", "nameplate30",
 		"nameplate31", "nameplate32", "nameplate33", "nameplate34", "nameplate35", "nameplate36", "nameplate37", "nameplate38", "nameplate39", "nameplate40",
 		"party1", "party2", "party3", "party4",
+		"party1pet", "party2pet", "party3pet", "party4pet",
 		"raid1", "raid2", "raid3", "raid4", "raid5",
+		"raid1pet", "raid2pet", "raid3pet", "raid4pet", "raid5pet",
 		"raid6", "raid7", "raid8", "raid9", "raid10",
+		"raid6pet", "raid7pet", "raid8pet", "raid9pet", "raid10pet",
 		"raid11", "raid12", "raid13", "raid14", "raid15",
+		"raid11pet", "raid12pet", "raid13pet", "raid14pet", "raid15pet",
 		"raid16", "raid17", "raid18", "raid19", "raid20",
+		"raid16pet", "raid17pet", "raid18pet", "raid19pet", "raid20pet",
 		"raid21", "raid22", "raid23", "raid24", "raid25",
+		"raid21pet", "raid22pet", "raid23pet", "raid24pet", "raid25pet",
 		"raid26", "raid27", "raid28", "raid29", "raid30",
+		"raid26pet", "raid27pet", "raid28pet", "raid29pet", "raid30pet",
 		"raid31", "raid32", "raid33", "raid34", "raid35",
-		"raid36", "raid37", "raid38", "raid39", "raid40"
+		"raid31pet", "raid32pet", "raid33pet", "raid34pet", "raid35pet",
+		"raid36", "raid37", "raid38", "raid39", "raid40",
+		"raid36pet", "raid37pet", "raid38pet", "raid39pet", "raid40pet",
 	}
+	local count = #units
 	function Transcriptor:UpdateHiddenAuraBlacklist()
 		hiddenUnitAuraCollector, hiddenAuraInitList = {}, {}
-		for j = 1, #units do
+		for j = 1, count do
 			local unit = units[j]
 			for i = 1, 100 do
 				local _, _, _, _, _, _, _, _, _, spellId = UnitAura(unit, i, "HARMFUL|HELPFUL")
@@ -1068,9 +1088,9 @@ do
 				break
 			elseif not hiddenUnitAuraCollector[spellId] then
 				if UnitIsVisible(unit) then
-					hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("DEBUFF", spellId, name, duration, unit, UnitName(unit)))
+					hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall(spellId, name, duration, unit, UnitName(unit)))
 				else -- If it's not visible it may not show up in CLEU, use this as an indicator of a false positive
-					hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("DEBUFF", "UNIT_NOT_VISIBLE", spellId, name, duration, unit, UnitName(unit)))
+					hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("UNIT_NOT_VISIBLE", spellId, name, duration, unit, UnitName(unit)))
 				end
 			end
 		end
