@@ -4,12 +4,9 @@
 
 Adds countdown voices from the heroes in Overwatch to BigWigs.
 
-Only the English locale is included. I have the files for the other locales,
-but manually splitting them takes forever (and I'm extremely lazy).
-
-The default countdown voice is set in "Sounds" in the BigWigs options (`/bw`).
-You can also enable countdown per ability and change the voice for it in that
-ability's "Sounds" tab.
+The default countdown voice is set in "Sounds" and the pull countdown voice in
+"Pull" in the BigWigs options (`/bw`). You can also enable countdown per
+ability and change the voice for it in that ability's "Sounds" tab.
 
 ## Download
 

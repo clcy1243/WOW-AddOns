@@ -83,7 +83,7 @@ function Operations.GetOperationManagementElements()
 		:AddChild(Operations.CreateHeadingLine("groupManagement", L["Group Management"]))
 		:AddChild(Operations.CreateSettingLine("applyNewGroup", L["Apply operation to group:"])
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Dropdown", "dropdown")
-				:SetHintText(L["None"])
+				:SetHintText(L["Select operation"])
 				:SetItems(private.groupList)
 				:SetScript("OnSelectionChanged", private.ApplyNewOnSelectionChanged)
 			)
@@ -105,8 +105,7 @@ function Operations.CreateHeadingLine(id, text)
 end
 
 function Operations.CreateLinkedSettingLine(settingKey, labelText, disabled)
-	local operation = TSM.Operations.GetSettings(private.currentModule, private.currentOperationName)
-	local relationshipSet = operation.relationships[settingKey] and true or false
+	local relationshipSet = TSM.Operations.HasRelationship(private.currentModule, private.currentOperationName, settingKey)
 	return TSMAPI_FOUR.UI.NewElement("Frame", settingKey)
 		:SetLayout("HORIZONTAL")
 		:SetStyle("height", 26)
@@ -136,12 +135,14 @@ function Operations.CreateSettingLine(id, labelText, disabled)
 		)
 end
 
-function Operations.CheckCustomPrice(value)
+function Operations.CheckCustomPrice(value, ignoreError)
 	if TSMAPI_FOUR.CustomPrice.Validate(value) then
 		return true
 	else
 		-- TODO: better error message
-		TSM:Print("Your custom price was incorrect. Please try again.")
+		if not ignoreError then
+			TSM:Print("Your custom price was incorrect. Please try again.")
+		end
 		return false
 	end
 end
@@ -153,6 +154,7 @@ end
 -- ============================================================================
 
 function private.GetOperationsFrame()
+	TSM.UI.AnalyticsRecordPathChange("main", "operations")
 	local frame = TSMAPI_FOUR.UI.NewElement("DividedContainer", "operations")
 		:SetStyle("background", "#272727")
 		:SetContextTable(private.dividedContainerContext, DEFAULT_DIVIDED_CONTAINER_CONTEXT)
@@ -293,8 +295,7 @@ end
 
 function private.CreateLinkButton(disabled, settingKey)
 	local vertexColor = nil
-	local operation = TSM.Operations.GetSettings(private.currentModule, private.currentOperationName)
-	local relationshipSet = operation.relationships[settingKey]
+	local relationshipSet = TSM.Operations.HasRelationship(private.currentModule, private.currentOperationName, settingKey)
 	if disabled and relationshipSet then
 		vertexColor = "#6f5819"
 	elseif disabled then
@@ -365,6 +366,7 @@ function private.OperationTreeOnOperationSelected(self, moduleName, operationNam
 		titleFrame:GetElement("moreBtn"):Show()
 		contentFrame:AddChild(private.moduleCallbacks[moduleName](operationName))
 	else
+		TSM.UI.AnalyticsRecordPathChange("main", "operations", "none")
 		titleFrame:GetElement("text"):SetText(L["No Operation Selected"])
 		titleFrame:GetElement("editBtn"):Hide()
 		titleFrame:GetElement("moreBtn"):Hide()
@@ -405,25 +407,34 @@ function private.EditBtnOnClick(button)
 end
 
 function private.ApplyNewOnSelectionChanged(dropdown, groupPath)
-	TSM.Groups.SetOperationOverride(groupPath, private.currentModule, true)
-	local numOperations = 0
-	local lastOperationName = nil
-	for _, operationName in TSM.Groups.OperationIterator(groupPath, private.currentModule) do
-		lastOperationName = operationName
-		numOperations = numOperations + 1
+	local hasOperation = false
+	for _, operationName in TSM.Operations.GroupOperationIterator(private.currentModule, groupPath) do
+		if operationName == private.currentOperationName then
+			hasOperation = true
+			break
+		end
 	end
-	if numOperations == TSM.Operations.GetMaxNumber(private.currentModule) then
-		-- replace the last operation since we're already at the max number of operations
-		TSM.Groups.RemoveOperation(groupPath, private.currentModule, numOperations)
-		TSM:Printf(L["%s previously had the max number of operations, so removed %s."], TSM.Groups.Path.Format(groupPath, true), "|cff99ffff"..lastOperationName.."|r")
-	end
-	TSM.Groups.AppendOperation(groupPath, private.currentModule, private.currentOperationName)
-	TSM:Printf(L["Added %s to %s."], "|cff99ffff"..private.currentOperationName.."|r", TSM.Groups.Path.Format(groupPath, true))
-
-	-- add a new line
 	local parentElement = dropdown:GetParentElement():GetParentElement()
-	parentElement:AddChild(private.CreateGroupOperationLine(groupPath))
-	parentElement:GetParentElement():Draw()
+	if not hasOperation then
+		TSM.Groups.SetOperationOverride(groupPath, private.currentModule, true)
+		local numOperations = 0
+		local lastOperationName = nil
+		for _, operationName in TSM.Groups.OperationIterator(groupPath, private.currentModule) do
+			lastOperationName = operationName
+			numOperations = numOperations + 1
+		end
+		if numOperations == TSM.Operations.GetMaxNumber(private.currentModule) then
+			-- replace the last operation since we're already at the max number of operations
+			TSM.Groups.RemoveOperation(groupPath, private.currentModule, numOperations)
+			TSM:Printf(L["%s previously had the max number of operations, so removed %s."], TSM.Groups.Path.Format(groupPath, true), "|cff99ffff"..lastOperationName.."|r")
+		end
+		TSM.Groups.AppendOperation(groupPath, private.currentModule, private.currentOperationName)
+		TSM:Printf(L["Added %s to %s."], "|cff99ffff"..private.currentOperationName.."|r", TSM.Groups.Path.Format(groupPath, true))
+		parentElement:AddChild(private.CreateGroupOperationLine(groupPath))
+	end
+
+	dropdown:SetSelection(nil)
+	parentElement:Draw()
 end
 
 function private.ViewGroupOnClick(button)
@@ -452,8 +463,6 @@ function private.LinkBtnOnClick(button)
 		end
 	end
 	sort(private.linkMenuEntries)
-	local operation = TSM.Operations.GetSettings(private.currentModule, private.currentOperationName)
-	local currentRelationshipOperationName = operation.relationships[settingKey]
 	button:GetBaseElement():ShowDialogFrame(TSMAPI_FOUR.UI.NewElement("MenuDialogFrame", "linkDialog")
 		:SetLayout("VERTICAL")
 		:SetStyle("width", 263)
@@ -480,7 +489,7 @@ function private.LinkBtnOnClick(button)
 			:SetContext(settingKey)
 			:SetStyle("margin", { left = 2, right = 2, bottom = 3 })
 			:SetStyle("rowHeight", 20)
-			:SetEntries(private.linkMenuEntries, currentRelationshipOperationName)
+			:SetEntries(private.linkMenuEntries, TSM.Operations.GetRelationship(private.currentModule, private.currentOperationName, settingKey))
 			:SetScript("OnEntrySelected", private.ListOnEntrySelected)
 		)
 	)
@@ -488,12 +497,11 @@ end
 
 function private.ListOnEntrySelected(list, operationName)
 	local settingKey = list:GetContext()
-	local operationSettings = TSM.Operations.GetSettings(private.currentModule, private.currentOperationName)
-	local previousValue = operationSettings.relationships[settingKey]
+	local previousValue = TSM.Operations.GetRelationship(private.currentModule, private.currentOperationName, settingKey)
 	if operationName == previousValue then
-		operationSettings.relationships[settingKey] = nil
+		TSM.Operations.SetRelationship(private.currentModule, private.currentOperationName, settingKey, nil)
 	else
-		operationSettings.relationships[settingKey] = operationName
+		TSM.Operations.SetRelationship(private.currentModule, private.currentOperationName, settingKey, operationName)
 	end
 
 	local baseFrame = list:GetBaseElement()

@@ -51,6 +51,7 @@ end
 -- ============================================================================
 
 function private.GetAuctioningFrame()
+	TSM.UI.AnalyticsRecordPathChange("auction", "auctioning")
 	if not private.hasLastScan then
 		private.contentPath = "selection"
 	end
@@ -73,6 +74,7 @@ function private.GetAuctioningContentFrame(_, path)
 end
 
 function private.GetAuctioningSelectionFrame()
+	TSM.UI.AnalyticsRecordPathChange("auction", "auctioning", "selection")
 	local frame = TSMAPI_FOUR.UI.NewElement("DividedContainer", "selection")
 		:SetStyle("background", "#272727")
 		:SetContextTable(private.dividedContainerContext, DEFAULT_DIVIDED_CONTAINER_CONTEXT)
@@ -203,6 +205,7 @@ function private.GetAuctioningSelectionFrame()
 				)
 			)
 		)
+		:SetScript("OnUpdate", private.SelectionOnUpdate)
 		:SetScript("OnHide", private.SelectionOnHide)
 	local noGroupSelected = frame:GetElement("groupSelection.groupTree"):IsSelectionCleared(true)
 	frame:GetElement("groupSelection.postScanBtn"):SetDisabled(noGroupSelected)
@@ -232,6 +235,7 @@ function private.GetScansElement(_, button)
 end
 
 function private.GetAuctioningScanFrame()
+	TSM.UI.AnalyticsRecordPathChange("auction", "auctioning", "scan")
 	return TSMAPI_FOUR.UI.NewElement("Frame", "scan")
 		:SetLayout("VERTICAL")
 		:SetStyle("background", "#272727")
@@ -461,6 +465,7 @@ end
 
 function private.ScanNavCallback(_, path)
 	if path == L["Auctioning Log"] then
+		TSM.UI.AnalyticsRecordPathChange("auction", "auctioning", "scan", "log")
 		private.logQuery = private.logQuery or TSM.Auctioning.Log.CreateQuery()
 		return TSMAPI_FOUR.UI.NewElement("Frame", "logFrame")
 			:SetLayout("VERTICAL")
@@ -532,6 +537,7 @@ function private.ScanNavCallback(_, path)
 				:SetSelectionDisabled(true)
 			)
 	elseif path == L["All Auctions"] then
+		TSM.UI.AnalyticsRecordPathChange("auction", "auctioning", "scan", "auctions")
 		return TSMAPI_FOUR.UI.NewElement("Frame", "auctionsFrame")
 			:SetLayout("VERTICAL")
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Texture", "line")
@@ -565,6 +571,11 @@ function private.OnItemLinked(_, itemLink)
 	return true
 end
 
+function private.SelectionOnUpdate(frame)
+	frame:SetScript("OnUpdate", nil)
+	frame:GetBaseElement():SetBottomPadding(nil)
+end
+
 function private.SelectionOnHide(frame)
 	assert(frame == private.selectionFrame)
 	private.selectionFrame = nil
@@ -582,8 +593,13 @@ local function MoreDialogRowIterator(_, prevIndex)
 		return 1, L["Select All Groups"], private.SelectAllBtnOnClick
 	elseif prevIndex == 1 then
 		return 2, L["Deselect All Groups"], private.DeselectAllBtnOnClick
+	elseif prevIndex == 2 then
+		return 3, L["Expand All Groups"], private.ExpandAllBtnOnClick
+	elseif prevIndex == 3 then
+		return 4, L["Collapse All Groups"], private.CollapseAllBtnOnClick
 	end
 end
+
 function private.MoreBtnOnClick(button)
 	button:GetBaseElement():ShowMoreButtonDialog(button, MoreDialogRowIterator)
 end
@@ -597,6 +613,18 @@ end
 function private.DeselectAllBtnOnClick(button)
 	local baseFrame = button:GetBaseElement()
 	baseFrame:GetElement("content.auctioning.selection.groupSelection.groupTree"):DeselectAll()
+	baseFrame:HideDialog()
+end
+
+function private.ExpandAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.auctioning.selection.groupSelection.groupTree"):ExpandAll()
+	baseFrame:HideDialog()
+end
+
+function private.CollapseAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.auctioning.selection.groupSelection.groupTree"):CollapseAll()
 	baseFrame:HideDialog()
 end
 
@@ -671,16 +699,11 @@ end
 
 function private.ScanFrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 38)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(38)
 	private.fsm:ProcessEvent("EV_SCAN_FRAME_SHOWN", frame)
 end
 
 function private.ScanFrameOnHide(frame)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", nil)
-	baseFrame:Draw()
 	private.fsm:ProcessEvent("EV_SCAN_FRAME_HIDDEN")
 end
 
@@ -729,10 +752,8 @@ end
 
 function private.BidBuyoutTextOnValueChanged(text, value)
 	value = TSM.Money.FromString(value)
-	if value > MAXIMUM_BID_PRICE then
-		value = MAXIMUM_BID_PRICE
-	end
 	if value then
+		value = min(value, MAXIMUM_BID_PRICE)
 		private.fsm:ProcessEvent("EV_POST_DETAIL_CHANGED", text:GetContext(), value)
 	else
 		text:Draw()
@@ -782,6 +803,7 @@ function private.FSMCreate()
 		[ERR_AUCTION_USED_CHARGES] = false,
 		[ERR_AUCTION_WRAPPED_ITEM] = false,
 		[ERR_AUCTION_BAG] = false,
+		[ERR_NOT_ENOUGH_MONEY] = false,
 	}
 	TSMAPI_FOUR.Event.Register("UI_ERROR_MESSAGE", function(_, _, msg)
 		if POST_ERR_MSGS[msg] ~= nil then
@@ -808,7 +830,7 @@ function private.FSMCreate()
 		local itemString = currentRow:GetField("itemString")
 
 		local postBag, postSlot = nil, nil
-		for _, bag, slot, bagItemString in TSMAPI_FOUR.Inventory.BagIterator() do
+		for _, bag, slot, bagItemString in TSMAPI_FOUR.Inventory.BagIterator(true, false, false, true) do
 			if not postBag and not postSlot and bagItemString == itemString then
 				postBag = bag
 				postSlot = slot
@@ -892,16 +914,16 @@ function private.FSMCreate()
 				detailsHeader1:GetElement("buyout.editBtn"):Show()
 				detailsHeader2:GetElement("duration.dropdown"):SetDisabled(false)
 				detailsHeader2:GetElement("duration.dropdown"):SetSelection(AUCTION_DURATIONS[currentRow:GetField("postTime")])
+
+				if context.itemString ~= itemString then
+					UpdateDepositCost(context)
+					context.itemString = itemString
+				end
 			else
 				detailsHeader1:GetElement("bid.editBtn"):Hide()
 				detailsHeader1:GetElement("buyout.editBtn"):Hide()
 				detailsHeader2:GetElement("duration.dropdown"):SetDisabled(true)
 			end
-			if context.itemString ~= itemString then
-				UpdateDepositCost(context)
-			end
-			context.itemString = itemString
-			currentRow:Release()
 		else
 			itemContent:GetElement("icon")
 				:SetStyle("backgroundTexture", nil)
@@ -932,7 +954,7 @@ function private.FSMCreate()
 			processIcon = "iconPack.18x18/Post"
 		elseif context.scanType == "CANCEL" then
 			processText = strupper(CANCEL)
-			processIcon = "iconPack.18x18/Post" -- FIXME
+			processIcon = "iconPack.18x18/Close/Circle"
 		else
 			error("Invalid scan type: "..tostring(context.scanType))
 		end
@@ -1006,9 +1028,6 @@ function private.FSMCreate()
 				if ... then
 					return "ST_STARTING_SCAN", ...
 				elseif context.scanFrame then
-					local baseFrame = context.scanFrame:GetBaseElement()
-					baseFrame:SetStyle("bottomPadding", nil)
-					baseFrame:Draw()
 					context.scanFrame:GetParentElement():SetPath("selection", true)
 					context.scanFrame = nil
 				end
@@ -1105,7 +1124,6 @@ function private.FSMCreate()
 							return "ST_DONE"
 						end
 					end
-					context.scanThreadId = TSM.Auctioning.CancelScan.Prepare()
 				else
 					error("Invalid scan type: "..tostring(context.scanType))
 				end
@@ -1126,9 +1144,10 @@ function private.FSMCreate()
 			:AddTransition("ST_HANDLING_CONFIRM")
 			:AddEvent("EV_PROCESS_CLICKED", function(context)
 				if context.scanType == "POST" then
-					if not TSM.Auctioning.PostScan.DoProcess() then
-						-- we failed to post but can retry
-						return "ST_HANDLING_CONFIRM", false, true
+					local success, noRetry = TSM.Auctioning.PostScan.DoProcess()
+					if not success then
+						-- we failed to post
+						return "ST_HANDLING_CONFIRM", false, not noRetry
 					end
 				elseif context.scanType == "CANCEL" then
 					if not TSM.Auctioning.CancelScan.DoProcess() then
@@ -1195,7 +1214,7 @@ function private.FSMAuctionScanOnProgressUpdate(auctionScan)
 	private.fsm:ProcessEvent("EV_SCAN_PROGRESS_UPDATE")
 end
 
-function private.FSMScanCallback(success)
+function private.FSMScanCallback()
 	private.fsm:ProcessEvent("EV_SCAN_COMPLETE")
 end
 

@@ -6,7 +6,7 @@ if GetLocale()=="deDE" or GetLocale()=="ruRU" or GetLocale()=="zhTW" or GetLocal
 end
 
 
-	raversion=8.004
+	raversion=8.103
 	local raverstiptext="alpha"
 	if string.len(raversion)==6 then
 		raverstiptext="beta"
@@ -1152,7 +1152,7 @@ end
 
 
 function chechtekzoneea()
-if C_Map.GetMapInfo(C_Map.GetBestMapForUnit("player")).name then
+if C_Map.GetBestMapForUnit("player") and C_Map.GetMapInfo(C_Map.GetBestMapForUnit("player")) and C_Map.GetMapInfo(C_Map.GetBestMapForUnit("player")).name then
 local a1, a2, a3, a4, a5 = GetInstanceInfo()
 if UnitInRaid("player") or (a2=="raid" or a2=="scenario" or (a2=="party" and a3==2) or a3==14) then
 --SetMapToCurrentZone()

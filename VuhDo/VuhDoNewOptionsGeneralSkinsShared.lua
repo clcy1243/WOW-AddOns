@@ -877,7 +877,7 @@ local VUHDO_DEFAULT_PROFILES = {
 				["BAR_BORDER"] = VUHDO_I18N_DEF_BOUQUET_BORDER_MULTI_AGGRO,
 				["HEALTH_BAR"] = VUHDO_I18N_DEF_BOUQUET_BAR_HEALTH,
 				["DAMAGE_FLASH_BAR"] = "",
-				["SWIFTMEND_INDICATOR"] = VUHDO_I18N_DEF_ROLE_ICON,
+				["SWIFTMEND_INDICATOR"] = VUHDO_I18N_DEF_BOUQUET_ROLE_AND_SUMMON,
 			},
 		},
 		["ORIGINATOR_TOON"] = "Izaak",
@@ -1959,7 +1959,7 @@ end
 
 
 --
-local tAutoProfileIndices = { "1", "5", "10", "15", "20", "25", "30", "40" };
+local tAutoProfileIndices = { "1", "3", "5", "10", "15", "20", "25", "30", "40" };
 local tKey;
 local function VUHDO_getBestProfileForSpecAndSize(aSpec, aSize)
 	for _, tIndex in ipairs(tAutoProfileIndices) do
@@ -2433,7 +2433,7 @@ local VUHDO_PROFILE_MODEL = {
 local tOriginatorClass = nil;
 local tOriginatorToon = nil;
 local function VUHDO_smartLoadFromProfile(aDestArray, aSourceArray, aProfileModel, aDerivedRule)
-	if not aSourceArray then
+	if not aSourceArray or not aDestArray then
 		return aDestArray;
 	end
 

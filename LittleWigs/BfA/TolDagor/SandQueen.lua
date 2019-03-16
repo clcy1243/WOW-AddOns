@@ -7,6 +7,7 @@ local mod, CL = BigWigs:NewBoss("The Sand Queen", 1771, 2097)
 if not mod then return end
 mod:RegisterEnableMob(127479) -- The Sand Queen
 mod.engageId = 2101
+mod.respawnTime = 30
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -53,7 +54,7 @@ end
 
 function mod:Upheaval(args)
 	self:Bar(args.spellId, 42)
-	self:CastBar(args.spellId, 5)
+	self:CastBar(args.spellId, 4.35)
 end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg, _, _, _, destName)

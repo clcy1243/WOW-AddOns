@@ -3,7 +3,7 @@ if not L then return end
 if L then
 	L.sideLaser = "(Lateral) Láseres" -- short for: (location) Uldir Defensive Beam
 	L.upLaser = "(Techo) Láseres"
-	L.mythic_beams = "(Lateral + Techo) Láseres"
+	L.mythic_beams = "Láseres"
 end
 
 L = BigWigs:NewBossLocale("Zek'voz, Herald of N'zoth", "esES") or BigWigs:NewBossLocale("Zek'voz, Herald of N'zoth", "esMX")
@@ -46,4 +46,11 @@ if L then
 
 	L.custom_on_fixate_plates = "Fija un icono en la placa de nombre enemiga"
 	L.custom_on_fixate_plates_desc = "Muestra un icono en la placa de nombre del enemigo que te tiene fijado.\nRequiere el uso de placa de nombre de enemigos. Esta característica es actualmente solo soportada por KuiNameplates."
+end
+
+L = BigWigs:NewBossLocale("Uldir Trash", "esES") or BigWigs:NewBossLocale("Uldir Trash", "esMX")
+if L then
+	L.watcher = "Vigía corrupto"
+	L.ascendant = "Ascendiente Nazmani"
+	L.dominator = "Dominadora Nazmani"
 end

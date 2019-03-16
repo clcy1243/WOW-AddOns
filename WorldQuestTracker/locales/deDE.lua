@@ -3,9 +3,12 @@ if not L then return end
 
 L["S_APOWER_AVAILABLE"] = "Verfügbar"
 L["S_APOWER_NEXTLEVEL"] = "Nächste Stufe"
+L["S_DECREASESIZE"] = "Verkleinern"
 L["S_ENABLED"] = "Aktiviert"
 L["S_ERROR_NOTIMELEFT"] = "Diese Quest ist bereits abgelaufen."
 L["S_ERROR_NOTLOADEDYET"] = "Diese Quest ist noch nicht geladen. Bitte warte ein paar Sekunden."
+L["S_FACTION_TOOLTIP_SELECT"] = "Klicken: Diese Fraktion auswählen"
+L["S_FACTION_TOOLTIP_TRACK"] = "Shift-Klick: Diese Fraktionsquests verfolgen"
 L["S_FLYMAP_SHOWTRACKEDONLY"] = "Nur verfolgte"
 L["S_FLYMAP_SHOWTRACKEDONLY_DESC"] = "Zeigt nur verfolgte Quests"
 L["S_FLYMAP_SHOWWORLDQUESTS"] = "Weltquests anzeigen"
@@ -48,7 +51,7 @@ L["S_GROUPFINDER_RIGHTCLICKCLOSE"] = "Rechtsklicken zum Schließen"
 L["S_GROUPFINDER_SECONDS"] = "Sekunden"
 L["S_GROUPFINDER_TITLE"] = "Dungeonbrowser"
 L["S_GROUPFINDER_TUTORIAL1"] = "Erledige deine Weltquests schneller, indem du Gruppen beitrittst, die die gleiche Quest machen!"
-L["S_MAPBAR_AUTOWORLDMAP"] = "Autom. Weltkarte"
+L["S_INCREASESIZE"] = "Vergrößern"
 L["S_MAPBAR_FILTER"] = "Filter"
 L["S_MAPBAR_FILTERMENU_FACTIONOBJECTIVES"] = "Fraktionsziele"
 L["S_MAPBAR_FILTERMENU_FACTIONOBJECTIVES_DESC"] = "Zeigt Fraktionsquests, selbst wenn sie durch obenstehende Filter herausgefiltert wurden."
@@ -61,8 +64,11 @@ L["S_MAPBAR_OPTIONSMENU_ARROWSPEED_SLOW"] = "Langsam"
 L["S_MAPBAR_OPTIONSMENU_EQUIPMENTICONS"] = "Ausrüstungssymbole"
 L["S_MAPBAR_OPTIONSMENU_QUESTTRACKER"] = "Questverfolgung aktivieren"
 L["S_MAPBAR_OPTIONSMENU_REFRESH"] = "Aktualisieren"
-L["S_MAPBAR_OPTIONSMENU_SHARE"] = "Dieses Addon empfehlen"
 L["S_MAPBAR_OPTIONSMENU_SOUNDENABLED"] = "Ton aktivieren"
+--[[Translation missing --]]
+--[[ L["S_MAPBAR_OPTIONSMENU_STATUSBAR_ONDISABLE"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["S_MAPBAR_OPTIONSMENU_STATUSBAR_VISIBILITY"] = ""--]] 
 L["S_MAPBAR_OPTIONSMENU_STATUSBARANCHOR"] = "Oben anheften"
 L["S_MAPBAR_OPTIONSMENU_TOMTOM_WPPERSISTENT"] = "Ständige Wegpunkte"
 L["S_MAPBAR_OPTIONSMENU_TRACKER_CURRENTZONE"] = "Nur in meinem Gebiet"
@@ -74,7 +80,7 @@ L["S_MAPBAR_OPTIONSMENU_TRACKERMOVABLE_LOCKED"] = "Fixiert"
 L["S_MAPBAR_OPTIONSMENU_UNTRACKQUESTS"] = "Alle Quests nicht mehr verfolgen"
 L["S_MAPBAR_OPTIONSMENU_WORLDMAPCONFIG"] = "Weltkarte"
 L["S_MAPBAR_OPTIONSMENU_YARDSDISTANCE"] = "Distanz anzeigen"
-L["S_MAPBAR_OPTIONSMENU_ZONE_QUESTSUMMARY"] = "Questübersicht (Vollbild)"
+L["S_MAPBAR_OPTIONSMENU_ZONE_QUESTSUMMARY"] = "Questübersicht"
 L["S_MAPBAR_OPTIONSMENU_ZONEMAPCONFIG"] = "Gebietskarte"
 L["S_MAPBAR_RESOURCES_TOOLTIP_TRACKALL"] = "Klicken, um alle |cFFFFFFFF%s|r-Quests zu verfolgen."
 L["S_MAPBAR_SORTORDER"] = "Anordnung"
@@ -91,6 +97,36 @@ keine Quests, deren verbleibende
 Zeit weniger als 2 Stunden beträgt!]=]
 L["S_MAPBAR_SUMMARYMENU_REQUIREATTENTION"] = "Erfordert Aufmerksamkeit"
 L["S_MAPBAR_SUMMARYMENU_TODAYREWARDS"] = "Heutige Belohnungen"
+L["S_MAPFRAME_ALIGN_CENTER"] = "mittig"
+--[[Translation missing --]]
+--[[ L["S_MAPFRAME_ALIGN_DESC"] = ""--]] 
+L["S_MAPFRAME_ALIGN_LEFT"] = "links"
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_ANIMATIONS"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_MAPFRAME_ALIGN"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_MAPFRAME_ERROR_SCALING_DISABLED"] = ""--]] 
+L["S_OPTIONS_MAPFRAME_SCALE"] = "Kartenfensterskalierung"
+L["S_OPTIONS_MAPFRAME_SCALE_ENABLED"] = "Kartenfensterskalierung einschalten"
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_QUESTBLACKLIST"] = ""--]] 
+L["S_OPTIONS_RESET"] = "Zurücksetzen"
+L["S_OPTIONS_SHOWFACTIONS"] = "Fraktionen anzeigen"
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_TIMELEFT_NOPRIORITY"] = ""--]] 
+L["S_OPTIONS_TRACKER_RESETPOSITION"] = "Position zurücksetzen"
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_WORLD_ANCHOR_LEFT"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_WORLD_ANCHOR_RIGHT"] = ""--]] 
+L["S_OPTIONS_WORLD_DECREASEICONSPERROW"] = "Quadrate pro Reihe verkleinern"
+L["S_OPTIONS_WORLD_INCREASEICONSPERROW"] = "Quadrate pro Reihe vergrößern"
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_WORLD_ORGANIZE_BYMAP"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["S_OPTIONS_WORLD_ORGANIZE_BYTYPE"] = ""--]] 
+L["S_OPTIONS_ZONE_SHOWONLYTRACKED"] = "Nur verfolgte"
 L["S_OVERALL"] = "Insgesamt"
 L["S_PARTY"] = "Gruppe"
 L["S_PARTY_DESC1"] = "Ein blauer Stern bei einer Quest bedeutet, dass alle Gruppenmitglieder diese Quest haben."
@@ -119,9 +155,6 @@ L["S_RAREFINDER_TOOLTIP_REMOVE"] = "Entfernen"
 L["S_RAREFINDER_TOOLTIP_SEACHREALM"] = "Auf anderen Realms suchen"
 L["S_RAREFINDER_TOOLTIP_SPOTTEDBY"] = "Aufgespürt von"
 L["S_RAREFINDER_TOOLTIP_TIMEAGO"] = "Minuten vergangen"
-L["S_SHAREPANEL_THANKS"] = [=[Danke, dass Du World Quest Tracker weitergibst!
-Sende den Link an deine Freunde auf Facebook, Twitter usw..]=]
-L["S_SHAREPANEL_TITLE"] = "World Quest Tracker weiterempfehlen"
 L["S_SUMMARYPANEL_EXPIRED"] = "ABGELAUFEN"
 L["S_SUMMARYPANEL_LAST15DAYS"] = "Letzten 15 Tage"
 L["S_SUMMARYPANEL_LIFETIMESTATISTICS_ACCOUNT"] = "Accountweite Statistik"
@@ -129,10 +162,21 @@ L["S_SUMMARYPANEL_LIFETIMESTATISTICS_CHARACTER"] = "Charakterspezifische Statist
 L["S_SUMMARYPANEL_OTHERCHARACTERS"] = "Andere Charaktere"
 L["S_TUTORIAL_AMOUNT"] = "Zeigt die zu erhaltene Anzahl an"
 L["S_TUTORIAL_CLICKTOTRACK"] = "Klicken, um eine Quest zu verfolgen."
+L["S_TUTORIAL_MAPALIGN"] = "Klicke hier, um die Ausrichtung der Weltkarte zu wählen."
 L["S_TUTORIAL_PARTY"] = "Wenn du in einer Gruppe bist, zeigt ein blauer Stern bei einer Quest an, dass diese alle Gruppenmitglieder haben."
 L["S_TUTORIAL_TIMELEFT"] = "Zeigt die verbleibende Zeit an (+4 Stunden, +90 Minuten, +30 Minuten, weniger als 30 Minuten)"
+--[[Translation missing --]]
+--[[ L["S_TUTORIAL_WORLDBUTTONS"] = ""--]] 
 L["S_TUTORIAL_WORLDMAPBUTTON"] = "Diese Schaltfläche öffnet die Karte der Verheerten Inseln."
 L["S_UNKNOWNQUEST"] = "Unbekannte Quest"
+L["S_WORLDBUTTONS_SHOW_NONE"] = "Übersicht ausblenden"
+L["S_WORLDBUTTONS_SHOW_TYPE"] = "Übersicht anzeigen"
+L["S_WORLDBUTTONS_SHOW_ZONE"] = "Nach Zone anordnen"
+--[[Translation missing --]]
+--[[ L["S_WORLDBUTTONS_TOGGLE_QUESTS"] = ""--]] 
+L["S_WORLDMAP_QUESTLOCATIONS"] = "Questorte anzeigen"
+L["S_WORLDMAP_QUESTSUMMARY"] = "Questübersicht anzeigen"
 L["S_WORLDMAP_TOOGLEQUESTS"] = "Quests ein-/ausblenden"
+L["S_WORLDMAP_TOOLTIP_TRACKALL"] = "Alle Quests auf dieser Liste verfolgen"
 L["S_WORLDQUESTS"] = "Weltquests"
 

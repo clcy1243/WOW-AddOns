@@ -10,6 +10,7 @@ local _, TSM = ...
 local BankingUI = TSM.UI:NewPackage("BankingUI")
 local L = TSM.L
 local private = {
+	fsm = nil,
 	currentModule = nil,
 	groupSearch = "",
 }
@@ -69,6 +70,7 @@ end
 -- ============================================================================
 
 function private.CreateMainFrame()
+	TSM.UI.AnalyticsRecordPathChange("banking")
 	local frame = TSMAPI_FOUR.UI.NewElement("ApplicationFrame", "base")
 		:SetTextureSet("LARGE", "SMALL")
 		:SetParent(UIParent)
@@ -78,6 +80,7 @@ function private.CreateMainFrame()
 		:SetStyle("strata", "HIGH")
 		:SetStyle("bottomPadding", 170)
 		:SetTitle(L["TSM Banking"])
+		:SetScript("OnHide", private.BaseFrameOnHide)
 		:SetContentFrame(TSMAPI_FOUR.UI.NewElement("Frame", "content")
 			:SetLayout("VERTICAL")
 			:SetStyle("background", "#272727")
@@ -148,6 +151,7 @@ function private.GroupTreeGetList(groups, headerNameLookup)
 end
 
 function private.UpdateCurrentModule(frame)
+	ReagentBankFrame_OnShow(ReagentBankFrame)
 	-- update nav buttons
 	local navButtonsFrame = frame:GetElement("content.navButtons")
 	for _, module in ipairs(MODULE_LIST) do
@@ -159,10 +163,13 @@ function private.UpdateCurrentModule(frame)
 	-- update group tree
 	local contextTable = nil
 	if private.currentModule == "Warehousing" then
+		TSM.UI.AnalyticsRecordPathChange("banking", "warehousing")
 		contextTable = TSM.db.profile.internalData.bankingWarehousingGroupTreeContext
 	elseif private.currentModule == "Auctioning" then
+		TSM.UI.AnalyticsRecordPathChange("banking", "auctioning")
 		contextTable = TSM.db.profile.internalData.bankingAuctioningGroupTreeContext
 	elseif private.currentModule == "Mailing" then
+		TSM.UI.AnalyticsRecordPathChange("banking", "mailing")
 		contextTable = TSM.db.profile.internalData.bankingMailingGroupTreeContext
 	else
 		error("Unexpected module: "..tostring(private.currentModule))
@@ -272,6 +279,10 @@ end
 -- Local Script Handlers
 -- ============================================================================
 
+function private.BaseFrameOnHide()
+	TSM.UI.AnalyticsRecordClose("banking")
+end
+
 function private.CloseBtnOnClick(button)
 	TSM:Print(L["Hiding the TSM Banking UI. Type '/tsm bankui' to reopen it."])
 	button:GetParentElement():Hide()
@@ -296,6 +307,10 @@ local function MoreDialogRowIterator(_, prevIndex)
 		return 1, L["Select All Groups"], private.SelectAllBtnOnClick
 	elseif prevIndex == 1 then
 		return 2, L["Deselect All Groups"], private.DeselectAllBtnOnClick
+	elseif prevIndex == 2 then
+		return 3, L["Expand All Groups"], private.ExpandAllBtnOnClick
+	elseif prevIndex == 3 then
+		return 4, L["Collapse All Groups"], private.CollapseAllBtnOnClick
 	end
 end
 function private.MoreBtnOnClick(button)
@@ -311,6 +326,18 @@ end
 function private.DeselectAllBtnOnClick(button)
 	local baseFrame = button:GetBaseElement()
 	baseFrame:GetElement("content.groupTree"):DeselectAll()
+	baseFrame:HideDialog()
+end
+
+function private.ExpandAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.groupTree"):ExpandAll()
+	baseFrame:HideDialog()
+end
+
+function private.CollapseAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.groupTree"):CollapseAll()
 	baseFrame:HideDialog()
 end
 
@@ -486,7 +513,12 @@ function private.FSMCreate()
 				context.progress = progress
 				UpdateFrame(context)
 			end)
-			:AddEvent("EV_THREAD_DONE", TSMAPI_FOUR.FSM.SimpleTransitionEventHandler("ST_FRAME_OPEN"))
+			:AddEvent("EV_THREAD_DONE", function(context)
+				if context.progress == 0 then
+					TSM:Print(L["Nothing to move."])
+				end
+				return "ST_FRAME_OPEN"
+			end)
 			:AddEvent("EV_TOGGLE", TSMAPI_FOUR.FSM.SimpleTransitionEventHandler("ST_FRAME_HIDDEN"))
 		)
 		:AddDefaultEvent("EV_BANK_CLOSED", TSMAPI_FOUR.FSM.SimpleTransitionEventHandler("ST_CLOSED"))

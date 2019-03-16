@@ -2,6 +2,7 @@ local L = BigWigsAPI:NewLocale("BigWigs: Common", "enUS")
 
 -- Prototype.lua common words
 L.you = "%s on YOU"
+L.you_icon = "%s on |T13700%d:0|tYOU"
 L.underyou = "%s under YOU"
 L.other = "%s: %s"
 L.onboss = "%s on BOSS"
@@ -75,6 +76,7 @@ L.link_both = "%s linked with %s"
 L.link_removed = "Link removed"
 
 -- Abbreviated numbers
-L.amount_one = "%dB"
-L.amount_two = "%dM"
-L.amount_three = "%dK"
+L.amount_one = "%dB" -- Billions 1,000,000,000
+L.amount_two = "%dM" -- Millions 1,000,000
+L.amount_three = "%dK" -- Thousands 1,000
+L.seconds = "%.1fs" -- 1.1 seconds

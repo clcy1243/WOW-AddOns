@@ -35,6 +35,7 @@ end
 -- ============================================================================
 
 function private.GetMyAuctionsFrame()
+	TSM.UI.AnalyticsRecordPathChange("auction", "my_auctions")
 	private.query = private.query or TSM.MyAuctions.CreateQuery()
 	local frame = TSMAPI_FOUR.UI.NewElement("Frame", "myAuctions")
 		:SetLayout("VERTICAL")
@@ -179,7 +180,7 @@ function private.GetMyAuctionsFrame()
 			)
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "labels")
 				:SetLayout("VERTICAL")
-				:SetStyle("width", 120)
+				:SetStyle("width", 125)
 				:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "sold")
 					:SetStyle("font", TSM.UI.Fonts.MontserratMedium)
 					:SetStyle("fontHeight", 11)
@@ -247,18 +248,14 @@ end
 
 function private.FrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 38)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(38)
 	private.fsm:ProcessEvent("EV_FRAME_SHOWN", frame)
 end
 
 function private.FrameOnHide(frame)
 	assert(frame == private.frame)
 	private.frame = nil
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", nil)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(nil)
 	private.fsm:ProcessEvent("EV_FRAME_HIDDEN")
 end
 
@@ -286,6 +283,10 @@ function private.AuctionsOnSelectionChanged()
 end
 
 function private.AuctionsOnDataUpdated()
+	if not private.frame then
+		return
+	end
+
 	private.fsm:ProcessEvent("EV_DATA_UPDATED")
 end
 

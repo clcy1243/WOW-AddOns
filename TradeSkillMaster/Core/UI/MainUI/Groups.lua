@@ -49,6 +49,7 @@ end
 -- ============================================================================
 
 function private.GetGroupsFrame()
+	TSM.UI.AnalyticsRecordPathChange("main", "groups")
 	private.currentGroupPath = TSM.CONST.ROOT_GROUP_PATH
 	local frame = TSMAPI_FOUR.UI.NewElement("DividedContainer", "groups")
 		:SetStyle("background", "#272727")
@@ -56,12 +57,23 @@ function private.GetGroupsFrame()
 		:SetMinWidth(250, 250)
 		:SetLeftChild(TSMAPI_FOUR.UI.NewElement("Frame", "groupSelection")
 			:SetLayout("VERTICAL")
-			:AddChild(TSMAPI_FOUR.UI.NewElement("SearchInput", "search")
+			:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "search")
+				:SetLayout("HORIZONTAL")
 				:SetStyle("height", 20)
 				:SetStyle("margin", { left = 12, right = 12, top = 35, bottom = 12 })
-				:SetText(private.groupSearch)
-				:SetHintText(L["Search Groups"])
-				:SetScript("OnTextChanged", private.GroupSearchOnTextChanged)
+				:AddChild(TSMAPI_FOUR.UI.NewElement("SearchInput", "input")
+					:SetStyle("height", 20)
+					:SetText(private.groupSearch)
+					:SetHintText(L["Search Groups"])
+					:SetScript("OnTextChanged", private.GroupSearchOnTextChanged)
+				)
+				:AddChild(TSMAPI_FOUR.UI.NewElement("Button", "moreBtn")
+					:SetStyle("width", 18)
+					:SetStyle("height", 18)
+					:SetStyle("margin.left", 8)
+					:SetStyle("backgroundTexturePack", "iconPack.18x18/More")
+					:SetScript("OnClick", private.MoreBtnOnClick)
+				)
 			)
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Texture", "line")
 				:SetStyle("height", 2)
@@ -116,6 +128,7 @@ end
 
 function private.GetGroupsPage(self, button)
 	if button == L["Information"] then
+		TSM.UI.AnalyticsRecordPathChange("main", "groups", "information")
 		return TSMAPI_FOUR.UI.NewElement("Frame", "items")
 			:SetLayout("VERTICAL")
 			:SetStyle("background", "#1e1e1e")
@@ -128,6 +141,7 @@ function private.GetGroupsPage(self, button)
 			)
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Spacer", "spacer"))
 	elseif button == L["Add / Remove Items"] then
+		TSM.UI.AnalyticsRecordPathChange("main", "groups", "items")
 		assert(private.currentGroupPath ~= TSM.CONST.ROOT_GROUP_PATH)
 		return TSMAPI_FOUR.UI.NewElement("Frame", "items")
 			:SetLayout("VERTICAL")
@@ -261,10 +275,11 @@ function private.GetGroupsPage(self, button)
 				)
 			)
 	elseif button == L["Group Operations"] then
+		TSM.UI.AnalyticsRecordPathChange("main", "groups", "operations")
 		return TSMAPI_FOUR.UI.NewElement("ScrollFrame", "operations")
 			:SetStyle("background", "#1e1e1e")
-			:SetStyle("padding", { top = 10 })
-			:AddChild(private.GetModuleOperationFrame("Auctioning"):SetStyle("margin", nil))
+			:SetStyle("padding.top", 10)
+			:AddChild(private.GetModuleOperationFrame("Auctioning"))
 			:AddChild(private.GetModuleOperationFrame("Crafting"))
 			:AddChild(private.GetModuleOperationFrame("Mailing"))
 			:AddChild(private.GetModuleOperationFrame("Shopping"))
@@ -438,7 +453,7 @@ end
 -- ============================================================================
 
 function private.GroupSearchOnTextChanged(input)
-	local groupsContentFrame = input:GetElement("__parent.__parent.content")
+	local groupsContentFrame = input:GetElement("__parent.__parent.__parent.content")
 	-- Copy search filter
 	local text = strlower(strtrim(input:GetText()))
 
@@ -452,7 +467,7 @@ function private.GroupSearchOnTextChanged(input)
 	if not strmatch(strlower(private.currentGroupPath), searchStr) then
 		local titleFrame = groupsContentFrame:GetElement("header.title")
 		local buttonsFrame = groupsContentFrame:GetElement("buttons")
-		input:GetElement("__parent.groupTree"):SetSelectedGroup(TSM.CONST.ROOT_GROUP_PATH)
+		input:GetElement("__parent.__parent.groupTree"):SetSelectedGroup(TSM.CONST.ROOT_GROUP_PATH)
 		titleFrame:GetElement("text")
 			:SetText(L["No group selected"])
 			:SetEditing(false)
@@ -462,9 +477,33 @@ function private.GroupSearchOnTextChanged(input)
 		buttonsFrame:Draw()
 		titleFrame:Draw()
 	end
-	input:GetElement("__parent.groupTree")
+	input:GetElement("__parent.__parent.groupTree")
 		:SetSearchString(private.groupSearch)
 		:Draw()
+end
+
+local function MoreDialogRowIterator(_, prevIndex)
+	if prevIndex == nil then
+		return 1, L["Expand All Groups"], private.ExpandAllBtnOnClick
+	elseif prevIndex == 1 then
+		return 2, L["Collapse All Groups"], private.CollapseAllBtnOnClick
+	end
+end
+
+function private.MoreBtnOnClick(button)
+	button:GetBaseElement():ShowMoreButtonDialog(button, MoreDialogRowIterator)
+end
+
+function private.ExpandAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.groups.groupSelection.groupTree"):ExpandAll()
+	baseFrame:HideDialog()
+end
+
+function private.CollapseAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.groups.groupSelection.groupTree"):CollapseAll()
+	baseFrame:HideDialog()
 end
 
 function private.GroupTreeGetList(groups, headerNameLookup)
@@ -516,6 +555,7 @@ function private.TitleOnValueChanged(text, newValue)
 		text:Draw()
 	else
 		TSM.Groups.Move(private.currentGroupPath, newPath)
+		TSM.Analytics.Action("MOVED_GROUP", private.currentGroupPath, newPath)
 		text:GetElement("__parent.__parent.__parent.__parent.groupSelection.groupTree"):SetSelectedGroup(newPath, true)
 	end
 end
@@ -558,14 +598,17 @@ end
 
 function private.AddItemsOnClick(self)
 	local itemList = self:GetElement("__parent.content.itemList")
+	local numAdded = 0
 	for _, items in ipairs(private.GetUngroupedItemList()) do
 		for _, itemLink in ipairs(items) do
 			if itemList:IsItemSelected(itemLink) then
 				local itemString = TSMAPI_FOUR.Item.ToItemString(itemLink)
 				TSM.Groups.SetItemGroup(itemString, private.currentGroupPath)
+				numAdded = numAdded + 1
 			end
 		end
 	end
+	TSM.Analytics.Action("ADDED_GROUP_ITEMS", private.currentGroupPath, numAdded)
 
 	-- update the item lists
 	itemList:SetItems(private.GetUngroupedItemList(), true)
@@ -580,6 +623,7 @@ local function UngroupedMoreDialogRowIterator(_, prevIndex)
 		return 2, L["Deselect All Items"], private.UngroupedDeselectAllBtnOnClick
 	end
 end
+
 function private.UngroupedMoreBtnOnClick(button)
 	button:GetBaseElement():ShowMoreButtonDialog(button, UngroupedMoreDialogRowIterator)
 end
@@ -611,6 +655,7 @@ local function GroupedMoreDialogRowIterator(_, prevIndex)
 		return 2, L["Deselect All Items"], private.GroupedDeselectAllBtnOnClick
 	end
 end
+
 function private.GroupedMoreBtnOnClick(button)
 	button:GetBaseElement():ShowMoreButtonDialog(button, GroupedMoreDialogRowIterator)
 end
@@ -637,12 +682,15 @@ end
 
 function private.RemoveItemsOnClick(self)
 	local itemList = self:GetElement("__parent.content.itemList")
+	local numRemoved = 0
 	local targetGroup = IsShiftKeyDown() and TSM.Groups.Path.GetParent(private.currentGroupPath) or nil
 	for _, itemLink in ipairs(private.GetGroupedItemList()) do
 		if itemList:IsItemSelected(itemLink) then
 			TSM.Groups.SetItemGroup(TSMAPI_FOUR.Item.ToItemString(itemLink), targetGroup)
+			numRemoved = numRemoved + 1
 		end
 	end
+	TSM.Analytics.Action("REMOVED_GROUP_ITEMS", private.currentGroupPath, numRemoved, targetGroup or "")
 
 	-- update the item lists
 	itemList:SetItems(private.GetGroupedItemList(), true)
@@ -662,6 +710,7 @@ function private.OverrideToggleOnValueChanged(self, value)
 	local moduleOperationFrame = self:GetParentElement():GetParentElement()
 	local moduleName = moduleOperationFrame:GetContext()
 	TSM.Groups.SetOperationOverride(private.currentGroupPath, moduleName, value)
+	TSM.Analytics.Action("CHANGED_GROUP_OVERRIDE", private.currentGroupPath, moduleName, value)
 	moduleOperationFrame:GetParentElement():GetParentElement():ReloadContent()
 end
 
@@ -679,9 +728,11 @@ function private.NewOperationSelectionChanged(self, operationName)
 		operationName = operationName..extra
 		TSM.Operations.Create(moduleName, operationName)
 		TSM.Groups.AppendOperation(private.currentGroupPath, moduleName, operationName)
+		TSM.Analytics.Action("ADDED_GROUP_OPERATION", private.currentGroupPath, moduleName, operationName)
 		TSM.MainUI.Operations.ShowOperationSettings(self:GetBaseElement(), moduleName, operationName)
 	else
 		TSM.Groups.AppendOperation(private.currentGroupPath, moduleName, operationName)
+		TSM.Analytics.Action("ADDED_GROUP_OPERATION", private.currentGroupPath, moduleName, operationName)
 		moduleOperationFrame:GetParentElement():GetParentElement():ReloadContent()
 	end
 end
@@ -695,7 +746,17 @@ end
 
 function private.RemoveOperationOnClick(button)
 	local moduleOperationFrame = button:GetParentElement():GetParentElement():GetParentElement()
-	TSM.Groups.RemoveOperation(private.currentGroupPath, moduleOperationFrame:GetContext(), button:GetContext())
+	local moduleName = moduleOperationFrame:GetContext()
+	local operationIndex = button:GetContext()
+	local operationName = nil
+	for index, name in TSM.Groups.OperationIterator(private.currentGroupPath, moduleName) do
+		if index == operationIndex then
+			operationName = name
+		end
+	end
+	assert(operationName)
+	TSM.Groups.RemoveOperation(private.currentGroupPath, moduleName, operationIndex)
+	TSM.Analytics.Action("REMOVED_GROUP_OPERATION", private.currentGroupPath, moduleName, operationName)
 	moduleOperationFrame:GetParentElement():GetParentElement():ReloadContent()
 end
 

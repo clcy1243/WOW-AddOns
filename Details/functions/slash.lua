@@ -162,6 +162,35 @@ function SlashCmdList.DETAILS (msg, editbox)
 	elseif (command == Loc ["STRING_SLASH_CHANGES"] or command == Loc ["STRING_SLASH_CHANGES_ALIAS1"] or command == Loc ["STRING_SLASH_CHANGES_ALIAS2"] or command == "news" or command == "updates") then
 		_detalhes:OpenNewsWindow()
 	
+	elseif (command == "debugwindow") then
+		
+		local window1 = Details:GetWindow(1)
+		if (window1) then
+			local state = {
+				ParentName = window1.baseframe:GetParent():GetName(),
+				Alpha = window1.baseframe:GetAlpha(),
+				IsShown = window1.baseframe:IsShown(),
+				IsOpen = window1:IsEnabled() and true or false,
+				NumPoints = window1.baseframe:GetNumPoints(),
+			}
+			
+			for i = 1, window1.baseframe:GetNumPoints() do
+				state ["Point" .. i] = {window1.baseframe:GetPoint (i)}
+			end
+			
+			local parent = window1.baseframe:GetParent()
+			
+			state ["ParentInfo"] = {
+				Alpha = parent:GetAlpha(),
+				IsShown = parent:IsShown(),
+				NumPoints = parent:GetNumPoints(),
+			}
+			
+			Details:Dump (state)
+		else
+			Details:Msg ("Window 1 not found.")
+		end
+	
 	elseif (command == "spells") then
 		Details.OpenForge()
 		DetailsForgePanel.SelectModule (_, _, 2)
@@ -210,6 +239,28 @@ function SlashCmdList.DETAILS (msg, editbox)
 		else
 			print ("|cFF00FF00No error occured!|r")
 		end
+	
+	elseif (msg == "tr") then
+		
+		local f = CreateFrame ("frame", nil, UIParent)
+		f:SetSize (300, 300)
+		f:SetPoint ("center")
+		
+--		/run TTT:SetTexture ("Interface\\1024.tga")
+		local texture = f:CreateTexture ("TTT", "background")
+		texture:SetAllPoints()
+		texture:SetTexture ("Interface\\1023.tga")
+		
+		local A = DetailsFramework:CreateAnimationHub (texture)
+		
+		local b = DetailsFramework:CreateAnimation (A, "ROTATION", 1, 40, 360)
+		b:SetTarget (texture)
+		A:Play()
+		
+		C_Timer.NewTicker (1, function()
+			texture:SetTexCoord (math.random(), math.random(), math.random(), math.random(), math.random(), math.random(), math.random(), math.random())
+		end)
+		
 	
 	elseif (msg == "realmsync") then
 		
@@ -1374,7 +1425,8 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 			startDate = lastSegment:GetDate()
 		end
 		
-		_detalhes:Msg ("done merging " .. segmentsAdded .. " segments.")
+		newCombat.is_trash = false
+		_detalhes:Msg ("done merging, segments: " .. segmentsAdded .. ", total time: " .. DetailsFramework:IntegerToTimer (totalTime))
 
 		--[[ --mythic+ debug
 		--> tag the segment as mythic overall segment
@@ -1494,6 +1546,65 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 	elseif (msg == "update") then
 		_detalhes:CopyPaste ([[https://www.wowinterface.com/downloads/info23056-DetailsDamageMeter8.07.3.5.html]])
 	
+	
+	elseif (msg == "share") then
+	
+		local f = {}
+		
+		local elapsed = GetTime()
+
+		local ignoredKeys = {
+			minha_barra = true,
+			__index = true,
+			shadow = true,
+			links = true,
+			__call = true,
+			_combat_table = true,
+			previous_combat = true,
+			owner = true,
+		}
+		
+		local keys = {}
+		
+		--> copy from table2 to table1 overwriting values
+		function f.copy (t1, t2)
+			if (t1.Timer) then
+				t1, t2 = t1.t1, t1.t2
+			end
+			for key, value in pairs (t2) do 
+				if (not ignoredKeys [key] and type (value) ~= "function") then
+					if (key == "targets") then
+						t1 [key] = {}
+					
+					elseif (type (value) == "table") then
+						t1 [key] = t1 [key] or {}
+						
+						--print (key, value)
+						--local d = C_Timer.NewTimer (1, f.copy)
+						--d.t1 = t1 [key]
+						--d.t2 = t2 [key]
+						--d.Timer = true
+						
+						keys [key] = true
+						
+						f.copy (t1 [key], t2 [key])
+					else
+						t1 [key] = value
+					end
+				end
+			end
+			return t1
+		end
+		
+		--local copySegment = f.copy ({}, _detalhes.tabela_vigente)
+		local copySegment = f.copy ({}, _detalhes.tabela_historico.tabelas [2])
+		
+		--the segment received is raw and does not have metatables, need to refresh them
+		local zipData = Details:CompressData (copySegment, "print")
+		
+		--print (zipData)
+		--Details:Dump (keys)
+		Details:Dump ({zipData})
 	else
 		
 		--if (_detalhes.opened_windows < 1) then
@@ -1553,7 +1664,8 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		end
 		
 		print (" ")
-		print (Loc ["STRING_DETAILS1"] .. "" .. _detalhes.userversion .. " [|cFFFFFF00CORE: " .. _detalhes.realversion .. "|r] " ..  Loc ["STRING_COMMAND_LIST"] .. ":")
+		local v = _detalhes.game_version .. "." .. (_detalhes.build_counter >= _detalhes.alpha_build_counter and _detalhes.build_counter or _detalhes.alpha_build_counter)
+		print (Loc ["STRING_DETAILS1"] .. "" .. v .. " [|cFFFFFF00CORE: " .. _detalhes.realversion .. "|r] " ..  Loc ["STRING_COMMAND_LIST"] .. ":")
 		
 		print ("|cffffaeae/details|r |cffffff33" .. Loc ["STRING_SLASH_NEW"] .. "|r: " .. Loc ["STRING_SLASH_NEW_DESC"])
 		print ("|cffffaeae/details|r |cffffff33" .. Loc ["STRING_SLASH_SHOW"] .. " " .. Loc ["STRING_SLASH_HIDE"] .. " " .. Loc ["STRING_SLASH_TOGGLE"] .. "|r|cfffcffb0 <" .. Loc ["STRING_WINDOW_NUMBER"] .. ">|r: " .. Loc ["STRING_SLASH_SHOWHIDETOGGLE_DESC"])

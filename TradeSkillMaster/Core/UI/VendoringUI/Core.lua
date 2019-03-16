@@ -37,6 +37,7 @@ end
 -- ============================================================================
 
 function private.CreateMainFrame()
+	TSM.UI.AnalyticsRecordPathChange("vendoring")
 	local frame = TSMAPI_FOUR.UI.NewElement("LargeApplicationFrame", "base")
 		:SetParent(UIParent)
 		:SetMinResize(MIN_FRAME_SIZE.width, MIN_FRAME_SIZE.height)
@@ -61,6 +62,7 @@ end
 -- ============================================================================
 
 function private.BaseFrameOnHide()
+	TSM.UI.AnalyticsRecordClose("vendoring")
 	private.fsm:ProcessEvent("EV_FRAME_HIDE")
 end
 

@@ -4,6 +4,29 @@ Simulationcraft = LibStub("AceAddon-3.0"):NewAddon(Simulationcraft, "Simulationc
 ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
 LibRealmInfo = LibStub("LibRealmInfo")
 
+-- Set up DataBroker for minimap button
+SimcLDB = LibStub("LibDataBroker-1.1"):NewDataObject("SimulationCraft", {
+  type = "data source",
+  text = "SimulationCraft",
+  label = "SimulationCraft",
+  icon = "Interface\\AddOns\\SimulationCraft\\logo",
+  OnClick = function()
+    if SimcCopyFrame:IsShown() then
+      SimcCopyFrame:Hide()
+    else
+      Simulationcraft:PrintSimcProfile(false, false)
+    end
+  end,
+  OnTooltipShow = function(tt)
+    tt:AddLine("SimulationCraft")
+    tt:AddLine(" ")
+    tt:AddLine("Click to show SimC input")
+    tt:AddLine("To toggle minimap button, type '/simc minimap'")
+  end
+})
+
+LibDBIcon = LibStub("LibDBIcon-1.0")
+
 local OFFSET_ITEM_ID = 1
 local OFFSET_ENCHANT_ID = 2
 local OFFSET_GEM_ID_1 = 3
@@ -36,6 +59,17 @@ local regionString  = Simulationcraft.RegionString
 -- coding mistakes regarding objects and namespaces.
 
 function Simulationcraft:OnInitialize()
+  -- init databroker
+  self.db = LibStub("AceDB-3.0"):New("SimulationCraftDB", {
+    profile = {
+      minimap = {
+        hide = false,
+      },
+    },
+  });
+  LibDBIcon:Register("SimulationCraft", SimcLDB, self.db.profile.minimap)
+  Simulationcraft:UpdateMinimapButton()
+
   Simulationcraft:RegisterChatCommand('simc', 'HandleChatCommand')
 end
 
@@ -47,22 +81,45 @@ function Simulationcraft:OnDisable()
 
 end
 
+function Simulationcraft:UpdateMinimapButton()
+  if (self.db.profile.minimap.hide) then
+    LibDBIcon:Hide("SimulationCraft")
+  else
+    LibDBIcon:Show("SimulationCraft")
+  end
+end
+
+local function getLinks(input)
+  local separatedLinks = {}
+  for link in input:gmatch("|c.-|h|r") do
+     separatedLinks[#separatedLinks + 1] = link
+  end
+  return separatedLinks
+end
+
 function Simulationcraft:HandleChatCommand(input)
   local args = {strsplit(' ', input)}
 
   local debugOutput = false
   local noBags = false
+  local links = getLinks(input)
 
   for _, arg in ipairs(args) do
     if arg == 'debug' then
       debugOutput = true
     elseif arg == 'nobag' or arg == 'nobags' or arg == 'nb' then
       noBags = true
+    elseif arg == 'minimap' then
+      self.db.profile.minimap.hide = not self.db.profile.minimap.hide
+      DEFAULT_CHAT_FRAME:AddMessage("SimulationCraft: Minimap button is now " .. (self.db.profile.minimap.hide and "hidden" or "shown"))
+      Simulationcraft:UpdateMinimapButton()
+      return
     end
   end
 
-  self:PrintSimcProfile(debugOutput, noBags)
+  self:PrintSimcProfile(debugOutput, noBags, links)
 end
+
 
 local function GetItemSplit(itemLink)
   local itemString = string.match(itemLink, "item:([%-?%d:]+)")
@@ -267,10 +324,8 @@ local function GetItemStringFromItemLink(slotNum, itemLink, itemLoc, debugOutput
   end
 
   -- Get item creation context. Can be used to determine unlock/availability of azerite tiers for 3rd parties
-  -- To reduce issues with SimC, use reforge= for now
-  -- context= will be supported by simc soon and we can switch over for 8.1
   if itemSplit[OFFSET_CONTEXT] ~= 0 then
-    simcItemOptions[#simcItemOptions + 1] = 'reforge=' .. itemSplit[OFFSET_CONTEXT]
+    simcItemOptions[#simcItemOptions + 1] = 'context=' .. itemSplit[OFFSET_CONTEXT]
   end
 
   -- Azerite powers - only run in BfA client
@@ -398,10 +453,9 @@ function Simulationcraft:GetReoriginationArrayStacks()
 end
 
 -- This is the workhorse function that constructs the profile
-function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
+function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
   -- addon metadata
   local versionComment = '# SimC Addon ' .. GetAddOnMetadata('Simulationcraft', 'Version')
-  local reforgeWarning = '# 8.0 Note: reforge= is being used as a hacky way to capture item context. This will be changed in 8.1'
 
   -- Basic player info
   local _, realmName, _, _, _, _, region, _, _, realmLatinName, _ = LibRealmInfo:GetRealmInfoByUnit('player')
@@ -475,8 +529,7 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
 
   -- Build the output string for the player (not including gear)
   local simulationcraftProfile = versionComment .. '\n'
-  simulationcraftProfile = simulationcraftProfile .. reforgeWarning .. '\n'
-  simulationcraftProfile = simulationcraftProfile .. '\n'
+  local simcPrintError = nil
   simulationcraftProfile = simulationcraftProfile .. player .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerLevel .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerRace .. '\n'
@@ -520,16 +573,32 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags)
     simulationcraftProfile = simulationcraftProfile .. '# bfa.reorigination_array_stacks=' .. reoriginationArrayStacks .. '\n'
   end
 
+  if links and #links > 0 then
+    simulationcraftProfile = simulationcraftProfile .. '\n### Linked gear\n'
+    for i,v in pairs(links) do
+      local name,_,_,_,_,_,_,_,invType = GetItemInfo(v)
+      if name and invType ~= "" then
+        local slotNum = Simulationcraft.invTypeToSlotNum[invType]
+        simulationcraftProfile = simulationcraftProfile .. '#\n'
+        simulationcraftProfile = simulationcraftProfile .. '# ' .. name .. '\n'
+        simulationcraftProfile = simulationcraftProfile .. '# ' .. GetItemStringFromItemLink(slotNum, v, nil, debugOutput) .. "\n"
+      else -- Someone linked something that was not gear.
+        simcPrintError = "Error: " .. v .. " is not gear."
+        break
+      end
+    end
+  end
+
   -- sanity checks - if there's anything that makes the output completely invalid, punt!
   if specId==nil then
-    simulationcraftProfile = "Error: You need to pick a spec!"
+    simcPrintError = "Error: You need to pick a spec!"
   end
 
   -- show the appropriate frames
   SimcCopyFrame:Show()
   SimcCopyFrameScroll:Show()
   SimcCopyFrameScrollText:Show()
-  SimcCopyFrameScrollText:SetText(simulationcraftProfile)
+  SimcCopyFrameScrollText:SetText(simcPrintError or simulationcraftProfile)
   SimcCopyFrameScrollText:HighlightText()
   SimcCopyFrameScrollText:SetScript("OnEscapePressed", function(self)
     SimcCopyFrame:Hide()

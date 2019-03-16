@@ -66,6 +66,7 @@ end
 -- ============================================================================
 
 function private.GetSendFrame()
+	TSM.UI.AnalyticsRecordPathChange("mailing", "send")
 	local frame = TSMAPI_FOUR.UI.NewElement("Frame", "send")
 		:SetLayout("VERTICAL")
 		:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "container")
@@ -481,6 +482,7 @@ function private.SubjectBtnOnClick(button)
 					:SetText(private.body)
 					:SetScript("OnTextChanged", private.DesciptionOnTextChanged)
 					:SetScript("OnSizeChanged", private.DesciptionOnSizeChanged)
+					:SetScript("OnCursorChanged", private.DesciptionOnCursorChanged)
 				)
 			)
 			:SetScript("OnMouseUp", private.DescriptionOnMouseUp)
@@ -528,9 +530,7 @@ end
 
 function private.SendFrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 36)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(36)
 
 	private.fsm:ProcessEvent("EV_FRAME_SHOW", frame)
 end
@@ -730,9 +730,11 @@ function private.DesciptionOnSizeChanged(input, width, height)
 
 	input:SetStyle("height", height)
 	input:GetParentElement():Draw()
+end
 
-	local scrollframe = input:GetParentElement()
-	scrollframe._scrollbar:SetValue(scrollframe:_GetMaxScroll())
+function private.DesciptionOnCursorChanged(input, _, y)
+	local scrollFrame = input:GetParentElement()
+	scrollFrame._scrollbar:SetValue(TSMAPI_FOUR.Util.Round(abs(y) / (input:_GetStyle("height") - 22) * scrollFrame:_GetMaxScroll()))
 end
 
 function private.SendOnValueChanged(checkbox)
@@ -754,6 +756,13 @@ function private.CODOnValueChanged(checkbox)
 
 		private.isMoney = false
 		private.isCOD = true
+
+		local input = checkbox:GetElement("__parent.moneyInput")
+		local text = gsub(strtrim(input:GetText()), TSMAPI_FOUR.Util.StrEscape(LARGE_NUMBER_SEPERATOR), "")
+		local value = tonumber(text) or TSM.Money.FromString(text) or 0
+		private.money = private.isCOD and min(value, 100000000) or value
+		input:SetText(TSM.Money.ToString(private.money))
+			:Draw()
 	else
 		private.isCOD = false
 	end
@@ -779,6 +788,11 @@ function private.MoneyOnTextChanged(input)
 end
 
 function private.MoneyValueConvert(input)
+	local text = gsub(strtrim(input:GetText()), TSMAPI_FOUR.Util.StrEscape(LARGE_NUMBER_SEPERATOR), "")
+	local value = max(tonumber(text) or TSM.Money.FromString(text) or 0, 0)
+
+	private.money = private.isCOD and min(value, 100000000) or value
+
 	input:SetFocused(false)
 	input:SetText(TSM.Money.ToString(private.money))
 		:Draw()
@@ -798,6 +812,7 @@ function private.SendMail(button)
 		money = private.money * -1
 	end
 
+	button:GetElement("__parent.__parent.container.name.input"):SetFocused(false)
 	private.UpdateRecentlyMailed(private.recipient)
 
 	if private.query:Count() > 0 then
@@ -1045,9 +1060,6 @@ function private.FSMCreate()
 			:AddTransition("ST_SHOWN")
 			:AddTransition("ST_HIDDEN")
 			:AddEvent("EV_FRAME_SHOW", TSMAPI_FOUR.FSM.SimpleTransitionEventHandler("ST_SHOWN"))
-			:AddEvent("EV_MAIL_CLEAR", function(context, redraw)
-				ClearMail(context, redraw)
-			end)
 		)
 		:AddState(TSMAPI_FOUR.FSM.NewState("ST_SHOWN")
 			:SetOnEnter(function(context, frame)
@@ -1068,7 +1080,7 @@ function private.FSMCreate()
 				UpdateFrame(context)
 			end)
 			:AddEvent("EV_MAIL_CLEAR", function(context, redraw)
-				ClearMail(context, redraw)
+				ClearMail(context, IsShiftKeyDown(), redraw)
 			end)
 			:AddEvent("EV_BUTTON_CLICKED", TSMAPI_FOUR.FSM.SimpleTransitionEventHandler("ST_SENDING_START"))
 		)

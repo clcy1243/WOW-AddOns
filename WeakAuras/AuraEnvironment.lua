@@ -25,8 +25,8 @@ end
 
 -- Function to assist iterating group members whether in a party or raid.
 local WA_IterateGroupMembers = function(reversed, forceParty)
-  local unit  = (not forceParty and IsInRaid()) and 'raid' or 'party'
-  local numGroupMembers = (forceParty and GetNumSubgroupMembers()  or GetNumGroupMembers())
+  local unit = (not forceParty and IsInRaid()) and 'raid' or 'party'
+  local numGroupMembers = unit == 'party' and GetNumSubgroupMembers() or GetNumGroupMembers()
   local i = reversed and numGroupMembers or (unit == 'party' and 0 or 1)
   return function()
     local ret
@@ -55,9 +55,9 @@ local helperFunctions = {
   WA_ClassColorName = WA_ClassColorName,
 }
 
-local LBG = LibStub("LibButtonGlow-1.0")
-WeakAuras.ShowOverlayGlow = LBG.ShowOverlayGlow
-WeakAuras.HideOverlayGlow = LBG.HideOverlayGlow
+local LCG = LibStub("LibCustomGlow-1.0")
+WeakAuras.ShowOverlayGlow = LCG.ButtonGlow_Start
+WeakAuras.HideOverlayGlow = LCG.ButtonGlow_Stop
 
 local function forbidden()
   prettyPrint(L["A WeakAura just tried to use a forbidden function but has been blocked from doing so. Please check your auras!"])
@@ -145,6 +145,7 @@ function WeakAuras.ActivateAuraEnvironment(id, cloneId, state)
       current_aura_env.cloneId = cloneId
       current_aura_env.state = state
       current_aura_env.region = WeakAuras.GetRegion(id, cloneId)
+      current_aura_env.config = CopyTable(data.config)
       -- Push the new environment onto the stack
       tinsert(aura_env_stack, current_aura_env)
       -- Run the init function if supplied

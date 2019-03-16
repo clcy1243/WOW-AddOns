@@ -52,6 +52,7 @@ end
 -- ============================================================================
 
 function private.DrawResalePage()
+	TSM.UI.AnalyticsRecordPathChange("main", "ledger", "revenue", "resale")
 	wipe(private.characters)
 	tinsert(private.characters, ALL)
 	TSM.Accounting.Transactions.GetCharacters(private.characters)
@@ -181,7 +182,6 @@ function private.DrawResalePage()
 				:GetScrollingTableInfo()
 					:NewColumn("item")
 						:SetTitles(L["Item"])
-						:SetWidth(140)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("LEFT")
@@ -209,7 +209,7 @@ function private.DrawResalePage()
 						:Commit()
 					:NewColumn("bought")
 						:SetTitles(L["Bought"])
-						:SetWidth(60)
+						:SetWidth(70)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("RIGHT")
@@ -227,6 +227,7 @@ function private.DrawResalePage()
 						:Commit()
 					:NewColumn("avgResaleProfit")
 						:SetTitles(L["Avg Resale Profit"])
+						:SetWidth(140)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("RIGHT")
@@ -316,7 +317,7 @@ function private.UpdateQuery()
 end
 
 function private.CompareRarityFilter(row, rarityFilter)
-	return rarityFilter[row:GetField("quality")] and true or false
+	return TSMAPI_FOUR.Util.TableKeyByValue(rarityFilter, row:GetField("quality")) and true or false
 end
 
 function private.TableSelectionChanged(scrollingTable, row)

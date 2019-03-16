@@ -120,6 +120,7 @@ end
 -- ============================================================================
 
 function private.CreateMainFrame()
+	TSM.UI.AnalyticsRecordPathChange("task_list")
 	local frame = TSMAPI_FOUR.UI.NewElement("OverlayApplicationFrame", "base")
 		:SetParent(UIParent)
 		:SetStylesheet(BASE_STYLESHEET)
@@ -274,6 +275,7 @@ function private.BaseFrameOnHide(frame)
 	assert(frame == private.frame)
 	frame:Release()
 	private.frame = nil
+	TSM.UI.AnalyticsRecordClose("task_list")
 end
 
 function private.CloseBtnOnClick(button)
@@ -330,6 +332,7 @@ function private.OnTaskListUpdate()
 	if private.frame then
 		local numTasks = TSM.TaskList.GetNumTasks()
 		if numTasks == 0 then
+			private.didAutoShow = false
 			TaskListUI.Toggle()
 			return
 		end

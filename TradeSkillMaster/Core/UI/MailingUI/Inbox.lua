@@ -49,6 +49,7 @@ end
 -- ============================================================================
 
 function private.GetInboxFrame()
+	TSM.UI.AnalyticsRecordPathChange("mailing", "inbox")
 	local frame = TSMAPI_FOUR.UI.NewElement("Frame", "frame")
 		:SetLayout("VERTICAL")
 		:AddChild(TSMAPI_FOUR.UI.NewElement("ViewContainer", "view")
@@ -410,7 +411,6 @@ function private.GetInboxItemsFrame()
 					:Commit()
 				:SetQuery(private.itemsQuery)
 				:SetScript("OnRowClick", private.ItemQueryOnRowClick)
-				:SetScript("OnDataUpdated", private.ItemQueryOnDataUpdated)
 			)
 		)
 		:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "footer")
@@ -444,8 +444,8 @@ function private.GetInboxItemsFrame()
 	return frame
 end
 
-function private.ViewBackButtonOnClick()
-	private.view:GetElement("view"):SetPath("mails", true)
+function private.ViewBackButtonOnClick(button)
+	button:GetElement("__parent.__parent.__parent"):SetPath("mails", true)
 end
 
 function private.BodyOnSizeChanged(input, width, height)
@@ -457,7 +457,7 @@ function private.ItemQueryOnRowClick(scrollingTable, row)
 	local index = row:GetField("index")
 	local _, _, _, _, _, cod = GetInboxHeaderInfo(index)
 	if cod > 0 then
-		scrollingTable:GetBaseElement():ShowConfirmationDialog(L["Accepting this item will cost"]..":", TSM.Money.ToString(cod), strupper(ACCEPT), function() private.TakeInboxItem(scrollingTable, row) end)
+		scrollingTable:GetBaseElement():ShowConfirmationDialog(L["Accepting this item will cost"]..":", TSM.Money.ToString(cod), strupper(ACCEPT), private.TakeInboxItem, scrollingTable, row)
 		return
 	end
 
@@ -473,7 +473,7 @@ function private.TakeInboxItem(scrollingTable, row)
 		else
 			TakeInboxItem(index, row:GetField("itemIndex"))
 		end
-		private.view:GetElement("view"):SetPath("mails", true)
+		scrollingTable:GetElement("__parent.__parent.__parent"):SetPath("mails", true)
 	else
 		if itemIndex == 0 then
 			TakeInboxMoney(index)
@@ -494,15 +494,15 @@ end
 function private.TakeAllOnClick(button)
 	local _, _, _, _, _, cod = GetInboxHeaderInfo(private.selectedMail)
 	if cod > 0 then
-		button:GetBaseElement():ShowConfirmationDialog(L["Accepting these item(s) will cost"]..":", TSM.Money.ToString(cod), strupper(ACCEPT), private.AutoLootMailItem)
+		button:GetBaseElement():ShowConfirmationDialog(L["Accepting these item(s) will cost"]..":", TSM.Money.ToString(cod), strupper(ACCEPT), private.AutoLootMailItem, button)
 	else
-		private.AutoLootMailItem()
+		private.AutoLootMailItem(button)
 	end
 end
 
-function private.AutoLootMailItem()
+function private.AutoLootMailItem(button)
 	AutoLootMailItem(private.selectedMail)
-	private.view:GetElement("view"):SetPath("mails", true)
+	button:GetElement("__parent.__parent.__parent.__parent"):SetPath("mails", true)
 end
 
 function private.ReplyOnClick(button)
@@ -524,7 +524,7 @@ function private.DeleteMailOnClick(button)
 	else
 		ReturnInboxItem(private.selectedMail)
 	end
-	private.view:GetElement("view"):SetPath("mails", true)
+	button:GetElement("__parent.__parent.__parent"):SetPath("mails", true)
 end
 
 function private.UpdateInboxItemsFrame()
@@ -579,7 +579,18 @@ function private.UpdateInboxItemsFrame()
 		private.frameItems:GetElement("footer.return/send"):SetDisabled(false)
 	end
 
-	local bodyText = GetInboxText(private.selectedMail)
+	local bodyText, _, _, _, isInvoice = GetInboxText(private.selectedMail)
+	if isInvoice then
+		local invoiceType, itemName, playerName, bid, buyout, deposit, consignment, _, etaHour, etaMin = GetInboxInvoiceInfo(private.selectedMail)
+		local purchaseType = bid == buyout and BUYOUT or HIGH_BIDDER
+		if invoiceType == "buyer" then
+			bodyText = ITEM_PURCHASED_COLON.." "..itemName.."\n"..SOLD_BY_COLON.." "..playerName.." ("..purchaseType..")".."\n\n"..AMOUNT_RECEIVED_COLON.." "..TSM.Money.ToString(bid)
+		elseif invoiceType == "seller" then
+			bodyText = ITEM_SOLD_COLON.." "..itemName.."\n"..PURCHASED_BY_COLON.." "..playerName.." ("..purchaseType..")".."\n\n"..L["Sale Price"]..": "..TSM.Money.ToString(bid).."\n"..L["Deposit"]..": +"..TSM.Money.ToString(deposit).."\n"..L["Auction House Cut"]..": -"..TSM.Money.ToString(consignment, "|cffff0000").."\n\n"..AMOUNT_RECEIVED_COLON.." "..TSM.Money.ToString(bid + deposit - consignment)
+		elseif invoiceType == "seller_temp_invoice" then
+			bodyText = ITEM_SOLD_COLON.." "..itemName.."\n"..PURCHASED_BY_COLON.." "..playerName.." ("..purchaseType..")".."\n\n"..AUCTION_INVOICE_PENDING_FUNDS_COLON.." "..TSM.Money.ToString(bid + deposit - consignment).."\n"..L["Estimated deliver time"]..": "..GameTime_GetFormattedTime(etaHour, etaMin, true)
+		end
+	end
 	private.frameItems:GetElement("body.scroll.input"):SetText(bodyText or "")
 
 	if not bodyText then
@@ -627,9 +638,7 @@ end
 
 function private.InboxFrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 55)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(55)
 
 	private.UpdateCountDown(true)
 	TSMAPI_FOUR.Delay.AfterTime("mailUpdateCounter", 0, private.UpdateCountDown, 1)
@@ -639,9 +648,7 @@ end
 
 function private.InboxItemsFrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 34)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(34)
 end
 
 function private.InboxFrameOnHide(frame)
@@ -660,8 +667,9 @@ function private.InboxOnDataUpdated()
 end
 
 function private.OpenBtnOnClick(button)
+	local context = button:GetContext()
 	button:SetPressed(true)
-	private.fsm:ProcessEvent("EV_BUTTON_CLICKED", IsShiftKeyDown(), private.filterText, button:GetContext())
+	private.fsm:ProcessEvent("EV_BUTTON_CLICKED", IsShiftKeyDown(), not context and IsControlKeyDown(), private.filterText, context)
 end
 
 function private.QueryOnRowClick(scrollingTable, row, button)
@@ -678,7 +686,7 @@ function private.QueryOnRowClick(scrollingTable, row, button)
 	else
 		TSM.Mailing.Open.KillThread()
 		private.selectedMail = row:GetField("index")
-		private.view:GetElement("view"):SetPath("items", true)
+		scrollingTable:GetElement("__parent.__parent"):SetPath("items", true)
 	end
 end
 
@@ -757,7 +765,13 @@ function private.FormatItem(row)
 	end
 
 	if not items or items == "" then
-		items = gsub(row:GetField("subject"), strtrim(AUCTION_SOLD_MAIL_SUBJECT, "%s.*"), "") or "--"
+		local subject = row:GetField("subject")
+		if subject ~= "" then
+			items = gsub(row:GetField("subject"), strtrim(AUCTION_SOLD_MAIL_SUBJECT, "%s.*"), "") or "--"
+		else
+			local _, _, sender = GetInboxHeaderInfo(row:GetField("index"))
+			items = sender
+		end
 	end
 
 	return items
@@ -961,10 +975,10 @@ function private.FSMCreate()
 			:AddEvent("EV_BUTTON_CLICKED", TSMAPI_FOUR.FSM.SimpleTransitionEventHandler("ST_OPENING_START"))
 		)
 		:AddState(TSMAPI_FOUR.FSM.NewState("ST_OPENING_START")
-			:SetOnEnter(function(context, autoRefresh, filterText, filterType)
+			:SetOnEnter(function(context, autoRefresh, keepMoney, filterText, filterType)
 				context.opening = true
 				UpdateButtons(context)
-				TSM.Mailing.Open.StartOpening(private.FSMOpenCallback, autoRefresh, filterText, filterType)
+				TSM.Mailing.Open.StartOpening(private.FSMOpenCallback, autoRefresh, keepMoney, filterText, filterType)
 			end)
 			:SetOnExit(function(context)
 				context.opening = false

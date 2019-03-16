@@ -15,6 +15,7 @@ local VUHDO_SHIELDS = {
 	[114893] = 10, -- Stone Bulwark Totem (shaman talent)
 	[152118] = 15, -- VUHDO_SPELL_ID.CLARITY_OF_WILL
 	[187805] = 15, -- VUHDO_SPELL_ID.BUFF_ETHERALUS
+	[271466] = 10, -- VUHDO_SPELL_ID.LUMINOUS_BARRIER
 }
 
 
@@ -23,7 +24,7 @@ local VUHDO_PUMP_SHIELDS = {
 }
 
 
--- HoTs which we want to explicitl update on SPELL_AURA_APPLIED 
+-- HoTs which we want to explicitly update on SPELL_AURA_APPLIED 
 -- This avoids any display delays on contingent auras (eg. Atonement)
 local VUHDO_IMMEDIATE_HOTS = {
 	[VUHDO_SPELL_ID.ATONEMENT] = true,
@@ -38,30 +39,36 @@ local VUHDO_ABSORB_DEBUFFS = {
 	[110214] = function(aUnit) return 280000, 2 * 60; end, -- Consuming Shroud
 
 	-- Patch 6.2 - Hellfire Citadel
-	[189030] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_BEFOULED)), 10 * 60; end, -- Fel Lord Zakuun
-	[189031] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_BEFOULED)), 10 * 60; end, -- Fel Lord Zakuun
-	[189032] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_BEFOULED)), 10 * 60; end, -- Fel Lord Zakuun
-	[180164] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_TOUCH_OF_HARM)), 10 * 60; end, -- Tyrant Velhari
-	[180166] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_TOUCH_OF_HARM)), 10 * 60; end, -- Tyrant Velhari
+	[189030] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_BEFOULED)), 10 * 60; end, -- Fel Lord Zakuun
+	[189031] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_BEFOULED)), 10 * 60; end, -- Fel Lord Zakuun
+	[189032] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_BEFOULED)), 10 * 60; end, -- Fel Lord Zakuun
+	[180164] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_TOUCH_OF_HARM)), 10 * 60; end, -- Tyrant Velhari
+	[180166] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_TOUCH_OF_HARM)), 10 * 60; end, -- Tyrant Velhari
 
 	-- Patch 7.0 - Legion
-	[221772] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_OVERFLOW)), 1 * 60; end, -- Mythic+ affix
+	[221772] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_OVERFLOW)), 1 * 60; end, -- Mythic+ affix
 
 	-- Patch 7.1 - Legion - Trial of Valor
-	[228253] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_SHADOW_LICK)), 10 * 60; end, -- Shadow Lick
-	[232450] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_CORRUPTED_AXION)), 30; end, -- Corrupted Axion
+	[228253] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_SHADOW_LICK)), 10 * 60; end, -- Shadow Lick
+	[232450] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_CORRUPTED_AXION)), 30; end, -- Corrupted Axion
 
 	-- Patch 7.1.5 - Legion - Nighthold
-	[206609] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_TIME_RELEASE)), 30; end, -- Chronomatic Anomaly Time Release
-	[219964] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_TIME_RELEASE)), 30; end, -- Chronomatic Anomaly Time Release Geen
-	[219965] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_TIME_RELEASE)), 30; end, -- Chronomatic Anomaly Time Release Yellow
-	[219966] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_TIME_RELEASE)), 30; end, -- Chronomatic Anomaly Time Release Red
+	[206609] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_TIME_RELEASE)), 30; end, -- Chronomatic Anomaly Time Release
+	[219964] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_TIME_RELEASE)), 30; end, -- Chronomatic Anomaly Time Release Geen
+	[219965] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_TIME_RELEASE)), 30; end, -- Chronomatic Anomaly Time Release Yellow
+	[219966] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_TIME_RELEASE)), 30; end, -- Chronomatic Anomaly Time Release Red
 
 	-- Patch 7.2.5 - Legion - Tomb of Sargeras
-	[233263] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_EMBRACE_OF_THE_ECLIPSE)), 12; end, -- Sisters Embrace of the Eclipse
+	[233263] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_EMBRACE_OF_THE_ECLIPSE)), 12; end, -- Sisters Embrace of the Eclipse
 
 	-- Patch 7.3 - Legion - Antorus, The Burning Throne
-	[245586] = function(aUnit) return select(16, VUHDO_unitAura(aUnit, VUHDO_SPELL_ID.DEBUFF_CHILLED_BLOOD)), 10; end, -- Coven Chilled Blood
+	[245586] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_CHILLED_BLOOD)), 10; end, -- Coven Chilled Blood
+
+	-- Patch 8.0 - Battle for Azeroth - Uldir
+	[265206] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_IMMUNOSUPPRESSION)), 10 * 60; end, -- Vectis Immunosuppression
+
+	-- Patch 8.0 - Battle for Azeroth - The Underrot
+	[278961] = function(aUnit) return select(16, VUHDO_unitDebuff(aUnit, VUHDO_SPELL_ID.DEBUFF_DECAYING_MIND)), 30; end, -- Diseased Lasher Decaying Mind
 
 	--[79105] = function(aUnit) return 280000, 60 * 60; end, -- @TESTING PW:F
 };
@@ -148,12 +155,11 @@ local function VUHDO_updateShieldValue(aUnit, aShieldName, anAmount, aDuration)
 		return;
 	end
 
-	if aDuration and VUHDO_SHIELD_LEFT[aUnit][aShieldName] <= anAmount then
+	if aDuration then
 		VUHDO_SHIELD_EXPIRY[aUnit][aShieldName] = GetTime() + aDuration;
+		VUHDO_SHIELD_SIZE[aUnit][aShieldName] = anAmount;
 		--VUHDO_xMsg("Shield overwritten");
-	end
-
-	if VUHDO_SHIELD_SIZE[aUnit][aShieldName] < anAmount then
+	elseif VUHDO_SHIELD_SIZE[aUnit][aShieldName] < anAmount then
 		VUHDO_SHIELD_SIZE[aUnit][aShieldName] = anAmount;
 	end
 
@@ -216,7 +222,7 @@ local tSpellName;
 local function VUHDO_updateShields(aUnit)
 	for tSpellId, _ in pairs(VUHDO_SHIELDS) do
 		tSpellName = select(1, GetSpellInfo(tSpellId));
-		tRemain = select(16, VUHDO_unitAura(aUnit, tSpellName));
+		tRemain = select(16, VUHDO_unitBuff(aUnit, tSpellName));
 
 		if tRemain and "number" == type(tRemain) then
 			if tRemain > 0 then
@@ -304,7 +310,7 @@ function VUHDO_parseCombatLogShieldAbsorb(aMessage, aSrcGuid, aDstGuid, aShieldN
 			VUHDO_removeShield(tUnit, aShieldName);
 			VUHDO_DEBUFF_SHIELDS[tUnit] = nil;
 		end
-	elseif "SPELL_HEAL" == aMessage or "SPELL_PERIODIC_HEAL" == aMessage
+	elseif ("SPELL_HEAL" == aMessage or "SPELL_PERIODIC_HEAL" == aMessage)
 		and VUHDO_DEBUFF_SHIELDS[tUnit]
 		and (tonumber(anAbsorbAmount) or 0) > 0 then
 		tShieldName = VUHDO_DEBUFF_SHIELDS[tUnit];

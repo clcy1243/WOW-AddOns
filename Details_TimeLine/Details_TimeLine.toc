@@ -1,6 +1,6 @@
-## Interface: 80000
-## Title: Details Time Line (plugin)
-## Notes: Plugin for Details
+## Interface: 80100
+## Title: Details!: Time Line (plugin)
+## Notes: Show the time raid members gto debuffs on them and when they used cooldowns durin an emcounter.
 ## RequiredDeps: Details
 ## OptionalDeps: Ace3
 ## SavedVariablesPerCharacter: DetailsTimeLineDB

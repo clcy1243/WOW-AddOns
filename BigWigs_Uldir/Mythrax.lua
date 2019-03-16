@@ -21,6 +21,7 @@ local beamCount = 1
 local ruinCount = 0
 local mobCollector = {}
 local voidEchoesCount = 1
+local ruinCounter = 1
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -71,8 +72,8 @@ function mod:OnBossEnable()
 
 	self:Log("SPELL_AURA_APPLIED", "Annihilation", 272146)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "Annihilation", 272146)
-	self:Log("SPELL_AURA_REMOVED", "Annihilation", 272146)
 	self:Log("SPELL_AURA_REMOVED_DOSE", "Annihilation", 272146)
+	self:Log("SPELL_AURA_REMOVED", "AnnihilationRemoved", 272146)
 
 	self:Log("SPELL_CAST_START", "EssenceShear", 273282)
 	self:Log("SPELL_AURA_APPLIED", "EssenceShearApplied", 274693)
@@ -98,10 +99,11 @@ function mod:OnEngage()
 	nextStageWarning = 69
 	annihilationList = {}
 	mobCollector = {}
+	ruinCounter = 1
 
 	self:OpenInfo(272146, self:SpellName(272146)) -- Annihilation
 
-	self:Bar(272536, 5) -- Imminent Ruin
+	self:Bar(272536, 5, CL.count:format(self:SpellName(272536), ruinCounter)) -- Imminent Ruin
 	self:Bar(272404, self:Mythic() and 7 or 9) -- Oblivion Sphere
 	self:Bar(273538, 15, L.boss_blast) -- Obliteration Blast
 	self:Bar(273282, 20.5) -- Essence Shear
@@ -110,7 +112,7 @@ function mod:OnEngage()
 		self:CDBar(276922, 10) -- Living Weapon
 	end
 
-	self:OpenProximity(272404, 8) -- Oblivion Sphere
+	self:OpenProximity(272404, 5) -- Oblivion Sphere
 	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
 end
 
@@ -142,9 +144,8 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 		stage = 2
 		self:PlaySound("stages", "long")
 		self:Message2("stages", "cyan",CL.stage:format(stage), false)
-		self:CloseProximity(272404) -- Oblivion Sphere
 
-		self:StopBar(272536) -- Imminent Ruin
+		self:StopBar(CL.count:format(self:SpellName(272536), ruinCounter)) -- Imminent Ruin
 		self:StopBar(273282) -- Essence Shear
 		self:StopBar(L.boss_blast) -- Obliteration Blast
 		self:StopBar(272404) -- Oblivion Sphere
@@ -155,15 +156,17 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 
 		visionCount = 1
 		beamCount = 1
+		ruinCounter = 1
 
 		self:CDBar("stages", self:Mythic() and 79 or 84, CL.intermission, 274230) -- 274230 = inv_icon_shadowcouncilorb_purple
 	elseif spellId == 279748 then -- Intermission End
 		stage = 1
 		self:PlaySound("stages", "long")
 		self:Message2("stages", "cyan", CL.stage:format(stage), false)
-		self:OpenProximity(272404, 8) -- Oblivion Sphere
+		self:OpenProximity(272404, 5) -- Oblivion Sphere
+		self:StopBar(CL.intermission)
 
-		self:Bar(272536, 5) -- Imminent Ruin
+		self:Bar(272536, 5, CL.count:format(self:SpellName(272536), ruinCounter)) -- Imminent Ruin
 		self:Bar(272404, self:Mythic() and 7 or 9) -- Oblivion Sphere
 		self:Bar(273538, 15, L.boss_blast) -- Obliteration Blast
 		self:Bar(273282, self:Mythic() and 23 or 20.5) -- Essence Shear
@@ -183,6 +186,11 @@ end
 
 function mod:Annihilation(args)
 	annihilationList[args.destName] = args.amount or 1
+	self:SetInfoByTable(args.spellId, annihilationList)
+end
+
+function mod:AnnihilationRemoved(args)
+	annihilationList[args.destName] = nil
 	self:SetInfoByTable(args.spellId, annihilationList)
 end
 
@@ -206,7 +214,7 @@ end
 function mod:EssenceShearApplied(args)
 	if self:Tank(args.destName) then
 		self:TargetMessage2(273282, "red", args.destName)
-		self:PlaySound(273282, "alarm")
+		self:PlaySound(273282, "alarm", nil, args.destName)
 	end
 end
 
@@ -226,12 +234,15 @@ function mod:OblivionSphere(args)
 	self:PlaySound(args.spellId, "warning")
 	if stage == 1 then
 		self:Bar(args.spellId, 15)
+	elseif stage == 2 then
+		self:CloseProximity(272404) -- Oblivion Sphere
 	end
 end
 
-function mod:ImminentRuin()
+function mod:ImminentRuin(args)
 	ruinCount = 0
-	self:Bar(272536, self:Mythic() and 20 or 15)
+	self:Bar(272536, self:Mythic() and 20 or 15, CL.count:format(args.spellName, ruinCounter))
+	ruinCounter = ruinCounter + 1
 end
 
 do
@@ -268,6 +279,7 @@ function mod:XalzaixsAwakening(args)
 	self:PlaySound(args.spellId, "long")
 	self:CastBar(args.spellId, 8) -- 2s cast, 6s channel
 
+	self:Bar(272404, 7) -- Oblivion Sphere
 	self:CDBar(272115, 18.5) -- Obliteration Beam
 	self:CDBar(273949, self:Mythic() and 26.1 or 30) -- Visions of Madness
 	self:CDBar(273282, self:Mythic() and 32 or 30, L.destroyer_cast:format(self:SpellName(273282))) -- Essence Shear
@@ -309,7 +321,7 @@ do
 	end
 
 	function mod:VisionsofMadness(args)
-		self:Message(args.spellId, "red")
+		self:Message2(args.spellId, "red")
 		self:PlaySound(args.spellId, "warning")
 		visionCount = visionCount + 1
 		if visionCount <= 2 then

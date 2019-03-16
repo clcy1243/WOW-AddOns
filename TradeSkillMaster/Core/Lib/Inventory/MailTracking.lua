@@ -113,7 +113,8 @@ function MailTracking.OnInitialize()
 	MailTracking:SecureHook("CancelAuction", function(index)
 		local itemString = TSMAPI_FOUR.Item.ToBaseItemString(GetAuctionItemLink("owner", index))
 		local _, _, stackSize = GetAuctionItemInfo("owner", index)
-		if not itemString or not stackSize then
+		-- for some reason, these APIs don't always work properly, so check the return values
+		if not itemString or not stackSize or stackSize == 0 then
 			return
 		end
 		TSM.Inventory.ChangePendingMailQuantity(itemString, stackSize)
@@ -203,8 +204,12 @@ function private.MailInboxUpdateDelayed()
 	TSM.Inventory.WipePendingMail(PLAYER_NAME)
 	TSM.Inventory.WipeMailQuantity()
 
+	local expiration = math.huge
 	for i = 1, GetInboxNumItems() do
 		local _, _, _, subject, money, cod, daysLeft, itemCount = GetInboxHeaderInfo(i)
+		if itemCount and itemCount > 0 and money and money > 0 then
+			expiration = min(expiration, time() + (daysLeft * 24 * 60 * 60))
+		end
 		local firstItemString = TSMAPI_FOUR.Item.ToItemString(private.GetInboxItemLink(i))
 		local mailType = private.GetMailType(i) or ""
 		if mailType == "BUY" then
@@ -234,6 +239,9 @@ function private.MailInboxUpdateDelayed()
 
 	private.itemDB:BulkInsertEnd()
 	private.mailDB:BulkInsertEnd()
+
+	TSM.db.factionrealm.internalData.expiringMail[PLAYER_NAME] = expiration ~= math.huge and expiration or nil
+	TSM.TaskList.Expirations.UpdateDelayed()
 end
 
 
@@ -299,10 +307,10 @@ function private.GetMailType(index)
 		return "SALE"
 	elseif numItems and numItems > 0 and info == "buyer" then
 		return "BUY"
-	elseif not (select(5, GetInboxText(index))) and numItems == 1 then
+	elseif not info and numItems == 1 then
 		local itemName = TSMAPI_FOUR.Item.GetName(private.GetInboxItemLink(index))
 		if itemName then
-			local quantity = select(4, GetInboxItem(index, 1))
+			local _, _, _, quantity = GetInboxItem(index, 1)
 			if quantity and quantity > 0 and (subject == format(AUCTION_REMOVED_MAIL_SUBJECT.." (%d)", itemName, quantity) or subject == format(AUCTION_REMOVED_MAIL_SUBJECT, itemName)) then
 				return "CANCEL"
 			end

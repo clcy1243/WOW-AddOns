@@ -28,10 +28,11 @@ end
 -- ============================================================================
 
 function private.GetTooltipSettingsFrame()
+	TSM.UI.AnalyticsRecordPathChange("main", "settings", "tooltips", "auctioning")
 	return TSMAPI_FOUR.UI.NewElement("ScrollFrame", "tooltipSettings")
 		:SetStyle("padding.left", 12)
 		:SetStyle("padding.right", 12)
-		:AddChild(TSM.MainUI.Settings.Tooltip.CreateHeading("header", L["Accounting Tooltips"]))
+		:AddChild(TSM.MainUI.Settings.Tooltip.CreateHeading("header", L["Auctioning Tooltips"]))
 		:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "dbHeadingDesc")
 			:SetStyle("height", 18)
 			:SetStyle("margin.bottom", 24)

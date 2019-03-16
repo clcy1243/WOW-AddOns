@@ -1,6 +1,7 @@
 # Capping
 
-## [v8.0.13](https://github.com/BigWigsMods/Capping/tree/v8.0.13) (2018-09-25)
-[Full Changelog](https://github.com/BigWigsMods/Capping/compare/v8.0.12...v8.0.13)
+## [v8.1.0](https://github.com/BigWigsMods/Capping/tree/v8.1.0) (2018-12-18)
+[Full Changelog](https://github.com/BigWigsMods/Capping/compare/v8.0.21...v8.1.0)
 
-- Add Mugambala arena.  
+- bump toc  
+- Fix rare error, closes #20  

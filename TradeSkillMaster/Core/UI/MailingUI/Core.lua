@@ -14,7 +14,7 @@ local private = {
 	frame = nil,
 	fsm = nil,
 	defaultUISwitchBtn = nil,
-	isVisible = false
+	isVisible = false,
 }
 local MIN_FRAME_SIZE = { width = 560, height = 500 }
 
@@ -47,6 +47,9 @@ end
 -- ============================================================================
 
 function private.CreateMainFrame()
+	TSM.UI.AnalyticsRecordPathChange("mailing")
+	-- Always show the Inbox first
+	TSM.db.global.internalData.mailingUIFrameContext.page = 1
 	local frame = TSMAPI_FOUR.UI.NewElement("LargeApplicationFrame", "base")
 		:SetParent(UIParent)
 		:SetMinResize(MIN_FRAME_SIZE.width, MIN_FRAME_SIZE.height)
@@ -73,6 +76,7 @@ end
 -- ============================================================================
 
 function private.BaseFrameOnHide()
+	TSM.UI.AnalyticsRecordClose("mailing")
 	private.fsm:ProcessEvent("EV_FRAME_HIDE")
 end
 
@@ -157,12 +161,14 @@ function private.FSMCreate()
 			:AddTransition("ST_CLOSED")
 			:AddTransition("ST_FRAME_OPEN")
 			:AddEvent("EV_FRAME_HIDE", function(context)
+				OpenMailFrame:Hide()
 				CloseMail()
 
 				return "ST_CLOSED"
 			end)
 			:AddEvent("EV_MAIL_CLOSED", TSMAPI_FOUR.FSM.SimpleTransitionEventHandler("ST_CLOSED"))
 			:AddEvent("EV_SWITCH_BTN_CLICKED", function()
+				OpenMailFrame:Hide()
 				return "ST_FRAME_OPEN"
 			end)
 		)

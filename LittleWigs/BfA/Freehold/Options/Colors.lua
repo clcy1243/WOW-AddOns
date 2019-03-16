@@ -4,19 +4,26 @@ BigWigs:AddColors("Skycap'n Kragg", {
 	[256016] = "blue",
 	[256060] = "red",
 	[256106] = "yellow",
+	[272046] = "orange",
 	["stages"] = "cyan",
 })
 
 BigWigs:AddColors("Council o' Captains", {
 	[256589] = "orange",
+	[256979] = {"blue","red"},
 	[258338] = "yellow",
 	[258381] = "red",
+	[264608] = "green",
+	[265088] = "green",
+	[265168] = {"blue","red"},
 })
 
 BigWigs:AddColors("Ring of Booty", {
-	[256358] = "yellow",
+	[256358] = {"blue","yellow"},
 	[256405] = "red",
 	[256489] = "cyan",
+	[257829] = {"blue","cyan","green"},
+	[257904] = "yellow",
 })
 
 BigWigs:AddColors("Harlan Sweete", {
@@ -37,10 +44,8 @@ BigWigs:AddColors("Freehold Trash", {
 	[257739] = "blue",
 	[257756] = "orange",
 	[257775] = "blue",
-	[257829] = {"blue","cyan","green"},
 	[257870] = "yellow",
 	[257899] = {"red","yellow"},
-	[257904] = "yellow",
 	[257908] = "blue",
 	[258181] = "orange",
 	[258199] = "yellow",

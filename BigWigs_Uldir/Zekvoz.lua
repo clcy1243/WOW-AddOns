@@ -24,6 +24,7 @@ local lastPower = 0
 local eyeBeamCount = 0
 local roilingDeceitCount = 0
 local roilingDeceitTargets = {}
+local surgingDarknessCount = 1
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -50,7 +51,7 @@ function mod:GetOptions()
 		{265248, "TANK"}, -- Shatter
 
 		--[[ Stage 1 ]]--
-		{264382, "SAY", "ICON"}, -- Eye Beam
+		{264382, "SAY", "ICON", "ME_ONLY_EMPHASIZE"}, -- Eye Beam
 		-18390, -- Qiraji Warrior
 
 		--[[ Stage 2 ]]--
@@ -81,12 +82,13 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "SurgingDarkness", 265530)
 	self:Log("SPELL_CAST_START", "VoidLash", 265231, 265268) -- Initial, Secondary
 	self:Log("SPELL_CAST_START", "Shatter", 265248)
+	self:Log("SPELL_CAST_SUCCESS", "Stages", 181089) -- Encounter Event spell
 
 	--[[ Stage 1 ]]--
 	self:Log("SPELL_CAST_START", "EyeBeam", 264382)
 
 	--[[ Stage 2 ]]--
-	self:Log("SPELL_CAST_START", "RoilingDeceit", 265358)
+	self:Log("SPELL_CAST_SUCCESS", "RoilingDeceit", 265358)
 	self:Log("SPELL_AURA_APPLIED", "RoilingDeceitApplied", 265360)
 	self:Log("SPELL_AURA_REMOVED", "RoilingDeceitRemoved", 265360)
 	self:Log("SPELL_CAST_START", "VoidBolt", 267180)
@@ -121,7 +123,6 @@ function mod:OnEngage()
 	end
 
 	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
-	self:RegisterUnitEvent("UNIT_POWER_FREQUENT", nil, "boss1")
 end
 
 --------------------------------------------------------------------------------
@@ -138,37 +139,6 @@ function mod:UNIT_HEALTH_FREQUENT(event, unit)
 			self:UnregisterUnitEvent(event, unit)
 		end
 	end
-end
-
-function mod:UNIT_POWER_FREQUENT(event, unit)
-	local power = UnitPower(unit)
-	if power < lastPower and lastPower ~= 100 then
-		stage = stage + 1
-		self:Message2("stages", "green", CL.stage:format(stage), false)
-		self:PlaySound("stages", "long")
-		self:Bar(265530, 80) -- Surging Darkness
-		if self:Mythic() then
-			self:StopBar(-18390) -- Qiraji Warrior
-			self:StopBar(-18397) -- Anub'ar Voidweaver
-			self:Bar(267239, 15) -- Orb of Corruption
-			self:Bar(265231, 35) -- Void Lash (Initial)
-		elseif stage == 2 then
-			self:StopBar(-18390) -- Qiraji Warrior
-			self:StopBar(264382) -- Eye Beam
-			if not self:LFR() then
-				self:Bar(-18397, 20.5, nil, 267180) -- Anub'ar Voidweaver
-			end
-			self:CDBar(265360, 27) -- Roiling Deceit -- Until APPLIED not START
-			self:Bar(265231, 30) -- Void Lash (Initial)
-		elseif stage == 3 then
-			self:UnregisterUnitEvent(event, unit)
-			self:StopBar(-18397) -- Anub'ar Voidweaver
-			self:StopBar(265360) -- Roiling Deceit
-			self:Bar(267239, 12) -- Orb of Corruption
-			self:Bar(265231, 30) -- Void Lash (Initial)
-		end
-	end
-	lastPower = power
 end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
@@ -189,12 +159,16 @@ function mod:SurgingDarkness(args)
 	self:Message2(args.spellId, "red")
 	self:PlaySound(args.spellId, "long")
 	self:Bar(args.spellId, 83)
-	-- XXX Lots of Bars, try to rework into a less intrusive manner
-	self:CDBar(args.spellId, self:Mythic() and 8 or 10.5, L.surging_darkness_eruption:format(1))
-	self:CDBar(args.spellId, self:Mythic() and 12 or 17, L.surging_darkness_eruption:format(2))
-	self:CDBar(args.spellId, self:Mythic() and 16 or 23.5, L.surging_darkness_eruption:format(3))
-	if self:Mythic() then
-		self:CDBar(args.spellId, 20, L.surging_darkness_eruption:format(4))
+	surgingDarknessCount = 1
+	self:StartSurgingDarknessTimer(self:Mythic() and 8 or 10.5)
+end
+
+function mod:StartSurgingDarknessTimer(t)
+	self:Bar(265530, t, CL.count:format(self:SpellName(265530), surgingDarknessCount))
+	surgingDarknessCount = surgingDarknessCount + 1
+	local maxEruptions = self:Mythic() and 4 or 3
+	if maxEruptions >= surgingDarknessCount then
+		self:ScheduleTimer("StartSurgingDarknessTimer", t, self:Mythic() and 4 or 6.5)
 	end
 end
 
@@ -214,22 +188,60 @@ function mod:Shatter(args)
 	self:Message2(args.spellId, "purple")
 end
 
+function mod:Stages()
+	stage = stage + 1
+	self:Message2("stages", "green", CL.stage:format(stage), false)
+	self:PlaySound("stages", "long")
+	self:Bar(265530, 80) -- Surging Darkness
+	if self:Mythic() then
+		self:StopBar(-18390) -- Qiraji Warrior
+		self:StopBar(-18397) -- Anub'ar Voidweaver
+		self:Bar(267239, 15) -- Orb of Corruption
+		self:Bar(265231, 35) -- Void Lash (Initial)
+	elseif stage == 2 then
+		self:StopBar(-18390) -- Qiraji Warrior
+		self:StopBar(264382) -- Eye Beam
+		if not self:LFR() then
+			self:Bar(-18397, 20.5, nil, 267180) -- Anub'ar Voidweaver
+		end
+		self:CDBar(265360, 27) -- Roiling Deceit -- Until APPLIED not START
+		self:Bar(265231, 30) -- Void Lash (Initial)
+	elseif stage == 3 then
+		self:StopBar(-18397) -- Anub'ar Voidweaver
+		self:StopBar(265360) -- Roiling Deceit
+		self:Bar(267239, 12) -- Orb of Corruption
+		self:Bar(265231, 30) -- Void Lash (Initial)
+	end
+end
+
 --[[ Stage 1 ]]--
 do
 	local function printTarget(self, name, guid)
 		local count = CL.count:format(self:SpellName(264382), eyeBeamCount)
 		self:TargetMessage2(264382, "yellow", name, count)
-		self:PlaySound(264382, "alert", nil, name)
 		self:PrimaryIcon(264382, name)
 		if self:Me(guid) then
+			self:PlaySound(264382, "warning")
 			self:Say(264382, count)
+		else
+			self:PlaySound(264382, "alert", nil, name)
 		end
 		if eyeBeamCount == 3 then
 			self:ScheduleTimer("PrimaryIcon", 3, 264382)
 		end
 	end
+	function mod:UNIT_TARGET(event, unit)
+		self:UnregisterUnitEvent(event, unit)
+		local id = unit.."target"
+		printTarget(self, self:UnitName(id), UnitGUID(id))
+	end
 	function mod:EyeBeam(args)
-		self:GetBossTarget(printTarget, 0.5, args.sourceGUID)
+		local unit = self:GetBossIdByGUID(args.sourceGUID)
+		if unit then
+			self:RegisterUnitEvent("UNIT_TARGET", nil, unit)
+		else
+			self:GetBossTarget(printTarget, 0.5, args.sourceGUID)
+		end
 		self:CastBar(args.spellId, self:Mythic() and 1.5 or 3)
 		eyeBeamCount = eyeBeamCount + 1
 		if eyeBeamCount == 4 then
@@ -316,7 +328,7 @@ end
 
 function mod:WillOfTheCorruptor(args)
 	self:TargetMessage2(args.spellId, "red", args.destName)
-	self:PlaySound(args.spellId, "warning")
+	self:PlaySound(args.spellId, "warning", nil, args.destName)
 end
 
 --[[ Mythic ]]--

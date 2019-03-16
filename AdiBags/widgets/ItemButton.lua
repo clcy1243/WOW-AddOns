@@ -58,7 +58,7 @@ local ITEM_SIZE = addon.ITEM_SIZE
 -- Button initialization
 --------------------------------------------------------------------------------
 
-local buttonClass, buttonProto = addon:NewClass("ItemButton", "Button", "ContainerFrameItemButtonTemplate", "ABEvent-1.0")
+local buttonClass, buttonProto = addon:NewClass("ItemButton", "ItemButton", "ContainerFrameItemButtonTemplate", "ABEvent-1.0")
 
 local childrenNames = { "Cooldown", "IconTexture", "IconQuestTexture", "Count", "Stock", "NormalTexture", "NewItemTexture" }
 
@@ -396,7 +396,7 @@ function buttonProto:UpdateBorder(isolatedEvent)
 		local border = self.IconQuestTexture
 		if texture == true then
 			border:SetVertexColor(1, 1, 1, 1)
-			border:SetTexture(r or 1, g or 1, b or 1, a or 1)
+			border:SetColorTexture(r or 1, g or 1, b or 1, a or 1)
 		else
 			border:SetTexture(texture)
 			border:SetVertexColor(r or 1, g or 1, b or 1, a or 1)

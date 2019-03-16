@@ -12,7 +12,8 @@ local L = TSM.L
 local private = {
 	thread = nil,
 	isOpening = false,
-	lastCheck = nil
+	lastCheck = nil,
+	moneyCollected = 0,
 }
 
 
@@ -31,16 +32,18 @@ end
 function Open.KillThread()
 	TSMAPI_FOUR.Thread.Kill(private.thread)
 
+	private.PrintMoneyCollected()
 	private.isOpening = false
 end
 
-function Open.StartOpening(callback, autoRefresh, filterText, filterType)
+function Open.StartOpening(callback, autoRefresh, keepMoney, filterText, filterType)
 	TSMAPI_FOUR.Thread.Kill(private.thread)
 
 	private.isOpening = true
+	private.moneyCollected = 0
 
 	TSMAPI_FOUR.Thread.SetCallback(private.thread, callback)
-	TSMAPI_FOUR.Thread.Start(private.thread, autoRefresh, filterText, filterType)
+	TSMAPI_FOUR.Thread.Start(private.thread, autoRefresh, keepMoney, filterText, filterType)
 end
 
 function Open.GetLastCheckTime()
@@ -53,7 +56,7 @@ end
 -- Mail Opening Thread
 -- ============================================================================
 
-function private.OpenMailThread(autoRefresh, filterText, filterType)
+function private.OpenMailThread(autoRefresh, keepMoney, filterText, filterType)
 	while true do
 		local query = TSM.Mailing.Inbox.CreateQuery()
 		query:ResetOrderBy()
@@ -76,7 +79,7 @@ function private.OpenMailThread(autoRefresh, filterText, filterType)
 
 		query:Release()
 
-		private.OpenMails(mails, filterType)
+		private.OpenMails(mails, keepMoney, filterType)
 
 		TSMAPI_FOUR.Thread.ReleaseSafeTempTable(mails)
 
@@ -93,6 +96,7 @@ function private.OpenMailThread(autoRefresh, filterText, filterType)
 		TSMAPI_FOUR.Thread.Sleep(1)
 	end
 
+	private.PrintMoneyCollected()
 	private.isOpening = false
 end
 
@@ -100,22 +104,25 @@ function private.CanOpenMail()
 	return not C_Mail.IsCommandPending()
 end
 
-function private.OpenMails(mails, filterType)
+function private.OpenMails(mails, keepMoney, filterType)
 	for i = 1, #mails do
 		local index = mails[i]
 		TSMAPI_FOUR.Thread.WaitForFunction(private.CanOpenMail)
 
 		local mailType = TSM.Inventory.MailTracking.GetMailType(index)
-
 		if (not filterType and mailType) or (filterType and filterType == mailType) then
 			if CalculateTotalNumberOfFreeBagSlots() <= TSM.db.global.mailingOptions.keepMailSpace then
 				return
 			end
-			AutoLootMailItem(index)
+			local _, _, _, _, money = GetInboxHeaderInfo(index)
+			if not keepMoney or (keepMoney and money <= 0) then
+				AutoLootMailItem(index)
+				private.moneyCollected = private.moneyCollected + money
 
-			if TSMAPI_FOUR.Thread.WaitForEvent("CLOSE_INBOX_ITEM", "MAIL_FAILED") ~= "MAIL_FAILED" then
-				if TSM.db.global.mailingOptions.inboxMessages then
-					private.PrintOpenMailMessage(index)
+				if TSMAPI_FOUR.Thread.WaitForEvent("CLOSE_INBOX_ITEM", "MAIL_FAILED") ~= "MAIL_FAILED" then
+					if TSM.db.global.mailingOptions.inboxMessages then
+						private.PrintOpenMailMessage(index)
+					end
 				end
 			end
 		end
@@ -140,6 +147,12 @@ function private.CheckInbox()
 	private.ScheduleCheck()
 end
 
+function private.PrintMoneyCollected()
+	if TSM.db.global.mailingOptions.inboxMessages and private.moneyCollected > 0 then
+		TSM:Printf(L["Total Gold Collected: %s"], TSM.Money.ToString(private.moneyCollected))
+	end
+	private.moneyCollected = 0
+end
 
 function private.PrintOpenMailMessage(index)
 	local _, _, sender, subject, money, cod, _, hasItem = GetInboxHeaderInfo(index)

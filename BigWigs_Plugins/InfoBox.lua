@@ -80,18 +80,6 @@ do
 		db.posx = self:GetLeft() * s
 		db.posy = self:GetTop() * s
 	end)
-	display:SetScript("OnHide", function(self)
-		inTestMode = false
-		opener = nil
-		nameList = {}
-		for i = 1, 40 do
-			self.text[i]:SetText("")
-		end
-		for i = 1, 40, 2 do
-			self.bar[i]:Hide()
-		end
-		self.title:SetText(L.infoBox)
-	end)
 
 	local bg = display:CreateTexture()
 	bg:SetAllPoints(display)
@@ -177,6 +165,7 @@ do
 		local bar = display:CreateTexture(nil, bgLayer, nil, bgLevel + 1)
 		bar:SetSize(infoboxWidth, infoboxHeight/5-1)
 		bar:SetColorTexture(0, 1, 0, 0.3)
+		bar:Hide()
 		if i == 1 then
 			bar:SetPoint("TOPLEFT", display, "TOPLEFT", 0, -1)
 		elseif i == 21 then
@@ -227,9 +216,10 @@ function plugin:OnPluginEnable()
 	self:RegisterMessage("BigWigs_SetInfoBoxTitle")
 	self:RegisterMessage("BigWigs_SetInfoBoxLine")
 	self:RegisterMessage("BigWigs_SetInfoBoxTable")
+	self:RegisterMessage("BigWigs_SetInfoBoxTableWithBars")
 	self:RegisterMessage("BigWigs_SetInfoBoxBar")
 	self:RegisterMessage("BigWigs_OnBossDisable")
-	self:RegisterMessage("BigWigs_OnBossReboot", "BigWigs_OnBossDisable")
+	self:RegisterMessage("BigWigs_OnBossWipe", "BigWigs_OnBossDisable")
 
 	self:RegisterMessage("BigWigs_StartConfigureMode", "Test")
 	self:RegisterMessage("BigWigs_StopConfigureMode", "Close")
@@ -249,7 +239,7 @@ end
 
 function plugin:BigWigs_ShowInfoBox(_, module, title, TEMP)
 	if opener then
-		display:Hide()
+		self:Close()
 	end
 
 	opener = module or self
@@ -280,7 +270,7 @@ function plugin:BigWigs_SetInfoBoxLine(_, _, line, text)
 	if line % 2 == 0 then
 		row = line-1
 	end
-	plugin:BigWigs_ResizeInfoBoxRow(row)
+	self:BigWigs_ResizeInfoBoxRow(row)
 end
 
 function plugin:BigWigs_ResizeInfoBoxRow(row)
@@ -316,7 +306,7 @@ function plugin:BigWigs_ResizeInfoBoxRow(row)
 end
 
 do
-	local sortingTbl = nil
+	local sortingTbl = {}
 	local function sortFunc(x,y)
 		local px, py = sortingTbl[x] or -1, sortingTbl[y] or -1
 		if px == py then
@@ -334,11 +324,89 @@ do
 		for i = 1, 5 do
 			local n = nameList[i]
 			local result = tbl[n]
-			display.text[line]:SetText(result and colors[n] or "")
-			display.text[line+1]:SetText(result or "")
-			plugin:BigWigs_ResizeInfoBoxRow(line)
+			if result then
+				display.text[line]:SetText(colors[n])
+				display.text[line+1]:SetText(result)
+			else
+				display.text[line]:SetText("")
+				display.text[line+1]:SetText("")
+			end
+			self:BigWigs_ResizeInfoBoxRow(line)
 			line = line + 2
 		end
+	end
+
+	local function sortBarsFunc(x,y)
+		local px, py = sortingTbl[x] and sortingTbl[x][1] or -1, sortingTbl[y] and sortingTbl[y][1] or -1
+		if px == py then
+			if px == -1 then
+				return x > y
+			else
+				return sortingTbl[x][3] > sortingTbl[y][3]
+			end
+		else
+			return px > py
+		end
+	end
+	local next = next
+	local Timer = C_Timer.After
+	local reschedule = false
+	local function update()
+		if next(sortingTbl) then
+			Timer(0.1, update)
+		else
+			reschedule = false
+			return
+		end
+
+		for i = 1, 5 do
+			local n = nameList[i]
+			local result = sortingTbl[n]
+			if result then
+				local t = result[3] + 0.1
+				result[3] = t
+				local duration = result[2]
+				local remaining = duration - t
+				plugin:BigWigs_SetInfoBoxBar(nil, nil, i*2, remaining/duration)
+			end
+		end
+	end
+	function plugin:BigWigs_SetInfoBoxTableWithBars(_, _, tbl)
+		sortingTbl = tbl
+		tsort(nameList, sortBarsFunc)
+		local line = 1
+		for i = 1, 5 do
+			local n = nameList[i]
+			local result = tbl[n]
+			if result then
+				display.text[line]:SetText(colors[n])
+				display.text[line+1]:SetText(result[1])
+			else
+				display.text[line]:SetText("")
+				display.text[line+1]:SetText("")
+				self:BigWigs_SetInfoBoxBar(nil, nil, i*2, 0)
+			end
+			self:BigWigs_ResizeInfoBoxRow(line)
+			line = line + 2
+		end
+		if not reschedule then
+			reschedule = true
+			Timer(0.1, update)
+		end
+	end
+
+	function plugin:Close()
+		inTestMode = false
+		opener = nil
+		nameList, sortingTbl = {}, {}
+		display:Hide()
+		for i = 1, 40 do
+			display.text[i]:SetText("")
+		end
+		for i = 1, 40, 2 do
+			display.bar[i]:Hide()
+		end
+		display.title:SetText(L.infoBox)
 	end
 end
 
@@ -352,10 +420,6 @@ function plugin:BigWigs_SetInfoBoxBar(_, _, line, percentage, r, g, b, a)
 	else
 		bar:Hide()
 	end
-end
-
-function plugin:Close()
-	display:Hide()
 end
 
 function plugin:BigWigs_OnBossDisable(_, module)

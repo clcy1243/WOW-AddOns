@@ -1,8 +1,6 @@
 
 local debugmode = false
 
-
-
 local Loc = LibStub ("AceLocale-3.0"):GetLocale ("Details_DeathGraphs")
 local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0")
 
@@ -12,7 +10,7 @@ local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0")
 --> main frame (shortcut)
 	local DeathGraphsFrame = DeathGraphs.Frame
 
-DeathGraphs.version_string = "v3.5"
+DeathGraphs.version_string = "v3.6"
 
 local CONST_DBTYPE_DEATH = "deaths"
 local CONST_DBTYPE_ENDURANCE = "endurance"
@@ -62,8 +60,6 @@ local function CreatePluginFunctions()
 		end
 
 		DeathGraphs:Refresh()
-		
-		--DeathGraphsFrame:Show()
 		DetailsPluginContainerWindow.OpenPlugin (DeathGraphs)
 	end
 	
@@ -156,10 +152,8 @@ local function CreatePluginFunctions()
 			
 			if (found_something) then
 				DeathGraphs:ShowToolbarIcon (DeathGraphs.ToolbarButton, "star")
-				--print ("SHOW ICON")
 			else
 				DeathGraphs:HideToolbarIcon (DeathGraphs.ToolbarButton)
-				--print ("CANT SHOW ICON")
 			end
 		end
 	end
@@ -189,8 +183,6 @@ local function CreatePluginFunctions()
 				welcome:SetBackdrop ({edgeFile = "Interface\\Buttons\\UI-SliderBar-Border", edgeSize = 8,
 				bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 130, insets = {left = 1, right = 1, top = 5, bottom = 5}})
 				
---				/run DETAILS_PLUGIN_DEATH_GRAPHICS.db.first_run = nil
-				
 				local str = _detalhes.gump:CreateLabel (welcome, Loc ["STRING_PLUGIN_WELCOME"], 
 				nil, nil, "GameFontNormal")
 				str:SetPoint (15, -15)
@@ -211,28 +203,21 @@ local function CreatePluginFunctions()
 			if (not DeathGraphs.BossEncounterStartAt) then
 				DeathGraphs.BossEncounterStartAt = GetTime()
 			end
-			--print ("ADL: registering COMBATLOG")
 		
 		elseif (event == "COMBAT_PLAYER_ENTER") then --> combat started
 			DeathGraphs.BossEncounterStartAt = GetTime()
 		
 		elseif (event == "COMBAT_PLAYER_LEAVE") then --> combat ended
-			--print ("1 - Player Leaved the Combat")
 			DeathGraphs:DebugMsg ("combat finished -> calling CombatFinished()")
 			DeathGraphs:CombatFinished (...)
 			combat_log_event_listener:UnregisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
-			
-		--elseif (event == "DETAILS_DATA_RESET") then
-			--DeathGraphs:ResetData()
 			
 		elseif (event == "PLUGIN_DISABLED") then
 			DeathGraphs:HideIcon()
 			
 		elseif (event == "PLUGIN_ENABLED" or event == "DETAILS_STARTED") then
 			DeathGraphs:CanShowIcon()
-			
-			--DeathGraphs:OpenWindow() --debug remove me
-			
+
 		end
 	end
 	
@@ -280,16 +265,6 @@ local function CreatePluginFunctions()
 		end
 	end
 
-	--[[	boss table structure:
-		DeathGraphs.deaths_database = {
-			[ENCOUNTER_ID + DIFFICULT ID] = {
-				player_db = {
-					[player name] = {data}
-				},
-				type = "deaths" or "endurance"
-			}
-		} --]]
-	
 	function DeathGraphs:GetBossTable (encounter_id, boss, type)
 	
 		local db_table
@@ -378,16 +353,12 @@ local function CreatePluginFunctions()
 		
 		DeathGraphs.db.last_combat_id = DeathGraphs.combat_id
 		
-		--print ("2 - check point", boss)
-		
 		if (boss) then
 		
 			DeathGraphs:DebugMsg ("boss found", boss.name)
 		
 			local EI = DeathGraphs:GetEncounterIdFromBossIndex (boss.mapid, boss.index)
 			if (EI) then
-			
-				--print ("3 - check point", EI)
 			
 				DeathGraphs:DebugMsg ("boss EI: " .. EI .. " diff: " .. combat:GetDifficulty())
 			
@@ -410,8 +381,6 @@ local function CreatePluginFunctions()
 				DeathGraphs:DebugMsg ("deaths: " .. #death_list)
 				
 				if (#death_list > 0) then
-					
-					--print ("4 - check point", #death_list)
 					
 					--> get raid size
 					--local size = select (5, GetInstanceInfo())
@@ -498,46 +467,9 @@ local function CreatePluginFunctions()
 									tremove (d, 1)
 								end
 								
-								--[[ overall has been removed, no need to capture data for it
-								tinsert (player_table.deaths, 1, {
-									d, --death table (last events)
-									t.last_cooldown or false, --last coioldown
-									t.dead_at, --time of death in seconds
-									t[5], --unit max health
-									boss.name, 
-									t[2], --time() of death
-									class, --player class
-									(combat.is_boss.try_number or 0) --combat counter
-								})
-								--]]
-								
 								--> store overall
 								local d_stored = 0
 								local time_of_death = t[2]
-								
-								--[[ overall has been removed, no need to capture data for it
-								for i = #t[1], 1, -1 do 
-									local damage_event = t[1][i]
-
-									if (type (damage_event [1]) == "boolean" and damage_event [1]) then
-										local time = damage_event [4]
-									
-										if (time+8 > time_of_death) then
-											local spellid = damage_event [2]
-											if (player_table.overall [spellid]) then
-												player_table.overall [spellid] = player_table.overall [spellid] + damage_event [3]
-											else
-												player_table.overall [spellid] = damage_event [3]
-											end
-											
-											d_stored = d_stored + 1
-											if (d_stored >= 4) then
-												break
-											end
-										end
-									end
-								end
-								--]]
 								
 							end --if deaths_stored < max_deaths
 
@@ -626,18 +558,6 @@ local build_options_panel = function()
 	options_frame:SetHeight (260)
 	
 	local menu = {
-	--[=[
-		{
-			type = "range",
-			get = function() return DeathGraphs.db.deaths_threshold end,
-			set = function (self, fixedparam, value) DeathGraphs.db.deaths_threshold = value end,
-			min = 1,
-			max = 30,
-			step = 1,
-			desc = Loc ["STRING_OVERALL_DEATHS_THRESHOLD_DESC"],
-			name = Loc ["STRING_OVERALL_DEATHS_THRESHOLD"],
-		},
-	--]=]
 		{
 			type = "range",
 			get = function() return DeathGraphs.db.endurance_threshold end,
@@ -735,30 +655,20 @@ local floor = floor
 
 combat_log_event_listener:SetScript ("OnEvent", function (self, event, time, token, ...)
 	if (token == "SPELL_CAST_SUCCESS") then --> if an actor successful casted a spell
-		--print ("token", token, DeathGraphs.BossEncounterStartAt)
 		local hidding, who_serial, who_name, who_flags, who_flags2, target_serial, target_name, target_flags, target_flags2, spellid, spellname, spelltype = ...
 		if (bit.band (who_flags, 0x00000040) ~= 0) then --> check if the actor is a enemy        DeathGraphs.BossEncounterStartAt
 			local t = floor (GetTime() - DeathGraphs.BossEncounterStartAt) --> get the combat time
 			if (DeathGraphs.EnemySkillTableDelay [spellid] ~= t) then --> avoid a spell be recorded more than once per second
 				tinsert (DeathGraphs.EnemySkillTable, {t, spellid, spellname}) --> add the spell
 				DeathGraphs.EnemySkillTableDelay [spellid] = t
-				--print ("Enemy Spell Cast", spellname)
 			end
-		else 
-			--print (CompareFlags (who_flags, EnemyFlag), bit.band (who_flags, EnemyFlag))
 		end
 	end
 end)
---combat_log_event_listener:RegisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
 
 function DeathGraphs:OnEvent (_, event, ...)
 
-	if (event == "PLAYER_REGEN_ENABLED") then
-	--	DeathGraphs:DebugMsg ("combat finished -> calling CombatFinished()")
-	--	DeathGraphs:CombatFinished (Details.tabela_vigente)
-	--	combat_log_event_listener:UnregisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
-		
-	elseif (event == "ADDON_LOADED") then
+	if (event == "ADDON_LOADED") then
 		local AddonName = select (1, ...)
 		if (AddonName == "Details_DeathGraphs") then
 			

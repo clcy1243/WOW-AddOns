@@ -7,8 +7,18 @@
 -- ------------------------------------------------------------------------------ --
 
 local _, TSM = ...
-local private = { events = {}, lastEventTime = nil }
+local Analytics = TSM:NewPackage("Analytics")
+local private = {
+	events = {},
+	lastEventTime = nil,
+	argsTemp = {},
+	session = time(),
+	sequenceNumber = 1,
+}
 local MAX_ANALYTICS_AGE = 14 * 24 * 60 * 60 -- 2 weeks
+local HIT_TYPE_IS_VALID = {
+	AC = true,
+}
 
 
 
@@ -16,34 +26,65 @@ local MAX_ANALYTICS_AGE = 14 * 24 * 60 * 60 -- 2 weeks
 -- Module Functions
 -- ============================================================================
 
-function TSM.AnalyticsEvent(event, arg)
-	if arg == nil then
-		arg = ""
-	end
-	assert(type(event) == "string" and strmatch(event, "^[A-Z_]+$"))
-	assert(type(arg) == "string" or type(arg) == "number" or type(arg) == "boolean")
-	arg = "\""..gsub(tostring(arg), "\"", "'").."\""
-	event = "\""..event.."\""
-	local name = "\"TradeSkillMaster\""
-	local version = TSM:GetVersion()
-	version = "\""..(version or "").."\""
-	tinsert(private.events, "["..strjoin(",", name, event, version, arg, time()).."]")
-	private.lastEventTime = time()
+function Analytics.Action(name, ...)
+	private.InsertHit("AC", name, ...)
 end
 
-function TSM.SaveAnalytics(appDB)
+function Analytics.Save(appDB)
 	appDB.analytics = appDB.analytics or {updateTime=0, data={}}
 	if private.lastEventTime then
 		appDB.analytics.updateTime = private.lastEventTime
 	end
 	-- remove any events which are too old
 	for i = #appDB.analytics.data, 1, -1 do
-		local eventTime = strmatch(appDB.analytics.data[i], "([0-9]+)%]$") or ""
-		if (tonumber(eventTime) or 0) < time() - MAX_ANALYTICS_AGE then
+		local _, _, timeStr = strsplit(",", appDB.analytics.data[i])
+		local eventTime = timeStr and tonumber(timeStr) or 0
+		if eventTime < time() - MAX_ANALYTICS_AGE then
 			tremove(appDB.analytics.data, i)
 		end
 	end
 	for _, event in ipairs(private.events) do
 		tinsert(appDB.analytics.data, event)
 	end
+end
+
+
+
+-- ============================================================================
+-- Private Helper Functions
+-- ============================================================================
+
+function private.InsertHit(hitType, ...)
+	assert(HIT_TYPE_IS_VALID[hitType])
+	wipe(private.argsTemp)
+	for i = 1, select("#", ...) do
+		local arg = select(i, ...)
+		local argType = type(arg)
+		if argType == "string" then
+			-- remove non-printable and non-ascii characters
+			arg = gsub(arg, "[^ -~]", "")
+			-- remove characters we don't want in the JSON
+			arg = gsub(arg, "[\\\"]", "")
+			arg = private.AddQuotes(arg)
+		elseif argType == "number" then
+			-- pass
+		elseif argType == "boolean" then
+			arg = tostring(arg)
+		else
+			error("Invalid arg type: "..argType)
+		end
+		tinsert(private.argsTemp, arg)
+	end
+	TSM:LOG_INFO("%s %s", hitType, strjoin(" ", tostringall(...)))
+	hitType = private.AddQuotes(hitType)
+	local version = private.AddQuotes(TSM:GetVersion() or "???")
+	local timeMs = TSMAPI_FOUR.Util.GetTimeMilliseconds()
+	local jsonStr = strjoin(",", hitType, version, timeMs, private.session, private.sequenceNumber, unpack(private.argsTemp))
+	tinsert(private.events, "["..jsonStr.."]")
+	private.sequenceNumber = private.sequenceNumber + 1
+	private.lastEventTime = time()
+end
+
+function private.AddQuotes(str)
+	return "\""..str.."\""
 end

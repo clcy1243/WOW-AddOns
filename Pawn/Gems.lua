@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2018 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2019 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 -- 
 -- Gem information
@@ -355,11 +355,7 @@ local PawnGemData120Rare =
 
 PawnGemQualityLevels =
 {
-	-- 355-370: BfA world bosses
-	-- 355: BfA normal raids
-	-- 325: BfA heroics
-	-- 210-310: leveling dungeons in BfA
-	{ 340, PawnGemData120Rare }, -- BfA raid finder / mythic dungeon
+	{ 385, PawnGemData120Rare }, -- Darkshore warfront and Battle for Dazar'Alor raid finder
 	{ 270, PawnGemData120Uncommon }, -- above Legion legendaries
 	{ 225, PawnGemData110Epic }, -- Heroic Antorus
 	{ 195, PawnGemData110Rare }, -- Heroic Tomb of Sargeras / higher than new Relinquished gear

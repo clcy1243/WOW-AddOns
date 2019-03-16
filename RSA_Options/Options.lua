@@ -267,7 +267,7 @@ local Options = {
 							name = "|cff91BE0F"..L["Enable in the World"].."|r",
 							type = "toggle",
 							order = 2,
-							desc = L["Enable in the world area when playing with War Mode disabled."],
+							desc = L["Enable in the non-instanced world area when playing with War Mode disabled."],
 							descStyle = "inline",
 							width = "double",
 							get = function(info)
@@ -299,19 +299,20 @@ local Options = {
 								RSA.db.profile.General.GlobalAnnouncements.OnlyInCombat = value
 							end,
 						},
-						Remove_Server_Names = {
-							name = "|cffFFCC00"..L["Remove Server Names"].."|r",
+						AlwaysAllowWhispers = {
+							name = "|cffFFCC00"..L["Always allow Whispers"].."|r",
 							type = "toggle",
 							order = 110,
+							desc = L["Always allow whispers to be sent, ignoring the PvP and PvE Options on this page."],
+							descStyle = "inline",
 							width = "double",
 							get = function(info)
-								return RSA.db.profile.General.GlobalAnnouncements.RemoveServerNames
+								return RSA.db.profile.General.GlobalAnnouncements.AlwaysAllowWhispers
 							end,
 							set = function(info, value)
-								RSA.db.profile.General.GlobalAnnouncements.RemoveServerNames = value
+								RSA.db.profile.General.GlobalAnnouncements.AlwaysAllowWhispers = value
 							end,
 						},
-
 					},					
 				},
 			},
@@ -343,6 +344,309 @@ local Options = {
 							type = "description",
 							order = 0.03,
 							fontSize = "large",
+						},
+					},
+				},
+			},
+		},
+		Tags = {
+			name = L["Tag Options"],
+			type = "group",
+			order = 10,
+			args = {
+				Target = {
+					name = "|c5500DBBD[TARGET]|r "..L["Tag Options"],
+					type = "group",
+					order = 10,
+					inline = true,
+					args = {
+						Remove_Server_Names = {
+							name = "|cffFFCC00"..L["Remove Server Names"].."|r",
+							type = "toggle",
+							order = 0,
+							desc = L["Removes server name from |c5500DBBD[TARGET]|r tags."],
+							descStyle = "inline",
+							width = "double",
+							get = function(info)
+								return RSA.db.profile.General.GlobalAnnouncements.RemoveServerNames
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.GlobalAnnouncements.RemoveServerNames = value
+							end,
+						},
+						AlwaysUseName = {
+							name = "|cffFFCC00"..L["Always uses spell target's name"].."|r",
+							type = "toggle",
+							order = 10,
+							desc = L["If selected, |c5500DBBD[TARGET]|r will always use the spell target's name, rather than using the input below for whispers."],
+							descStyle = "inline",
+							width = "full",
+							get = function(info)
+								return RSA.db.profile.General.Replacements.Target.AlwaysUseName
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.Target.AlwaysUseName = value
+							end,
+						},					
+						Replacement = {
+							name = L["Replacement"],
+							desc = L["|c5500DBBD[TARGET]|r will be replaced with this when whispering someone."],
+							type = "input",
+							order = 10.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.Target.AlwaysUseName == true then
+									return true 
+								else 
+									return false
+								end
+							end,							
+							get = function(info)
+								return RSA.db.profile.General.Replacements.Target.Replacement
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.Target.Replacement = value
+							end,
+						},					
+					},
+				},
+				MissType = {
+					name = "|c5500DBBD[MISSTYPE]|r ".. L["Tag Options"],
+					type = "group",
+					order = 20,
+					inline = true,
+					args = {
+						UseGeneralReplacement = {
+							name = "|cffFFCC00" .. L["Use Single Replacement"] .. "|r",
+							type = "toggle",
+							order = 10,
+							desc = L["If selected, |c5500DBBD[MISSTYPE]|r will always use the General Replacement set below."].."\n"..L[" Does not affect Immune, Immune will always use its own replacement."],
+							descStyle = "inline",
+							width = "full",
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement = value
+							end,
+						},					
+						GeneralReplacement = {
+							name = L["General Replacement"],
+							desc = L["Whether the target blocks, dodges, absorbs etc. your attack, |c5500DBBD[MISSTYPE]|r will be replaced to this."],
+							type = "input",
+							order = 10.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == false then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.GeneralReplacement
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.GeneralReplacement = value
+							end,
+						},
+						GeneralReplacement_Spacer = {
+							name = " ",
+							type = "description",
+							order = 10.2,
+						},
+						Miss = {
+							name = MISS,
+							desc = L["When your spell misses the target |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Miss
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Miss = value
+							end,
+						},	
+						Resist = {
+							name = RESIST,
+							desc = L["When the target resists your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Resist
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Resist = value
+							end,
+						},
+						Absorb = {
+							name = ABSORB,
+							desc = L["When the target absorbs your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Absorb
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Absorb = value
+							end,
+						},
+						Block = {
+							name = BLOCK,
+							desc = L["When the target blocks your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Block
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Block = value
+							end,
+						},
+						Deflect = {
+							name = DEFLECT,
+							desc = L["When the target deflects your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Deflect
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Deflect = value
+							end,
+						},
+						Dodge = {
+							name = DODGE,
+							desc = L["When the target dodges your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Dodge
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Dodge = value
+							end,
+						},
+						Evade = {
+							name = EVADE,
+							desc = L["When the target evades your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Evade
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Evade = value
+							end,
+						},
+						Parry = {
+							name = PARRY,
+							desc = L["When the target parries your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Parry
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Parry = value
+							end,
+						},
+						Immune = {
+							name = IMMUNE,
+							desc = L["When the target is immune to your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Immune
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Immune = value
+							end,
+						},
+						Reflect = {
+							name = REFLECT,
+							desc = L["When the target reflects your spell |c5500DBBD[MISSTYPE]|r will be replaced with this."],
+							type = "input",
+							order = 20.1,
+							width = "double",
+							disabled = function() 
+								if RSA.db.profile.General.Replacements.MissType.UseGeneralReplacement == true then
+									return true 
+								else 
+									return false
+								end
+							end,
+							get = function(info)
+								return RSA.db.profile.General.Replacements.MissType.Reflect
+							end,
+							set = function(info, value)
+								RSA.db.profile.General.Replacements.MissType.Reflect = value
+							end,
 						},
 					},
 				},
@@ -712,21 +1016,31 @@ local function DemonHunter_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
+		["Imprison"] = {
+			Profile = "Imprison",
+			Name = GetSpellInfo(217832),
+			Desc = GetSpellDescription(217832),
+			Message_Amount = 4,
+			Message_Areas = {"Cast", "End", "Resist", "Immune"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
+		},
 	}
 	return Spells
 end
 
 local function Druid_Options()
 	local Spells = {
-		[1] = {
+		["SurvivalInstincts"] = {
 			Profile = "SurvivalInstincts",
 			Name = GetSpellInfo(61336),
 			Desc = GetSpellDescription(61336),
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[2] = {
+		["Cyclone"] = {
 			Profile = "Cyclone",
 			Name = GetSpellInfo(33786),
 			Desc = GetSpellDescription(33786),
@@ -735,31 +1049,43 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[3] = {
+		["IncapacitatingRoar"] = {
 			Profile = "IncapacitatingRoar",
 			Name = GetSpellInfo(99),
 			Desc = GetSpellDescription(99),
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[4] = {
+		["FrenziedRegeneration"] = {
 			Profile = "FrenziedRegeneration",
 			Name = GetSpellInfo(22842),
 			Desc = GetSpellDescription(22842),
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
+			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[5] = {
+		["UrsolsVortex"] = {
 			Profile = "UrsolsVortex",
 			Name = GetSpellInfo(102793),
 			Desc = GetSpellDescription(102793),
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
+			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[6] = {
+		["Treants"] = {
+			Profile = "Treants",
+			Name = GetSpellInfo(205636),
+			Desc = GetSpellDescription(205636),
+			Message_Amount = 1,
+			Message_Areas = {"Cast"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]"},
+		},
+		["Ironbark"] = {
 			Profile = "Ironbark",
 			Name = GetSpellInfo(102342),
 			Desc = GetSpellDescription(102342),
@@ -767,7 +1093,7 @@ local function Druid_Options()
 			Message_Areas = {"Start", "End"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[7] = {
+		["SkullBash"] = {
 			Profile = "SkullBash",
 			Name = GetSpellInfo(93985),
 			Desc = GetSpellDescription(93985),
@@ -776,7 +1102,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[TARSPELL]", "[TARLINK]", "[MISSTYPE]"},
 		},
-		[8] = {
+		["Growl"] = {
 			Profile = "Growl",
 			Name = GetSpellInfo(6795),
 			Desc = GetSpellDescription(6795),
@@ -785,7 +1111,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
-		[9] = {
+		["Revive"] = {
 			Profile = "Revive",
 			Name = GetSpellInfo(50769),
 			Desc = GetSpellDescription(50769),
@@ -793,7 +1119,7 @@ local function Druid_Options()
 			Message_Areas = {"Start", "End"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[10] = {
+		["Rebirth"] = {
 			Profile = "Rebirth",
 			Name = GetSpellInfo(20484),
 			Desc = GetSpellDescription(20484),
@@ -801,7 +1127,7 @@ local function Druid_Options()
 			Message_Areas = {"Start", "End"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[11] = {
+		["TreeOfLife"] = {
 			Profile = "TreeOfLife",
 			Name = GetSpellInfo(33891),
 			Desc = GetSpellDescription(33891),
@@ -810,7 +1136,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[12] = {
+		["Barkskin"] = {
 			Profile = "Barkskin",
 			Name = GetSpellInfo(22812),
 			Desc = GetSpellDescription(22812),
@@ -828,7 +1154,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[13] = {
+		["Tranquility"] = {
 			Profile = "Tranquility",
 			Name = GetSpellInfo(740),
 			Desc = GetSpellDescription(740),
@@ -837,7 +1163,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[14] = {
+		["NaturesVigil"] = {
 			Profile = "NaturesVigil",
 			Name = GetSpellInfo(124974),
 			Desc = GetSpellDescription(124974),
@@ -846,7 +1172,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[15] = {
+		["Berserk"] = {
 			Profile = "Berserk",
 			Name = GetSpellInfo(106951),
 			Desc = GetSpellDescription(106951),
@@ -855,7 +1181,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[16] = {
+		["RemoveCorruption"] = {
 			Profile = "RemoveCorruption",
 			Name = GetSpellInfo(2782) .. " / " .. GetSpellInfo(88423),
 			longDesc = true,
@@ -864,7 +1190,7 @@ local function Druid_Options()
 			Message_Areas = {"Cast"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
-		[17] = {
+		["Roots"] = {
 			Profile = "Roots",
 			Name = GetSpellInfo(339),
 			Desc = GetSpellDescription(339),
@@ -873,7 +1199,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[18] = {
+		["StampedingRoar"] = {
 			Profile = "StampedingRoar",
 			Name = GetSpellInfo(106898),
 			Desc = GetSpellDescription(106898),
@@ -882,7 +1208,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[19] = {
+		["SolarBeam"] = {
 			Profile = "SolarBeam",
 			Name = GetSpellInfo(97547),
 			Desc = GetSpellDescription(97547),
@@ -891,7 +1217,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[TARSPELL]", "[TARLINK]"},
 		},
-		[20] = {
+		["Revitalize"] = {
 			Profile = "Revitalize",
 			Name = GetSpellInfo(212040),
 			Desc = GetSpellDescription(212040),
@@ -900,7 +1226,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[21] = {
+		["Innervate"] = {
 			Profile = "Innervate",
 			Name = GetSpellInfo(29166),
 			Desc = GetSpellDescription(29166),
@@ -908,7 +1234,7 @@ local function Druid_Options()
 			Message_Areas = {"Start", "End"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[22] = {
+		["Ironfur"] = {
 			Profile = "Ironfur",
 			Name = GetSpellInfo(192081),
 			Desc = GetSpellDescription(192081),
@@ -917,7 +1243,7 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[23] = {
+		["DemoralizingRoar"] = {
 			Profile = "DemoralizingRoar",
 			Name = GetSpellInfo(201664),
 			Desc = GetSpellDescription(201664),
@@ -926,15 +1252,16 @@ local function Druid_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[24] = {
+		["Soothe"] = {
 			Profile = "Soothe",
 			Name = GetSpellInfo(2908),
 			Desc = GetSpellDescription(2908),
 			Message_Amount = 1,
 			Message_Areas = {"Cast"},
+			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
-		[25] = {
+		["MassEntanglement"] = {
 			Profile = "MassEntanglement",
 			Name = GetSpellInfo(102359),
 			Desc = GetSpellDescription(102359),
@@ -942,6 +1269,15 @@ local function Druid_Options()
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
+		},
+		["Hibernate"] = {
+			Profile = "Hibernate",
+			Name = GetSpellInfo(2637),
+			Desc = GetSpellDescription(2637),
+			Message_Amount = 4,
+			Message_Areas = {"Cast", "End", "Resist", "Immune"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
 	}
 	return Spells
@@ -1100,7 +1436,7 @@ local function Mage_Options()
 			Name = GetSpellInfo(118),
 			Desc = GetSpellDescription(118),
 			Message_Amount = 4,
-			Message_Areas = {"Start", "End", "Resist", "Immune"},
+			Message_Areas = {"Cast", "End", "Resist", "Immune"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
@@ -1174,6 +1510,15 @@ local function Mage_Options()
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
+		},
+		["RemoveCurse"] = {
+			Profile = "RemoveCurse",
+			Name = GetSpellInfo(475),
+			Desc = GetSpellDescription(475),
+			Message_Amount = 1,
+			Message_Areas = {"Dispel"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
 	}
 	return Spells
@@ -1628,6 +1973,15 @@ local function Priest_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
+		["Apotheosis"] = {
+			Profile = "Apotheosis",
+			Name = GetSpellInfo(200183),
+			Desc = GetSpellDescription(200183),
+			Message_Amount = 2,
+			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]"},
+		},
 		["Levitate"] = {
 			Profile = "Levitate",
 			Name = GetSpellInfo(1706),
@@ -1640,6 +1994,15 @@ local function Priest_Options()
 			Profile = "ShackleUndead",
 			Name = GetSpellInfo(9484),
 			Desc = GetSpellDescription(9484),
+			Message_Amount = 2,
+			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
+		},
+		["Chastise"] = {
+			Profile = "Chastise",
+			Name = GetSpellInfo(88625),
+			Desc = GetSpellDescription(88625),
 			Message_Amount = 2,
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
@@ -1822,6 +2185,15 @@ local function Priest_Options()
 			Message_Areas = {"Dispel"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
+		["Salvation"] = {
+			Profile = "Salvation",
+			Name = GetSpellInfo(265202),
+			Desc = GetSpellDescription(265202),
+			Message_Amount = 1,
+			Message_Areas = {"Cast"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]"},
+		},
 	}
 	return Spells
 end
@@ -1917,6 +2289,15 @@ local function Rogue_Options()
 			Message_Areas = {"Start", "End"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
+		},
+		["Shiv"] = {
+			Profile = "Shiv",
+			Name = GetSpellInfo(248744),
+			Desc = GetSpellDescription(248744),
+			Message_Amount = 1,
+			Message_Areas = {"Dispel"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
 	}
 	return Spells
@@ -2155,7 +2536,7 @@ end
 
 local function Warlock_Options()
 	local Spells = {
-		[1] = {
+		["SoulWell"] = {
 			Profile = "SoulWell",
 			Name = GetSpellInfo(29893),
 			Desc = GetSpellDescription(29893),
@@ -2164,7 +2545,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[2] = {
+		["SummonStone"] = {
 			Profile = "SummonStone",
 			Name = GetSpellInfo(698),
 			Desc = GetSpellDescription(698),
@@ -2173,7 +2554,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[3] = {
+		["Suffering"] = {
 			Profile = "Suffering",
 			Name = GetSpellInfo(17735),
 			Desc = GetSpellDescription(17735),
@@ -2182,7 +2563,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
-		[4] = {
+		["SingeMagic"] = {
 			Profile = "SingeMagic",
 			Name = GetSpellInfo(89808),
 			Desc = GetSpellDescription(89808),
@@ -2191,7 +2572,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
 		},
-		[5] = {
+		["Banish"] = {
 			Profile = "Banish",
 			Name = GetSpellInfo(710),
 			Desc = GetSpellDescription(710),
@@ -2200,7 +2581,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
-		[6] = {
+		["Fear"] = {
 			Profile = "Fear",
 			Name = GetSpellInfo(5782),
 			Desc = GetSpellDescription(5782),
@@ -2209,7 +2590,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
-		[7] = {
+		["Seduce"] = {
 			Profile = "Seduce",
 			Name = GetSpellInfo(6358),
 			Desc = GetSpellDescription(6358),
@@ -2218,7 +2599,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[MISSTYPE]"},
 		},
-		[8] = {
+		["SpellLock"] = {
 			Profile = "SpellLock",
 			Name = GetSpellInfo(19647),
 			Desc = GetSpellDescription(19647),
@@ -2227,7 +2608,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[TARSPELL]", "[TARLINK]", "[MISSTYPE]"},
 		},
-		[9] = {
+		["Soulstone"] = {
 			Profile = "Soulstone",
 			Name = GetSpellInfo(20707),
 			Desc = GetSpellDescription(20707),
@@ -2235,7 +2616,7 @@ local function Warlock_Options()
 			Message_Areas = {"Start", "Cast"},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[10] = {
+		["DeathCoil"] = {
 			Profile = "DeathCoil",
 			Name = GetSpellInfo(6789),
 			Desc = GetSpellDescription(6789),
@@ -2244,7 +2625,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
-		[11] = {
+		["Shadowfury"] = {
 			Profile = "Shadowfury",
 			Name = GetSpellInfo(30283),
 			Desc = GetSpellDescription(30283),
@@ -2253,7 +2634,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[12] = {
+		["UnendingResolve"] = {
 			Profile = "UnendingResolve",
 			Name = GetSpellInfo(104773),
 			Desc = GetSpellDescription(104773),
@@ -2262,7 +2643,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[13] = {
+		["Gateway"] = {
 			Profile = "Gateway",
 			Name = GetSpellInfo(111771),
 			Desc = GetSpellDescription(111771),
@@ -2271,7 +2652,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[14] = {
+		["DarkPact"] = {
 			Profile = "DarkPact",
 			Name = GetSpellInfo(108416),
 			Desc = GetSpellDescription(108416),
@@ -2280,7 +2661,7 @@ local function Warlock_Options()
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]"},
 		},
-		[15] = {
+		["DevourMagic"] = {
 			Profile = "DevourMagic",
 			Name = GetSpellInfo(19505),
 			Desc = GetSpellDescription(19505),
@@ -2288,6 +2669,15 @@ local function Warlock_Options()
 			Message_Areas = {"Dispel"},
 			Message_Channels_Disabled = {["Whisper"] = true},
 			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]", "[AURA]", "[AURALINK]"},
+		},
+		["AxeToss"] = {
+			Profile = "AxeToss",
+			Name = GetSpellInfo(89766),
+			Desc = GetSpellDescription(89766),
+			Message_Amount = 2,
+			Message_Areas = {"Start", "End"},
+			Message_Channels_Disabled = {["Whisper"] = true},
+			Valid_Tags = {"[SPELL]", "[LINK]", "[TARGET]"},
 		},
 	}
 	return Spells
@@ -2641,7 +3031,7 @@ local function Utilities_Options()
 	return Spells
 end
 
-local function FixDB()
+function RSA:FixDB()
 	local Profiles = {
 		[1] = "DeathKnight",
 		[2] = "DemonHunter",
@@ -2907,11 +3297,24 @@ local function Spell_Options(NonClass)
 							RSA.db.profile[ProfileName].Spells[Spells[i].Profile].CustomChannel.Channel = value
 						end,
 					},
+					Instance = {
+						name = "|cff91BE0F"..L["Instance"].."|r",
+						type = "toggle",
+						order = 4,
+						desc = L["|cff91BE0F/instance|r if you're in an instance group such as when in LFR or Battlegrounds."],
+						hidden = function() if Spells[i].Message_Channels_Disabled then if Spells[i].Message_Channels_Disabled["Instance"] then return true end end end,
+						get = function(info)
+							return RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Instance
+						end,
+						set = function (info, value)
+							RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Instance = value
+						end,
+					},
 					Raid = {
 						name = "|cff91BE0F"..L["Raid"].."|r",
 						type = "toggle",
 						order = 4,
-						desc = L["|cff91BE0F/raid|r. Only for manually formed raid groups."] .. "\n" .. L["Doesn't do anything in group finder parties, use |cffFFCC00Instance|r or |cffFFCC00Smart Group Channel|r for that."],
+						desc = L["Sends a message to one of the following channels in order of priority:"] .. "\n" .. L["|cff91BE0F/raid|r if you're in a manually formed raid."] .. "\n" .. L["|cff91BE0F/instance|r if you're in an instance group such as when in LFR or Battlegrounds."],
 						hidden = function() if Spells[i].Message_Channels_Disabled then if Spells[i].Message_Channels_Disabled["Raid"] then return true end end end,
 						get = function(info)
 							return RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Raid
@@ -2924,7 +3327,7 @@ local function Spell_Options(NonClass)
 						name = "|cff91BE0F"..L["Party"].."|r",
 						type = "toggle",
 						order = 4,
-						desc = L["|cff91BE0F/party|r. Only for manually formed parties."] .. "\n" .. L["Doesn't do anything in group finder parties, use |cffFFCC00Instance|r or |cffFFCC00Smart Group Channel|r for that."],
+						desc = L["Sends a message to one of the following channels in order of priority:"] .. "\n" .. L["|cff91BE0F/party|r if you're in a manually formed group."] .. "\n" .. L["|cff91BE0F/instance|r if you're in an instance group such as when in LFR or Battlegrounds."],
 						hidden = function() if Spells[i].Message_Channels_Disabled then if Spells[i].Message_Channels_Disabled["Party"] then return true end end end,
 						get = function(info)
 							return RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Party
@@ -2963,7 +3366,7 @@ local function Spell_Options(NonClass)
 						name = "|cffFFCC00"..L["Smart Group Channel"].."|r",
 						type = "toggle",
 						order = 7,
-						desc = L["|cff91BE0F/raid|r if you're in a raid."] .. "\n" .. L["|cff91BE0F/party|r if you're in a dungeon."] .. "\n" .. L["|cff91BE0F/instance|r if you're in a group finder group."],
+						desc = L["Sends a message to one of the following channels in order of priority:"] .. "\n" .. L["|cff91BE0F/instance|r if you're in an instance group such as when in LFR or Battlegrounds."] .. "\n" .. L["|cff91BE0F/raid|r if you're in a manually formed raid."] .. "\n" .. L["|cff91BE0F/party|r if you're in a manually formed group."],
 						hidden = function() if Spells[i].Message_Channels_Disabled then if Spells[i].Message_Channels_Disabled["SmartGroup"] then return true end end end,
 						get = function(info)
 							return RSA.db.profile[ProfileName].Spells[Spells[i].Profile].SmartGroup
@@ -2995,17 +3398,19 @@ local function Spell_Options(NonClass)
 		Options.args[Spells[i].Name].args.Message_Description.name = L["The following tags are available for use with this spell:"] .. TagList
 
 		-- Iterate Messages
-		for k=1,Spells[i].Message_Amount do -- Order message areas logically (i.e Start message is displayed before End message)
+		for k=1,Spells[i].Message_Amount do
 			local OrderVal
-			for n = 1,#Area_Orders do
+			for n = 1,#Area_Orders do -- Order message areas logically (i.e Start message is displayed before End message)
 				if Spells[i].Message_Areas[k] == Area_Orders[n] then
 					OrderVal = n
 				end
 			end
 			local Messages = {}
-			for _,v in pairs(RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]]) do
-				if v ~= "" then
-					table.insert(Messages,v)
+			for _,v in pairs(RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]]) do -- Add valid messages to list.
+				if string.match(v,"%w") then
+					if v ~= "" then
+						table.insert(Messages,v)
+					end
 				end
 			end
 			Options.args[Spells[i].Name].args[Spells[i].Message_Areas[k]] = {
@@ -3025,10 +3430,19 @@ local function Spell_Options(NonClass)
 						type = "input",
 						order = 10,
 						width = "full",
+						validate = function(info, value)
+							if value == "" then return true end -- Pressed enter without entering anything, we don't need to warn about this.
+							if not string.match(value,"%w") then
+								RSA.Print_Self(L["Your message must contain at least one number or letter!"])
+								return L["Your message must contain at least one number or letter!"]
+							else
+								return true
+							end
+						end,
 						set = function(info, value)
-							if value == " " then return end
 							table.insert(RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]],value)
 							RSA:UpdateOptions()
+							RSA.WipeMessageCache()
 						end,
 					},
 					List_Description = {
@@ -3067,6 +3481,15 @@ local function Spell_Options(NonClass)
 					width = "full",
 					name = tostring(l),
 					order = 20,
+					validate = function(info, value)
+						if value == "" then return true end
+						if not string.match(value,"%w") then
+							RSA.Print_Self(L["Your message must contain at least one number or letter!"])
+							return L["Your message must contain at least one number or letter!"]
+						else
+							return true
+						end
+					end,
 					get = function(info)
 						if RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]][l] == "" then
 							table.remove(RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]],l)
@@ -3081,6 +3504,7 @@ local function Spell_Options(NonClass)
 							RSA.db.profile[ProfileName].Spells[Spells[i].Profile].Messages[Spells[i].Message_Areas[k]][l] = value
 						end
 						RSA:UpdateOptions()
+						RSA.WipeMessageCache()
 					end,
 				}
 			end
@@ -3115,7 +3539,7 @@ function RSA_O:OnInitialize()
 	self.db.RegisterCallback(RSA, "OnProfileReset", "RefreshConfig")
 
 	if not self.db.profile.Fixed then
-		FixDB()
+		RSA:FixDB()
 	end
 
 	-- Register Various Options
@@ -3124,8 +3548,7 @@ function RSA_O:OnInitialize()
 	Options.args.profiles = Profiles
 	Options.args.profiles.order = 99
 	AddOptions()
-	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("RSA", "RSA")
-	LibStub("AceConfigDialog-3.0"):SetDefaultSize("RSA",1000,725)
+	LibStub("AceConfigDialog-3.0"):SetDefaultSize("RSA",975,700)
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
 	LibDualSpec:EnhanceDatabase(self.db, "RSA")
 	LibDualSpec:EnhanceOptions(Profiles, self.db)

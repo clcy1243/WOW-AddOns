@@ -1,5 +1,227 @@
-changeset:   743:16c8b07b352a
+changeset:   780:e28b2b09c3f5
 tag:         tip
+user:        Tercioo
+date:        Fri Mar 08 18:57:38 2019 -0300
+summary:     - Fixing the Streamer plugin for the recently changes in details!.
+
+
+changeset:   779:621c761711da
+user:        Tercioo
+date:        Fri Mar 08 12:32:33 2019 -0300
+summary:     - Fixed Raid Check plugin not showing the in plugin management nor in the title bar.
+
+
+changeset:   778:bf6860134626
+user:        Tercioo
+date:        Thu Mar 07 17:49:46 2019 -0300
+summary:     - Fixed plugins initialization broken in latest version.
+
+
+changeset:   777:8c04c5215338
+user:        Tercioo
+date:        Wed Mar 06 15:22:09 2019 -0300
+summary:     - Attempt to fix some plugins loading after details! start and failing to install.
+
+
+changeset:   776:7f45f4fcf75b
+user:        Tercioo
+date:        Sat Feb 23 14:55:50 2019 -0300
+summary:     - Framework update.
+
+
+changeset:   775:fa9b0cd31fb3
+user:        Tercioo
+date:        Thu Feb 21 13:02:22 2019 -0300
+summary:     - Moving Details:Start() to PLAYER_LOGIN.
+
+
+changeset:   774:d9a02815778e
+user:        Tercioo
+date:        Tue Feb 19 21:56:21 2019 -0300
+summary:     - Fixed an issue where some options combinations was making the window unlock after /reload.
+
+
+changeset:   773:3b328f956efe
+user:        Tercioo
+date:        Sat Feb 09 14:05:24 2019 -0200
+summary:     - Custom display 'My Spells' now get the player role from the current spec the character is using.
+
+
+changeset:   772:242d660dd3af
+user:        Tercioo
+date:        Wed Jan 30 17:35:46 2019 -0200
+summary:     - Added encounter ID for Grong horde version inside the parser encounter rules.
+
+
+changeset:   771:a22e9ea2e6b9
+user:        Tercioo
+date:        Wed Jan 30 14:36:09 2019 -0200
+summary:     - Fixed Player Details Breakdown window not opening for new instalations.
+
+
+changeset:   770:86af40120d52
+user:        Tercioo
+date:        Fri Jan 25 16:00:17 2019 -0200
+summary:     - Fixed Player Details! Breakdown window not opening for new installs.
+
+
+changeset:   769:d028abffce39
+user:        Tercioo
+date:        Wed Jan 23 16:20:12 2019 -0200
+summary:     - Major clean up on plugins that lost support on 8.0.
+
+
+changeset:   768:d2824170ed79
+user:        Tercioo
+date:        Tue Jan 22 14:28:29 2019 -0200
+summary:     - Encounter updates and framework fixes.
+
+
+changeset:   767:4c16cb3cefc2
+user:        Tercioo
+date:        Tue Jan 22 09:39:01 2019 -0200
+summary:     - Framework update for mage polymorph fixes.
+
+
+changeset:   766:b47964a7f9ff
+user:        Tercioo
+date:        Sun Jan 20 20:14:24 2019 -0200
+summary:     - Improvements on the Encounter Breakdown plugin.
+
+
+changeset:   765:4badbe30d64f
+user:        Tercioo
+date:        Sun Jan 20 00:22:22 2019 -0200
+summary:     - Battle for Dazaralor update.
+
+
+changeset:   764:e68d261c6a61
+user:        Tercioo
+date:        Mon Dec 31 11:06:00 2018 -0200
+summary:     - Fixed Event Tracker tool broken on 8.1 patch.
+
+
+changeset:   763:1ae1f6b5a2c7
+user:        Tercioo
+date:        Mon Dec 17 08:14:11 2018 -0200
+summary:     - ToC and libraries update.
+
+
+changeset:   762:a2d25472f076
+user:        Tercioo
+date:        Tue Dec 11 11:23:05 2018 -0200
+summary:     - Fixed East Asian myriads showing a giganting non formated number in the total bar DPS.
+
+
+changeset:   761:914618091b2c
+user:        Tercioo
+date:        Mon Dec 03 17:25:35 2018 -0200
+summary:     - Fixed East Asian myriads showing a giganting non formated number in the total bar DPS.
+
+
+changeset:   760:ea42ccffcad1
+user:        Tercioo
+date:        Fri Nov 23 19:31:40 2018 -0200
+summary:     - Framwork update for timeline plugin.
+
+
+changeset:   759:daf50a35a0fe
+user:        Tercioo
+date:        Thu Nov 22 14:01:54 2018 -0200
+summary:     - Added Death Logs for mythic dungeon runs in the Overall Data.
+
+
+changeset:   758:e1c9450234ec
+user:        Tercioo
+date:        Wed Nov 21 22:14:43 2018 -0200
+summary:     - Fixed window for report to Copy/Paste.
+
+
+changeset:   757:0d92132ce7d7
+user:        Tercioo
+date:        Wed Nov 07 17:32:08 2018 -0200
+summary:     - New Feature: import and export profiles.
+
+
+changeset:   756:313b158026ee
+user:        Tercio
+date:        Tue Oct 30 19:40:07 2018 -0300
+summary:     - Major improvements on row text scripts, now they pass 4 objects: actor, combat, instance and the default text of the bar.
+
+
+changeset:   755:b53b11c41a50
+user:        Tercio
+date:        Sun Oct 28 15:58:05 2018 -0300
+summary:     - Added import and export profiles.
+
+
+changeset:   754:64d71a698f27
+user:        Tercio
+date:        Sat Oct 20 00:18:52 2018 -0300
+summary:     - Fixed broken change log from last version.
+
+
+changeset:   753:cdaff539eed9
+user:        Tercio
+date:        Fri Oct 19 21:11:32 2018 -0300
+summary:     - Fixed damage on low level training dummies where it was showing 1 damage for each ability.
+
+
+changeset:   752:b5a107128b3f
+user:        Tercio
+date:        Wed Oct 10 23:01:37 2018 -0300
+summary:     - Fixing the pvp issue introduced in the previous build.
+
+
+changeset:   751:83144964254d
+user:        Tercio
+date:        Wed Oct 10 14:31:12 2018 -0300
+summary:     - Send character data when the group roster changes.
+
+
+changeset:   750:8ad20c7b78e7
+user:        Tercio
+date:        Tue Oct 09 18:43:05 2018 -0300
+summary:     - Player detail window now has bigger lines (16 pixels to 20).
+
+
+changeset:   749:4e7c350ff26b
+user:        Tercio
+date:        Sat Oct 06 17:39:20 2018 -0300
+summary:     - Added a macro section with useful macros.
+
+
+changeset:   748:589b441f6a68
+user:        Tercio
+date:        Fri Oct 05 09:18:09 2018 -0300
+summary:     - framework update.
+
+
+changeset:   747:5ae6f4f26046
+user:        Tercio
+date:        Sun Sep 30 20:05:18 2018 -0300
+summary:     - Updated to BFA 'Potion Used' and 'Health Potion and Stone' custom displays.
+
+
+changeset:   746:6bc9f8bacdb5
+user:        Tercio
+date:        Fri Sep 28 19:19:03 2018 -0300
+summary:     - Show light of the martyr damage on death log.
+
+
+changeset:   745:414ed11c2900
+user:        Tercio
+date:        Tue Sep 25 20:21:13 2018 -0300
+summary:     - Deprecated rules for friendly fire has been removed, this might fix some random issues with mind controlled players in the Lord Stormsong encounter in the Shrine of the Storm dungeon.
+
+
+changeset:   744:4249f1488249
+user:        Tercio
+date:        Tue Sep 18 18:13:39 2018 -0300
+summary:     - Fixed pets with the owner name showing twice in the pet name.
+
+
+changeset:   743:16c8b07b352a
 user:        Tercio
 date:        Tue Sep 11 22:19:59 2018 -0300
 summary:     - Added macro text box in Encounter Plugin.
@@ -381,41 +603,5 @@ changeset:   680:7ffc9da9aaee
 user:        Tercio
 date:        Sat Oct 14 16:01:59 2017 -0300
 summary:     - framework update to v58 (looks like some author are adding words like 'topleft' and 'top' to the global namespace).
-
-
-changeset:   679:bc5a5e38ecac
-user:        Tercio
-date:        Sat Oct 14 13:04:36 2017 -0300
-summary:     - fixed an issue opening the segments menu.
-
-
-changeset:   678:fb72e955bfed
-user:        Tercio
-date:        Mon Oct 09 22:43:26 2017 -0300
-summary:     - Added several options and tools for streamers and youtubers.
-
-
-changeset:   677:6cf0fca6ebdb
-user:        Tercio
-date:        Sun Oct 01 21:03:47 2017 -0300
-summary:     - lib folder renamed.
-
-
-changeset:   676:8f7230c2e02e
-user:        Tercio
-date:        Wed Sep 27 17:59:04 2017 -0300
-summary:     - Rolling back to Mercurial repository.
-
-
-changeset:   675:899e13d626a1
-user:        Tercio
-date:        Tue Sep 19 12:56:32 2017 -0300
-summary:     - testing the mercurial repo packpager.
-
-
-changeset:   674:3939641c0fe0
-user:        Tercio
-date:        Wed Jul 26 10:14:37 2017 -0300
-summary:     - packpager, hello?
 
 

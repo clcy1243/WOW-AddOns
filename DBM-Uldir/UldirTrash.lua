@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("UldirTrash", "DBM-Uldir")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 17831 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 18139 $"):sub(12, -3))
 --mod:SetModelID(47785)
 mod:SetZone()
 mod.isTrashMod = true
@@ -10,7 +10,6 @@ mod:RegisterEvents(
 	"SPELL_CAST_START 277047 274802 276540 278976",
 	"SPELL_CAST_SUCCESS 277358",
 	"SPELL_AURA_APPLIED 277047 277498 277548"
---	"SPELL_AURA_REMOVED"
 )
 
 local warnCorruptingGaze				= mod:NewTargetAnnounce(277047, 3)
@@ -24,8 +23,6 @@ local specWarnBloodstorm				= mod:NewSpecialWarningRun(274802, nil, nil, nil, 4,
 local specWarnCrushingDarkness			= mod:NewSpecialWarningRun(277548, "Tank", nil, nil, 4, 2)
 local specWarnBloodShield				= mod:NewSpecialWarningInterrupt(276540, "HasInterrupt", nil, nil, 1, 2)
 local specWarnMindFlay					= mod:NewSpecialWarningInterrupt(277358, "HasInterrupt", nil, nil, 1, 2)
-
---mod:AddRangeFrameOption(10, 221028)
 
 function mod:GazeTarget(targetname, uId)
 	if not targetname then return end
@@ -48,7 +45,7 @@ function mod:SPELL_CAST_START(args)
 	if spellId == 277047 then
 		--self:BossTargetScanner(args.sourceGUID, "SubmergeTarget", 0.1, 14)
 		self:ScheduleMethod(0.2, "BossTargetScanner", args.sourceGUID, "GazeTarget", 0.1, 12)
-	elseif spellId == 274802 and self:AntiSpam(3, 1) then
+	elseif spellId == 274802 and self:AntiSpam(5, 1) then
 		specWarnBloodstorm:Show()
 		specWarnBloodstorm:Play("justrun")
 	elseif spellId == 276540 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
@@ -89,13 +86,3 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnCrushingDarkness:Play("justrun")
 	end
 end
---mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
-
---[[
-function mod:SPELL_AURA_REMOVED(args)
-	local spellId = args.spellId
-	if spellId == 221028 then
-	
-	end
-end
---]]

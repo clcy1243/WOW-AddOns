@@ -168,6 +168,7 @@ L.ExpandUpwards				= "Expand upward"
 L.FillUpBars				= "Fill up"
 L.ClickThrough				= "Disable mouse events (click through)"
 L.Bar_Decimal				= "Decimal shows below time: %d"
+L.Bar_Alpha					= "Bar Alpha: %0.1f"
 L.Bar_DBMOnly				= "Below options only work with \"DBM\" bar style."
 L.Bar_EnlargeTime			= "Bar enlarges below time: %d"
 L.Bar_EnlargePercent		= "Bar enlarges below percent: %0.1f%%"
@@ -177,6 +178,9 @@ L.BarSort					= "Sort by remaining time"
 L.BarColorByType			= "Color by type"
 L.BarInlineIcons			= "Show inline icons"
 L.ShortTimerText			= "Use short timer text (when available)"
+L.KeepBar					= "Keep timer active until ability cast"
+L.KeepBar2					= "(when supported by mod)"
+L.FadeBar					= "Fade timers for out of range abilities"
 
 -- Tab: Spec Warn Frame
 L.Panel_SpecWarnFrame		= "Special Warnings"
@@ -283,9 +287,9 @@ L.Area_PullTimer			= "Pull, Break, Combat, & Custom Timer Filter Options"
 L.DontShowPTNoID			= "Block Pull Timer if not sent from same zone as you"
 L.DontShowPT				= "Do not show Pull/Break Timer bar"
 L.DontShowPTText			= "Do not show announce text for Pull/Break Timer"
-L.DontPlayPTCountdown		= "Do not play Pull/Break/Combat/Custom Timer countdown audio"
 L.DontShowPTCountdownText	= "Do not show Pull countdown text"
-L.PT_Threshold				= "Do not show Break/Combat/Custom Timer countdown text above: %d"
+L.DontPlayPTCountdown		= "Do not play Pull/Break/Combat/Custom Timer countdown audio at all"
+L.PT_Threshold				= "Do not play Pull/Break/Combat/Custom Timer countdown audio above: %d"
 
 L.Panel_HideBlizzard		= "Blizzard Disable & Hide"
 L.Area_HideBlizzard			= "Blizzard Disable & Hide Options"
@@ -297,15 +301,16 @@ L.HideQuestTooltips			= "Hide quest objectives from tooltips during boss fights"
 L.HideTooltips				= "Completely hide tooltips during boss fights"
 L.DisableSFX				= "Disable sound effects channel during boss fights"
 L.DisableCinematics			= "Hide in-game cinematics"
-L.AfterFirst				= "After each movie has played once"
+L.OnlyFight					= "Only during fight, after each movie has played once"
+L.AfterFirst				= "In instance, after each movie has played once"
 L.Always					= ALWAYS
 L.CombatOnly				= "Disable in combat (any)"
 L.RaidCombat				= "Disable in combat (bosses only)"
 L.HideBonusHeader			= "Hide bonus roll window in..."
-L.TrivialContent			= "NON-Mythic dungeons (<340)"--Basically anything below 340
-L.NormalRaider				= "Dungeons below Mythic+5 and LFR raids (<355)"--Basically, anything below 355
-L.HeroicRaider				= "Dungeons below Mythic+10 and raids below heroic and non warfront bosses (<370)"--Basically anything below 370
-L.MythicRaider				= "Anything below mythic difficulty raids (<385)"--Basically anything below 385
+L.TrivialContent			= "NON-Mythic dungeons"--Basically anything below 340
+L.NormalRaider				= "Dungeons below Mythic+5 and LFR raids"--Basically, anything below 355
+L.HeroicRaider				= "Dungeons below Mythic+10 and raids below heroic and non warfront bosses"--Basically anything below 370
+L.MythicRaider				= "Anything below mythic difficulty raids"--Basically anything below 385
 
 L.Panel_ExtraFeatures		= "Extra Features"
 --

@@ -3,7 +3,7 @@ if not L then return end
 if L then
 	L.sideLaser = "Rayons (côté)" -- short for: (location) Uldir Defensive Beam
 	L.upLaser = "Rayons (plafond)"
-	L.mythic_beams = "Rayons (côté + plafond)"
+	L.mythic_beams = "Rayons"
 end
 
 L = BigWigs:NewBossLocale("Zek'voz, Herald of N'zoth", "frFR")
@@ -46,4 +46,11 @@ if L then
 
 	L.custom_on_fixate_plates = "Icône de prise pour cible sur la barre d'info ennemie"
 	L.custom_on_fixate_plates_desc = "Affiche une icône sur la barre d'info de l'unité ennemie qui vous prend pour cible.\nNécessite l'utilisation des barres d'infos ennemies. Cette fonctionnalité est actuellement uniquement supportée par KuiNameplates."
+end
+
+L = BigWigs:NewBossLocale("Uldir Trash", "frFR")
+if L then
+	L.watcher = "Guetteur corrompu"
+	L.ascendant = "Ascendante nazmani"
+	L.dominator = "Dominatrice nazmani"
 end

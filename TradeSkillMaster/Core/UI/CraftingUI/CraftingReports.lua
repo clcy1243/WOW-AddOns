@@ -28,7 +28,11 @@ end
 -- ============================================================================
 
 function private.GetCraftingReportsFrame()
-	private.craftsQuery = private.craftsQuery or TSM.Crafting.CreateCraftsQuery()
+	TSM.UI.AnalyticsRecordPathChange("crafting", "crafting_reports")
+	if not private.craftsQuery then
+		private.craftsQuery = TSM.Crafting.CreateCraftsQuery()
+		private.craftsQuery:VirtualField("firstOperation", "string", private.FirstOperationVirtualField, "itemString")
+	end
 	private.craftsQuery:ResetFilters()
 	private.craftsQuery:ResetOrderBy()
 	private.craftsQuery:OrderBy("itemName", true)
@@ -49,6 +53,7 @@ end
 
 function private.GetTabElements(self, path)
 	if path == L["Crafts"] then
+		TSM.UI.AnalyticsRecordPathChange("crafting", "crafting_reports", "crafts")
 		private.filterText = ""
 		wipe(private.craftProfessions)
 		tinsert(private.craftProfessions, L["All Professions"])
@@ -206,6 +211,7 @@ function private.GetTabElements(self, path)
 				:SetScript("OnRowClick", private.CraftsOnRowClick)
 			)
 	elseif path == L["Materials"] then
+		TSM.UI.AnalyticsRecordPathChange("crafting", "crafting_reports", "materials")
 		wipe(private.matProfessions)
 		tinsert(private.matProfessions, L["All Professions"])
 		for _, _, profession in TSM.Crafting.PlayerProfessions.Iterator() do
@@ -486,6 +492,10 @@ end
 -- Private Helper Functions
 -- ============================================================================
 
+function private.FirstOperationVirtualField(itemString)
+	return TSM.Operations.GetFirstOperationByItem("Crafting", itemString) or ""
+end
+
 function private.UpdateCraftsQueryWithFilters(frame)
 	private.craftsQuery:ResetFilters()
 	-- apply search filter
@@ -496,7 +506,7 @@ function private.UpdateCraftsQueryWithFilters(frame)
 	-- apply dropdown filter
 	local professionPlayer = frame:GetElement("profession.dropdown"):GetSelection()
 	if professionPlayer ~= private.craftProfessions[1] then
-		local profession, player = strmatch(professionPlayer, "^([^ ]+) %- ([^ ]+)$")
+		local profession, player = strmatch(professionPlayer, "^(.+) %- ([^ ]+)$")
 		private.craftsQuery
 			:Equal("profession", profession)
 			:Or()

@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2018 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2019 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 --
 -- User interface code
@@ -61,7 +61,12 @@ local PawnUIFrameNeedsScaleSelector = { true, true, true, true, false, false, fa
 function PawnUI_InventoryPawnButton_Move()
 	if PawnCommon.ButtonPosition == PawnButtonPositionRight then
 		PawnUI_InventoryPawnButton:ClearAllPoints()
-		PawnUI_InventoryPawnButton:SetPoint("TOPRIGHT", "CharacterTrinket1Slot", "BOTTOMRIGHT", -1, -8)
+		if PaperDollFrame.ExpandButton then
+			-- DejaCharacterStats compatibility
+			PawnUI_InventoryPawnButton:SetPoint("TOPRIGHT", "CharacterTrinket1Slot", "BOTTOMRIGHT", -31, -8)
+		else
+			PawnUI_InventoryPawnButton:SetPoint("TOPRIGHT", "CharacterTrinket1Slot", "BOTTOMRIGHT", -1, -8)
+		end
 		PawnUI_InventoryPawnButton:Show()
 		if PawnUI_InspectPawnButton then
 			PawnUI_InspectPawnButton:ClearAllPoints()
@@ -85,7 +90,6 @@ function PawnUI_InventoryPawnButton_Move()
 		if PawnUI_SocketingPawnButton then
 			PawnUI_SocketingPawnButton:ClearAllPoints()
 			PawnUI_SocketingPawnButton:SetPoint("TOPRIGHT", "ItemSocketingFrame", "TOPRIGHT", -14, -32)
-			--PawnUI_SocketingPawnButton:SetPoint("TOPLEFT", "ItemSocketingFrame", "TOPLEFT", 64, -32)
 			PawnUI_SocketingPawnButton:Show()
 		end
 	else
@@ -1024,7 +1028,7 @@ function PawnUI_SetCompareItem(Index, ItemLink)
 	
 	-- Now, update the item name and icon.
 	local Label = getglobal("PawnUICompareItemName" .. Index)
-	local Texture = getglobal("PawnUICompareItemIconTexture" .. Index)
+	local Texture = getglobal("PawnUICompareItemIcon" .. Index .. "NormalTexture")
 	Label:SetText(ItemName)
 	local Color = ITEM_QUALITY_COLORS[ItemRarity]
 	if Color then Label:SetVertexColor(Color.r, Color.g, Color.b) end
@@ -1162,7 +1166,7 @@ function PawnUI_SetShortcutButtonItem(ShortcutIndex)
 	-- Update this button.
 	local Item = PawnUIShortcutItems[ShortcutIndex]
 	if Item then
-		local Texture = getglobal(ButtonName .. "Texture")
+		local Texture = getglobal(ButtonName .. "NormalTexture")
 		local _, _, _, _, _, _, _, _, _, ItemTexture = GetItemInfo(Item.Link)
 		Texture:SetTexture(ItemTexture)
 		ShortcutButton:Show()

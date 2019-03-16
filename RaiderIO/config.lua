@@ -13,20 +13,24 @@ local addonConfig = {
 	enableWhoMessages = true,
 	enableGuildTooltips = true,
 	enableKeystoneTooltips = true,
+	mplusHeadlineMode = 1,
 	showMainsScore = true,
+	showMainBestScore = true,
 	showDropDownCopyURL = true,
 	showSimpleScoreColors = false,
 	showScoreInCombat = true,
 	disableScoreColors = false,
-	alwaysExtendTooltip = false,
 	enableClientEnhancements = true,
 	showClientGuildBest = true,
 	displayWeeklyGuildBest = false,
 	showRaiderIOProfile = true,
+	hidePersonalRaiderIOProfile = false,
+	showRaidEncountersInProfile = true,
 	enableProfileModifier = true,
 	inverseProfileModifier = false,
 	positionProfileAuto = true,
 	lockProfile = false,
+	showRoleIcons = true,
 	profilePoint = { point = nil, x = 0, y = 0 },
 }
 
@@ -37,6 +41,15 @@ ns.addonConfig = addonConfig
 local Init
 do
 	local HasConfigUI
+
+	-- Print map info
+	local function PrintMaps()
+		for i = 1, #ns.dungeons do
+			local dgn = ns.dungeons[i]
+			local _, _, dungeonSeconds = C_ChallengeMode.GetMapUIInfo(dgn.keystone_instance)
+			DEFAULT_CHAT_FRAME:AddMessage(format("%s: %d minutes", dgn.shortName, dungeonSeconds / 60))
+		end
+	end
 
 	-- update local reference to the correct savedvariable table
 	local function UpdateVar()
@@ -190,15 +203,34 @@ do
 					end
 				end
 			end
+
+			for cvar in pairs(config.radios) do
+				local radios = config.radios[cvar]
+				for i = 1, #radios do
+					local f = radios[i]
+					local checked = f.checkButton:GetChecked()
+					local currentValue = ns.addonConfig[f.cvar]
+
+					if checked then
+						ns.addonConfig[f.cvar] = f.valueRadio
+
+						if currentValue ~= f.valueRadio and f.needReload then
+							reload = 1
+						end
+					end
+				end
+			end
 			if reload then
 				StaticPopup_Show("RAIDERIO_RELOADUI_CONFIRM")
 			end
+			ns.FlushTooltipCache()
 			ns.PROFILE_UI.SaveConfig()
 		end
 
 		config = {
 			modules = {},
 			options = {},
+			radios = {},
 			backdrop = {
 				bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16,
@@ -215,6 +247,14 @@ do
 			for i = 1, #self.options do
 				local f = self.options[i]
 				f.checkButton:SetChecked(ns.addonConfig[f.cvar] ~= false)
+			end
+			for cvar in pairs(self.radios) do
+				local radios = config.radios[cvar]
+				for i = 1, #radios do
+					local f = radios[i]
+
+					f.checkButton:SetChecked(f.valueRadio == ns.addonConfig[f.cvar])
+				end
 			end
 		end
 
@@ -304,7 +344,7 @@ do
 			return frame
 		end
 
-		function config.CreateOptionToggle(self, label, description, cvar, config)
+		function config.CreateToggle(self, label, description, cvar, config)
 			local frame = self:CreateWidget("Frame")
 			frame.text:SetText(label)
 			frame.tooltip = description
@@ -314,8 +354,41 @@ do
 			frame.help.tooltip = description
 			frame.help:Show()
 			frame.checkButton:Show()
+
+			return frame
+		end
+
+		function config.CreateOptionToggle(self, label, description, cvar, config)
+			local frame = self:CreateToggle(label, description, cvar, config)
 			self.options[#self.options + 1] = frame
 			return frame
+		end
+
+		function config.CreateRadioToggle(self, label, description, cvar, value, config)
+			local frame = self:CreateToggle(label, description, cvar, config)
+
+			frame.valueRadio = value
+
+			if self.radios[cvar] == nil then
+				self.radios[cvar] = {}
+			end
+
+			self.radios[cvar][#self.radios[cvar] +1] = frame
+
+			frame.checkButton:SetScript("OnClick", function ()
+				-- Disable unchecking radio (to avoid having nothing chosen)
+				if not frame.checkButton:GetChecked() then
+					frame.checkButton:SetChecked(true)
+				end
+
+				-- Uncheck every other radio for same cvar
+				for i = 1, #self.radios[cvar] do
+					local f = self.radios[cvar][i]
+					if f.valueRadio ~= frame.valueRadio then
+						f.checkButton:SetChecked(false)
+					end
+				end
+			end)
 		end
 
 		-- customize the look and feel
@@ -377,7 +450,23 @@ do
 			local header = config:CreateHeadline(L.RAIDERIO_MYTHIC_OPTIONS .. "\nVersion: " .. tostring(GetAddOnMetadata(addonName, "Version")), configHeaderFrame)
 			header.text:SetFont(header.text:GetFont(), 16, "OUTLINE")
 
-			config:CreateHeadline(L.MYTHIC_PLUS_SCORES)
+			config:CreateHeadline(L.CHOOSE_HEADLINE_HEADER)
+			config:CreateRadioToggle(L.SHOW_BEST_SEASON, L.SHOW_BEST_SEASON_DESC, "mplusHeadlineMode", 1)
+			config:CreateRadioToggle(L.SHOW_CURRENT_SEASON, L.SHOW_CURRENT_SEASON_DESC, "mplusHeadlineMode", 0)
+			config:CreateRadioToggle(L.SHOW_BEST_RUN, L.SHOW_BEST_RUN_DESC, "mplusHeadlineMode", 2)
+
+			config:CreatePadding()
+			config:CreateHeadline(L.GENERAL_TOOLTIP_OPTIONS)
+			config:CreateOptionToggle(L.SHOW_MAINS_SCORE, L.SHOW_MAINS_SCORE_DESC, "showMainsScore")
+			config:CreateOptionToggle(L.SHOW_BEST_MAINS_SCORE, L.SHOW_BEST_MAINS_SCORE_DESC, "showMainBestScore")
+			config:CreateOptionToggle(L.SHOW_ROLE_ICONS, L.SHOW_ROLE_ICONS_DESC, "showRoleIcons")
+			config:CreateOptionToggle(L.ENABLE_SIMPLE_SCORE_COLORS, L.ENABLE_SIMPLE_SCORE_COLORS_DESC, "showSimpleScoreColors")
+			config:CreateOptionToggle(L.ENABLE_NO_SCORE_COLORS, L.ENABLE_NO_SCORE_COLORS_DESC, "disableScoreColors")
+			config:CreateOptionToggle(L.SHOW_KEYSTONE_INFO, L.SHOW_KEYSTONE_INFO_DESC, "enableKeystoneTooltips")
+			config:CreateOptionToggle(L.SHOW_AVERAGE_PLAYER_SCORE_INFO, L.SHOW_AVERAGE_PLAYER_SCORE_INFO_DESC, "showAverageScore")
+
+			config:CreatePadding()
+			config:CreateHeadline(L.CONFIG_WHERE_TO_SHOW_TOOLTIPS)
 			config:CreateOptionToggle(L.SHOW_ON_PLAYER_UNITS, L.SHOW_ON_PLAYER_UNITS_DESC, "enableUnitTooltips")
 			config:CreateOptionToggle(L.SHOW_IN_LFD, L.SHOW_IN_LFD_DESC, "enableLFGTooltips")
 			config:CreateOptionToggle(L.SHOW_IN_FRIENDS, L.SHOW_IN_FRIENDS_DESC, "enableFriendsTooltips")
@@ -386,18 +475,10 @@ do
 			config:CreateOptionToggle(L.SHOW_IN_SLASH_WHO_RESULTS, L.SHOW_IN_SLASH_WHO_RESULTS_DESC, "enableWhoMessages")
 
 			config:CreatePadding()
-			config:CreateHeadline(L.TOOLTIP_CUSTOMIZATION)
-			config:CreateOptionToggle(L.SHOW_MAINS_SCORE, L.SHOW_MAINS_SCORE_DESC, "showMainsScore")
-			config:CreateOptionToggle(L.ENABLE_SIMPLE_SCORE_COLORS, L.ENABLE_SIMPLE_SCORE_COLORS_DESC, "showSimpleScoreColors")
-			config:CreateOptionToggle(L.ENABLE_NO_SCORE_COLORS, L.ENABLE_NO_SCORE_COLORS_DESC, "disableScoreColors")
-			config:CreateOptionToggle(L.ALWAYS_SHOW_EXTENDED_INFO, L.ALWAYS_SHOW_EXTENDED_INFO_DESC, "alwaysExtendTooltip")
-			config:CreateOptionToggle(L.SHOW_SCORE_IN_COMBAT, L.SHOW_SCORE_IN_COMBAT_DESC, "showScoreInCombat")
-			config:CreateOptionToggle(L.SHOW_KEYSTONE_INFO, L.SHOW_KEYSTONE_INFO_DESC, "enableKeystoneTooltips")
-			config:CreateOptionToggle(L.SHOW_AVERAGE_PLAYER_SCORE_INFO, L.SHOW_AVERAGE_PLAYER_SCORE_INFO_DESC, "showAverageScore")
-
-			config:CreatePadding()
 			config:CreateHeadline(L.TOOLTIP_PROFILE)
 			config:CreateOptionToggle(L.SHOW_RAIDERIO_PROFILE, L.SHOW_RAIDERIO_PROFILE_DESC, "showRaiderIOProfile")
+			config:CreateOptionToggle(L.HIDE_OWN_PROFILE, L.HIDE_OWN_PROFILE_DESC, "hidePersonalRaiderIOProfile")
+			config:CreateOptionToggle(L.SHOW_RAID_ENCOUNTERS_IN_PROFILE, L.SHOW_RAID_ENCOUNTERS_IN_PROFILE_DESC, "showRaidEncountersInProfile")
 			config:CreateOptionToggle(L.SHOW_LEADER_PROFILE, L.SHOW_LEADER_PROFILE_DESC, "enableProfileModifier")
 			config:CreateOptionToggle(L.INVERSE_PROFILE_MODIFIER, L.INVERSE_PROFILE_MODIFIER_DESC, "inverseProfileModifier")
 			config:CreateOptionToggle(L.ENABLE_AUTO_FRAME_POSITION, L.ENABLE_AUTO_FRAME_POSITION_DESC, "positionProfileAuto")
@@ -413,19 +494,20 @@ do
 			config:CreateOptionToggle(L.ALLOW_ON_PLAYER_UNITS, L.ALLOW_ON_PLAYER_UNITS_DESC, "showDropDownCopyURL")
 			config:CreateOptionToggle(L.ALLOW_IN_LFD, L.ALLOW_IN_LFD_DESC, "enableLFGDropdown")
 
+			local factionHeaderModules = {}
 			config:CreatePadding()
 			config:CreateHeadline(L.MYTHIC_PLUS_DB_MODULES)
-			local module1 = config:CreateModuleToggle(L.MODULE_AMERICAS, "RaiderIO_DB_US_A", "RaiderIO_DB_US_H")
+			factionHeaderModules[#factionHeaderModules + 1] = config:CreateModuleToggle(L.MODULE_AMERICAS, "RaiderIO_DB_US_A", "RaiderIO_DB_US_H")
 			config:CreateModuleToggle(L.MODULE_EUROPE, "RaiderIO_DB_EU_A", "RaiderIO_DB_EU_H")
 			config:CreateModuleToggle(L.MODULE_KOREA, "RaiderIO_DB_KR_A", "RaiderIO_DB_KR_H")
 			config:CreateModuleToggle(L.MODULE_TAIWAN, "RaiderIO_DB_TW_A", "RaiderIO_DB_TW_H")
 
-			--config:CreatePadding()
-			--config:CreateHeadline(L.RAIDING_DB_MODULES)
-			--local module1 = config:CreateModuleToggle(L.MODULE_AMERICAS, "RaiderIO_DB_US_A_R", "RaiderIO_DB_US_H_R")
-			--config:CreateModuleToggle(L.MODULE_EUROPE, "RaiderIO_DB_EU_A_R", "RaiderIO_DB_EU_H_R")
-			--config:CreateModuleToggle(L.MODULE_KOREA, "RaiderIO_DB_KR_A_R", "RaiderIO_DB_KR_H_R")
-			--config:CreateModuleToggle(L.MODULE_TAIWAN, "RaiderIO_DB_TW_A_R", "RaiderIO_DB_TW_H_R")
+			config:CreatePadding()
+			config:CreateHeadline(L.RAIDING_DB_MODULES)
+			factionHeaderModules[#factionHeaderModules + 1] = config:CreateModuleToggle(L.MODULE_AMERICAS, "RaiderIO_DB_US_A_R", "RaiderIO_DB_US_H_R")
+			config:CreateModuleToggle(L.MODULE_EUROPE, "RaiderIO_DB_EU_A_R", "RaiderIO_DB_EU_H_R")
+			config:CreateModuleToggle(L.MODULE_KOREA, "RaiderIO_DB_KR_A_R", "RaiderIO_DB_KR_H_R")
+			config:CreateModuleToggle(L.MODULE_TAIWAN, "RaiderIO_DB_TW_A_R", "RaiderIO_DB_TW_H_R")
 
 			-- add save button and cancel buttons
 			local buttons = config:CreateWidget("Frame", 4, configButtonFrame)
@@ -450,7 +532,7 @@ do
 
 			-- adjust frame height dynamically
 			local children = {configFrame:GetChildren()}
-			local height = 50
+			local height = 70
 			for i = 1, #children do
 				height = height + children[i]:GetHeight() + 2
 			end
@@ -470,14 +552,18 @@ do
 			configParentFrame:SetWidth(160 + maxWidth)
 
 			-- add faction headers over the first module
-			local af = config:CreateHeadline("|TInterface\\Icons\\inv_bannerpvp_02:0:0:0:0:16:16:4:12:4:12|t")
-			af:ClearAllPoints()
-			af:SetPoint("BOTTOM", module1.checkButton2, "TOP", 2, -5)
-			af:SetSize(32, 32)
-			local hf = config:CreateHeadline("|TInterface\\Icons\\inv_bannerpvp_01:0:0:0:0:16:16:4:12:4:12|t")
-			hf:ClearAllPoints()
-			hf:SetPoint("BOTTOM", module1.checkButton, "TOP", 2, -5)
-			hf:SetSize(32, 32)
+			for i = 1, #factionHeaderModules do
+				local module = factionHeaderModules[i]
+				local af = config:CreateHeadline("|TInterface\\Icons\\inv_bannerpvp_02:0:0:0:0:16:16:4:12:4:12|t")
+				af:ClearAllPoints()
+				af:SetPoint("BOTTOM", module.checkButton2, "TOP", 2, -5)
+				af:SetSize(32, 32)
+
+				local hf = config:CreateHeadline("|TInterface\\Icons\\inv_bannerpvp_01:0:0:0:0:16:16:4:12:4:12|t")
+				hf:ClearAllPoints()
+				hf:SetPoint("BOTTOM", module.checkButton, "TOP", 2, -5)
+				hf:SetSize(32, 32)
+			end
 		end
 
 		-- add the category and a shortcut button in the interface panel options
@@ -538,6 +624,12 @@ do
 						if ns.EXPORT_JSON then
 							ns.EXPORT_JSON.OpenCopyDialog()
 						end
+						return
+					end
+
+					-- if the keyword "group" is present in the command we show the EXPORT JSON dialog
+					if text:find("[Pp][Rr][Ii][Nn][Tt][Mm][Aa][Pp][Ss]") then
+						PrintMaps()
 						return
 					end
 				end

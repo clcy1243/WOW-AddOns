@@ -10,26 +10,25 @@ local _, TSM = ...
 local Import = TSM.MainUI:NewPackage("ImportExport")
 local L = TSM.L
 local private = {
-	currentGroupPath = TSM.CONST.ROOT_GROUP_PATH,
-	selectedGroupList = {},
-	blacklistedItemsByGroup = {},
-	groupedItemList = {},
-	itemsByGroup = {},
 	groupSearch = "",
 	importText = "",
-	importExportMode = "Import",
-	-- TODO: this should eventually go in the saved variables
-	dividedContainerContext = {},
+	newImport = nil,
+	importRootPath = TSM.CONST.ROOT_GROUP_PATH,
+	importOptions = {
+		moveGroupedItems = true,
+		includeOperations = true,
+		replaceDuplicateOperations = true,
+		skipConfirmation = false,
+	},
 }
-
+-- TODO: this should eventually go in the saved variables
+private.dividedContainerContext = {}
 local DEFAULT_DIVIDED_CONTAINER_CONTEXT = {
 	leftWidth = 300,
 }
-
 local SETTING_LINE_MARGIN = {
 	bottom = 16
 }
-
 local VALID_OUTER_VIEW_STATES = {
 	["import"] = true,
 	["exportSelection"] = true,
@@ -46,109 +45,17 @@ function Import.OnInitialize()
 	TSM.MainUI.RegisterTopLevelPage("Import/Export", "iconPack.24x24/Import", private.GetOuterFrame)
 end
 
-local colors = {
-	red = "#ffff0000",
-	green = "#ff00ff00",
-	blue = "#ff0000ff",
-	black = "#ff000000",
-	white = "#ffffffff",
-}
-
-local stylesheet = {
-	LINE_COLOR = "#e2e2e2",
-	BANANA_YELLOW = "#ffd839",
-	--GROUP_LABEL_COLOR = "#79a2ff",
-	GROUP_LABEL_COLOR = "#e2e2e2",
-	HIGHLIGHT_TEXT_COLOR = "#ff000000",
-	HIGHLIGHT_BACKGROUND_COLOR = colors.green,
-	OPERATIONS_LABEL_COLOR = colors.red,
-	--HIGHLIGHT_BACKGROUND_COLOR = "#ffb2b2b2",
-}
-
 
 
 -- ============================================================================
--- Builder Functions
+-- Import UI
 -- ============================================================================
-local builder = {}
 
-function builder.CheckBox(name, label, optionTable, optionKey, width)
-	local element = TSMAPI_FOUR.UI.NewElement("Checkbox", name)
-		:SetText(label)
-		:SetSettingInfo(optionTable, optionKey)
-	if width then
-		element:SetStyle("width", width)
-	end
-	return element
+function private.ImportGroupSelectionChangedHandler(element, groupPath)
+	private.importRootPath = groupPath
 end
 
-function builder.ExporterGroupLine(name, path, removeHandler)
-	return TSMAPI_FOUR.UI.NewElement("Frame", name)
-		:SetLayout("HORIZONTAL")
-		:SetContext(path)
-		:SetStyle("height", 40)
-		:SetStyle("padding", 10)
-		:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "groupName")
-			:SetText(TSM.Groups.Path.GetName(path))
-		)
-		:AddChild(TSMAPI_FOUR.UI.NewElement("Button", "removeGroupButton")
-			:SetText("X")
-			:SetScript("OnClick", removeHandler)
-		)
-end
-
-function builder.SectionHeaderLine(name, text)
-	return TSMAPI_FOUR.UI.NewElement("Text", name)
-		:SetStyle("height", 19)
-		:SetStyle("fontHeight", 16)
-		:SetStyle("font", TSM.UI.Fonts.MontserratBold)
-		:SetStyle("textColor", "#ffffffff")
-		:SetStyle("margin", { bottom = 8 })
-		:SetText(text)
-end
-
-function builder.SpacerFrame(name)
-	name = name or 'spacerFrame'
-	return TSMAPI_FOUR.UI.NewElement("Spacer", name)
-end
-
-function private.ImportGroupSelectionChangedHandler(element, selectedGroups, groupPath)
-	private.importer.rootPath = selectedGroups
-end
-
-function builder.SelectedCountHeader(name, text, color, items)
-	return TSMAPI_FOUR.UI.NewElement("Frame", "selectedGroupsLine")
-		:SetLayout("HORIZONTAL")
-		:SetStyle("height", 40)
-		:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "selectedGroupsLabel")
-			:SetText(text)
-			:SetStyle("width", 200)
-			:SetStyle("height", 24)
-		)
-		:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "selectedGroupsCountDecoration")
-			--:SetStyle("backgroundTexture", stylesheet.HIGHLIGHT_BACKGROUND_COLOR)
-			:SetStyle("textColor", stylesheet.HIGHLIGHT_TEXT_COLOR)
-			:SetStyle("width", 40)
-			:SetStyle("height", 24)
-			:SetStyle("justifyH", "CENTER")
-			:SetStyle("fontHeight", 20)
-			:SetText(TSMAPI_FOUR.Util.Count(items))
-		)
--- FIXME texture / count rendering not right
---			:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "decoration")
---				:SetStyle("background", stylesheet.HIGHLIGHT_BACKGROUND_COLOR)
---				:SetStyle("width", 40)
---				:SetStyle("height", 24)
---				:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "selectedGroupsCount")
---					:SetStyle("textColor", stylesheet.HIGHLIGHT_TEXT_COLOR)
---					:SetStyle("fontHeight", 20)
---					:SetText(TSMAPI_FOUR.Util.Count(items))
---				)
---			)
-		:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "spacerFrame"))
-end
-
-function builder.ImportOptionToggle(name, labelText, optionTable)
+function private.CreateImportOptionToggle(name, labelText, optionTable)
 	return TSMAPI_FOUR.UI.NewElement("Frame", name)
 		:SetLayout("HORIZONTAL")
 		:SetStyle("height", 26)
@@ -164,21 +71,16 @@ function builder.ImportOptionToggle(name, labelText, optionTable)
 		:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", name.."Frame")
 			:SetLayout("HORIZONTAL")
 			-- move the right by the width of the toggle so this frame gets half the total width
-			:SetStyle("margin", { right = -TSM.UI.TexturePacks.GetWidth("uiFrames.ToggleOn") })
+			:SetStyle("margin.right", -TSM.UI.TexturePacks.GetWidth("uiFrames.ToggleOn"))
 			:AddChild(TSMAPI_FOUR.UI.NewElement("ToggleOnOff", "toggle")
 				:SetSettingInfo(optionTable, name)
 			)
-			:AddChild(builder.SpacerFrame())
+			:AddChild(TSMAPI_FOUR.UI.NewElement("Spacer", "spacer"))
 		)
 end
 
-
-
--- ============================================================================
--- Import UI
--- ============================================================================
-
 function private.GetOuterFrame()
+	TSM.UI.AnalyticsRecordPathChange("main", "import_export")
 	return TSMAPI_FOUR.UI.NewElement("ViewContainer", "ImportExportOuterViewContainer")
 		:SetNavCallback(private.GetImportExportOuterViewContainerCallback)
 		:AddPath("import", true)
@@ -198,7 +100,6 @@ function private.GetImportExportOuterViewContainerCallback(self, path)
 end
 
 function private.GetImportExportFrame()
-	private.currentGroupPath = TSM.CONST.ROOT_GROUP_PATH
 	local frame = TSMAPI_FOUR.UI.NewElement("DividedContainer", "groups")
 		:SetStyle("background", "#272727")
 		:SetContextTable(private.dividedContainerContext, DEFAULT_DIVIDED_CONTAINER_CONTEXT)
@@ -232,15 +133,59 @@ function private.GetImportExportLeftPaneCallback(self, path)
 	end
 end
 
+function private.GetImportExportLeftPaneImportSelection(self)
+	return TSMAPI_FOUR.UI.NewElement("Frame", "groupSelection")
+		:SetLayout("VERTICAL")
+		:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "search")
+			:SetLayout("HORIZONTAL")
+			:SetStyle("height", 20)
+			:SetStyle("margin", { left = 12, right = 12, top = 35, bottom = 12 })
+			:AddChild(TSMAPI_FOUR.UI.NewElement("SearchInput", "input")
+				:SetStyle("height", 20)
+				:SetText(private.groupSearch)
+				:SetHintText(L["Search Groups"])
+				:SetScript("OnTextChanged", private.GroupSearchOnTextChanged)
+			)
+			:AddChild(TSMAPI_FOUR.UI.NewElement("Button", "moreBtn")
+				:SetStyle("width", 18)
+				:SetStyle("height", 18)
+				:SetStyle("margin.left", 8)
+				:SetStyle("backgroundTexturePack", "iconPack.18x18/More")
+				:SetScript("OnClick", private.ImportMoreBtnOnClick)
+			)
+		)
+		:AddChild(TSMAPI_FOUR.UI.NewElement("Texture", "line")
+			:SetStyle("height", 2)
+			:SetStyle("color", "#9d9d9d")
+		)
+		:AddChild(TSMAPI_FOUR.UI.NewElement("SelectionGroupTree", "groupTree")
+			:SetGroupListFunc(private.GroupTreeGetList)
+			:SetContextTable(TSM.db.profile.internalData.importGroupTreeContext)
+			:SetStyle("background", "#131313")
+			:SetScript("OnGroupSelectionChanged", private.ImportGroupSelectionChangedHandler)
+		)
+end
+
 function private.GetImportExportLeftPaneExportSelection(self)
 	return TSMAPI_FOUR.UI.NewElement("Frame", "groupSelection")
 		:SetLayout("VERTICAL")
-		:AddChild(TSMAPI_FOUR.UI.NewElement("SearchInput", "search")
+		:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "search")
+			:SetLayout("HORIZONTAL")
 			:SetStyle("height", 20)
 			:SetStyle("margin", { left = 12, right = 12, top = 35, bottom = 12 })
-			:SetText(private.groupSearch)
-			:SetHintText(L["Search Groups"])
-			:SetScript("OnTextChanged", private.GroupSearchOnTextChanged)
+			:AddChild(TSMAPI_FOUR.UI.NewElement("SearchInput", "input")
+				:SetStyle("height", 20)
+				:SetText(private.groupSearch)
+				:SetHintText(L["Search Groups"])
+				:SetScript("OnTextChanged", private.GroupSearchOnTextChanged)
+			)
+			:AddChild(TSMAPI_FOUR.UI.NewElement("Button", "moreBtn")
+				:SetStyle("width", 18)
+				:SetStyle("height", 18)
+				:SetStyle("margin.left", 8)
+				:SetStyle("backgroundTexturePack", "iconPack.18x18/More")
+				:SetScript("OnClick", private.ExportMoreBtnOnClick)
+			)
 		)
 		:AddChild(TSMAPI_FOUR.UI.NewElement("Texture", "line")
 			:SetStyle("height", 2)
@@ -248,40 +193,14 @@ function private.GetImportExportLeftPaneExportSelection(self)
 		)
 		:AddChild(TSMAPI_FOUR.UI.NewElement("ApplicationGroupTree", "groupTree")
 			:SetGroupListFunc(private.GroupTreeGetList)
-			:SetContextTable(TSM.db.profile.internalData.importGroupTreeContext)
+			:SetContextTable(TSM.db.profile.internalData.exportGroupTreeContext)
+			:SetStyle("background", "#131313")
 			:SetScript("OnGroupSelectionChanged", private.ExportGroupsSelectionChanged)
-			:SetStyle("background", "#131313")
-		)
-		:AddChild(TSMAPI_FOUR.UI.NewElement("Texture", "line")
-			:SetStyle("height", 2)
-			:SetStyle("color", "#ff252525")
-		)
-end
-
-function private.GetImportExportLeftPaneImportSelection(self)
-	return TSMAPI_FOUR.UI.NewElement("Frame", "groupSelection")
-		:SetLayout("VERTICAL")
-		:AddChild(TSMAPI_FOUR.UI.NewElement("SearchInput", "search")
-			:SetStyle("height", 20)
-			:SetStyle("margin", { left = 12, right = 12, top = 35, bottom = 12 })
-			:SetText(private.groupSearch)
-			:SetHintText(L["Search Groups"])
-			:SetScript("OnTextChanged", private.GroupSearchOnTextChanged)
-		)
-		:AddChild(TSMAPI_FOUR.UI.NewElement("Texture", "line")
-			:SetStyle("height", 2)
-			:SetStyle("color", "#9d9d9d")
-		)
-		:AddChild(TSMAPI_FOUR.UI.NewElement("SelectionGroupTree", "groupTree")
-			:SetStyle("background", "#131313")
-			:SetScript("OnGroupSelectionChanged", private.ImportGroupSelectionChangedHandler)
-			:SetGroupListFunc(private.GroupTreeGetList)
 		)
 end
 
 function private.GetImportExportRightPaneCallback(self, button)
 	if button == L["Import"] then
-		private.importer = TSMAPI_FOUR.Importer.New()
 		-- at initial draw time parent won't exist, so we can't tell it to be the import left pane
 		local parent = self:GetParentElement()
 		if parent then
@@ -313,6 +232,82 @@ function private.ExportRightPaneCallback(self, path)
 	end
 end
 
+function private.GroupSearchOnTextChanged(input)
+	local text = strlower(strtrim(input:GetText()))
+	if text == private.groupSearch then
+		return
+	end
+	private.groupSearch = text
+
+	input:GetElement("__parent.__parent.groupTree")
+		:SetSearchString(private.groupSearch)
+		:Draw()
+end
+
+local function ImportMoreDialogRowIterator(_, prevIndex)
+	if prevIndex == nil then
+		return 1, L["Expand All Groups"], private.ExportExpandAllBtnOnClick
+	elseif prevIndex == 1 then
+		return 2, L["Collapse All Groups"], private.ExportCollapseAllBtnOnClick
+	end
+end
+
+function private.ImportMoreBtnOnClick(button)
+	button:GetBaseElement():ShowMoreButtonDialog(button, ImportMoreDialogRowIterator)
+end
+
+function private.ImportExpandAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.ImportExportOuterViewContainer.groups.ImportExportLeftPane.groupSelection.groupTree"):ExpandAll()
+	baseFrame:HideDialog()
+end
+
+function private.ImportCollapseAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.ImportExportOuterViewContainer.groups.ImportExportLeftPane.groupSelection.groupTree"):CollapseAll()
+	baseFrame:HideDialog()
+end
+
+local function ExportMoreDialogRowIterator(_, prevIndex)
+	if prevIndex == nil then
+		return 1, L["Select All Groups"], private.ExportSelectAllBtnOnClick
+	elseif prevIndex == 1 then
+		return 2, L["Deselect All Groups"], private.ExportDeselectAllBtnOnClick
+	elseif prevIndex == 2 then
+		return 3, L["Expand All Groups"], private.ExportExpandAllBtnOnClick
+	elseif prevIndex == 3 then
+		return 4, L["Collapse All Groups"], private.ExportCollapseAllBtnOnClick
+	end
+end
+
+function private.ExportMoreBtnOnClick(button)
+	button:GetBaseElement():ShowMoreButtonDialog(button, ExportMoreDialogRowIterator)
+end
+
+function private.ExportSelectAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.ImportExportOuterViewContainer.groups.ImportExportLeftPane.groupSelection.groupTree"):SelectAll()
+	baseFrame:HideDialog()
+end
+
+function private.ExportDeselectAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.ImportExportOuterViewContainer.groups.ImportExportLeftPane.groupSelection.groupTree"):DeselectAll()
+	baseFrame:HideDialog()
+end
+
+function private.ExportExpandAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.ImportExportOuterViewContainer.groups.ImportExportLeftPane.groupSelection.groupTree"):ExpandAll()
+	baseFrame:HideDialog()
+end
+
+function private.ExportCollapseAllBtnOnClick(button)
+	local baseFrame = button:GetBaseElement()
+	baseFrame:GetElement("content.ImportExportOuterViewContainer.groups.ImportExportLeftPane.groupSelection.groupTree"):CollapseAll()
+	baseFrame:HideDialog()
+end
+
 function private.GroupTreeGetList(groups, headerNameLookup)
 	if strmatch(strlower(L["Base Group"]), TSMAPI_FOUR.Util.StrEscape(private.groupSearch)) then
 		tinsert(groups, TSM.CONST.ROOT_GROUP_PATH)
@@ -327,8 +322,6 @@ function private.GroupTreeGetList(groups, headerNameLookup)
 end
 
 function private.GetImportEntryFrame()
-	private.importer:Reset()
-
 	return TSMAPI_FOUR.UI.NewElement("ScrollFrame", "importContent")
 		:SetStyle("padding", 16)
 		:SetStyle("background", "#ff1e1e1e")
@@ -341,23 +334,35 @@ function private.GetImportEntryFrame()
 			:SetStyle("margin", { bottom = 44 })
 			:SetText(L["Paste your import string in the field below and then press 'IMPORT'. You can import everything from item lists (comma delineated please) to whole group & operation structures."])
 		)
-		:AddChild(builder.SectionHeaderLine("label", L["Import Groups & Operations"]))
+		:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "label")
+			:SetStyle("height", 19)
+			:SetStyle("fontHeight", 16)
+			:SetStyle("font", TSM.UI.Fonts.MontserratBold)
+			:SetStyle("textColor", "#ffffffff")
+			:SetStyle("margin.bottom", 8)
+			:SetText(L["Import Groups & Operations"])
+		)
 		:AddChild(TSMAPI_FOUR.UI.NewElement("BorderedFrame", "import")
 			:SetLayout("HORIZONTAL")
 			:SetStyle("borderTheme", "roundLight")
 			:SetStyle("margin.bottom", 16)
 			:AddChild(TSMAPI_FOUR.UI.NewElement("ScrollFrame", "scroll")
-				:SetStyle("height", 180)
+				:SetStyle("height", 175)
+				:SetStyle("margin.bottom", 2)
 				:AddChild(TSMAPI_FOUR.UI.NewElement("Input", "input")
-					:SetStyle("height", 180)
-					:SetStyle("margin", { top = 2, left = 2, right = 2, bottom = 2 })
-					:SetStyle("fontHeight", 12)
+					:SetStyle("height", 173)
+					:SetStyle("margin", { left = 2, right = 8 })
+					:SetStyle("font", TSM.UI.Fonts.MontserratRegular)
+					:SetStyle("fontHeight", 14)
+					:SetStyle("justifyH", "LEFT")
 					:SetStyle("hintTextColor", "#ffe2e2e2")
 					:SetStyle("hintJustifyH", "LEFT")
 					:SetHintText(L["Paste string here"])
+					:SetSpacing(6)
 					:SetMultiLine(true)
 					:SetScript("OnTextChanged", private.ImportOnTextChanged)
 					:SetScript("OnSizeChanged", private.ImportOnSizeChanged)
+					:SetScript("OnCursorChanged", private.ImportOnCursorChanged)
 				)
 			)
 			:SetScript("OnMouseUp", private.ImportOnMouseUp)
@@ -376,14 +381,19 @@ function private.GetImportEntryFrame()
 				:SetScript("OnClick", private.ImportOnClick)
 			)
 		)
-		:AddChild(builder.SectionHeaderLine("generalOptionsTitle", L["Advanced Options"])
-			:SetStyle("margin", { top = 32, bottom = 8 })
+		:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "generalOptionsTitle")
+			:SetStyle("height", 19)
+			:SetStyle("margin.top", 32)
+			:SetStyle("margin.bottom", 8)
+			:SetStyle("fontHeight", 16)
+			:SetStyle("font", TSM.UI.Fonts.MontserratBold)
+			:SetStyle("textColor", "#ffffffff")
+			:SetText(L["Advanced Options"])
 		)
-		:AddChild(builder.ImportOptionToggle("moveAlreadyGroupedItems", L["Move already grouped items?"], private.importer.options))
-		:AddChild(builder.ImportOptionToggle("includeOperations", L["Include operations?"], private.importer.options))
-		--:AddChild(builder.ImportOptionToggle("includeCustomPrices", L["Include custom prices?"], private.importer.options))
-		:AddChild(builder.ImportOptionToggle("ignoreDuplicateOperations", L["Ignore duplicate operations?"], private.importer.options))
-		:AddChild(builder.ImportOptionToggle("skipImportExportConfirmations", L["Skip Import confirmation?"], private.importer.options))
+		:AddChild(private.CreateImportOptionToggle("moveGroupedItems", L["Move already grouped items?"], private.importOptions))
+		:AddChild(private.CreateImportOptionToggle("includeOperations", L["Include operations?"], private.importOptions))
+		:AddChild(private.CreateImportOptionToggle("replaceDuplicateOperations", L["Replace duplicate operations?"], private.importOptions))
+		:AddChild(private.CreateImportOptionToggle("skipConfirmation", L["Skip Import confirmation?"], private.importOptions))
 end
 
 function private.GetExporterGroupsFrameSelectedGroups()
@@ -404,7 +414,10 @@ function private.GetExporterGroupsFrameSelectedGroups()
 			:SetStyle("height", 28)
 			:SetStyle("padding", 10)
 			:SetStyle("margin", { top = 16 })
-			:AddChild(builder.CheckBox("includeAttachedOperationsCheckbox", L["Include Attached Operations"], private.exporter.options, "includeAttachedOperations"))
+			:AddChild(TSMAPI_FOUR.UI.NewElement("Checkbox", "includeAttachedOperationsCheckbox")
+				:SetText(L["Include Attached Operations"])
+				:SetSettingInfo(private.exporter.options, "includeAttachedOperations")
+			)
 		)
 		:AddChild(TSMAPI_FOUR.UI.NewElement("Frame", "buttonLayout")
 			:SetLayout("HORIZONTAL")
@@ -427,7 +440,7 @@ function private.GetExporterGroupsFrameSelectedGroups()
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Spacer", "spacer"))
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Button", "ConfirmButton")
 				:SetText(NEXT)
-				:SetStyle("textColor", stylesheet.BANANA_YELLOW)
+				:SetStyle("textColor", "#ffd839")
 				:SetStyle("font", TSM.UI.Fonts.MontserratMedium)
 				:SetScript("OnClick", private.ExporterExportSelectedGroupsOnClick)
 			)
@@ -485,12 +498,16 @@ function private.GetExporterGroupsFrameExportOutput()
 	local frame = TSMAPI_FOUR.UI.NewElement("BorderedFrame", "export")
 		:SetLayout("HORIZONTAL")
 		:SetStyle("borderTheme", "roundLight")
-		:SetStyle("margin", { top = 16.5, left = 16, right = 16, bottom = 16 })
+		:SetStyle("margin", { top = 16, left = 16, right = 16, bottom = 17 })
 		:AddChild(TSMAPI_FOUR.UI.NewElement("ScrollFrame", "scroll")
+			:SetStyle("margin.bottom", 2)
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Input", "input")
-				:SetStyle("margin", { top = 2, left = 2, right = 2, bottom = 2 })
-				:SetStyle("height", 146)
-				:SetStyle("fontHeight", 12)
+				:SetStyle("margin", { left = 2, right = 8 })
+				:SetStyle("height", 145)
+				:SetStyle("font", TSM.UI.Fonts.MontserratRegular)
+				:SetStyle("fontHeight", 14)
+				:SetStyle("justifyH", "LEFT")
+				:SetSpacing(6)
 				:SetMultiLine(true)
 				:SetText(private.exporter:GetExportString())
 				:SetScript("OnTextChanged", nil)
@@ -545,22 +562,24 @@ function private.ImportOnSizeChanged(input, width, height)
 
 	input:SetStyle("height", height)
 	input:GetParentElement():Draw()
+end
 
-	local scrollframe = input:GetParentElement()
-	scrollframe._scrollbar:SetValue(scrollframe:_GetMaxScroll())
+function private.ImportOnCursorChanged(input, _, y)
+	local scrollFrame = input:GetParentElement()
+	scrollFrame._scrollbar:SetValue(TSMAPI_FOUR.Util.Round(abs(y) / (input:_GetStyle("height") - 22) * scrollFrame:_GetMaxScroll()))
 end
 
 function private.ConfirmImportOnClick(element)
-	private.importer:Finalize()
-	TSM:Printf(L["Finished importing %s"], private.importer.rootPath)
+	private.newImport:Commit(private.importRootPath)
+	private.newImport:Release()
+	private.newImport = nil
 	local importViewContainer = element:GetElement("__parent.__parent.__parent")
 	importViewContainer:SetPath("import", true)
 end
 
 function private.GetImporterConfirmationFrame()
-	local importerItemsCount = TSMAPI_FOUR.Util.Count(private.importer.items)
-	local importerOperationsCount = private.CountOperations(private.importer.operations)
-	local frame = TSMAPI_FOUR.UI.NewElement("Frame", "ImportConfirmation")
+	local numItems, numOperations = private.newImport:GetInfo()
+	return TSMAPI_FOUR.UI.NewElement("Frame", "ImportConfirmation")
 		:SetLayout("VERTICAL")
 		:SetStyle("background", "#272727")
 		:AddChild(TSMAPI_FOUR.UI.NewElement("Spacer", "spacer")
@@ -579,7 +598,7 @@ function private.GetImporterConfirmationFrame()
 			)
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Spacer", "spacer"))
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "ImportPrompt")
-				:SetText(format(L["Import %d Items and %s Operations?"], importerItemsCount, importerOperationsCount))
+				:SetText(format(L["Import %d Items and %s Operations?"], numItems, numOperations))
 				:SetStyle("autoWidth", true)
 				:SetStyle("fontHeight", 18)
 				:SetStyle("font", TSM.UI.Fonts.MontserratBold)
@@ -590,7 +609,7 @@ function private.GetImporterConfirmationFrame()
 				:SetStyle("font", TSM.UI.Fonts.MontserratBold)
 				:SetStyle("fontHeight", 16)
 				:SetStyle("fontSpacing", 2)
-				:SetStyle("textColor", stylesheet.BANANA_YELLOW)
+				:SetStyle("textColor", "#ffd839")
 				:SetScript("OnClick", private.ConfirmImportOnClick)
 			)
 		)
@@ -599,9 +618,8 @@ function private.GetImporterConfirmationFrame()
 			:SetStyle("height", 1)
 		)
 		:AddChild(TSMAPI_FOUR.UI.NewElement("ImportConfirmationList")
-			:SetImporter(private.importer, true)
+			:SetImport(private.newImport)
 		)
-	return frame
 end
 
 function private.CancelConfirmOnClick(element)
@@ -615,14 +633,6 @@ function private.ExporterExportSelectedGroupsOnClick(element)
 	exportViewContainer:SetPath("exportOutput", true)
 end
 
-function private.GroupTreeGetList(groups, headerNameLookup)
-	for _, groupPath in TSM.Groups.GroupIterator() do
-		tinsert(groups, groupPath)
-	end
-	tinsert(groups, 1, TSM.CONST.ROOT_GROUP_PATH)
-	headerNameLookup[TSM.CONST.ROOT_GROUP_PATH] = L["Base Group"]
-end
-
 function private.ExporterResetSelectedGroupsOnClick(element)
 	local outerViewContainer = element:GetElement("__parent.__parent.__parent.__parent")
 	outerViewContainer:SetPath(L["Import"], false)
@@ -631,25 +641,36 @@ end
 
 function private.ImportOnClick(element)
 	local input = element:GetElement("__parent.__parent.import.scroll.input")
-	local text = input:GetText()
-	private.importer:ParseUserInput(text)
-	private.importer:CreateGroupIfNoneSelectedAndTopGroupHasItems()
+	private.newImport = TSM.Groups.Import.ParseString(input:GetText())
+	input:SetText("")
+	input:Draw()
+	if not private.newImport then
+		TSM:Print(L["Invalid import string."])
+		return
+	end
 
-	local path = "__parent.__parent.__parent.__parent.__parent.__parent.__parent.ImportExportOuterViewContainer"
+	-- apply our options
+	if not private.importOptions.includeOperations then
+		private.newImport:RemoveOperations()
+	end
+	if not private.importOptions.moveGroupedItems then
+		private.newImport:RemoveExistingGroupedItems()
+	end
+	if not private.importOptions.replaceDuplicateOperations then
+		private.newImport:RemoveExistingOperations()
+	end
 
-	if private.importer.options.skipImportExportConfirmations then
-		private.importer:Finalize()
-		TSM:Printf(L["Finished importing %s"], private.importer.rootPath)
+	local importViewContainer = element:GetElement("__parent.__parent.__parent.__parent.__parent.__parent.__parent.ImportExportOuterViewContainer")
+	if private.importOptions.skipConfirmation then
+		private.newImport:Commit(private.importRootPath)
+		private.newImport:Release()
+		private.newImport = nil
 		-- Redraw the groups pane with the new data
-		local importViewContainer = element:GetElement(path)
 		local groupSelectionPane = importViewContainer:GetElement("groups.ImportExportLeftPane.groupSelection.groupTree")
 		groupSelectionPane:_UpdateData()
 		groupSelectionPane:Draw()
 		return
 	end
 
-	local importViewContainer = element:GetElement(path)
 	importViewContainer:SetPath("importConfirmation", true)
 end
-
-private.importer = TSMAPI_FOUR.Importer.New()

@@ -10,7 +10,7 @@ local ldbi = LibStub("LibDBIcon-1.0")
 -- Generate our version variables
 --
 
-local BIGWIGS_VERSION = 118
+local BIGWIGS_VERSION = 141
 local BIGWIGS_RELEASE_STRING, BIGWIGS_VERSION_STRING = "", ""
 local versionQueryString, versionResponseString = "Q^%d^%s", "V^%d^%s"
 
@@ -21,7 +21,7 @@ do
 	local RELEASE = "RELEASE"
 
 	local releaseType = RELEASE
-	local myGitHash = "7926051" -- The ZIP packager will replace this with the Git hash.
+	local myGitHash = "d85661c" -- The ZIP packager will replace this with the Git hash.
 	local releaseString = ""
 	--[===[@alpha@
 	-- The following code will only be present in alpha ZIPs.
@@ -163,6 +163,8 @@ do
 		--[[ BigWigs: Battle for Azeroth ]]--
 		[-947] = bfa, -- Azeroth (Fake Menu)
 		[1861] = bfa, -- Uldir
+		[2070] = bfa, -- Battle Of Dazar'alor
+		[2096] = bfa, -- Crucible of Storms
 
 		--[[ LittleWigs: Classic ]]--
 		[33] = lw_c, -- Shadowfang Keep
@@ -358,32 +360,15 @@ local dataBroker = ldb:NewDataObject("BigWigs",
 )
 
 function dataBroker.OnClick(self, button)
-	--if button == "RightButton" then
+	if button == "RightButton" then
 		loadCoreAndOpenOptions()
-	--else
-	--	loadAndEnableCore()
-	--	if IsAltKeyDown() then
-	--		if IsControlKeyDown() then
-	--			BigWigs:Disable()
-	--		else
-	--			for name, module in BigWigs:IterateBossModules() do
-	--				if module:IsEnabled() then module:Disable() end
-	--			end
-	--			sysprint(L.modulesDisabled)
-	--		end
-	--	else
-	--		for name, module in BigWigs:IterateBossModules() do
-	--			if module:IsEnabled() then module:Reboot() end
-	--		end
-	--		sysprint(L.modulesReset)
-	--	end
-	--end
+	end
 end
 
 function dataBroker.OnTooltipShow(tt)
 	tt:AddLine("BigWigs")
 	if BigWigs and BigWigs:IsEnabled() then
-		local added = nil
+		local added = false
 		for name, module in BigWigs:IterateBossModules() do
 			if module:IsEnabled() then
 				if not added then
@@ -405,7 +390,7 @@ end
 --
 
 tooltipFunctions[#tooltipFunctions+1] = function(tt)
-	local add, i = nil, 0
+	local add, i = false, 0
 	for _, version in next, usersVersion do
 		i = i + 1
 		if version < highestFoundVersion then
@@ -743,9 +728,9 @@ function mod:ADDON_LOADED(addon)
 	self:BigWigs_CoreOptionToggled(nil, "fakeDBMVersion", self.isFakingDBM)
 
 	if self.isSoundOn ~= false then -- Only if sounds are enabled
-		local num = tonumber(GetCVar("Sound_NumChannels")) or 0
+		local num = tonumber(C_CVar.GetCVar("Sound_NumChannels")) or 0
 		if num < 64 then
-			SetCVar("Sound_NumChannels", 64) -- Blizzard keeps screwing with addon sound priority so we force this minimum
+			C_CVar.SetCVar("Sound_NumChannels", "64") -- Blizzard keeps screwing with addon sound priority so we force this minimum
 		end
 	end
 
@@ -848,6 +833,7 @@ do
 		BigWigs_Nightmare = "BigWigs_Legion",
 		BigWigs_TombOfSargeras = "BigWigs_Legion",
 		BigWigs_TrialOfValor = "BigWigs_Legion",
+		BigWigs_SiegeOfZuldazar = "BigWigs",
 	}
 	local delayedMessages = {}
 
@@ -882,6 +868,9 @@ do
 		--koKR = "Korean (koKR)",
 		esES = "Spanish (esES)",
 		esMX = "Spanish (esMX)",
+		--deDE = "German (deDE)",
+		ptBR = "Portuguese (ptBR)",
+		--frFR = "French (frFR)",
 	}
 	if locales[L] then
 		delayedMessages[#delayedMessages+1] = ("BigWigs is missing translations for %s. Can you help? Visit git.io/vpBye or ask us on Discord for more info."):format(locales[L])
@@ -961,7 +950,7 @@ do
 		end
 	end
 	public.RegisterMessage(mod, "BigWigs_OnBossDisable", UnregisterAllMessages)
-	public.RegisterMessage(mod, "BigWigs_OnBossReboot", UnregisterAllMessages)
+	public.RegisterMessage(mod, "BigWigs_OnBossWipe", UnregisterAllMessages)
 	public.RegisterMessage(mod, "BigWigs_OnPluginDisable", UnregisterAllMessages)
 end
 
@@ -971,8 +960,8 @@ end
 
 do
 	-- This is a crapfest mainly because DBM's actual handling of versions is a crapfest, I'll try explain how this works...
-	local DBMdotRevision = "17892" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
-	local DBMdotDisplayVersion = "8.0.10" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
+	local DBMdotRevision = "18418" -- The changing version of the local client, changes with every alpha revision using an SVN keyword.
+	local DBMdotDisplayVersion = "8.1.11" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration. Unless they fuck up their release and leave the alpha text in it.
 	local DBMdotReleaseRevision = DBMdotRevision -- This is manually changed by them every release, they use it to track the highest release version, a new DBM release is the only time it will change.
 
 	local timer, prevUpgradedUser = nil, nil

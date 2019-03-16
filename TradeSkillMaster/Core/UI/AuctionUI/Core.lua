@@ -161,6 +161,7 @@ function private.HideAuctionFrame()
 end
 
 function private.CreateMainFrame()
+	TSM.UI.AnalyticsRecordPathChange("auction")
 	local frame = TSMAPI_FOUR.UI.NewElement("LargeApplicationFrame", "base")
 		:SetParent(UIParent)
 		:SetMinResize(MIN_FRAME_SIZE.width, MIN_FRAME_SIZE.height)
@@ -199,11 +200,12 @@ function private.BaseFrameOnHide(frame)
 	if not private.isSwitching then
 		CloseAuctionHouse()
 	end
+	TSM.UI.AnalyticsRecordClose("auction")
 end
 
 function private.SwitchBtnOnClick(button)
 	private.isSwitching = true
-	TSM.db.global.internalData.auctionUIFrameContext.showDefault = button ~= private.defaultUISwitchBtn
+	TSM.db.global.internalData.auctionUIFrameContext.showDefault = true
 	private.HideAuctionFrame()
 	UIParent_OnEvent(UIParent, "AUCTION_HOUSE_SHOW")
 	private.isSwitching = false

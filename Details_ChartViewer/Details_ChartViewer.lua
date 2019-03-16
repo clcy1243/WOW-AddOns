@@ -708,8 +708,6 @@ end
 					local line_name = chart [4]
 					local texture = chart [5]
 					
-					--todo: apply pre smoothness here
-					
 					g:AddLine (chart_data, chart_color, line_name, combat_time, texture) --, "SMA"
 				end
 			end

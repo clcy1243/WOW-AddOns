@@ -184,7 +184,6 @@ function GRA:Remove(t, v)
 	end
 end
 
--- TODO: 内部直接赋值，不需要再次赋值
 function GRA:RemoveElementsByKeys(tbl, keys) -- keys is a table
 	local newTbl = {}
 	for k, v in pairs(tbl) do
@@ -195,7 +194,7 @@ function GRA:RemoveElementsByKeys(tbl, keys) -- keys is a table
 	return newTbl
 end
 
-function GRA:Sort(t, k1, order1, k2, order2)
+function GRA:Sort(t, k1, order1, k2, order2, k3, order3)
 	table.sort(t, function(a, b)
 		if a[k1] ~= b[k1] then
 			if order1 == "ascending" then
@@ -203,11 +202,17 @@ function GRA:Sort(t, k1, order1, k2, order2)
 			else -- "descending"
 				return a[k1] > b[k1]
 			end
-		else
+		elseif k2 and order2 and a[k2] ~= b[k2] then
 			if order2 == "ascending" then
 				return a[k2] < b[k2]
 			else -- "descending"
 				return a[k2] > b[k2]
+			end
+		elseif k3 and order3 and a[k3] ~= b[k3] then
+			if order3 == "ascending" then
+				return a[k3] < b[k3]
+			else -- "descending"
+				return a[k3] > b[k3]
 			end
 		end
 	end)
@@ -259,9 +264,21 @@ function GRA:GetGuildRoster(rank)
 		if rankIndex <= rank - 1 then
 			table.insert(roster, {["name"] = fullName, ["class"] = class, ["rankIndex"] = rankIndex})
 		else
+			break
 			-- sort and return
-			GRA:Sort(roster, "rankIndex", "ascending", "name", "ascending")
-			return roster
+			-- GRA:Sort(roster, "rankIndex", "ascending", "name", "ascending")
+			-- return roster
+		end
+	end
+	return roster
+end
+
+function GRA:GetGuildOnlineRoster()
+	local roster = {}
+	for i = 1, GetNumGuildMembers() do
+		local fullName, _, _, _, _, _, _, _, isOnline = GetGuildRosterInfo(i)
+		if isOnline then
+			roster[fullName] = true
 		end
 	end
 	return roster
@@ -290,6 +307,10 @@ function GRA:GetClassColoredName(fullName, class)
 	end
 end
 
+function GRA:GetRealmName()
+	return string.gsub(GetRealmName(), " ", "")
+end
+
 function GRA:GetPlayersInRaid()
 	if IsInRaid() then
 		local raidInfo = {}
@@ -297,7 +318,7 @@ function GRA:GetPlayersInRaid()
 			local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)
 			if name then
 				if not raidInfo[subgroup] then raidInfo[subgroup] = {} end
-				if not string.find(name, "-") then name = name .. "-" .. GetRealmName() end
+				if not string.find(name, "-") then name = name .. "-" .. GRA:GetRealmName() end
 				table.insert(raidInfo[subgroup], name)
 			 end
 		end
@@ -503,7 +524,7 @@ function GRA:NextDate(d, offset)
 end
 
 -- 2017033112:30
-function GRA:DateToTime(s, hasTime)
+function GRA:DateToSeconds(s, hasTime)
 	local y = tonumber(string.sub(s, 1, 4))
 	local M = tonumber(string.sub(s, 5, 6))
 	local d = tonumber(string.sub(s, 7, 8))
@@ -527,7 +548,7 @@ function GRA:GetRaidStartTime(d)
 		if _G[GRA_R_RaidLogs][d]["startTime"] then -- has startTime
 			return GRA:SecondsToTime(_G[GRA_R_RaidLogs][d]["startTime"]), _G[GRA_R_RaidLogs][d]["startTime"]
 		else
-			return _G[GRA_R_Config]["raidInfo"]["startTime"], GRA:DateToTime(d .. _G[GRA_R_Config]["raidInfo"]["startTime"], true)
+			return _G[GRA_R_Config]["raidInfo"]["startTime"], GRA:DateToSeconds(d .. _G[GRA_R_Config]["raidInfo"]["startTime"], true)
 		end
 	else
 		return _G[GRA_R_Config]["raidInfo"]["startTime"]
@@ -539,7 +560,10 @@ function GRA:GetRaidEndTime(d)
 		if _G[GRA_R_RaidLogs][d]["endTime"] then -- has endTime
 			return GRA:SecondsToTime(_G[GRA_R_RaidLogs][d]["endTime"]), _G[GRA_R_RaidLogs][d]["endTime"]
 		else
-			return _G[GRA_R_Config]["raidInfo"]["endTime"], GRA:DateToTime(d .. _G[GRA_R_Config]["raidInfo"]["endTime"], true)
+			if _G[GRA_R_Config]["raidInfo"]["startTime"] > _G[GRA_R_Config]["raidInfo"]["endTime"] then -- 21:00-00:00(the next day)
+				d = d + 1
+			end
+			return _G[GRA_R_Config]["raidInfo"]["endTime"], GRA:DateToSeconds(d .. _G[GRA_R_Config]["raidInfo"]["endTime"], true)
 		end
 	else
 		return _G[GRA_R_Config]["raidInfo"]["endTime"]
@@ -548,35 +572,71 @@ end
 
 function GRA:CheckAttendanceStatus(joinTime, startTime, leaveTime, endTime)
 	if joinTime and startTime and (joinTime > startTime) then
-		return "PARTLY" -- no need to check leaveTime
+		return "PARTIAL" -- no need to check leaveTime
 	end
 
 	if leaveTime and endTime and (leaveTime < endTime) then
-		return "PARTLY"
+		return "PARTIAL"
 	end
 
 	return "PRESENT"
 end
 
 -- 出勤率使用出勤分钟数计算
-function GRA:GetAttendanceRate(d, name)
-	if _G[GRA_R_RaidLogs][d]["attendances"][name] then
-		if _G[GRA_R_RaidLogs][d]["attendances"][name][1] == "PRESENT" then
-			return 1
-		elseif _G[GRA_R_RaidLogs][d]["attendances"][name][1] == "PARTLY" then
-			local startTime = select(2, GRA:GetRaidStartTime(d))
-			local endTime = select(2, GRA:GetRaidEndTime(d))
-			local joinTime = _G[GRA_R_RaidLogs][d]["attendances"][name][3]
-			local leaveTime = _G[GRA_R_RaidLogs][d]["attendances"][name][4] or endTime -- 没有退队的成员可能没有leaveTime
+local function GetAttendanceRate(d, joinTime, leaveTime)
+	if not joinTime then
+		return 0
+	else
+		local startTime = select(2, GRA:GetRaidStartTime(d))
+		local endTime = select(2, GRA:GetRaidEndTime(d))
 
-			joinTime = math.max(startTime, joinTime)
-			leaveTime = math.min(endTime, leaveTime)
-			
-			return math.ceil((leaveTime - joinTime) / 60) / math.ceil((endTime - startTime) / 60)
+		joinTime = math.max(startTime, joinTime)
+		leaveTime = leaveTime and math.min(endTime, leaveTime) or endTime
+		
+		if joinTime == startTime and leaveTime == endTime then
+			return 1
 		else
-			return 0
+			return math.ceil((leaveTime - joinTime) / 60) / math.ceil((endTime - startTime) / 60)
 		end
 	end
+end
+
+-- get main-alt attendance (which joined first)
+function GRA:GetMainAltAttendance(d, mainName)
+	local att, joinTime, leaveTime, isSitOut
+
+	if _G[GRA_R_RaidLogs][d]["attendances"][mainName] then
+		att = _G[GRA_R_RaidLogs][d]["attendances"][mainName][1]
+
+		if _G[GRA_R_RaidLogs][d]["attendances"][mainName][3] then
+			joinTime = _G[GRA_R_RaidLogs][d]["attendances"][mainName][3]
+			leaveTime = _G[GRA_R_RaidLogs][d]["attendances"][mainName][4] or select(2, GRA:GetRaidEndTime(d))
+			-- main sit out
+			if _G[GRA_R_RaidLogs][d]["attendances"][mainName][5] then isSitOut = true end
+		end
+	end
+
+	if gra.mainAlt[mainName] then -- has alt
+		-- PRESENT or PARTIAL
+		for _, altName in pairs(gra.mainAlt[mainName]) do
+			if _G[GRA_R_RaidLogs][d]["attendances"][altName] and _G[GRA_R_RaidLogs][d]["attendances"][altName][3] then
+				-- 大号没有出勤 or 小号先于大号进组
+				if not joinTime or joinTime > _G[GRA_R_RaidLogs][d]["attendances"][altName][3] then
+					att = _G[GRA_R_RaidLogs][d]["attendances"][altName][1]
+					joinTime = _G[GRA_R_RaidLogs][d]["attendances"][altName][3]
+				end
+				-- 小号后于大号退组
+				if _G[GRA_R_RaidLogs][d]["attendances"][altName][4] and (not leaveTime or leaveTime < _G[GRA_R_RaidLogs][d]["attendances"][altName][4]) then
+					leaveTime = _G[GRA_R_RaidLogs][d]["attendances"][altName][4] or leaveTime
+				end
+				-- alt sit out
+				if _G[GRA_R_RaidLogs][d]["attendances"][altName][5] then isSitOut = true end
+			end
+		end
+		if not leaveTime then leaveTime = select(2, GRA:GetRaidEndTime(d)) end
+	end
+
+	return att, joinTime, leaveTime, GetAttendanceRate(d, joinTime, leaveTime), isSitOut
 end
 
 -- update attendances when raid hours changed
@@ -584,7 +644,7 @@ function GRA:UpdateAttendance(d)
 	if d then
 		-- start/end time changed for this day
 		for n, t in pairs(_G[GRA_R_RaidLogs][d]["attendances"]) do
-			if t[3] then -- PRESENT or PARTLY
+			if t[3] then -- PRESENT or PARTIAL
 				t[1] = GRA:CheckAttendanceStatus(t[3], select(2, GRA:GetRaidStartTime(d)), t[4], select(2, GRA:GetRaidEndTime(d)))
 			end
 		end
@@ -599,7 +659,7 @@ function GRA:UpdateAttendance(d)
 end
 
 function GRA:DateOffset(d1, d2)
-	local t1, t2 = GRA:DateToTime(d1), GRA:DateToTime(d2)
+	local t1, t2 = GRA:DateToSeconds(d1), GRA:DateToSeconds(d2)
 	local offset = abs(t1 - t2) / (3600 * 24)
 	return offset
 end

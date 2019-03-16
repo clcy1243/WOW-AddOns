@@ -10,7 +10,8 @@ local _, TSM = ...
 local Send = TSM.Mailing:NewPackage("Send")
 local L = TSM.L
 local private = {
-	thread = nil
+	thread = nil,
+	bagUpdate = nil,
 }
 
 local PLAYER_NAME = UnitName("player")
@@ -24,6 +25,7 @@ local PLAYER_NAME_REALM = string.gsub(PLAYER_NAME.."-"..GetRealmName(), "%s+", "
 
 function Send.OnInitialize()
 	private.thread = TSMAPI_FOUR.Thread.New("MAIL_SENDING", private.SendMailThread)
+	TSM.Inventory.BagTracking.RegisterCallback(private.BagUpdate)
 end
 
 function Send.KillThread()
@@ -49,7 +51,10 @@ function private.SendMailThread(recipient, subject, body, money, items, isGroup)
 	end
 
 	if not items then
-		private.SendMail(recipient, subject, body, money)
+		if TSM.db.global.mailingOptions.sendMessages then
+			private.PrintMailMessage(money, items, recipient)
+		end
+		private.SendMail(recipient, subject, body, money, true)
 
 		return
 	end
@@ -61,7 +66,7 @@ function private.SendMailThread(recipient, subject, body, money, items, isGroup)
 		if isGroup and TSM.db.global.mailingOptions.sendItemsIndividually then
 			individually = true
 		end
-		private.PrintMailMessage(items, recipient, individually)
+		private.PrintMailMessage(money, items, recipient, individually)
 	end
 
 	local itemInfo = TSMAPI_FOUR.Thread.AcquireSafeTempTable()
@@ -149,7 +154,16 @@ function private.SendMailThread(recipient, subject, body, money, items, isGroup)
 	TSMAPI_FOUR.Thread.ReleaseSafeTempTable(itemInfo)
 end
 
-function private.PrintMailMessage(items, target, individually)
+function private.PrintMailMessage(money, items, target, individually)
+	if money > 0 and not items then
+		TSM:Printf(L["Sending %s to %s"], TSM.Money.ToString(money), target)
+		return
+	end
+
+	if not items then
+		return
+	end
+
 	local itemList = ""
 	for k, v in pairs(items) do
 		local coloredItem = TSMAPI_FOUR.Item.GetLink(k)
@@ -157,18 +171,19 @@ function private.PrintMailMessage(items, target, individually)
 	end
 	itemList = strtrim(itemList, ", ")
 
-	if private.isCOD then
-		TSM:Printf(L["Sending %s to %s with a COD of %s"], itemList, target, TSM.Money.ToString(private.money, "|cffff0000"))
-	elseif individually then
+	if next(items) and money < 0 then
+		TSM:Printf(L["Sending %s to %s with a COD of %s"], itemList, target, TSM.Money.ToString(money, "|cffff0000"))
+	elseif next(items) and individually then
 		TSM:Printf(L["Sending %s individually to %s"], itemList, target)
-	elseif items then
+	elseif next(items) then
 		TSM:Printf(L["Sending %s to %s"], itemList, target)
 	end
 end
 
-function private.SendMail(recipient, subject, body, money)
+function private.SendMail(recipient, subject, body, money, noItem)
 	if subject == "" then
-		subject = "TSM Mailing"
+		local text = SendMailSubjectEditBox:GetText()
+		subject = text ~= "" and text or "TSM Mailing"
 	end
 
 	if money > 0 then
@@ -182,8 +197,26 @@ function private.SendMail(recipient, subject, body, money)
 		SetSendMailCOD(0)
 	end
 
+	private.bagUpdate = false
 	SendMail(recipient, subject, body)
-	TSMAPI_FOUR.Thread.WaitForEvent("MAIL_SUCCESS")
+
+	if TSMAPI_FOUR.Thread.WaitForEvent("MAIL_SUCCESS", "MAIL_FAILED") == "MAIL_SUCCESS" then
+		if noItem then
+			TSMAPI_FOUR.Thread.Sleep(0.5)
+		else
+			TSMAPI_FOUR.Thread.WaitForFunction(private.HasNewBagUpdate)
+		end
+	else
+		TSMAPI_FOUR.Thread.Sleep(0.5)
+	end
+end
+
+function private.BagUpdate()
+	private.bagUpdate = true
+end
+
+function private.HasNewBagUpdate()
+	return private.bagUpdate
 end
 
 function private.HasPendingAttachments()

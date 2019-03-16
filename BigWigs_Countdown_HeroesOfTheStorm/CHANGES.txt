@@ -1,19 +1,18 @@
-tag 7c17a2537c3166e331cfcfed360c48e9f9a8f042 1.2.0
+tag abaff3459750156a3370eea0d357c665325ca8f8 1.2.2
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Sun Sep 23 17:44:40 2018 -0500
+Date:	Tue Dec 18 00:56:15 2018 -0600
 
-Tagging as 1.2.0
+Tagging as 1.2.2
 
-commit 3ab113b17602a3e9c37abc884f4d38febf06d319
+commit 820592306945826ede864beb59f0254e9f26a6a7
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Sun Sep 23 17:22:36 2018 -0500
+Date:   Tue Dec 18 00:52:44 2018 -0600
 
-    Make the addon load on demand
-    
-    I can't think of a good reason not to go back to LoD and it
-    simplifies things. I don't like delaying registration, but if
-    options don't over-aggressively reset the value, there's nothing
-    else to use the voices anyway. :man_shrugging:
-    
-    Resolves #1
+    Update TOC for 8.1
+
+commit 6154dab7d347564dd2cdf367f5388a6b5f8430db
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Tue Dec 18 00:50:31 2018 -0600
+
+    Add Mal'Ganis and "The Kid"
 

@@ -23,6 +23,7 @@ mod:RegisterEnableMob(
 	129550, -- Bilge Rat Padfoot
 	130024, -- Soggy Shiprat
 	130400, -- Irontide Crusher
+	130086, -- Davey "Two Eyes"
 	130099, -- Lightning
 	129699, -- Ludwig Von Tortollen
 	130011, -- Irontide Buccaneer
@@ -53,9 +54,6 @@ if L then
 	L.padfoot = "Bilge Rat Padfoot"
 	L.rat = "Soggy Shiprat"
 	L.crusher = "Irontide Crusher"
-	L.lightning = "Lightning"
-	L.lightning_caught = "Lightning caught after %.1f seconds!"
-	L.ludwig = "Ludwig Von Tortollen"
 	L.buccaneer = "Irontide Buccaneer"
 	L.ravager = "Irontide Ravager"
 	L.officer = "Irontide Officer"
@@ -102,10 +100,6 @@ function mod:GetOptions()
 		-- Irontide Crusher
 		258181, -- Boulder Throw
 		258199, -- Ground Shatter
-		-- Lightning
-		257829, -- Greasy
-		-- Ludwig Von Tortollen
-		257904, -- Shell Bounce
 		-- Irontide Buccaneer
 		257870, -- Blade Barrage
 		-- Irontide Ravager
@@ -131,8 +125,6 @@ function mod:GetOptions()
 		[257775] = L.padfoot,
 		[274555] = L.rat,
 		[258181] = L.crusher,
-		[257829] = L.lightning,
-		[257904] = L.ludwig,
 		[257870] = L.buccaneer,
 		[257899] = L.ravager,
 		[257908] = L.officer,
@@ -184,12 +176,6 @@ function mod:OnBossEnable()
 	-- Irontide Crusher
 	self:Log("SPELL_CAST_START", "BoulderThrow", 258181)
 	self:Log("SPELL_CAST_START", "GroundShatter", 258199)
-	-- Lightning
-	self:Log("SPELL_AURA_APPLIED", "GreasyApplied", 257829)
-	self:Log("SPELL_AURA_REMOVED_DOSE", "GreasyRemoved", 257829)
-	self:Log("SPELL_AURA_REMOVED", "GreasyRemoved", 257829)
-	-- Ludwig Von Tortollen
-	self:Log("SPELL_CAST_START", "ShellBounce", 257904)
 	-- Irontide Buccaneer
 	self:Log("SPELL_CAST_START", "BladeBarrage", 257870)
 	-- Irontide Ravager
@@ -368,31 +354,6 @@ function mod:BoulderThrow(args)
 end
 
 function mod:GroundShatter(args)
-	self:Message2(args.spellId, "yellow")
-	self:PlaySound(args.spellId, "alert")
-end
-
--- Lightning
-do
-	local seconds = 0
-	function mod:GreasyApplied(args)
-		seconds = args.time
-	end
-
-	function mod:GreasyRemoved(args)
-		if args.amount then -- Slippery when oily
-			self:StackMessage(args.spellId, args.destName, args.amount, "cyan")
-			self:PlaySound(args.spellId, "info")
-		else -- Caught!
-			seconds = math.floor((args.time - seconds) * 100)/100
-			self:Message2(args.spellId, "green", L.lightning_caught:format(seconds))
-			self:Win() -- XXX Replace with normal victory PlaySound preferably
-		end
-	end
-end
-
--- Ludwig Von Tortollen
-function mod:ShellBounce(args)
 	self:Message2(args.spellId, "yellow")
 	self:PlaySound(args.spellId, "alert")
 end

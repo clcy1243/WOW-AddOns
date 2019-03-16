@@ -18,6 +18,16 @@ local private = {
 	elementIdMap = {},
 	propagateScripts = {},
 	objectPools = {},
+	analyticsPath = {
+		auction = "",
+		banking = "",
+		crafting = "",
+		destroying = "",
+		mailing = "",
+		main = "",
+		task_list = "",
+		vendoring = "",
+	},
 }
 local TIME_LEFT_STRINGS = {
 	"|cfff72d1f30m|r",
@@ -200,7 +210,7 @@ function TSM.UI.CreateScrollbar(frame)
 	scrollbar:SetPoint("BOTTOMRIGHT", 0, 4)
 	scrollbar:SetValueStep(1)
 	scrollbar:SetObeyStepOnDrag(true)
-	scrollbar:SetHitRectInsets(-6, -10, 0, 0)
+	scrollbar:SetHitRectInsets(-6, -10, -4, -4)
 	scrollbar:SetScript("OnHide", private.ScrollbarOnMouseUp)
 	scrollbar:SetScript("OnUpdate", private.ScrollbarOnUpdate)
 	scrollbar:SetScript("OnMouseDown", private.ScrollbarOnMouseDown)
@@ -376,7 +386,8 @@ function TSM.UI.ShowTooltip(parent, tooltip)
 	else
 		tooltip = tooltip
 	end
-	GameTooltip:SetOwner(parent, "ANCHOR_NONE")
+	GameTooltip:SetOwner(parent, "ANCHOR_PRESERVE")
+	GameTooltip:ClearAllPoints()
 	GameTooltip:SetPoint("LEFT", parent, "RIGHT")
 	if type(tooltip) == "number" then
 		GameTooltip:SetHyperlink("item:"..tooltip)
@@ -399,6 +410,30 @@ end
 
 --- Hides the current tooltip.
 function TSM.UI.HideTooltip()
+	GameTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE")
+	GameTooltip:ClearAllPoints()
+	GameTooltip:SetPoint("CENTER")
 	GameTooltip:Hide()
+	BattlePetTooltip:ClearAllPoints()
+	BattlePetTooltip:SetPoint("CENTER")
 	BattlePetTooltip:Hide()
+end
+
+function TSM.UI.AnalyticsRecordPathChange(uiName, ...)
+	assert(private.analyticsPath[uiName])
+	local path = strjoin("/", uiName, ...)
+	if path == private.analyticsPath[uiName] then
+		return
+	end
+	TSM.Analytics.Action("UI_NAVIGATION", private.analyticsPath[uiName], path)
+	private.analyticsPath[uiName] = path
+end
+
+function TSM.UI.AnalyticsRecordClose(uiName)
+	assert(private.analyticsPath[uiName])
+	if private.analyticsPath[uiName] == "" then
+		return
+	end
+	TSM.Analytics.Action("UI_NAVIGATION", private.analyticsPath[uiName], "")
+	private.analyticsPath[uiName] = ""
 end

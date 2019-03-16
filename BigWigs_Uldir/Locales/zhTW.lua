@@ -3,7 +3,7 @@ if not L then return end
 if L then
 	L.sideLaser = "側面光束" -- short for: (location) Uldir Defensive Beam
 	L.upLaser = "頂部光束"
-	L.mythic_beams = "雙重光束"
+	L.mythic_beams = "光束"
 end
 
 L = BigWigs:NewBossLocale("Zek'voz, Herald of N'zoth", "zhTW")
@@ -51,4 +51,11 @@ if L then
 
 	L.custom_on_fixate_plates = "在敵方名條顯示追擊圖示"
 	L.custom_on_fixate_plates_desc = "當你被凝視時，在敵方名條上顯示一個圖示。\n需要啟用敵方名條，此功能目前只支援KuiNameplates。"
+end
+
+L = BigWigs:NewBossLocale("Uldir Trash", "zhTW")
+if L then
+	--L.watcher = "Corrupted Watcher"
+	--L.ascendant = "Nazmani Ascendant"
+	--L.dominator = "Nazmani Dominator"
 end

@@ -51,6 +51,7 @@ L.stage = "階段%d"
 L.trash = "小怪"
 L.underyou = "你腳下：%s"
 L.you = "你 %s"
+L.you_icon = "|T13700%2$d:0|t你 %1$s"
 
 L.active = "激活" -- When a boss becomes active, after speech finishes
 
@@ -66,6 +67,7 @@ L.link_both = "%s和%s連結"
 L.link_removed = "連結移除"
 
 -- Abbreviated numbers
-L.amount_one = "%.2f億"
-L.amount_two = "%.1f萬"
-L.amount_three = "%d千"
+L.amount_one = "%.2f億" -- Billions 1,000,000,000
+L.amount_two = "%.1f萬" -- Millions 1,000,000
+L.amount_three = "%d千" -- Thousands 1,000
+L.seconds = "%.1f秒" -- 1.1 seconds

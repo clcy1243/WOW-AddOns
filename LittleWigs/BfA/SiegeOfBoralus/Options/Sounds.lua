@@ -1,5 +1,6 @@
 
 BigWigs:AddSounds("Chopper Redhook", {
+	[257288] = "alert",
 	[257326] = "alarm",
 	[257348] = "alert",
 	[257459] = "warning",
@@ -14,6 +15,7 @@ BigWigs:AddSounds("Sergeant Bainbridge", {
 	[260954] = "warning",
 	[261428] = "alert",
 	[277965] = "alert",
+	[279761] = "alert",
 	["adds"] = "long",
 })
 
@@ -39,4 +41,19 @@ BigWigs:AddSounds("Viq'Goth", {
 	[275014] = "warning",
 	["demolishing"] = "alert",
 	["stages"] = "long",
+})
+
+BigWigs:AddSounds("Siege of Boralus Trash", {
+	[256627] = "alert",
+	[256957] = {"alert","warning"},
+	[257169] = "alarm",
+	[257170] = "long",
+	[257288] = "alert",
+	[268260] = "alarm",
+	[272421] = "info",
+	[272711] = "alert",
+	[272827] = "alert",
+	[272874] = "info",
+	[274569] = "alert",
+	[275826] = {"alarm","info"},
 })

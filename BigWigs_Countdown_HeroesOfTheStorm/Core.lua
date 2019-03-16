@@ -101,11 +101,12 @@ local announcers = {
 	SpiderQueen = "Spider Queen",
 	VanndarA = "Vanndar Stormpike",
 	VolskayaA = "Volskaya",
-	-- Brawl
+	-- Brawl/Event
 	Arena = "Arena",
 	Commodore = "Commodore",
 	-- LuchaA = "El Guapo", -- same for all languages
 	MiraA = "Mira Han",
+	Toy18A = "\"The Kid\"",
 	-- Warcraft
 	AlexstraszaA = "Alexstrasza",
 	AnubarakAnnouncer = "Anub'arak",
@@ -121,6 +122,7 @@ local announcers = {
 	LiLiA = "Li Li",
 	MaievA = "Maiev",
 	MalfurionA = "Malfurion",
+	MalganisA = "Mal'Ganis",
 	MuradinA = "Muradin",
 	MurkyA = "Murky",
 	RehgarAnnouncer = "Rehgar",
@@ -152,6 +154,10 @@ local announcers = {
 	JunkratA = "Junkrat",
 	-- Skins
 	TyraelMechaA = "Mecha Tyrael",
+	-- Nexus
+	OrpheaA = "Orphea",
+	-- Misc
+	-- CloakenA = "Cloaken", -- same for all languages
 }
 
 function ns.RegisterVoices()
@@ -175,7 +181,7 @@ function ns.RegisterVoices()
 		})
 	end
 
-	-- Special case Butcher (It's just grunts and growls)
+	-- Butcher (It's just grunts and growls)
 	-- This is reversed from HotS so 2/1 are the more distinctive sounds
 	local k, v = "ButcherA", "Butcher"
 	local id = ("Heroes of the Storm: %s"):format(v)
@@ -189,8 +195,21 @@ function ns.RegisterVoices()
 		})
 	end
 
-	-- Special case El Guapo (Spanish for all locales)
+	-- El Guapo (Spanish for all locales)
 	local k, v = "LuchaA", "El Guapo"
+	local id = ("Heroes of the Storm: %s"):format(v)
+	if not BigWigsAPI:HasCountdown(id) then
+		BigWigsAPI:RegisterCountdown(id, L.key_short:format(L.heroes, L[k] or v), {
+			path:format("enUS", k, 1),
+			path:format("enUS", k, 2),
+			path:format("enUS", k, 3),
+			path:format("enUS", k, 4),
+			path:format("enUS", k, 5),
+		})
+	end
+
+	-- Cloaken (English for all locales)
+	local k, v = "CloakenA", "Cloaken"
 	local id = ("Heroes of the Storm: %s"):format(v)
 	if not BigWigsAPI:HasCountdown(id) then
 		BigWigsAPI:RegisterCountdown(id, L.key_short:format(L.heroes, L[k] or v), {

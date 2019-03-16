@@ -1929,8 +1929,9 @@
 						classColor = RAID_CLASS_COLORS [className] and RAID_CLASS_COLORS [className].colorStr
 					end
 				
+					local playerNameFormated = _detalhes:GetOnlyName (playerName)
 					tinsert (sortTable, {
-						"|c" .. classColor .. playerName .. "|r",
+						"|c" .. classColor .. playerNameFormated .. "|r",
 						_detalhes:comma_value (t.ps),
 						_detalhes:ToK2 (t.total),
 						_detalhes.gump:IntegerToTimer (t.length),
@@ -2018,8 +2019,9 @@
 
 					local className = select (2, GetClassInfo (player_class [playerTable [1]] or 0))
 					if (className) then
+						local playerNameFormated = _detalhes:GetOnlyName (playerTable[1])
 						local classColor = RAID_CLASS_COLORS [className] and RAID_CLASS_COLORS [className].colorStr
-						playerTable [1] = "|c" .. classColor .. playerTable [1] .. "|r"
+						playerTable [1] = "|c" .. classColor .. playerNameFormated .. "|r"
 					end
 				end
 				
@@ -3033,7 +3035,7 @@
 	
 --> row text editor
 
-	local panel = _detalhes:CreateWelcomePanel ("DetailsWindowOptionsBarTextEditor", nil, 650, 230, true)
+	local panel = _detalhes:CreateWelcomePanel ("DetailsWindowOptionsBarTextEditor", nil, 1150, 600, true)
 	panel:SetPoint ("center", UIParent, "center")
 	panel:Hide()
 	panel:SetFrameStrata ("FULLSCREEN")
@@ -3056,7 +3058,7 @@
 	local y = -32
 	local buttonTemplate = Details.gump:GetTemplate ("button", "OPTIONS_BUTTON_TEMPLATE")
 	
-	local textentry = _detalhes.gump:NewSpecialLuaEditorEntry (panel, 450, 185, "editbox", "$parentEntry", true)
+	local textentry = _detalhes.gump:NewSpecialLuaEditorEntry (panel, 950, 555, "editbox", "$parentEntry")
 	textentry:SetPoint ("topleft", panel, "topleft", 10, y)
 	Details.gump:ApplyStandardBackdrop (textentry)
 	Details.gump:SetFontSize (textentry.editbox, 14)
@@ -3191,7 +3193,7 @@
 	color_button:SetTemplate (buttonTemplate)
 	
 	func_button:SetPoint ("topright", panel, "topright", -12, y - (20*3))
-	color_button:SetPoint ("topright", panel, "topright", -12, y - (20*4))
+	--color_button:SetPoint ("topright", panel, "topright", -12, y - (20*4))
 	func_button:SetTemplate (buttonTemplate)
 	
 	color_button.tooltip = Loc ["STRING_OPTIONS_TEXTEDITOR_COLOR_TOOLTIP"]
@@ -3886,6 +3888,153 @@
 	end	
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- ~macros
+
+	function _detalhes:InitializeMacrosWindow()
+		local DetailsMacrosPanel = gump:CreateSimplePanel (UIParent, 700, 480, "Details! Useful Macros", "DetailsMacrosPanel")
+		DetailsMacrosPanel.Frame = DetailsMacrosPanel
+		DetailsMacrosPanel.__name = "Macros"
+		DetailsMacrosPanel.real_name = "DETAILS_MACROSWINDOW"
+		DetailsMacrosPanel.__icon = [[Interface\MacroFrame\MacroFrame-Icon]]
+		DetailsMacrosPanel.__iconcoords = {0, 1, 0, 1}
+		DetailsMacrosPanel.__iconcolor = "white"
+		DetailsPluginContainerWindow.EmbedPlugin (DetailsMacrosPanel, DetailsMacrosPanel, true)
+		
+		function DetailsMacrosPanel.RefreshWindow()
+			_detalhes.OpenMacrosWindow()
+		end
+		
+		DetailsMacrosPanel:Hide()
+	end
+	
+	function _detalhes.OpenMacrosWindow()
+	
+		if (not DetailsMacrosPanel or not DetailsMacrosPanel.Initialized) then
+			local DF = DetailsFramework
+			
+			DetailsMacrosPanel.Initialized = true
+			local f = DetailsMacrosPanel or gump:CreateSimplePanel (UIParent, 700, 480, "Details! Useful Macros", "DetailsMacrosPanel")
+			
+			local scrollbox_line_backdrop_color = {0, 0, 0, 0.2}
+			local scrollbox_line_backdrop_color_onenter = {.3, .3, .3, 0.5}
+			local scrollbox_lines = 7
+			local scrollbox_line_height = 79.5
+			local scrollbox_size = {890, 563}
+			
+			f.bg1 = f:CreateTexture (nil, "background")
+			f.bg1:SetTexture ([[Interface\AddOns\Details\images\background]], true)
+			f.bg1:SetAlpha (0.8)
+			f.bg1:SetVertexColor (0.27, 0.27, 0.27)
+			f.bg1:SetVertTile (true)
+			f.bg1:SetHorizTile (true)
+			f.bg1:SetSize (790, 454)
+			f.bg1:SetAllPoints()
+			f:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]], tileSize = 64, tile = true})
+			f:SetBackdropColor (.5, .5, .5, .7)
+			f:SetBackdropBorderColor (0, 0, 0, 1)
+			
+			local macrosAvailable = _detalhes.MacroList
+		
+			local OnEnterMacroButton = function (self)
+				self:SetBackdropColor (unpack (scrollbox_line_backdrop_color_onenter))
+			end
+			
+			local onLeaveMacroButton = function (self)
+				self:SetBackdropColor (unpack (scrollbox_line_backdrop_color))
+			end
+			
+			local updateMacroLine = function (self, index, title, desc, macroText)
+				self.Title:SetText (title)
+				self.Desc:SetText (desc)
+				self.MacroTextEntry:SetText (macroText)
+			end
+			
+			local textEntryOnFocusGained = function (self)
+				self:HighlightText()
+			end
+			
+			local textEntryOnFocusLost = function (self)
+				self:HighlightText (0, 0)
+			end
+
+			local refreshMacroScrollbox = function (self, data, offset, totalLines)
+				for i = 1, totalLines do
+					local index = i + offset
+					local macro = macrosAvailable [index]
+					if (macro) then
+						local line = self:GetLine (i)
+						line:UpdateLine (index, macro.Name, macro.Desc, macro.MacroText)
+					end
+				end
+			end
+			
+			local macroListCreateLine = function (self, index)
+				--create a new line
+				local line = CreateFrame ("button", "$parentLine" .. index, self)
+				
+				--set its parameters
+				line:SetPoint ("topleft", self, "topleft", 0, -((index-1) * (scrollbox_line_height+1)))
+				line:SetSize (scrollbox_size[1], scrollbox_line_height)
+				line:SetScript ("OnEnter", OnEnterMacroButton)
+				line:SetScript ("OnLeave", onLeaveMacroButton)
+				line:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true, edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1})
+				line:SetBackdropColor (unpack (scrollbox_line_backdrop_color))
+				line:SetBackdropBorderColor (0, 0, 0, 0.3)
+				
+				local titleLabel = DF:CreateLabel (line, "", DF:GetTemplate ("font", "ORANGE_FONT_TEMPLATE"))
+				titleLabel.textsize = 14
+				titleLabel.textcolor = "yellow"
+				local descLabel = DF:CreateLabel (line, "", DF:GetTemplate ("font", "ORANGE_FONT_TEMPLATE"))
+				descLabel.textsize = 12
+				
+				local options_dropdown_template = DF:GetTemplate ("dropdown", "OPTIONS_DROPDOWN_TEMPLATE")
+				options_dropdown_template = DF.table.copy ({}, options_dropdown_template)
+				options_dropdown_template.backdropcolor = {.51, .51, .51, .3}
+				options_dropdown_template.onenterbordercolor = {.51, .51, .51, .2}
+				
+				local textEntry = DF:CreateTextEntry (line, function()end, scrollbox_size[1] - 10, 40, "MacroTextEntry", _, _, options_dropdown_template)
+				textEntry:SetHook ("OnEditFocusGained", textEntryOnFocusGained)
+				textEntry:SetHook ("OnEditFocusLost", textEntryOnFocusLost)
+				textEntry:SetJustifyH ("left")
+				textEntry:SetTextInsets (8, 8, 0, 0)
+				
+				titleLabel:SetPoint ("topleft", line, "topleft", 5, -5)
+				descLabel:SetPoint ("topleft", titleLabel, "bottomleft", 0, -2)
+				textEntry:SetPoint ("topleft", descLabel, "bottomleft", 0, -4)
+				
+				line.Title = titleLabel
+				line.Desc = descLabel
+				line.MacroTextEntry = textEntry
+			
+				line.UpdateLine = updateMacroLine
+				line:Hide()
+				
+				return line
+			end
+			
+			local macroScrollbox = DF:CreateScrollBox (f, "$parentMacroScrollbox", refreshMacroScrollbox, macrosAvailable, scrollbox_size[1], scrollbox_size[2], scrollbox_lines, scrollbox_line_height)
+			macroScrollbox:SetPoint ("topleft", f, "topleft", 5, -30)
+			macroScrollbox:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
+			macroScrollbox:SetBackdropColor (0, 0, 0, 0)
+			macroScrollbox:SetBackdropBorderColor (0, 0, 0, 1)
+			f.MacroScrollbox = macroScrollbox
+			DF:ReskinSlider (macroScrollbox)
+			
+			macroScrollbox.__background:Hide()
+			
+			--create the scrollbox lines
+			for i = 1, scrollbox_lines do 
+				macroScrollbox:CreateLine (macroListCreateLine)
+			end
+		end
+		
+		DetailsPluginContainerWindow.OpenPlugin (DetailsMacrosPanel)
+		DetailsMacrosPanel.MacroScrollbox:Refresh()
+		DetailsMacrosPanel:Show()
+	end	
+	
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- ~plater
 
 	function _detalhes:InitializePlaterIntegrationWindow()
@@ -4548,6 +4697,8 @@
 			text_box:SetPoint ("topleft", f, "topleft", 220, -40)
 			text_box:SetBackdrop (nil)
 			
+			DetailsFramework:ReskinSlider (text_box.scroll)
+			
 			--background
 			f.bg1 = f:CreateTexture (nil, "background")
 			f.bg1:SetTexture ([[Interface\AddOns\Details\images\background]], true)
@@ -5083,7 +5234,7 @@ local CreateCurrentDpsFrame = function (parent, name)
 
 	--> labels for mythic dungeon / group party
 		local labelGroupDamage = f:CreateFontString (nil, "overlay", "GameFontNormal")
-		labelGroupDamage:SetText ("Group DPS")
+		labelGroupDamage:SetText ("Real Time Group DPS")
 		DF:SetFontSize (labelGroupDamage, 14)
 		DF:SetFontOutline (labelGroupDamage, "NONE")
 		
@@ -5913,6 +6064,8 @@ local CreateEventTrackerFrame = function (parent, name)
 			end
 			
 			f:SetBackdropColor (unpack (_detalhes.event_tracker.frame.backdrop_color))
+			scrollframe.__background:SetVertexColor (unpack (_detalhes.event_tracker.frame.backdrop_color))
+			
 			f:SetFrameStrata (_detalhes.event_tracker.frame.strata)
 			
 			_detalhes:UpdateWorldTrackerLines()
@@ -5951,8 +6104,9 @@ local CreateEventTrackerFrame = function (parent, name)
 		local is_enemy = function (flag)
 			return bit.band (flag, OBJECT_TYPE_ENEMY) ~= 0
 		end
-		combatLog:SetScript ("OnEvent", function (self, event, time, token, hidding, caster_serial, caster_name, caster_flags, caster_flags2, target_serial, target_name, target_flags, target_flags2, spellid, spellname, spelltype, extraSpellID, extraSpellName, extraSchool)
+		combatLog:SetScript ("OnEvent", function (self, event)
 			
+			local time, token, hidding, caster_serial, caster_name, caster_flags, caster_flags2, target_serial, target_name, target_flags, target_flags2, spellid, spellname, spelltype, extraSpellID, extraSpellName, extraSchool = CombatLogGetCurrentEventInfo()
 			local added = false
 			
 			--> defensive cooldown
@@ -6819,5 +6973,82 @@ function Details:ScrollDamage()
 	end
 
 	DetailsScrollDamage:Show()
+end
+
+---------------------------------------------------------------------------------------------------------------------------------------
+--> import export window
+
+--show a window with a big text editor and 2 buttons: okay and cancel.
+--cancel button always closes the window and okay calls the comfirm function passed in the argument
+--default text is the text shown show the window is show()
+
+function _detalhes:DumpString (text)
+	_detalhes:ShowImportWindow (text)
+end
+
+function _detalhes:ShowImportWindow (defaultText, confirmFunc, titleText)
+	if (not DetailsExportWindow) then
+		local importWindow = DetailsFramework:CreateSimplePanel (UIParent, 800, 610, "Details! Dump String", "DetailsExportWindow")
+		importWindow:SetFrameStrata ("FULLSCREEN")
+		importWindow:SetPoint ("center")
+		DetailsFramework:ApplyStandardBackdrop (importWindow, false, 1.2)
+	
+		local importTextEditor = DetailsFramework:NewSpecialLuaEditorEntry (importWindow, 780, 540, "ImportEditor", "$parentEditor", true)
+		importTextEditor:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
+		importTextEditor:SetBackdropColor (.2, .2, .2, .5)
+		importTextEditor:SetBackdropBorderColor (0, 0, 0, 1)
+		importTextEditor:SetPoint ("topleft", importWindow, "topleft", 10, -30)
+		
+		importTextEditor.scroll:SetBackdrop (nil)
+		importTextEditor.editbox:SetBackdrop (nil)
+		importTextEditor:SetBackdrop (nil)
+		
+		DetailsFramework:ReskinSlider (importTextEditor.scroll)
+		
+		if (not importTextEditor.__background) then
+			importTextEditor.__background = importTextEditor:CreateTexture (nil, "background")
+		end
+		
+		importTextEditor:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1})
+		importTextEditor:SetBackdropBorderColor (0, 0, 0, 1)
+		
+		importTextEditor.__background:SetColorTexture (0.2317647, 0.2317647, 0.2317647)
+		importTextEditor.__background:SetVertexColor (0.27, 0.27, 0.27)
+		importTextEditor.__background:SetAlpha (0.8)
+		importTextEditor.__background:SetVertTile (true)
+		importTextEditor.__background:SetHorizTile (true)
+		importTextEditor.__background:SetAllPoints()	
+		
+		--import button
+		local onClickImportButton = function()
+			if (DetailsExportWindow.ConfirmFunction) then
+				DetailsFramework:Dispatch (DetailsExportWindow.ConfirmFunction, importTextEditor:GetText())
+			end
+			importWindow:Hide()
+		end
+		local okayButton = DetailsFramework:CreateButton (importTextEditor, onClickImportButton, 120, 20, "Okay", -1, nil, nil, nil, nil, nil, _detalhes.gump:GetTemplate ("button", "OPTIONS_BUTTON_TEMPLATE"), _detalhes.gump:GetTemplate ("font", "OPTIONS_FONT_TEMPLATE")) --> localize-me
+		okayButton:SetIcon ([[Interface\BUTTONS\UI-Panel-BiggerButton-Up]], 20, 20, "overlay", {0.1, .9, 0.1, .9})
+		importTextEditor.OkayButton = okayButton
+	
+		--cancel button
+		local cancelButton = DetailsFramework:CreateButton (importTextEditor, function() importWindow:Hide() end, 120, 20, "Cancel", -1, nil, nil, nil, nil, nil, _detalhes.gump:GetTemplate ("button", "OPTIONS_BUTTON_TEMPLATE"), _detalhes.gump:GetTemplate ("font", "OPTIONS_FONT_TEMPLATE")) --> localize-me
+		cancelButton:SetIcon ([[Interface\BUTTONS\UI-Panel-MinimizeButton-Up]], 20, 20, "overlay", {0.1, .9, 0.1, .9})
+
+		okayButton:SetPoint ("topright", importTextEditor, "bottomright", 0, -10)
+		cancelButton:SetPoint ("right", okayButton, "left", -20, 0)
+		
+	end
+	
+	DetailsExportWindow.ConfirmFunction = confirmFunc
+	DetailsExportWindow.ImportEditor:SetText (defaultText or "")
+	DetailsExportWindow:Show()
+	
+	titleText = titleText or "Details! Dump String"
+	DetailsExportWindow.Title:SetText (titleText)
+	
+	C_Timer.After (.2, function()
+		DetailsExportWindow.ImportEditor:SetFocus (true)
+		DetailsExportWindow.ImportEditor.editbox:HighlightText (0)
+	end)
 end
 

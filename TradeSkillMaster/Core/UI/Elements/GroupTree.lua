@@ -109,6 +109,46 @@ function GroupTree.UpdateData(self, redraw)
 	return self
 end
 
+--- Expand every group.
+-- @tparam GroupTree self The application group tree object
+-- @treturn GroupTree The application group tree object
+function GroupTree.ExpandAll(self)
+	for _, groupPath in ipairs(self._allData) do
+		if groupPath ~= TSM.CONST.ROOT_GROUP_PATH and self._hasChildrenLookup[groupPath] and self._contextTbl.collapsed[groupPath] then
+			self:_SetCollapsed(groupPath, false)
+		end
+	end
+	for _, row in ipairs(self._rows) do
+		local groupPath = row:GetData()
+		if groupPath ~= TSM.CONST.ROOT_GROUP_PATH and self._hasChildrenLookup[groupPath] then
+			local scrollingList = row._scrollingList
+			scrollingList:_UpdateData()
+			scrollingList:Draw()
+		end
+	end
+	return self
+end
+
+--- Collapse every group.
+-- @tparam GroupTree self The application group tree object
+-- @treturn GroupTree The application group tree object
+function GroupTree.CollapseAll(self)
+	for _, groupPath in ipairs(self._allData) do
+		if groupPath ~= TSM.CONST.ROOT_GROUP_PATH and self._hasChildrenLookup[groupPath] and not self._contextTbl.collapsed[groupPath] then
+			self:_SetCollapsed(groupPath, true)
+		end
+	end
+	for _, row in ipairs(self._rows) do
+		local groupPath = row:GetData()
+		if groupPath ~= TSM.CONST.ROOT_GROUP_PATH and self._hasChildrenLookup[groupPath] then
+			local scrollingList = row._scrollingList
+			scrollingList:_UpdateData()
+			scrollingList:Draw()
+		end
+	end
+	return self
+end
+
 
 
 -- ============================================================================
@@ -152,7 +192,6 @@ function GroupTree._GetListRow(self)
 	text:SetFont(self:_GetStyle("font"), self:_GetStyle("fontHeight"))
 	text:SetJustifyH("LEFT")
 	text:SetJustifyV("MIDDLE")
-	text:SetText("TEST")
 	row._texts.text = text
 
 	local color = row:_GetTexture()

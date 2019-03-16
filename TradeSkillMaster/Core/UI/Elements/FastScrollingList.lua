@@ -39,6 +39,7 @@ function FastScrollingList.__init(self)
 	self._scrollFrame = CreateFrame("ScrollFrame", nil, frame, nil)
 	self._scrollFrame:SetAllPoints()
 	self._scrollFrame:EnableMouseWheel(true)
+	self._scrollFrame:SetClipsChildren(true)
 	self._scrollFrame:SetScript("OnUpdate", private.FrameOnUpdate)
 	self._scrollFrame:SetScript("OnMouseWheel", private.FrameOnMouseWheel)
 	private.frameFastScrollingListLookup[self._scrollFrame] = self
@@ -135,20 +136,10 @@ function FastScrollingList.Draw(self)
 		if i > numVisibleRows or not data then
 			row:SetVisible(false)
 		else
-			local topInset, bottomInset = 0, 0
-			if i == 1 then
-				-- this is the first visible row so might have an inset at the top
-				topInset = max(scrollOffset % rowHeight, 0)
-			end
-			if i == numVisibleRows then
-				-- this is the last visible row so might have an inset at the bottom
-				bottomInset = max((numVisibleRows + dataOffset) * rowHeight - (scrollOffset + visibleHeight), 0)
-			end
-			row:SetBackgroundColor(dataIndex % 2 == 1 and "#00000000" or altBackground)
-			row:SetHeight(rowHeight)
-			row:SetHitRectInsets(0, 0, topInset, bottomInset)
 			row:SetVisible(true)
 			self:_SetRowData(row, data)
+			row:SetBackgroundColor(dataIndex % 2 == 1 and "#00000000" or altBackground)
+			row:SetHeight(rowHeight)
 		end
 	end
 end
@@ -209,7 +200,7 @@ function FastScrollingList._OnScrollValueChanged(self, value, noDraw)
 	if not noDraw then
 		self:Draw()
 		for _, row in ipairs(self._rows) do
-			if row._frame:IsVisible() and row._frame:IsMouseOver() then
+			if row._frame:IsVisible() and row._frame:IsMouseOver() and not self._scrollbar:IsMouseOver(4, -4, -6, 10) then
 				row._frame:GetScript("OnLeave")(row._frame)
 				row._frame:GetScript("OnEnter")(row._frame)
 			end
@@ -300,6 +291,7 @@ function ListRow.Acquire(self, scrollingList)
 	self._scrollingList = scrollingList
 
 	self._frame:SetParent(self._scrollingList._content)
+	self._frame:SetHitRectInsets(0, 0, 0, 0)
 	self._frame:Show()
 	self._frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	self._frame:SetScript("OnEnter", private.RowOnEnter)
@@ -308,23 +300,18 @@ function ListRow.Acquire(self, scrollingList)
 end
 
 function ListRow.Release(self)
-	self._scrollingList = nil
-	self._rowData = nil
-	self._frame:ClearAllPoints()
-	self._frame:SetParent(nil)
-	self._frame:SetScript("OnEnter", nil)
-	self._frame:SetScript("OnLeave", nil)
-	self._frame:SetScript("OnClick", nil)
+	self._frame:Hide()
 	for _, text in pairs(self._texts) do
+		text:Hide()
 		text:ClearAllPoints()
 		text:SetWidth(0)
 		text:SetHeight(0)
 		text:SetTextColor(1, 1, 1, 1)
-		text:Hide()
 		tinsert(self._recycled.texts, text)
 	end
 	wipe(self._texts)
 	for _, icon in pairs(self._icons) do
+		icon:Hide()
 		icon:SetTexture(nil)
 		icon:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
 		icon:SetColorTexture(0, 0, 0, 0)
@@ -332,22 +319,29 @@ function ListRow.Release(self)
 		icon:ClearAllPoints()
 		icon:SetWidth(0)
 		icon:SetHeight(0)
-		icon:Hide()
 		tinsert(self._recycled.icons, icon)
 	end
 	wipe(self._icons)
-	for _, tooltip in pairs(self._buttons) do
-		tooltip:SetScript("OnEnter", nil)
-		tooltip:SetScript("OnLeave", nil)
-		tooltip:SetScript("OnClick", nil)
-		tooltip:ClearAllPoints()
-		tooltip:SetWidth(0)
-		tooltip:SetHeight(0)
-		tooltip:Hide()
-		tinsert(self._recycled.buttons, tooltip)
+	for _, button in pairs(self._buttons) do
+		button:Hide()
+		button:SetScript("OnEnter", nil)
+		button:SetScript("OnLeave", nil)
+		button:SetScript("OnClick", nil)
+		button:SetParent(nil)
+		button:ClearAllPoints()
+		button:SetWidth(0)
+		button:SetHeight(0)
+		tinsert(self._recycled.buttons, button)
 	end
 	wipe(self._buttons)
-	self._frame:Hide()
+
+	self._scrollingList = nil
+	self._rowData = nil
+	self._frame:SetParent(nil)
+	self._frame:ClearAllPoints()
+	self._frame:SetScript("OnEnter", nil)
+	self._frame:SetScript("OnLeave", nil)
+	self._frame:SetScript("OnClick", nil)
 end
 
 function ListRow.SetData(self, data)
@@ -434,12 +428,15 @@ function ListRow._GetTexture(self)
 end
 
 function ListRow._GetButton(self)
-	local frame = tremove(self._recycled.buttons)
-	if not frame then
-		frame = CreateFrame("Button", nil, self._frame, nil)
+	local button = tremove(self._recycled.buttons)
+	if not button then
+		button = CreateFrame("Button", nil, self._frame, nil)
 	end
-	frame:Show()
-	return frame
+	button:SetParent(self._frame)
+	button:SetHitRectInsets(0, 0, 0, 0)
+	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	button:Show()
+	return button
 end
 
 

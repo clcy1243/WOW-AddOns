@@ -21,7 +21,7 @@
 	local _UnitGUID = UnitGUID --wow api local
 	local _UnitName = UnitName --wow api local
 	local _GetTime = GetTime
-
+	
 	local _IsAltKeyDown = IsAltKeyDown
 	local _IsShiftKeyDown = IsShiftKeyDown
 	local _IsControlKeyDown = IsControlKeyDown
@@ -697,6 +697,9 @@
 					end
 
 					if (from_encounter_end) then
+						if (_detalhes.encounter_table.start) then
+							_detalhes.tabela_vigente:SetStartTime (_detalhes.encounter_table.start)
+						end
 						_detalhes.tabela_vigente:SetEndTime (_detalhes.encounter_table ["end"] or GetTime())
 					end
 
@@ -755,6 +758,15 @@
 				_detalhes.tabela_historico:adicionar (_detalhes.tabela_vigente) --move a tabela atual para dentro do hist�rico
 				--8.0.1 miss data isn't required at the moment, spells like akari's soul has been removed from the game
 				--_detalhes:CanSendMissData()
+				
+				--the combat is valid, see if the user is sharing data with somebody
+				if (_detalhes.shareData) then
+					local zipData = Details:CompressData (_detalhes.tabela_vigente, "comm")
+					if (zipData) then
+						print ("has zip data")
+					end
+				end
+				
 			else
 				invalid_combat = _detalhes.tabela_vigente
 				
@@ -863,6 +875,7 @@
 			
 			_detalhes.StoreSpells()
 			
+			_detalhes:RunScheduledEventsAfterCombat()
 		end
 
 		function _detalhes:GetPlayersInArena()
@@ -1499,8 +1512,8 @@
 		
 		function _detalhes:AddTooltipBackgroundStatusbar (side, value, useSpark)
 			_detalhes.tooltip.background [4] = 0.8
-			_detalhes.tooltip.icon_size.W = 16
-			_detalhes.tooltip.icon_size.H = 16
+			_detalhes.tooltip.icon_size.W = _detalhes.tooltip.line_height
+			_detalhes.tooltip.icon_size.H = _detalhes.tooltip.line_height
 			
 			value = value or 100
 			

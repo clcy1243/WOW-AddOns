@@ -1,6 +1,82 @@
 local L
 L = LibStub("AceLocale-3.0"):NewLocale("Rarity", "enUS", true)
 
+L["Risen Mare"] = true
+L["Island Thunderscale"] = true
+L["Bloodgorged Hunter"]= true
+L["Stonehide Elderhorn"] = true
+L["Baby Stonehide"] = true
+L["Leatherwing Screecher"] = true
+L["Rotting Ghoul"] = true
+L["Thunderscale Whelpling"] = true
+L["Scritches"] = true
+L["Tonguelasher"] = true
+L["Lord Woofington"] = true
+L["Firesting Buzzer"] = true
+L["Needleback Pup"] = true
+L["Shadefeather Hatchling"] = true
+L["G.M.O.D."] = true
+L["Spawn of Krag'wa"] = true
+L["Thundering Scale of Akunda"] = true
+L["Enchanted Talon of Pa'ku"] = true
+L["Darkshore Sentinel"] = true
+L["Burninator Mark V"] = true
+L["Rattling Bones"] = true
+L["Conflagros"] = true
+L["Everburning Treant"] = true
+L["Zim'kaga"] = true
+L["Onu"] = true
+L["Binding of Cyclarus"] = true
+L["Cyclarus"] = true
+L["Bottled Essence of Hydrath"] = true
+L["Hydrath"] = true
+L["Squishy Purple Goo"] = true
+L["Soggoth the Slitherer"] = true
+L["Zur'aj the Depleted"] = true
+L["Twilight Prophet Graeme"] = true
+L["Nightwreathed Egg"] = true
+L["Will hatch into Nightwreathed Watcher pet after five days."] = true
+L["Grimhorn"] = true
+L["Orwell Stevenson"] = true
+L["Detoxified Blight Grenade"] = true
+L["Gren Tornfur"] = true
+L["Highborne Memento"] = true
+L["Commander Drald"] = true
+L["Thelar Moonstrike"] = true
+L["Narassin's Soul Gem"] = true
+L["Athrikus Narassin"] = true
+L["Twiddle Twirler: Sentinel's Glaive"] = true
+L["Commander Ral'esh"] = true
+L["Twiddle Twirler: Shredder Blade"] = true
+L["Sapper Odette"] = true
+L["Ashenvale Chimaera"] = true
+L["Alash'anir"] = true
+L["Caged Bear"] = true
+L["Agathe Wyrmwood"] = true
+L["Blackpaw"] = true
+L["Kaldorei Nightsaber"] = true
+L["Captured Kaldorei Nightsaber"] = true
+L["Croz Bloodrage"] = true
+L["Shadowclaw"] = true
+L["Umber Nightsaber"] = true
+L["Moxo the Beheader"] = true
+L["Athil Dewfire"] = true
+L["Captured Umber Nightsaber"] = true
+L["Warbeast Kraal Dinner Bell"] = true
+L["Rallying War Banner"] = true
+L["Azerite Firework Launcher"] = true
+L["Bowl of Glowing Pufferfish"] = true
+L["Kojo's Master Matching Set"] = true
+L["Proudmoore Music Box"] = true
+L["Albatross Feather"] = true
+L["Cobalt Raven Hatchling"] = true
+L["Bewitching Tea Set"] = true
+L["Violet Abyssal Eel"] = true
+L["For da Blood God!"] = true
+L["Pair of Tiny Bat Wings"] = true
+L["Goldtusk Inn Breakfast Buffet"] = true
+L["Words of Akunda"] = true
+L["Meerah's Jukebox"] = true
 L["Goldenmane's Reins"] = true
 L["Reins of a Tamed Bloodfeaster"] = true
 L["Chewed-On Reins of the Terrified Pack Mule"] = true
@@ -1238,6 +1314,14 @@ L["Sand Shifter School"] = true
 L["Slimy Mackerel School"] = true
 L["Tiragarde Perch School"] = true
 L["U'taka School"] = true
+L["Min Buyout"] = true
+L["Market Price"] = true
+L["Region Market Avg"] = true
+L["Region Sale Avg"] = true
+L["Region Sale Rate"] = true
+L["Region Avg Daily Sold"] = true
+L["Show TSM column"] = true
+L["When on, the TSM Market Price will be shown in the main tooltip."] = true
 
 --[[
 					The rest of this file is auto-generated using the WoWAce localization application.
@@ -1267,48 +1351,41 @@ L["%s: %d collected"] = "%s: %d gesammelt"
 L["%s: 0/%d attempt so far (%.2f%% - %s)"] = "%s: 0/%d bisheriger Versuch (%.2f%% - %s)"
 L["%s: 0/%d attempts so far (%.2f%% - %s)"] = "%s: 0/%d bisherige Versuche (%.2f%% - %s)"
 L["%s: collection completed!"] = "%s: Sammlung vollständig!"
-L["%s: Found after %d attempts!"] = "%s: Gefunden nach %d Versuchen!"
+L["%s: Found after %d attempts!"] = "%s: Erbeutet nach %d Versuchen!"
 L["%s: Found on the first attempt!"] = "%s erbeutet beim ersten Versuch!"
-L["(%d/%d attempts)"] = "(%d/%d versucht)"
+L["(%d/%d attempts)"] = "(%d/%d Versuche)"
 L["(%d/%d collected)"] = "(%d/%d gesammelt)"
 L["(Items listed in red could not be found on the server and may not exist. Consider removing them.)"] = "(Die rot markierten Gegenstände konnten auf dem Server nicht gefunden werden. Eventuell existieren sie nicht und können daher entfernt werden.)"
-L["(running in debug mode)"] = "Läuft im Debug Modus"
+L["(running in debug mode)"] = "Debug-Modus ist aktiv!"
 L["(Warning: item could not be retrieved from server)"] = "(Warnung: Gegenstand wurde auf dem Server nicht gefunden)"
-L["1 in %d chance"] = "1 zu %d Chance"
-L["10-player Heroic Raid instance (legacy content; not flexible)"] = "10 Spieler heroischer Schlachtzug (alter Content, kein Flexmode)"
-L["10-player Raid instance (legacy content; not flexible)"] = "10 Spieler Schlachtzug (alter Content, kein Flexmode)"
-L["25-player Event scenario"] = "25 Spieler Event Szenario"
+L["1 in %d chance"] = "1-zu-%d-Chance"
+L["10-player Heroic Raid instance (legacy content; not flexible)"] = "Heroischer 10-Spieler-Schlachtzug (alter Content, keine Skalierung)"
+L["10-player Raid instance (legacy content; not flexible)"] = "10-Spieler-Schlachtzug (alter Content, keine Skalierung)"
+L["25-player Event scenario"] = "25-Spieler-Event-Szenario"
 L["25-player heroic"] = "25 Spieler heroisch"
-L["25-player Heroic Raid instance (legacy content; not flexible)"] = "25 Spieler heroischer Schlachtzug (alter Content, kein Flexmode)"
-L["25-player Raid instance (legacy content; not flexible)"] = "25 Spieler Schlachtzug (alter Content, kein Flexmode)"
-L["40-player Event raid"] = "40 Spieler Event Schlachtzug"
-L["40-player Raid instance (legacy content; not flexible)"] = "40 Spieler Schlachtzug (alter Content, kein Flexmode)"
-L["5-player Event instance"] = "5 Spieler Event Instanz "
-L["5-player Heroic instance"] = "5 Spieler heroische Instanz"
-L["5-player instance"] = "5 Spieler Instanz "
---[[Translation missing --]]
-L["A comma-separated list of item IDs which, when used or opened, can give you this item. Use WowHead or a similar service to lookup item IDs."] = "A comma-separated list of item IDs which, when used or opened, can give you this item. Use WowHead or a similar service to lookup item IDs."
-L["A comma-separated list of NPC IDs who drop this item. Use WowHead or a similar service to lookup NPC IDs."] = "Eine durch Kommas getrennte Liste der NPCs, die dieses Item droppen. Nutze WoW-Head oder ähnliche Seiten um die NPC-IDs zu finden."
---[[Translation missing --]]
-L["A comma-separated list of quest IDs. When these quest IDs are completed, the item is considered defeated."] = "A comma-separated list of quest IDs. When these quest IDs are completed, the item is considered defeated."
---[[Translation missing --]]
-L["A comma-separated list of Statistic IDs that track the number of kills toward obtaining this item."] = "A comma-separated list of Statistic IDs that track the number of kills toward obtaining this item."
---[[Translation missing --]]
-L["A comma-separated list of Statistic IDs that track the number of kills toward obtaining this item. These statistics will be added together. Use WowHead or a similar service to locate statistic IDs."] = "A comma-separated list of Statistic IDs that track the number of kills toward obtaining this item. These statistics will be added together. Use WowHead or a similar service to locate statistic IDs."
---[[Translation missing --]]
+L["25-player Heroic Raid instance (legacy content; not flexible)"] = "Heroischer 25-Spieler-Schlachtzug (alter Content, keine Skalierung)"
+L["25-player Raid instance (legacy content; not flexible)"] = "25-Spieler-Schlachtzug (alter Content, keine Skalierung)"
+L["40-player Event raid"] = "40-Spieler-Event-Schlachtzug"
+L["40-player Raid instance (legacy content; not flexible)"] = "40-Spieler-Schlachtzug (alter Content, keine Skalierung)"
+L["5-player Event instance"] = "5-Spieler-Event-Instanz "
+L["5-player Heroic instance"] = "Heroische 5-Spieler-Instanz"
+L["5-player instance"] = "5-Spieler-Instanz"
+L["A comma-separated list of item IDs which, when used or opened, can give you this item. Use WowHead or a similar service to lookup item IDs."] = "Eine durch Kommas getrennte Liste der Gegenstands-IDs, von welchen man durch Öffnen oder Benutzen diesen Gegenstand erhalten kann. Nutze WoW-Head oder ähnliche Seiten, um die NPC-IDs zu finden."
+L["A comma-separated list of NPC IDs who drop this item. Use WowHead or a similar service to lookup NPC IDs."] = "Eine durch Kommas getrennte Liste der NPC-IDs, die diesen Gegenstand droppen. Nutze WoW-Head oder ähnliche Seiten, um die NPC-IDs zu finden."
+L["A comma-separated list of quest IDs. When these quest IDs are completed, the item is considered defeated."] = "Eine durch Kommas getrennte Liste Quest-IDs. Wenn diese Quest-IDs erledigt sind, gilt der Gegenstand ebenfalls als erledigt."
+L["A comma-separated list of Statistic IDs that track the number of kills toward obtaining this item."] = "Eine durch Kommas getrennte Liste Statistik-IDs, welche die Anzahl der benötigten Versuche verfolgen, die nötig sind, um den Gegenstand zu erhalten."
+L["A comma-separated list of Statistic IDs that track the number of kills toward obtaining this item. These statistics will be added together. Use WowHead or a similar service to locate statistic IDs."] = "Eine durch Kommas getrennte Liste Statistik-IDs, welche die Anzahl der benötigten Versuche verfolgen, die nötig sind, um den Gegenstand zu erhalten. Die Statistiken werden zusammengezählt. Nutze WoWHead oder einen ähnlichen Dienst, um Statistik-IDs zu finden."
 L[ [=[A comma-separated list of the zones or sub-zones this item can be found in. For zones, you can enter either the Map ID (i.e. 811 is Vale of Eternal Blossoms), or the full name of the zone. For sub-zones, you must enter the full name of the sub-zone.
 
 Enter zone names with proper spelling, capitalization, and punctuation. They can be entered either in US English or your client's local language. Use WowHead or a similar service to make sure you're entering the zone names perfectly.
 
-PLEASE NOTE: Zone translations may not be correct. For zones, it is highly recommended that you use the Map ID instead of the name. For sub-zones, you must enter the name. If sub-zone detection isn't working for you, please visit the LibBabble-SubZone-3.0 library page on wowace.com and update the translations for your language.]=] ] = [=[A comma-separated list of the zones or sub-zones this item can be found in. For zones, you can enter either the Map ID (i.e. 811 is Vale of Eternal Blossoms), or the full name of the zone. For sub-zones, you must enter the full name of the sub-zone.
+PLEASE NOTE: Zone translations may not be correct. For zones, it is highly recommended that you use the Map ID instead of the name. For sub-zones, you must enter the name. If sub-zone detection isn't working for you, please visit the LibBabble-SubZone-3.0 library page on wowace.com and update the translations for your language.]=] ] = [=[Eine durch Kommas getrennte Liste von Gebieten oder Untergebieten, in denen der Gegenstand gefunden werden kann. Für Gebiete kann entweder die Karten-ID (z. B.: 811 für das Tal der ewigen Blüten) oder der volle Name eingegeben werden. Für Untergebiete muss der volle Name eingegeben werden.
 
-Enter zone names with proper spelling, capitalization, and punctuation. They can be entered either in US English or your client's local language. Use WowHead or a similar service to make sure you're entering the zone names perfectly.
+Gib die Namen der Gebiete mit korrekter Schreibweise, Groß- und Kleinschreiben und Satzzeichen an. Sie können entweder in Englisch oder in deiner Client-Sprache eingegeben werden. Nutze WoWHead oder einen ähnlichen Dienst, um sicherzugehen, dass der Name des Gebietes korrekt eingegeben wurde.
 
-PLEASE NOTE: Zone translations may not be correct. For zones, it is highly recommended that you use the Map ID instead of the name. For sub-zones, you must enter the name. If sub-zone detection isn't working for you, please visit the LibBabble-SubZone-3.0 library page on wowace.com and update the translations for your language.]=]
---[[Translation missing --]]
-L["A dungeon ID which, when marked as completed by the game client, will cause this item to be considered Defeated. This is primarily used for holiday items which have unique dungeon IDs."] = "A dungeon ID which, when marked as completed by the game client, will cause this item to be considered Defeated. This is primarily used for holiday items which have unique dungeon IDs."
---[[Translation missing --]]
-L["A holiday event is available today for %s! Go get it!"] = "A holiday event is available today for %s! Go get it!"
+BEACHTE: Übersetzungen der Gebiete können unter Umständen nicht korrekt sein. Für Gebiete wird dringend empfohlen, die Karten-ID statt des Namens zu verwenden. Für Untergebiete muss der Name eingegeben werden. Falls die Erkennung des Untergebiets nicht funktioniert, gehe bitte auf die Webseite der LibBabble-SubZone-3.0-Bibliothek und aktualisiere die Übersetzung für deine Sprache.]=]
+L["A dungeon ID which, when marked as completed by the game client, will cause this item to be considered Defeated. This is primarily used for holiday items which have unique dungeon IDs."] = "Eine Instanz-ID, die, wenn sie vom Spiel-Client als abgeschlossen markiert wird, dazu führt, dass der Gegenstand als erlangt gilt. Diese Funktion wird primär für Festtagsgegenstände verwendet, welche einzigartige Instanz-IDs haben."
+L["A holiday event is available today for %s! Go get it!"] = "Heute ist ein Feiertagsereignis für %s verfügbar. Los, hol es dir!"
 L["Abundant Bloodsail Wreckage"] = "Blutsegelwrackteile"
 L["Abundant Firefin Snapper School"] = "Ein ergiebiger Schwarm Feuerflossenschnapper"
 L["Abundant Oily Blackmouth School"] = "Ergiebiger Schwarm öliger Schwarzmaulfische"
@@ -1317,10 +1394,8 @@ L["Abyssal Gulper School"] = "Ein Schwarm Tiefseeschluckaale"
 L["Acid Belcher"] = "Säurespucker"
 L["Adamantite Deposit"] = "Adamantitvorkommen"
 L["Added %d |4waypoint:waypoints; to TomTom"] = "%d |4Wegpunkt:Wegpunkte; zu TomTom hinzugefügt"
---[[Translation missing --]]
-L["Adjusts the scale of the primary tooltip. This will take effect the next time the tooltip is shown."] = "Adjusts the scale of the primary tooltip. This will take effect the next time the tooltip is shown."
---[[Translation missing --]]
-L["After upgrading your garrison's Fishing Shack to level 3, fish up 5 minnows to summon a Cavedweller which can drop this mount."] = "After upgrading your garrison's Fishing Shack to level 3, fish up 5 minnows to summon a Cavedweller which can drop this mount."
+L["Adjusts the scale of the primary tooltip. This will take effect the next time the tooltip is shown."] = "Verändert die Größe des primären Tooltips. Die Änderung wird beim nächsten Erscheinen des Tooltips angewendet."
+L["After upgrading your garrison's Fishing Shack to level 3, fish up 5 minnows to summon a Cavedweller which can drop this mount."] = "Nachdem die Angelhütte deiner Garnison auf Level 3 verbessert wurde, angele 5 Elritzen, um einen Höhlenbewohner zu beschwören, welcher das Reittier droppen kann."
 L["Ageless Bronze Drake"] = "Nie alternder Bronzedrache"
 L["Ahune"] = true
 L["Ai-Li's Skymirror"] = "Ai-Lis Himmelsspiegel"
@@ -1328,42 +1403,36 @@ L["Ai-Ran the Shifting Cloud"] = "Ai-Ran die flüchtige Wolke"
 L["Albino Buzzard"] = "Albinobussard"
 L["Albino Cavefish School"] = "Ein Schwarm Albinohöhlenfische"
 L["Albino Chimaeraling"] = "Albinoschimärling"
---[[Translation missing --]]
-L["Aldrusian Sproutling"] = "Aldrusian Sproutling"
+L["Aldrusian Sproutling"] = "Schössling von Aldrus"
 L["Algaefin Rockfish School"] = "Ein Schwarm Algenflossenbarsche"
---[[Translation missing --]]
-L["All players can participate in killing this world boss once per week, regardless of faction"] = "All players can participate in killing this world boss once per week, regardless of faction"
+L["All players can participate in killing this world boss once per week, regardless of faction"] = "Jeder Spieler kann, unabhängig von seiner Fraktion, einmal pro Woche am Kampf gegen diesen Boss teilnehmen."
 L["All raid formats except Raid Finder"] = "Alle Schlachtzugsschwierigkeitsgrade außer Schlachtzugbrowser"
---[[Translation missing --]]
-L["Alliance controls Stromgarde"] = "Alliance controls Stromgarde"
+L["Alliance controls Stromgarde"] = "Die Allianz kontrolliert Stromgarde"
 L["Alliance only"] = "Nur Allianz"
-L["Already defeated"] = "bereits besiegt"
-L["Already defeated for %s"] = "bereits besiegt für %s"
+L["Already defeated"] = "Bereits besiegt"
+L["Already defeated for %s"] = "Bereits besiegt für %s"
 L["Already known"] = "Bereits bekannt"
-L["an item already exists by this name, so it will not be imported"] = "ein Gegenstand, der mit demselben Namen schon existiert, also wird er nicht importiert"
-L["an item with the same Item ID already exists, so it will not be imported"] = "einen Gegenstand mit derselben Gegenstands-ID bereits existiert, wird er nicht mit importiert"
+L["an item already exists by this name, so it will not be imported"] = "ein Gegenstand mit diesem Namen existiert bereits, also wird er nicht importiert"
+L["an item with the same Item ID already exists, so it will not be imported"] = "ein Gegenstand mit dieser ID existiert bereits, also wird er nicht importiert"
 L["Ancient Mana"] = "Uraltes Mana"
 L["and %d |4other zone:other zones;"] = "und %d |4andere Zone:andere Zonen;"
---[[Translation missing --]]
-L["Angry Egg"] = "Angry Egg"
-L["Announce"] = "Ankündigung"
-L["Announcements"] = "Ankündigungen"
---[[Translation missing --]]
-L["Announcements will only be triggered when the item is found. When this is off, Rarity will announce every attempt and when the item is found."] = "Announcements will only be triggered when the item is found. When this is off, Rarity will announce every attempt and when the item is found."
+L["Angry Egg"] = "Wütendes Ei"
+L["Announce"] = "Mitteilung"
+L["Announcements"] = "Mitteilungen"
+L["Announcements will only be triggered when the item is found. When this is off, Rarity will announce every attempt and when the item is found."] = "Mitteilungen werden nur gezeigt, wenn der Gegenstand erbeutet wird. Ist diese Option deaktiviert, wird Rarity bei jedem Versuch sowie beim Erbeuten des Gegenstandes eine Mitteilung zeigen."
 L["Antoran Charhound"] = "Antorischer Aschenhund"
 L["Anubisath Idol"] = "Götze des Anubisath"
 L["Any difficulty"] = "Jeder Schwierigkeitsgrad"
 L["Any raid size"] = "Jede Schlachtzugsgröße"
-L["Any raid size or difficulty"] = "Jede Schlachtzugsgröße und Schwierigkeitsgrad"
+L["Any raid size or difficulty"] = "Jede Schlachtzugsgröße und jeder Schwierigkeitsgrad"
 L["Appears in the Black Market"] = "Erscheint im Schwarzmarkt"
 L["Aqua Jewel"] = "Wasserjuwel"
 L["Arakkoa"] = true
 L["Arcano-Shower"] = "Arkandusche"
-L["Archaeology race"] = "Archäologie Rasse"
+L["Archaeology race"] = "Archäologie-Rasse"
 L["Are you sure you want to delete this item?"] = "Bist du sicher, dass du diesen Gegenstand löschen möchtest?"
-L["Are you sure you want to import the Rarity Item Pack you entered?"] = "Sind sie sich sicher, das sie dieses Rarity Item Pack, das sie eingegeben haben, importieren wollen?"
---[[Translation missing --]]
-L["Are you sure you want to turn off the Export toggle for all your Custom items?"] = "Are you sure you want to turn off the Export toggle for all your Custom items?"
+L["Are you sure you want to import the Rarity Item Pack you entered?"] = "Bist du sicher, dass du das eingegebene Rarity-Gegenstandspaket importieren willst?"
+L["Are you sure you want to turn off the Export toggle for all your Custom items?"] = "Bist du sicher, dass du den Export für alle deine benutzerdefinierten Gegenstände deaktivieren willst?"
 L["Armored Razorback"] = "Gepanzerter Klingenrücken"
 L["Armored Razzashi Raptor"] = "Gepanzerter Razzashiraptor"
 L["Ash-Covered Horn"] = "Aschebedecktes Horn"
@@ -1378,18 +1447,14 @@ L["Azure Crane Chick"] = "Azurblaues Kranichküken"
 L["Azure Whelpling"] = "Azurblauer Welpling"
 L["Baarut the Bloodthirsty"] = "Baruut der Blutrünstige"
 L["Baarut the Brisk"] = "Baarut der Blitz"
---[[Translation missing --]]
-L["Bad Mojo Banana"] = "Bad Mojo Banana"
---[[Translation missing --]]
-L["Barnaby"] = "Barnaby"
+L["Bad Mojo Banana"] = "Banane des schlechten Mojo"
+L["Barnaby"] = true
 L["Barrier Generator"] = "Barrierengenerator"
---[[Translation missing --]]
-L["Basten"] = "Basten"
+L["Basten"] = true
 L["Battle Horn"] = "Schlachthorn"
 L["Battle Pet"] = "Kampfhaustier"
 L["Battle Pets"] = "Kampfhaustiere"
---[[Translation missing --]]
-L["Beastrider Kama"] = "Beastrider Kama"
+L["Beastrider Kama"] = "Bestienreiter Kama"
 L["Big Love Rocket"] = "Große Liebesrakete"
 L["Big Red Raygun"] = "Große rote Strahlenkanone"
 L["Biletooth Gnasher"] = "Gallzahnknirscher"
@@ -1402,8 +1467,7 @@ L["Blackhoof"] = "Schwarzhuf"
 L["Blackrock Deposit"] = "Schwarzfelsvorkommen"
 L["Blackwater Whiptail School"] = "Ein Schwarm Schwarzwasserpeitschflossen"
 L["Blackwing Banner"] = "Banner der Pechschwingen"
---[[Translation missing --]]
-L["Blank line before tooltip additions"] = "Blank line before tooltip additions"
+L["Blank line before tooltip additions"] = "Leerzeile vor Tooltip-Erweiterungen"
 L["Blazing Rune"] = "Lodernde Rune"
 L["Bleakclaw"] = "Trübklaue"
 L["Blessed Felcrusher"] = "Gesegneter Teufelszermalmer"
@@ -1414,8 +1478,7 @@ L["Blind Lake Sturgeon School"] = "Ein Schwarm blinder Seestöre"
 L["Blistermaw"] = "Blasenmaul"
 L["Bloodsail Wreckage"] = "Blutsegelwrackteile"
 L["Bloodsail Wreckage Pool"] = "Ein Schwarm Blutsegelwrackteile"
---[[Translation missing --]]
-L["Bloodstone Tunneler"] = "Bloodstone Tunneler"
+L["Bloodstone Tunneler"] = "Blutsteintunnelgräber"
 L["Blue Conservatory Scroll"] = "Blaue Konservatoriumsschriftrolle"
 L["Bluefish School"] = "Blauflossenschwarm"
 L["Bone Serpent"] = "Knochenschlange"
@@ -1425,64 +1488,51 @@ L["Boss Name"] = "Bossname"
 L["Botani Camouflage"] = true
 L["Bottled Tornado"] = "Abgefüllter Tornado"
 L["Brackish Mixed School"] = "Brackwasserschwarm"
---[[Translation missing --]]
-L["Branchlord Aldrus"] = "Branchlord Aldrus"
---[[Translation missing --]]
-L["Brazier Cap"] = "Brazier Cap"
+L["Branchlord Aldrus"] = "Zweigfürst Aldrus"
+L["Brazier Cap"] = "Kohlenpfannenkappe"
 L["Breezy Essence"] = "Sanft wehende Essenz"
 L["Brew Frenzied Emperor Salmon"] = "Brauverrückter Kaiserlachs"
 L["Brilliant Phoenix Hawk Feather"] = "Glänzende Phönixfalkenfeder"
 L["Brinedeep Bottom-Feeder"] = "Gründling der salzigen Tiefen"
 L["Bristling Hellboar"] = "Stachelhölleneber"
---[[Translation missing --]]
-L["Broken Highland Mustang"] = "Broken Highland Mustang"
+L["Broken Highland Mustang"] = "Gezähmter Hochlandmustang"
 L["Bronze Proto-Whelp"] = "Bronzener Protowelpe"
 L["Bunny Hunter is running. Would you like Rarity to import data from Bunny Hunter now? Disable Bunny Hunter or click Yes if you don't want to be asked again."] = "Bunny Hunter läuft. Willst du, dass Rarity Daten von Bunny Hunter importiert? Schalte Bunny Hunter aus, oder klicke auf Ja, wenn du nicht noch einmal gefragt werden mächtest."
 L["Burgy Blackheart's Handsome Hat"] = "Bürgi Schwarzherzens Hübscher Hut"
 L["Call of the Frozen Blade"] = "Ruf der gefrorenen Klinge"
-L["Can be contained in Heart-Shaped Box, rewarded for defeating the World Event Dungeon during Love is in the Air."] = "Bekommt man in einer Herzförmigen Box, die von einem Event Weltboss während \"Liebe liegt in der Luft\" ist."
---[[Translation missing --]]
-L["Can be contained in Keg-Shaped Treasure Chest, rewarded for defeating the World Event Dungeon during Brewfest."] = "Can be contained in Keg-Shaped Treasure Chest, rewarded for defeating the World Event Dungeon during Brewfest."
---[[Translation missing --]]
-L["Can be contained in Loot-Filled Pumpkin, rewarded for defeating the World Event Dungeon during Hallow's End."] = "Can be contained in Loot-Filled Pumpkin, rewarded for defeating the World Event Dungeon during Hallow's End."
---[[Translation missing --]]
-L["Can be obtained from Rattling Iron Cage, which has a chance to drop from any of the four champions of Hellfire Citadel in Tanaan Jungle (Terrorfist, Deathtalon, Vengeance, or Doomroller). Each of them can be looted once per day. Rarity will consider this mount \"defeated\" for the day when you kill any of the four."] = "Can be obtained from Rattling Iron Cage, which has a chance to drop from any of the four champions of Hellfire Citadel in Tanaan Jungle (Terrorfist, Deathtalon, Vengeance, or Doomroller). Each of them can be looted once per day. Rarity will consider this mount \"defeated\" for the day when you kill any of the four."
+L["Can be contained in Heart-Shaped Box, rewarded for defeating the World Event Dungeon during Love is in the Air."] = "Kann in einer Herzförmigen Schachtel enthalten sein, die man als Belohnung für das Abschließen der Weltereignis-Instanz während \"Liebe liegt in der Luft\" erhält."
+L["Can be contained in Keg-Shaped Treasure Chest, rewarded for defeating the World Event Dungeon during Brewfest."] = "Kann in einer Fassförmigen Schatzkiste enthalten sein, die man als Belohnung für das Abschließen der Weltereignis-Instanz während des Braufests erhält."
+L["Can be contained in Loot-Filled Pumpkin, rewarded for defeating the World Event Dungeon during Hallow's End."] = "Kann in einem Beutegefüllten Kürbis enthalten sein, den man als Belohnung für das Abschließen der Weltereignis-Instanz während der Schlotternächte erhält."
+L["Can be obtained from Rattling Iron Cage, which has a chance to drop from any of the four champions of Hellfire Citadel in Tanaan Jungle (Terrorfist, Deathtalon, Vengeance, or Doomroller). Each of them can be looted once per day. Rarity will consider this mount \"defeated\" for the day when you kill any of the four."] = "Kann in einem Rappelnden Eisenkäfig enthalten sein, der von einem der vier Champions der Höllenfeuerzitadelle im Tanaandschungel (Terrorfaust, Todeskralle, Rache oder Verdammniswalze) gedroppt wird. Jeder Champion kann einmal am Tag gelootet werden. Rarity wird dieses Mount für den Tag als erledigt betrachten, wenn einer der vier Champions getötet wurde."
 L["Can be obtained with a bonus roll"] = "Kann auch mit einen Bonuswurf erbeutet werden"
-L["Can drop from Fel-Touched Pet Supplies, which is obtained by defeating the Fel-corrupted legendary pets in Tanaan Jungle."] = "Kann von Teufelsberührten Haustier Lieferungen gedroppt werden, die man bekommen kann, wenn man Teufelsberührte Legendäre Haustiere im Tanaandschungel besiegt."
---[[Translation missing --]]
-L["Captain Nibs"] = "Captain Nibs"
+L["Can drop from Fel-Touched Pet Supplies, which is obtained by defeating the Fel-corrupted legendary pets in Tanaan Jungle."] = "Kann in Teufelsberührter Haustierbedarf enthalten sein, die man bekommen kann, wenn man teufelsberührte legendäre Haustiere im Tanaandschungel besiegt."
+L["Captain Nibs"] = "Käpt'n Fips"
 L["Captured Firefly"] = "Gefangenes Glühwürmchen"
 L["Cat Carrier (Black Tabby)"] = "Katzentransportkorb (Schwarze Tigerkatze)"
 L["Cataclysm"] = true
---[[Translation missing --]]
-L["Cave Entrance"] = "Cave Entrance"
+L["Cave Entrance"] = "Höhleneingang"
 L["Cavern Moccasin"] = "Höhlenmokassinschlange"
---[[Translation missing --]]
-L["Certain items, such as Illusions in your wardrobe, flag a completed Quest ID when you learn them. Rarity can automatically stop tracking this item if you enter that Quest ID here. (Only one ID, not a list.)"] = "Certain items, such as Illusions in your wardrobe, flag a completed Quest ID when you learn them. Rarity can automatically stop tracking this item if you enter that Quest ID here. (Only one ID, not a list.)"
+L["Certain items, such as Illusions in your wardrobe, flag a completed Quest ID when you learn them. Rarity can automatically stop tracking this item if you enter that Quest ID here. (Only one ID, not a list.)"] = "Bestimme Gegenstände, wie Illusionen in deinem Kleiderschrank, sorgen dafür, dass eine Quest-ID als erledigt markiert wird, wenn du sie erlernst. Rarity kann automatisch aufhören, den Gegenstand zu verfolgen, wenn du die Quest-ID hier eingibst. (Nur eine ID, keine Liste.)"
 L["Chain Pet Leash"] = "Haustierkette"
 L["Chalice of Secrets"] = "Kelch der Geheimnisse"
 L["Challenge Mode instance"] = "Herausforderungsmodus Instanz"
 L["Chance"] = true
 L["Chance so far"] = "Chance bis jetzt"
 L["Chaos Pup"] = "Chaoswelpe"
---[[Translation missing --]]
-L["Check this for every Custom item you wish to export. Then click on the Import/Export tab and click the Export button. This checkbox will be disabled until enough information has been filled in below to make it a detectable item."] = "Check this for every Custom item you wish to export. Then click on the Import/Export tab and click the Export button. This checkbox will be disabled until enough information has been filled in below to make it a detectable item."
---[[Translation missing --]]
+L["Check this for every Custom item you wish to export. Then click on the Import/Export tab and click the Export button. This checkbox will be disabled until enough information has been filled in below to make it a detectable item."] = "Für jeden benutzerdefinierten Gegenstand markieren, den du exportieren willst. Danach auf den Import/Export-Tab und dort auf den Export-Button klicken. Diese Checkbox ist deaktiviert, bis genügend Informationen unterhalb eingegeben wurden, um den Gegenstand identifizierbar zu machen."
 L[ [=[Check this to automatically refresh your search every 5 seconds while this window is visible. Auto refresh only works if you've typed something in the search box, and if you haven't selected something in the list below.
 
-This checkbox is provided by Rarity. You can hide the checkbox in Rarity options.]=] ] = [=[Check this to automatically refresh your search every 5 seconds while this window is visible. Auto refresh only works if you've typed something in the search box, and if you haven't selected something in the list below.
+This checkbox is provided by Rarity. You can hide the checkbox in Rarity options.]=] ] = [=[Aktivieren, um deine Suche automatisch alle 5 Sekunden zu erneuern, solange dieses Fenster sichtbar ist. Die automatische Erneuerung funktioniert nur, wenn Du etwas in das Suchfeld eingegeben und wenn Du nichts aus der Liste unten ausgewählt hast.
 
-This checkbox is provided by Rarity. You can hide the checkbox in Rarity options.]=]
---[[Translation missing --]]
-L["Choose which classes this item should be disabled for. Checking a class below hides the item from the Rarity tooltip and prevents it from being tracked. You can still toggle Track This, but the item will not track for any classes specified here."] = "Choose which classes this item should be disabled for. Checking a class below hides the item from the Rarity tooltip and prevents it from being tracked. You can still toggle Track This, but the item will not track for any classes specified here."
+Diese Checkbox wird von Rarity zur Verfügung gestellt. Du kannst sie in den Rarity-Einstellungen verstecken.]=]
+L["Choose which classes this item should be disabled for. Checking a class below hides the item from the Rarity tooltip and prevents it from being tracked. You can still toggle Track This, but the item will not track for any classes specified here."] = "Wähle, für welche Klassen der Gegenstand deaktiviert werden soll. Wird eine Klasse unten ausgewählt, wird der Gegenstand im Rarity-Tooltip versteckt und nicht verfolgt. Du kannst nach wie vor \"Fortschritt verfolgen\" auswählen, aber der Gegenstand wird für alle hier gewählten Klassen nicht verfolgt."
 L["Christoph VonFeasel"] = "Christoph von Feasel"
 L["Chromie"] = true
 L["Chuck's Bucket"] = "Schnapps Eimer"
 L["Cinderweb Egg"] = "Aschenweberei"
 L["Classic"] = true
---[[Translation missing --]]
-L["Clear All Exports"] = "Clear All Exports"
-L["Click to switch to this item"] = "Klicken um diesen Gegenstand auszuwählen"
+L["Clear All Exports"] = "Alle Exporte verwerfen"
+L["Click to switch to this item"] = "Klicken, um diesen Gegenstand auszuwählen"
 L["Click to toggle the progress bar"] = "Klicken um die Fortschrittsanzeige zu aktvieren/deaktivieren"
 L["Clockwork Rocket Bot"] = "Aufziehraketenbot"
 L["Close"] = "Schließen"
@@ -1490,44 +1540,33 @@ L["Cloudwing Hippogryph"] = "Wolkenschwingenhippogryph"
 L["Clutch of Ji-Kun"] = "Kralle von Ji-Kun"
 L["Cobalt Deposit"] = "Kobaltvorkommen"
 L["Coin of Many Faces"] = "Münze der vielen Gesichter"
---[[Translation missing --]]
-L["Coldlight Surfrunner"] = "Coldlight Surfrunner"
---[[Translation missing --]]
-L["Coldrage's Cooler"] = "Coldrage's Cooler"
+L["Coldlight Surfrunner"] = "Tiefenlichtgischtrenner"
+L["Coldrage's Cooler"] = "Frostzorns Kühlbox"
 L["Collect %d %s"] = "Sammel %d %s"
 L["Collected"] = "Gesammelt"
 L["Collection Complete"] = "Sammlung vollständig"
 L["Collection complete!"] = "Sammlung vollständig!"
 L["Collection Size"] = "Größe der Sammlung"
 L["Contained in bonus satchels"] = "Enthalten in Bonusbeuteln"
---[[Translation missing --]]
-L["Contained in Cracked Egg, which is obtained by becoming Revered with The Oracles, purchasing a Mysterious Egg from their reputation vendor, and waiting three days. The mount has a 5% chance to appear in the Cracked Egg."] = "Contained in Cracked Egg, which is obtained by becoming Revered with The Oracles, purchasing a Mysterious Egg from their reputation vendor, and waiting three days. The mount has a 5% chance to appear in the Cracked Egg."
---[[Translation missing --]]
-L["Contained in Cracked Fel-Spotted Egg, which is obtained by defeating any of the panthara rares on Argus, looting a Fel-Spotted Egg from them, and waiting five days. Each mount has a 6% chance to appear in the Cracked Fel-Spotted Egg, and each pet has a 20% chance to appear in it."] = "Contained in Cracked Fel-Spotted Egg, which is obtained by defeating any of the panthara rares on Argus, looting a Fel-Spotted Egg from them, and waiting five days. Each mount has a 6% chance to appear in the Cracked Fel-Spotted Egg, and each pet has a 20% chance to appear in it."
---[[Translation missing --]]
-L["Contained in Hyldnir Spoils, which is rewarded for completing daily quests given by Gretta the Arbiter in Brunnhildar Village, Storm Peaks. The mount has a 3% chance to appear in Hyldnir Spoils."] = "Contained in Hyldnir Spoils, which is rewarded for completing daily quests given by Gretta the Arbiter in Brunnhildar Village, Storm Peaks. The mount has a 3% chance to appear in Hyldnir Spoils."
+L["Contained in Cracked Egg, which is obtained by becoming Revered with The Oracles, purchasing a Mysterious Egg from their reputation vendor, and waiting three days. The mount has a 5% chance to appear in the Cracked Egg."] = "Enthalten in Zerbrochener Eierschale, welche erhalten wird, nachdem man den Status \"Ehrfürchtig\" bei den Orakeln hat, ein Mysteriöses Ei bei deren Händler gekauft und drei Tage gewartet hat. Das Mount hat eine fünfprozentige Chance in einer Zerbrochenen Eierschale enthalten zu sein."
+L["Contained in Cracked Fel-Spotted Egg, which is obtained by defeating any of the panthara rares on Argus, looting a Fel-Spotted Egg from them, and waiting five days. Each mount has a 6% chance to appear in the Cracked Fel-Spotted Egg, and each pet has a 20% chance to appear in it."] = "Enthalten in gesprungenem teufelsgeflecktem Ei, welches nach fünf Tagen aus einem von allen seltenen Pantharas in Argus gelooteten  teufelsgefleckten Ei entsteht. Jedes Reittier hat eine sechsprozentige und jedes Kampfhaustier eine zwanzigprozentige Chance, in einem gesprungenem teufelsgeflecktem Ei enthalten zu sein."
+L["Contained in Hyldnir Spoils, which is rewarded for completing daily quests given by Gretta the Arbiter in Brunnhildar Village, Storm Peaks. The mount has a 3% chance to appear in Hyldnir Spoils."] = "Enthalten in Hyldnirbeute, welche man für das Abschließen einer Daily Quest von Gretta die Schiedsfrau in Brunnhilder in den Sturmgipfeln erhält. Das Reittier hat eine dreiprozentige Chance in Hyldnirbeute enthalten zu sein."
 --[[Translation missing --]]
 L["Contained in Ripe Disgusting Jar, which is obtained by becoming Revered with Frenzyheart Tribe, purchasing a Disgusting Jar from their reputation vendor, and waiting three days."] = "Contained in Ripe Disgusting Jar, which is obtained by becoming Revered with Frenzyheart Tribe, purchasing a Disgusting Jar from their reputation vendor, and waiting three days."
---[[Translation missing --]]
-L["Content Category"] = "Content Category"
---[[Translation missing --]]
-L["Controls on which side the secondary tooltip appears when you hover over an item in the main tooltip. If the main tooltip is on the right side of your screen, change this to Left. Otherwise, choose Right. You can also hide the status tooltip completely."] = "Controls on which side the secondary tooltip appears when you hover over an item in the main tooltip. If the main tooltip is on the right side of your screen, change this to Left. Otherwise, choose Right. You can also hide the status tooltip completely."
---[[Translation missing --]]
-L["Controls what type of text is shown in Rarity's LDB feed. Minimal shows just the number of attempts. Normal adds the likelihood percent, and verbose adds the item link."] = "Controls what type of text is shown in Rarity's LDB feed. Minimal shows just the number of attempts. Normal adds the likelihood percent, and verbose adds the item link."
+L["Content Category"] = "Inhaltskategorie"
+L["Controls on which side the secondary tooltip appears when you hover over an item in the main tooltip. If the main tooltip is on the right side of your screen, change this to Left. Otherwise, choose Right. You can also hide the status tooltip completely."] = "Steuert, auf welcher Seite der sekundäre Tooltip erscheint, wenn du die Maus über einen Gegenstand im primären Tooltip bewegst. Wenn der primäre Tooltip auf der rechten Seite deines Bildschirms ist, setze diese Option auf \"links\", sonst \"rechts\". Du kannst den Status-Tooltip auch ganz verbergen."
+L["Controls what type of text is shown in Rarity's LDB feed. Minimal shows just the number of attempts. Normal adds the likelihood percent, and verbose adds the item link."] = "Steuert, welcher Texttyp in Raritys LDB-Feed verwendet wird. \"Minimal\" zeigt nur die Anzahl der Versuche. \"Normal\" zeigt zusätzlich die Wahrscheinlichkeit in Prozent und \"Vollständig\" fügt den Link des Gegenstandes hinzu."
 L["Copper Vein"] = "Kupferader"
---[[Translation missing --]]
 L[ [=[Copy the generated Rarity Item Pack string below using Ctrl-C. You can then paste it elsewhere using Ctrl-V.
 
-Feel free to comment on the Curse web site to share your Item Pack. Allara will promote the best ones to the main add-on page.]=] ] = [=[Copy the generated Rarity Item Pack string below using Ctrl-C. You can then paste it elsewhere using Ctrl-V.
+Feel free to comment on the Curse web site to share your Item Pack. Allara will promote the best ones to the main add-on page.]=] ] = [=[Kopiere den String des untenstehenden Rarity-Gegenstandspakets mittels STRG+C. Du kannst es dann an anderer Stelle mit STRG+V einfügen.
 
-Feel free to comment on the Curse web site to share your Item Pack. Allara will promote the best ones to the main add-on page.]=]
+Dein Gegenstandspaket kannst Du auf der Curse-Webseite teilen. Allara wird die besten auf der Hauptseite des Addons veröffentlichen.]=]
 L["Core of Hardened Ash"] = "Gehärteter Aschekern"
 L["Corrupted Nest Guardian"] = "Verderbter Nestwächter"
 L["Corrupted Thundertail"] = "Verderbter Donnerschwanz"
---[[Translation missing --]]
-L["Craghoof Kid"] = "Craghoof Kid"
---[[Translation missing --]]
-L["Craghorn Chasm-Leaper"] = "Craghorn Chasm-Leaper"
+L["Craghoof Kid"] = "Klippenhufkitz"
+L["Craghorn Chasm-Leaper"] = "Klippenhornspringer"
 L["Crane Nest"] = "Kranichnest"
 L["Crashin' Thrashin' Cannon Controller"] = "Krachbummkanonensteuerung"
 L["Crashin' Thrashin' Flamer Controller"] = "Krachbummflambiererfernsteuerung"
@@ -1538,23 +1577,21 @@ L["Crashin' Thrashin' Roller Controller"] = "Krachbummwalzensteuerung"
 L["Crashin' Thrashin' Shredder Controller"] = "Steuerung für Krachbummschredder"
 L["Create a New Item"] = "Einen neuen Gegenstand erstellen"
 L["Create a new item to track"] = "Einen neuen Gegenstand zum Beobachten erstellen."
---[[Translation missing --]]
-L["Creature ID"] = "Creature ID"
+L["Creature ID"] = "Kreatur-ID"
 L["Crimson Slavermaw"] = "Purpurroter Geiferschlund"
 L["Crowded Redbelly Mandarin"] = "Ein Schwarm wimmelnder Rotbauchmandarine"
 L["Crysa"] = true
 L["Crystal of the Void"] = "Leerenkristall"
-L["Ctrl-Click to change sort order"] = "Strg-Klick auf das Minimap-Icon um die Sortierung zu ändern"
-L["Ctrl-Click to create the remaining TomTom waypoint(s)."] = "Strg-Klick um die restlichen TomTom Wegpunkte zu erstellen"
-L["Ctrl-Click to create TomTom waypoint(s)."] = "Strg-Klick um TomTom Wegpunkt(e) zu erstellen"
+L["Ctrl-Click to change sort order"] = "Strg-Klick auf das Minimap-Icon, um die Sortierung zu ändern"
+L["Ctrl-Click to create the remaining TomTom waypoint(s)."] = "Strg-Klick, um die restlichen TomTom Wegpunkte zu erstellen"
+L["Ctrl-Click to create TomTom waypoint(s)."] = "Strg-Klick, um TomTom Wegpunkt(e) zu erstellen"
 L["Cupri"] = true
 L["Curious Wyrmtongue Cache"] = "Seltsame Wyrmzungentruhe"
 L["Cursed Queenfish School"] = "Ein Schwarm verfluchter Königinnenfische"
 L["Cursed Spirit"] = "Verfluchter Geist"
 L["Custom"] = "Benutzerdefiniert"
 L["Dandelion Frolicker"] = "Löwenzahnwitzbold"
---[[Translation missing --]]
-L["Darbel Montrose"] = "Darbel Montrose"
+L["Darbel Montrose"] = true
 L["Dark Gazer"] = "Dunkles Auge"
 L["Dark Iron Deposit"] = "Dunkeleisenablagerung"
 L["Dark Quivering Blob"] = "Dunkler wabernder Klumpen"
@@ -1565,37 +1602,35 @@ L["Data has been imported from Bunny Hunter"] = "Daten wurden aus Bunny Hunter i
 L["Death Adder Hatchling"] = "Todesnatterjungtier"
 L["Death Knight"] = "Todesritter"
 L["Deathcharger's Reins"] = "Zügel des Todesstreitrosses"
---[[Translation missing --]]
-L["Deathsting Scorpid"] = "Deathsting Scorpid"
+L["Deathsting Scorpid"] = "Todesstachelskorpid"
 L["Deathtalon"] = "Todeskralle"
 L["Debug mode"] = "Debug-Modus"
-L["Debug mode OFF"] = "Debug Modus AUS"
-L["Debug mode ON"] = "Debug Modus AN"
+L["Debug mode OFF"] = "Debug-Modus AUS"
+L["Debug mode ON"] = "Debug-Modus AN"
 L["Decahedral Dwarven Dice"] = "Zehnseitige Zwergenwürfel"
 L["Deep Sea Monsterbelly School"] = "Ein Schwarm Tiefseemonsterbäuche"
 L["Deepsea Sagefish School"] = "Ein Schwarm Tiefseeweisenfische"
---[[Translation missing --]]
-L["Defeat Detection"] = "Defeat Detection"
+L["Defeat Detection"] = "Abschlussverfolgung"
 L["Defeated"] = "Besiegt"
 L["Defiled Earth"] = "Entweihte Erde"
 L["Delete this item"] = "Gegenstand löschen"
 L["Demon Hunter"] = "Dämonenjäger"
 L["Demonic"] = "Dämonisch"
-L["Determines how this item is obtained."] = "Bestimmt wie ein Item erlangt wird."
-L["Determines what type of item this is."] = "Bestimmt was für eine Art von Item es ist."
-L["Determines whether the item can only be obtained from fishing in pools. In order for this option to work, the fishing pools must have all been translated into your client's language."] = "Bestimmt ob ein Item aus einem Fischschwarm erhalten wird. Damit dies funktionieren kann müssen die Fischschwärme alle in die Sprache deines Spielclients übersetzt worden sein."
-L["Determines whether tracking should be enabled for this item. Items that are disabled will not appear in the tooltip."] = "Bestimmt ob das Nachverfolgen für dieses Item aktiviert werden soll. Deaktivierte Items werden nicht im Tooltip angezeigt."
-L["Determines whether you want to repeatedly farm this item. If you turn this on and find the item, Rarity will mark the item as un-found after a few seconds."] = "Bestimmt ob du dieses Item mehrfach sammeln möchtest. Wenn du dies aktivierst und das Item findest, wird Rarity es nach ein paar Sekunden wieder als nicht gefunden markieren."
+L["Determines how this item is obtained."] = "Bestimmt, wie ein Gegenstand erlangt wird."
+L["Determines what type of item this is."] = "Bestimmt, was für eine Art von Gegenstand es ist."
+L["Determines whether the item can only be obtained from fishing in pools. In order for this option to work, the fishing pools must have all been translated into your client's language."] = "Bestimmt, ob ein Gegenstand aus einem Fischschwarm erhalten wird. Damit dies funktionieren kann, müssen die Fischschwärme alle in die Sprache deines Spiel-Clients übersetzt worden sein."
+L["Determines whether tracking should be enabled for this item. Items that are disabled will not appear in the tooltip."] = "Bestimmt, ob das Verfolgen für diesen Gegenstand aktiviert werden soll. Deaktivierte Gegenstände werden nicht im Tooltip angezeigt."
+L["Determines whether you want to repeatedly farm this item. If you turn this on and find the item, Rarity will mark the item as un-found after a few seconds."] = "Bestimmt, ob du diesen Gegenstand mehrfach sammeln möchtest. Wenn du dies aktivierst und den Gegenstand findest, wird Rarity ihn nach ein paar Sekunden wieder als nicht gefunden markieren."
 L[ [=[Determines which instance difficulties this item may be obtained in. Leave everything unchecked if the instance difficulty doesn't matter.
 
 If you specified a Statistic ID for this item, the Instance Difficulty is probably meaningless, because all modern statistics already incorporate the difficulty.
 
-You can check multiple items in this list at once.]=] ] = [=[Bestimmt auf welcher Instanz Schwierigkeitsstufe der Gegenstand erhalten werden kann. Lass alles leer wenn die Schwierigkeitsstufe egal ist.
+You can check multiple items in this list at once.]=] ] = [=[Bestimmt auf welcher Instanz-Schwierigkeitsstufe der Gegenstand erhalten werden kann. Wähle nicht aus, wenn die Schwierigkeitsstufe egal ist.
 
-Wenn du eine Statistik-ID für dieses Item definierst, ist die Schwierigkeitsstufe wahrscheinlich egal weil alle modernen Statistik-IDs die Schwierigkeit bereits beinhalten. 
+Wenn du eine Statistik-ID für diesen Gegenstand definierst, ist die Schwierigkeitsstufe wahrscheinlich egal, weil alle modernen Statistik-IDs die Schwierigkeit bereits beinhalten. 
 
-Du kannst mehrere Gegenstände in dieser Liste auf einmal auf einmal markieren.]=]
-L["Determines which race includes this archaeology project."] = "Bestimmt welche Rasse dieses Archäologie-Projekt beinhaltet."
+Du kannst mehrere Einträge in dieser Liste auf einmal markieren.]=]
+L["Determines which race includes this archaeology project."] = "Bestimmt, welche Rasse dieses Archäologie-Projekt beinhaltet."
 L["Deviate Hatchling"] = "Deviatjungtier"
 L["Direflame"] = "Terrorflamme"
 L["Direhorn Runt"] = "Terrorhörnchen"
@@ -1608,38 +1643,32 @@ L["Docile Skyfin"] = "Zahme Himmelsflosse"
 L["Doctor Weavil"] = true
 L["Don Carlos' Famous Hat"] = "Don Carlos' berühmter Hut"
 L["Doomcaster Suprax"] = "Verdammniswirker Suprax"
---[[Translation missing --]]
-L["Doomrider Helgrim"] = "Doomrider Helgrim"
+L["Doomrider Helgrim"] = "Verdammnisreiter Helgrim "
 L["Doomroller"] = "Verdammniswalze"
---[[Translation missing --]]
-L["Doom's Howl"] = "Doom's Howl"
+L["Doom's Howl"] = "Die Heulende Verdammnis"
 L["Draenei"] = true
 L["Draenor Clans"] = "Klans von Draenor"
-L["Draenor Garrison"] = "Dreanor Garnison"
+L["Draenor Garrison"] = "Garnison in Draenor"
 L["Dragonfin Angelfish School"] = "Engelsdrachenfischschwarm"
 L["Drakum"] = true
 L["Dreadwalker"] = "Schreckenswandler"
 L["Dripping Strider Egg"] = "Tropfendes Schreiterei"
 L["Droplet of Y'Shaarj"] = "Tröpfchen von Y'Shaarj"
-L["Dropped by any mob in Vale of Eternal Blossoms (except minor mobs). 10 of these can be combined to pierce Alani's shield, allowing combat and a guaranteed drop of Reins of the Thundering Ruby Cloud Serpent."] = "Wird von allen Gegnern (außer Begleitern) im Tal der ewigen Blüten fallengelassen. 10 von diesen können kombiniert werden um Alanis Schild zu durchbrechen, einen Kampf zu erlauben und dann einen garantierten Drop der Zügel der donnernden Rubinwolkenschlange."
-L["Dropped by dinosaurs on Isle of Giants Will hatch into one of three Primal Raptor mounts after three days."] = "Wird von den Dinosauriern auf der Insel der Giganten fallengelassen. Daraus schlüpft nach drei Tagen einer der drei Urraptoren."
---[[Translation missing --]]
-L["Dropped by Disturbed Podling, which has a chance to spawn when picking herbs in Draenor."] = "Dropped by Disturbed Podling, which has a chance to spawn when picking herbs in Draenor."
+L["Dropped by any mob in Vale of Eternal Blossoms (except minor mobs). 10 of these can be combined to pierce Alani's shield, allowing combat and a guaranteed drop of Reins of the Thundering Ruby Cloud Serpent."] = "Wird von allen Gegnern (außer niedere Gegener) im Tal der ewigen Blüten fallengelassen. Zehn von diesen können kombiniert werden, um Alanis Schild zu durchbrechen, einen Kampf zu erlauben und einen garantierten Drop der Zügel der donnernden Rubinwolkenschlange zu erhalten."
+L["Dropped by dinosaurs on Isle of Giants Will hatch into one of three Primal Raptor mounts after three days."] = "Wird von den Dinosauriern auf der Insel der Giganten fallengelassen. Daraus schlüpft nach drei Tagen einer der drei Urraptoren-Reittiere."
+L["Dropped by Disturbed Podling, which has a chance to spawn when picking herbs in Draenor."] = "Wird von gestörten Schotlingen fallengelasssen, welche manchmal beim Kräutersammeln in Draenor erscheinen."
 L["Dropped by Elegon in Mogu'shan Vaults (all raid formats except Raid Finder)"] = "Wird von Elegon im Mogu'shangewölbe fallengelassen (alle Schwierigkeitsstufen außer Schlachtzugsbrowser) "
---[[Translation missing --]]
-L["Dropped by Goren Protector, which has a chance to spawn when mining ore in Draenor."] = "Dropped by Goren Protector, which has a chance to spawn when mining ore in Draenor."
-L["Dropped by Koralon the Flame Watcher, Emalon the Storm Watcher, Archavon the Stone Watcher, and Toravon the Ice Watcher in Vault of Archavon (any raid size)."] = "Wird von Koralon der Flammenwächter, Emalon der Sturmwächter, Archavon der Stainwächter und Toravon der Eiswächter in Archavons Kammer fallengelassen. (jede Schlachtszugsgröße)"
-L["Dropped by Malygos in The Eye of Eternity (any raid size)"] = "Wird von Malygos im Auge der Ewigkeit fallengelassen (jede Schlachtzugsgröße)"
---[[Translation missing --]]
-L["Dropped by Merektha in Temple of Sethraliss. Will hatch into Spawn of Merektha pet after three days."] = "Dropped by Merektha in Temple of Sethraliss. Will hatch into Spawn of Merektha pet after three days."
-L["Dropped by Onyxia in Onyxia's Lair (any raid size)"] = "Wird von Onyxia in Onyxias Hort fallengelassen (jede Schlachtzugsgröße)"
-L["Dropped by the Madness of Deathwing encounter in Dragon Soul (any raid size or difficulty)"] = "Wird bei Todesschwinges Wahnsinn in Drachenseele fallengelassen (jede Schlachtzugsgröße oder -schwierigkeit)"
-L["Dropped by the Madness of Deathwing encounter in Dragon Soul (heroic, any raid size)"] = "Wird bei Todesschwinges Wahnsinn in Drachenseele fallengelassen (heroisch, jede Schlachtzugsgröße)"
---[[Translation missing --]]
-L["Dropped by the panthara rares on Argus. Has a chance to hatch into one of four Mana Ray mounts as well as one of two Skyfin pets after five days."] = "Dropped by the panthara rares on Argus. Has a chance to hatch into one of four Mana Ray mounts as well as one of two Skyfin pets after five days."
-L["Dropped by Ultraxion in Dragon Soul (any raid size or difficulty)"] = "Wird von Ultraxion in Drachenseele fallengelassen (jede Schlachtzugsgröße oder -schwierigkeit)"
-L["Dropped by Yogg-Saron in Ulduar (25-player) with no Keepers assisting"] = "Wird von Yogg-Saron in Ulduar fallengelassen (25-Spieler ohne Hüter)"
-L["Dropped by Yogg-Saron in Ulduar with no Keepers assisting"] = "Wird von Yogg-Saron in Ulduar fallengelassen (25-Spieler ohne Hüter)"
+L["Dropped by Goren Protector, which has a chance to spawn when mining ore in Draenor."] = "Wird von Gorenbeschützern fallengelasssen, welche manchmal beim Abbauen von Erzen in Draenor erscheinen."
+L["Dropped by Koralon the Flame Watcher, Emalon the Storm Watcher, Archavon the Stone Watcher, and Toravon the Ice Watcher in Vault of Archavon (any raid size)."] = "Wird von Koralon der Flammenwächter, Emalon der Sturmwächter, Archavon der Steinwächter und Toravon der Eiswächter in Archavons Kammer fallengelassen (jede Schlachtzuggröße)."
+L["Dropped by Malygos in The Eye of Eternity (any raid size)"] = "Wird von Malygos im Auge der Ewigkeit fallengelassen (jede Schlachtzuggröße)"
+L["Dropped by Merektha in Temple of Sethraliss. Will hatch into Spawn of Merektha pet after three days."] = "Wird von Merektha im Tempel von Sethraliss fallengelassen. Daraus schlüpft nach drei Tagen das Haustier Merekthas Brut."
+L["Dropped by Onyxia in Onyxia's Lair (any raid size)"] = "Wird von Onyxia in Onyxias Hort fallengelassen (jede Schlachtzuggröße)"
+L["Dropped by the Madness of Deathwing encounter in Dragon Soul (any raid size or difficulty)"] = "Wird bei Todesschwinges Wahnsinn in Drachenseele fallengelassen (jede Schlachtzuggröße oder -schwierigkeit)"
+L["Dropped by the Madness of Deathwing encounter in Dragon Soul (heroic, any raid size)"] = "Wird bei Todesschwinges Wahnsinn in Drachenseele fallengelassen (heroisch, jede Schlachtzuggröße)"
+L["Dropped by the panthara rares on Argus. Has a chance to hatch into one of four Mana Ray mounts as well as one of two Skyfin pets after five days."] = "Wird von Pantharas in Argus fallengelassen. Entwickelt sich nach fünf Tagen in ein Manarochen-Reittier oder ein Himmelsflosse-Kampfhaustier."
+L["Dropped by Ultraxion in Dragon Soul (any raid size or difficulty)"] = "Wird von Ultraxion in Drachenseele fallengelassen (jede Schlachtzuggröße oder -schwierigkeit)"
+L["Dropped by Yogg-Saron in Ulduar (25-player) with no Keepers assisting"] = "Wird von Yogg-Saron in Ulduar fallengelassen (25 Spieler) ohne, dass die Hüter helfen."
+L["Dropped by Yogg-Saron in Ulduar with no Keepers assisting"] = "Wird von Yogg-Saron in Ulduar fallengelassen ohne, dass die Hüter helfen."
 L["Dropped from dinosaurs on Isle of Giants"] = "Wird von Dinosauriern auf der Insel der Giganten fallengelassen"
 L["Dropped from monsters in Fang'rila"] = "Wird von Gegnern in Fang'rila fallengelassen"
 L["Drops from a boss requiring a group"] = "Erbeutet von einem Boss der eine Gruppe benötigt"
@@ -1647,58 +1676,47 @@ L["Drops from any mob in a zone"] = "Erbeutet von jedem Mob in der Zone"
 L["Drops from NPC(s)"] = "Erbeutet von NPC(s)"
 L["Drudge Remains"] = "Sklavenüberreste"
 L["Druid"] = "Druide"
---[[Translation missing --]]
-L["Drust"] = "Drust"
-L["Dungeon ID"] = true
+L["Drust"] = true
+L["Dungeon ID"] = "Instanz-ID"
 L["Dusty Clutch of Eggs"] = "Staubiges Gelege"
 L["Dwarf"] = "Zwerg"
-L["Earned by giving 9999 Giant Dinosaur Bones to Ku'ma on Isle of Giants. Giant Dinosaur bones drop from all dinosaurs and Zandalari Dinomancers on Isle of Giants."] = "Kann bei Ku'ma auf der Insel der Giganten gegen 9999 Riesige Dinosaurierknochen eingetauscht werden. Die riesigen Dinosaurierknochen werden von allen Dinosauriern und Dinomanten der Zandalari auf der Insel der Giganten fallengelassen."
---[[Translation missing --]]
-L["Echo of Myzrael"] = "Echo of Myzrael"
+L["Earned by giving 9999 Giant Dinosaur Bones to Ku'ma on Isle of Giants. Giant Dinosaur bones drop from all dinosaurs and Zandalari Dinomancers on Isle of Giants."] = "Kann bei Ku'ma auf der Insel der Giganten gegen 9999 riesige Dinosaurierknochen eingetauscht werden. Die riesigen Dinosaurierknochen werden von allen Dinosauriern und Dinomanten der Zandalari auf der Insel der Giganten fallengelassen."
+L["Echo of Myzrael"] = "Echo von Myzrael"
 L["Elementium Back Plate"] = "Elementiumrückenplatte"
 L["Elementium Geode"] = "Elementiumgeode"
 L["Elementium Vein"] = "Elementiumader"
 L["Emperor Salmon School"] = "Ein Schwarm Kaiserlachse"
-L["Enable announcements"] = "Ankündigungen aktivieren"
+L["Enable announcements"] = "Mitteilungen aktivieren"
 L["Enable Coins"] = "Aktiviere Bonuswurf"
 --[[Translation missing --]]
 L["Enable profiling"] = "Enable profiling"
---[[Translation missing --]]
-L["Enable tooltip additions"] = "Enable tooltip additions"
-L["Enables announcements whenever you complete a new attempt toward anything Rarity is tracking. You can also enable announcements per-item, but this is the master switch."] = "Aktiviert die Option, dass immer wenn ein Versuch ein item zu bekommen, welches von Rarity beobachtet wird, beendet wird eine Ankündigung gemacht wird. Man kann auch Ankündigungen für jedes Item einzeln aktivieren, aber diese Option ist der Hautschalter"
-L["Enables announcements whenever you complete a new attempt toward this item."] = "Aktiviert Benachrichtigungen für jedes Mal wenn du einen neuen Versuch für diesen Gegenstand abgeschlossen hast."
---[[Translation missing --]]
-L["Enchanted Soup Stone"] = "Enchanted Soup Stone"
+L["Enable tooltip additions"] = "Tooltip-Erweiterungen aktivieren"
+L["Enables announcements whenever you complete a new attempt toward anything Rarity is tracking. You can also enable announcements per-item, but this is the master switch."] = "Aktiviert die Option, dass immer wenn ein Versuch einen Gegenstand zu bekommen, welcher von Rarity beobachtet wird, beendet wird, eine Ankündigung erscheint. Man kann Ankündigungen auch für jeden Gegenstand einzeln aktivieren, aber diese Option ist der Hauptschalter."
+L["Enables announcements whenever you complete a new attempt toward this item."] = "Aktiviert Mitteilungen für jeden neuen Versuch, diesen Gegenstand zu erhalten."
+L["Enchanted Soup Stone"] = "Verzauberter Suppenstein"
 L["Enter 1 or leave this blank to mark the item as soloable."] = "Gib 1 ein oder lasse es leer, wenn der Gegenstand alleine erlangt werden kann."
 L["Environeer Bert"] = "Biosphäreningenieur Bert"
---[[Translation missing --]]
-L["Equal odds"] = "Equal odds"
---[[Translation missing --]]
-L["Error compressing item pack"] = "Error compressing item pack"
---[[Translation missing --]]
-L["Error encoding item pack"] = "Error encoding item pack"
---[[Translation missing --]]
-L["Error serializing item pack"] = "Error serializing item pack"
+L["Equal odds"] = "Gleiche Wahrscheinlichkeit"
+L["Error compressing item pack"] = "Fehler beim Komprimieren des Gegenstandspakets"
+L["Error encoding item pack"] = "Fehler beim Kodieren des Gegenstandspakets"
+L["Error serializing item pack"] = "Fehler beim Serialisieren des Gegenstandspakets"
 L["Essence of the Breeze"] = "Essenz der Brise"
 L["Eternal Kiln"] = "Ewiger Flammenkessel"
 L["Eternal Warrior's Sigil"] = "Siegel des ewigen Kriegers"
 L["Everliving Spore"] = "Ewiglebende Spore"
-L["Every item ID must be a number greater than 0."] = "Jede Item-ID muss eine Zahl größer als 0 sein."
+L["Every item ID must be a number greater than 0."] = "Jede Gegenstand-ID muss eine Zahl größer als 0 sein."
 L["Every NPC ID must be a number greater than 0."] = "Jede NPC-ID muss eine Zahl größer als 0 sein."
-L["Every Quest ID must be a number greater than 0."] = "Jede Quest ID muss eine Nummer größer 0 sein."
+L["Every Quest ID must be a number greater than 0."] = "Jede Quest-ID muss eine Zahl größer 0 sein."
 L["Experiment 12-B"] = true
 L["Experiment-In-A-Jar"] = "Experiment im Glas"
 L["Export"] = true
---[[Translation missing --]]
-L["Export Rarity Item Pack"] = "Export Rarity Item Pack"
+L["Export Rarity Item Pack"] = "Rarity-Gegenstandspaket exportieren"
 L["Export this item"] = "Exportiere diesen Gegenstand"
 L["Eye of Inquisition"] = "Untersuchendes Auge"
---[[Translation missing --]]
-L["Eye of Observation"] = "Eye of Observation"
+L["Eye of Observation"] = "Auge des Beobachters"
 L["Faintly Glowing Flagon of Mead"] = "Schwach leuchtende Metflasche"
 L["Fal'dorei Egg"] = "Ei der Fal'dorei"
---[[Translation missing --]]
-L["False Knucklebump"] = "False Knucklebump"
+L["False Knucklebump"] = "Falscher Knöchelhauer"
 L["Fandral's Pet Carrier"] = "Fandrals Haustierkiste"
 L["Fandral's Seed Pouch"] = "Fandrals Samenbeutel"
 L["Fangtooth Herring School"] = "Ein Schwarm Fangzahnheringe"
@@ -1706,11 +1724,9 @@ L["Farwater Conch"] = "Weitwassermuschelhorn"
 L["Fat Sleeper School"] = "Ein Schwarm dicker Schläfer"
 L["Fathom Dweller"] = "Tiefenbewohner"
 L["Fathom Eel Swarm"] = "Klafteraalschwarm"
---[[Translation missing --]]
-L["Feed text"] = "Feed text"
+L["Feed text"] = "Feed-Text"
 L["Fel Iron Deposit"] = "Teufelseisenvorkommen"
---[[Translation missing --]]
-L["Fel Lasher"] = "Fel Lasher"
+L["Fel Lasher"] = "Teufelspeitscher"
 L["Fel-Afflicted Skyfin"] = "Teufelsverdorbene Himmelsflosse"
 L["Felfly"] = "Teufelsfliege"
 L["Felglow Mana Ray"] = "Teufelsschimmermanarochen"
@@ -1721,15 +1737,13 @@ L["Felsteel Annihilator"] = "Teufelsstahlvernichter"
 L["Felsworn Sentry"] = "Wächter des Dämonenpakts"
 L["Feltail School"] = "Teufelsfinnenschwarm"
 L["Fever of Stormrays"] = "Eine Gruppe Sturmrochen"
---[[Translation missing --]]
-L["Fiendish Hellfire Core"] = "Fiendish Hellfire Core"
+L["Fiendish Hellfire Core"] = true
 L["Fiery Warhorse's Reins"] = "Zügel des feurigen Schlachtrosses"
 L["Fire Ammonite School"] = "Ein Schwarm Feuerammoniten"
 L["Firefin Snapper School"] = "Feuerflossenschnapperschwarm"
 L["Firewing"] = "Feuerflügel"
 L["Fished anywhere in Draenor (except your garrison) with the help of Nat Pagle"] = "Kann, mit der Hilfe von Nat Pagle, überall in Draenor (außer deiner Garnison) geangelt werden."
---[[Translation missing --]]
-L["Five players are needed to activate the runes on the floor. The boss can be attacked only after all runes have been activated."] = "Five players are needed to activate the runes on the floor. The boss can be attacked only after all runes have been activated."
+L["Five players are needed to activate the runes on the floor. The boss can be attacked only after all runes have been activated."] = "Fünf Spieler werden benötigt, um die Runen auf dem Boden zu aktivieren. Der Boss kann angegriffen werden, nachdem alle Runen aktiviert wurden."
 L["Flametalon of Alysrazor"] = "Flammenkralle von Alysrazar"
 L["Floating Debris"] = "Schwimmende Trümmer"
 L["Floating Debris Pool"] = "Ein Schwarm Schwimmende Trümmer"
@@ -1741,28 +1755,22 @@ L["Font Size"] = "Schriftgröße"
 L["Foot Ball"] = "Fußball"
 L["Fossil"] = true
 L["Fossilized Raptor"] = "Fossiler Raptor"
---[[Translation missing --]]
-L["Fossorial Bile Larva"] = "Fossorial Bile Larva"
---[[Translation missing --]]
-L["Foul Belly"] = "Foul Belly"
---[[Translation missing --]]
-L["Foulbelly"] = "Foulbelly"
+L["Fossorial Bile Larva"] = "Grabende Eiterlarve"
+L["Foul Belly"] = "Faulbauch"
+L["Foulbelly"] = "Faulbauch"
 L["Found after %d attempts!"] = "Nach %d Versuchen gefunden!"
 L["Found in: "] = "Gefunden in: "
 L["Found on your first attempt!"] = "Beim ersten Versuch erbeutet!"
 L["Fox Kit"] = "Fuchswelpe"
---[[Translation missing --]]
-L["Fozruk"] = "Fozruk"
+L["Fozruk"] = true
 L["Fragment of Anger"] = "Fragment des Zorns"
 L["Fragment of Desire"] = "Fragment der Begierde"
 L["Fragment of Frozen Bone"] = "Gefrorenes Knochenfragment"
 L["Fragment of Suffering"] = "Fragment des Leidens"
---[[Translation missing --]]
-L["Frenzied Fangtooth School"] = "Frenzied Fangtooth School"
+L["Frenzied Fangtooth School"] = "Ein Schwarm rasender Tigerfische"
 L["Frenzyheart Brew"] = "Wildherzengebräu"
 L["Frightened Bush Chicken"] = "Aufgeschrecktes Buschhuhn"
---[[Translation missing --]]
-L["Fuzzy Creepling"] = "Fuzzy Creepling"
+L["Fuzzy Creepling"] = "Flauschiger Kriechling"
 L["Fuzzy Green Lounge Cushion"] = "Knallgrünes Sitzpolster"
 L["Gahz'rooki's Summoning Stone"] = "Gahz'rookis Beschwörungsstein"
 L["Gar'lok"] = true
@@ -1775,16 +1783,14 @@ L["Garrison Invasion Platinum Victory"] = "Garrison Invasion Platinum Victory"
 L["Gastropod Shell"] = "Schneckenhaus"
 L["General"] = "Allgemein"
 L["General Options"] = "Allgemeine Einstellungen"
---[[Translation missing --]]
-L["Geomancer Flintdagger"] = "Geomancer Flintdagger"
+L["Geomancer Flintdagger"] = "Geomant Flintdolch"
 L["Ghost Iron Deposit"] = "Geistereisenvorkommen"
 L["Giant Coldsnout"] = "Riesige Kaltschnauze"
 L["Giant Mantis Shrimp Swarm"] = "Ein Schwarm riesiger Mantisgarnelen"
 L["Giant Sewer Rat"] = "Riesige Kanalratte"
 L["Giant Worm Egg"] = "Riesenwurmei"
 L["Gibblette the Cowardly"] = "Gibblett der Feigling"
---[[Translation missing --]]
-L["Giggling Flame"] = "Giggling Flame"
+L["Giggling Flame"] = "Kichernde Flamme"
 L["Glacial Salmon School"] = "Ein Schwarm Winterlachse"
 L["Glassfin Minnow School"] = "Ein Schwarm Glasflossenelritzen"
 L["Glimmering Jewel Danio Pool"] = "Ein Schwarm glitzernder Juwelendanios"
@@ -1802,8 +1808,7 @@ L["Gooey Sha-ling"] = true
 L["Goren \"Log\" Roller"] = "Goren-\"Stamm\"-Walze"
 L["Grasping Manifestation"] = "Klammernde Manifestation"
 L["Great Brewfest Kodo"] = "Großer Braufestkodo"
---[[Translation missing --]]
-L["Great Sea Catfish School"] = "Great Sea Catfish School"
+L["Great Sea Catfish School"] = "Großmeerwels"
 L["Greater Sagefish School"] = "Großer Schwarm Weisenfische"
 L["Greatfather Winter's Tree"] = "Altvater Winters Baum"
 L["Green Helper Box"] = "Grüne Helferbox"
@@ -1811,11 +1816,9 @@ L["Grotesque Statue"] = "Groteskenstatue"
 L["Group Finder Options"] = "Gruppen Finder Optionen"
 L["Group size"] = "Gruppengröße"
 L["Group(s) found!"] = "Gruppe(n) gefunden!"
---[[Translation missing --]]
-L["Grow Up"] = "Grow Up"
+L["Grow Up"] = "Aufwachsen"
 L["Grumpling"] = true
---[[Translation missing --]]
-L["Guaranteed drop from Dormus the Camel-Hoarder. Accessing this encounter requires finding a rare Mysterious Camel Figurine in Uldum. These are difficult to spot and, when clicked, have a small chance to grant you access to the Dormus encounter. Rarity will count how many Figurines you've found if you mouseover them."] = "Guaranteed drop from Dormus the Camel-Hoarder. Accessing this encounter requires finding a rare Mysterious Camel Figurine in Uldum. These are difficult to spot and, when clicked, have a small chance to grant you access to the Dormus encounter. Rarity will count how many Figurines you've found if you mouseover them."
+L["Guaranteed drop from Dormus the Camel-Hoarder. Accessing this encounter requires finding a rare Mysterious Camel Figurine in Uldum. These are difficult to spot and, when clicked, have a small chance to grant you access to the Dormus encounter. Rarity will count how many Figurines you've found if you mouseover them."] = "Garantierte Beute von Dormus der Kameltreiber. Zugang zu dieser Begegnung erhält man durch Finden einer seltenen mysteriösen Kamelfigur in Uldum. Diese sind schwer auszumachen und haben eine geringe Chance, Zugang zur Begegnung mit Dormus zu gewähren, wenn sie angeklickt werden. Rarity zählt, wie viele Figuren du gefunden hast, wenn du die Maus über sie bewegst."
 L["Gu'chi Swarmling"] = "Schwarmling von Gu'chi"
 L["Guk"] = true
 L["Gulp Froglet"] = "Schluckfroschling"
@@ -1826,39 +1829,34 @@ L["Has a chance to drop from either %s or %s on Argus. Each can be looted once p
 L["Havak"] = true
 L["Height"] = "Höhe"
 L["Helpful Wikky's Whistle"] = "Pfeife des hilfreichen Nupsi"
---[[Translation missing --]]
-L["Here is a preview of what will (or won't) be imported:"] = "Here is a preview of what will (or won't) be imported:"
+L["Here is a preview of what will (or won't) be imported:"] = "Hier ist eine Vorschau, was importiert wird (oder nicht importiert wird):"
 L["Heroic difficulty"] = "Heroischer Schwierigkeitsgrad"
 L["Heroic Raid (10-30 players)"] = "Heroischer Schlachtzug (10-30 Spieler)"
 L["Heroic Scenario instance"] = "Heroisches Szenario"
 L["Heroic, any raid size"] = "Heroisch, jede Schlachtzuggröße"
 L["Hidden"] = "Versteckt"
-L["Hide defeated items"] = "Verstecke besiegte Gegenstände"
+L["Hide defeated items"] = "Verstecke erledigte Gegenstände"
 L["Hide high chance items"] = "Verstecke Gegenstände mit hoher Dropchance"
-L["Hide items not in your zone"] = "Verstecke Gegenstände außerhalb deiner Zone"
+L["Hide items not in your zone"] = "Verstecke Gegenstände außerhalb deines Gebiets"
 L["Hide items with no attempts"] = "Verstecke Gegenstände ohne Versuche"
 L["Hide unavailable items"] = "Verstecke nicht verfügbare Gegenstände"
 L["High Priest of Ordos"] = "Hohepriester von Ordos"
 L["Highborne"] = "Hochgeborene"
 L["Highland Guppy School"] = "Ein Schwarm Hochlandguppys"
 L["Highland Mixed School"] = "Mischschwarm des Hochlands"
---[[Translation missing --]]
-L["Highland Mustang"] = "Highland Mustang"
+L["Highland Mustang"] = "Hochlandmustang"
 L["Highmountain Elderhorn"] = "Hochbergurhorn"
 L["Highmountain Salmon School"] = "Ein Schwarm Hochberglachse"
 L["Highmountain Tauren"] = "Hochbergtauren"
-L["Holiday"] = "Weltereignisse"
+L["Holiday"] = "Feiertag"
 L["Holiday reminders"] = "Benachrichtigungen für Feiertage"
 L["Hollow Reed"] = "Hohles Schilfrohr"
 L["Holy Lightsphere"] = "Heilige Lichtsphäre"
---[[Translation missing --]]
-L["Horde controls Stromgarde"] = "Horde controls Stromgarde"
+L["Horde controls Stromgarde"] = "Die Horde kontrolliert Stromgarde"
 L["Horde only"] = "Nur Horde"
---[[Translation missing --]]
-L["Horrific Apparition"] = "Horrific Apparition"
+L["Horrific Apparition"] = "Schreckliche Erscheinung"
 L["Houndmaster Kerrax"] = "Hundemeister Kerrax"
---[[Translation missing --]]
-L["How likely the item is to appear, expressed as 1 in X, where X is the number you enter here."] = "How likely the item is to appear, expressed as 1 in X, where X is the number you enter here."
+L["How likely the item is to appear, expressed as 1 in X, where X is the number you enter here."] = "Die Wahrscheinlichkeit eines Gegenstandes zu erscheinen, ausgedrückt in \"1 zu X\", wobei X die Zahl ist, die Du hier eingibst."
 L["How many attempts you've made so far."] = "Anzahl der Versuche bis jetzt."
 L["How many items you need to collect."] = "Wie viele Gegenstände du sammeln musst."
 L["How many items you've collected so far."] = "Wie viele Gegenstände du bereits gesammelt hast."
@@ -1867,15 +1865,14 @@ L["Huge Obsidian Slab"] = "Sehr große Obsidian-Platte "
 L["Hunter"] = "Jäger"
 L["Hyjal Wisp"] = "Irrwisch des Hyjal"
 L["Ice Chip"] = "Eissplitter"
-L["Identify the Item"] = "Identifizieren Sie den Artikel"
+L["Identify the Item"] = "Identifiziere den Gegenstand"
 L["Imbued Jade Fragment"] = "Erfülltes Jadefragment"
 L["Imperial Manta Ray School"] = "Ein Schwarm imperialer Mantarochen"
 L["Imperial Moth"] = "Kaisermotte"
 L["Imperial Silkworm"] = "Kaiserliche Seidenraupe"
 L["Imp-Master Valessa"] = "Wichtelmeisterin Valessa"
 L["Import"] = true
---[[Translation missing --]]
-L["Import Rarity Item Pack"] = "Import Rarity Item Pack"
+L["Import Rarity Item Pack"] = "Rarity-Gegenstandspaket importieren"
 --[[Translation missing --]]
 L["Import/Export"] = "Import/Export"
 --[[Translation missing --]]
@@ -1893,9 +1890,8 @@ L["Iron Deposit"] = "Eisenvorkommen"
 L["Ironbound Collar"] = "Eisenbeschlagenes Halsband"
 L["Ironhoof Destroyer"] = "Eisenhufzerstörer"
 L["Item ID"] = "Gegenstands-ID"
---[[Translation missing --]]
-L["Item ID to Collect"] = "Item ID to Collect"
-L["Items to Use"] = "Gegenstände zu benutzen"
+L["Item ID to Collect"] = "Zu sammelnde Gegenstands-ID"
+L["Items to Use"] = "Zu benutzende Gegenstände"
 L["Jade Lungfish School"] = "Ein Schwarm Jadelungenfische"
 L["Jadefire Spirit"] = "Jadefeuergeist"
 L["Jademist Dancer"] = "Jadenebeltänzer"
@@ -1974,7 +1970,7 @@ L["Lil' Donkey"] = "Lil' Donkey"
 L["Littlehoof"] = "Littlehoof"
 L["Living Infernal Core"] = "Lebender Höllenkern"
 L["Living Sandling"] = "Lebendiger Sandling"
-L["Loaded (running in debug mode)"] = "Geladen (läuft im Debug Modus)"
+L["Loaded (running in debug mode)"] = "Geladen (Debug-Modus ist aktiv!)"
 L["Loaded Gnomish Dice"] = "Gezinkte gnomische Würfel"
 L["Loading"] = "Lädt"
 L["Locked"] = "Gesperrt"
@@ -2062,10 +2058,8 @@ L["Nightmare Whelpling"] = "Alptraumwelpling"
 L["Nightshade Sproutling"] = "Nachtschattensprössling"
 --[[Translation missing --]]
 L["Nimar the Slayer"] = "Nimar the Slayer"
---[[Translation missing --]]
 L[ [=[No items to display! Either you've obtained every item, or you have
-one or more options turned on which hide things from the tooltip.]=] ] = [=[No items to display! Either you've obtained every item, or you have
-one or more options turned on which hide things from the tooltip.]=]
+one or more options turned on which hide things from the tooltip.]=] ] = "Keine Gegenstände zum Anzeigen vorhanden. Entweder hast du jeden Gegenstand erlangt oder du hast eine oder mehrere Einstellungen aktiviert, die Einträge im Tooltip ausblenden."
 L["None"] = "Nichts"
 L["None (not in an instance)"] = "Nichts (nicht in einer Instanz)"
 L["Normal"] = true
@@ -2082,7 +2076,7 @@ L["Obtained as a rare project for the Fossil branch of archaeology"] = "Obtained
 --[[Translation missing --]]
 L["Obtained as a very rare project for the Tol'vir branch of archaeology"] = "Obtained as a very rare project for the Tol'vir branch of archaeology"
 L["Obtained as an archaeology project"] = "Erbeutet mit einem Archäologie Projekt"
-L["Obtained by collecting a number of items"] = "Erbeutet durch Sammeln von einer gewissen Anzahl von Gegenständen"
+L["Obtained by collecting a number of items"] = "Erbeutet durch Sammeln einer gewissen Anzahl von Gegenständen"
 L["Obtained by fishing"] = "Erbeutet mit Angeln"
 L["Obtained by fishing in any water in Ironforge"] = "Erbeutet mit Angeln in Eisenschmiede"
 L["Obtained by fishing in any water in Orgrimmar"] = "Erbeutet mit Angeln in Orgrimmar"
@@ -2151,8 +2145,7 @@ L["Pandaren Firework Launcher"] = "Pandarischer Raketenzünder"
 L["Panflute of Pandaria"] = "Pandarische Panflöte"
 L["Parrot Cage (Green Wing Macaw)"] = "Papageienkäfig (Grünflügelara)"
 L["Parrot Cage (Hyacinth Macaw)"] = "Papageienkäfig (Hyazinthara)"
---[[Translation missing --]]
-L["Paste a Rarity Item Pack String here using Ctrl-V, then click the Import button."] = "Paste a Rarity Item Pack String here using Ctrl-V, then click the Import button."
+L["Paste a Rarity Item Pack String here using Ctrl-V, then click the Import button."] = "Füge einen String eines Rarity-Gegenstandspakets mittels STRG+V ein und drücke dann auf den Import-Button"
 L["Patch of Elemental Water"] = "Stelle mit Elementarwasser"
 L["Periwinkle Calf"] = "Lilablassblaues Kalb"
 L["Phoenix Hatchling"] = "Phönixküken"
@@ -2166,8 +2159,7 @@ L["Play a sound when groups are found"] = "Einen Sound abspielen, wenn Gruppen g
 L["Players have a personal loot chance to obtain this item."] = "Spieler können diesen Gegenständ als persönliche Beute erhalten."
 --[[Translation missing --]]
 L["Playful Frostkin"] = "Playful Frostkin"
---[[Translation missing --]]
-L["Please enter a comma-separated list of item IDs."] = "Please enter a comma-separated list of item IDs."
+L["Please enter a comma-separated list of item IDs."] = "Bitte gib eine Liste mit Gegenstands-IDs ein, die durch Kommas getrennt sind."
 --[[Translation missing --]]
 L["Please enter a comma-separated list of NPC IDs."] = "Please enter a comma-separated list of NPC IDs."
 --[[Translation missing --]]
@@ -2220,8 +2212,7 @@ L["Raid Finder instance (legacy content; fixed at 25 players)"] = "Schlachtzugbr
 L["Raid Finder or Flexible difficulty"] = "Schlachtzugbrowser- oder Flexmodeschwierigkeitsgrad"
 L["Rarity has %d |4coordinate:coordinates; for this item."] = "Rarity hat %d |4Koordinate:Koordinaten; für diesen Gegenstand."
 L["Rarity is loading..."] = "Rarity wird geladen..."
---[[Translation missing --]]
-L["Rarity Item Pack String"] = "Rarity Item Pack String"
+L["Rarity Item Pack String"] = "Rarity-Gegenstandspaket-String"
 L["Rarity Tooltip Options"] = "Rarity Tooltip Einstellungen"
 L["Rarity: "] = true
 --[[Translation missing --]]
@@ -2341,8 +2332,7 @@ L["Secondary tooltip display"] = "Secondary tooltip display"
 L["Servant of Demidos"] = "Diener von Demidos"
 L["Servant's Bell"] = "Dienerglocke"
 L["Session"] = "Sitzung"
---[[Translation missing --]]
-L["Set this to the achievement ID which indicates this item has been obtained. This is useful for items which do not yield mounts or pets, but which do grant an achievement when obtained, such as Old Crafty or Old Ironjaw. Leave this blank for mounts and pets. Use WowHead to find achievement IDs."] = "Set this to the achievement ID which indicates this item has been obtained. This is useful for items which do not yield mounts or pets, but which do grant an achievement when obtained, such as Old Crafty or Old Ironjaw. Leave this blank for mounts and pets. Use WowHead to find achievement IDs."
+L["Set this to the achievement ID which indicates this item has been obtained. This is useful for items which do not yield mounts or pets, but which do grant an achievement when obtained, such as Old Crafty or Old Ironjaw. Leave this blank for mounts and pets. Use WowHead to find achievement IDs."] = "Gib hier die Erfolgs-ID ein, welche anzeigt, dass der Gegenstand erlangt wurde. Dies ist nützlich für Gegenstände, welche kein Reit- oder Kampfhaustier liefern, sondern einen Erfolg freischalten, wenn sie erhalten werden, wie beispielsweise der alte Fuchs oder der alte Eisenkiefer. Lass das Feld frei für Reit- und Kampfhaustiere. Nutze WoWHead zum Finden von Erfolgs-IDs."
 L["Severed Tentacle"] = "Abgetrenntes Tentakel"
 --[[Translation missing --]]
 L["Shackled Ur'zul"] = "Shackled Ur'zul"
@@ -2489,12 +2479,10 @@ L["Texture"] = "Textur"
 --[[Translation missing --]]
 L["The boss name, in English (enUS), which appears in the instance lock inside the Raid Info panel. The name will be translated to your local language automatically using the LibBoss library (if detection fails, check that the translation exists in this library). IMPORTANT: This method of defeat detection only works when the boss exists in one place at a time. Certain bosses, such as Ragnaros and Kael'thas Sunstrider, exist in two instances at once. Those bosses can be used here, but killing them in either of their instances will result in this Defeat Detection triggering."] = "The boss name, in English (enUS), which appears in the instance lock inside the Raid Info panel. The name will be translated to your local language automatically using the LibBoss library (if detection fails, check that the translation exists in this library). IMPORTANT: This method of defeat detection only works when the boss exists in one place at a time. Certain bosses, such as Ragnaros and Kael'thas Sunstrider, exist in two instances at once. Those bosses can be used here, but killing them in either of their instances will result in this Defeat Detection triggering."
 L["The Burning Crusade"] = true
---[[Translation missing --]]
-L["The following %d item(s) have been selected to export:"] = "The following %d item(s) have been selected to export:"
+L["The following %d item(s) have been selected to export:"] = "Die folgenden %s Gegenstände wurden zum Exportieren ausgewählt:"
 L["The Heartbreaker"] = "Der Herzbrecher"
 L["The Horseman's Reins"] = "Die Zügel des Reiters"
---[[Translation missing --]]
-L["The item ID that you need to collect. Rarity uses the number of this item that you have in your bags as your progress. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must not be used by another item."] = "The item ID that you need to collect. Rarity uses the number of this item that you have in your bags as your progress. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must not be used by another item."
+L["The item ID that you need to collect. Rarity uses the number of this item that you have in your bags as your progress. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must not be used by another item."] = "Die Gegenstands-ID, die du sammeln musst. Rarity verwendet die Anzahl dieses Gegenstandes in deinem Inventar als Fortschritt. Nutze WoWHead oder einen ähnlichen Dienst, um Gegenstands-IDs zu suchen. Es muss eine gültige Zahl eingegeben werden, die nicht von einem anderen Gegenstand verwendet wird. "
 --[[Translation missing --]]
 L["The item ID to track. This is the item as it appears in your inventory or in a loot window. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must be unique."] = "The item ID to track. This is the item as it appears in your inventory or in a loot window. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must be unique."
 --[[Translation missing --]]
@@ -2513,8 +2501,7 @@ L["The quest starter item for Reins of the Llothien Prowler"] = "The quest start
 --[[Translation missing --]]
 L["The quest starter item for Wondrous Wisdomball"] = "The quest starter item for Wondrous Wisdomball"
 L["The Rarity Options module has been disabled. Log out and enable it from your add-ons menu."] = "Das Rarity Optionsmodul wurde deaktiviert. Logge dich aus und aktiviere es im Addon Menü."
---[[Translation missing --]]
-L["The selected Rarity Item Pack string is invalid."] = "The selected Rarity Item Pack string is invalid."
+L["The selected Rarity Item Pack string is invalid."] = "Der gewählte String des Rarity-Gegenstandspakets ist ungültig."
 --[[Translation missing --]]
 L["The spell ID of the item once you've learned it. This applies only to mounts and companions, and is the spell as it appears in your spell book after learning the item. Use WowHead or a similar service to lookup spell IDs. This must be a valid number and must be unique."] = "The spell ID of the item once you've learned it. This applies only to mounts and companions, and is the spell as it appears in your spell book after learning the item. Use WowHead or a similar service to lookup spell IDs. This must be a valid number and must be unique."
 --[[Translation missing --]]
@@ -2570,10 +2557,8 @@ L[ [=[To create a new item, enter a unique name for the item, and click Okay. Th
 You can't change this name after you create the item, so choose it well.]=] ] = [=[To create a new item, enter a unique name for the item, and click Okay. The name will be used if the server does not return the item link or if the item is invalid.
 
 You can't change this name after you create the item, so choose it well.]=]
---[[Translation missing --]]
-L["To export a group of items, go through each item in your Custom tab and check or uncheck the Export checkbox. The checkbox will be disabled if you haven't yet filled out enough information for Rarity to detect the item. Once you've done that, return here and click the Export button. A Rarity Item Pack string will be generated that you can copy to the clipboard using Ctrl-C."] = "To export a group of items, go through each item in your Custom tab and check or uncheck the Export checkbox. The checkbox will be disabled if you haven't yet filled out enough information for Rarity to detect the item. Once you've done that, return here and click the Export button. A Rarity Item Pack string will be generated that you can copy to the clipboard using Ctrl-C."
---[[Translation missing --]]
-L["To import a group of items, paste a Rarity Item Pack string into the Import text box below and click the Import button. Rarity will tell you which items were imported (or which ones failed to import) in your chat window. You can find many Rarity Item Packs on the Curse web site, or elsewhere on the web."] = "To import a group of items, paste a Rarity Item Pack string into the Import text box below and click the Import button. Rarity will tell you which items were imported (or which ones failed to import) in your chat window. You can find many Rarity Item Packs on the Curse web site, or elsewhere on the web."
+L["To export a group of items, go through each item in your Custom tab and check or uncheck the Export checkbox. The checkbox will be disabled if you haven't yet filled out enough information for Rarity to detect the item. Once you've done that, return here and click the Export button. A Rarity Item Pack string will be generated that you can copy to the clipboard using Ctrl-C."] = "Um eine Gruppe Gegenstände zu exportieren, aktiviere oder deaktiviere die Export-Checkbox für jeden Gegenstand in Deinem Benutzerdefiniert-Tab. Die Checkbox ist deaktiviert, wenn Du nicht genug Informationen eingegeben hast, damit Rarity den Gegenstand erkennen kann. Sobald genügend Informationen vorhanden sind, kehre hierher zurück und drücke den Export-Button. Ein Rarity-Gegenstandspaket-String wird generiert, den Du mit STRG+C in die Zwischenablage kopieren kannst. "
+L["To import a group of items, paste a Rarity Item Pack string into the Import text box below and click the Import button. Rarity will tell you which items were imported (or which ones failed to import) in your chat window. You can find many Rarity Item Packs on the Curse web site, or elsewhere on the web."] = "Um eine Gruppe Gegenstände zu importieren, füge den Rarity-Gegenstandspaket-String im Eingabefeld unten ein und drücke auf den Import-Button. Rarity wird in deinem Chat-Fenster anzeigen, welche Gegenstände importiert worden sind (bzw. welche Gegenstände nicht importiert werden konnten). Du kannst viele Rarity-Gegenstandspakete auf der Curse-Webseite und an anderen Stellen im Internet finden."
 L["Today"] = "Heute"
 --[[Translation missing --]]
 L["Toggles"] = "Toggles"
@@ -2631,8 +2616,7 @@ L["Vengeance"] = "Rache "
 L["Venomarus"] = "Venomarus"
 --[[Translation missing --]]
 L["Venomtail Skyfin"] = "Venomtail Skyfin"
---[[Translation missing --]]
-L["Verbose"] = "Verbose"
+L["Verbose"] = "Vollständig"
 --[[Translation missing --]]
 L["Viable Cobra Egg"] = "Viable Cobra Egg"
 --[[Translation missing --]]
@@ -7231,13 +7215,11 @@ L["Ai-Ran the Shifting Cloud"] = "Ai Ran le Nuage Fantasque"
 L["Albino Buzzard"] = "Busard albinos"
 L["Albino Cavefish School"] = "Banc de tétras cavernicoles albinos"
 L["Albino Chimaeraling"] = "Chimérion albinos"
---[[Translation missing --]]
-L["Aldrusian Sproutling"] = "Aldrusian Sproutling"
+L["Aldrusian Sproutling"] = "Jeune pousse aldrusienne"
 L["Algaefin Rockfish School"] = "Banc de sébastes nagealgue"
 L["All players can participate in killing this world boss once per week, regardless of faction"] = "Tous les joueurs peuvent participer au combat face à ce world boss une fois par semaine, peu importe la faction."
 L["All raid formats except Raid Finder"] = "Tous les formats de raid à l'exception de la recherche de raid"
---[[Translation missing --]]
-L["Alliance controls Stromgarde"] = "Alliance controls Stromgarde"
+L["Alliance controls Stromgarde"] = "L'Alliance contrôle Stromgarde"
 L["Alliance only"] = "Alliance uniquement"
 L["Already defeated"] = "Déjà vaincu"
 L["Already defeated for %s"] = "Déjà vaincu pour %s"
@@ -7246,8 +7228,7 @@ L["an item already exists by this name, so it will not be imported"] = "Un objet
 L["an item with the same Item ID already exists, so it will not be imported"] = "Un objet avec le même identifiant d'objet existe déjà, et ne sera pas importé."
 L["Ancient Mana"] = "Mana ancestral"
 L["and %d |4other zone:other zones;"] = "et %d |4autre zone:autres zones;"
---[[Translation missing --]]
-L["Angry Egg"] = "Angry Egg"
+L["Angry Egg"] = "Œuf en colère"
 L["Announce"] = "Annoncer"
 L["Announcements"] = "Annonces"
 L["Announcements will only be triggered when the item is found. When this is off, Rarity will announce every attempt and when the item is found."] = "Les annonces s'afficheront uniquement lorsque l'objet sera trouvé. Quand ceci est désactivé, Rarity annoncera chaque essai et lorsque l'objet sera trouvé."
@@ -7278,18 +7259,14 @@ L["Azure Crane Chick"] = "Gruon azur"
 L["Azure Whelpling"] = "Bébé dragonnet azur"
 L["Baarut the Bloodthirsty"] = "Baarut le Sanguinaire"
 L["Baarut the Brisk"] = "Baarut le Vif"
---[[Translation missing --]]
-L["Bad Mojo Banana"] = "Bad Mojo Banana"
---[[Translation missing --]]
-L["Barnaby"] = "Barnaby"
+L["Bad Mojo Banana"] = "Banane de mauvais mojo"
+L["Barnaby"] = true
 L["Barrier Generator"] = "Générateur de barrière"
---[[Translation missing --]]
-L["Basten"] = "Basten"
+L["Basten"] = true
 L["Battle Horn"] = "Cor de bataille"
 L["Battle Pet"] = "Mascotte de combat"
 L["Battle Pets"] = "Mascottes de combat"
---[[Translation missing --]]
-L["Beastrider Kama"] = "Beastrider Kama"
+L["Beastrider Kama"] = "Chevaucheur de bêtes Kama"
 L["Big Love Rocket"] = "Grande fusée d'amour"
 L["Big Red Raygun"] = "Gros pistolet à rayon rouge"
 L["Biletooth Gnasher"] = "Grince-dents caustique"
@@ -7313,29 +7290,24 @@ L["Blind Lake Sturgeon School"] = "Banc d’esturgeons jaunes aveugles"
 L["Blistermaw"] = "Gueule Putride"
 L["Bloodsail Wreckage"] = "Débris de la Voile sanglante"
 L["Bloodsail Wreckage Pool"] = "Débris de la Voile sanglante"
---[[Translation missing --]]
-L["Bloodstone Tunneler"] = "Bloodstone Tunneler"
+L["Bloodstone Tunneler"] = "Tunnelier pierre-de-sang"
 L["Blue Conservatory Scroll"] = "Parchemin bleu du Conservatorium"
 L["Bluefish School"] = "Banc de tassergals"
 L["Bone Serpent"] = "Serpent d’os"
 L["Bonkers"] = "Foldingue"
 L["Borean Man O' War School"] = "Banc de poissons-méduses boréens"
 L["Boss Name"] = "Nom du Boss"
---[[Translation missing --]]
-L["Botani Camouflage"] = "Botani Camouflage"
+L["Botani Camouflage"] = "Camouflage botani"
 L["Bottled Tornado"] = "Tornade en bouteille"
 L["Brackish Mixed School"] = "Banc mixte en eaux saumâtres"
---[[Translation missing --]]
-L["Branchlord Aldrus"] = "Branchlord Aldrus"
---[[Translation missing --]]
-L["Brazier Cap"] = "Brazier Cap"
+L["Branchlord Aldrus"] = "Seigneur-branche Aldrus"
+L["Brazier Cap"] = "Amorce de brasero"
 L["Breezy Essence"] = "Essence venteuse"
 L["Brew Frenzied Emperor Salmon"] = "Saumon empereur affolé par la bière"
 L["Brilliant Phoenix Hawk Feather"] = "Plume de jeune faucon-phénix brillante"
 L["Brinedeep Bottom-Feeder"] = "Saumefond benthique"
 L["Bristling Hellboar"] = "Sanglier infernal hirsute"
---[[Translation missing --]]
-L["Broken Highland Mustang"] = "Broken Highland Mustang"
+L["Broken Highland Mustang"] = "Mustang des hautes-terres dressé"
 L["Bronze Proto-Whelp"] = "Proto-dragonnet de bronze"
 L["Bunny Hunter is running. Would you like Rarity to import data from Bunny Hunter now? Disable Bunny Hunter or click Yes if you don't want to be asked again."] = "Bunny Hunter est actif. Voulez-vous que Rarity importe les données depuis Bunny Hunter maintenant ? Désactivez Bunny Hunter ou cliquez sur Oui si vous ne voulez pas être de nouveau interrogé."
 L["Burgy Blackheart's Handsome Hat"] = "Beau chapeau de Burgy Cœur-noir"
@@ -7346,13 +7318,11 @@ L["Can be contained in Loot-Filled Pumpkin, rewarded for defeating the World Eve
 L["Can be obtained from Rattling Iron Cage, which has a chance to drop from any of the four champions of Hellfire Citadel in Tanaan Jungle (Terrorfist, Deathtalon, Vengeance, or Doomroller). Each of them can be looted once per day. Rarity will consider this mount \"defeated\" for the day when you kill any of the four."] = "Peut être obtenu dans la Cage en fer cliquetante, qui a une chance de se trouver sur n'importe lequel des quatre champions de la Citadelle des Flammes infernales dans la Jungle de Tanaan (Poing-de-terreur, Serres-mort, Vengeance ou Compresseur funeste). Chacun d'entre eux peut être fouillé une fois par jour. Rarity considèrera cette monture \"Vaincu\" pour la journée lorsque vous tuez l'un des quatre."
 L["Can be obtained with a bonus roll"] = "Peut être obtenu via un jet de dé bonus."
 L["Can drop from Fel-Touched Pet Supplies, which is obtained by defeating the Fel-corrupted legendary pets in Tanaan Jungle."] = "Peut se trouver dans les Fournitures pour mascottes touchées par la gangrène, qui sont obtenues en venant à bout des mascottes légendaires gangrénées dans la jungle de Tanaan."
---[[Translation missing --]]
-L["Captain Nibs"] = "Captain Nibs"
+L["Captain Nibs"] = "Capitaine Cézigue"
 L["Captured Firefly"] = "Luciole capturée"
 L["Cat Carrier (Black Tabby)"] = "Panier à chat (tigré noir)"
 L["Cataclysm"] = "Cataclysme"
---[[Translation missing --]]
-L["Cave Entrance"] = "Cave Entrance"
+L["Cave Entrance"] = "Entrée de la caverne"
 L["Cavern Moccasin"] = "Mocassin cavernicole"
 L["Certain items, such as Illusions in your wardrobe, flag a completed Quest ID when you learn them. Rarity can automatically stop tracking this item if you enter that Quest ID here. (Only one ID, not a list.)"] = "Certains objets, comme les Illusions dans votre garde-robe, renvoient un identifiant de quête terminée quand vous les apprenez. Rarity peut automatiquement arrêter de suivre cet objet si vous entrez cet identifiant de quête ici. (seulement un identifiant, pas une liste.)"
 L["Chain Pet Leash"] = "Laisse en chaîne pour mascotte"
@@ -7371,7 +7341,7 @@ L["Chromie"] = true
 L["Chuck's Bucket"] = "Seau de Chuck"
 L["Cinderweb Egg"] = "Oeuf de braisetoile"
 L["Classic"] = "Classique"
-L["Clear All Exports"] = "Effacer tous les exports"
+L["Clear All Exports"] = "Effacer toutes les exportations"
 L["Click to switch to this item"] = "Cliquer pour passer à cet objet."
 L["Click to toggle the progress bar"] = "Clic sur un objet pour afficher la barre de progression"
 L["Clockwork Rocket Bot"] = "Rob-fusée mécanique"
@@ -7380,10 +7350,8 @@ L["Cloudwing Hippogryph"] = "Hippogriffe nuelle"
 L["Clutch of Ji-Kun"] = "Etreinte de Ji Kun"
 L["Cobalt Deposit"] = "Gisement de cobalt"
 L["Coin of Many Faces"] = "Pièce aux nombreuses faces"
---[[Translation missing --]]
-L["Coldlight Surfrunner"] = "Coldlight Surfrunner"
---[[Translation missing --]]
-L["Coldrage's Cooler"] = "Coldrage's Cooler"
+L["Coldlight Surfrunner"] = "Glisseur froide-lumière"
+L["Coldrage's Cooler"] = "Glacière de Froiderage"
 L["Collect %d %s"] = "Collecter %d %s"
 L["Collected"] = "Collectés"
 L["Collection Complete"] = "Collecte terminée"
@@ -7406,10 +7374,8 @@ N'hésitez pas à commenter sur le site Curse pour partager vos liens de pack d'
 L["Core of Hardened Ash"] = "Noyau de cendre pétrifiée"
 L["Corrupted Nest Guardian"] = "Gardien de nid corrompu"
 L["Corrupted Thundertail"] = "Foudrequeue corrompu"
---[[Translation missing --]]
-L["Craghoof Kid"] = "Craghoof Kid"
---[[Translation missing --]]
-L["Craghorn Chasm-Leaper"] = "Craghorn Chasm-Leaper"
+L["Craghoof Kid"] = "Chevreau combesabot"
+L["Craghorn Chasm-Leaper"] = "Bondisseur rochecorne"
 L["Crane Nest"] = "Nid de grues"
 L["Crashin' Thrashin' Cannon Controller"] = "Commande de Cogn’Baff à canon"
 L["Crashin' Thrashin' Flamer Controller"] = "Commande de Cogn'Baff lance-flammes"
@@ -7434,8 +7400,7 @@ L["Cursed Queenfish School"] = "Banc de talangs maudits"
 L["Cursed Spirit"] = "Esprit maudit"
 L["Custom"] = "Personnalisé"
 L["Dandelion Frolicker"] = "Jonquille boute-en-train"
---[[Translation missing --]]
-L["Darbel Montrose"] = "Darbel Montrose"
+L["Darbel Montrose"] = true
 L["Dark Gazer"] = "Sombre contemplateur"
 L["Dark Iron Deposit"] = "Gisement de sombrefer"
 L["Dark Quivering Blob"] = "Goutte tremblante sombre"
@@ -7446,8 +7411,7 @@ L["Data has been imported from Bunny Hunter"] = "Les données ont été importé
 L["Death Adder Hatchling"] = "Jeune aspic mortel"
 L["Death Knight"] = "Chevalier de la mort"
 L["Deathcharger's Reins"] = "Rênes de destrier de la mort"
---[[Translation missing --]]
-L["Deathsting Scorpid"] = "Deathsting Scorpid"
+L["Deathsting Scorpid"] = "Scorpide dard-de-mort"
 L["Deathtalon"] = "Serres-mort"
 L["Debug mode"] = "Mode Debug"
 L["Debug mode OFF"] = "Mode de débuggage DESACTIVE"
@@ -7488,11 +7452,9 @@ L["Docile Skyfin"] = "Ciaileron docile"
 L["Doctor Weavil"] = "Docteur Dwenfer"
 L["Don Carlos' Famous Hat"] = "Célèbre chapeau de don Carlos"
 L["Doomcaster Suprax"] = "Lance-malheur Suprax"
---[[Translation missing --]]
-L["Doomrider Helgrim"] = "Doomrider Helgrim"
+L["Doomrider Helgrim"] = "Chevauche-malheur Sombrenfer"
 L["Doomroller"] = "Compresseur funeste"
---[[Translation missing --]]
-L["Doom's Howl"] = "Doom's Howl"
+L["Doom's Howl"] = "Héraut du malheur"
 L["Draenei"] = "Draeneï"
 L["Draenor Clans"] = "Clans de Draenor"
 L["Draenor Garrison"] = "Fief de Draenor"
@@ -7508,8 +7470,7 @@ L["Dropped by Elegon in Mogu'shan Vaults (all raid formats except Raid Finder)"]
 L["Dropped by Goren Protector, which has a chance to spawn when mining ore in Draenor."] = "Butin de Protecteur goren, lequel a une chance d'apparaître quand vous minez un filon en Draenor."
 L["Dropped by Koralon the Flame Watcher, Emalon the Storm Watcher, Archavon the Stone Watcher, and Toravon the Ice Watcher in Vault of Archavon (any raid size)."] = "Obtenu sur Koralon le Veilleur des flammes, Emalon le Guetteur d'orage, Archavon le Gardien des pierres, et Toravon la Sentinelle de glace dans le Caveau d’Archavon (n'importe quelle taille de raid)."
 L["Dropped by Malygos in The Eye of Eternity (any raid size)"] = "Butin de Malygos dans l'Oeil de l'éternité (n'importe quelle taille de raid)."
---[[Translation missing --]]
-L["Dropped by Merektha in Temple of Sethraliss. Will hatch into Spawn of Merektha pet after three days."] = "Dropped by Merektha in Temple of Sethraliss. Will hatch into Spawn of Merektha pet after three days."
+L["Dropped by Merektha in Temple of Sethraliss. Will hatch into Spawn of Merektha pet after three days."] = "Butin de Merektha dans le Temple de Sephraliss. Éclora en la mascotte Rejeton de Merekpha au bout de trois jours."
 L["Dropped by Onyxia in Onyxia's Lair (any raid size)"] = "Butin d'Onyxia dans le Repaire d'Onyxia (n'importe quelle taille de raid)."
 L["Dropped by the Madness of Deathwing encounter in Dragon Soul (any raid size or difficulty)"] = "Butin de la Folie d'Aile de mort dans l'Âme des dragons (n'importe quelle taille ou difficulté de raid)."
 L["Dropped by the Madness of Deathwing encounter in Dragon Soul (heroic, any raid size)"] = "Butin de la Folie d'Aile de mort dans l'Âme des dragons (héroïque, n'importe quelle taille de raid)."
@@ -7524,14 +7485,12 @@ L["Drops from any mob in a zone"] = "Obtenu sur n'importe quelle monstre d'une z
 L["Drops from NPC(s)"] = "Obtenu auprès d'un PNJ."
 L["Drudge Remains"] = "Restes de manœuvre besogneux"
 L["Druid"] = "Druide"
---[[Translation missing --]]
-L["Drust"] = "Drust"
+L["Drust"] = true
 L["Dungeon ID"] = "ID du donjon"
 L["Dusty Clutch of Eggs"] = "Chapelet d’œufs poussiéreux"
 L["Dwarf"] = "Nain"
 L["Earned by giving 9999 Giant Dinosaur Bones to Ku'ma on Isle of Giants. Giant Dinosaur bones drop from all dinosaurs and Zandalari Dinomancers on Isle of Giants."] = "Obtenu en échangeant 9999 Os de dinosaure géant avec Ku’ma sur l'Île des Géants. Les Os de dinosaure géant se trouvent sur tout les dinosaures et les Dinomanciens zandalaris de l'Île des Géants."
---[[Translation missing --]]
-L["Echo of Myzrael"] = "Echo of Myzrael"
+L["Echo of Myzrael"] = "Echo de Myzrael"
 L["Elementium Back Plate"] = "Plaque dorsale en élémentium"
 L["Elementium Geode"] = "Géode en élémentium"
 L["Elementium Vein"] = "Filon d'élémentium"
@@ -7542,8 +7501,7 @@ L["Enable profiling"] = "Activer le profilage"
 L["Enable tooltip additions"] = "Ajouts dans les infobulles en jeu"
 L["Enables announcements whenever you complete a new attempt toward anything Rarity is tracking. You can also enable announcements per-item, but this is the master switch."] = "Active les annonces lorsque vous effectuez un nouvel essai pour quoi que ce soit suivi par Rarity. Vous pouvez aussi activer les annonces objet par objet, mais ceci est la commande principale."
 L["Enables announcements whenever you complete a new attempt toward this item."] = "Active les annonces lorsque vous complétez une nouvelle tentative pour cet objet."
---[[Translation missing --]]
-L["Enchanted Soup Stone"] = "Enchanted Soup Stone"
+L["Enchanted Soup Stone"] = "Pierre à soupe enchantée"
 L["Enter 1 or leave this blank to mark the item as soloable."] = "Entrez 1 ou laissez vide pour marquer l'objet comme étant obtenable en solo."
 L["Environeer Bert"] = "Envirogénieur Bert"
 L["Equal odds"] = "Chance répartie"
@@ -7563,12 +7521,10 @@ L["Export"] = "Exporter"
 L["Export Rarity Item Pack"] = "Exporter un pack d'objets Rarity"
 L["Export this item"] = "Exporter cet objet"
 L["Eye of Inquisition"] = "Oeil d'inquisition"
---[[Translation missing --]]
-L["Eye of Observation"] = "Eye of Observation"
+L["Eye of Observation"] = "Oeil d'observation"
 L["Faintly Glowing Flagon of Mead"] = "Pichet d'hydromel légèrement luminescent"
 L["Fal'dorei Egg"] = "Œuf fal'dorei"
---[[Translation missing --]]
-L["False Knucklebump"] = "False Knucklebump"
+L["False Knucklebump"] = "Faux cogne-poings"
 L["Fandral's Pet Carrier"] = "Porte-mascotte de Fandral"
 L["Fandral's Seed Pouch"] = "Bourse de graine de Fandral"
 L["Fangtooth Herring School"] = "Banc de harengs crocs-pointus"
@@ -7578,8 +7534,7 @@ L["Fathom Dweller"] = "Créature des grands fonds"
 L["Fathom Eel Swarm"] = "Banc d'anguilles des profondeurs"
 L["Feed text"] = "Taille du texte"
 L["Fel Iron Deposit"] = "Gisement de gangrefer"
---[[Translation missing --]]
-L["Fel Lasher"] = "Fel Lasher"
+L["Fel Lasher"] = "Flagellant gangrené"
 L["Fel-Afflicted Skyfin"] = "Ciaileron atteint par la corruption"
 L["Felfly"] = "Gangreluciole"
 L["Felglow Mana Ray"] = "Raie de mana gangreluisante"
@@ -7590,15 +7545,13 @@ L["Felsteel Annihilator"] = "Annihilateur en gangracier"
 L["Felsworn Sentry"] = "Factionnaire gangrelige"
 L["Feltail School"] = "Banc de gangre-queues"
 L["Fever of Stormrays"] = "Multitude de raies-tempête"
---[[Translation missing --]]
-L["Fiendish Hellfire Core"] = "Fiendish Hellfire Core"
+L["Fiendish Hellfire Core"] = "Noyau de flammes dévorantes"
 L["Fiery Warhorse's Reins"] = "Rênes de cheval de guerre embrasé"
 L["Fire Ammonite School"] = "Banc d’ammonites de feu"
 L["Firefin Snapper School"] = "Banc de lutjans de nagefeu"
 L["Firewing"] = "Aile-de-feu"
 L["Fished anywhere in Draenor (except your garrison) with the help of Nat Pagle"] = "Pêché n'importe où en Draenor (sauf dans le fief) avec l'aide de Nat Pagle."
---[[Translation missing --]]
-L["Five players are needed to activate the runes on the floor. The boss can be attacked only after all runes have been activated."] = "Five players are needed to activate the runes on the floor. The boss can be attacked only after all runes have been activated."
+L["Five players are needed to activate the runes on the floor. The boss can be attacked only after all runes have been activated."] = "Cinq joueurs sont nécessaires pour activer les runes au sol. Le boss ne peut être attaqué que lorsque toutes les runes ont été activées."
 L["Flametalon of Alysrazor"] = "Serres-de-Flammes d’Alysrazor"
 L["Floating Debris"] = "Débris flottant"
 L["Floating Debris Pool"] = "Déchets flottants"
@@ -7610,28 +7563,22 @@ L["Font Size"] = "Taille de police"
 L["Foot Ball"] = "Ballon rond"
 L["Fossil"] = "Fossile"
 L["Fossilized Raptor"] = "Raptor fossilisé"
---[[Translation missing --]]
-L["Fossorial Bile Larva"] = "Fossorial Bile Larva"
---[[Translation missing --]]
-L["Foul Belly"] = "Foul Belly"
---[[Translation missing --]]
-L["Foulbelly"] = "Foulbelly"
+L["Fossorial Bile Larva"] = "Larve bilieuse fouisseuse"
+L["Foul Belly"] = "Souillebedon"
+L["Foulbelly"] = "Souillebedon"
 L["Found after %d attempts!"] = "Trouvé après %d essais !"
 L["Found in: "] = "Se trouve à : "
 L["Found on your first attempt!"] = "Trouvé au premier essai !"
 L["Fox Kit"] = "Renardeau"
---[[Translation missing --]]
-L["Fozruk"] = "Fozruk"
+L["Fozruk"] = true
 L["Fragment of Anger"] = "Fragment de colère"
 L["Fragment of Desire"] = "Fragment de désir"
 L["Fragment of Frozen Bone"] = "Fragment d'os gelé"
 L["Fragment of Suffering"] = "Fragment de souffrance"
---[[Translation missing --]]
-L["Frenzied Fangtooth School"] = "Frenzied Fangtooth School"
+L["Frenzied Fangtooth School"] = "Crocs-pointus frénétique"
 L["Frenzyheart Brew"] = "Bière frénécœur"
 L["Frightened Bush Chicken"] = "Poulet des fourrés effrayé"
---[[Translation missing --]]
-L["Fuzzy Creepling"] = "Fuzzy Creepling"
+L["Fuzzy Creepling"] = "Arachnée duveteuse"
 L["Fuzzy Green Lounge Cushion"] = "Coussin de salon vert duveteux"
 L["Gahz'rooki's Summoning Stone"] = "Pierre d’invocation de Gahz’rooki"
 L["Gar'lok"] = "Gar’lok"
@@ -7642,16 +7589,14 @@ L["Garrison Invasion Platinum Victory"] = "Invasion de fief : victoire Platine"
 L["Gastropod Shell"] = "Carapace de gastéropode"
 L["General"] = "Général"
 L["General Options"] = "Options générales"
---[[Translation missing --]]
-L["Geomancer Flintdagger"] = "Geomancer Flintdagger"
+L["Geomancer Flintdagger"] = "Géomancien Dague-de-silex"
 L["Ghost Iron Deposit"] = "Gisement d’ectofer"
 L["Giant Coldsnout"] = "Groin-froid géant"
 L["Giant Mantis Shrimp Swarm"] = "Banc de crevettes-mantes géantes"
 L["Giant Sewer Rat"] = "Rat d'égout géant"
 L["Giant Worm Egg"] = "Oeuf de ver géant"
 L["Gibblette the Cowardly"] = "Gibblette le Poltron"
---[[Translation missing --]]
-L["Giggling Flame"] = "Giggling Flame"
+L["Giggling Flame"] = "Flamme rieuse"
 L["Glacial Salmon School"] = "Banc de saumons glaciaires"
 L["Glassfin Minnow School"] = "Banc de vairons nageverres"
 L["Glimmering Jewel Danio Pool"] = "Banc de danios joyaux scintillants"
@@ -7669,8 +7614,7 @@ L["Gooey Sha-ling"] = "Sha-ton gluant"
 L["Goren \"Log\" Roller"] = "Rouleur de « bûches » goren"
 L["Grasping Manifestation"] = "Manifestation avide"
 L["Great Brewfest Kodo"] = "Grand kodo de la fête des Brasseurs"
---[[Translation missing --]]
-L["Great Sea Catfish School"] = "Great Sea Catfish School"
+L["Great Sea Catfish School"] = "Poisson-chat de la Grande mer"
 L["Greater Sagefish School"] = "Banc de grandes sagerelles"
 L["Greatfather Winter's Tree"] = "Sapin de Grand-père Hiver"
 L["Green Helper Box"] = "Boîte à assistant vert"
@@ -7706,8 +7650,7 @@ L["High Priest of Ordos"] = "Grand prêtre d’Ordos"
 L["Highborne"] = "Bien-né"
 L["Highland Guppy School"] = "Banc de guppys des Hautes terres"
 L["Highland Mixed School"] = "Banc mixte des Hautes-terres"
---[[Translation missing --]]
-L["Highland Mustang"] = "Highland Mustang"
+L["Highland Mustang"] = "Mustang des hautes-terres"
 L["Highmountain Elderhorn"] = "Noble-bois de Haut-Roc"
 L["Highmountain Salmon School"] = "Banc de saumons de Haut-Roc"
 L["Highmountain Tauren"] = "Taurène de Haut-Roc"
@@ -7715,11 +7658,9 @@ L["Holiday"] = "Saisonnier"
 L["Holiday reminders"] = "Rappels des événements saisonniers"
 L["Hollow Reed"] = "Roseau creux"
 L["Holy Lightsphere"] = "Sphère de Lumière sacrée"
---[[Translation missing --]]
-L["Horde controls Stromgarde"] = "Horde controls Stromgarde"
+L["Horde controls Stromgarde"] = "La Horde contrôle Stromgarde"
 L["Horde only"] = "Horde uniquement"
---[[Translation missing --]]
-L["Horrific Apparition"] = "Horrific Apparition"
+L["Horrific Apparition"] = "Apparition horrifique"
 L["Houndmaster Kerrax"] = "Dresseur de molosses Kerrax"
 L["How likely the item is to appear, expressed as 1 in X, where X is the number you enter here."] = "La probabilité qu'un objet apparaisse, exprimé sous format 1 pour X, où X est le nombre que vous entrez."
 L["How many attempts you've made so far."] = "Combien d'essais vous avez fait à ce jour."
@@ -7742,8 +7683,7 @@ L["Import/Export"] = true
 L["imported successfully"] = "importé avec succès"
 L["Incendicite Mineral Vein"] = "Filon d'incendicite"
 L["Indurium Mineral Vein"] = "Filon d'indurium"
---[[Translation missing --]]
-L["Inky"] = "Inky"
+L["Inky"] = "Poulpirate"
 L["Install TomTom to enable waypoint creation."] = "Installez TomTom pour activer la création de points de navigation."
 L["Instance Difficulty"] = "Difficulté de l'instance"
 L["Instant Arcane Sanctum Security Kit"] = "Kit sécurité instantané du sanctum des arcanes"
@@ -7764,37 +7704,28 @@ L["Jewel Danio School"] = "Banc de danios joyaux"
 L["Jewel of Maddening Whispers"] = "Joyau de murmures démentiels"
 L["Ji-Kun Hatchling"] = "Bébé de Ji Kun"
 L["Jingling Bell"] = "Clochette tintinnabulante"
---[[Translation missing --]]
-L["Jinyu Light Globe"] = "Jinyu Light Globe"
---[[Translation missing --]]
-L["Juvenile Brineshell"] = "Juvenile Brineshell"
+L["Jinyu Light Globe"] = "Globe lumineux jinyu"
+L["Juvenile Brineshell"] = "Jeune saumécaille"
 L["Kael'thas Sunstrider"] = "Kael’thas Haut-Soleil"
 L["Kaldorei Light Globe"] = "Globe lumineux kaldorei"
 L["Kal'tik the Blight"] = "Kal’tik le Chancre"
 L["Kang's Bindstone"] = "Pierre de lien de Kang"
 L["Khorium Vein"] = "Filon de khorium"
 L["Kill Statistic IDs"] = "Identifiants de statistiques de mises à mort."
---[[Translation missing --]]
-L["Kindleweb Spiderling"] = "Kindleweb Spiderling"
---[[Translation missing --]]
-L["Knight-Captain Aldrin"] = "Knight-Captain Aldrin"
+L["Kindleweb Spiderling"] = "Jeune araignée brûletoile"
+L["Knight-Captain Aldrin"] = "Chevalier-capitaine Aldrin"
 L["Knockoff Blingtron"] = "Bling-o-tron de contrefaçon"
---[[Translation missing --]]
-L["Kor'gresh Coldrage"] = "Kor'gresh Coldrage"
+L["Kor'gresh Coldrage"] = "Kor'gresh Froiderage"
 L["Kor'kron Juggernaut"] = "Mastodonte kor’kron"
 L["Kovok"] = true
---[[Translation missing --]]
-L["Kovork"] = "Kovork"
---[[Translation missing --]]
-L["Kovork Kostume"] = "Kovork Kostume"
+L["Kovork"] = true
+L["Kovork Kostume"] = "Kostume de Kovork"
 L["Krasarang Paddlefish School"] = "Banc de poissons-spatules de Krasarang"
---[[Translation missing --]]
-L["Kunchong Hatchling"] = "Kunchong Hatchling"
+L["Kunchong Hatchling"] = "Jeune kunchong"
 L["Kyparite Deposit"] = "Gisement de kyparite"
 L["Lambent Mana Ray"] = "Raie de mana diaprée"
 L["Land Shark"] = "Requin terrestre"
---[[Translation missing --]]
-L["Lane Snapper School"] = "Lane Snapper School"
+L["Lane Snapper School"] = "Banc de vivaneaux rayés"
 L["Large Obsidian Chunk"] = "Grand morceau d'obsidienne"
 L["Large Pool of Brew Frenzied Emperor Salmon"] = "Grande réserve de saumons empereurs affolés par la bière"
 L["Large Pool of Crowded Redbelly Mandarin"] = "Grande réserve de mandarins ventre-rouge agglutinés"
@@ -7807,8 +7738,7 @@ L["Large Swarm of Panicked Paddlefish"] = "Grande colonie de poissons-spatules p
 L["Large Tangled Mantis Shrimp Cluster"] = "Grand amas de crevettes-mantes enchevêtrées"
 L["Last Month"] = "Mois dernier :"
 L["Last Week"] = "Semaine dernière :"
---[[Translation missing --]]
-L["Laughing Stonekin"] = "Laughing Stonekin"
+L["Laughing Stonekin"] = "Pierrelet rieur"
 L["Left"] = "Gauche"
 L["Legion"] = "Légion"
 L["Legion Communication Orb"] = "Orbe de communication de la Légion"
@@ -7826,10 +7756,8 @@ L["Leywoven Flying Carpet"] = "Tapis volant tellurique"
 L["Life-Binder's Handmaiden"] = "Suivante de la Lieuse-de-vie"
 L["Likelihood"] = "Probabilité"
 L["Lil' Bling"] = "P’tit Bling-Bling"
---[[Translation missing --]]
-L["Lil' Donkey"] = "Lil' Donkey"
---[[Translation missing --]]
-L["Littlehoof"] = "Littlehoof"
+L["Lil' Donkey"] = "P'tit âne"
+L["Littlehoof"] = "Petit-Sabot"
 L["Living Infernal Core"] = "Noyau de brasier infernal"
 L["Living Sandling"] = "Sablon vivant"
 L["Loaded (running in debug mode)"] = "Chargé (lancé en mode de débuggage)"
@@ -7845,16 +7773,12 @@ L["Lump of Coal"] = "Morceau de charbon"
 L["Lunkers can be fished anywhere in Draenor (except in your garrison) after you've obtained a level 3 Fishing Shack and acquired Nat Pagle as a follower."] = "Les malabars peuvent être pêchés n'importe où en Draenor (sauf dans le fief) après avoir obtenu une Cabane de pêche de niveau 3 et recruté Nat Pagle en sujet de fief."
 L["Maddened Chaosrunner"] = "Foule-chaos affolé"
 L["Mage"] = true
---[[Translation missing --]]
-L["Magic Fun Rock"] = "Magic Fun Rock"
---[[Translation missing --]]
-L["Magic Monkey Banana"] = "Magic Monkey Banana"
+L["Magic Fun Rock"] = "Caillou magique rigolo"
+L["Magic Monkey Banana"] = "Banane de singe magique"
 L["Magnataur Hunting Horn"] = "Cor de chasse magnataure"
 L["Major Nanners"] = "Major Sinok"
---[[Translation missing --]]
-L["Mana-Warped Egg"] = "Mana-Warped Egg"
---[[Translation missing --]]
-L["Man-Hunter Rog"] = "Man-Hunter Rog"
+L["Mana-Warped Egg"] = "Œuf déformé par le mana"
+L["Man-Hunter Rog"] = "Rog le Chasseur d'hommes"
 L["Mantid"] = "Mantide"
 L["Mark of Flame"] = "Marque de la flamme"
 L["Method of obtaining"] = "Méthode d'obtention"
@@ -7865,17 +7789,14 @@ L["Minimal"] = "Minimum"
 L["Minion of Grumpus"] = "Serviteur de Grognus"
 L["MiniZep Controller"] = "Contrôles de minizep"
 L["Mirecroak"] = "Fangecoasse"
---[[Translation missing --]]
-L["Mischievous Zephyr"] = "Mischievous Zephyr"
+L["Mischievous Zephyr"] = "Zéphyr espiègle"
 L["Mists of Pandaria"] = true
 L["Mithril Deposit"] = "Gisement de mithril"
 L["Model D1-BB-L3R"] = "Modèle PR-7"
 L["Mogu"] = true
 L["Mojo"] = true
---[[Translation missing --]]
-L["Molok Morion"] = "Molok Morion"
---[[Translation missing --]]
-L["Molok the Crusher"] = "Molok the Crusher"
+L["Molok Morion"] = "Morion de Molok"
+L["Molok the Crusher"] = "Molok l'Anéantisseur"
 L["Monk"] = "Moine"
 L["Moon Moon"] = "Loulou"
 L["Moonfang"] = "Croc-de-Lune"
@@ -7894,10 +7815,8 @@ L["Mr. Smite's Brass Compass"] = "Boussole de cuivre de M. Châtiment"
 L["Muckbreaths's Bucket"] = "Seau de Bourbe-haleine"
 L["Muddy Churning Water"] = "Eaux troubles et agitées"
 L["Mudfish School"] = "Banc d'éperlans"
---[[Translation missing --]]
-L["Mummified Raptor Skull"] = "Mummified Raptor Skull"
---[[Translation missing --]]
-L["Muskflank Calfling"] = "Muskflank Calfling"
+L["Mummified Raptor Skull"] = "Crâne de raptor momifié"
+L["Muskflank Calfling"] = "Bufflon croupe-musquée"
 L["Musselback Sculpin School"] = "Banc de rascasses dos-de-moule"
 L["Muyani"] = true
 L["Mysterious Camel Figurine"] = "Figurine de dromadaire mystérieuse"
@@ -7917,8 +7836,7 @@ L["Night Elf"] = "Elfe de la nuit"
 L["Nightmare Bell"] = "Carillon cauchemardesque"
 L["Nightmare Whelpling"] = "Jeune dragonnet de cauchemar"
 L["Nightshade Sproutling"] = "Jeune pousse de belladone"
---[[Translation missing --]]
-L["Nimar the Slayer"] = "Nimar the Slayer"
+L["Nimar the Slayer"] = "Nimar le Pourfendeur"
 L[ [=[No items to display! Either you've obtained every item, or you have
 one or more options turned on which hide things from the tooltip.]=] ] = "Aucun objet à afficher ! Soit vous avez obtenu tous les objets, soit vous avez une ou des options activées qui cachent des éléments de l'infobulle."
 L["None"] = "Aucun"
@@ -7938,21 +7856,18 @@ L["Obtained by fishing"] = "Obtenu en pêchant"
 L["Obtained by fishing in any water in Ironforge"] = "Obtenu en pêchant n'importe où dans Forgefer."
 L["Obtained by fishing in any water in Orgrimmar"] = "Obtenu en pêchant en n'importe où dans Orgrimmar."
 L["Obtained by fishing in pools located in Terrokar Forest"] = "Obtenu en pêchant dans les bancs de la Forêt de Terrokar."
---[[Translation missing --]]
-L["Obtained by gathering herbs on Argus"] = "Obtained by gathering herbs on Argus"
+L["Obtained by gathering herbs on Argus"] = "Obtenu en cueillant des herbes sur Argus"
 L["Obtained by mining"] = "Obtenu en minant."
 L["Obtained by mining Elementium Vein"] = "Obtenu en minant un filon d'élémentium."
 L["Obtained by opening Crane Nests on the Timeless Isle"] = "Obtenu en ouvrant les Nids de grues sur l'Île du Temps figé."
 L["Obtained by opening Snow Mound in Frostfire Ridge"] = "Obtenu en fouillant un Monticule de neige dans la Crête de Givrefeu."
 L["Obtained by opening Timeless Chests on the Timeless Isle"] = "Obtenu en ouvrant les Coffres intemporels sur l'Île du Temps figé."
---[[Translation missing --]]
-L["Obtained by skinning creatures on Argus"] = "Obtained by skinning creatures on Argus"
+L["Obtained by skinning creatures on Argus"] = "Obtenu en dépeçant des créatures sur Argus"
 L["Obtained by using an item or opening a container"] = "Obtenu en utilisant un objet ou contenu à l'intérieur d'un objet."
 L["Obtained On Your First Attempt"] = "Obtenu au premier essai."
 L["Obtained Quest ID"] = "ID de quête terminée"
 L["Obtained very rarely by fishing in pools located in any expansion zone (not Classic zones)"] = "Obtenu très rarement en pêchant dans les bancs situés dans une zone d'une extension (pas dans les zones classiques)."
---[[Translation missing --]]
-L["Octopode Fry"] = "Octopode Fry"
+L["Octopode Fry"] = "Petit octopode"
 L["Odd Polished Stone"] = "Etrange pierre polie"
 L["Odd Twilight Egg"] = "Oeuf du Crépuscule étrange"
 L["Ogre"] = true
@@ -7969,8 +7884,7 @@ L["One of the Map IDs you entered (%s) is incorrect. Please enter numbers larger
 L["One of the zones or sub-zones you entered (%s) cannot be found. Check that it is spelled correctly, and is either US English or your client's local language."] = "L'une des zones ou sous-zones que vous avez saisies (%s) ne peut être trouvée. Vérifiez si l'orthographe est correcte, et est en Anglais US ou dans la langue de votre client."
 L["Only announce when found"] = "Annoncer uniquement quand trouvé"
 L["Only Raid Finder difficulty"] = "Uniquement en recherche de raid."
---[[Translation missing --]]
-L["Oomgut Ritual Drum"] = "Oomgut Ritual Drum"
+L["Oomgut Ritual Drum"] = "Tambour rituel oomgot"
 L["Ooze Covered Gold Vein"] = "Filon d'or couvert de limon"
 L["Ooze Covered Mithril Deposit"] = "Gisement de mithril couvert de vase"
 L["Ooze Covered Rich Thorium Vein"] = "Riche filon de thorium couvert de limon"
@@ -7984,8 +7898,7 @@ L["Orphaned Felbat"] = "Gangroptère orphelin"
 L["Other"] = "Autre"
 L["Other Requirements"] = "Autres prérequis"
 L["Overcomplicated Controller"] = "Régulateur excessivement complexe"
---[[Translation missing --]]
-L["Overseer Krix"] = "Overseer Krix"
+L["Overseer Krix"] = "Surveillant Krix"
 L["Paladin"] = true
 L["Pandaren"] = "Pandarène"
 L["Pandaren Firework Launcher"] = "Lanceur de feux d’artifice pandaren"
@@ -7998,14 +7911,11 @@ L["Periwinkle Calf"] = "Jeune potamodonte pervenche"
 L["Phoenix Hatchling"] = "Jeune phénix"
 L["Pilfered Sweeper"] = "Balayeur chapardé"
 L["Pineapple Lounge Cushion"] = "Coussin de salon ananas"
---[[Translation missing --]]
-L["Plagued Egg"] = "Plagued Egg"
---[[Translation missing --]]
-L["Plaguefeather"] = "Plaguefeather"
+L["Plagued Egg"] = "Œuf pestiféré"
+L["Plaguefeather"] = "Pesteplume"
 L["Play a sound when groups are found"] = "Jouer un son lorsque des groupes sont trouvés"
 L["Players have a personal loot chance to obtain this item."] = "Les joueurs ont une chance d'obtenir cet objet en butin personnel."
---[[Translation missing --]]
-L["Playful Frostkin"] = "Playful Frostkin"
+L["Playful Frostkin"] = "Givrelet joueur"
 L["Please enter a comma-separated list of item IDs."] = "Veuillez entrer une liste d'identifiants d'objets séparés par des virgules."
 L["Please enter a comma-separated list of NPC IDs."] = "Veuillez entrer une liste d'identifiants de PNJs séparés par des virgules."
 L["Please enter a comma-separated list of Quest IDs."] = "Veuillez entrer une liste d'identifiants de quêtes séparés par des virgules."
@@ -8014,8 +7924,7 @@ L["Please enter a comma-separated list of zones."] = "Veuillez entrer une liste 
 L["Pond Nettle"] = "Ortie d'eau douce"
 L["Pool of Fire"] = "Flaque de feu"
 L["Porcupette"] = "Porc-épique"
---[[Translation missing --]]
-L["Poro"] = "Poro"
+L["Poro"] = true
 L["Priest"] = "Prêtre"
 L["Primal Egg"] = "Oeuf primordial"
 L["Primary tooltip hide delay"] = "Délai de disparition de l'infobulle principale"
@@ -8036,14 +7945,11 @@ L["Put \"Rarity:\" on a separate line"] = "Ajouter \"Rarity :\" sur une ligne s�
 L["Putricide's Alchemy Supplies"] = "Fournitures d'alchimiste de Putricide"
 L["Pygmy Direhorn"] = "Navrecorne pygmée"
 L["Pyrite Deposit"] = "Gisement de pyrite"
---[[Translation missing --]]
-L["Qinsho's Eternal Hound"] = "Qinsho's Eternal Hound"
---[[Translation missing --]]
-L["Qroshekx"] = "Qroshekx"
+L["Qinsho's Eternal Hound"] = "Molosse éternel de Qinsho"
+L["Qroshekx"] = true
 L["Quest ID"] = "ID de quête"
 L["Quivering Blob"] = "Goutte tremblante"
---[[Translation missing --]]
-L["Ragebeak"] = "Ragebeak"
+L["Ragebeak"] = "Ragebec"
 L["Raid Finder instance (legacy content; fixed at 25 players)"] = "Recherche de raid (contenu héritage, fixé à 25 joueurs)"
 L["Raid Finder or Flexible difficulty"] = "Difficulté recherche de raid ou dynamique"
 L["Rarity has %d |4coordinate:coordinates; for this item."] = "Rarity a %d |4coordonnée:coordonnées; pour cet objet."
@@ -8051,8 +7957,7 @@ L["Rarity is loading..."] = "Chargement de Rarity..."
 L["Rarity Item Pack String"] = "Lien de pack d'objets Rarity"
 L["Rarity Tooltip Options"] = "Options des infobulles de Rarity"
 L["Rarity: "] = "Rarity : "
---[[Translation missing --]]
-L["Rasboralus School"] = "Rasboralus School"
+L["Rasboralus School"] = "Banc de rasboralus"
 L["Razzashi Hatchling"] = "Bébé raptor razzashi"
 L["Rebellious Imp"] = "Diablotin rebelle"
 L["Red Conservatory Scroll"] = "Parchemin rouge du Conservatorium"
@@ -8062,11 +7967,9 @@ L["Red Qiraji Resonating Crystal"] = "Cristal de résonance qiraji rouge"
 L["Red Wooden Sled"] = "Luge en bois rouge"
 L["Redbelly Mandarin School"] = "Banc de mandarins ventre-rouge"
 L["Red-Hot Coal"] = "Charbon brûlant"
---[[Translation missing --]]
-L["Redtail Loach School"] = "Redtail Loach School"
+L["Redtail Loach School"] = "Loche à caudale rouge"
 L["Reef Octopus Swarm"] = "Banc de poulpes des récifs"
---[[Translation missing --]]
-L["Regenerating Banana Bunch"] = "Regenerating Banana Bunch"
+L["Regenerating Banana Bunch"] = "Régime de bananes régénérant"
 L["Reins of the Amber Primordial Direhorn"] = "Rênes de navrecorne primordial d’ambre"
 L["Reins of the Astral Cloud Serpent"] = "Rênes de serpent-nuage astral"
 L["Reins of the Azure Drake"] = "Rênes de drake azur"
@@ -8123,8 +8026,7 @@ L["Rough-Hewn Remote"] = "Télécommande mal taillée"
 L["Ruby Droplet"] = "Gouttelette rubis"
 L["Rukdug"] = true
 L["Runescale Koi School"] = "Banc de koïs runécailles"
---[[Translation missing --]]
-L["Ruul Onestone"] = "Ruul Onestone"
+L["Ruul Onestone"] = "Ruul Unepierre"
 L["S.F.E. Interceptor"] = "Intercepteur M.G.U."
 L["Sabuul"] = true
 L["Sack of Spectral Spiders"] = "Sac d’araignées spectrales"
@@ -8133,17 +8035,14 @@ L["Sagefish School"] = "Banc de sagerelles"
 L["Sahn Tidehunter"] = "Sahn Chasse Marée"
 L["Salyin Battle Banner"] = "Bannière de bataille salyin"
 L["Salyin Warscout"] = "Eclaireur de guerre salyin"
---[[Translation missing --]]
-L["Sand Shifter School"] = "Sand Shifter School"
---[[Translation missing --]]
-L["Sandshell Chitterer"] = "Sandshell Chitterer"
+L["Sand Shifter School"] = "Banc de trouble-sable"
+L["Sandshell Chitterer"] = "Craqueteur carasable"
 L["Saronite Deposit"] = "Gisement de saronite"
 L["Sassy Imp"] = "Diablotin insolent"
 L["Satyr Charm"] = "Charme de satyre"
 L["Savage Cub"] = "Bébé tigre sauvage"
 L["Savage Piranha Pool"] = "Bassin de piranhas sauvages"
---[[Translation missing --]]
-L["Scabby"] = "Scabby"
+L["Scabby"] = "Galeux"
 L["Scale"] = "Echelle"
 L["Scenario instance"] = "Scénario"
 L["Scepter of Azj'Aqir"] = "Sceptre d'Azj'Aqir"
@@ -8155,8 +8054,7 @@ L["Schooner Wreckage Pool"] = "Débris de goélette"
 L["Scintillating Mana Ray"] = "Raie de mana scintillante"
 L["Scorched Stone"] = "Pierre brûlée"
 L["Scraps"] = "Loque"
---[[Translation missing --]]
-L["Scuttle"] = "Scuttle"
+L["Scuttle"] = "Galure"
 L["Sea Calf"] = "Bébé phoque"
 L["Sea Pony"] = "Jeune hippocampe"
 L["Sea Scorpion School"] = "Banc de scorpions de mer"
@@ -8168,17 +8066,14 @@ L["Servant's Bell"] = "Cloche du serviteur"
 L["Session"] = true
 L["Set this to the achievement ID which indicates this item has been obtained. This is useful for items which do not yield mounts or pets, but which do grant an achievement when obtained, such as Old Crafty or Old Ironjaw. Leave this blank for mounts and pets. Use WowHead to find achievement IDs."] = "Saisissez l'identifiant du haut fait qui indique que cet objet a été obtenu. Ceci est utile pour les objets qui ne confèrent pas de monture ou de mascotte, mais qui attribuent un haut fait, tel que Vieux malin ou Vieux gueule-de-fer. Laissez vide pour les montures et les mascottes. Utilisez WowHead pour obtenir les identifiants des haut faits."
 L["Severed Tentacle"] = "Tentacule tranché"
---[[Translation missing --]]
-L["Shackled Ur'zul"] = "Shackled Ur'zul"
+L["Shackled Ur'zul"] = "Ur'zul entravé"
 L["Shadowhide Pearltusk"] = "Brocheperle sombrepoil"
 L["Shadowy Pile of Bones"] = "Pile d'ossements ténébreuse"
 L["Shaman"] = "Chaman"
 L["Shard of Archstone"] = "Éclat de la clé-de voûte"
---[[Translation missing --]]
-L["Shard of Fozruk"] = "Shard of Fozruk"
+L["Shard of Fozruk"] = "Éclat de Fozruk"
 L["Shard of Supremus"] = "Eclat de Supremus"
---[[Translation missing --]]
-L["Sharkbait's Favorite Crackers"] = "Sharkbait's Favorite Crackers"
+L["Sharkbait's Favorite Crackers"] = "Biscuits préférés de Jacasse"
 L["Sha-Touched Spinefish"] = "Poisson-hérisson touché par les sha"
 L["Shell of Tide-Calling"] = "Ecaille d’appel des flots"
 L["Shift-Click to link your progress to chat"] = "Maj+Clic pour créer un lien de votre progression dans la fenêtre de discussion."
@@ -8195,28 +8090,23 @@ L["Show Text"] = "Afficher le texte"
 L["Show Time column"] = "Colonne Durée"
 L["Show Zone column"] = "Colonne Zone"
 L["Sightless Eye"] = "Oeil clos"
---[[Translation missing --]]
-L["Silithid Mini-Tank"] = "Silithid Mini-Tank"
+L["Silithid Mini-Tank"] = "Char miniature silithide"
 L["Silver Vein"] = "Filon d'argent"
 L["Silver-Plated Turkey Shooter"] = "Dindoflingue plaqué argent"
 L["Since last drop"] = "Depuis la dernière obtention"
---[[Translation missing --]]
-L["Singer"] = "Singer"
+L["Singer"] = true
 L["Sira's Extra Cloak"] = "Cape de rechange de Sira"
---[[Translation missing --]]
-L["Sister Subversia"] = "Sister Subversia"
+L["Sister Subversia"] = "Soeur Subversia"
 L["Sister Subversiva"] = "Soeur Subversia"
 L["Skreeg the Devourer"] = "Skreeg le Dévoreur"
 L["Skrillix"] = true
 L["Skull of a Frozen Whelp"] = "Crâne de dragonnet gelé"
 L["Skull of Corruption"] = "Crâne de corruption"
---[[Translation missing --]]
-L["Skullripper"] = "Skullripper"
+L["Skullripper"] = "Arrache-Crâne"
 L["Skunky Alemental"] = "Elémenbière puant"
 L["Sky-Bo"] = "Ciel Bo"
 L["Skyshard"] = "Eclat céleste"
---[[Translation missing --]]
-L["Slimy Mackerel School"] = "Slimy Mackerel School"
+L["Slimy Mackerel School"] = "Banc de maquereaux visqueux"
 L["Slithershock Elver"] = "Civelle foudrondule"
 L["Small Obsidian Chunk"] = "Petit morceau d'obsidienne"
 L["Small Thorium Vein"] = "Petit filon de thorium"
@@ -8225,11 +8115,9 @@ L["Smelly Gravestone"] = "Pierre tombale puante"
 L["Smoky Direwolf"] = "Loup redoutable anthracite"
 L["Smoldering Egg of Millagazor"] = "Oeuf fumant de Millagazor"
 L["Smoldering Treat"] = "Friandise fumante"
---[[Translation missing --]]
-L["Snapper"] = "Snapper"
+L["Snapper"] = "Pince-bec"
 L["Snarly's Bucket"] = "Seau de Patibulle"
---[[Translation missing --]]
-L["Snort"] = "Snort"
+L["Snort"] = "Rodéo"
 L["Snow Mound"] = "Monticule de neige"
 L["Snowman Kit"] = "Boîte de bonhomme de neige"
 L["Snowy Panda"] = "Panda neigeux"
@@ -8241,16 +8129,14 @@ L["Sorting by difficulty"] = "Tri par difficulté"
 L["Sorting by name"] = "Tri par nom"
 L["Sorting by percent complete"] = "Tri par pourcentage d'accomplissement"
 L["Sorting by zone"] = "Tri par zone"
---[[Translation missing --]]
-L["Sparkleshell Sandcrawler"] = "Sparkleshell Sandcrawler"
+L["Sparkleshell Sandcrawler"] = "Clampant nacrétoile"
 L["Sparse Firefin Snapper School"] = "Banc épars de lutjans de nagefeu"
 L["Sparse Oily Blackmouth School"] = "Banc clairsemé de bouches-noires huileux"
 L["Sparse Schooner Wreckage"] = "Débris clairsemés de goélette"
 L["Spawn of Horridon"] = "Rejeton d’Horridon"
 L["Special case"] = "Cas spécial"
 L["Spectral Bell"] = "Cloche spectrale"
---[[Translation missing --]]
-L["Spectral Visage"] = "Spectral Visage"
+L["Spectral Visage"] = "Visage spectral"
 L["Spell ID"] = "ID du sort"
 L["Spiky Collar"] = "Collier à pointes"
 L["Spineclaw Crab"] = "Crabe pincépine"
@@ -8259,10 +8145,8 @@ L["Spire of Spite"] = "Flèche de mépris"
 L["Sporefish School"] = "Banc de poissons-spores"
 L["Sprite Darter Egg"] = "Oeuf de fée fléchetteuse"
 L["Squadron Commander Vishax"] = "Commandant d'escadron Vishax"
---[[Translation missing --]]
-L["Squawks"] = "Squawks"
---[[Translation missing --]]
-L["Ssinkrix"] = "Ssinkrix"
+L["Squawks"] = "Caquet"
+L["Ssinkrix"] = true
 L["Statistics"] = "Statistiques"
 L["Steam Pump Flotsam"] = "Détritus de la pompe à vapeur"
 L["Sting Ray Pup"] = "Jeune pastenague"
@@ -8277,20 +8161,16 @@ L["Sun Sproutling"] = "Jeune pousse solaire"
 L["Sunblade Rune of Activation"] = "Rune d’activation lamesoleil"
 L["Sunfire Kaliri"] = "Kaliri feu-solaire"
 L["Sunfur Panda"] = "Panda crin-de-soleil"
---[[Translation missing --]]
-L["Sunscale Hatchling"] = "Sunscale Hatchling"
---[[Translation missing --]]
-L["Surf Jelly"] = "Surf Jelly"
+L["Sunscale Hatchling"] = "Jeune solécaille"
+L["Surf Jelly"] = "Méduse des vagues"
 L["Swarm of Panicked Paddlefish"] = "Colonie de poissons-spatules paniqués"
---[[Translation missing --]]
-L["Swift Albino Raptor"] = "Swift Albino Raptor"
+L["Swift Albino Raptor"] = "Raptor albinos véloce"
 L["Swift Brewfest Ram"] = "Bélier rapide de la fête des Brasseurs"
 L["Swift White Hawkstrider"] = "Faucon-pérégrin blanc rapide"
 L["Swift Zulian Panther"] = "Panthère zulienne rapide"
 L["Syd the Squid"] = "Syd le calmar"
 L["Sylvia Hartshorn"] = "Sylvia Cerfbois"
---[[Translation missing --]]
-L["Syndicate Mask"] = "Syndicate Mask"
+L["Syndicate Mask"] = "Masque du Syndicat"
 L["Tainted Core"] = "Noyau contaminé"
 L["Tainted Maulclaw"] = "Tranchepince impur"
 L["Take screenshots"] = "Captures d'écran"
@@ -8298,8 +8178,7 @@ L["Tangled Mantis Shrimp Cluster"] = "Amas de crevettes-mantes enchevêtrées"
 L["Teeming Firefin Snapper School"] = "Banc grouillant de lutjans de nagefeu"
 L["Teeming Floating Wreckage"] = "Débris flottants grouillants"
 L["Teeming Oily Blackmouth School"] = "Banc grouillant de bouches-noires huileux"
---[[Translation missing --]]
-L["Teeny Titan Orb"] = "Teeny Titan Orb"
+L["Teeny Titan Orb"] = "Minuscule orbe de titan"
 L["Terrorfist"] = "Poing-de-terreur"
 L["Texture"] = true
 L["The boss name, in English (enUS), which appears in the instance lock inside the Raid Info panel. The name will be translated to your local language automatically using the LibBoss library (if detection fails, check that the translation exists in this library). IMPORTANT: This method of defeat detection only works when the boss exists in one place at a time. Certain bosses, such as Ragnaros and Kael'thas Sunstrider, exist in two instances at once. Those bosses can be used here, but killing them in either of their instances will result in this Defeat Detection triggering."] = "Le nom du boss, en anglais (enUS), qui apparaît sur le verrouillage d'instance dans le panneau Infos Raid. Le nom sera automatiquement traduit à la langue de votre jeu en utilisant la bibliothèque LibBoss (si la détection échoue, vérifiez que la traduction existe dans cette bibliothèque). IMPORTANT : cette méthode de détection fonctionne uniquement si le boss n'existe que dans un endroit à la fois. Certains boss, comme Ragnaros ou Kael'thas existent dans deux instances à la fois. Ces boss peuvent être utilisés ici, mais les tuer dans n'importe laquelle de leurs instances activera cette méthode de détection."
@@ -8309,8 +8188,7 @@ L["The Heartbreaker"] = "Le Bourreau des cœurs"
 L["The Horseman's Reins"] = "Les rênes du Cavalier"
 L["The item ID that you need to collect. Rarity uses the number of this item that you have in your bags as your progress. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must not be used by another item."] = "L'identifiant de l'objet que vous devez collecter. Rarity utilise le nombre de ces objets présents dans vos sacs comme progression. Utilisez WowHead ou un service similaire pour obtenir les identifiants des objets. Ce numéro doit être valide et unique."
 L["The item ID to track. This is the item as it appears in your inventory or in a loot window. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must be unique."] = "L'identifiant de l'objet à suivre. Ceci est l'objet tel qu'il apparaît dans vos sacs ou dans une fenêtre de butin. Utilisez WowHead ou un service similaire pour trouver les identifiants des objets. Ce numéro doit être valide et unique."
---[[Translation missing --]]
-L["The Lion's Roar"] = "The Lion's Roar"
+L["The Lion's Roar"] = "Le Rugissement du Lion"
 L["The Many-Faced Devourer"] = "Le Dévoreur aux cent visages"
 L["The name you entered is already being used by another item. Please enter a unique name."] = "Le nom que vous avez entré est déjà utilisé par un autre objet. Veuillez entrer un nom unique."
 L["The NPC ID of the creature that is spawned when you summon this pet. This is used to track account-wide battle pets."] = "L'identifiant de la créature qui apparaît lorsque vous invoquez cette mascotte. Ceci est utilisé pour suivre les mascottes de combat liées au compte."
@@ -8335,8 +8213,7 @@ L["This mount is only obtainable by Alliance players"] = "Cette monture est réc
 L["This mount is only obtainable by Horde players"] = "Cette monture est récupérable uniquement par les joueurs de la Horde."
 L["This tab lets you import and export items into and out of your Custom tab."] = "Cet onglet vous permet d'importer et d'exporter des objets depuis votre onglet Personnalisé."
 L["This was a guaranteed drop for players who defeated the encounter when it was current"] = "Ceci était un butin garanti pour les joueurs étant venu à bout de la rencontre lorsqu'elle était d'actualité."
---[[Translation missing --]]
-L["Thistlebrush Bud"] = "Thistlebrush Bud"
+L["Thistlebrush Bud"] = "Bourgeon brousse-chardon"
 L["Thistleleaf Adventurer"] = "Aventurier chardofeuille"
 L["Tiger Gourami School"] = "Banc de gouramis tigres"
 L["Tiger Gourami Slush"] = "Boue de gouramis tigres"
@@ -8347,15 +8224,12 @@ L["Time-Locked Box"] = "Boîte scellée par le temps"
 L["Time-Lost Figurine"] = "Figurine perdue dans le temps"
 L["Timewalker 5-player instance"] = "Donjon marcheur du temps à 5 joueurs"
 L["Tin Vein"] = "Filon d'étain"
---[[Translation missing --]]
-L["Tinder Pup"] = "Tinder Pup"
+L["Tinder Pup"] = "Brandon"
 L["Tiny Crimson Whelpling"] = "Minuscule jeune dragonnet cramoisi"
 L["Tiny Emerald Whelpling"] = "Minuscule jeune dragonnet d'émeraude"
 L["Tiny Fel Engine Key"] = "Minuscule clé de contact gangrenée"
---[[Translation missing --]]
-L["Tiny Grimoire"] = "Tiny Grimoire"
---[[Translation missing --]]
-L["Tiragarde Perch School"] = "Tiragarde Perch School"
+L["Tiny Grimoire"] = "Minuscule grimoire"
+L["Tiragarde Perch School"] = "banc de perche de tiragarde"
 L["Titanium Vein"] = "Veine de titane"
 L[ [=[To create a new item, enter a unique name for the item, and click Okay. The name will be used if the server does not return the item link or if the item is invalid.
 
@@ -8374,10 +8248,8 @@ L["Total"] = true
 L["Total found"] = "Total découvert"
 L["Toxic Wasteling"] = "Gaspi toxique"
 L["Toy or Item"] = "Jouet ou objet"
---[[Translation missing --]]
-L["Toy Siege Tower"] = "Toy Siege Tower"
---[[Translation missing --]]
-L["Toy War Machine"] = "Toy War Machine"
+L["Toy Siege Tower"] = "Tour de siège miniature"
+L["Toy War Machine"] = "Machine de guerre miniature"
 L["Toys & Items"] = "Jouets & Objets"
 L["Track this"] = "Suivre ceci"
 L["Trillium Vein"] = "Filon de trillium"
@@ -8387,15 +8259,13 @@ L["Truesilver Deposit"] = "Gisement de vrai-argent"
 L["Tundra Icehoof"] = "Sabot-glacé de la toundra"
 L["Turn this on if the item requires a group to obtain, but every player gets an equal chance to obtain the item. This currently only applies to some of the holiday mounts. When you turn this on, Rarity will stop lowering your chance to obtain based on the group size."] = "Cochez ceci si l'obtention de l'objet requiert un groupe, mais que chaque joueur a une chance égale de l'obtenir. Ceci ne s'applique actuellement qu'à certaines montures d'évènements saisonniers. Lorsque vous cochez ceci, Rarity cessera de réduire vos chances d'obtenir l'objet en fonction de la taille du groupe."
 L["Turns on a minimap icon for Rarity. Use this option if you don't have an LDB display add-on."] = "Affiche l'icone de la mini-carte de Rarity. Utilise cette option si vous n'avez pas d'addon d'affichage LDB."
---[[Translation missing --]]
-L["Twilight Avenger"] = "Twilight Avenger"
+L["Twilight Avenger"] = "Vengeur du Crépuscule"
 L["Twilight Summoning Portal"] = "Portail d'invocation du Crépuscule"
 L["Type of item"] = "Type d'objet"
 L["Unable to retrieve item information from the server"] = "Impossible de récupérer les informations sur l'objet depuis le serveur."
 L["Unavailable"] = "Non disponible"
 L["Undefeated"] = "Invaincu"
---[[Translation missing --]]
-L["Underrot Crawg Harness"] = "Underrot Crawg Harness"
+L["Underrot Crawg Harness"] = "Harnais de crogg des tréfonds Putrides"
 L["Unknown"] = "Inconnu"
 L["Unlucky"] = "Malchanceux"
 L["unlucky"] = "malchanceux"
@@ -8404,18 +8274,15 @@ L["Unstable Powder Box"] = "Poudrier instable"
 L["Unusual Compass"] = "Boussole insolite"
 L["Use your bonus roll for a chance at this item"] = "Utilisez votre jet de dé bonus pour avoir une chance d'obtenir cet objet."
 L["Usually requires a group of around %d players"] = "Nécessite habituellement un groupe d'environ %d joueurs."
---[[Translation missing --]]
-L["U'taka School"] = "U'taka School"
+L["U'taka School"] = "Banc d'U'taka"
 L["Uuna's Doll"] = "Poupée d'Uuna"
 L["Valarjar Stormwing"] = "Aile-tempête valarjar"
 L["Varga"] = true
 L["Vengeance"] = true
---[[Translation missing --]]
-L["Venomarus"] = "Venomarus"
+L["Venomarus"] = "Venimarus"
 L["Venomtail Skyfin"] = "Ciaileron queue-venin"
 L["Verbose"] = true
---[[Translation missing --]]
-L["Viable Cobra Egg"] = "Viable Cobra Egg"
+L["Viable Cobra Egg"] = "Œuf de cobra viable"
 L["Vibrant Mana Ray"] = "Raie de Mana vibrante"
 L["Vibrating Arcane Crystal"] = "Cristal arcanique vibrant"
 L["Vibrating Stone"] = "Pierre vibrante"
@@ -8425,8 +8292,7 @@ L["Vile Blood of Draenor"] = "Sang infâme de Draenor"
 L["Vile Fiend"] = "Vil indomptable"
 L["Viscidus Globule"] = "Globule de Viscidus"
 L["Void Collar"] = "Collier du Vide"
---[[Translation missing --]]
-L["Voru'kar Leecher"] = "Voru'kar Leecher"
+L["Voru'kar Leecher"] = "Tique voru'kar"
 L["Vrax'thul"] = true
 L["Vrykul"] = true
 L["Warlock"] = "Démoniste"
@@ -8460,8 +8326,7 @@ L["When on, the Time column will be shown in the main tooltip."] = "Affiche la c
 L["When on, the Zone column will be shown in the main tooltip."] = "Affiche la colonne Zone dans l'infobulle principale."
 L["When on, this option hides any item with a drop chance of 1 in 49 or better. The item is merely hidden from the tooltip in order to keep it clean. Items hidden in this fashion are still tracked like normal."] = "Cache tout objet dont le taux d'obtention est d'1 sur 49 ou meilleur. L'objet sera caché de l'infobulle afin de la garder propre mais sera toujours suivi de façon normale."
 L["When you move your mouse out of the Rarity tooltip, it will take this long before it automatically hides itself."] = "Le temps nécessaire avant que l'infobulle Rarity ne disparaissent après avoir passé la souris dessus."
---[[Translation missing --]]
-L["Whiskerwax Candle"] = "Whiskerwax Candle"
+L["Whiskerwax Candle"] = "Bougie cire-moustache"
 L["Whistle of Chromatic Bone"] = "Sifflet en os chromatique"
 L["White Trillium Deposit"] = "Gisement de trillium blanc"
 L["Width"] = "Largeur"
@@ -8470,24 +8335,19 @@ L["Wild Goretusk"] = "Broche-tripes sauvage"
 L["will be imported"] = "sera importé"
 L["Will only drop for druids."] = "Ne tombera que pour les druides."
 L["Wisp in a Bottle"] = "Feu Follet en Bouteille"
---[[Translation missing --]]
-L["Witherbark Direwing"] = "Witherbark Direwing"
---[[Translation missing --]]
-L["Witherbark Gong"] = "Witherbark Gong"
+L["Witherbark Direwing"] = "Redoutaile fanécorce"
+L["Witherbark Gong"] = "Gong fanécorce"
 L["World Tooltip Options"] = "Options des infobulles en jeu"
 L["Worn Troll Dice"] = "Dés trolls usés"
 L["Wrangler Kravos"] = "Kravos le Dompteur"
 L["Wrath of the Lich King"] = true
 L["Wrath-Lord Yarez"] = "Seigneur du courroux Yarez"
 L["Wriggling Darkness"] = "Ténèbres louvoyantes"
---[[Translation missing --]]
-L["Xaarshej"] = "Xaarshej"
---[[Translation missing --]]
-L["Yaungol Oil Stove"] = "Yaungol Oil Stove"
+L["Xaarshej"] = true
+L["Yaungol Oil Stove"] = "Fourneau de naphte yaungol"
 L["Yellow Conservatory Scroll"] = "Parchemin jaune du Conservatorium"
 L["Yesterday"] = "Hier :"
---[[Translation missing --]]
-L["Yogursa"] = "Yogursa"
+L["Yogursa"] = true
 L["You already defeated %d of them."] = "Vous avez déjà vaincu %d d'entre eux."
 L["You already defeated all of them."] = "Vous les avez déjà tous vaincus."
 L["You can turn off holiday reminders as a whole or on an item-by-item basis by visiting the Rarity Options screen."] = "Vous pouvez désactiver les rappels d’événements saisonniers entièrement ou bien objet par objet en vous rendant sur le panneau des options de Rarity."
@@ -8511,10 +8371,8 @@ L["You must enter at least one Statistic ID."] = "Vous devez entrer au moins un 
 L["You must enter at least one zone."] = "Vous devez entrer au moins une zone."
 L["Young Talbuk"] = "Jeune talbuk"
 L["Young Venomfang"] = "Jeune croc-venin"
---[[Translation missing --]]
-L["Zalas Witherbark"] = "Zalas Witherbark"
---[[Translation missing --]]
-L["Zandalari"] = "Zandalari"
+L["Zalas Witherbark"] = "Zalas Fanécorce"
+L["Zandalari"] = true
 L["Zandalari Anklerender"] = "Mordille-chevilles zandalari"
 L["Zandalari Footslasher"] = "Ecrase-pieds zandalari"
 L["Zandalari Kneebiter"] = "Mordilleur zandalari"
@@ -10473,8 +10331,7 @@ L["Ai-Ran the Shifting Cloud"] = "Ай-Жань Летящее Облако"
 L["Albino Buzzard"] = "Гриф-альбинос"
 L["Albino Cavefish School"] = "Косяк слепоглазок-альбиносов"
 L["Albino Chimaeraling"] = "Химерка-альбинос"
---[[Translation missing --]]
-L["Aldrusian Sproutling"] = "Aldrusian Sproutling"
+L["Aldrusian Sproutling"] = "Побег Алдрия"
 L["Algaefin Rockfish School"] = "Косяк водорослевых скорпен"
 L["All players can participate in killing this world boss once per week, regardless of faction"] = "Все игроки (вне зависимости от фракции) раз в неделю могут принять участие в убийстве этого босса"
 L["All raid formats except Raid Finder"] = "Любой формат, кроме поиска рейда"
@@ -10488,12 +10345,10 @@ L["an item already exists by this name, so it will not be imported"] = "пред
 L["an item with the same Item ID already exists, so it will not be imported"] = "предмет с таким ID уже существует, так что он не будет импортирован"
 L["Ancient Mana"] = "Древняя мана"
 L["and %d |4other zone:other zones;"] = "и %d |4другая зона:другие зоны:других зон;"
---[[Translation missing --]]
-L["Angry Egg"] = "Angry Egg"
+L["Angry Egg"] = "Яйцо злобного вида"
 L["Announce"] = "Оповещать"
 L["Announcements"] = "Оповещения"
---[[Translation missing --]]
-L["Announcements will only be triggered when the item is found. When this is off, Rarity will announce every attempt and when the item is found."] = "Announcements will only be triggered when the item is found. When this is off, Rarity will announce every attempt and when the item is found."
+L["Announcements will only be triggered when the item is found. When this is off, Rarity will announce every attempt and when the item is found."] = "Оповещение будет показано только при получении предмета. Если эта опция выключена, Rarity будет оповещать и при каждой попытке и при получении предмета."
 L["Antoran Charhound"] = "Огнедышащая гончая из Анторуса"
 L["Anubisath Idol"] = "Фигурка анубисата"
 L["Any difficulty"] = "Любая сложность"
@@ -10523,8 +10378,7 @@ L["Azure Crane Chick"] = "Птенец лазурного журавля"
 L["Azure Whelpling"] = "Лазурный дракончик"
 L["Baarut the Bloodthirsty"] = "Баруут Кровожадный"
 L["Baarut the Brisk"] = "Баарут Резвый"
---[[Translation missing --]]
-L["Bad Mojo Banana"] = "Bad Mojo Banana"
+L["Bad Mojo Banana"] = "Банан с плохим моджо"
 --[[Translation missing --]]
 L["Barnaby"] = "Barnaby"
 L["Barrier Generator"] = "Генератор барьера"
@@ -10876,8 +10730,7 @@ L["Found after %d attempts!"] = "Обнаружен после %d попыток
 L["Found in: "] = "Найдено в:"
 L["Found on your first attempt!"] = "Обнаружен с первой попытки!"
 L["Fox Kit"] = "Лисенок"
---[[Translation missing --]]
-L["Fozruk"] = "Fozruk"
+L["Fozruk"] = "Фозрук"
 L["Fragment of Anger"] = "Фрагмент Злобы"
 L["Fragment of Desire"] = "Фрагмент Желания"
 L["Fragment of Frozen Bone"] = "Фрагмент заледеневшей кости"
@@ -11008,8 +10861,7 @@ L["Imperial Moth"] = "Императорский мотылек"
 L["Imperial Silkworm"] = "Imperial Silkworm"
 --[[Translation missing --]]
 L["Imp-Master Valessa"] = "Imp-Master Valessa"
---[[Translation missing --]]
-L["Import"] = "Import"
+L["Import"] = "Импорт"
 --[[Translation missing --]]
 L["Import Rarity Item Pack"] = "Import Rarity Item Pack"
 --[[Translation missing --]]
@@ -11620,12 +11472,10 @@ L["Spell ID"] = "ID заклинания"
 L["Spiky Collar"] = "Шипастый ошейник"
 L["Spineclaw Crab"] = "Краб-хребтохват"
 L["Spinefish School"] = "Косяк иглоспинки"
---[[Translation missing --]]
-L["Spire of Spite"] = "Spire of Spite"
+L["Spire of Spite"] = "Шпиль злобы"
 L["Sporefish School"] = "Косяк спороуса"
 L["Sprite Darter Egg"] = "Яйцо летучего хамелеона"
---[[Translation missing --]]
-L["Squadron Commander Vishax"] = "Squadron Commander Vishax"
+L["Squadron Commander Vishax"] = "Командир отряда Вишакс"
 --[[Translation missing --]]
 L["Squawks"] = "Squawks"
 --[[Translation missing --]]
@@ -11647,18 +11497,15 @@ L["Sunfire Kaliri"] = "Солнечно-огненный калири"
 L["Sunfur Panda"] = "Солнечная панда"
 --[[Translation missing --]]
 L["Sunscale Hatchling"] = "Sunscale Hatchling"
---[[Translation missing --]]
-L["Surf Jelly"] = "Surf Jelly"
+L["Surf Jelly"] = "Медуза-волнолов"
 L["Swarm of Panicked Paddlefish"] = "Косяк испуганноого веслоноса"
---[[Translation missing --]]
-L["Swift Albino Raptor"] = "Swift Albino Raptor"
+L["Swift Albino Raptor"] = "Стремительный ящер-альбинос"
 L["Swift Brewfest Ram"] = "Стремительный баран Хмельного фестиваля"
 L["Swift White Hawkstrider"] = "Стремительный белый крылобег"
 L["Swift Zulian Panther"] = "Стремительная зульская пантера"
 L["Syd the Squid"] = "Кальмар Вольдемар"
 L["Sylvia Hartshorn"] = "Сильвия Олений Рог"
---[[Translation missing --]]
-L["Syndicate Mask"] = "Syndicate Mask"
+L["Syndicate Mask"] = "Маска Синдиката"
 L["Tainted Core"] = "Ядро порчи"
 L["Tainted Maulclaw"] = "Нечистый острохват"
 L["Take screenshots"] = "Делать снимки экрана"
@@ -11666,8 +11513,7 @@ L["Tangled Mantis Shrimp Cluster"] = "Стая запутавшихся рако
 L["Teeming Firefin Snapper School"] = "Большой косяк огнеперого луциана"
 L["Teeming Floating Wreckage"] = "Большие плавающие обломки"
 L["Teeming Oily Blackmouth School"] = "Большой косяк масляного черноротика"
---[[Translation missing --]]
-L["Teeny Titan Orb"] = "Teeny Titan Orb"
+L["Teeny Titan Orb"] = "Малюсенькая сфера титанов"
 L["Terrorfist"] = "Кулак Страха"
 L["Texture"] = "Текстура"
 --[[Translation missing --]]
@@ -11679,18 +11525,14 @@ L["The Heartbreaker"] = "Сердцеед"
 L["The Horseman's Reins"] = "Поводья скакуна Всадника без головы"
 L["The item ID that you need to collect. Rarity uses the number of this item that you have in your bags as your progress. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must not be used by another item."] = "ID предмета, который нужно собрать. Rarity использует количество данных предметов в ваших сумках как прогресс. Используйте WowHead или подобное. чтобы выяснить ID. ID должен быть корректным и не использоваться другими предметами."
 L["The item ID to track. This is the item as it appears in your inventory or in a loot window. Use WowHead or a similar service to lookup item IDs. This must be a valid number and must be unique."] = "ID предмета. Определяет предмет, когда он находится в сумке или в окне добычи. Используйте WowHead или подобные сервисы для нахождения ID предметов. Номер должен быть правильным и уникальным."
---[[Translation missing --]]
-L["The Lion's Roar"] = "The Lion's Roar"
---[[Translation missing --]]
-L["The Many-Faced Devourer"] = "The Many-Faced Devourer"
+L["The Lion's Roar"] = "Львиный рык"
+L["The Many-Faced Devourer"] = "Многоликий Пожиратель"
 L["The name you entered is already being used by another item. Please enter a unique name."] = "Введенное название уже используется другим предметом. Используйте уникальное название. "
 L["The NPC ID of the creature that is spawned when you summon this pet. This is used to track account-wide battle pets."] = "НПЦ ID существа, которое появляется, когда вы призываете данного питомца. Используется для отслеживания общих для аккаунта боевых питомцев."
 L["The number of players it takes to obtain the item. This will lower your chances of obtaining the item."] = "Количество игроков требуемое для получения данного предмета. Шанс на получение будет рассчитываться с понижающим коэффициентом."
 L["The Pigskin"] = "Мяч из толстой кожи"
---[[Translation missing --]]
-L["The quest starter item for Reins of the Llothien Prowler"] = "The quest starter item for Reins of the Llothien Prowler"
---[[Translation missing --]]
-L["The quest starter item for Wondrous Wisdomball"] = "The quest starter item for Wondrous Wisdomball"
+L["The quest starter item for Reins of the Llothien Prowler"] = "Этот предмет начинает задание на получение \"Поводьев ллотиенского хищника\""
+L["The quest starter item for Wondrous Wisdomball"] = "Этот предмет начинает задание на получение \"Чудесной сферы мудрости\""
 L["The Rarity Options module has been disabled. Log out and enable it from your add-ons menu."] = "Модуль настроек отключен. Выйдите из игрового мира и включите его в списке игровых модификаций."
 --[[Translation missing --]]
 L["The selected Rarity Item Pack string is invalid."] = "The selected Rarity Item Pack string is invalid."
@@ -11710,10 +11552,8 @@ L["This mount is only obtainable by Horde players"] = "Это ездовое ж�
 --[[Translation missing --]]
 L["This tab lets you import and export items into and out of your Custom tab."] = "This tab lets you import and export items into and out of your Custom tab."
 L["This was a guaranteed drop for players who defeated the encounter when it was current"] = "Гарантированно выпадал при убийстве босса в актуальное время"
---[[Translation missing --]]
-L["Thistlebrush Bud"] = "Thistlebrush Bud"
---[[Translation missing --]]
-L["Thistleleaf Adventurer"] = "Thistleleaf Adventurer"
+L["Thistlebrush Bud"] = "Юный чертополошник"
+L["Thistleleaf Adventurer"] = "Путешественник из племени Листа Чертополоха"
 L["Tiger Gourami School"] = "Косяк тигрового гурами"
 L["Tiger Gourami Slush"] = "Илистый тигровый гурами"
 L["Time"] = "Время"
@@ -11723,15 +11563,12 @@ L["Time-Locked Box"] = "Шкатулка Времени"
 L["Time-Lost Figurine"] = "Статуэтка затерянного во времени"
 L["Timewalker 5-player instance"] = "Путешествие во времени (5 человек)"
 L["Tin Vein"] = "Оловянная жила"
---[[Translation missing --]]
-L["Tinder Pup"] = "Tinder Pup"
+L["Tinder Pup"] = "Трутик"
 L["Tiny Crimson Whelpling"] = "Маленький багровый дракончик"
 L["Tiny Emerald Whelpling"] = "Маленький изумрудный дракончик"
 L["Tiny Fel Engine Key"] = "Маленький ключ от двигателя Скверны"
---[[Translation missing --]]
-L["Tiny Grimoire"] = "Tiny Grimoire"
---[[Translation missing --]]
-L["Tiragarde Perch School"] = "Tiragarde Perch School"
+L["Tiny Grimoire"] = "Гримуарчик"
+L["Tiragarde Perch School"] = "Косяк тирагардского окуня"
 L["Titanium Vein"] = "Залежи титана"
 L[ [=[To create a new item, enter a unique name for the item, and click Okay. The name will be used if the server does not return the item link or if the item is invalid.
 
@@ -11745,18 +11582,15 @@ L["To import a group of items, paste a Rarity Item Pack string into the Import t
 L["Today"] = "Сегодня"
 L["Toggles"] = "Переключатели"
 L["Tol'vir"] = "Тол'вир"
---[[Translation missing --]]
-L["Tooltip can't be shown in combat"] = "Tooltip can't be shown in combat"
+L["Tooltip can't be shown in combat"] = "Подсказка не может быть показана в бою"
 L["Toothy's Bucket"] = "Ведро с Зубастиком"
 L["Torn Invitation"] = "Порванное приглашение"
 L["Total"] = "Всего"
 L["Total found"] = "Всего найдено"
 L["Toxic Wasteling"] = "Токсичный выбросец"
 L["Toy or Item"] = "Игрушка или предмет"
---[[Translation missing --]]
-L["Toy Siege Tower"] = "Toy Siege Tower"
---[[Translation missing --]]
-L["Toy War Machine"] = "Toy War Machine"
+L["Toy Siege Tower"] = "Игрушечная осадная башенка"
+L["Toy War Machine"] = "Игрушечная боевая машинка"
 L["Toys & Items"] = "Игрушки и предметы"
 L["Track this"] = "Отслеживать"
 L["Trillium Vein"] = "Триллиевая жила"
@@ -11766,67 +11600,46 @@ L["Truesilver Deposit"] = "Залежи истинного серебра"
 L["Tundra Icehoof"] = "Тундровый ледяной копытень"
 L["Turn this on if the item requires a group to obtain, but every player gets an equal chance to obtain the item. This currently only applies to some of the holiday mounts. When you turn this on, Rarity will stop lowering your chance to obtain based on the group size."] = "Включите, если для получения предмета требуется группа, но получает его каждый игрок в ней. В частности это относится к многим праздничным маунтам. После включения этой опции, Rarity перестаёт рассчитывать понижающий коэффициент для шанса получения предмета в группе."
 L["Turns on a minimap icon for Rarity. Use this option if you don't have an LDB display add-on."] = "Включить значок около миникарты."
---[[Translation missing --]]
-L["Twilight Avenger"] = "Twilight Avenger"
---[[Translation missing --]]
-L["Twilight Summoning Portal"] = "Twilight Summoning Portal"
+L["Twilight Avenger"] = true
+L["Twilight Summoning Portal"] = "Сумеречный портал призыва"
 L["Type of item"] = "Тип предмета"
---[[Translation missing --]]
-L["Unable to retrieve item information from the server"] = "Unable to retrieve item information from the server"
+L["Unable to retrieve item information from the server"] = "Невозможно получить информацию о предмете с сервера"
 L["Unavailable"] = "Недоступно"
 L["Undefeated"] = "Не повержен"
---[[Translation missing --]]
-L["Underrot Crawg Harness"] = "Underrot Crawg Harness"
+L["Underrot Crawg Harness"] = "Упряжь крога из Подгнилья"
 L["Unknown"] = "Неизвестно"
 L["Unlucky"] = "Невезучий"
 L["unlucky"] = "невезучий"
 L["Unscathed Egg"] = "Неповрежденное яйцо"
---[[Translation missing --]]
-L["Unstable Powder Box"] = "Unstable Powder Box"
+L["Unstable Powder Box"] = "Нестабильная коробка с порохом"
 L["Unusual Compass"] = "Необычный компас"
 L["Use your bonus roll for a chance at this item"] = "Используй бонусный бросок, ради шанса получить этот предмет"
 L["Usually requires a group of around %d players"] = "Обычно требуется группа из %d игроков"
---[[Translation missing --]]
-L["U'taka School"] = "U'taka School"
---[[Translation missing --]]
-L["Uuna's Doll"] = "Uuna's Doll"
---[[Translation missing --]]
-L["Valarjar Stormwing"] = "Valarjar Stormwing"
---[[Translation missing --]]
-L["Varga"] = "Varga"
+L["U'taka School"] = "Косяк у'таки"
+L["Uuna's Doll"] = "Кукла Ууны"
+L["Valarjar Stormwing"] = "Штормокрыл валарьяров"
+L["Varga"] = "Варга"
 L["Vengeance"] = "Отмщение"
---[[Translation missing --]]
-L["Venomarus"] = "Venomarus"
---[[Translation missing --]]
-L["Venomtail Skyfin"] = "Venomtail Skyfin"
+L["Venomarus"] = "Ядомар"
+L["Venomtail Skyfin"] = "Ядовитый небесный скат"
 L["Verbose"] = "Избыточный"
---[[Translation missing --]]
-L["Viable Cobra Egg"] = "Viable Cobra Egg"
---[[Translation missing --]]
-L["Vibrant Mana Ray"] = "Vibrant Mana Ray"
+L["Viable Cobra Egg"] = "Целое яйцо кобры"
+L["Vibrant Mana Ray"] = "Пурпурный манаскат"
 L["Vibrating Arcane Crystal"] = "Дрожащий магический кристалл"
---[[Translation missing --]]
-L["Vibrating Stone"] = "Vibrating Stone"
---[[Translation missing --]]
-L["Vigilant Kuro"] = "Vigilant Kuro"
---[[Translation missing --]]
-L["Vigilant Thanos"] = "Vigilant Thanos"
+L["Vibrating Stone"] = "Вибрирующий камень"
+L["Vigilant Kuro"] = "Дозорный Куро"
+L["Vigilant Thanos"] = "Дозорный Танос"
 L["Vile Blood of Draenor"] = "Порченная кровь Дренора"
---[[Translation missing --]]
-L["Vile Fiend"] = "Vile Fiend"
+L["Vile Fiend"] = "Злобное отродье"
 L["Viscidus Globule"] = "Нечистая капля"
 L["Void Collar"] = "Ошейник Бездны"
---[[Translation missing --]]
-L["Voru'kar Leecher"] = "Voru'kar Leecher"
---[[Translation missing --]]
-L["Vrax'thul"] = "Vrax'thul"
+L["Voru'kar Leecher"] = "Вору'карский пиявец"
+L["Vrax'thul"] = "Вракс'тул"
 L["Vrykul"] = "Врайкулы"
---[[Translation missing --]]
-L["Warlock"] = "Warlock"
+L["Warlock"] = "Чернокнижник"
 L["Warlords of Draenor"] = true
 L["Warm Arcane Crystal"] = "Теплый магический кристалл"
---[[Translation missing --]]
-L["Warmage Silva"] = "Warmage Silva"
+L["Warmage Silva"] = "Боевой маг Сильва"
 L["Warning Sign"] = "Предупредительный знак"
 L["Warrior"] = "Воин"
 L["Warsong Direfang"] = "Лютоклык клана Песни Войны"
@@ -11856,8 +11669,7 @@ L["When on, the Time column will be shown in the main tooltip."] = "Когда �
 L["When on, the Zone column will be shown in the main tooltip."] = "Когда вкл. колонка Зоны показывается в основной подсказке."
 L["When on, this option hides any item with a drop chance of 1 in 49 or better. The item is merely hidden from the tooltip in order to keep it clean. Items hidden in this fashion are still tracked like normal."] = "Когда включена, данная опция скрывает все предметы с шансом получения 1 из 49 или лучше. Предмет просто скрыт на подсказке, чтобы не загромождать ее. Предметы, скрытые таким образом, по прежнему отслеживаются как обычно."
 L["When you move your mouse out of the Rarity tooltip, it will take this long before it automatically hides itself."] = "Длительность задержки перед автоматическим скрытием подсказки, после перемещения курсора мышки."
---[[Translation missing --]]
-L["Whiskerwax Candle"] = "Whiskerwax Candle"
+L["Whiskerwax Candle"] = "Свеча из воска для усов"
 L["Whistle of Chromatic Bone"] = "Костяной свисток"
 L["White Trillium Deposit"] = "Залежи белой триллиевой руды"
 L["Width"] = "Ширина"
@@ -11866,27 +11678,20 @@ L["Wild Goretusk"] = "Дикий кровоклык"
 L["will be imported"] = "будет импортировано"
 L["Will only drop for druids."] = "Падает только друидам."
 L["Wisp in a Bottle"] = "Огонек в бутылке"
---[[Translation missing --]]
-L["Witherbark Direwing"] = "Witherbark Direwing"
---[[Translation missing --]]
-L["Witherbark Gong"] = "Witherbark Gong"
+L["Witherbark Direwing"] = "Лютокрыл племени Сухокожих"
+L["Witherbark Gong"] = "Гонг племени Сухокожих"
 L["World Tooltip Options"] = "Глобальные настройки подсказки"
 L["Worn Troll Dice"] = "Потертая тролльская игральная кость"
---[[Translation missing --]]
-L["Wrangler Kravos"] = "Wrangler Kravos"
+L["Wrangler Kravos"] = "Пастух Кравос"
 L["Wrath of the Lich King"] = true
---[[Translation missing --]]
-L["Wrath-Lord Yarez"] = "Wrath-Lord Yarez"
+L["Wrath-Lord Yarez"] = "Повелитель гнева Ярез"
 L["Wriggling Darkness"] = "Извивающаяся тьма"
---[[Translation missing --]]
-L["Xaarshej"] = "Xaarshej"
+L["Xaarshej"] = "Ксааршедж"
 --[[Translation missing --]]
 L["Yaungol Oil Stove"] = "Yaungol Oil Stove"
---[[Translation missing --]]
-L["Yellow Conservatory Scroll"] = "Yellow Conservatory Scroll"
+L["Yellow Conservatory Scroll"] = "Желтый свиток Консерватория"
 L["Yesterday"] = "Вчера"
---[[Translation missing --]]
-L["Yogursa"] = "Yogursa"
+L["Yogursa"] = "Мертведица"
 L["You already defeated %d of them."] = "Ты уже победил %d из них."
 L["You already defeated all of them."] = "Ты уже победил всех из них."
 L["You can turn off holiday reminders as a whole or on an item-by-item basis by visiting the Rarity Options screen."] = "Напоминание о событии можно выключить в настройках, как в целом, так и для отдельных предметов."
@@ -11910,8 +11715,7 @@ L["You must enter at least one Statistic ID."] = "Вы должны ввести
 L["You must enter at least one zone."] = "Добавьте хотя бы одну зону."
 L["Young Talbuk"] = "Молодой талбук"
 L["Young Venomfang"] = "Молодой ядоклык"
---[[Translation missing --]]
-L["Zalas Witherbark"] = "Zalas Witherbark"
+L["Zalas Witherbark"] = "Залас Сухокожий "
 --[[Translation missing --]]
 L["Zandalari"] = "Zandalari"
 L["Zandalari Anklerender"] = "Зандаларский пяткогрыз"

@@ -53,6 +53,7 @@ end
 -- ============================================================================
 
 function private.CreateMainFrame()
+	TSM.UI.AnalyticsRecordPathChange("crafting")
 	local frame = TSMAPI_FOUR.UI.NewElement("LargeApplicationFrame", "base")
 		:SetParent(UIParent)
 		:SetMinResize(MIN_FRAME_SIZE.width, MIN_FRAME_SIZE.height)
@@ -77,6 +78,7 @@ end
 -- ============================================================================
 
 function private.BaseFrameOnHide()
+	TSM.UI.AnalyticsRecordClose("crafting")
 	private.fsm:ProcessEvent("EV_FRAME_HIDE")
 end
 
@@ -108,6 +110,7 @@ function private.FSMCreate()
 
 	local fsmContext = {
 		frame = nil,
+		openedTime = 0,
 	}
 	local function DefaultFrameOnHide()
 		private.fsm:ProcessEvent("EV_FRAME_HIDE")
@@ -155,8 +158,11 @@ function private.FSMCreate()
 					private.defaultUISwitchBtn:Draw()
 				end
 				TradeSkillFrame:SetScript("OnHide", DefaultFrameOnHide)
-				TradeSkillFrame:OnEvent("TRADE_SKILL_DATA_SOURCE_CHANGED")
-				TradeSkillFrame:OnEvent("TRADE_SKILL_LIST_UPDATE")
+				local linked, linkedName = C_TradeSkillUI.IsTradeSkillLinked()
+				if C_TradeSkillUI.IsTradeSkillReady() and not C_TradeSkillUI.IsTradeSkillGuild() and not C_TradeSkillUI.IsTradeSkillGuildMember() and (not linked or (linked and linkedName == UnitName("player"))) then
+					TradeSkillFrame:OnEvent("TRADE_SKILL_DATA_SOURCE_CHANGED")
+					TradeSkillFrame:OnEvent("TRADE_SKILL_LIST_UPDATE")
+				end
 			end)
 			:SetOnExit(function(context)
 				TradeSkillFrame:SetScript("OnHide", nil)
@@ -185,6 +191,7 @@ function private.FSMCreate()
 					context.frame:GetElement("titleFrame.switchBtn"):Hide()
 				end
 				context.frame:Draw()
+				context.openedTime = GetTime()
 				private.isVisible = true
 			end)
 			:SetOnExit(function(context)
@@ -207,6 +214,9 @@ function private.FSMCreate()
 			:AddEvent("EV_TRADE_SKILL_CLOSED", function(context)
 				context.frame:GetElement("titleFrame.switchBtn"):Hide()
 				context.frame:GetElement("titleFrame"):Draw()
+				if context.openedTime > GetTime() - 2 then
+					return "ST_CLOSED"
+				end
 			end)
 			:AddEvent("EV_SWITCH_BTN_CLICKED", function()
 				return "ST_DEFAULT_OPEN"

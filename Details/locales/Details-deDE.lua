@@ -176,8 +176,7 @@ L["STRING_DAMAGE_TAKEN_FROM2"] = "Schaden zugefügt mit"
 L["STRING_DEFENSES"] = "Verteidigung "
 L["STRING_DESCENDING"] = "Absteigend"
 L["STRING_DETACH_DESC"] = "Löst die Fenstergruppe auf"
---[[Translation missing --]]
---[[ L["STRING_DISCARD"] = ""--]] 
+L["STRING_DISCARD"] = "Verwerfen"
 L["STRING_DISPELLED"] = "Entfernte Stärkungs-/Schwächungszauber"
 L["STRING_DODGE"] = "Ausweichen"
 L["STRING_DOT"] = "(DoT)"
@@ -246,7 +245,7 @@ L["STRING_FORGE_HEADER_SCHOOL"] = "Kategorie"
 L["STRING_FORGE_HEADER_SPELLID"] = "Zauber-ID"
 L["STRING_FORGE_HEADER_TIMER"] = "Timer"
 L["STRING_FORGE_TUTORIAL_DESC"] = [=[
-Durchsuche Zauber- und Boss-Mods-Timer, um Auren durch Klicken auf '|cFFFFFF00Aura Erstellen|r' zu erstellen.]=]
+ Durchsuche Zauber- und Boss-Mods-Timer, um Auren durch Klicken auf '|cFFFFFF00Aura Erstellen|r' zu erstellen.]=]
 L["STRING_FORGE_TUTORIAL_TITLE"] = "Willkommen bei Details! Forge"
 L["STRING_FORGE_TUTORIAL_VIDEO"] = "Beispiel einer Aura bei Verwendung von Bossmod-Timern:"
 L["STRING_FREEZE"] = "Dieses Segment ist im Moment nicht verfügbar "
@@ -266,7 +265,7 @@ L["STRING_GUILDDAMAGERANK_ROLE"] = "Rolle"
 L["STRING_GUILDDAMAGERANK_SHOWHISTORY"] = "Verlauf zeigen"
 L["STRING_GUILDDAMAGERANK_SHOWRANK"] = "Gildenbank zeigen"
 L["STRING_GUILDDAMAGERANK_SYNCBUTTONTEXT"] = "Mit Gilde synchronisieren"
-L["STRING_GUILDDAMAGERANK_TUTORIAL_DESC"] = "Details! speichere den Schaden und die Heilung für jeden Boss, den du mit deiner Gilde triffst. Durchsuche den Verlauf, indem du das Kästchen'|cFFFFFF00Show History|r' anklickst, die Ergebnisse für alle Kämpfe werden angezeigt.\\n Durch Auswahl von '|cFFFFFF00Show Guild Rank|r' werden die Top-Ergebnisse für den ausgewählten Boss angezeigt.\\n\\n\\nWenn Sie dieses Tool zum ersten Mal verwenden oder wenn Sie einen Tag des Schlachtzuges verloren haben, klicken Sie auf die Schaltfläche '|cFFFFFFFFFF00Sync With Guild|r'."
+L["STRING_GUILDDAMAGERANK_TUTORIAL_DESC"] = "Details! speichert den Schaden und die Heilung für jeden Boss, den du mit deiner Gilde triffst. Durchsuche den Verlauf, indem du das Kästchen'|cFFFFFF00Zeige Gerschichte|r' anklickst. Die Ergebnisse für alle Kämpfe werden angezeigt.\\n Durch Auswahl von '|cFFFFFF00Zeige Gilden Rang|r' werden die Top-Ergebnisse für den ausgewählten Boss angezeigt.\\n\\n\\nWenn Sie dieses Tool zum ersten Mal verwenden oder wenn Sie einen Tag des Schlachtzuges verloren haben, klicken Sie auf die Schaltfläche '|cFFFFFFFFFF00Synchroniesiere mit Gilde|r'."
 L["STRING_GUILDDAMAGERANK_WINDOWALERT"] = "Boss besiegt! Rangliste zeigen"
 L["STRING_HEAL"] = "Heilung"
 L["STRING_HEAL_ABSORBED"] = "Absorbierte Heilung"
@@ -1039,7 +1038,7 @@ L["STRING_OPTIONS_SAVELOAD_ERASE_DESC"] = "Option zum Löschen eines gespeichert
 L["STRING_OPTIONS_SAVELOAD_EXPORT"] = "Export"
 L["STRING_OPTIONS_SAVELOAD_EXPORT_COPY"] = "Drücke Strg + C"
 L["STRING_OPTIONS_SAVELOAD_EXPORT_DESC"] = "Speichert den Skin im Textformat."
-L["STRING_OPTIONS_SAVELOAD_IMPORT"] = "Import"
+L["STRING_OPTIONS_SAVELOAD_IMPORT"] = "Importiere benutzerdefinierte Skin"
 L["STRING_OPTIONS_SAVELOAD_IMPORT_DESC"] = "Lädt einen Skin im Textformat."
 L["STRING_OPTIONS_SAVELOAD_IMPORT_OKEY"] = "Skin erfolgreich aus deiner Liste geladen. Zum Anwenden gehe zu 'Anwenden'."
 L["STRING_OPTIONS_SAVELOAD_LOAD"] = "Anwenden"
@@ -1093,6 +1092,7 @@ Rahmenfarbe auf: |cFFFFFF00transparent|r.]=]
 L["STRING_OPTIONS_SKIN_EXTRA_OPTIONS_ANCHOR"] = "Skinoptionen:"
 L["STRING_OPTIONS_SKIN_LOADED"] = "Skin erfolgreich geladen."
 L["STRING_OPTIONS_SKIN_PRESETS_ANCHOR"] = "Skin speichern:"
+L["STRING_OPTIONS_SKIN_PRESETSCONFIG_ANCHOR"] = "Verwalte gespeicherte benutzerdefinierte Skins"
 L["STRING_OPTIONS_SKIN_REMOVED"] = "Skin gelöscht."
 L["STRING_OPTIONS_SKIN_RESET_TOOLTIP"] = "Tooltiprahmen zurücksetzen "
 L["STRING_OPTIONS_SKIN_RESET_TOOLTIP_DESC"] = "Setzt die Rahmenfarbe und Textur des Tooltips auf die Standardeinstellung zurück."
@@ -1115,12 +1115,6 @@ L["STRING_OPTIONS_SPELL_NOTFOUND"] = "Zauber nicht gefunden."
 L["STRING_OPTIONS_SPELL_REMOVE"] = "Entfernen"
 L["STRING_OPTIONS_SPELL_RESET"] = "Zurücksetzen"
 L["STRING_OPTIONS_SPELL_SPELLID"] = "Zauber-ID"
-L["STRING_OPTIONS_SPELL_SPELLID_DESC"] = [=[Eine ID ist eine einzigartige Nummer, um den Zauber in WoW zu identifizieren. Es gibt viele Wege an diese Nummer zu kommen:
-
-- Im Spielerdetail-Fenster durch Gedrückthalten der SHIFT-Taste während der Mauszeiger über der Zauberleiste schwebt.
-- Tippe den Namen in das Zauber-ID-Feld ein und im Tooltip werden Zauber vorgeschlagen.
-- Community-Webseiten - die meisten haben die Zauber-ID in ihrer Webadresse.
-- Indem im unten stehenden Zauber-Cache gesucht wird:]=]
 L["STRING_OPTIONS_STRETCH"] = "Ausweitungsschaltfläche auf der Oberseite"
 L["STRING_OPTIONS_STRETCH_DESC"] = "Platziert die Ausweitungsschaltfläche oberhalb des Fensters."
 L["STRING_OPTIONS_STRETCHTOP"] = "Ausweitungsschaltfläche immer oben"
@@ -1489,7 +1483,7 @@ L["STRING_SEGMENT_TRASH"] = "Trash abgräumt"
 L["STRING_SEGMENTS"] = "Segmente"
 L["STRING_SEGMENTS_LIST_BOSS"] = "Bosskampf"
 L["STRING_SEGMENTS_LIST_COMBATTIME"] = "Kampfzeit"
-L["STRING_SEGMENTS_LIST_OVERALL"] = "Insgesamt"
+L["STRING_SEGMENTS_LIST_OVERALL"] = "insgesamt"
 L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "Zeit im Kampf"
 L["STRING_SEGMENTS_LIST_TOTALTIME"] = "Insgesamte Zeit"
 L["STRING_SEGMENTS_LIST_TRASH"] = "Trash"
@@ -1560,6 +1554,7 @@ L["STRING_UNLOCK"] = [=[Fenstergruppe auflösen
  mit dieser Schaltfläche]=]
 L["STRING_UNLOCK_WINDOW"] = "freigeben"
 L["STRING_UPTADING"] = "aktualisiere"
+L["STRING_VERSION_AVAILABLE"] = "Eine neue Version ist verfügbar, lade es von der Twitch App oder der Curse Webseite herunter."
 L["STRING_VERSION_UPDATE"] = "Neue Version: Was hat sich geändert? Klicke hier"
 L["STRING_VOIDZONE_TOOLTIP"] = "Schaden und Zeit"
 L["STRING_WAITPLUGIN"] = [=[warte auf

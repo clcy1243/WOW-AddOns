@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2018 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2019 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 
 -- 
@@ -50,7 +50,7 @@ PawnLocal =
 	["RenameScaleEnterName"] = "Entrer un nouveau nom pour %s:",
 	["SocketBonusValueCalculationMessage"] = "   -- Le bonus de sertissage vaudrait: %g",
 	["StatNameText"] = "1 |cffffffff%s|r vaut:",
-	["ThousandsSeparator"] = "NBSP",
+	["ThousandsSeparator"] = "",
 	["TooltipBestAnnotation"] = "%s  |cff8ec3e6(meilleur)|r",
 	["TooltipBestAnnotationSimple"] = "%s  votre meilleur",
 	["TooltipBigUpgradeAnnotation"] = "%s  |TInterface\\AddOns\\Pawn\\Textures\\UpgradeArrow:0|t|cff00ff00 upgrade%s|r",
@@ -548,11 +548,13 @@ Cette commande ne peut etre défaite!]=],
 
 	-- Convert "NBSP" to an actual non-breaking space (ASCII 160).  CurseForge isn't good about exporting actual NSBPs.
 	-- This is only supported for ThousandsSeparator and the items in the TooltipParsing table, and only for French.
-	PawnLocal.ThousandsSeparator = "\194\160"
-	local Key, Value
-	local T = PawnLocal.TooltipParsing
-	for Key, Value in pairs(T) do
-		T[Key] = gsub(Value, "NBSP", "\194\160")
+	if PawnLocal.ThousandsSeparator == "NBSP" then
+		PawnLocal.ThousandsSeparator = "\194\160"
+		local Key, Value
+		local T = PawnLocal.TooltipParsing
+		for Key, Value in pairs(T) do
+			T[Key] = gsub(Value, "NBSP", "\194\160")
+		end
 	end
 end
 

@@ -1,3 +1,29 @@
+version r87-release
+------------------------
+    * Fixed realm names that contain whitespaces.
+    * Fixed two typos: UNKOWN -> UNKNOWN, PARTIAL -> PARTLY.
+    * Updated bosses in raid logs.
+
+version r86-release
+------------------------
+    * Fixed attendance rate calculation.
+    * Fixed mass invitation.
+    * EPGP is back!
+
+version r85-release
+------------------------
+    * Fixed roster transmission.
+    * Guild roster with different ranks are now separated by blank line. (Import Frame)
+    * Fixed Sit Out sort.
+
+version r84-release
+------------------------
+    * Fixed a main-alt leaveTime bug.
+    * Fixed main-alt attendance.
+    * Fixed attendance sheet grids highlight and update.
+    + Added "Sit Out" attendance state.
+    + Added roster invitation.
+
 version r83-release
 ------------------------
     * Fixed member deletion bugs (RosterEditor).

@@ -313,7 +313,7 @@ end
 
 -- Minion of Zul
 function mod:Fixate(args)
-	if self:Me(args.destGUID) then
+	if self:Me(args.destGUID) and not isThrottled(args.spellId) then
 		self:PersonalMessage(args.spellId)
 		self:PlaySound(args.spellId, "alert")
 		self:Say(args.spellId)
@@ -351,6 +351,7 @@ end
 
 -- King Timalji
 function mod:Bladestorm(args)
+	if self:MobId(args.destGUID) == 137474 then return end -- applies to himself too
 	self:CastBar(270928, 10)
 	self:TargetMessage2(270928, "orange", args.destName)
 	self:PlaySound(270928, "alarm", nil, args.destName)
@@ -368,7 +369,7 @@ end
 function mod:Seduction(args)
 	self:TargetBar(args.spellId, 30, args.destName)
 	self:TargetMessage2(args.spellId, "yellow", args.destName)
-	self:PlaySound(args.spellId, self:Dispeller("magic") and "warning" or "long", nil, args.destName)
+	self:PlaySound(args.spellId, self:Dispeller("magic", true) and "warning" or "long", nil, args.destName)
 end
 
 function mod:SeductionRemoved(args)
@@ -413,7 +414,7 @@ function mod:HiddenBladeApplied(args)
 	end
 
 	if isOnMe or self:Dispeller("poison") or self:Healer() then
-		self:TargetBar(args.spellId, 8, args.destName)
+		self:TargetBar(args.spellId, 4, args.destName)
 		self:TargetMessage2(args.spellId, "yellow", args.destName)
 		self:PlaySound(args.spellId, "alarm", nil, args.destName)
 	end

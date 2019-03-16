@@ -56,6 +56,15 @@ function RSA_Warlock:OnEnable()
 	}
 	local MonitorConfig_Warlock = {
 		player_profile = RSA.db.profile.Warlock,
+		SPELL_CAST_SUCCESS = {
+			[698] = { -- SUMMONING STONE
+				profile = 'SummonStone'
+			},
+			[111771] = { -- DEMONIC GATEWAY
+				profile = 'Gateway',
+				section = "Cast",
+			},
+		},
 		SPELL_AURA_APPLIED = {
 			[118699] = Config_Fear, -- FEAR
 			[6358] = Config_Seduce, -- SEDUCE
@@ -94,14 +103,9 @@ function RSA_Warlock:OnEnable()
 				replacements = { TARGET = 1 },
 				section = 'Cast',
 			},
-		},
-		SPELL_CAST_SUCCESS = {
-			[698] = { -- SUMMONING STONE
-				profile = 'SummonStone'
-			},
-			[111771] = { -- DEMONIC GATEWAY
-				profile = 'Gateway',
-				section = "Cast",
+			[89766] = { -- Axe Toss
+				profile = 'AxeToss',
+				replacements = { TARGET = 1 },
 			},
 		},
 		SPELL_AURA_REMOVED = {
@@ -130,6 +134,11 @@ function RSA_Warlock:OnEnable()
 				tracker = 1,
 				section = 'End',
 			},
+			[89766] = { -- Axe Toss
+				profile = 'AxeToss',
+				replacements = { TARGET = 1 },
+				section = 'End',
+			},
 		},
 		SPELL_CAST_START = {
 			[29893] = { -- SOULWELL
@@ -145,7 +154,7 @@ function RSA_Warlock:OnEnable()
 			[115276] = Config_SingeMagic, -- SEAR MAGIC - Fel Imp Glyph
 			[132411] = Config_SingeMagic, -- Singe Magic - Grimoire of Sacrifice
 			[19505] = { -- DEVOUR MAGIC
-				profile = 'Devour',
+				profile = 'DevourMagic',
 				section = 'Dispel',
 				replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" },
 			}
@@ -238,7 +247,7 @@ function RSA_Warlock:OnEnable()
 						end
 						if RSA.db.profile.Warlock.Spells.Soulstone.Whisper == true and dest ~= pName then
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+							RSA.Print_Whisper(message, full_destName, RSA.Replacements, dest)
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 						end
 						if RSA.db.profile.Warlock.Spells.Soulstone.CustomChannel.Enabled == true then

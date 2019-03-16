@@ -60,12 +60,12 @@ frame:SetScript("OnEvent", function(self, event, arg1, ...)
 		-- r79-release startTime string -> number
 		for d, t in pairs(_G[GRA_R_RaidLogs]) do
 			if type(t["startTime"]) == "string" then
-				t["startTime"] = GRA:DateToTime(d .. t["startTime"], true)
+				t["startTime"] = GRA:DateToSeconds(d .. t["startTime"], true)
 			end
-			-- change LATE -> PARTLY
+			-- change LATE -> PARTIAL
 			for n, att in pairs(t["attendances"]) do
 				if att[1] == "LATE" then
-					att[1] = "PARTLY"
+					att[1] = "PARTIAL"
 				end
 			end
 		end
@@ -74,6 +74,56 @@ frame:SetScript("OnEvent", function(self, event, arg1, ...)
 		if type(_G[GRA_R_Config]["raidInfo"]["endTime"]) ~= "string" then
 			_G[GRA_R_Config]["raidInfo"]["endTime"] = "23:00"
 		end
+
+		-- r84-release
+		for n, t in pairs(_G[GRA_R_Roster]) do
+			if t["attLifetime"] and #t["attLifetime"] == 5 then
+				table.insert(t["attLifetime"], 0)
+			end
+		end
+
+		if type(GRA_Variables["columns"]["Sit_Out"]) ~= "boolean" then
+			GRA_Variables["columns"]["Sit_Out"] = false
+		end
 		]]
+
+		-- r86-release
+		-- if not(_G[GRA_R_Config]["revise"]) or _G[GRA_R_Config]["revise"] < "r86-release" then
+		-- 	for _, t in pairs(_G[GRA_R_RaidLogs]) do
+		-- 		for _, att in pairs(t["attendances"]) do
+		-- 			if att[1] == "PARTLY" then
+		-- 				att[1] = "PARTIAL"
+		-- 			end
+		-- 		end
+		-- 	end
+		-- 	_G[GRA_R_Config]["revise"] = "r86-release"
+		-- end
+
+		-- r87-release
+		if not(_G[GRA_R_Config]["revise"]) or _G[GRA_R_Config]["revise"] < "r87-release" then
+			for _, t in pairs(_G[GRA_R_RaidLogs]) do
+				-- fix typo in r86-release
+				for _, att in pairs(t["attendances"]) do
+					if att[1] == "PARTLY" then
+						att[1] = "PARTIAL"
+					end
+				end
+				
+				-- add duration and wipes
+				for _, bt in ipairs(t["bosses"]) do
+					if #bt == 5 then
+						-- duration
+						if bt[3] then
+							table.insert(bt, 3, bt[4]-bt[3])
+						else
+							table.insert(bt, 3, nil)
+						end
+						-- wipes
+						table.insert(bt, 6, 0)
+					end
+				end
+			end
+			_G[GRA_R_Config]["revise"] = "r87-release"
+		end
     end
 end)

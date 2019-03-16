@@ -113,6 +113,11 @@ function RSA_Druid:OnEnable()
 				profile = 'MassEntanglement',
 				tracker = 2
 			},
+			[2637] = { -- Hibernate
+				profile = 'Hibernate',
+				replacements = { TARGET = 1 },
+				section = "Cast",
+			},
 		},
 		SPELL_CAST_START = {
 			[212040] = { -- REVITALIZE
@@ -130,6 +135,10 @@ function RSA_Druid:OnEnable()
 			},
 			[102793] = { -- URSOL'S VORTEX
 				profile = 'UrsolsVortex',
+				section = "Cast"
+			},
+			[205636] = { -- Force of Nature
+				profile = 'Treants',
 				section = "Cast"
 			},
 			[740] = { -- TRANQUILITY
@@ -218,6 +227,11 @@ function RSA_Druid:OnEnable()
 				section = "End",
 				tracker = 1
 			},
+			[2637] = { -- Hibernate
+				profile = 'Hibernate',
+				replacements = { TARGET = 1 },
+				section = "End",
+			},
 		},
 		SPELL_INTERRUPT = {
 			--[[[32747] = { -- FAE SILENCE (spell id is general interrupt)
@@ -248,6 +262,12 @@ function RSA_Druid:OnEnable()
 				section = 'Resist',
 				immuneSection = "Immune",
 				replacements = { TARGET = 1, MISSTYPE = 1 },
+			},
+			[2637] = { -- Hibernate
+				profile = 'Hibernate',
+				replacements = { TARGET = 1 },
+				section = 'Resist',
+				immuneSection = "Immune",
 			},
 		},
 	}
@@ -315,7 +335,8 @@ function RSA_Druid:OnEnable()
 						end
 						if RSA.db.profile.Druid.Spells.Revive.Whisper == true and dest ~= pName then
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+							RSA.Print_Whisper(message, full_destName, RSA.Replacements, dest)
+							--RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 						end
 						if RSA.db.profile.Druid.Spells.Revive.CustomChannel.Enabled == true then
@@ -373,7 +394,7 @@ function RSA_Druid:OnEnable()
 						end
 						if RSA.db.profile.Druid.Spells.Rebirth.Whisper == true and dest ~= pName then
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+							RSA.Print_Whisper(message, full_destName, RSA.Replacements, dest)
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 						end
 						if RSA.db.profile.Druid.Spells.Rebirth.CustomChannel.Enabled == true then

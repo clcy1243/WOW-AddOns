@@ -11,6 +11,7 @@ local Money = TSM.Accounting:NewPackage("Money")
 local private = { db = nil }
 local CSV_KEYS = { "type", "amount", "otherPlayer", "player", "time" }
 local COMBINE_TIME_THRESHOLD = 300 -- group expenses within 5 minutes together
+local SECONDS_PER_DAY = 24 * 60 * 60
 local DB_SCHEMA = {
 	fields = {
 		recordType = "string",
@@ -41,8 +42,10 @@ local DB_SCHEMA = {
 
 function Money.OnInitialize()
 	private.db = TSMAPI_FOUR.Database.New(DB_SCHEMA, "ACCOUNTING_MONEY")
+	private.db:BulkInsertStart()
 	private.LoadData("expense", TSM.db.realm.internalData.csvExpense)
 	private.LoadData("income", TSM.db.realm.internalData.csvIncome)
+	private.db:BulkInsertEnd()
 end
 
 function Money.OnDisable()
@@ -82,6 +85,20 @@ function Money.CharacterIterator(recordType)
 		:IteratorAndRelease()
 end
 
+function Money.RemoveOldData(days)
+	local query = private.db:NewQuery()
+		:LessThan("time", time() - days * SECONDS_PER_DAY)
+	local numRecords = 0
+	private.db:SetQueryUpdatesPaused(true)
+	for _, row in query:Iterator() do
+		private.db:DeleteRow(row)
+		numRecords = numRecords + 1
+	end
+	query:Release()
+	private.db:SetQueryUpdatesPaused(false)
+	return numRecords
+end
+
 
 
 -- ============================================================================
@@ -89,19 +106,28 @@ end
 -- ============================================================================
 
 function private.LoadData(recordType, csvRecords)
-	local _, records = TSMAPI_FOUR.CSV.Decode(csvRecords)
-	if not records then
+	local decodeContext = TSMAPI_FOUR.CSV.DecodeStart(csvRecords, CSV_KEYS)
+	if not decodeContext then
+		TSM:LOG_ERR("Failed to decode %s records", recordType)
 		return
 	end
-	private.db:BulkInsertStart()
-	for _, record in ipairs(records) do
-		-- convert from old (TSM3) keys if necessary
-		local otherPlayer = record.otherPlayer or record.destination or record.source
-		if type(otherPlayer) == "string" and type(record.time) == "number" then
-			private.db:BulkInsertNewRow(recordType, record.type, record.amount, otherPlayer, record.player, record.time)
+
+	for type, amount, otherPlayer, player, timestamp in TSMAPI_FOUR.CSV.DecodeIterator(decodeContext) do
+		amount = tonumber(amount)
+		timestamp = tonumber(timestamp)
+		if amount and timestamp then
+			local newTimestamp = floor(timestamp)
+			if newTimestamp ~= timestamp then
+				-- make sure all timestamps are stored as integers
+				timestamp = newTimestamp
+			end
+			private.db:BulkInsertNewRowFast6(recordType, type, amount, otherPlayer, player, timestamp)
 		end
 	end
-	private.db:BulkInsertEnd()
+
+	if not TSMAPI_FOUR.CSV.DecodeEnd(decodeContext) then
+		TSM:LOG_ERR("Failed to decode %s records", recordType)
+	end
 end
 
 function private.SaveData(recordType)
@@ -117,6 +143,7 @@ end
 
 function private.InsertRecord(recordType, type, amount, otherPlayer, timestamp)
 	assert(type and amount and amount > 0 and otherPlayer and timestamp)
+	timestamp = floor(timestamp)
 	local matchingRow = private.db:NewQuery()
 		:Equal("recordType", recordType)
 		:Equal("type", type)

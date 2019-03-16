@@ -40,7 +40,7 @@ function Operations.OnInitialize()
 	TSM.db:RegisterCallback("OnProfileUpdated", private.OnProfileUpdated)
 end
 
-function Operations.Register(moduleName, operationInfo, maxOperations, infoCallback)
+function Operations.Register(moduleName, localizedName, operationInfo, maxOperations, infoCallback)
 	for key, info in pairs(operationInfo) do
 		assert(type(key) == "string" and type(info) == "table")
 		assert(info.type == type(info.default))
@@ -52,6 +52,7 @@ function Operations.Register(moduleName, operationInfo, maxOperations, infoCallb
 	tinsert(private.operationModules, moduleName)
 	private.operationInfo[moduleName] = {
 		info = operationInfo,
+		localizedName = localizedName,
 		maxOperations = maxOperations,
 		infoCallback = infoCallback,
 	}
@@ -95,6 +96,10 @@ end
 
 function Operations.ModuleExists(moduleName)
 	return private.operationInfo[moduleName] and true or false
+end
+
+function Operations.GetLocalizedName(moduleName)
+	return private.operationInfo[moduleName].localizedName
 end
 
 function Operations.GetMaxNumber(moduleName)
@@ -221,6 +226,50 @@ function Operations.GetDescription(moduleName, operationName)
 	return private.operationInfo[moduleName].infoCallback(operationSettings)
 end
 
+function Operations.SanitizeSettings(moduleName, operationName, operationSettings)
+	local operationInfo = private.operationInfo[moduleName].info
+	for key, value in pairs(operationSettings) do
+		if not operationInfo[key] then
+			operationSettings[key] = nil
+		elseif type(value) ~= operationInfo[key].type then
+			if operationInfo[key].type == "string" and type(value) == "number" then
+				-- some custom price settings were potentially stored as numbers previously, so just convert them
+				operationSettings[key] = tostring(value)
+			else
+				TSM:LOG_ERR("Resetting operation setting %s,%s,%s (%s)", moduleName, operationName, tostring(key), tostring(value))
+				operationSettings[key] = operationInfo[key].type == "table" and CopyTable(operationInfo[key].default) or operationInfo[key].default
+			end
+		end
+	end
+	for key in pairs(operationInfo) do
+		if operationSettings[key] == nil then
+			-- this key was missing
+			if operationInfo[key].type == "boolean" then
+				-- we previously stored booleans as nil instead of false
+				operationSettings[key] = false
+			else
+				TSM:LOG_ERR("Resetting missing operation setting %s,%s,%s", moduleName, operationName, tostring(key))
+				operationSettings[key] = operationInfo[key].type == "table" and CopyTable(operationInfo[key].default) or operationInfo[key].default
+			end
+		end
+	end
+end
+
+function Operations.HasRelationship(moduleName, operationName, settingKey)
+	return Operations.GetRelationship(moduleName, operationName, settingKey) and true or false
+end
+
+function Operations.GetRelationship(moduleName, operationName, settingKey)
+	assert(private.operationInfo[moduleName].info[settingKey])
+	return private.operations[moduleName][operationName].relationships[settingKey]
+end
+
+function Operations.SetRelationship(moduleName, operationName, settingKey, targetOperationName)
+	assert(targetOperationName == nil or private.operations[moduleName][targetOperationName])
+	assert(private.operationInfo[moduleName].info[settingKey])
+	private.operations[moduleName][operationName].relationships[settingKey] = targetOperationName
+end
+
 
 
 -- ============================================================================
@@ -249,35 +298,12 @@ function private.ValidateOperations(moduleName)
 		Operations.Create(moduleName, "#Default")
 		return
 	end
-	local operationInfo = private.operationInfo[moduleName].info
 	for operationName, operationSettings in pairs(private.operations[moduleName]) do
 		if type(operationName) ~= "string" or strmatch(operationName, TSM.CONST.OPERATION_SEP) then
 			TSM:LOG_ERR("Removing %s operation with invalid name: ", moduleName, tostring(operationName))
 			private.operations[moduleName][operationName] = nil
 		else
-			for key, value in pairs(operationSettings) do
-				if not operationInfo[key] then
-					operationSettings[key] = nil
-				elseif type(value) ~= operationInfo[key].type then
-					if operationInfo[key].type == "string" and type(value) == "number" then
-						-- some custom price settings were potentially stored as numbers previously, so just convert them
-						operationSettings[key] = tostring(value)
-					else
-						TSM:LOG_ERR("Resetting operation setting %s,%s,%s (%s)", moduleName, operationName, tostring(key), tostring(value))
-						operationSettings[key] = operationInfo[key].type == "table" and CopyTable(operationInfo[key].default) or operationInfo[key].default
-					end
-				end
-			end
-			for key in pairs(operationInfo) do
-				if operationSettings[key] == nil then
-					-- this key was missing
-					-- we previously stored booleans as nil instead of false, so don't log those
-					if operationInfo[key].type ~= "boolean" then
-						TSM:LOG_ERR("Resetting missing operation setting %s,%s,%s", moduleName, operationName, tostring(key))
-					end
-					operationSettings[key] = operationInfo[key].type == "table" and CopyTable(operationInfo[key].default) or operationInfo[key].default
-				end
-			end
+			Operations.SanitizeSettings(moduleName, operationName, operationSettings)
 			for key, target in pairs(operationSettings.relationships) do
 				if not private.operations[moduleName][target] then
 					TSM:LOG_ERR("Removing invalid relationship %s,%s,%s -> %s", moduleName, operationName, tostring(key), tostring(target))

@@ -424,7 +424,7 @@ function ns:DefaultOptions()
 				icon_spacing = 2,
 				time_format = 1,
 				max_width = 31,
-				
+				swipe_alpha = 0.7,
 				isvertical = 1,
 				
 				nonactivealpha = 0.5,

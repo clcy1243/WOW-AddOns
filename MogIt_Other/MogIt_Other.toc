@@ -1,6 +1,6 @@
-## Interface: 80000
+## Interface: 80100
 ## Author: Aelobin (The Maelstrom EU) & Lombra (Defias Brotherhood EU)
-## Version: 3.8.11
+## Version: 3.9.0
 ## SavedVariables: MogIt_OtherDB
 ## LoadOnDemand: 1
 ## RequiredDeps: MogIt

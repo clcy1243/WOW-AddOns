@@ -30,6 +30,9 @@ local SummaryWidgets = {}
 local CurrentTab = "Summary"
 local IconTexCoord = {5/64, 59/64, 5/64, 59/64}
 
+local CONST_BAR_HEIGHT = 20
+local CONST_TARGET_HEIGHT = 18
+
 ------------------------------------------------------------------------------------------------------------------------------
 --self = instancia
 --jogador = classe_damage ou classe_heal
@@ -560,8 +563,10 @@ function gump:SetaDetalheInfoAltura (index, xmod, ymod)
 	info.dano_porcento:SetPoint ("TOPRIGHT", background, "TOPRIGHT", -x + right, y + (-24))
 	info.dano_dps:SetPoint ("TOPRIGHT", background, "TOPRIGHT", -x + right, y + (-44))
 	
-	info.bg:SetPoint ("TOPLEFT", background, "TOPLEFT", 0, 0)
-	info.bg:SetHeight (background:GetHeight())
+	info.bg:SetPoint ("TOPLEFT", background, "TOPLEFT", 1, -1)
+	info.bg:SetHeight (background:GetHeight() - 2)
+	info.bg:SetWidth (info.bg:GetWidth() - 2) --ofcourse why not
+	
 	info.bg_end:SetPoint ("LEFT", info.bg, "LEFT", info.bg:GetValue()*2.19, 0)
 	info.bg_end:SetHeight (background:GetHeight()+2)
 	info.bg_end:SetWidth (6)
@@ -581,10 +586,10 @@ function gump:SetaDetalheInfoTexto (index, p, arg1, arg2, arg3, arg4, arg5, arg6
 	if (p) then
 		if (_type (p) == "table") then
 			info.bg:SetValue (p.p)
-			--info.bg:SetStatusBarColor (p.c[1], p.c[2], p.c[3], p.c[4] or 1)
+			info.bg:SetStatusBarColor (p.c[1], p.c[2], p.c[3], p.c[4] or 1)
 		else
 			info.bg:SetValue (p)
-			--info.bg:SetStatusBarColor (1, 1, 1, 0.5)
+			info.bg:SetStatusBarColor (1, 1, 1, .5)
 		end
 		
 		--if (index == 1) then
@@ -728,10 +733,11 @@ function gump:JI_AtualizaContainerBarras (amt)
 	local container = _detalhes.janela_info.container_barras
 	
 	if (amt >= 9 and container.ultimo ~= amt) then
-		local tamanho = 17*amt
+		local tamanho = (CONST_BAR_HEIGHT + 1) * amt
 		container.gump:SetHeight (tamanho)
 		container.slider:Update()
 		container.ultimo = amt
+		
 	elseif (amt < 8 and container.slider.ativo) then
 		container.slider:Update (true)
 		container.gump:SetHeight (140)
@@ -740,16 +746,16 @@ function gump:JI_AtualizaContainerBarras (amt)
 	end
 end
 
-
 function gump:JI_AtualizaContainerAlvos (amt)
 
 	local container = _detalhes.janela_info.container_alvos
 	
 	if (amt >= 6 and container.ultimo ~= amt) then
-		local tamanho = 17*amt
+		local tamanho = (CONST_TARGET_HEIGHT + 1) * amt
 		container.gump:SetHeight (tamanho)
 		container.slider:Update()
 		container.ultimo = amt
+		
 	elseif (amt <= 5 and container.slider.ativo) then
 		container.slider:Update (true)
 		container.gump:SetHeight (100)
@@ -1779,6 +1785,14 @@ function gump:CriaJanelaInfo()
 	
 	--> tabs:
 	--> tab default
+	
+	local iconTableSummary = {
+		texture = [[Interface\AddOns\Details\images\icons]],
+		coords = {238/512, 255/512, 0, 18/512},
+		width = 16,
+		height = 16,
+	}
+	
 	_detalhes:CreatePlayerDetailsTab ("Summary", Loc ["STRING_SPELLS"], --[1] tab name [2] localized name
 			function (tabOBject, playerObject) --[2] condition
 				if (playerObject) then 
@@ -1793,7 +1807,8 @@ function gump:CriaJanelaInfo()
 					tab.frame:Hide()
 				end
 			end,
-			nil --[5] oncreate
+			nil, --[5] oncreate
+			iconTableSummary --icon table
 	)
 		
 		--> search key: ~avoidance --> begining of avoidance tab
@@ -2492,6 +2507,14 @@ function gump:CriaJanelaInfo()
 --]]
 		end
 		
+		local iconTableAvoidance = {
+			texture = [[Interface\AddOns\Details\images\icons]],
+			--coords = {363/512, 381/512, 0/512, 17/512},
+			coords = {384/512, 402/512, 19/512, 38/512},
+			width = 16,
+			height = 16,
+		}		
+		
 		_detalhes:CreatePlayerDetailsTab ("Avoidance", Loc ["STRING_INFO_TAB_AVOIDANCE"], --[1] tab name [2] localized name
 			function (tabOBject, playerObject)  --[2] condition
 				if (playerObject.isTank) then 
@@ -2505,7 +2528,8 @@ function gump:CriaJanelaInfo()
 			
 			nil, --[4] onclick
 			
-			avoidance_create --[5] oncreate
+			avoidance_create, --[5] oncreate
+			iconTableAvoidance
 		)
 	
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2738,6 +2762,13 @@ function gump:CriaJanelaInfo()
 		end		
 	end
 
+	local iconTableAuras = {
+		texture = [[Interface\AddOns\Details\images\icons]],
+		coords = {257/512, 278/512, 0/512, 19/512},
+		width = 16,
+		height = 16,
+	}	
+	
 	_detalhes:CreatePlayerDetailsTab ("Auras", "Auras", --[1] tab name [2] localized name
 		function (tabOBject, playerObject)  --[2] condition
 			return true
@@ -2747,7 +2778,8 @@ function gump:CriaJanelaInfo()
 		
 		nil, --[4] onclick
 		
-		auras_tab_create --[5] oncreate
+		auras_tab_create, --[5] oncreate
+		iconTableAuras --icon table
 	)
 
 
@@ -4659,6 +4691,13 @@ function gump:CriaJanelaInfo()
 		
 		
 		-- ~compare
+		local iconTableCompare = {
+			texture = [[Interface\AddOns\Details\images\icons]],
+			--coords = {363/512, 381/512, 0/512, 17/512},
+			coords = {383/512, 403/512, 0/512, 15/512},
+			width = 16,
+			height = 14,
+		}
 		_detalhes:CreatePlayerDetailsTab ("Compare", Loc ["STRING_INFO_TAB_COMPARISON"], --[1] tab name [2] localized name
 			function (tabOBject, playerObject)  --[2] condition
 				
@@ -4699,18 +4738,42 @@ function gump:CriaJanelaInfo()
 				end
 				
 				if (#tabOBject.players > 0) then
+					--tutorial flash
+					local blink = _detalhes:GetTutorialCVar ("DETAILS_INFO_TUTORIAL2") or 0
+					if (type (blink) == "number" and blink < 10) then
+					
+						if (not tabOBject.FlashAnimation) then
+							local flashAnimation = tabOBject:CreateTexture (nil, "overlay")
+							flashAnimation:SetPoint ("topleft", tabOBject.widget, "topleft", 1, -1)
+							flashAnimation:SetPoint ("bottomright", tabOBject.widget, "bottomright", -1, 1)
+							flashAnimation:SetColorTexture (1, 1, 1)
+
+							local flashHub = DetailsFramework:CreateAnimationHub (flashAnimation, function() flashAnimation:Show() end, function() flashAnimation:Hide() end)
+							DetailsFramework:CreateAnimation (flashHub, "alpha", 1, 1, 0, 0.3)
+							DetailsFramework:CreateAnimation (flashHub, "alpha", 2, 1, 0.45, 0)
+							flashHub:SetLooping ("REPEAT")
+							
+							tabOBject.FlashAnimation = flashHub
+						end
+						
+						_detalhes:SetTutorialCVar ("DETAILS_INFO_TUTORIAL2", blink+1)
+
+						tabOBject.FlashAnimation:Play()
+					end
+					
 					return true
 				end
 				
 				--return false
-				return true
+				return true --debug?
 			end, 
 			
 			compare_fill, --[3] fill function
 			
 			nil, --[4] onclick
 			
-			compare_create --[5] oncreate
+			compare_create, --[5] oncreate
+			iconTableCompare --icon table
 		)
 	
 	-- ~tab ~tabs
@@ -4734,29 +4797,24 @@ function gump:CriaJanelaInfo()
 							alert.ArrowUP:Show()
 							alert.ArrowGlowUP:Show()
 							alert.Text:SetText (Loc ["STRING_INFO_TUTORIAL_COMPARISON1"])
-							alert:SetPoint ("bottom", tab, "top", 5, 28)
+							alert:SetPoint ("bottom", tab.widget or tab, "top", 5, 28)
 							alert:Show()
 						end
-						
-						local blink = _detalhes:GetTutorialCVar ("DETAILS_INFO_TUTORIAL2") or 0
-						if (type (blink) == "number" and blink < 10) then
-							_detalhes:SetTutorialCVar ("DETAILS_INFO_TUTORIAL2", blink+1)
-							if (not tab.glow.Flash) then
-								gump:CreateFlashAnimation (tab.glow)
-							end
-							tab.glow:Flash (4.5, 0.8, 6, false, 0, 0, "NONE")
-						end
-						
+
 					end
 				
 					tab:Show()
 					amt_positive = amt_positive + 1
-					
-					--tab:SetPoint ("BOTTOMLEFT", info.container_barras, "TOPLEFT",  490 - (94 * (amt_positive-1)), 1) --left to right
 					tab:ClearAllPoints()
-					tab:SetPoint ("bottomright", info, "topright",  -17 - (94 * (amt_positive-1)), -74) --right to left
 					
+					--get the button width
+					local buttonTemplate = gump:GetTemplate ("button", "DETAILS_TAB_BUTTON_TEMPLATE")
+					local buttonWidth = buttonTemplate.width + 1
+					
+					PixelUtil.SetSize (tab, buttonTemplate.width, buttonTemplate.height)
+					PixelUtil.SetPoint (tab, "bottomright", info, "topright",  -9 - (buttonWidth * (amt_positive-1)), -72)
 					tab:SetAlpha (0.8)
+					
 				else
 					tab.frame:Hide()
 					tab:Hide()
@@ -4768,7 +4826,6 @@ function gump:CriaJanelaInfo()
 			end
 			
 			_detalhes.player_details_tabs[1]:Click()
-			
 		end
 
 		este_gump:SetScript ("OnHide", function (self)
@@ -4788,56 +4845,63 @@ end
 
 _detalhes.player_details_tabs = {}
 
-function _detalhes:CreatePlayerDetailsTab (tabname, localized_name, condition, fillfunction, onclick, oncreate)
+function _detalhes:CreatePlayerDetailsTab (tabname, localized_name, condition, fillfunction, onclick, oncreate, iconSettings)
 	if (not tabname) then
 		tabname = "unnamed"
 	end
 	
 	local index = #_detalhes.player_details_tabs
 	
-	local newtab = CreateFrame ("button", "DetailsInfoWindowTab" .. index, info, "ChatTabTemplate")
-	newtab.textWidth = 90
+	--create a button for the tab
+	local newTabButton = gump:CreateButton (info, onclick, 20, 20)
+	newTabButton:SetTemplate ("DETAILS_TAB_BUTTON_TEMPLATE")
+	if (tabname == "Summary") then
+		newTabButton:SetTemplate ("DETAILS_TAB_BUTTONSELECTED_TEMPLATE")
+	end
+	newTabButton:SetText (localized_name)
+	newTabButton:SetFrameStrata ("HIGH")
+	newTabButton:SetFrameLevel (info:GetFrameLevel()+1)
+	newTabButton:Hide()
 	
-	newtab:SetParent (info)
-	newtab:SetWidth (100)
-	newtab.middleTexture:SetWidth (70)
+	newTabButton.condition = condition
+	newTabButton.tabname = tabname
+	newTabButton.localized_name = localized_name
+	newTabButton.onclick = onclick
+	newTabButton.fillfunction = fillfunction
+	newTabButton.last_actor = {}
 	
-	newtab:SetText (localized_name)
-	_G ["DetailsInfoWindowTab" .. index .. "Text"]:SetWidth (70)
+	newTabButton.frame = CreateFrame ("frame", "DetailsPDWTabFrame" .. tabname, UIParent)
+	newTabButton.frame:SetParent (info)
+	newTabButton.frame:SetFrameStrata ("HIGH")
+	newTabButton.frame:SetFrameLevel (info:GetFrameLevel()+5)
+	newTabButton.frame:EnableMouse (true)
 	
-	newtab:SetFrameStrata ("HIGH")
-	newtab:SetFrameLevel (info:GetFrameLevel()+1)
-	newtab:Hide()
+	if (iconSettings) then
+		local texture = iconSettings.texture
+		local coords = iconSettings.coords
+		local width = iconSettings.width
+		local height = iconSettings.height
+		
+		local overlay, textdistance, leftpadding, textheight, short_method --nil
+		
+		newTabButton:SetIcon (texture, width, height, "overlay", coords, overlay, textdistance, leftpadding, textheight, short_method)
+	end
 	
-	newtab.condition = condition
-	newtab.tabname = tabname
-	newtab.localized_name = localized_name
-	newtab.onclick = onclick
-	newtab.fillfunction = fillfunction
-	newtab.last_actor = {}
-	
-	--> frame
-	newtab.frame = CreateFrame ("frame", "DetailsPDWTabFrame" .. tabname, UIParent)
-	newtab.frame:SetParent (info)
-	newtab.frame:SetFrameStrata ("HIGH")
-	newtab.frame:SetFrameLevel (info:GetFrameLevel()+5)
-	newtab.frame:EnableMouse (true)
-	
-	if (newtab.fillfunction) then
-		newtab.frame:SetScript ("OnShow", function()
-			if (newtab.last_actor == info.jogador) then
+	if (newTabButton.fillfunction) then
+		newTabButton.frame:SetScript ("OnShow", function()
+			if (newTabButton.last_actor == info.jogador) then
 				return
 			end
-			newtab.last_actor = info.jogador
-			newtab:fillfunction (info.jogador, info.instancia.showing)
+			newTabButton.last_actor = info.jogador
+			newTabButton:fillfunction (info.jogador, info.instancia.showing)
 		end)
 	end
 	
 	if (oncreate) then
-		oncreate (newtab, newtab.frame)
+		oncreate (newTabButton, newTabButton.frame)
 	end
 	
-	newtab.frame:SetBackdrop({
+	newTabButton.frame:SetBackdrop({
 		edgeFile = [[Interface\Buttons\WHITE8X8]], 
 		edgeSize = 1, 
 		bgFile = [[Interface\AddOns\Details\images\background]],
@@ -4845,55 +4909,45 @@ function _detalhes:CreatePlayerDetailsTab (tabname, localized_name, condition, f
 		tile = true,
 		insets = {left = 0, right = 0, top = 0, bottom = 0}}
 	)
-
-	newtab.frame:SetBackdropColor (0, 0, 0, 0.3)
-	newtab.frame:SetBackdropBorderColor (.3, .3, .3, 0)
-
-	newtab.frame:SetPoint ("TOPLEFT", info.container_barras, "TOPLEFT", 0, 2)
-	newtab.frame:SetPoint ("bottomright", info, "bottomright", -3, 3)
-	newtab.frame:SetSize (569, 274)
 	
-	newtab.frame:Hide()
+	newTabButton.frame:SetBackdropColor (0, 0, 0, 0.3)
+	newTabButton.frame:SetBackdropBorderColor (.3, .3, .3, 0)
+
+	newTabButton.frame:SetPoint ("TOPLEFT", info.container_barras, "TOPLEFT", 0, 2)
+	newTabButton.frame:SetPoint ("bottomright", info, "bottomright", -3, 3)
+	newTabButton.frame:SetSize (569, 274)
 	
-	--> adicionar ao container
-	_detalhes.player_details_tabs [#_detalhes.player_details_tabs+1] = newtab
+	newTabButton.frame:Hide()
+	
+	_detalhes.player_details_tabs [#_detalhes.player_details_tabs+1] = newTabButton
 	
 	if (not onclick) then
 		--> hide all tabs
-		newtab:SetScript ("OnClick", function() 
+		newTabButton:SetScript ("OnClick", function() 
 			for _, tab in _ipairs (_detalhes.player_details_tabs) do
 				tab.frame:Hide()
-				tab.leftSelectedTexture:SetVertexColor (1, 1, 1, 1)
-				tab.middleSelectedTexture:SetVertexColor (1, 1, 1, 1)
-				tab.rightSelectedTexture:SetVertexColor (1, 1, 1, 1)
+				tab:SetTemplate ("DETAILS_TAB_BUTTON_TEMPLATE")
 			end
 			
-			newtab.leftSelectedTexture:SetVertexColor (1, .7, 0, 1)
-			newtab.middleSelectedTexture:SetVertexColor (1, .7, 0, 1)
-			newtab.rightSelectedTexture:SetVertexColor (1, .7, 0, 1)
-			newtab.frame:Show()
+			newTabButton:SetTemplate ("DETAILS_TAB_BUTTONSELECTED_TEMPLATE")
+			newTabButton.frame:Show()
 		end)
 	else
 		--> custom
-		newtab:SetScript ("OnClick", function() 
+		newTabButton:SetScript ("OnClick", function() 
 			for _, tab in _ipairs (_detalhes.player_details_tabs) do
 				tab.frame:Hide()
-				tab.leftSelectedTexture:SetVertexColor (1, 1, 1, 1)
-				tab.middleSelectedTexture:SetVertexColor (1, 1, 1, 1)
-				tab.rightSelectedTexture:SetVertexColor (1, 1, 1, 1)
+				tab:SetTemplate ("DETAILS_TAB_BUTTON_TEMPLATE")
 			end
 			
-			newtab.leftSelectedTexture:SetVertexColor (1, .7, 0, 1)
-			newtab.middleSelectedTexture:SetVertexColor (1, .7, 0, 1)
-			newtab.rightSelectedTexture:SetVertexColor (1, .7, 0, 1)
-			
+			newTabButton:SetTemplate ("DETAILS_TAB_BUTTONSELECTED_TEMPLATE")
 			onclick()
 		end)
 	end
 	
-	newtab:SetScript ("PostClick", function (self)
-		CurrentTab = self.tabname
-		
+	newTabButton:SetScript ("PostClick", function (self)
+		CurrentTab = self.tabname or self.MyObject.tabname
+
 		if (CurrentTab ~= "Summary") then
 			for _, widget in ipairs (SummaryWidgets) do
 				widget:Hide()
@@ -4905,12 +4959,6 @@ function _detalhes:CreatePlayerDetailsTab (tabname, localized_name, condition, f
 		end
 	end)
 	
-	--> remove os scripts padroes
-	newtab:SetScript ("OnDoubleClick", nil)
-	newtab:SetScript ("OnEnter", nil)
-	newtab:SetScript ("OnLeave", nil)
-	newtab:SetScript ("OnDragStart", nil)
-
 end
 
 function _detalhes.janela_info:monta_relatorio (botao)
@@ -5146,7 +5194,7 @@ local row_on_enter = function (self)
 	end
 	
 	--> aumenta o tamanho da barra
-	self:SetHeight (17) --> altura determinada pela inst�ncia
+	self:SetHeight (CONST_BAR_HEIGHT + 1)
 	--> poe a barra com alfa 1 ao inv�s de 0.9
 	self:SetAlpha(1)
 
@@ -5165,6 +5213,8 @@ local row_on_enter = function (self)
 		elseif (not self.minha_tabela or not self.minha_tabela:MontaTooltipAlvos (self, self._index, info.instancia)) then  -- > poderia ser aprimerado para uma tailcall
 			return
 		end
+		
+		self:SetHeight (CONST_TARGET_HEIGHT + 1)
 		
 		GameTooltip:Show()
 		
@@ -5185,8 +5235,8 @@ local row_on_enter = function (self)
 		end
 	
 		--> da zoom no icone
-		self.icone:SetWidth (17)
-		self.icone:SetHeight (17)	
+		self.icone:SetWidth (CONST_BAR_HEIGHT + 2)
+		self.icone:SetHeight (CONST_BAR_HEIGHT + 2)
 		--> poe a alfa do icone em 1.0
 		self.icone:SetAlpha (1)
 		
@@ -5210,7 +5260,7 @@ local row_on_leave = function (self)
 	self.mouse_over = false
 
 	--> diminui o tamanho da barra
-	self:SetHeight (16)
+	self:SetHeight (CONST_BAR_HEIGHT)
 	--> volta com o alfa antigo da barra que era de 0.9
 	self:SetAlpha(0.9)
 	
@@ -5225,8 +5275,8 @@ local row_on_leave = function (self)
 	
 	if (self.isMain) then
 		--> retira o zoom no icone
-		self.icone:SetWidth (14)
-		self.icone:SetHeight (14)
+		self.icone:SetWidth (CONST_BAR_HEIGHT)
+		self.icone:SetHeight (CONST_BAR_HEIGHT)
 		--> volta com a alfa antiga da barra
 		self.icone:SetAlpha (1)
 		
@@ -5239,6 +5289,9 @@ local row_on_leave = function (self)
 			info.jogador.detalhes = nil
 			gump:HidaAllDetalheInfo()
 		end
+	
+	elseif (self.isAlvo) then
+		self:SetHeight (CONST_TARGET_HEIGHT)
 	end
 end
 
@@ -5340,12 +5393,7 @@ local function CriaTexturaBarra (instancia, barra)
 	
 	local texture = SharedMedia:Fetch ("statusbar", _detalhes.player_details_window.bar_texture)
 	barra.textura:SetStatusBarTexture (texture)
-	
-	--barra.textura:SetStatusBarTexture ([[Interface\AddOns\Details\Images\bar_skyline.tga]])
-	--barra.textura:SetStatusBarTexture ([[Interface\AddOns\Details\Images\bar_serenity]])
 	barra.textura:SetStatusBarTexture (.6, .6, .6, 1)
-
-	--print (texture, _detalhes.player_details_window.bar_texture)
 	
 	barra.textura:SetStatusBarColor (.5, .5, .5, 0)
 	barra.textura:SetMinMaxValues (0,100)
@@ -5360,7 +5408,7 @@ local function CriaTexturaBarra (instancia, barra)
 	end
 	
 	barra.texto_esquerdo = barra:CreateFontString (nil, "OVERLAY", "GameFontHighlightSmall")
-	barra.texto_esquerdo:SetPoint ("LEFT", barra.textura, "LEFT", 22, 0)
+	barra.texto_esquerdo:SetPoint ("LEFT", barra.textura, "LEFT", CONST_BAR_HEIGHT + 6, 0)
 	barra.texto_esquerdo:SetJustifyH ("LEFT")
 	barra.texto_esquerdo:SetTextColor (1,1,1,1)
 	
@@ -5496,6 +5544,8 @@ local target_on_leave = function (self)
 	self:SetAlpha (.7)
 end
 
+
+
 function gump:CriaNovaBarraInfo1 (instancia, index)
 
 	if (_detalhes.janela_info.barras1 [index]) then
@@ -5506,10 +5556,10 @@ function gump:CriaNovaBarraInfo1 (instancia, index)
 	local janela = info.container_barras.gump
 
 	local esta_barra = _CreateFrame ("Button", "Details_infobox1_bar_"..index, info.container_barras.gump)
-	esta_barra:SetHeight (16) --> altura determinada pela inst�ncia
+	esta_barra:SetHeight (CONST_BAR_HEIGHT)
 	esta_barra.index = index
 
-	local y = (index-1)*17 --> 17 � a altura da barra
+	local y = (index-1) * (CONST_BAR_HEIGHT + 1)
 	y = y*-1 --> baixo
 	
 	esta_barra:SetPoint ("LEFT", janela, "LEFT")
@@ -5522,7 +5572,7 @@ function gump:CriaNovaBarraInfo1 (instancia, index)
 	
 	esta_barra.targets = CreateFrame ("frame", "Details_infobox1_bar_"..index.."Targets", esta_barra)
 	esta_barra.targets:SetPoint ("right", esta_barra, "right")
-	esta_barra.targets:SetSize (15, 15)
+	esta_barra.targets:SetSize (CONST_BAR_HEIGHT-1, CONST_BAR_HEIGHT-1)
 	esta_barra.targets.texture = esta_barra.targets:CreateTexture (nil, overlay)
 	esta_barra.targets.texture:SetTexture ([[Interface\MINIMAP\TRACKING\Target]])
 	esta_barra.targets.texture:SetAllPoints()
@@ -5536,16 +5586,16 @@ function gump:CriaNovaBarraInfo1 (instancia, index)
 	
 	--> icone
 	esta_barra.miniframe = CreateFrame ("frame", nil, esta_barra)
-	esta_barra.miniframe:SetSize (14, 14)
-	esta_barra.miniframe:SetPoint ("RIGHT", esta_barra.textura, "LEFT", 18, 0)
+	esta_barra.miniframe:SetSize (CONST_BAR_HEIGHT-2, CONST_BAR_HEIGHT-2)
+	esta_barra.miniframe:SetPoint ("RIGHT", esta_barra.textura, "LEFT", CONST_BAR_HEIGHT + 2, 0)
 	
 	esta_barra.miniframe:SetScript ("OnEnter", miniframe_func_on_enter)
 	esta_barra.miniframe:SetScript ("OnLeave", miniframe_func_on_leave)
 	
 	esta_barra.icone = esta_barra:CreateTexture (nil, "OVERLAY")
-	esta_barra.icone:SetWidth (14)
-	esta_barra.icone:SetHeight (14)
-	esta_barra.icone:SetPoint ("RIGHT", esta_barra.textura, "LEFT", 18, 0)
+	esta_barra.icone:SetWidth (CONST_BAR_HEIGHT)
+	esta_barra.icone:SetHeight (CONST_BAR_HEIGHT)
+	esta_barra.icone:SetPoint ("RIGHT", esta_barra.textura, "LEFT", CONST_BAR_HEIGHT + 2, 0)
 	
 	esta_barra:SetAlpha(0.9)
 	esta_barra.icone:SetAlpha (1)
@@ -5572,9 +5622,9 @@ function gump:CriaNovaBarraInfo2 (instancia, index)
 	local janela = info.container_alvos.gump
 
 	local esta_barra = _CreateFrame ("Button", "Details_infobox2_bar_"..index, info.container_alvos.gump)
-	esta_barra:SetHeight (16) --> altura determinada pela inst�ncia
+	esta_barra:SetHeight (CONST_TARGET_HEIGHT)
 
-	local y = (index-1)*17 --> 17 � a altura da barra
+	local y = (index-1) * (CONST_TARGET_HEIGHT + 1)
 	y = y*-1 --> baixo
 	
 	esta_barra:SetPoint ("LEFT", janela, "LEFT")
@@ -5589,9 +5639,9 @@ function gump:CriaNovaBarraInfo2 (instancia, index)
 
 	--> icone
 	esta_barra.icone = esta_barra:CreateTexture (nil, "OVERLAY")
-	esta_barra.icone:SetWidth (14)
-	esta_barra.icone:SetHeight (14)
-	esta_barra.icone:SetPoint ("RIGHT", esta_barra.textura, "LEFT", 18, 0)
+	esta_barra.icone:SetWidth (CONST_TARGET_HEIGHT)
+	esta_barra.icone:SetHeight (CONST_TARGET_HEIGHT)
+	esta_barra.icone:SetPoint ("RIGHT", esta_barra.textura, "LEFT", CONST_TARGET_HEIGHT + 2, 0)
 	
 	esta_barra:SetAlpha (ALPHA_BLEND_AMOUNT)
 	esta_barra.icone:SetAlpha (1)

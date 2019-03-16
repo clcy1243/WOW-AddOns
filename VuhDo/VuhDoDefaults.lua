@@ -374,10 +374,10 @@ function VUHDO_loadSpellArray()
 	if (VUHDO_SPEC_LAYOUTS == nil) then
 		VUHDO_SPEC_LAYOUTS = {
 			["selected"] = "",
-			["1"] = "";
-			["2"] = "";
-			["3"] = "";
-			["4"] = "";
+			["1"] = "",
+			["2"] = "",
+			["3"] = "",
+			["4"] = ""
 		}
 	end
 
@@ -421,6 +421,8 @@ local function VUHDO_customDebuffsAddDefaultSettings(aBuffName)
 			["animate"] = VUHDO_CONFIG["CUSTOM_DEBUFF"]["animate"],
 			["timer"] = VUHDO_CONFIG["CUSTOM_DEBUFF"]["timer"],
 			["isStacks"] = VUHDO_CONFIG["CUSTOM_DEBUFF"]["isStacks"],
+			["isMine"] = true,
+			["isOthers"] = true,
 		}
 	end
 
@@ -740,6 +742,8 @@ local VUHDO_DEFAULT_CU_DE_STORED_SETTINGS = {
 	["isStacks"] = true,
 	["isAliveTime"] = false,
 	["isFullDuration"] = false,
+	["isMine"] = true,
+	["isOthers"] = true,
 
 --	["color"] = {
 --		["R"] = 0.6,
@@ -1768,6 +1772,83 @@ function VUHDO_loadDefaultConfig()
 		-- Dunegorger Kraulok
 	);
 		
+	-- 8.0.1 - Battle for Azeroth - Debuff Absorbs
+	VUHDO_addCustomSpellIds(40,
+		-- [[ The Underrot ]]
+		-- Diseased Lasher
+		278961, -- Decaying Mind
+		-- [[ Uldir - Vectis ]]
+		265206  -- Immunosuppression
+	);
+
+	-- 8.0.1 - Battle for Azeroth - Uldir part 2
+	VUHDO_addCustomSpellIds(41, 
+		-- [[ Uldir ]]
+		-- Taloc
+		275270, -- Fixate 
+		-- Mother
+		-- Devourer
+		-- Zek'voz
+		-- Vectis
+		265127, -- Lingering Infection
+		267160, -- Omega Vector		
+		267161, -- Omega Vector
+		267162, -- Omega Vector
+		267163, -- Omega Vector
+		267164, -- Omega Vector
+		267165, -- Omega Vector
+		267166, -- Omega Vector
+		267167, -- Omega Vector
+		267168, -- Omega Vector
+		-- Zul
+		276020, -- Fixate
+		-- Mythrax
+		-- G'huun
+		272506  -- Explosive Corruption
+	);
+
+	-- 8.1 - Battle for Azeroth - Battle of Dazar'alor
+	VUHDO_addCustomSpellIds(42,
+		-- [[ Battle of Dazar'alor ]]
+		-- Champion of the Light
+		-- Grong (Horde & Alliance)
+		285875, -- Rending Bite
+		282215, -- Megatomic Seeker Missile
+		282471, -- Voodoo Blast
+		285659, -- Apetagonizer Core
+		286434, -- Necrotic Core
+		-- Jadefire Masters
+		285632, -- Stalking
+		286988, -- Searing Embers
+		-- Treasure Guardian Opulence
+		287072, -- Liquid Gold
+		283507, -- Volatile Charge
+		284519, -- Pulse Quickening Toxin
+		-- Conclave of the Chosen
+		282444, -- Lacerating Claws
+		286811, -- Akunda's Wrath
+		282209, -- Mark of Prey
+		-- King Rastakhan
+		285213, -- Caress of Death
+		288449, -- Death's Door
+		284662, -- Seal of Purification
+		285349, -- Plague of Fire
+		284781, -- Grevious Axe
+		-- High Tinker Mekkatorque
+		286480, -- Anti-Tampering Shock
+		282182, -- Buster Cannon
+		287757, -- Gigavolt Charge
+		283411, -- Gigavolt Blast
+		-- Stormwall Blockade
+		284405, -- Tempting Song
+		285000, -- Kelp Wrapping
+		285350, -- Storm's Wail
+		-- Lady Jaina Proudmoore
+		287365, -- Searing Pitch
+		288218, -- Broadside
+		289220, -- Heart of Frost
+		288038  -- Marked Target
+	);
 
 	local debuffRemovalList = {};
 

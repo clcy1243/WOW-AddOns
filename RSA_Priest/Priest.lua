@@ -37,7 +37,8 @@ function RSA.Resurrect(_, _, target, _, caster)
 		end
 		if RSA.db.profile.Priest.Spells.Resurrection.Whisper == true and dest ~= pName then
 			RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-			RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+			--RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+			RSA.Print_Whisper(message, full_destName, RSA.Replacements, dest)
 			RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 		end
 		if RSA.db.profile.Priest.Spells.Resurrection.CustomChannel.Enabled == true then
@@ -88,6 +89,15 @@ function RSA_Priest:OnEnable()
 		section = "Dispel",
 		replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
 	}
+	local Config_Chastise = { -- Holy Word: Chastise
+		profile = 'Chastise',
+		replacements = { TARGET = 1 },
+	}
+	local Config_Chastise_End = { -- Holy Word: Chastise
+		profile = 'Chastise',
+		replacements = { TARGET = 1 },
+		section = 'End'
+	}
 	local MonitorConfig_Priest = {
 		player_profile = RSA.db.profile.Priest,
 		SPELL_RESURRECT = {
@@ -108,6 +118,8 @@ function RSA_Priest:OnEnable()
 		SPELL_AURA_APPLIED = {
 			[605] = Config_MC, -- Mind Control
 			[205364] = Config_MC, -- Mind Control
+			[200196] = Config_Chastise, -- Holy Word: Chastise
+			[200200] = Config_Chastise, -- Holy Word: Chastise with Censure talent
 			[9484] = { -- SHACKLE UNDEAD
 				profile = 'ShackleUndead',
 				replacements = { TARGET = 1 }
@@ -152,11 +164,6 @@ function RSA_Priest:OnEnable()
 				profile = 'MassRess',
 				section = 'End'
 			},
-			[2006] = { -- Resurrection
-				profile = 'Resurrection',
-				section = 'End',
-				replacements = { TARGET = 1 },
-			},
 			[73325] = { -- LEAP OF FAITH
 				profile = 'LeapOfFaith',
 				section = "Cast",
@@ -171,6 +178,9 @@ function RSA_Priest:OnEnable()
 			},
 			[64843] = { -- DIVINE HYMN
 				profile = 'DivineHymn'
+			},
+			[200183] = {
+				profile = 'Apotheosis'
 			},
 			[1706] = { -- LEVITATE
 				profile = 'Levitate',
@@ -210,18 +220,28 @@ function RSA_Priest:OnEnable()
 			[64901] = { -- SYMBOL OF HOPE
 				profile = 'SymbolOfHope'
 			},
+			[265202] = { -- Holy Word: Salvation
+				profile = 'Salvation',
+				section = "Cast"
+			},
 		},
 		SPELL_AURA_REMOVED = {
 			[586] = Config_Fade_End, -- Fade
 			[213602] = Config_Fade_End, -- Greater Fade
 			[605] = Config_MC_End, -- Mind Control
 			[205364] = Config_MC_End, -- Mind Control
+			[200196] = Config_Chastise_End, -- Holy Word: Chastise
+			[200200] = Config_Chastise_End, -- Holy Word: Chastise with Censure talent
 			[15286] = { -- VAMPIRIC EMBRACE
 				profile = 'VampiricEmbrace',
 				section = 'End'
 			},
 			[64843] = { -- DIVINE HYMN
 				profile = 'DivineHymn',
+				section = 'End'
+			},
+			[200183] = {
+				profile = 'Apotheosis',
 				section = 'End'
 			},
 			[111759] = { -- LEVITATE
@@ -434,7 +454,7 @@ function RSA_Priest:OnEnable()
 						end
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.Whisper == true and dest ~= pName then
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-							RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+							RSA.Print_Whisper(message, full_destName, RSA.Replacements, dest)
 							RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 						end
 						if RSA.db.profile.Priest.Spells.GuardianSpirit.CustomChannel.Enabled == true then

@@ -1,3 +1,110 @@
+Version 3.100
+
+
+Known issues:
+-- BfA stat squish cleanup still a work in progress
+--   AOE Advice spell equations need complete overhaul
+--   Some text providers need changes to better display small numbers
+-- Debuff tooltips are currently bugged when using ElvUI
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'
+
+
+Bugfixes:
+-- Fixed hostile spells options UI recognition of talents and items
+-- Fixed custom debuff spell source filter when aura is a buff
+-- Fixed custom debuff update when debuff index changes
+-- Fixed custom debuff display on update when slot becomes available
+-- Fixed unnecessary shield value updates for irrelevant spells
+-- Fixed shield overwrite detection when new shield amount is smaller
+
+
+Improvements:
+
+
+--------------------------------------------------------------
+Version 3.99
+
+
+Known issues:
+-- BfA stat squish cleanup still a work in progress
+--   AOE Advice spell equations need complete overhaul
+--   Some text providers need changes to better display small numbers
+-- Debuff tooltips are currently bugged when using ElvUI
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'
+
+
+Bugfixes:
+-- Fixed various reset functions under 'VuhDo Options > Tools > Reset'
+
+
+Improvements:
+-- Added new bouquet validator 'Icon: Is Phased'
+-- Added new bouquet validator 'Icon: Is War Mode Phased'
+-- Added new default bouquet 'Is Phased Icon'
+-- Added spell caster source options to custom debuffs
+--  See 'VuhDo Options > Debuffs > Custom > Store / Delete > Mine'
+--  See 'VuhDo Options > Debuffs > Custom > Store / Delete > Others'
+--  Both checkboxes are selected by default
+--  These defaults are inherited by existing custom debuffs
+-- Added auto-activate of profile due to a group size of '3'
+-- Added '3' and '15' man group sizes for 'Hold to Test' demo mode
+-- Added default custom debuffs for Battle of Dazar'alor raid
+-- Added Mage spell 'Arcane Familiar' to Buff Watch
+
+
+--------------------------------------------------------------
+Version 3.98
+
+
+Known issues:
+-- BfA stat squish cleanup still a work in progress
+--   AOE Advice spell equations need complete overhaul
+--   Some text providers need changes to better display small numbers
+-- Debuff tooltips are currently bugged when using ElvUI
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'
+
+
+Bugfixes:
+-- Fixed debuff absorb tracking
+
+
+Improvements:
+-- Added Vectis Immunosuppression debuff absorb tracking
+-- Added Diseased Lasher Decaying Mind debuff absorb tracking
+-- Added Priest Luminous Barrier absorb tracking
+-- Added more default custom debuffs for Uldir raid encounters
+-- Added new bouquet validator 'Has Summon'
+-- Added new default bouquet 'Summon Status Icon'
+-- Added new default bouquet 'Role & Summon Status Icon'
+--   Now assigned to the 'Special Dot' indicator by default
+-- Bump TOC interface version for 8.1
+
+
+--------------------------------------------------------------
+Version 3.97
+
+
+Known issues:
+-- BfA stat squish cleanup still a work in progress
+--   AOE Advice spell equations need complete overhaul
+--   Some text providers need changes to better display small numbers
+-- Debuff tooltips are currently bugged when using ElvUI
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'
+
+
+Bugfixes:
+-- Fixed vertical health bar display for units w/o a power bar
+-- Fixed mana bar display after specialization activation
+-- Fixed apostrophe issue for Priest 'Shadow Mend' in French language
+-- Fixed assignment of remapped spells when dragging from spell book
+-- Fixed Holy Priest 'Trail of Light' tracker
+
+
+Improvements:
+-- Added panel sort method 'Tank => Healer => MDPS => RDPS'
+
+
+--------------------------------------------------------------
 Version 3.96
 
 

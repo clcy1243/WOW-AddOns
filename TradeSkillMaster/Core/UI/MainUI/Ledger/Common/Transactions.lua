@@ -53,11 +53,13 @@ end
 -- ============================================================================
 
 function private.DrawPurchasesPage()
+	TSM.UI.AnalyticsRecordPathChange("main", "ledger", "expenses", "purchases")
 	private.type = "buy"
 	return private.DrawTransactionPage()
 end
 
 function private.DrawSalesPage()
+	TSM.UI.AnalyticsRecordPathChange("main", "ledger", "revenue", "sales")
 	private.type = "sale"
 	return private.DrawTransactionPage()
 end
@@ -200,7 +202,6 @@ function private.DrawTransactionPage()
 				:GetScrollingTableInfo()
 					:NewColumn("item")
 						:SetTitles(L["Item"])
-						:SetWidth(140)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("LEFT")
@@ -237,11 +238,11 @@ function private.DrawTransactionPage()
 						:Commit()
 					:NewColumn("auctions")
 						:SetTitles(L["Auctions"])
-						:SetWidth(70)
+						:SetWidth(80)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("RIGHT")
-						:SetTextInfo("quantity")
+						:SetTextInfo(nil, private.FormatAuctions)
 						:SetSortInfo("quantity")
 						:Commit()
 					:NewColumn("perItem")
@@ -253,8 +254,9 @@ function private.DrawTransactionPage()
 						:SetTextInfo("price", private.TableGetPerItemText)
 						:SetSortInfo("price")
 						:Commit()
-					:NewColumn("timeFrame")
+					:NewColumn("time")
 						:SetTitles(L["Time Frame"])
+						:SetWidth(120)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("RIGHT")
@@ -280,6 +282,10 @@ end
 
 function private.TableGetTimeframeText(record)
 	return SecondsToTime(time() - record)
+end
+
+function private.FormatAuctions(row)
+	return row:GetField("quantity") / row:GetField("stackSize")
 end
 
 

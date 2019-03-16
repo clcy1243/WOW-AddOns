@@ -1,3 +1,43 @@
+- version B7 (8.1.5)
+
+General
+* Oops fixes.
+* Abilities that are missing an alert are now all off by default.
+
+- If you spot spells with existing alerts that are no longer alerting, please let me know so I can correct their spell IDs.
+- No, I don't know when recording will get done.
+
+===============================================
+- version B6 (8.1.5)
+
+General
+* Fixed Drinking alert in arenas (I'm *fairly* certain, but yell at me if it isn't.)
+
+Yes, I'm aware that there are some spellIDs that need fixing since 8.1. I have very little time to play WoW at the moment and I don't PvP actively right now, so it might be a while on getting those unless someone at least tell me what abilities to look at. I also have straight up no idea when the new VO is going to be done anymore.
+
+===============================================
+- version B5 (8.1.0)
+
+General
+* Sloppily enabled Drinking alert functionality. The option is now a part of the General Abilities section as opposed to its own alert, and will also now trigger in all areas that are currently enabled. Note that I attempted only to add drinking spell IDs that could be used in arenas, so if someone in a battleground is using buff food, it may not alert. This could also mean I missed a few IDs.
+
+Warlock
+* Once again, added even more Spell Lock IDs.
+
+Yes, I'm aware that there are some spellIDs that need fixing since 8.1. I have very little time to play WoW at the moment and I don't PvP actively right now, so it might be a while on getting those unless someone at least tell me what abilities to look at. I also have straight up no idea when the new VO is going to be done anymore.
+
+===============================================
+- version B4 (8.1.0)
+
+General
+* Attempted, very aggressive hand-wavy emphasis on attempted, a fix for most recent cases of the "Script Ran Too Long" error. I'm pretty sure it won't get worse, but I have kinda'-sorta' crossed fingers that it'll make it better. I'd be more surprised to hear that it does work than doesn't, honestly. Let me know how it feels. Or don't, and I'll assume it's fixed.
+
+Demon Hunter
+* Fixed Disrupt spellID (their interrupt).
+
+Yes, I'm aware that there are some spellIDs that need fixing since 8.1. I have very little time to play WoW at the moment and I don't PvP actively right now, so it might be a while on getting those. I also have straight up no idea when the new VO is going to be done anymore.
+
+===============================================
 - version B3 (8.0.1)
 
 * **THIS VERSION INCLUDES THE UPDATED SPELL LIBRARY, BUT NOT THE UPDATED VOICEOVERS. MANY ABILITIES BELOW WILL NOT PLAY AN ASSOCIATED ALERT UNTIL A FUTURE VERSION.**

@@ -1,24 +1,42 @@
-tag 46b5751503044da85a7d49f3aed1b7f6b69b1574 1.0.16
+tag 553d206436812645d3b370b8a7a7540853b96259 1.1.0
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Sat Jul 28 17:38:05 2018 -0500
+Date:	Tue Dec 18 01:01:07 2018 -0600
 
-Tagging as 1.0.16
+Tagging as 1.1.0
 
-commit f5ecfc236b67bd778f1b27a0130074005c866853
+commit 396f68d85bc21aeb58a79372e79e6dabb81ba438
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Sat Jul 28 17:29:39 2018 -0500
+Date:   Tue Dec 18 00:58:35 2018 -0600
 
-    Switch to the actual Bastion voice
+    Update TOC for 8.1
 
-commit 16a57bce36fb1b6fd2c957a763009c6aaeff9537
+commit f5b82c4c8ecbd4399f9b81f1810ae5013d321f3c
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Sat Jul 28 15:46:48 2018 -0500
+Date:   Tue Dec 18 00:58:35 2018 -0600
 
-    Add Wrecking Ball
+    Update TOC for 8.1
 
-commit 348c4b4655174b0accd3d9e6d1060070b5fc2bf4
+commit 5873f8ef1b2a96b597bfb199fc248938adbd9ddb
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Sat Jul 28 15:37:50 2018 -0500
+Date:   Tue Nov 20 04:59:02 2018 -0600
 
-    Separate id and name
+    Add Ashe
+
+commit d003bf77468d8834ec9c4abf3127fe1bb1bfc2d2
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sat Aug 11 00:29:46 2018 -0500
+
+    Add deDE and frFR
+
+commit fd13b85a2b1b504827b36bb1f19c6fe7b6ad3ed7
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Sat Aug 11 00:28:33 2018 -0500
+
+    Start localization support
+
+commit 83313a6941d5391ef65f7acdc3301914ecb5cb13
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Fri Aug 10 23:35:55 2018 -0500
+
+    Realign audio
 

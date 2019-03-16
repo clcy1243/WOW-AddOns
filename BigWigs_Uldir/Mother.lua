@@ -14,6 +14,7 @@ mod.respawnTime = 26
 --
 
 local stage = 1
+local nextBeam = nil
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -23,7 +24,7 @@ local L = mod:GetLocale()
 if L then
 	L.sideLaser = "(Side) Beams" -- short for: (location) Uldir Defensive Beam
 	L.upLaser = "(Roof) Beams"
-	L.mythic_beams = "(Side + Roof) Beams"
+	L.mythic_beams = "Beams"
 end
 
 --------------------------------------------------------------------------------
@@ -65,7 +66,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "PurifyingFlame", 267795)
 	self:Log("SPELL_PERIODIC_DAMAGE", "PurifyingFlameDamage", 268277)
 	self:Log("SPELL_PERIODIC_MISSED", "PurifyingFlameDamage", 268277)
-	self:Log("SPELL_CAST_SUCCESS", "WindTunnel", 267945, 267885, 267878) -- XXX 267878 267945 Heroic, Verify 267885
+	self:Log("SPELL_CAST_SUCCESS", "WindTunnel", 267945)
 	self:Log("SPELL_CAST_SUCCESS", "UldirDefensiveBeam", 277973, 277742, 269827) -- Sideways Beams, Room 2 Roof Beams, Room 3 Roof Beams
 	self:Log("SPELL_PERIODIC_DAMAGE", "UldirDefensiveBeamDamage", 268253)
 	self:Log("SPELL_PERIODIC_MISSED", "UldirDefensiveBeamDamage", 268253)
@@ -94,15 +95,21 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, unit, _, spellId)
 			room = 1
 		elseif self:MobId(sourceGUID) == 137022 then -- Room 2
 			room = 2
-			self:StopBar(L.sideLaser)
-			self:StopBar(L.upLaser)
-			self:CDBar(268253, 20, L.sideLaser)
+			if self:Mythic() then
+				nextBeam = L.mythic_beams
+				self:CDBar(268253, 11, L.mythic_beams)
+			else
+				nextBeam = L.sideLaser
+				self:CDBar(268253, 20, L.sideLaser)
+			end
 		elseif self:MobId(sourceGUID) == 137023 then -- Room 3
 			room = 3
 			stage = 3
 			self:StopBar(L.sideLaser)
 			self:StopBar(L.upLaser)
-			self:CDBar(268253, 10, L.sideLaser)
+			self:StopBar(L.mythic_beams)
+			nextBeam = self:Mythic() and L.mythic_beams or L.sideLaser
+			self:CDBar(268253, 10, self:Mythic() and L.mythic_beams or L.sideLaser)
 		end
 		self:Message2(spellId, "cyan", CL.count:format(self:SpellName(spellId), room), "ability_mage_firestarter")
 		self:PlaySound(spellId, "info")
@@ -119,7 +126,7 @@ function mod:ClingingCorruption(args)
 end
 
 function mod:DepletedEnergy(args)
-	self:TargetMessage2(args.spellId, "green", args.destName)
+	self:TargetMessage2(args.spellId, "green", args.destName) -- Cast on herself
 	self:PlaySound(args.spellId, "long")
 end
 
@@ -147,7 +154,7 @@ end
 
 function mod:SanitizingStrikeApplied(args)
 	self:StackMessage(args.spellId, args.destName, args.amount, "red")
-	self:PlaySound(args.spellId, "alarm")
+	self:PlaySound(args.spellId, "alarm", nil, args.destName)
 end
 
 function mod:PurifyingFlame(args)
@@ -170,22 +177,18 @@ do
 	end
 end
 
-do
-	local prev = 0
-	function mod:WindTunnel(args)
-		local t = args.time
-		if t-prev > 2 then
-			prev = t
-			self:Message2(267878, "red")
-			self:PlaySound(267878, "warning")
-			self:CastBar(267878, 11)
-			self:CDBar(267878, 46.5)
-		end
+function mod:WindTunnel(args)
+	self:Message2(267878, "red")
+	self:PlaySound(267878, "warning")
+	self:CastBar(267878, 11)
+	self:CDBar(267878, 42.5)
+	if stage > 1 and self:BarTimeLeft(nextBeam) < 11 then -- No beams during winds
+		self:CDBar(268253, 11, nextBeam)
 	end
 end
 
 function mod:UldirDefensiveBeam(args)
-	local beamType, castTime, nextBeam, timer = nil, nil, nil, nil
+	local beamType, castTime, timer = nil, nil, nil
 	if self:Easy() then
 		beamType = L.sideLaser
 		castTime = 4
@@ -195,7 +198,7 @@ function mod:UldirDefensiveBeam(args)
 		beamType = L.mythic_beams
 		castTime = 4
 		nextBeam = L.mythic_beams
-		timer = 31.5
+		timer = stage == 3 and 23 or 51
 	elseif args.spellId == 277973 then
 		beamType = L.sideLaser
 		castTime = 4
@@ -207,10 +210,15 @@ function mod:UldirDefensiveBeam(args)
 		nextBeam = L.sideLaser
 		timer = stage == 3 and 16 or 17
 	end
+	self:StopBar(L.sideLaser)
+	self:StopBar(L.upLaser)
 	self:Message2(268253, "yellow", beamType)
 	self:PlaySound(268253, "alert")
 	self:CastBar(268253, castTime, beamType)
 	self:CDBar(268253, timer, nextBeam)
+	if self:BarTimeLeft(self:SpellName(267878)) < 8 then -- No winds during beams
+		self:CDBar(267878, 8) -- Wind Tunnel
+	end
 end
 
 do

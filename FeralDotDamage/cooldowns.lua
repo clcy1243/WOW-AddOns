@@ -682,7 +682,7 @@ function C:AddCooldownIcon(spellid, parent)
 			if not self.cooldown:IsShown() then
 				self.cooldown:Show()
 			end
-			self.cooldown:SetSwipeColor(0, 0, 0, 0.7)
+			self.cooldown:SetSwipeColor(0, 0, 0, C.db.profile.cooldowns.swipe_alpha or 0.7) --0.7)
 			self.cooldown:SetDrawEdge(false)	
 			self.cooldown:SetReverse(true)
 			self.cooldown:SetCooldown(start, duration)
@@ -707,7 +707,7 @@ function C:AddCooldownIcon(spellid, parent)
 				self.icon:SetDesaturated(stacks == 0 and true or false)
 				
 				if stacks == 0 then
-					self.cooldown:SetSwipeColor(0, 0, 0, 0.7)
+					self.cooldown:SetSwipeColor(0, 0, 0, C.db.profile.cooldowns.swipe_alpha or 0.7) --0.7)
 					self.cooldown:SetDrawEdge(false)		
 				else
 					self.cooldown:SetSwipeColor(0, 0, 0, 0)	
@@ -740,7 +740,7 @@ function C:AddCooldownIcon(spellid, parent)
 		elseif status == 3 then
 			self.icon:SetDesaturated(false)
 			self.cooldown:Hide()
-			self.cooldown:SetSwipeColor(0, 0, 0, 0.7)
+			self.cooldown:SetSwipeColor(0, 0, 0, C.db.profile.cooldowns.swipe_alpha or 0.7) --0.7)
 			self.cooldown:SetDrawEdge(false)	
 			self.cooldown:SetReverse(true)
 			self.cooldown:Clear()
@@ -755,7 +755,7 @@ function C:AddCooldownIcon(spellid, parent)
 		elseif status == 4 then	
 			self.icon:SetDesaturated(C.db.profile.cooldowns.blackwhite)
 			self.cooldown:Hide()
-			self.cooldown:SetSwipeColor(0, 0, 0, 0.7)
+			self.cooldown:SetSwipeColor(0, 0, 0, C.db.profile.cooldowns.swipe_alpha or 0.7) --0.7)
 			self.cooldown:SetDrawEdge(false)	
 			self.cooldown:SetReverse(true)
 			self.cooldown:Clear()
@@ -1337,7 +1337,19 @@ function C:UpdateCooldownStyleOpts(o)
 				return C.db.profile.cooldowns.icon_dark
 			end	
 		}
-	
+		
+		o.args.swipe_alpha_test = {
+			order = 2.1, name = L["Оверлей перезарядки"],
+			type = "slider", min = 0, max = 1, step = 0.1,
+			set = function(self, value)
+				C.db.profile.cooldowns.swipe_alpha = value;
+				C:UpdateCooldownOrders()
+			end,
+			get = function(self)		
+				return C.db.profile.cooldowns.swipe_alpha
+			end	
+		}
+
 		o.args.font.args.stacks ={
 			order = 20,name = L["Стаки"],type = "group", embend = true,
 			args={
@@ -1453,6 +1465,7 @@ function C:UpdateCooldownStyleOpts(o)
 	else
 		o.args.isvertical = nil
 		o.args.icon_darkness = nil
+		o.args.swipe_alpha_test = nil
 		o.args.blackwhite = nil
 		o.args.glowAnim = nil
 		o.args.font.args.timer.args.hide_timer_text = nil
@@ -1640,7 +1653,7 @@ function C:AddCooldownsGUI()
 	}
 	
 	o.args.font ={
-		order = 2,name = L["Шрифт"],type = "group", embend = true,
+		order = 8,name = L["Шрифт"],type = "group", embend = true,
 		args={
 			font = {
 				order = 4,name = L["Шрифт"],type = 'font',

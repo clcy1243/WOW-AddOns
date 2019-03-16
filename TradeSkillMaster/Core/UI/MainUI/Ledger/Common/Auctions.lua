@@ -53,11 +53,13 @@ end
 -- ============================================================================
 
 function private.DrawExpiredPage()
+	TSM.UI.AnalyticsRecordPathChange("main", "ledger", "failed_auctions", "expired")
 	private.type = "expire"
 	return private.DrawAuctionsPage()
 end
 
 function private.DrawCancelledPage()
+	TSM.UI.AnalyticsRecordPathChange("main", "ledger", "failed_auctions", "cancelled")
 	private.type = "cancel"
 	return private.DrawAuctionsPage()
 end
@@ -200,7 +202,6 @@ function private.DrawAuctionsPage()
 				:GetScrollingTableInfo()
 					:NewColumn("item")
 						:SetTitles(L["Item"])
-						:SetWidth(200)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("LEFT")
@@ -219,7 +220,7 @@ function private.DrawAuctionsPage()
 						:Commit()
 					:NewColumn("stackSize")
 						:SetTitles(L["Stack"])
-						:SetWidth(50)
+						:SetWidth(55)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("RIGHT")
@@ -228,15 +229,16 @@ function private.DrawAuctionsPage()
 						:Commit()
 					:NewColumn("quantity")
 						:SetTitles(L["Auctions"])
-						:SetWidth(70)
+						:SetWidth(80)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("RIGHT")
-						:SetTextInfo("quantity")
+						:SetTextInfo(nil, private.FormatAuctions)
 						:SetSortInfo("quantity")
 						:Commit()
 					:NewColumn("time")
-						:SetTitles(L["Time"])
+						:SetTitles(L["Time Frame"])
+						:SetWidth(120)
 						:SetFont(TSM.UI.Fonts.FRIZQT)
 						:SetFontHeight(12)
 						:SetJustifyH("RIGHT")
@@ -258,6 +260,10 @@ end
 
 function private.TableGetTimeframeText(record)
 	return SecondsToTime(time() - record)
+end
+
+function private.FormatAuctions(row)
+	return row:GetField("quantity") / row:GetField("stackSize")
 end
 
 

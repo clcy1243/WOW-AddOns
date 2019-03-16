@@ -85,7 +85,7 @@ local configBtn = GRA:CreateButton(gra.mainFrame, L["Config"], "red", {55, 20}, 
 configBtn:SetPoint("BOTTOMRIGHT", -8, 5)
 configBtn:SetScript("OnClick", function()
 	gra.importFrame:Hide()
-	-- gra.epgpOptionsFrame:Hide()
+	gra.epgpOptionsFrame:Hide()
 	-- gra.dkpOptionsFrame:Hide()
 	gra.rosterEditorFrame:Hide()
 	gra.appearanceFrame:Hide()
@@ -113,7 +113,7 @@ buttons["attendanceSheetBtn"]:SetScript("OnClick", function()
 	HighlightButton("attendanceSheetBtn")
 	lastFrame = gra.attendanceFrame
 	gra.attendanceFrame:Show()
-	gra.announcementsFrame:Hide()
+	gra.calenderFrame:Hide()
 	gra.raidLogsFrame:Hide()
 end)
 
@@ -123,10 +123,23 @@ buttons["raidLogsBtn"]:SetScript("OnClick", function()
 	HighlightButton("raidLogsBtn")
 	lastFrame = gra.raidLogsFrame
 	gra.attendanceFrame:Hide()
-	gra.announcementsFrame:Hide()
+	gra.calenderFrame:Hide()
 	gra.raidLogsFrame:Show()
 end)
 
+-- buttons["calenderBtn"] = GRA:CreateButton(gra.mainFrame, L["Calender"], "red", {100, 20}, "GRA_FONT_SMALL")
+-- buttons["calenderBtn"]:SetPoint("LEFT", buttons["raidLogsBtn"], "RIGHT", 5, 0)
+-- buttons["calenderBtn"]:SetScript("OnClick", function()
+-- 	HighlightButton("calenderBtn")
+-- 	lastFrame = gra.calenderFrame
+-- 	gra.attendanceFrame:Hide()
+-- 	gra.raidLogsFrame:Hide()
+-- 	gra.calenderFrame:Show()
+-- end)
+
+-----------------------------------------
+-- top buttons
+-----------------------------------------
 -- track button, change text and color OnClick
 local trackBtn = GRA:CreateButton(gra.mainFrame.header, "TRACK", nil, {60, 22}, "GRA_FONT_PIXEL")
 trackBtn:SetPoint("LEFT", gra.mainFrame.header)
@@ -153,9 +166,37 @@ GRA:RegisterEvent("GRA_TRACK",  "Main_TrackStatus", function(raidDate)
 	end
 end)
 
+-- invite button
+local inviteBtn = GRA:CreateButton(gra.mainFrame.header, "INVITE", "red-hover", {60, 22}, "GRA_FONT_PIXEL")
+inviteBtn:SetPoint("LEFT", trackBtn, "RIGHT", -1, 0)
+inviteBtn:Hide()
+
+inviteBtn:SetScript("OnClick", function()
+	ConvertToRaid()
+	inviteBtn:RegisterEvent("GROUP_ROSTER_UPDATE")
+	
+	local onlineMembers = GRA:GetGuildOnlineRoster()
+	local myName = strjoin("-", UnitFullName("player"))
+
+	for n, _ in pairs(_G[GRA_R_Roster]) do
+		if n ~= myName and onlineMembers[n] and not(UnitInParty(GRA:GetShortName(n)) or UnitInRaid(GRA:GetShortName(n))) then
+			InviteUnit(n)
+		end
+	end
+	wipe(onlineMembers)
+end)
+
+inviteBtn:SetScript("OnEvent", function()
+	if not IsInRaid() then
+		ConvertToRaid()
+		inviteBtn:UnregisterEvent("GROUP_ROSTER_UPDATE")
+	end
+end)
+
 GRA:RegisterEvent("GRA_PERMISSION", "MainFrame_CheckPermissions", function(isAdmin)
 	if isAdmin then
 		trackBtn:Show()
+		inviteBtn:Show()
 	end
 end)
 

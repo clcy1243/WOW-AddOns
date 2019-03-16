@@ -54,7 +54,9 @@ function VUHDO_customDebuffIconsInitLocalOverrides()
 		["timer"] = VUHDO_CONFIG["CUSTOM_DEBUFF"]["timer"],
 		["isStacks"] = VUHDO_CONFIG["CUSTOM_DEBUFF"]["isStacks"],
 		["isAliveTime"] = false,
-		["isFullDuration"] = false
+		["isFullDuration"] = false,
+		["isMine"] = true,
+		["isOthers"] = true
 	};
 
 end
@@ -191,15 +193,21 @@ end
 
 --
 local tIconInfo;
+local tFound;
 function VUHDO_updateDebuffIcon(aUnit, anIcon, aName, anExpiry, aStacks, aDuration, anIsBuff, aSpellId, aCnt)
+
 	if not VUHDO_DEBUFF_ICONS[aUnit] then
 		VUHDO_DEBUFF_ICONS[aUnit] = { };
 	end
+
+	tFound = false;
 
 	for tCnt = 1, sMaxIcons do
 		tIconInfo = VUHDO_DEBUFF_ICONS[aUnit][tCnt];
 
 		if tIconInfo and tIconInfo[3] == aName then
+			tFound = true;
+
 			tIconInfo[1], tIconInfo[3], tIconInfo[4], tIconInfo[5], tIconInfo[6], tIconInfo[7] = anIcon, aName, anExpiry, aStacks, aDuration, aSpellId;
 
 			for _, tButton in pairs(VUHDO_getUnitButtonsSafe(aUnit)) do
@@ -208,6 +216,11 @@ function VUHDO_updateDebuffIcon(aUnit, anIcon, aName, anExpiry, aStacks, aDurati
 			end
 		end
 	end
+
+	if not tFound then
+		VUHDO_addDebuffIcon(aUnit, anIcon, aName, anExpiry, aStacks, aDuration, anIsBuff, aSpellId, aCnt);
+	end
+
 end
 
 
@@ -278,3 +291,12 @@ function VUHDO_getLatestCustomDebuff(aUnit)
 
 	return tDebuffInfo[1], tDebuffInfo[4], tDebuffInfo[5], tDebuffInfo[6];
 end
+
+
+--
+function VUHDO_getDebuffIcons()
+
+	return VUHDO_DEBUFF_ICONS;
+
+end
+

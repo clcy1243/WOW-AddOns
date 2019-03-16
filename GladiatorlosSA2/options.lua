@@ -454,7 +454,7 @@ function GSA:OnOptionCreate()
 								type = 'group',
 								inline = true,
 								name = L["General Abilities"],
-								order = 30,
+								order = 30,					      		
 								args = listOption({195901,214027,34709},"auraApplied"),
 							},
 							dispelkickback = { -- AuraApplied
@@ -831,7 +831,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["EnemyInterrupts"],
 								order = 35,
-								args = listOption({47528,183752,78675,106839,147362,187707,2139,116705,96231,1766,57994,19647,171140,171138,115781,212619,119910,6552},"castSuccess"),
+								args = listOption({47528,183752,78675,106839,147362,187707,2139,116705,96231,1766,57994,19647,132409,119910,251523,251922,288047,171140,171138,115781,212619,119910,6552},"castSuccess"),
 							},
 							dk	= { -- CastSuccess
 								type = 'group',

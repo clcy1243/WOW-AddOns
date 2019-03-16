@@ -385,7 +385,7 @@ function GRA:CreateDatePicker(parent, width, height, onDateChanged, color)
 	local yearSet, monthSet, daySet, year, month, numDays, firstWeekday
 	
 	function datePicker:SetDate(d)
-		local t, tbl = GRA:DateToTime(d)
+		local t, tbl = GRA:DateToSeconds(d)
 		datePicker:SetText(date("%x", t))
 		numDays, firstWeekday = GRA:GetAbsMonthInfo(tbl.month, tbl.year)
 		yearSet, monthSet, daySet = tbl.year, tbl.month, tbl.day
@@ -555,27 +555,28 @@ function GRA:CreateGrid(frame, width, text, color, highlight, ...)
 	grid:SetPushedTextOffset(0, 0)
 	grid:SetNormalFontObject("GRA_FONT_SMALL")
 
+	-- save current color
+	grid.bColor = {grid:GetBackdropColor()}
+
 	function grid:Highlight()
-		-- save current color
-		grid.bColor = {grid:GetBackdropColor()} 
 		grid:SetBackdropColor(grid.bColor[1], grid.bColor[2], grid.bColor[3], .6)
+		if frame:GetObjectType() == "Button" then frame:Highlight() end
 	end
 		
 	function grid:Unhighlight()
 		grid:SetBackdropColor(unpack(grid.bColor))
+		if frame:GetObjectType() == "Button" then frame:Unhighlight() end
 	end
 
 	if highlight then -- highlight onMouseOver
-		grid:SetScript("OnEnter", function() 
-			grid:Highlight()
-		end)
+		grid:SetScript("OnEnter", function() grid:Highlight() end)
 		grid:SetScript("OnLeave", function() grid:Unhighlight() end)
 	end
 
 	if frame:GetObjectType() == "Button" then -- used for row highlight
 		grid:SetFrameLevel(6)
-		grid:HookScript("OnEnter", function() frame:SetBackdropColor(.5, .5, .5, .1) end)
-		grid:HookScript("OnLeave", function() frame:SetBackdropColor(0, 0, 0, 0) end)
+		-- grid:HookScript("OnEnter", function() frame:Highlight() end)
+		-- grid:HookScript("OnLeave", function() frame:Unhighlight() end)
 
 		function grid:SetAttendance(att)
 			if att == nil then
@@ -588,13 +589,16 @@ function GRA:CreateGrid(frame, width, text, color, highlight, ...)
 				-- tex:SetPoint("CENTER")
 			elseif att == "PRESENT" then
 				grid:SetBackdropColor(0, 1, 0, .2)
-			elseif att == "PARTLY" then
+			elseif att == "PARTIAL" then
 				grid:SetBackdropColor(1, 1, 0, .2)
 			elseif att == "ABSENT" then
 				grid:SetBackdropColor(1, 0, 0, .2)
 			else  -- on leave
 				grid:SetBackdropColor(1, 0, 1, .2)
 			end
+
+			-- save current color
+			grid.bColor = {grid:GetBackdropColor()}
 		end
 
 		grid.noteMark = grid:CreateTexture()
@@ -607,6 +611,19 @@ function GRA:CreateGrid(frame, width, text, color, highlight, ...)
 				grid.noteMark:Show()
 			else
 				grid.noteMark:Hide()
+			end
+		end
+
+		grid.sitOutMark = grid:CreateTexture()
+		grid.sitOutMark:SetTexture([[Interface\AddOns\GuildRaidAttendance\Media\sitOut]])
+		grid.sitOutMark:SetAlpha(.7)
+		grid.sitOutMark:SetPoint("BOTTOMLEFT")
+		grid.sitOutMark:Hide()
+		function grid:ShowSitOutMark(s)
+			if s then
+				grid.sitOutMark:Show()
+			else
+				grid.sitOutMark:Hide()
 			end
 		end
 	end
@@ -627,12 +644,22 @@ function GRA:CreateRow(frame, width, mainName, onDoubleClick)
 	row:SetBackdropColor(0, 0, 0, 0) 
     row:SetBackdropBorderColor(0, 0, 0, 1)
 	
+	function row:Highlight()
+		row:SetBackdropColor(.5, .5, .5, .1)
+	end
+
+	function row:Unhighlight()
+		row:SetBackdropColor(0, 0, 0, 0)
+	end
+
 	row.nameGrid = GRA:CreateGrid(row, gra.size.grid_name, GRA:GetClassColoredName(mainName), {.7,.7,.7,.1})
 	row.nameGrid:SetBackdropBorderColor(0, 0, 0, 1)
 	row.nameGrid:GetFontString():ClearAllPoints()
 	row.nameGrid:GetFontString():SetPoint("LEFT", 20, 0)
 	row.nameGrid:SetNormalFontObject("GRA_FONT_TEXT")
 	row.nameGrid:SetPoint("TOPLEFT")
+	row.nameGrid:SetScript("OnEnter", row.Highlight)
+	row.nameGrid:SetScript("OnLeave", row.Unhighlight)
 	row.nameGrid:SetScript("OnDoubleClick", function(self, button)
 		if button == "LeftButton" and onDoubleClick then
 			onDoubleClick()
@@ -642,8 +669,8 @@ function GRA:CreateRow(frame, width, mainName, onDoubleClick)
 	row.primaryRole = GRA:CreateButton(row.nameGrid, "", "none", {16, 16})
 	row.primaryRole:SetAlpha(.7)
 	row.primaryRole:SetPoint("LEFT", 2, 0)
-	row.primaryRole:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
-	row.primaryRole:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
+	row.primaryRole:SetScript("OnEnter", row.Highlight)
+	row.primaryRole:SetScript("OnLeave", row.Unhighlight)
 	row.primaryRole:SetNormalTexture([[Interface\AddOns\GuildRaidAttendance\Media\Roles\]] .. (_G[GRA_R_Roster][mainName]["role"] or "DPS"))
 
 	-- ep
@@ -695,6 +722,11 @@ function GRA:CreateRow(frame, width, mainName, onDoubleClick)
 	row.arLifetimeGrid = GRA:CreateGrid(row, gra.size.grid_others, " ", {.7,.7,.7,.1}, true)
 	row.arLifetimeGrid:SetBackdropBorderColor(0, 0, 0, 1)
 	row.arLifetimeGrid:SetNormalFontObject("GRA_FONT_GRID")
+
+	-- sitOut lifetime
+	row.sitOutGrid = GRA:CreateGrid(row, gra.size.grid_others, " ", {.7,.7,.7,.1}, true)
+	row.sitOutGrid:SetBackdropBorderColor(0, 0, 0, 1)
+	row.sitOutGrid:SetNormalFontObject("GRA_FONT_GRID")
 
 	-- columns: EP GP PR AR(30d) AR(60d) AR(90d) AR(lifetime)
 	local lastColumn
@@ -765,6 +797,14 @@ function GRA:CreateRow(frame, width, mainName, onDoubleClick)
 			row.arLifetimeGrid:Hide()
 		end
 
+		if GRA_Variables["columns"]["Sit_Out"] then
+			row.sitOutGrid:SetPoint("TOPLEFT", lastColumn, "TOPRIGHT", -1, 0)
+			row.sitOutGrid:Show()
+			lastColumn = row.sitOutGrid
+		else
+			row.sitOutGrid:Hide()
+		end
+
 		if row.dateGrids[1] then -- dateGrids created
 			row.dateGrids[1]:SetPoint("TOPLEFT", lastColumn, "TOPRIGHT", -1, 0)
 		end
@@ -807,6 +847,7 @@ function GRA:CreateRow(frame, width, mainName, onDoubleClick)
 		row.ar60Grid:SetHeight(height)
 		row.ar90Grid:SetHeight(height)
 		row.arLifetimeGrid:SetHeight(height)
+		row.sitOutGrid:SetHeight(height)
 		
 		-- nameGrid
 		row.alts[altName].nameGrid = GRA:CreateGrid(row, gra.size.grid_name, GRA:GetClassColoredName(altName), {.7,.7,.7,.1})
@@ -815,13 +856,15 @@ function GRA:CreateRow(frame, width, mainName, onDoubleClick)
 		row.alts[altName].nameGrid:GetFontString():SetPoint("LEFT", 20, 0)
 		row.alts[altName].nameGrid:SetNormalFontObject("GRA_FONT_TEXT")
 		row.alts[altName].nameGrid:SetPoint("TOP", row.nameGrid, 0, - altsNum * gra.size.height + altsNum)
+		row.alts[altName].nameGrid:SetScript("OnEnter", row.Highlight)
+		row.alts[altName].nameGrid:SetScript("OnLeave", row.Unhighlight)
 
 		-- primaryRole
 		row.alts[altName].primaryRole = GRA:CreateButton(row.alts[altName].nameGrid, "", "none", {16, 16})
 		row.alts[altName].primaryRole:SetAlpha(.7)
 		row.alts[altName].primaryRole:SetPoint("LEFT", 2, 0)
-		row.alts[altName].primaryRole:SetScript("OnEnter", function() row:SetBackdropColor(.5, .5, .5, .1) end)
-		row.alts[altName].primaryRole:SetScript("OnLeave", function() row:SetBackdropColor(0, 0, 0, 0) end)
+		row.alts[altName].primaryRole:SetScript("OnEnter", row.Highlight)
+		row.alts[altName].primaryRole:SetScript("OnLeave", row.Unhighlight)
 		row.alts[altName].primaryRole:SetNormalTexture([[Interface\AddOns\GuildRaidAttendance\Media\Roles\]] .. (_G[GRA_R_Roster][altName]["role"] or "DPS"))
 
 		-- dateGrids
@@ -849,12 +892,12 @@ function GRA:CreateRow(frame, width, mainName, onDoubleClick)
 				row.dateGrids[i]:GetScript("OnEnter")()
 			end)
 			grid:HookScript("OnLeave", function()
-				-- get the newest OnEnter
+				-- get the newest OnLeave
 				row.dateGrids[i]:GetScript("OnLeave")()
 			end)
 		end
 	end
-	
+
 	return row
 end
 
@@ -889,7 +932,7 @@ function GRA:CreateListButton(parent, text, color, size, font)
 	return b
 end
 
-function GRA:CreateRow_AttendanceEditor(parent, width, name, attendance, note, joinTime, leaveTime)
+function GRA:CreateRow_AttendanceEditor(parent, width, name, attendance, note, joinTime, leaveTime, isSitOut)
 	local row = CreateFrame("Button", nil, parent)
 	row:SetFrameLevel(5)
 	row:SetSize(width, 20)
@@ -947,23 +990,29 @@ function GRA:CreateRow_AttendanceEditor(parent, width, name, attendance, note, j
 		end
 	end
 
-	function row:SetRowInfo(att, nt, jt, lt)
+	function row:SetRowInfo(att, nt, jt, lt, iSO)
 		local attendanceText
 		row.attendance = att -- sort key
 		row.joinTime = jt
 		row.leaveTime = lt
 		row.note = nt
+		row.isSitOut = iSO
 
-		if att == "PRESENT" or att == "PARTLY" then
+		if att == "PRESENT" or att == "PARTIAL" then
 			row.attendance = "PRESENT"
-			attendanceText = L["Present"]
-			row.attendanceGrid:GetFontString():SetTextColor(0, 1, 0, .9)
+			if iSO then
+				attendanceText = L["Sit Out"]
+				row.attendanceGrid:GetFontString():SetTextColor(0, .9, 1, 1)
+			else
+				attendanceText = L["Present"]
+				row.attendanceGrid:GetFontString():SetTextColor(0, 1, 0, 1)
+			end
 		elseif att == "ABSENT" then
 			attendanceText = L["Absent"]
-			row.attendanceGrid:GetFontString():SetTextColor(1, 0, 0, .9)
+			row.attendanceGrid:GetFontString():SetTextColor(1, 0, 0, 1)
 		elseif att == "ONLEAVE" then
 			attendanceText = L["On Leave"]
-			row.attendanceGrid:GetFontString():SetTextColor(1, 0, 1, .9)
+			row.attendanceGrid:GetFontString():SetTextColor(1, 0, 1, 1)
 		else -- ignored
 			attendanceText = L["Ignored"]
 			row.attendanceGrid:GetFontString():SetTextColor(.7, .7, .7, 1)
@@ -994,7 +1043,7 @@ function GRA:CreateRow_AttendanceEditor(parent, width, name, attendance, note, j
 		-- let the first letter be first
 		row.noteEditBox:SetCursorPosition(0)
 	end
-	row:SetRowInfo(attendance, note, joinTime, leaveTime)
+	row:SetRowInfo(attendance, note, joinTime, leaveTime, isSitOut)
 
 	function row:SetChanged(changed)
 		if changed then
@@ -1474,18 +1523,15 @@ function GRA:CreateBossButton(parent, bossTable, font)
 	b.membersText:SetWordWrap(false)
 
 	-- set text -------------------------------
-	b.bossText:SetText(bossTable[1])
+	b.bossText:SetText(bossTable[1] .. (bossTable[3] and string.format(" (%d:%.2d)", bossTable[3]/60%60, bossTable[3]%60) or ""))
 	b.difficultyText:SetText(GRA:GetDifficultyInfo(bossTable[2]))
-	if bossTable[3] then -- has starttime
-		local duration = bossTable[4] - bossTable[3]
-		b.timeText:SetText(string.format("%d:%.2d", duration/60%60, duration%60)
-			.. " (" .. date("%H:%M:%S", bossTable[3]) .. " - " .. date("%H:%M:%S", bossTable[4]) .. ")")
-	else
-		b.timeText:SetText(_G.UNKOWN .. " - " .. date("%H:%M:%S", bossTable[4]))
-	end
+	
+	local startTime = bossTable[4] and date("%H:%M:%S", bossTable[4]) or _G.UNKNOWN
+	local wipes = (bossTable[6] ~= 0) and (bossTable[6] .. " " .. L["wipes"] .. ", ") or ""
+	b.timeText:SetText(wipes .. startTime .. " - " .. date("%H:%M:%S", bossTable[5]))
 
 	local membersShort = ""
-	for g, gt in pairs(bossTable[5]) do
+	for g, gt in pairs(bossTable[7]) do
 		local info = "|cffbababaG" .. g .. ":"
 		for _, n in pairs(gt) do
 			local color = "|cff909090"
@@ -1507,7 +1553,7 @@ function GRA:CreateBossButton(parent, bossTable, font)
 		GRA_Tooltip:SetOwner(b, "ANCHOR_NONE")
 		GRA_Tooltip:SetPoint("LEFT", b, "RIGHT", 2, 0)
 		GRA_Tooltip:AddLine(L["Members In Raid"])
-		for g, gt in pairs(bossTable[5]) do
+		for g, gt in pairs(bossTable[7]) do
 			local line = _G["GROUP"..g.."_CHAT_TAG1"] .. " (" .. #gt .. "): "
 			for _, n in pairs(gt) do
 				line = line .. GRA:GetClassColoredName(n) .. " "

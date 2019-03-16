@@ -35,6 +35,7 @@ end
 -- ============================================================================
 
 function private.GetGeneralSettingsFrame()
+	TSM.UI.AnalyticsRecordPathChange("main", "settings", "general")
 	wipe(private.chatFrameList)
 	local defaultChatFrame = nil
 	for i = 1, NUM_CHAT_WINDOWS do
@@ -90,6 +91,7 @@ function private.GetGeneralSettingsFrame()
 				:SetStyle("font", TSM.UI.Fonts.MontserratMedium)
 				:SetStyle("fontHeight", 12)
 				:SetText(L["Store operations globally"])
+				:SetChecked(TSM.db.global.coreOptions.globalOperations)
 				:SetScript("OnValueChanged", private.GlobalOperationsOnValueChanged)
 			)
 		)
@@ -414,6 +416,7 @@ end
 
 function private.GlobalOperationsConfirmed(checkbox, newValue)
 	checkbox:SetChecked(newValue, true)
+		:Draw()
 	TSM.db.global.coreOptions.globalOperations = newValue
 	TSM.Operations.SetStoredGlobally(newValue)
 end
@@ -467,6 +470,9 @@ function private.ProfileCheckboxOnValueChanged(checkbox, value)
 	local currentProfileRow = checkbox:GetElement("__parent.__parent.profileRow_"..currentProfileIndex)
 	currentProfileRow:GetElement("checkbox")
 		:SetChecked(false, true)
+	currentProfileRow:GetElement("duplicateRenameBtn")
+		:SetText(L["Duplicate"])
+		:SetScript("OnClick", private.DuplicateProfileOnClick)
 	currentProfileRow:GetElement("deleteResetBtn")
 		:SetText(DELETE)
 		:SetScript("OnClick", private.RemoveProfileOnClick)
@@ -474,6 +480,10 @@ function private.ProfileCheckboxOnValueChanged(checkbox, value)
 	-- set the profile
 	TSM.db:SetProfile(checkbox:GetText())
 	-- set this row as the current one
+	checkbox:GetElement("__parent.duplicateRenameBtn")
+		:SetText(L["Rename"])
+		:SetScript("OnClick", private.RenameProfileOnClick)
+		:Draw()
 	checkbox:GetElement("__parent.deleteResetBtn")
 		:SetText(RESET)
 		:SetScript("OnClick", private.ResetProfileOnClick)

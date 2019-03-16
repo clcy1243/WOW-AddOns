@@ -1,18 +1,26 @@
-tag f55c620366a42728d6d93321d13e47912a8ad892 1.0.3
+tag d185ac67713b836ad7865969198fd2073309e331 1.1.2
 Author:	Alar of Runetotem <alar@aspide.it>
-Date:	Mon Aug 20 12:28:12 2018 +0200
+Date:	Sun Dec 16 18:21:31 2018 +0100
 
-Fix: removed debug messages
+TOC BUMP
 
-commit b9aa7a4d8b0f837b3b7c267f4d4388ea0d2294e9
+commit afd6913e64a496be33e266533650e660559c9342
 Author: Alar of Runetotem <alar@aspide.it>
-Date:   Mon Aug 20 12:27:25 2018 +0200
+Date:   Sun Dec 16 18:21:06 2018 +0100
 
-    Fix: Removed debug messages
+    TOC BUMP
 
-commit cdabda54c7af436f8a777d62531fb20fdef9589f
+commit c9b698479456f717bda3b180dc51888bd3934282
 Author: Alar of Runetotem <alar@aspide.it>
-Date:   Mon Aug 20 12:17:57 2018 +0200
+Date:   Sun Dec 16 18:12:28 2018 +0100
 
-    Removed debug messages
+    8: Champions don't receive XP at epic
+    
+    Task-Url: http://github.com/alarofrunetotem/ChampionCommander/issues/8
+
+commit 7303467931f2bbcc9a9d63e52f92a567f0b19f05
+Author: Alar of Runetotem <alar@aspide.it>
+Date:   Sat Oct 20 13:11:40 2018 +0200
+
+    Rel Notes
 

@@ -1,7 +1,7 @@
 local addonName, ns = ...
 
 -- if we're on the developer version the addon behaves slightly different
-ns.DEBUG_MODE = not not (GetAddOnMetadata(addonName, "Version") or ""):find("v201809250600", nil, true)
+ns.DEBUG_MODE = not not (GetAddOnMetadata(addonName, "Version") or ""):find("v201903160600", nil, true)
 
 -- micro-optimization for more speed
 local unpack = unpack
@@ -15,9 +15,8 @@ local rshift = bit.rshift
 local band = bit.band
 local bor = bit.bor
 local bxor = bit.bxor
-local PAYLOAD_BITS = 13
-local PAYLOAD_MASK = lshift(1, PAYLOAD_BITS) - 1
 local LOOKUP_MAX_SIZE = floor(2^18-1)
+local CONST_COMPLETED_FROM_ACHIEVEMENT_VALUE = 63
 
 -- session
 local uiHooks = {}
@@ -41,6 +40,8 @@ local CONST_REALM_SLUGS = ns.realmSlugs
 local CONST_REGION_IDS = ns.regionIDs
 local CONST_SCORE_TIER = ns.scoreTiers
 local CONST_SCORE_TIER_SIMPLE = ns.scoreTiersSimple
+local CONST_PREVIOUS_SCORE_TIER = ns.previousScoreTiers or ns.scoreTiers
+local CONST_PREVIOUS_SCORE_TIER_SIMPLE = ns.previousScoreTiersSimple or ns.scoreTiersSimple
 local CONST_DUNGEONS = ns.dungeons
 local CONST_AVERAGE_SCORE = ns.scoreLevelStats
 local L = ns.L
@@ -50,22 +51,36 @@ local CONST_PROVIDER_DATA_MYTHICPLUS = 1
 local CONST_PROVIDER_DATA_RAIDING = 2
 local CONST_PROVIDER_DATA_LIST = { CONST_PROVIDER_DATA_MYTHICPLUS, CONST_PROVIDER_DATA_RAIDING }
 local CONST_PROVIDER_INTERFACE = { MYTHICPLUS = CONST_PROVIDER_DATA_MYTHICPLUS, RAIDING = CONST_PROVIDER_DATA_RAIDING }
+local CONST_PROVIDER_DATA_FIELDS_PER_CHARACTER = {
+	3,	-- Mythic Plus
+	2		-- Raiding
+}
+
+-- we size the buckets so that we never have to worry about data overlapping multiple buckets
+local CONST_PROVIDER_DATA_BUCKET_MAX_SIZE = {
+	floor(LOOKUP_MAX_SIZE / CONST_PROVIDER_DATA_FIELDS_PER_CHARACTER[CONST_PROVIDER_DATA_MYTHICPLUS]) * CONST_PROVIDER_DATA_FIELDS_PER_CHARACTER[CONST_PROVIDER_DATA_MYTHICPLUS],
+	floor(LOOKUP_MAX_SIZE / CONST_PROVIDER_DATA_FIELDS_PER_CHARACTER[CONST_PROVIDER_DATA_RAIDING]) * CONST_PROVIDER_DATA_FIELDS_PER_CHARACTER[CONST_PROVIDER_DATA_RAIDING],
+}
 
 -- output flags used to shape the table returned by the data provider
 local ProfileOutput = {
-	INVALID_FLAG = 0,
-	INCLUDE_LOWBIES = 1,
-	MOD_KEY_DOWN = 2,
-	MOD_KEY_DOWN_STICKY = 4,
-	MYTHICPLUS = 8,
-	RAIDING = 16,
-	TOOLTIP = 32,
-	ADD_PADDING = 64,
-	ADD_NAME = 128,
+	INVALID_FLAG 		= 0x000000,
+	INCLUDE_LOWBIES 	= 0x000001,
+	MOD_KEY_DOWN 		= 0x000002,
+	MOD_KEY_DOWN_STICKY = 0x000004,
+	MYTHICPLUS 			= 0x000008,
+	RAIDING 			= 0x000010,
+	TOOLTIP 			= 0x000020,
+	PROFILE 			= 0x000040, -- indicates data is going to be shown as part of "My Profile" window
+	ADD_PADDING 		= 0x000080,
+	ADD_NAME 			= 0x000100,
+	ADD_FOOTER 			= 0x000200,
+	ADD_HEADER 			= 0x000400,
+
 	-- these makes the tooltip not cache the output for dynamic purposes
-	ADD_LFD = 256,
-	FOCUS_DUNGEON = 512,
-	FOCUS_KEYSTONE = 1024,
+	ADD_LFD 			= 0x000800,
+	FOCUS_DUNGEON 		= 0x001000,
+	FOCUS_KEYSTONE 		= 0x002000,
 }
 
 -- default no-tooltip and default tooltip flags used as baseline in several places
@@ -77,6 +92,112 @@ local TooltipProfileOutput = {
 	DEFAULT = ProfileOutput.DEFAULT,
 	PADDING = bor(ProfileOutput.DEFAULT, ProfileOutput.ADD_PADDING),
 	NAME = bor(ProfileOutput.DEFAULT, ProfileOutput.ADD_NAME),
+}
+
+-- modes for what is placed in the headline of mythic plus tooltips
+local MythicPlusHeadlineModes = {
+	CURRENT_SEASON = 0,
+	BEST_SEASON = 1,
+	BEST_RUN = 2
+}
+
+local ROLE_ICONS = {
+	dps = {
+		full = "|TInterface\\AddOns\\RaiderIO\\icons\\roles:14:14:0:0:64:64:0:18:0:18|t",
+		partial = "|TInterface\\AddOns\\RaiderIO\\icons\\roles:14:14:0:0:64:64:0:18:36:54|t"
+	},
+	healer = {
+		full = "|TInterface\\AddOns\\RaiderIO\\icons\\roles:14:14:0:0:64:64:19:37:0:18|t",
+		partial = "|TInterface\\AddOns\\RaiderIO\\icons\\roles:14:14:0:0:64:64:19:37:36:54|t"
+	},
+	tank = {
+		full = "|TInterface\\AddOns\\RaiderIO\\icons\\roles:14:14:0:0:64:64:38:56:0:18|t",
+		partial	= "|TInterface\\AddOns\\RaiderIO\\icons\\roles:14:14:0:0:64:64:38:56:36:54|t"
+	}
+}
+
+-- look up the tuple of ordinals in this table and store that index to indicate the order
+-- in which to show roles in addon allowing us to store just 5 bits for all the role ordinals vs 6 bits.
+local ORDERED_ROLES = {
+	{ },
+	{ {"dps","full"}, },
+	{ {"dps","full"}, {"healer","full"}, },
+	{ {"dps","full"}, {"healer","full"}, {"tank","full"}, },
+	{ {"dps","full"}, {"healer","full"}, {"tank","partial"}, },
+	{ {"dps","full"}, {"healer","partial"}, },
+	{ {"dps","full"}, {"healer","partial"}, {"tank","full"}, },
+	{ {"dps","full"}, {"healer","partial"}, {"tank","partial"}, },
+	{ {"dps","full"}, {"tank","full"}, },
+	{ {"dps","full"}, {"tank","full"}, {"healer","full"}, },
+	{ {"dps","full"}, {"tank","full"}, {"healer","partial"}, },
+	{ {"dps","full"}, {"tank","partial"}, },
+	{ {"dps","full"}, {"tank","partial"}, {"healer","full"}, },
+	{ {"dps","full"}, {"tank","partial"}, {"healer","partial"}, },
+	{ {"dps","partial"}, },
+	{ {"dps","partial"}, {"healer","full"}, },
+	{ {"dps","partial"}, {"healer","full"}, {"tank","full"}, },
+	{ {"dps","partial"}, {"healer","full"}, {"tank","partial"}, },
+	{ {"dps","partial"}, {"healer","partial"}, },
+	{ {"dps","partial"}, {"healer","partial"}, {"tank","full"}, },
+	{ {"dps","partial"}, {"healer","partial"}, {"tank","partial"}, },
+	{ {"dps","partial"}, {"tank","full"}, },
+	{ {"dps","partial"}, {"tank","full"}, {"healer","full"}, },
+	{ {"dps","partial"}, {"tank","full"}, {"healer","partial"}, },
+	{ {"dps","partial"}, {"tank","partial"}, },
+	{ {"dps","partial"}, {"tank","partial"}, {"healer","full"}, },
+	{ {"dps","partial"}, {"tank","partial"}, {"healer","partial"}, },
+	{ {"healer","full"}, },
+	{ {"healer","full"}, {"dps","full"}, },
+	{ {"healer","full"}, {"dps","full"}, {"tank","full"}, },
+	{ {"healer","full"}, {"dps","full"}, {"tank","partial"}, },
+	{ {"healer","full"}, {"dps","partial"}, },
+	{ {"healer","full"}, {"dps","partial"}, {"tank","full"}, },
+	{ {"healer","full"}, {"dps","partial"}, {"tank","partial"}, },
+	{ {"healer","full"}, {"tank","full"}, },
+	{ {"healer","full"}, {"tank","full"}, {"dps","full"}, },
+	{ {"healer","full"}, {"tank","full"}, {"dps","partial"}, },
+	{ {"healer","full"}, {"tank","partial"}, },
+	{ {"healer","full"}, {"tank","partial"}, {"dps","full"}, },
+	{ {"healer","full"}, {"tank","partial"}, {"dps","partial"}, },
+	{ {"healer","partial"}, },
+	{ {"healer","partial"}, {"dps","full"}, },
+	{ {"healer","partial"}, {"dps","full"}, {"tank","full"}, },
+	{ {"healer","partial"}, {"dps","full"}, {"tank","partial"}, },
+	{ {"healer","partial"}, {"dps","partial"}, },
+	{ {"healer","partial"}, {"dps","partial"}, {"tank","full"}, },
+	{ {"healer","partial"}, {"dps","partial"}, {"tank","partial"}, },
+	{ {"healer","partial"}, {"tank","full"}, },
+	{ {"healer","partial"}, {"tank","full"}, {"dps","full"}, },
+	{ {"healer","partial"}, {"tank","full"}, {"dps","partial"}, },
+	{ {"healer","partial"}, {"tank","partial"}, },
+	{ {"healer","partial"}, {"tank","partial"}, {"dps","full"}, },
+	{ {"healer","partial"}, {"tank","partial"}, {"dps","partial"}, },
+	{ {"tank","full"}, },
+	{ {"tank","full"}, {"dps","full"}, },
+	{ {"tank","full"}, {"dps","full"}, {"healer","full"}, },
+	{ {"tank","full"}, {"dps","full"}, {"healer","partial"}, },
+	{ {"tank","full"}, {"dps","partial"}, },
+	{ {"tank","full"}, {"dps","partial"}, {"healer","full"}, },
+	{ {"tank","full"}, {"dps","partial"}, {"healer","partial"}, },
+	{ {"tank","full"}, {"healer","full"}, },
+	{ {"tank","full"}, {"healer","full"}, {"dps","full"}, },
+	{ {"tank","full"}, {"healer","full"}, {"dps","partial"}, },
+	{ {"tank","full"}, {"healer","partial"}, },
+	{ {"tank","full"}, {"healer","partial"}, {"dps","full"}, },
+	{ {"tank","full"}, {"healer","partial"}, {"dps","partial"}, },
+	{ {"tank","partial"}, },
+	{ {"tank","partial"}, {"dps","full"}, },
+	{ {"tank","partial"}, {"dps","full"}, {"healer","full"}, },
+	{ {"tank","partial"}, {"dps","full"}, {"healer","partial"}, },
+	{ {"tank","partial"}, {"dps","partial"}, },
+	{ {"tank","partial"}, {"dps","partial"}, {"healer","full"}, },
+	{ {"tank","partial"}, {"dps","partial"}, {"healer","partial"}, },
+	{ {"tank","partial"}, {"healer","full"}, },
+	{ {"tank","partial"}, {"healer","full"}, {"dps","full"}, },
+	{ {"tank","partial"}, {"healer","full"}, {"dps","partial"}, },
+	{ {"tank","partial"}, {"healer","partial"}, },
+	{ {"tank","partial"}, {"healer","partial"}, {"dps","full"}, },
+	{ {"tank","partial"}, {"healer","partial"}, {"dps","partial"}, },
 }
 
 -- setup outdated struct
@@ -113,12 +234,16 @@ end
 -- defined constants
 local MAX_LEVEL = MAX_PLAYER_LEVEL_TABLE[LE_EXPANSION_BATTLE_FOR_AZEROTH]
 local OUTDATED_SECONDS = 86400 * 3 -- number of seconds before we start warning about outdated data
-local NUM_FIELDS_PER_CHARACTER = 3 -- number of fields in the database lookup table for each character
+local PREVIOUS_SEASON_ID = 1
+local CURRENT_SEASON_ID = 2
 local FACTION
 local REGIONS
 local REGIONS_RESET_TIME
 local KEYSTONE_AFFIX_SCHEDULE
 local KEYSTONE_LEVEL_TO_BASE_SCORE
+local RAID_DIFFICULTY_SUFFIXES
+local RAID_DIFFICULTY_NAMES
+local RAID_DIFFICULTY_COLORS
 do
 	FACTION = {
 		["Alliance"] = 1,
@@ -189,6 +314,24 @@ do
 		[29] = 612,
 		[30] = 673,
 	}
+
+	RAID_DIFFICULTY_SUFFIXES = {
+		[1] = L.RAID_DIFFICULTY_SUFFIX_NORMAL,
+		[2] = L.RAID_DIFFICULTY_SUFFIX_HEROIC,
+		[3] = L.RAID_DIFFICULTY_SUFFIX_MYTHIC,
+	}
+
+	RAID_DIFFICULTY_NAMES = {
+		[1] = L.RAID_DIFFICULTY_NAME_NORMAL,
+		[2] = L.RAID_DIFFICULTY_NAME_HEROIC,
+		[3] = L.RAID_DIFFICULTY_NAME_MYTHIC,
+	}
+
+	RAID_DIFFICULTY_COLORS = {
+		[1] = { 0.12, 1.00, 0.00, 'ff1eff00' },
+		[2] = { 0.00, 0.44, 0.87, 'ff0070dd' },
+		[3] = { 0.64, 0.21, 0.93, 'ffa335ee' }
+	}
 end
 
 -- easter
@@ -205,7 +348,7 @@ local EGG = {
 		["Skullcrusher"] = {
 			["Aspyrox"] = "Raider.IO Creator",
 			["Ulsoga"] = "Raider.IO Creator",
-			["Dynrai"] = "Raider.IO Contributor"
+			["Fittlewak"] = "Raider.IO Contributor"
 		},
 		["Thrall"] = {
 			["Firstclass"] = "Author of mythicpl.us"
@@ -232,6 +375,9 @@ end
 -- utility functions
 local RoundNumber
 local CompareDungeon
+local DecodeBits2
+local DecodeBits3
+local DecodeBits4
 local GetDungeonWithData
 local GetTimezoneOffset
 local GetRegion
@@ -243,10 +389,9 @@ local GetNameAndRealm
 local GetFaction
 local IsUnitMaxLevel
 local GetWeeklyAffix
-local GetAverageScore
 local GetStarsForUpgrades
-local GetFormattedScore
 local GetFormattedRunCount
+local GetTooltipScore
 do
 	-- bracket can be 10, 100, 0.1, 0.01, and so on
 	function RoundNumber(v, bracket)
@@ -261,6 +406,21 @@ do
 				return CONST_DUNGEONS[i]
 			end
 		end
+	end
+
+	local CONST_DECODE_BITS4_TABLE = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 50, 100 }
+	function DecodeBits4(value)
+		return CONST_DECODE_BITS4_TABLE[1 + value]
+	end
+
+	local CONST_DECODE_BITS3_TABLE = { 0, 1, 2, 3, 4, 5, 10, 20 }
+	function DecodeBits3(value)
+		return CONST_DECODE_BITS3_TABLE[1 + value]
+	end
+
+	local CONST_DECODE_BITS2_TABLE = { 0, 1, 2, 5 }
+	function DecodeBits2(value)
+		return CONST_DECODE_BITS2_TABLE[1 + value]
 	end
 
 	-- Compare two dungeon first by the keyLevel, then by their short name
@@ -347,30 +507,47 @@ do
 
 	-- returns the LFD status (returns the info based on what we are hosting a group for, or what we queued up for)
 	function GetLFDStatus()
-		-- hosting a keystone group
-		local _, activityID, _, _, name, comment = C_LFGList.GetActiveEntryInfo()
 		local temp = {}
-		if activityID then
-			local index = LFD_ACTIVITYID_TO_DUNGEONID[activityID]
-			if index then
-				temp.dungeon = CONST_DUNGEONS[index]
-				temp.level = 0 or GetKeystoneLevel(name) or GetKeystoneLevel(comment) or 0
-				return true, temp
+
+		-- hosting a keystone group
+		local activityInfo = C_LFGList.GetActiveEntryInfo()
+
+		if activityInfo then
+			local activityID = activityInfo.activityID
+			local name = activityInfo.name -- unusable (broken by blizzard)
+			local comment = activityInfo.comment -- unusable (broken by blizzard)
+
+			if activityID then
+				local index = LFD_ACTIVITYID_TO_DUNGEONID[activityID]
+				if index then
+					temp.dungeon = CONST_DUNGEONS[index]
+					temp.level = 0 or GetKeystoneLevel(name) or GetKeystoneLevel(comment) or 0
+					return true, temp
+				end
 			end
 		end
+
 		-- applying for a keystone group
 		local applications = C_LFGList.GetApplications()
 		local j = 1
 		for i = 1, #applications do
 			local resultID = applications[i]
-			local _, activityID, name, comment, _, _, _, _, _, _, _, isDelisted = C_LFGList.GetSearchResultInfo(resultID)
-			if activityID and not isDelisted then
-				local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
-				if not pendingStatus and (appStatus == "applied" or appStatus == "invited") then
-					local index = LFD_ACTIVITYID_TO_DUNGEONID[activityID]
-					if index then
-						temp[j] = { dungeon = CONST_DUNGEONS[index], level = 0 or GetKeystoneLevel(name) or GetKeystoneLevel(comment) or 0, resultID = resultID }
-						j = j + 1
+			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
+			if searchResultInfo then
+				local activityID = searchResultInfo.activityID
+				local name = searchResultInfo.name -- unusable (broken by blizzard)
+				local comment = searchResultInfo.comment -- unusable (broken by blizzard)
+				local isDelisted = searchResultInfo.isDelisted
+
+				if activityID and not isDelisted then
+					local _, appStatus, pendingStatus = C_LFGList.GetApplicationInfo(resultID)
+					if not pendingStatus and (appStatus == "applied" or appStatus == "invited") then
+						local index = LFD_ACTIVITYID_TO_DUNGEONID[activityID]
+						if index then
+							temp[j] = { dungeon = CONST_DUNGEONS[index], level = 0 or GetKeystoneLevel(name) or GetKeystoneLevel(comment) or 0, resultID = resultID }
+							j = j + 1
+						end
 					end
 				end
 			end
@@ -452,13 +629,6 @@ do
 		return KEYSTONE_AFFIX_SCHEDULE[index]
 	end
 
-	function GetAverageScore(level)
-		if CONST_AVERAGE_SCORE and CONST_AVERAGE_SCORE[level] then
-			return CONST_AVERAGE_SCORE[level]
-		end
-		return nil
-	end
-
 	function GetStarsForUpgrades(upgrades, skipPadding)
 		local stars = ""
 		for q = 1, 3 do
@@ -476,17 +646,37 @@ do
 	end
 
 	-- returns score formatted for current or prev season
-	function GetFormattedScore(score, isPrevious)
-		if isPrevious then
-			return score .. " " .. L.PREV_SEASON_SUFFIX
-		end
+	function GetFormattedScore(score)
 		return score
 	end
 
-	-- we only use 11 bits for how many runs they've completed, so cap it somewhere nice and even
-	function GetFormattedRunCount(count)
-		if count > 2000 then
-			return "2000+"
+	-- returns score with role
+	function GetTooltipScore(score, isApproximated)
+		if not ns.addonConfig.showRoleIcons then
+			return score.score
+		end
+
+		local inversedRole = {}
+
+		local roles = {
+			["tank"] = 0,
+			["heal"] = 0,
+			["dps"] = 0,
+		}
+
+		local icons = ""
+
+		for i = 1, #score.roles do
+			icons = icons .. ROLE_ICONS[score.roles[i][1]][score.roles[i][2]]
+		end
+
+		return icons .. " " .. (isApproximated and "±" or "") .. score.score
+	end
+
+	-- run counts are packed so we print it as a range (with "+" suffix after a certain number)
+	function GetFormattedRunCount(count, pluralAt)
+		if count >= pluralAt then
+			return count .. "+"
 		else
 			return count
 		end
@@ -496,21 +686,11 @@ end
 -- provider
 local AddProvider
 local GetScoreColor
+local GetPreviousScoreColor
+local GetRaidDifficultyColor
 local GetPlayerProfile
 local HasPlayerProfile
 do
-	-- unpack the payload
-	local function UnpackPayload(data)
-		-- 4294967296 == (1 << 32). Meaning, shift to get the hi-word.
-		-- WoW lua bit operators seem to only work on the lo-word (?)
-		local hiword = data / 4294967296
-		return
-			band(data, PAYLOAD_MASK),
-			band(rshift(data, PAYLOAD_BITS), PAYLOAD_MASK),
-			band(hiword, PAYLOAD_MASK),
-			band(rshift(hiword, PAYLOAD_BITS), PAYLOAD_MASK)
-	end
-
 	-- search for the index of a name in the given sorted list
 	local function BinarySearchForName(list, name, startIndex, endIndex)
 		local minIndex = startIndex
@@ -545,23 +725,24 @@ do
 			local mask = lshift(1, (offset + bits) - 32) - 1
 			local p1 = rshift(lo, offset)
 			local p2 = lshift(band(hi, mask), 32 - offset)
-			return p1 + p2
+			return p1 + p2, offset + bits
 		else
 			local mask = lshift(1, bits) - 1
 			if offset < 32 then
 				-- standard read from loword
-				return band(rshift(lo, offset), mask)
+				return band(rshift(lo, offset), mask), offset + bits
 			else
 				-- standard read from hiword
-				return band(rshift(hi, offset - 32), mask)
+				return band(rshift(hi, offset - 32), mask), offset + bits
 			end
 		end
 	end
 
-	local function UnpackCharacterData(data1, data2, data3)
+	local function UnpackMythicPlusCharacterData(data1, data2, data3)
 		local results = {}
 		local lo, hi
 		local offset
+		local value
 
 		--
 		-- Field 1
@@ -569,20 +750,24 @@ do
 		lo, hi = Split64BitNumber(data1)
 		offset = 0
 
-		results.allScore = ReadBits(lo, hi, offset, PAYLOAD_BITS)
-		offset = offset + PAYLOAD_BITS
+		results.currentScore, offset = ReadBits(lo, hi, offset, 12)
 
-		results.healScore = ReadBits(lo, hi, offset, PAYLOAD_BITS)
-		offset = offset + PAYLOAD_BITS
+		value, offset = ReadBits(lo, hi, offset, 7)
+		results.currentRoleOrdinalIndex = 1 + value			-- indexes are one-based
 
-		results.tankScore = ReadBits(lo, hi, offset, PAYLOAD_BITS)
-		offset = offset + PAYLOAD_BITS
+		value, offset = ReadBits(lo, hi, offset, 4)
+		results.keystoneFivePlus = DecodeBits4(value)
 
-		results.mainScore = ReadBits(lo, hi, offset, PAYLOAD_BITS)
-		offset = offset + PAYLOAD_BITS
+		value, offset = ReadBits(lo, hi, offset, 4)
+		results.keystoneTenPlus = DecodeBits4(value)
 
-		results.isPrevAllScore = not (ReadBits(lo, hi, offset, 1) == 0)
-		offset = offset + 1
+		value, offset = ReadBits(lo, hi, offset, 7)
+		results.previousRoleOrdinalIndex = 1 + value			-- indexes are one-based
+
+		results.mainCurrentScore, offset = ReadBits(lo, hi, offset, 12)
+
+		value, offset = ReadBits(lo, hi, offset, 7)
+		results.mainCurrentRoleOrdinalIndex = 1 + value 	-- indexes are one-based
 
 		--
 		-- Field 2
@@ -590,12 +775,25 @@ do
 		lo, hi = Split64BitNumber(data2)
 		offset = 0
 
+		-- since we do not store score in addon, we need an explicit value indicating which dungeon was the best run
+		-- note: stored as zero-based, so offset it here on load
+		value, offset = ReadBits(lo, hi, offset, 4)
+		results.maxDungeonIndex = 1 + value
+
 		local dungeonIndex = 1
 		results.dungeons = {}
-		for i = 1, 10 do
-			results.dungeons[dungeonIndex] = ReadBits(lo, hi, offset, 5)
+		results.dungeonUpgrades = {}
+		results.dungeonTimes = {}
+
+		for i = 1, 7 do
+			results.dungeons[dungeonIndex], offset = ReadBits(lo, hi, offset, 5)
+			results.dungeonUpgrades[dungeonIndex], offset = ReadBits(lo, hi, offset, 2)
+
+			-- this is just set so that dungeons will be sorted by key level and number of stars.
+			-- it may be overridden by client data.
+			results.dungeonTimes[dungeonIndex] = 3 - results.dungeonUpgrades[dungeonIndex]
+
 			dungeonIndex = dungeonIndex + 1
-			offset = offset + 5
 		end
 
 		--
@@ -604,32 +802,141 @@ do
 		lo, hi = Split64BitNumber(data3)
 		offset = 0
 
-		results.dpsScore = ReadBits(lo, hi, offset, PAYLOAD_BITS)
-		offset = offset + PAYLOAD_BITS
+		for i = dungeonIndex, 10 do
+			results.dungeons[dungeonIndex], offset = ReadBits(lo, hi, offset, 5)
+			results.dungeonUpgrades[dungeonIndex], offset = ReadBits(lo, hi, offset, 2)
 
-		results.totalRuns = ReadBits(lo, hi, offset, 11)
-		offset = offset + 11
+			-- this is just set so that dungeons will be sorted by key level and number of stars.
+			-- it may be overridden by client data.
+			results.dungeonTimes[dungeonIndex] = 3 - results.dungeonUpgrades[dungeonIndex]
 
-		results.keystoneTenPlus = ReadBits(lo, hi, offset, 11)
-		offset = offset + 11
+			dungeonIndex = dungeonIndex + 1
+		end
 
-		results.keystoneFifteenPlus = ReadBits(lo, hi, offset, 11)
-		offset = offset + 11
+		value, offset = ReadBits(lo, hi, offset, 4)
+		results.keystoneFifteenPlus = DecodeBits4(value)
 
-		-- since we do not store score in addon, we need an explicit value indicating which dungeon was the best run
-		-- note: stored as zero-based, so offset it here on load
-		results.maxDungeonIndex = 1 + ReadBits(lo, hi, offset, 4)
+		value, offset = ReadBits(lo, hi, offset, 3)
+		results.keystoneTwentyPlus = DecodeBits3(value)
+
+		value, offset = ReadBits(lo, hi, offset, 9)
+		results.previousScore = 10 * value
+
+		-- main previous season
+		value, offset = ReadBits(lo, hi, offset, 7)
+		results.mainPreviousRoleOrdinalIndex = 1 + value		-- indexes are one-based
+
+		value, offset = ReadBits(lo, hi, offset, 9)
+		results.mainPreviousScore = 10 * value
+
+		-- Post processing
 		if results.maxDungeonIndex > #results.dungeons then
 			results.maxDungeonIndex = 1
 		end
 		results.maxDungeonLevel = results.dungeons[results.maxDungeonIndex]
-		offset = offset + 4
+
+		return results
+	end
+
+	local function UnpackRaidingCharacterData(dataProviderGroup, data1, data2)
+		local results = {
+			progress = {},
+			previousProgress = nil,
+			mainProgress = nil
+		}
+
+		local currentNumBosses = dataProviderGroup.currentRaid.bossCount
+		local value
+
+		do
+			local lo, hi = Split64BitNumber(data1)
+			local offset = 0
+			local prog
+
+			for bucketIndex = 1, 2 do
+				prog = { progressCount = 0 }
+
+				prog.difficulty, offset = ReadBits(lo, hi, offset, 2)
+
+				prog.killsPerBoss = {}
+				for i = 1, currentNumBosses do
+					value, offset = ReadBits(lo, hi, offset, 2)
+					prog.killsPerBoss[i] = DecodeBits2(value)
+					if prog.killsPerBoss[i] > 0 then
+						prog.progressCount = prog.progressCount + 1
+					end
+				end
+
+				if prog.progressCount > 0 then
+					results.progress[#results.progress + 1] = prog
+				end
+			end
+		end
+
+		do
+			local lo, hi = Split64BitNumber(data2)
+			local offset = 0
+			local prog
+
+			-- final difficulty
+			do
+				prog = { progressCount = 0 }
+
+				prog.difficulty, offset = ReadBits(lo, hi, offset, 2)
+
+				prog.killsPerBoss = {}
+				for i = 1, currentNumBosses do
+					value, offset = ReadBits(lo, hi, offset, 2)
+					prog.killsPerBoss[i] = DecodeBits2(value)
+					if prog.killsPerBoss[i] > 0 then
+						prog.progressCount = prog.progressCount + 1
+					end
+				end
+
+				if prog.difficulty ~= 0 and prog.progressCount > 0 then
+					results.progress[#results.progress + 1] = prog
+				end
+			end
+
+			-- progress in top two difficulties for previous raid
+			for i = 1, 2 do
+				prog = {}
+
+				prog.difficulty, offset = ReadBits(lo, hi, offset, 2)
+
+				prog.progressCount, offset = ReadBits(lo, hi, offset, 4)
+
+				if prog.progressCount > 0 then
+					if not results.previousProgress then
+						results.previousProgress = {}
+					end
+					results.previousProgress[#results.previousProgress + 1] = prog
+				end
+			end
+
+			-- main's top two progress
+			for i = 1, 2 do
+				prog = {}
+
+				prog.difficulty, offset = ReadBits(lo, hi, offset, 2)
+
+				prog.progressCount, offset = ReadBits(lo, hi, offset, 4)
+
+				if prog.progressCount > 0 then
+					if not results.mainProgress then
+						results.mainProgress = {}
+					end
+					results.mainProgress[#results.mainProgress + 1] = prog
+				end
+			end
+
+		end
 
 		return results
 	end
 
 	-- caches the profile table and returns one using keys
-	local function CacheProviderData(dataProviderGroup, name, realm, faction, index, data1, data2, data3)
+	local function CacheMythicPlusProviderData(dataProviderGroup, name, realm, faction, index, data1, data2, data3)
 		local cache = profileCache[index]
 
 		-- prefer to re-use cached profiles
@@ -638,7 +945,7 @@ do
 		end
 
 		-- unpack the payloads into these tables
-		local payload = UnpackCharacterData(data1, data2, data3)
+		local payload = UnpackMythicPlusCharacterData(data1, data2, data3)
 
 		-- TODO: can we make this table read-only? raw methods will bypass metatable restrictions we try to enforce
 		-- build this custom table in order to avoid users tainting the provider database
@@ -646,28 +953,50 @@ do
 			-- provider information
 			region = dataProviderGroup.region,
 			date = dataProviderGroup.date,
-			season = dataProviderGroup.season,
-			prevSeason = dataProviderGroup.prevSeason,
+			dataType = dataProviderGroup.data,
 			-- basic information about the character
 			name = name,
 			realm = realm,
 			faction = faction,
 			-- current and last season overall score
-			allScore = payload.allScore,
-			isPrevAllScore = payload.isPrevAllScore,
-			mainScore = payload.mainScore,
-			-- extract the scores per role
-			dpsScore = payload.dpsScore,
-			healScore = payload.healScore,
-			tankScore = payload.tankScore,
+			mplusCurrent = {
+				score = payload.currentScore,
+				roles = ORDERED_ROLES[payload.currentRoleOrdinalIndex] or ORDERED_ROLES[1]
+			},
+			mplusPrevious = {
+				score = payload.previousScore,
+				roles = ORDERED_ROLES[payload.previousRoleOrdinalIndex] or ORDERED_ROLES[1]
+			},
+			mplusMainCurrent = {
+				score = payload.mainCurrentScore,
+				roles = ORDERED_ROLES[payload.mainCurrentRoleOrdinalIndex] or ORDERED_ROLES[1]
+			},
+			mplusMainPrevious = {
+				score = payload.mainPreviousScore,
+				roles = ORDERED_ROLES[payload.mainPreviousRoleOrdinalIndex] or ORDERED_ROLES[1]
+			},
+			allScore = 0, 											-- deprecated: refer to mplusCurrent.score
+			mainScore = 0,											-- deprecated: refer to mplusMainCurrent.score
+			dpsScore = 0,												-- deprecated: refer to mplusXYZ.roles to see the roles they have contribution from
+			healScore = 0,											-- deprecated: refer to mplusXYZ.roles to see the roles they have contribution from
+			tankScore = 0,											-- deprecated: refer to mplusXYZ.roles to see the roles they have contribution from
+			season = '',												-- deprecated
+			prevSeason = '',										-- deprecated
+			isPrevAllScore = false,							-- deprecated: use mplusPrevious.score and mplusCurrent.score independently
+			isFivePlusAchievement = false,			-- deprecated
+			isTenPlusAchievement = false,				-- deprecated
+			isFifteenPlusAchievement = false,		-- deprecated
 			-- dungeons they have completed
 			dungeons = payload.dungeons,
+			dungeonUpgrades = payload.dungeonUpgrades,
+			dungeonTimes = payload.dungeonTimes,
 			-- best dungeon completed (or highest 10/15 achievement)
 			maxDungeon = CONST_DUNGEONS[payload.maxDungeonIndex],
 			maxDungeonLevel = payload.maxDungeonLevel,
+			keystoneFivePlus = payload.keystoneFivePlus,
 			keystoneTenPlus = payload.keystoneTenPlus,
 			keystoneFifteenPlus = payload.keystoneFifteenPlus,
-			totalRuns = payload.totalRuns,
+			keystoneTwentyPlus = payload.keystoneTwentyPlus
 		}
 
 		-- client related data populates these fields
@@ -677,20 +1006,18 @@ do
 			cache.isEnhanced = false
 
 			-- number of keystone upgrades per dungeon
-			cache.dungeonUpgrades = {}
-			cache.dungeonTimes = {}
 			cache.maxDungeonUpgrades = 0
 
 			-- if character exists in the clientCharacters list then override some data with higher precision
 			-- TODO: only do this if the clientCharacters data isn't too old compared to regular addon date?
-			if ns.CLIENT_CHARACTERS and ns.addonConfig.enableClientEnhancements then
+			if false and ns.CLIENT_CHARACTERS and ns.addonConfig.enableClientEnhancements then
 				local nameAndRealm = name .. "-" .. realm
 				local clientData = ns.CLIENT_CHARACTERS[nameAndRealm]
 
 				if clientData then
 					local keystoneData = clientData.mythic_keystone
 					cache.isEnhanced = true
-					cache.allScore = keystoneData.all.score
+					cache.mplusCurrent.score = keystoneData.all.score
 
 					local maxDungeonIndex = 0
 					local maxDungeonTime = 999
@@ -721,9 +1048,44 @@ do
 
 		end
 
-		-- append additional role information
-		cache.isTank, cache.isHealer, cache.isDPS = cache.tankScore > 0, cache.healScore > 0, cache.dpsScore > 0
-		cache.numRoles = (cache.tankScore > 0 and 1 or 0) + (cache.healScore > 0 and 1 or 0) + (cache.dpsScore > 0 and 1 or 0)
+		-- store it in the profile cache
+		profileCache[index] = cache
+
+		-- return the freshly generated table
+		return cache
+	end
+
+	-- caches the profile table and returns one using keys
+	local function CacheRaidingProviderData(dataProviderGroup, name, realm, faction, index, data1, data2)
+		local cache = profileCache[index]
+
+		-- prefer to re-use cached profiles
+		if cache then
+			return cache
+
+		end
+
+		-- unpack the payloads into these tables
+		local payload = UnpackRaidingCharacterData(dataProviderGroup, data1, data2)
+
+		-- TODO: can we make this table read-only? raw methods will bypass metatable restrictions we try to enforce
+		-- build this custom table in order to avoid users tainting the provider database
+		cache = {
+			-- provider information
+			region = dataProviderGroup.region,
+			date = dataProviderGroup.date,
+			dataType = dataProviderGroup.data,
+			currentRaid = dataProviderGroup.currentRaid,
+			previousRaid = dataProviderGroup.previousRaid,
+			-- basic information about the character
+			name = name,
+			realm = realm,
+			faction = faction,
+			-- data
+			progress = payload.progress,
+			previousProgress = payload.previousProgress,
+			mainProgress = payload.mainProgress
+		}
 
 		-- store it in the profile cache
 		profileCache[index] = cache
@@ -741,9 +1103,11 @@ do
 		-- figure out what faction tables we want to iterate
 		local a, b = 1, 2
 		if faction == 1 or faction == 2 then
-			a, b = faction, faction
+				a, b = faction, faction
 		end
 		-- iterate through the data
+		local numFieldsPerCharacter = CONST_PROVIDER_DATA_FIELDS_PER_CHARACTER[dataType]
+		local lookupMaxSize = CONST_PROVIDER_DATA_BUCKET_MAX_SIZE[dataType]
 		local db, lu, r, d, base, bucketID, bucket
 		for i = a, b do
 			db, lu = dataProviderGroup["db" .. i], dataProviderGroup["lookup" .. i]
@@ -754,13 +1118,19 @@ do
 					d = BinarySearchForName(r, name, 2, #r)
 					if d then
 						-- `r[1]` = offset for this realm's characters in lookup table
-						-- `d` = index of found character in realm list. note: this is offset by one because of r[1]
-						-- `bucketID` is the index in the lookup table that contains that characters data
-						base = r[1] + (d - 1) * NUM_FIELDS_PER_CHARACTER - (NUM_FIELDS_PER_CHARACTER - 1)
-						bucketID = floor(base / LOOKUP_MAX_SIZE)
-						bucket = lu[bucketID + 1]
-						base = base - bucketID * LOOKUP_MAX_SIZE
-						return CacheProviderData(dataProviderGroup, name, realm, i, i .. "-" .. bucketID .. "-" .. base, bucket[base], bucket[base + 1], bucket[base + 2])
+						-- `d` = index of found character in realm list. note: this is offset by two because first index in `r` is an offset, and because lua is 1-base.
+						-- `bucketID` = the index in the lookup table that contains that characters data
+						base = r[1] + (d - 2) * numFieldsPerCharacter
+						bucketID = 1 + floor(base / lookupMaxSize)
+						bucket = lu[bucketID]
+						base = 1 + base - (bucketID - 1) * lookupMaxSize
+						if bucket then
+							if dataType == CONST_PROVIDER_DATA_MYTHICPLUS then
+								return CacheMythicPlusProviderData(dataProviderGroup, name, realm, i, i .. "-" .. bucketID .. "-" .. base, bucket[base], bucket[base + 1], bucket[base + 2])
+							elseif dataType == CONST_PROVIDER_DATA_RAIDING then
+								return CacheRaidingProviderData(dataProviderGroup, name, realm, i, i .. "-" .. bucketID .. "-" .. base, bucket[base], bucket[base + 1])
+							end
+						end
 					end
 				end
 			end
@@ -784,15 +1154,15 @@ do
 	end
 
 	-- returns score color using item colors
-	function GetScoreColor(score)
+	function GetScoreColorFromTable(score, tbl, tblSimple)
 		if score == 0 or ns.addonConfig.disableScoreColors then
 			return 1, 1, 1
 		end
 		local r, g, b = 0.62, 0.62, 0.62
 		if type(score) == "number" then
 			if not ns.addonConfig.showSimpleScoreColors then
-				for i = 1, #CONST_SCORE_TIER do
-					local tier = CONST_SCORE_TIER[i]
+				for i = 1, #tbl do
+					local tier = tbl[i]
 					if score >= tier.score then
 						local color = tier.color
 						r, g, b = color[1], color[2], color[3]
@@ -800,9 +1170,9 @@ do
 					end
 				end
 			else
-				local qualityColor = 0
-				for i = 1, #CONST_SCORE_TIER_SIMPLE do
-					local tier = CONST_SCORE_TIER_SIMPLE[i]
+				local qualityColor = 1
+				for i = 1, #tblSimple do
+					local tier = tblSimple[i]
 					if score >= tier.score then
 						qualityColor = tier.quality
 						break
@@ -814,14 +1184,220 @@ do
 		return r, g, b
 	end
 
+	-- returns score color using item colors
+	function GetScoreColor(score)
+		return GetScoreColorFromTable(score, CONST_SCORE_TIER, CONST_SCORE_TIER_SIMPLE)
+	end
+
+	-- returns score color using item colors with scale from previous tier
+	function GetPreviousScoreColor(score)
+		return GetScoreColorFromTable(score, CONST_PREVIOUS_SCORE_TIER, CONST_PREVIOUS_SCORE_TIER_SIMPLE)
+	end
+
+	-- returns score color using item colors
+	function GetRaidDifficultyColor(difficulty)
+		return ns.RAID_DIFFICULTY_COLORS[difficulty]
+	end
+
 	local function SortScoresByRole(a, b)
 		return a[2] > b[2]
+	end
+
+	local function getBestRunLines(profile, isProfile, addLFD, focusDungeon, focusKeystone, ...)
+		local lines = {}
+
+		local best = { dungeon = nil, level = 0, text = nil }			-- dungeon best
+		local overallBest = { dungeon = profile.maxDungeon, level = profile.dungeons[profile.maxDungeon.index] }	-- overall best
+
+		if addLFD then
+			local hasArgs, dungeonIndex = ...
+			if hasArgs == true then
+				best.dungeon = CONST_DUNGEONS[dungeonIndex] or best.dungeon
+			end
+		end
+
+		if focusDungeon then
+			local hasArgs, dungeonIndex = ...
+			if hasArgs == true then
+				best.dungeon = CONST_DUNGEONS[dungeonIndex] or best.dungeon
+			end
+		end
+
+		if focusKeystone then
+			local hasArgs, arg1, arg2 = ...
+			if hasArgs == true then
+				if ns.DEBUG_MODE then -- TODO
+					table.insert(lines, "focusKeystone arg1 = " .. tostring(arg1))
+					table.insert(lines, "focusKeystone arg2 = " .. tostring(arg2))
+				end
+			end
+		end
+
+		-- if we don't have a best dungeon focused by this point, try to find one based on our queue or current instance
+		if not best.dungeon and addLFD then
+			local numSigned, status = GetLFDStatus()
+			if numSigned then
+				if numSigned == true then
+					best.dungeon = status.dungeon
+					best.level = status.level or 0
+				elseif numSigned > 0 then
+					local highestDungeon
+					for j = 1, numSigned do
+						local d = status[j]
+						if not highestDungeon or d.level > highestDungeon.level then
+							highestDungeon = d
+						end
+					end
+					best.dungeon = highestDungeon
+					best.level = highestDungeon.level or 0
+				end
+			end
+			if not best.dungeon then
+				best.dungeon = GetInstanceStatus()
+			end
+		end
+
+		-- if we have a dungeon, but no level assigned to it, try to read one from our profile
+		if best.dungeon and (not best.level or best.level < 1) then
+			best.level = profile.dungeons[best.dungeon.index] or 0
+		end
+
+		-- if no dungeon, or the level is undefined or 0, drop showing both as it's irrelevant information
+		if not best.dungeon or (best.level and best.level < 1) then
+			best.dungeon, best.level = nil, 0
+		end
+
+		if not best.text and (not best.dungeon or overallBest.dungeon.index ~= best.dungeon.index) and overallBest.level > 0 then
+			local bestRunLabel = (isProfile or ns.addonConfig.mplusHeadlineMode ~= MythicPlusHeadlineModes.BEST_RUN) and L.BEST_RUN or L.RAIDERIO_BEST_RUN
+			local lineColor = (isProfile or ns.addonConfig.mplusHeadlineMode ~= MythicPlusHeadlineModes.BEST_RUN) and {1, 1, 1} or {1, 0.85, 0}
+			table.insert(lines, {bestRunLabel, GetStarsForUpgrades(profile.dungeonUpgrades[overallBest.dungeon.index]) .. "|cFFFFFFFF" .. overallBest.level .. "|r " .. overallBest.dungeon.shortNameLocale, lineColor[1], lineColor[2], lineColor[3], GetScoreColor(profile.mplusCurrent.score)})
+		end
+
+		if best.dungeon and best.level > 0 then
+			if best.dungeon == profile.maxDungeon then
+				local bestRunLabel = (isProfile or ns.addonConfig.mplusHeadlineMode ~= MythicPlusHeadlineModes.BEST_RUN) and L.BEST_FOR_DUNGEON or L.RAIDERIO_BEST_RUN
+				local lineColor = (isProfile or ns.addonConfig.mplusHeadlineMode ~= MythicPlusHeadlineModes.BEST_RUN) and {0, 1, 0} or {1, 0.85, 0}
+				table.insert(lines, {bestRunLabel, GetStarsForUpgrades(profile.dungeonUpgrades[best.dungeon.index]) .. "|cFFFFFFFF" .. best.level .. "|r " .. best.dungeon.shortNameLocale, lineColor[1], lineColor[2], lineColor[3], GetScoreColor(profile.mplusCurrent.score)})
+			else
+				table.insert(lines, {L.BEST_FOR_DUNGEON, GetStarsForUpgrades(profile.dungeonUpgrades[best.dungeon.index]) .. "|cFFFFFFFF" ..best.level .. "|r " .. best.dungeon.shortNameLocale, 1, 1, 1, GetScoreColor(profile.mplusCurrent.score)})
+			end
+		elseif best.text then
+			local bestRunLabel = (isProfile or ns.addonConfig.mplusHeadlineMode ~= MythicPlusHeadlineModes.BEST_RUN) and L.BEST_RUN or L.RAIDERIO_BEST_RUN
+			local lineColor = (isProfile or ns.addonConfig.mplusHeadlineMode ~= MythicPlusHeadlineModes.BEST_RUN) and {1, 1, 1} or {1, 0.85, 0}
+			table.insert(lines, {bestRunLabel, best.text, lineColor[1], lineColor[2], lineColor[3], 1, 1, 1})
+		end
+
+		return lines
+	end
+
+	local function insertToOutput(output, outputLength, linesToInsert)
+		for i=1, #linesToInsert do
+			output[outputLength + i - 1] = linesToInsert[i]
+		end
+
+		return output
+	end
+
+	local function GenerateScoreSeasonLabel(label, season)
+		return format(label, format(L["SEASON_LABEL_" .. season], season))
+	end
+
+	local function GetScoreLines(profile, isProfile, hasRunLines)
+		local lines = {}
+
+		if isProfile then
+			if profile.mplusCurrent.score > 0 then
+				table.insert(lines, {
+					GenerateScoreSeasonLabel(L.CURRENT_SCORE, CURRENT_SEASON_ID),
+					GetTooltipScore(profile.mplusCurrent),
+					1, 1, 1,
+					GetScoreColor(profile.mplusCurrent.score)
+				})
+			end
+
+			if profile.mplusPrevious.score > profile.mplusCurrent.score then
+				table.insert(lines, {
+					GenerateScoreSeasonLabel(L.PREVIOUS_SCORE, PREVIOUS_SEASON_ID),
+					GetTooltipScore(profile.mplusPrevious, true),
+					1, 1, 1,
+					GetPreviousScoreColor(profile.mplusPrevious.score)
+				})
+			end
+		else
+			if ns.addonConfig.mplusHeadlineMode == MythicPlusHeadlineModes.CURRENT_SEASON then
+				-- headline
+				table.insert(lines, {
+					GenerateScoreSeasonLabel(L.RAIDERIO_MP_SCORE, CURRENT_SEASON_ID),
+					GetTooltipScore(profile.mplusCurrent),
+					1, 0.85, 0,
+					GetScoreColor(profile.mplusCurrent.score)
+				})
+
+				if profile.mplusPrevious.score > profile.mplusCurrent.score then
+					table.insert(lines, {
+						GenerateScoreSeasonLabel(L.PREVIOUS_SCORE, PREVIOUS_SEASON_ID),
+						GetTooltipScore(profile.mplusPrevious, true),
+						1, 1, 1,
+						GetPreviousScoreColor(profile.mplusPrevious.score)
+					})
+				end
+			elseif ns.addonConfig.mplusHeadlineMode == MythicPlusHeadlineModes.BEST_SEASON then
+				if profile.mplusPrevious.score > profile.mplusCurrent.score then
+					-- headline
+					table.insert(lines, {
+						GenerateScoreSeasonLabel(L.RAIDERIO_MP_BEST_SCORE, PREVIOUS_SEASON_ID),
+						GetTooltipScore(profile.mplusPrevious, true),
+						1, 0.85, 0,
+						GetPreviousScoreColor(profile.mplusPrevious.score)
+					})
+
+					if profile.mplusCurrent.score > 0 then
+						table.insert(lines, {
+							GenerateScoreSeasonLabel(L.CURRENT_SCORE, CURRENT_SEASON_ID),
+							GetTooltipScore(profile.mplusCurrent),
+							1, 1, 1,
+							GetScoreColor(profile.mplusCurrent.score)
+						})
+					end
+				else
+					table.insert(lines, {
+						GenerateScoreSeasonLabel(L.RAIDERIO_MP_SCORE, CURRENT_SEASON_ID),
+						GetTooltipScore(profile.mplusCurrent),
+						1, 0.85, 0,
+						GetScoreColor(profile.mplusCurrent.score)
+					})
+				end
+			elseif ns.addonConfig.mplusHeadlineMode == MythicPlusHeadlineModes.BEST_RUN then
+				local keyColor = hasRunLines and { 1, 1, 1 } or { 1, 0.85, 0 }
+				-- headline would have been added previously, so just add the scores without any color highlights
+				if profile.mplusCurrent.score > 0 then
+					table.insert(lines, {
+						GenerateScoreSeasonLabel(L.CURRENT_SCORE, CURRENT_SEASON_ID),
+						GetTooltipScore(profile.mplusCurrent),
+						keyColor[1], keyColor[2], keyColor[3],
+						GetScoreColor(profile.mplusCurrent.score)
+					})
+				end
+
+				if profile.mplusPrevious.score > profile.mplusCurrent.score then
+					table.insert(lines, {
+						GenerateScoreSeasonLabel(L.PREVIOUS_SCORE, PREVIOUS_SEASON_ID),
+						GetTooltipScore(profile.mplusPrevious, true),
+						keyColor[1], keyColor[2], keyColor[3],
+						GetPreviousScoreColor(profile.mplusPrevious.score)
+					})
+				end
+			end
+		end
+
+		return lines
 	end
 
 	-- reads the profile and formats the output using the provided output flags
 	local function ShapeProfileData(dataType, profile, outputFlag, ...)
 		local output = { dataType = dataType, profile = profile, outputFlag = outputFlag, length = 0 }
 		local addTooltip = band(outputFlag, ProfileOutput.TOOLTIP) == ProfileOutput.TOOLTIP
+		local isProfile = band(outputFlag, ProfileOutput.PROFILE) == ProfileOutput.PROFILE
 
 		if addTooltip then
 			local i = 1
@@ -831,6 +1407,8 @@ do
 			local addPadding = band(outputFlag, ProfileOutput.ADD_PADDING) == ProfileOutput.ADD_PADDING
 			local addName = band(outputFlag, ProfileOutput.ADD_NAME) == ProfileOutput.ADD_NAME
 			local addLFD = band(outputFlag, ProfileOutput.ADD_LFD) == ProfileOutput.ADD_LFD
+			local addFooter = band(outputFlag, ProfileOutput.ADD_FOOTER) == ProfileOutput.ADD_FOOTER
+			local addHeader = band(outputFlag, ProfileOutput.ADD_HEADER) == ProfileOutput.ADD_HEADER
 			local focusDungeon = band(outputFlag, ProfileOutput.FOCUS_DUNGEON) == ProfileOutput.FOCUS_DUNGEON
 			local focusKeystone = band(outputFlag, ProfileOutput.FOCUS_KEYSTONE) == ProfileOutput.FOCUS_KEYSTONE
 
@@ -844,175 +1422,166 @@ do
 				i = i + 1
 			end
 
-			if dataType == CONST_PROVIDER_DATA_MYTHICPLUS then
-				if profile.allScore >= 0 then
-					output[i] = {L.RAIDERIO_MP_SCORE, GetFormattedScore(profile.allScore, profile.isPrevAllScore), 1, 0.85, 0, GetScoreColor(profile.allScore)}
-					i = i + 1
-				else
-					output[i] = {L.RAIDERIO_MP_SCORE, L.UNKNOWN_SCORE, 1, 0.85, 0, 1, 1, 1}
+			if addHeader then
+				if dataType == CONST_PROVIDER_DATA_RAIDING then
+					output[i] = L.RAIDING_DATA_HEADER
 					i = i + 1
 				end
+			end
 
-				if isModKeyDown or isModKeyDownSticky then
-					local scores = {}
-					local j = 1
-					if profile.tankScore then
-						scores[j] = {L.TANK_SCORE, profile.tankScore}
-						j = j + 1
+			if dataType == CONST_PROVIDER_DATA_MYTHICPLUS then
+				local bestRunLines = getBestRunLines(profile, isProfile, addLFD, focusDungeon, focusKeystone, ...)
+
+				if ns.addonConfig.mplusHeadlineMode == MythicPlusHeadlineModes.BEST_RUN then
+					output = insertToOutput(output, i, bestRunLines)
+					i = i + #bestRunLines
+				end
+
+				local scoreLines = GetScoreLines(profile, isProfile, #bestRunLines > 0)
+				output = insertToOutput(output, i, scoreLines)
+				i = i + #scoreLines
+
+				if ns.addonConfig.showMainsScore then
+					if not ns.addonConfig.showMainBestScore then
+						-- show current season
+						if profile.mplusMainCurrent.score > profile.mplusCurrent.score then
+							output[i] = {L.MAINS_SCORE, GetTooltipScore(profile.mplusMainCurrent), 1, 1, 1, GetScoreColor(profile.mplusMainCurrent.score)}
+							i = i + 1
+						end
+					else
+						-- show best season and current
+						if profile.mplusMainCurrent.score > profile.mplusCurrent.score or profile.mplusMainPrevious.score > profile.mplusCurrent.score then
+							local displayedPreviousSeason = false
+							if profile.mplusMainCurrent.score < profile.mplusMainPrevious.score then
+								displayedPreviousSeason = true
+								output[i] = {
+									format(L.MAINS_BEST_SCORE_BEST_SEASON, L["SEASON_LABEL_" .. PREVIOUS_SEASON_ID]),
+									GetTooltipScore(profile.mplusMainPrevious, true),
+									1, 1, 1,
+									GetPreviousScoreColor(profile.mplusMainPrevious.score)
+								}
+								i = i + 1
+							end
+
+							-- Show current score on modifier (or if previous wasn't shown)
+							if profile.mplusMainCurrent.score ~= 0 and (not displayedPreviousSeason or isModKeyDown or isModKeyDownSticky) then
+								output[i] = {
+									L.CURRENT_MAINS_SCORE,
+									GetTooltipScore(profile.mplusMainCurrent),
+									1, 1, 1,
+									GetScoreColor(profile.mplusMainCurrent.score)
+								}
+								i = i + 1
+							end
+						end
 					end
-					if profile.healScore then
-						scores[j] = {L.HEALER_SCORE, profile.healScore}
-						j = j + 1
+				end
+
+				if ns.addonConfig.mplusHeadlineMode ~= MythicPlusHeadlineModes.BEST_RUN then
+					output = insertToOutput(output, i, bestRunLines)
+					i = i + #bestRunLines
+				end
+
+				do
+					local timedRunsStartLine = i		-- used to prevent showing more than 2 "Timed Runs" lines
+
+					if profile.keystoneTwentyPlus > 0 then
+						output[i] = {L.TIMED_20_RUNS, GetFormattedRunCount(profile.keystoneTwentyPlus, 10), 1, 1, 1, 1, 1, 1}
+						i = i + 1
 					end
-					if profile.dpsScore then
-						scores[j] = {L.DPS_SCORE, profile.dpsScore}
-						j = j + 1
+
+					if profile.keystoneFifteenPlus > 0 then
+						output[i] = {L.TIMED_15_RUNS, GetFormattedRunCount(profile.keystoneFifteenPlus, 5), 1, 1, 1, 1, 1, 1}
+						i = i + 1
 					end
-					table.sort(scores, SortScoresByRole)
-					for k = 1, j - 1 do
-						if scores[k][2] > 0 then
-							output[i] = {scores[k][1], scores[k][2], 1, 1, 1, GetScoreColor(scores[k][2])}
+
+					if profile.keystoneTenPlus > 0 and (i - timedRunsStartLine < 1 or (isModKeyDown or isModKeyDownSticky)) then
+						output[i] = {L.TIMED_10_RUNS, GetFormattedRunCount(profile.keystoneTenPlus, 5), 1, 1, 1, 1, 1, 1}
+						i = i + 1
+					end
+
+					if profile.keystoneFivePlus > 0 and (i - timedRunsStartLine < 1 or (isModKeyDown or isModKeyDownSticky)) then
+						output[i] = {L.TIMED_5_RUNS, GetFormattedRunCount(profile.keystoneFivePlus, 5), 1, 1, 1, 1, 1, 1}
+						i = i + 1
+					end
+				end
+			end
+
+			if dataType == CONST_PROVIDER_DATA_RAIDING then
+				local startOffset = i
+
+				-- current raid progress
+				for progIndex = 1, 2 do
+					local prog = profile.progress[progIndex]
+					if prog then
+						-- if they have cleared the raid we show only one line for progress (their best), otherwise we show their 2nd best too
+						if progIndex == 1 or isModKeyDown or isModKeyDownSticky or profile.progress[progIndex - 1].progressCount < profile.currentRaid.bossCount then
+							output[i] = {
+								format("%s %s", profile.currentRaid.shortName, RAID_DIFFICULTY_NAMES[prog.difficulty]),
+								format("|c%s%s|r %d/%d", RAID_DIFFICULTY_COLORS[prog.difficulty][4], RAID_DIFFICULTY_SUFFIXES[prog.difficulty], prog.progressCount, profile.currentRaid.bossCount),
+								1, 1, 1,
+								1, 1, 1
+							}
+
 							i = i + 1
 						end
 					end
 				end
 
-				do
-					local best = { dungeon = nil, level = 0, text = nil }
-
-					if addLFD then
-						local hasArgs, dungeonIndex = ...
-						if hasArgs == true then
-							best.dungeon = CONST_DUNGEONS[dungeonIndex] or best.dungeon
-						end
-					end
-
-					if focusDungeon then
-						local hasArgs, dungeonIndex = ...
-						if hasArgs == true then
-							best.dungeon = CONST_DUNGEONS[dungeonIndex] or best.dungeon
-						end
-					end
-
-					if focusKeystone then
-						local hasArgs, arg1, arg2 = ...
-						if hasArgs == true then
-							if ns.DEBUG_MODE then -- TODO
-								output[i] = "focusKeystone arg1 = " .. tostring(arg1)
-								i = i + 1
-								output[i] = "focusKeystone arg2 = " .. tostring(arg2)
-								i = i + 1
-							end
-						end
-					end
-
-					-- if we don't have a best dungeon focused by this point, try to find one based on our queue or current instance
-					if not best.dungeon and addLFD then
-						local numSigned, status = GetLFDStatus()
-						if numSigned then
-							if numSigned == true then
-								best.dungeon = status.dungeon
-								best.level = status.level or 0
-							elseif numSigned > 0 then
-								local highestDungeon
-								for j = 1, numSigned do
-									local d = status[j]
-									if not highestDungeon or d.level > highestDungeon.level then
-										highestDungeon = d
-									end
-								end
-								best.dungeon = highestDungeon
-								best.level = highestDungeon.level or 0
-							end
-						end
-						if not best.dungeon then
-							best.dungeon = GetInstanceStatus()
-						end
-					end
-
-					-- if we have a dungeon, but no level assigned to it, try to read one from our profile
-					if best.dungeon and (not best.level or best.level < 1) then
-						best.level = profile.dungeons[best.dungeon.index] or 0
-					end
-
-					-- if no dungeon, or the level is undefined or 0, drop showing both as it's irrelevant information
-					if not best.dungeon or (best.level and best.level < 1) then
-						best.dungeon, best.level = nil, 0
-					end
-
-					-- Jah: Disabled for now, as everyone who did a +15 in Legion will have one in BFA since we are sharing achievements
-					--[[
-					if profile.keystoneFifteenPlus > 0 then
-						if profile.maxDungeonLevel < 15 then
-							best.text = L.KEYSTONE_COMPLETED_15
-						end
-					elseif profile.keystoneTenPlus > 0 then
-						if profile.maxDungeonLevel < 10 then
-							best.text = L.KEYSTONE_COMPLETED_10
-						end
-					end
-					--]]
-
-					if best.dungeon and best.dungeon == profile.maxDungeon then
-						output[i] = {L.BEST_RUN, "+" .. best.level .. " " .. best.dungeon.shortNameLocale, 0, 1, 0, GetScoreColor(profile.allScore)}
-						i = i + 1
-					elseif best.dungeon and best.level > 0 then
-						output[i] = {L.BEST_RUN, "+" .. best.level .. " " .. best.dungeon.shortNameLocale, 1, 1, 1, GetScoreColor(profile.allScore)}
-						i = i + 1
-					elseif best.text then
-						output[i] = {L.BEST_RUN, best.text, 1, 1, 1, GetScoreColor(profile.allScore)}
-						i = i + 1
-					end
-
-					if profile.keystoneFifteenPlus > 0 then
-						output[i] = {L.TIMED_15_RUNS, GetFormattedRunCount(profile.keystoneFifteenPlus), 1, 1, 1, GetScoreColor(profile.allScore)}
-						i = i + 1
-					end
-
-					if profile.keystoneTenPlus > 0 and (profile.keystoneFifteenPlus == 0 or isModKeyDown or isModKeyDownSticky) then
-						output[i] = {L.TIMED_10_RUNS, GetFormattedRunCount(profile.keystoneTenPlus), 1, 1, 1, GetScoreColor(profile.allScore)}
-						i = i + 1
-					end
-
-					if profile.totalRuns > 0 and addon:IsModifierKeyDown() then
-						output[i] = {L.TOTAL_RUNS, GetFormattedRunCount(profile.totalRuns), 1, 1, 1, GetScoreColor(profile.allScore)}
+				-- main's current raid progress
+				if ns.addonConfig.showMainsScore and profile.mainProgress then
+					local mainProg = profile.mainProgress[1]
+					local bestProg = profile.progress[1]
+					if mainProg and bestProg and ((mainProg.difficulty > bestProg.difficulty) or (mainProg.progressCount > bestProg.progressCount)) then
+						output[i] = {
+							L.MAINS_RAID_PROGRESS,
+							format("|c%s%s|r %d/%d", RAID_DIFFICULTY_COLORS[mainProg.difficulty][4], RAID_DIFFICULTY_SUFFIXES[mainProg.difficulty], mainProg.progressCount, profile.currentRaid.bossCount),
+							1, 1, 1, 1, 1, 1}
 						i = i + 1
 					end
 				end
 
-				if ns.addonConfig.showMainsScore and profile.mainScore > profile.allScore then
-					output[i] = {L.MAINS_SCORE, profile.mainScore, 1, 1, 1, GetScoreColor(profile.mainScore)}
+				-- previous raid progress
+				if i - startOffset == 0 or isModKeyDown or isModKeyDownSticky then
+					for progIndex = 1, 2 do
+						local prog = profile.previousProgress and profile.previousProgress[progIndex]
+						if prog then
+							-- for previous progress, only show both if the mod key is down
+							if progIndex == 1 or isModKeyDown or isModKeyDownSticky then
+								output[i] = {
+									format("%s %s", profile.previousRaid.shortName, RAID_DIFFICULTY_NAMES[prog.difficulty]),
+									format("|c%s%s|r %d/%d", RAID_DIFFICULTY_COLORS[prog.difficulty][4], RAID_DIFFICULTY_SUFFIXES[prog.difficulty], prog.progressCount, profile.previousRaid.bossCount),
+									1, 1, 1,
+									1, 1, 1
+								}
+
+								i = i + 1
+							end
+						end
+					end
+				end
+			end
+
+			if addFooter then
+				if IS_DB_OUTDATED[dataType][profile.faction] then
+					output[i] = {format(L.OUTDATED_DATABASE, OUTDATED_DAYS[dataType][profile.faction]), "", 1, 1, 1, 1, 1, 1, false}
 					i = i + 1
 				end
 
-			end
-
-			if dataType == CONST_PROVIDER_DATA_RAIDING then
-				-- TODO
-			end
-
-			local j = 1
-
-			if IS_DB_OUTDATED[dataType][profile.faction] then
-				output[i] = {format(L.OUTDATED_DATABASE, OUTDATED_DAYS[dataType][profile.faction]), "", 1, 1, 1, 1, 1, 1, false}
-				i = i + 1
-				j = j + 1
-			end
-
-			local t = EGG[profile.region]
-			if t then
-				t = t[profile.realm]
+				local t = EGG[profile.region]
 				if t then
-					t = t[profile.name]
+					t = t[profile.realm]
 					if t then
-						output[i] = {t, "", 0.9, 0.8, 0.5, 1, 1, 1, false}
-						i = i + 1
-						j = j + 1
+						t = t[profile.name]
+						if t then
+							output[i] = {t, "", 0.9, 0.8, 0.5, 1, 1, 1, false}
+							i = i + 1
+						end
 					end
 				end
 			end
 
-			output.length = i - j
+			output.length = i - 1
 
 		end
 
@@ -1079,23 +1648,52 @@ do
 			end
 			-- establish faction for the lookups
 			local faction = type(queryFaction) == "number" and queryFaction or GetFaction(unit)
-			-- retrive data from the various data types
+			-- retrieve data from the various data types
 			local profile = {}
 			local hasData = false
+			local localOutputFlag = outputFlag
+			local validProviders = {}
 			for i = 1, #CONST_PROVIDER_DATA_LIST do
 				local dataType = CONST_PROVIDER_DATA_LIST[i]
 				if (dataType == CONST_PROVIDER_DATA_MYTHICPLUS and reqMythicPlus) or (dataType == CONST_PROVIDER_DATA_RAIDING and reqRaiding) then
 					local data = GetProviderData(dataType, name, realm, faction)
 					if data then
-						hasData = true
-						if passThroughArg1Table then
-							profile[dataType] = ShapeProfileData(dataType, data, outputFlag, passThroughArg1Table)
-						else
-							profile[dataType] = ShapeProfileData(dataType, data, outputFlag, select(passThroughAt, ...))
-						end
+						validProviders[#validProviders + 1] = data
 					end
 				end
 			end
+
+			for i = 1, #validProviders do
+				local data = validProviders[i]
+				local dataType = data.dataType
+
+				hasData = true
+
+				if i == 1 then
+					localOutputFlag = bor(localOutputFlag, ProfileOutput.ADD_HEADER)
+				else
+					-- we don't want padding or names to show between providers when rendering multiple providers
+					-- if band(localOutputFlag, ProfileOutput.ADD_PADDING) == ProfileOutput.ADD_PADDING then
+					-- 	localOutputFlag = bxor(localOutputFlag, ProfileOutput.ADD_PADDING)
+					-- end
+
+					if band(localOutputFlag, ProfileOutput.ADD_NAME) == ProfileOutput.ADD_NAME then
+						localOutputFlag = bxor(localOutputFlag, ProfileOutput.ADD_NAME)
+					end
+				end
+
+				if i == #validProviders then
+					-- add the footer to the last provider we render
+					localOutputFlag = bor(localOutputFlag, ProfileOutput.ADD_FOOTER)
+				end
+
+				if passThroughArg1Table then
+					profile[dataType] = ShapeProfileData(dataType, data, localOutputFlag, passThroughArg1Table)
+				else
+					profile[dataType] = ShapeProfileData(dataType, data, localOutputFlag, select(passThroughAt, ...))
+				end
+			end
+
 			-- if we only requested specific mythic+ or raiding data we only return that specific table
 			if reqMythicPlus and not reqRaiding then
 				profile = profile[CONST_PROVIDER_DATA_MYTHICPLUS]
@@ -1128,6 +1726,7 @@ end
 
 -- tooltips
 local ShowTooltip
+local FlushTooltipCache
 local UpdateTooltips
 do
 	-- tooltip related hooks and storage
@@ -1138,21 +1737,22 @@ do
 	local function AppendTooltipLines(tooltip, profile, multipleProviders)
 		local added
 		if multipleProviders then
-			local count = #profile
 			-- iterate the data returned from the modules
-			for i = 1, count do
-				local output = profile[i]
-				-- iterate everything if this is the last module output, otherwise limit ourselves to the defined length
-				for j = 1, i == count and #output or output.length do
-					-- the line can be a table, thus a double line, or a left aligned line
-					local line = output[j]
-					if type(line) == "table" then
-						tooltip:AddDoubleLine(line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9], line[10])
-					else
-						tooltip:AddLine(line)
+			for i = 1, #CONST_PROVIDER_DATA_LIST do
+				local output = profile[CONST_PROVIDER_DATA_LIST[i]]
+				if output then
+					-- iterate everything if this is the last module output, otherwise limit ourselves to the defined length
+					for j = 1, output.length do
+						-- the line can be a table, thus a double line, or a left aligned line
+						local line = output[j]
+						if type(line) == "table" then
+							tooltip:AddDoubleLine(line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9], line[10])
+						else
+							tooltip:AddLine(line)
+						end
+						-- we know the tooltip was build successfully
+						added = true
 					end
-					-- we know the tooltip was build successfully
-					added = true
 				end
 			end
 		else
@@ -1286,6 +1886,11 @@ do
 		end
 		ns.PROFILE_UI.UpdateTooltip()
 	end
+
+	function FlushTooltipCache()
+		table.wipe(profileCache)
+		table.wipe(profileCacheTooltip)
+	end
 end
 
 -- addon events
@@ -1364,6 +1969,7 @@ do
 		-- for notification purposes after we're done iterating the provider queue
 		local isAnyProviderDesynced
 		local isAnyProviderOutdated
+		local neededProviderLoaded = 0
 
 		-- pick the data provider that suits the players region
 		for i = #dataProviderQueue, 1, -1 do
@@ -1385,6 +1991,11 @@ do
 					isAnyProviderOutdated = isAnyProviderOutdated and max(isAnyProviderOutdated, outdatedDays) or outdatedDays
 				end
 
+				-- Check if our faction is loaded
+				if PLAYER_FACTION == data.faction then
+					neededProviderLoaded = neededProviderLoaded + 1
+				end
+
 				-- append provider to the group
 				if dataProviderGroup then
 					if dataProviderGroup.faction == data.faction and dataProviderGroup.date ~= data.date then
@@ -1403,6 +2014,15 @@ do
 						dataProviderGroup.lookup2 = data.lookup2
 					end
 
+					if dataType == CONST_PROVIDER_DATA_RAIDING then
+						if not dataProviderGroup.currentRaid then
+							dataProviderGroup.currentRaid = data.currentRaid
+						end
+
+						if not dataProviderGroup.previousRaid then
+							dataProviderGroup.previousRaid = data.previousRaid
+						end
+					end
 				else
 					dataProviderGroup = data
 					dataProvider[dataType] = dataProviderGroup
@@ -1425,6 +2045,12 @@ do
 			DEFAULT_CHAT_FRAME:AddMessage(format(L.OUTDATED_DATABASE_S, addonName, isAnyProviderOutdated), 1, 1, 0)
 		end
 
+		if neededProviderLoaded == 0 then
+			local _, localizedFaction = UnitFactionGroup("player")
+
+			DEFAULT_CHAT_FRAME:AddMessage(format(L.PROVIDER_NOT_LOADED, addonName, localizedFaction), 1, 1, 0)
+		end
+
 		-- hide the provider functions from the public API
 		_G.RaiderIO.AddProvider = nil
 
@@ -1438,8 +2064,7 @@ do
 	-- we enter the world (after a loading screen, int/out of instances)
 	function addon:PLAYER_ENTERING_WORLD()
 		-- we wipe the cached profiles in between loading screens, this seems like a good way get rid of memory use over time
-		table.wipe(profileCache)
-		table.wipe(profileCacheTooltip)
+		FlushTooltipCache()
 		-- store the character we're logged on (used by the client to queue an update, once we log out from the game of course)
 		local name, realm = GetNameAndRealm("player")
 		local realmSlug = GetRealmSlug(realm)
@@ -1606,9 +2231,14 @@ do
 				if not ns.addonConfig.enableLFGTooltips then
 					return
 				end
-				local _, activityID, title, description, _, _, _, _, _, _, _, _, leaderName = C_LFGList.GetSearchResultInfo(resultID)
+				local results = C_LFGList.GetSearchResultInfo(resultID)
+				if not results then
+					return
+				end
+				local activityID = results.activityID
+				local leaderName = results.leaderName
 				if leaderName then
-					local keystoneLevel = GetKeystoneLevel(title) or GetKeystoneLevel(description) or 0
+					local keystoneLevel = 0 -- GetKeystoneLevel(title) or GetKeystoneLevel(description) or 0
 					-- Update game tooltip with player info
 					ShowTooltip(tooltip, bor(TooltipProfileOutput.PADDING(), ProfileOutput.ADD_LFD), leaderName, nil, PLAYER_FACTION, true, LFD_ACTIVITYID_TO_DUNGEONID[activityID], keystoneLevel)
 					ns.PROFILE_UI.ShowProfile(leaderName, nil, PLAYER_FACTION, tooltip, nil, activityID, keystoneLevel)
@@ -1783,9 +2413,6 @@ do
 			pattern = pattern:gsub("%%%%%%[%d%.%,]+f", "([%%d%%.%%,]+)")
 			return pattern
 		end
-		local function sortRoleScores(a, b)
-			return a[2] > b[2]
-		end
 		local FORMAT_GUILD = "^" .. pattern(WHO_LIST_GUILD_FORMAT) .. "$"
 		local FORMAT = "^" .. pattern(WHO_LIST_FORMAT) .. "$"
 		local nameLink, name, level, race, class, guild, zone
@@ -1793,39 +2420,13 @@ do
 		local function score(profile)
 			text = ""
 
-			if profile.allScore > 0 then
-				text = text .. (L.RAIDERIO_MP_SCORE_COLON):gsub("%.", "|cffFFFFFF|r.") .. GetFormattedScore(profile.allScore, profile.isPrevAllScore) .. ". "
+			if profile.mplusCurrent.score > 0 then
+				text = text .. (L.RAIDERIO_MP_SCORE .. ": "):gsub("%.", "|cffFFFFFF|r.") .. profile.mplusCurrent.score .. ". "
 			end
 
 			-- show the mains season score
-			if ns.addonConfig.showMainsScore and profile.mainScore > profile.allScore then
-				text = text .. "(" .. L.MAINS_SCORE_COLON .. profile.mainScore .. "). "
-			end
-
-			-- show tank, healer and dps scores
-			local scores = {}
-
-			if profile.tankScore then
-				scores[#scores + 1] = { L.TANK, profile.tankScore }
-			end
-
-			if profile.healScore then
-				scores[#scores + 1] = { L.HEALER, profile.healScore }
-			end
-
-			if profile.dpsScore then
-				scores[#scores + 1] = { L.DPS, profile.dpsScore }
-			end
-
-			sort(scores, sortRoleScores)
-
-			for i = 1, #scores do
-				if scores[i][2] > 0 then
-					if i > 1 then
-						text = text .. ", "
-					end
-					text = text .. scores[i][1] .. ": " .. scores[i][2]
-				end
+			if ns.addonConfig.showMainsScore and profile.mplusMainCurrent.score > profile.mplusCurrent.score then
+				text = text .. "(" .. L.MAINS_SCORE .. ": " .. profile.mplusMainCurrent.score .. "). "
 			end
 
 			return text
@@ -2088,8 +2689,7 @@ do
 	uiHooks[#uiHooks + 1] = function()
 		local KEYSTONE_PATTERNS = {
 			"keystone:%d+:(.-):(.-):(.-):(.-):(.-)",
-			"item:158923:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:(.-):(.-):(.-):(.-):(.-):(.-)",
-			"item:138019:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:(.-):(.-):(.-):(.-):(.-):(.-)",
+			"item:158923:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:.-:(.-):(.-):(.-):(.-):(.-):(.-)"
 		}
 		local function SortByLevelDesc(a, b)
 			if a[2] == b[2] then
@@ -2125,7 +2725,13 @@ do
 			tooltip:AddLine(" ")
 			tooltip:AddDoubleLine(L.RAIDERIO_MP_BASE_SCORE, baseScore, 1, 0.85, 0, 1, 1, 1)
 
-			-- TODO: AppendAveragePlayerScore(tooltip, lvl)
+			if ns.addonConfig.showAverageScore then
+				local avgScore = CONST_AVERAGE_SCORE[lvl]
+				if avgScore then
+					tooltip:AddDoubleLine(format(L.RAIDERIO_AVERAGE_PLAYER_SCORE, lvl), avgScore, 1, 1, 1, GetScoreColor(avgScore))
+				end
+			end
+
 			if not inst then tooltip:Show() return end
 
 			local index = KEYSTONE_INST_TO_DUNGEONID[inst]
@@ -2205,6 +2811,10 @@ do
 	ns.IS_DB_OUTDATED = IS_DB_OUTDATED
 	ns.OUTDATED_DAYS = OUTDATED_DAYS
 	ns.OUTDATED_HOURS = OUTDATED_HOURS
+	ns.RAID_DIFFICULTY_NAMES = RAID_DIFFICULTY_NAMES
+	ns.RAID_DIFFICULTY_SUFFIXES = RAID_DIFFICULTY_SUFFIXES
+	ns.RAID_DIFFICULTY_COLORS = RAID_DIFFICULTY_COLORS
+	ns.GetRaidDifficultyColor = GetRaidDifficultyColor
 	ns.CompareDungeon = CompareDungeon
 	ns.GetDungeonWithData = GetDungeonWithData
 	ns.GetNameAndRealm = GetNameAndRealm
@@ -2212,9 +2822,11 @@ do
 	ns.GetStarsForUpgrades = GetStarsForUpgrades
 	ns.ProfileOutput = ProfileOutput
 	ns.TooltipProfileOutput = TooltipProfileOutput
+	ns.MythicPlusHeadlineModes = MythicPlusHeadlineModes
 	ns.GetPlayerProfile = GetPlayerProfile
 	ns.HasPlayerProfile = HasPlayerProfile
 	ns.ShowTooltip = ShowTooltip
+	ns.FlushTooltipCache = FlushTooltipCache
 end
 
 -- mirror certain data exposed in the public API to avoid external users changing our internal data
@@ -2268,9 +2880,17 @@ do
 		return function(...)
 			Notify(funcName, newFuncName, debugstack())
 			local d = GetPlayerProfile(ProfileOutput.DATA, ...)
-			if d then d = d[CONST_PROVIDER_DATA_MYTHICPLUS] end
-			if d then d = d.profile end
-			return d
+			local output = { mythicPlus = nil, raiding = nil }
+			if d then
+				local r
+
+				r = d[CONST_PROVIDER_DATA_MYTHICPLUS]
+				if r then output.mythicPlus = r.profile end
+
+				r = d[CONST_PROVIDER_DATA_RAIDING]
+				if r then output.raiding = r.profile end
+			end
+			return output
 		end
 	end
 end
@@ -2321,6 +2941,9 @@ _G.RaiderIO = {
 	-- Returns a table containing the RGB values for the specified score.
 	-- RaiderIO.GetScoreColor(5000) => { 1, 0.5, 0 }
 	GetScoreColor = GetScoreColor,
+
+	-- Returns a table containing the RGB values for the specified raid difficulty (1 = normal, 2 = heroic, 3 = mythic)
+	GetRaidDifficultyColor = GetRaidDifficultyColor,
 
 	-- DEPRECATED: use the new API above instead
 	GetScore = WrapDeprecatedFunc("GetScore", "GetPlayerProfile"),

@@ -21,8 +21,6 @@ local INVALID_PRICE_SOURCES = {
 	NumExpires = true,
 	DBRegionSaleRate = true,
 	DBRegionSoldPerDay = true,
-	DBGlobalSaleRate = true,
-	DBGlobalSoldPerDay = true,
 }
 
 
@@ -42,6 +40,7 @@ end
 -- ============================================================================
 
 function private.GetTooltipSettingsFrame()
+	TSM.UI.AnalyticsRecordPathChange("main", "settings", "tooltips", "destroying")
 	wipe(private.sources)
 	wipe(private.sourceKeys)
 	for key, _, label in TSMAPI_FOUR.CustomPrice.Iterator() do

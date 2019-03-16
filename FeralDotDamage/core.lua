@@ -1454,7 +1454,7 @@ local function IconOnUpdateHandler(self, elapsed)
 			
 		curperhp = UnitHealth("target")*100/UnitHealthMax("target")
 		
-		if curperhp < 25 and parent.shown and not ns.db.profile.icons.disableIconSwap and not haveFBIcon then
+		if parent.shown and not ns.db.profile.icons.disableIconSwap and ns.impFerBite then
 			parent.icon:SetTexture(fb_texture)
 		elseif parent.shown and not ns.db.profile.icons.disableIconSwap and ns:IsAshamaneBiteAvailible(guid) then		
 			parent.icon:SetTexture(ns.customAshamaneBiteTexture)
@@ -1532,7 +1532,7 @@ local function StatusBarOnUpdateHandler(self, elapsed)
 	if spellid == razorvat_spid then
 		curperhp = UnitHealth("target")*100/UnitHealthMax("target")
 
-		if curperhp < 25 and parent.shown then
+		if ns.impFerBite and parent.shown then
 			parent.icon:SetTexture(fb_texture)
 		elseif parent.shown and ns:IsAshamaneBiteAvailible(guid) then		
 			parent.icon:SetTexture(ns.customAshamaneBiteTexture)
@@ -3524,7 +3524,8 @@ do
 		--ns.ashamaneBite		 = ns:GetAtrifactPercInfo(210702) == 1 and true or false
 		ns.brutalSlash		 = IsTalentKnown(202028)
 		ns.moonkinForm		 = IsTalentKnown(197488)
-	
+		ns.impFerBite		 = IsTalentKnown(202031)
+		
 	--	print('T', 'ashamaneBite', ns.ashamaneBite)
 	--	print('T', 'rakeBonusDamage', ns.rakeBonusDamage)
 		
@@ -3658,7 +3659,7 @@ do
 	--	eventframe:RegisterEvent("ARTIFACT_XP_UPDATE")
 	--	eventframe:RegisterEvent("ARTIFACT_UPDATE")
 	--	eventframe:RegisterEvent("ARTIFACT_CLOSE")
-		eventframe:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", 'player')
+		eventframe:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", 'player', '')
 
 
 		if initUpdate then
@@ -4027,7 +4028,7 @@ do
 		end
 		
 		if ns.db.profile.others.overlay then
-			buffFrame:RegisterUnitEvent('UNIT_AURA', 'player')
+			buffFrame:RegisterUnitEvent('UNIT_AURA', 'player', '')
 		
 			local events = ns.db.profile.others.checkOnEvent or 5
 		

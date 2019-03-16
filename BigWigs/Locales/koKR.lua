@@ -23,10 +23,8 @@ L.getNewRelease = "당신의 BigWigs는 구버전이지만 (/bwv) Twitch 클라�
 L.warnTwoReleases = "당신의 BigWigs는 최신 버전보다 2번 앞서 배포된 구버전입니다! 당신의 버전은 오류가 있거나, 기능이 누락됐거나, 완전히 틀린 타이머를 가지고 있을 수 있습니다. 업데이트를 강력히 권장합니다."
 L.warnSeveralReleases = "|cffff0000당신의 BigWigs는 최신 버전보다 %d번 앞서 배포된 구버전입니다!! 다른 플레이어와 동기화 문제를 방지하기 위해 업데이트를 강력히 권장합니다!|r"
 
-L.tooltipHint = "실행 중인 모든 모듈을 초기화하려면 |cffeda55f클릭|r하세요.\n모듈을 비활성화하려면 |cffeda55fAlt-클릭|r하세요.\n옵션에 접근하려면 |cffeda55f오른쪽 클릭|r하세요."
+L.tooltipHint = "옵션에 접근하려면 |cffeda55f오른쪽 클릭|r하세요."
 L.activeBossModules = "활성화된 우두머리 모듈:"
-L.modulesReset = "실행 중인 모든 모듈이 초기화되었습니다."
-L.modulesDisabled = "실행 중인 모든 모듈이 비활성화되었습니다."
 
 L.oldVersionsInGroup = "파티 내에 BigWigs가 없거나 구버전을 가진 사람입니다. /bwv 명령어로 더 자세한 정보를 얻을 수 있습니다."
 L.upToDate = "최신 버전:"
@@ -119,12 +117,14 @@ L.COUNTDOWN = "초읽기"
 L.COUNTDOWN_desc = "활성화하면, 마지막 5초에 음성과 시각적 초읽기가 추가됩니다. 화면 가운데에 \"5... 4... 3... 2... 1...\"의 큰 숫자와 함께 초읽기를 해줍니다."
 L.INFOBOX = L.infobox
 L.INFOBOX_desc = L.infobox_desc
---L.SOUND = "Sound"
---L.SOUND_desc = "Boss abilities usually play sounds to help you notice them. If you disable this option, none of the sounds attached to it will play."
---L.CASTBAR = "Cast Bars"
---L.CASTBAR_desc = "Cast bars are sometimes shown on certain bosses, usually to bring attention to a critical ability incoming. If this ability is accompanied by a cast bar that you want to hide, disable this option."
---L.SAY_COUNTDOWN = "Say Countdown"
---L.SAY_COUNTDOWN_desc = "Chat bubbles are easy to spot. BigWigs will use multiple say messages counting down to alert people nearby that an ability on you is about to expire."
+L.SOUND = "소리 내기"
+L.SOUND_desc = "보스의 능력들을 소리를 통해서 알려줍니다. 이 옵션을 비활성화 한다면 이 능력에 해당하는 소리가 들리지 않을 것입니다."
+L.CASTBAR = "시전 바"
+L.CASTBAR_desc = "주로 특정 중요 능력들을 시전하는 보스들을 상대할 때는 시전바가 표시됩니다. 이 능력에 해당하는 시전바를 숨기고 싶다면 이 옵션을 비활성화하세요."
+L.SAY_COUNTDOWN = "카운트 표시"
+L.SAY_COUNTDOWN_desc = "말풍선은 매우 알아보기 쉽습니다. BigWigs는 여러가지 말풍선으로 주위 사람들에게 어떤 능력이 만료된다는 것을 알려줍니다."
+L.ME_ONLY_EMPHASIZE = "강조(나에게 걸렸을 때만)"
+L.ME_ONLY_EMPHASIZE_desc = "이 옵션을 활성화하면 이 능력이 자신에게 영향을 끼칠때 메세지를 더 크고 는에 띄게 표시합니다."
 
 L.advanced = "고급 옵션"
 L.back = "<< 뒤로"

@@ -28,6 +28,7 @@ end
 -- ============================================================================
 
 function private.GetCustomSourcesSettingsFrame()
+	TSM.UI.AnalyticsRecordPathChange("main", "settings", "custom_sources")
 	return TSMAPI_FOUR.UI.NewElement("ScrollFrame", "content")
 		:SetStyle("padding.left", 12)
 		:SetStyle("padding.right", 12)
@@ -207,6 +208,12 @@ function private.ValueOnValueChanged(text, newValue)
 end
 
 function private.DeleteCustomPriceOnClick(button)
+	if private.editingElement then
+		private.editingElement
+			:SetEditing(false)
+			:Draw()
+		private.editingElement = nil
+	end
 	TSM.db.global.userData.customPriceSources[button:GetParentElement():GetContext()] = nil
 	local rowFrame = button:GetParentElement()
 	local parentFrame = rowFrame:GetParentElement()

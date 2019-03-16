@@ -39,6 +39,39 @@ tbl.specialEvents = {
 		[248194] = { -- Jet Packs
 			[124158] = "Intermission 2", -- Imonar
 		},
+
+		-- [[ Uldir ]] --
+		[269051] = { -- Cleansing Purge
+			[136429] = "Room 1", -- Room 1 (MOTHER)
+			[137022] = "Room 2", -- Room 2 (MOTHER)
+			[137023] = "Room 3", -- Room 3 (MOTHER)
+		},
+		[279749] = { -- Stage 2 Start
+			[134546] = "Stage 2", -- Mythrax
+		},
+		[279748] = { -- Stage 2 End
+			[134546] = "Stage 1", -- Mythrax
+		},
+
+		-- [[ Battle of Dazar'Alor ]]--
+		[287165] = { -- King Rastakhan P1 -> P2 Conversation
+			[145616] = "Stage 2", -- King Rastakhan
+		},
+		[290801] = { -- King Rastakhan P2 -> P3 Conversation [DO NOT TRANSLATE]
+			[145616] = "Stage 3", -- King Rastakhan
+		},
+		[290852] = { -- King Rastakhan P3 -> P4 Conversation [DO NOT TRANSLATE]
+			[145616] = "Stage 4", -- King Rastakhan
+		},
+		[287282] = { -- Intermission 1 Start
+			[146409] = "Intermission 1", -- Lady Jaina Proudmoore
+		},
+	},
+	["UNIT_SPELLCAST_INTERRUPTED"] = {
+		-- [[ Battle of Dazar'Alor ]]--
+		[288696] = { -- Stage 2 start
+			[146256] = "Stage 2", -- Laminaria (Blockade)
+		},
 	},
 	["SPELL_AURA_APPLIED"] = {
 		--[[ Tomb of Sargeras ]]--
@@ -60,6 +93,14 @@ tbl.specialEvents = {
 			[121975] = function() -- Aggramar
 				return "Intermission ".. (tbl.data[1] or 1)
 			end,
+		},
+
+		-- [[ Uldir ]] --
+		[271965] = { -- Powered Down
+			[137119] = "Intermission", -- Taloc
+		},
+		[270443] = { -- Corrupting Bite
+			[132998] = "Stage 2", -- G'huun
 		},
 	},
 	["SPELL_AURA_REMOVED"] = {
@@ -90,6 +131,22 @@ tbl.specialEvents = {
 				return "Stage ".. tbl.data[1]
 			end,
 		},
+
+		-- [[ Uldir ]] --
+		[271965] = { -- Powered Down
+			[137119] = "Stage 2", -- Taloc
+		},
+		[265217] = { -- Liquefy
+			[134442] = "Intermission Over", -- Vectis
+		},
+
+		-- [[ Battle of Dazar'Alor ]]--
+		[288199] = { -- Howling Winds
+			[146409] = "Stage 2", -- Lady Jaina Proudmoore
+		},
+		[290001] = { -- Arcane Barrage
+			[146409] = "Stage 3", -- Lady Jaina Proudmoore
+		},
 	},
 	["SPELL_CAST_START"] = {
 		--[[ Tomb of Sargeras ]]--
@@ -115,11 +172,35 @@ tbl.specialEvents = {
 		[256542] = { -- Reap Soul
 			[124828] = "Stage 4", -- Argus the Unmaker
 		},
+
+		-- [[ Uldir ]] --
+		[265217] = { -- Liquefy
+			[134442] = "Intermission", -- Vectis
+		},
+
+		-- [[ Battle of Dazar'Alor ]]--
+		[287751] = { -- Evasive Maneuvers!
+			[144796] = "Stage 2", -- High Tinker Mekkatorque
+		},
+		[287797] = { -- Crash Down
+			[144796] = "Stage 3", -- High Tinker Mekkatorque
+		},
+		[288719] = { -- Flash Freeze
+			[146409] = "Intermission 2", -- Lady Jaina Proudmoore
+		},
 	},
 	["SPELL_CAST_SUCCESS"] = {
 		--[[ Tomb of Sargeras ]]--
 		[235597] = { -- Annihilation
 			[116939] = "Stage 2", -- Fallen Avatar
+		},
+
+		-- [[ Uldir ]] --
+		[274168] = { -- Locus of Corruption
+			[138967] = "Stage 2", -- Zul
+		},
+		[276839] = { -- Collapse
+			[132998] = "Stage 3", -- G'huun
 		},
 	},
 	["UNIT_DIED"] = {

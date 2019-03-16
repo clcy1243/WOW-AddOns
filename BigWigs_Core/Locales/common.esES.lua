@@ -51,6 +51,7 @@ L.stage = "Fase %d"
 L.trash = "Basura"
 L.underyou = "%s debajo de TI"
 L.you = "%s en TI"
+L.you_icon = "%s en |T13700%d:0|tTI"
 
 L.active = "Activo" -- Cuando un jefe se activa, después de que acabe el diálogo
 
@@ -66,6 +67,7 @@ L.link_both = "%s enlazado con %s"
 L.link_removed = "Enlace eliminado"
 
 -- Abbreviated numbers
-L.amount_one = "%dB"
-L.amount_two = "%dM"
-L.amount_three = "%dK"
+L.amount_one = "%dB" -- Billions 1,000,000,000
+L.amount_two = "%dM" -- Millions 1,000,000
+L.amount_three = "%dK" -- Thousands 1,000
+--L.seconds = "%.1fs" -- 1.1 seconds

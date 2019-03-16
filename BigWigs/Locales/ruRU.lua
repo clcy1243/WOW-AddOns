@@ -67,8 +67,6 @@ L.MESSAGE_desc = "Большинство способностей сопрово
 L.minimapIcon = "Иконка у миникарты"
 L.minimapToggle = "Показать/скрыть иконку у миникарты."
 L.missingAddOn = "Обратите внимание, что эта зона требует дополнение |cFF436EEE%s|r для показа таймеров."
-L.modulesDisabled = "Все запущенные модули были отключены."
-L.modulesReset = "Все запущенные модули сброшены."
 L.mythic = "Эпохальный"
 L.noBossMod = "Нет аддона:"
 L.normal = "Обычный"
@@ -109,9 +107,7 @@ L.testBarsBtn = "Создать тестовый индикатор оповещ
 L.testBarsBtn_desc = "Создаёт индикатор для теста ваших текущих настроек отображения оповещений BigWigs."
 L.toggleAnchorsBtn = "Задать положение индикаторов оповещений"
 L.toggleAnchorsBtn_desc = "Показать / спрятать привязки индикаторов для всех типов оповещений"
-L.tooltipHint = [=[|cffeda55fЩёлкните|r, чтобы сбросить все запущенные модули.
-|cffeda55fAlt+Левый клик|r - чтобы отключить их.
-|cffeda55fПравый клик|r открыть настройки.]=]
+L.tooltipHint = "|cffeda55fПравый клик|r открыть настройки."
 L.upToDate = "Текущий:"
 L.VOICE = "Голосовое оповещение"
 L.VOICE_desc = "Если установлен плагин голосового оповещения, эта опция позволит проиграть звуковой файл с голосовым предупреждением для вас."
@@ -121,12 +117,14 @@ L.wipes = "Поражений:"
 L.zoneMessages = "Показывать сообщения для игровой зоны"
 L.zoneMessagesDesc = "Отключив, вы перестанете получать сообщения при входе в зону, для которой нет таймеров BigWigs. Мы рекомендуем оставить включенной, чтобы в случае создания таймеров для новой зоны, вы могли сразу узнать об этом."
 
---L.SOUND = "Sound"
---L.SOUND_desc = "Boss abilities usually play sounds to help you notice them. If you disable this option, none of the sounds attached to it will play."
---L.CASTBAR = "Cast Bars"
---L.CASTBAR_desc = "Cast bars are sometimes shown on certain bosses, usually to bring attention to a critical ability incoming. If this ability is accompanied by a cast bar that you want to hide, disable this option."
---L.SAY_COUNTDOWN = "Say Countdown"
---L.SAY_COUNTDOWN_desc = "Chat bubbles are easy to spot. BigWigs will use multiple say messages counting down to alert people nearby that an ability on you is about to expire."
+L.SOUND = "Звук"
+L.SOUND_desc = "Во время произнесения заклинаний боссов обычно вопроизводится звук. При отключении этой опции ни один из звуков не будет воспроизведён."
+L.CASTBAR = "Полосы применения"
+L.CASTBAR_desc = "Полосы применения заклинаний иногда отображаются на определённых боссах, чтобы привлечь внимание к важной способности. Если эта способность сопровождается полосой применения, которую вы хотите скрыть, отключите данную опцию."
+L.SAY_COUNTDOWN = "Отсчет в /сказать"
+L.SAY_COUNTDOWN_desc = "Облачка чата легко заметить. BigWigs будет производить отсчет в /сказать, чтобы оповестить рядом стоящих игроков об окончании времени способности на Вас."
+L.ME_ONLY_EMPHASIZE = "Выделить (только для себя)"
+L.ME_ONLY_EMPHASIZE_desc = "С включенной опцией все сообщения, связанные с данной способностью будут выделенны ТОЛЬКО тогда, когда использованы на Вас, становясь более заметными."
 
 -- Media.lua
 L.Beware = "Берегитесь (Алгалон)"

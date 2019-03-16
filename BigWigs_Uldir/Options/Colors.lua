@@ -50,6 +50,7 @@ BigWigs:AddColors("Zek'voz, Herald of N'zoth", {
 })
 
 BigWigs:AddColors("Vectis", {
+	[265127] = "blue",
 	[265143] = "blue",
 	[265178] = {"blue","purple"},
 	[265206] = "orange",
@@ -116,4 +117,5 @@ BigWigs:AddColors("G'huun", {
 BigWigs:AddColors("Uldir Trash", {
 	[276540] = "red",
 	[277047] = {"blue","yellow"},
+	[278990] = "red",
 })

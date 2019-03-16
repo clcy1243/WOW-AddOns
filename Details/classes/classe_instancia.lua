@@ -329,7 +329,6 @@ end
 			self.sub_atributo_last = table_deepcopy (config.sub_atributo_last)
 			self.isLocked = config.isLocked
 			self.last_raid_plugin = config.last_raid_plugin
-			
 		end
 	end
 
@@ -578,7 +577,7 @@ end
 		end
 		
 		if (not self.iniciada) then
-			self:RestauraJanela (self.meu_id)
+			self:RestauraJanela (self.meu_id) --parece que esta chamando o ativar instance denovo...
 		else
 			_detalhes.opened_windows = _detalhes.opened_windows+1
 		end
@@ -865,27 +864,29 @@ function _detalhes:BaseFrameSnap()
 	for lado, snap_to in _pairs (self.snap) do
 		local instancia_alvo = _detalhes.tabela_instancias [snap_to]
 
-		if (instancia_alvo.ativa and instancia_alvo.baseframe) then
-			if (lado == 1) then --> a esquerda
-				instancia_alvo.baseframe:SetPoint ("TOPRIGHT", my_baseframe, "TOPLEFT")
-				
-			elseif (lado == 2) then --> em baixo
-				local statusbar_y_mod = 0
-				if (not self.show_statusbar) then
-					statusbar_y_mod = 14
-				end
-				instancia_alvo.baseframe:SetPoint ("TOPLEFT", my_baseframe, "BOTTOMLEFT", 0, -34 + statusbar_y_mod)
-				
-			elseif (lado == 3) then --> a direita
-				instancia_alvo.baseframe:SetPoint ("BOTTOMLEFT", my_baseframe, "BOTTOMRIGHT")
-				
-			elseif (lado == 4) then --> em cima
-				local statusbar_y_mod = 0
-				if (not instancia_alvo.show_statusbar) then
-					statusbar_y_mod = -14
-				end
-				instancia_alvo.baseframe:SetPoint ("BOTTOMLEFT", my_baseframe, "TOPLEFT", 0, 34 + statusbar_y_mod)
+		if (instancia_alvo) then
+			if (instancia_alvo.ativa and instancia_alvo.baseframe) then
+				if (lado == 1) then --> a esquerda
+					instancia_alvo.baseframe:SetPoint ("TOPRIGHT", my_baseframe, "TOPLEFT")
+					
+				elseif (lado == 2) then --> em baixo
+					local statusbar_y_mod = 0
+					if (not self.show_statusbar) then
+						statusbar_y_mod = 14
+					end
+					instancia_alvo.baseframe:SetPoint ("TOPLEFT", my_baseframe, "BOTTOMLEFT", 0, -34 + statusbar_y_mod)
+					
+				elseif (lado == 3) then --> a direita
+					instancia_alvo.baseframe:SetPoint ("BOTTOMLEFT", my_baseframe, "BOTTOMRIGHT")
+					
+				elseif (lado == 4) then --> em cima
+					local statusbar_y_mod = 0
+					if (not instancia_alvo.show_statusbar) then
+						statusbar_y_mod = -14
+					end
+					instancia_alvo.baseframe:SetPoint ("BOTTOMLEFT", my_baseframe, "TOPLEFT", 0, 34 + statusbar_y_mod)
 
+				end
 			end
 		end
 	end
@@ -1451,10 +1452,10 @@ end
 --> ao reiniciar o addon esta fun��o � rodada para recriar a janela da inst�ncia
 --> search key: ~restaura ~inicio ~start
 function _detalhes:RestauraJanela (index, temp, load_only)
-		
+
 	--> load
 		self:LoadInstanceConfig()
-		
+
 	--> reset internal stuff
 		self.sub_atributo_last = self.sub_atributo_last or {1, 1, 1, 1, 1}
 		self.rolagem = false
@@ -1474,8 +1475,9 @@ function _detalhes:RestauraJanela (index, temp, load_only)
 		self.last_modo = self.last_modo or modo_grupo
 		self.cached_bar_width = self.cached_bar_width or 0
 		self.row_height = self.row_info.height + self.row_info.space.between
-		
+
 	--> create frames
+		local isLocked = self.isLocked
 		local _baseframe, _bgframe, _bgframe_display, _scrollframe = gump:CriaJanelaPrincipal (self.meu_id, self)
 		self.baseframe = _baseframe
 		self.bgframe = _bgframe
@@ -1484,6 +1486,8 @@ function _detalhes:RestauraJanela (index, temp, load_only)
 		_baseframe:EnableMouseWheel (false)
 		self.alturaAntiga = _baseframe:GetHeight()
 		
+		--self.isLocked = isLocked --window isn't locked when just created it
+
 	--> change the attribute
 		_detalhes:TrocaTabela (self, self.segmento, self.atributo, self.sub_atributo, true) --> passando true no 5� valor para a fun��o ignorar a checagem de valores iguais
 	
@@ -1491,13 +1495,13 @@ function _detalhes:RestauraJanela (index, temp, load_only)
 		if (self.wallpaper.enabled) then
 			self:InstanceWallpaper (true)
 		end
-		
+
 	--> set the color of this instance window
 		self:InstanceColor (self.color)
 		
 	--> scrollbar
 		self:EsconderScrollBar (true)
-	
+
 	--> check snaps
 		self.snap = self.snap or {}
 
@@ -1897,6 +1901,20 @@ function _detalhes:Resize (w, h)
 	self:SaveMainWindowPosition()
 	
 	return true
+end
+
+--/run Details:GetWindow(1):ToggleMaxSize()
+function _detalhes:ToggleMaxSize()
+	if (self.is_in_max_size) then
+		self.is_in_max_size = false
+		self:SetSize (self.original_width, self.original_height)
+	else
+		local original_width, original_height = self:GetSize()
+		self.original_width, self.original_height = original_width, original_height
+		self.is_in_max_size = true
+		self:SetSize (original_width, 450)
+		
+	end
 end
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -3399,13 +3417,24 @@ function _detalhes:envia_relatorio (linhas, custom)
 	_detalhes:DelayUpdateReportWindowRecentlyReported()
 	
 	if (_detalhes.report_where == "COPY") then
-		return _detalhes:SendReportTextWindow (linhas)
+		_detalhes:SendReportTextWindow (linhas)
+		return
 	end
 	
 	local to_who = _detalhes.report_where
 	
 	local channel = to_who:find ("CHANNEL")
 	local is_btag = to_who:find ("REALID")
+	
+	local send_report_channel = function (timerObject)
+		_SendChatMessage (timerObject.Arg1, timerObject.Arg2, timerObject.Arg3, timerObject.Arg4)
+	end
+	
+	local send_report_bnet = function (timerObject)
+		BNSendWhisper (timerObject.Arg1, timerObject.Arg2)
+	end
+	
+	local delay = 200
 	
 	if (channel) then
 		
@@ -3415,8 +3444,13 @@ function _detalhes:envia_relatorio (linhas, custom)
 			if (channel == "Trade") then
 				channel = "Trade - City"
 			end
+			
 			local channelName = GetChannelName (channel)
-			_SendChatMessage (linhas[i], "CHANNEL", nil, channelName)
+			local timer = C_Timer.NewTimer (i * delay / 1000, send_report_channel)
+			timer.Arg1 = linhas[i]
+			timer.Arg2 = "CHANNEL"
+			timer.Arg3 = nil
+			timer.Arg4 = channelName
 		end
 		
 		return
@@ -3426,8 +3460,10 @@ function _detalhes:envia_relatorio (linhas, custom)
 		local id = to_who:gsub ((".*|"), "")
 		local presenceID = tonumber (id)
 		
-		for i = 1, #linhas do 
-			BNSendWhisper (presenceID, linhas[i])
+		for i = 1, #linhas do
+			local timer = C_Timer.NewTimer (i * delay / 1000, send_report_bnet)
+			timer.Arg1 = presenceID
+			timer.Arg2 = linhas[i]
 		end
 		
 		return
@@ -3442,7 +3478,11 @@ function _detalhes:envia_relatorio (linhas, custom)
 		end
 		
 		for i = 1, #linhas do 
-			_SendChatMessage (linhas[i], to_who, nil, alvo)
+			local timer = C_Timer.NewTimer (i * delay / 1000, send_report_channel)
+			timer.Arg1 = linhas[i]
+			timer.Arg2 = to_who
+			timer.Arg3 = nil
+			timer.Arg4 = alvo
 		end
 		return
 		
@@ -3467,22 +3507,29 @@ function _detalhes:envia_relatorio (linhas, custom)
 		end
 		
 		for i = 1, #linhas do 
-			_SendChatMessage (linhas[i], to_who, nil, alvo)
+			local timer = C_Timer.NewTimer (i * delay / 1000, send_report_channel)
+			timer.Arg1 = linhas[i]
+			timer.Arg2 = to_who
+			timer.Arg3 = nil
+			timer.Arg4 = alvo
 		end
 
 		return
 	end
 	
 	if (to_who == "RAID" or to_who == "PARTY") then
-		--LE_PARTY_CATEGORY_HOME - default
-		--LE_PARTY_CATEGORY_INSTANCE - player's automatic group
 		if (GetNumGroupMembers (LE_PARTY_CATEGORY_INSTANCE) > 0) then
 			to_who = "INSTANCE_CHAT"
 		end
 	end
 	
 	for i = 1, #linhas do 
-		_SendChatMessage (linhas[i], to_who)
+		local timer = C_Timer.NewTimer (i * delay / 1000, send_report_channel)
+		timer.Arg1 = linhas[i]
+		timer.Arg2 = to_who
+		timer.Arg3 = nil
+		timer.Arg4 = nil
+		
 	end
 	
 end

@@ -147,7 +147,7 @@
 			elseif (numero > 1000) then
 				return _string_format ("%.1f", numero/1000) .. symbol_1K
 			end
-			return numero
+			return _string_format ("%.0f", numero)
 		end
 
 		function _detalhes:ToK2 (numero)
@@ -185,7 +185,7 @@
 			elseif (numero > 1000) then
 				return _string_format ("%.1f", numero/1000) .. symbol_1K
 			end
-			return numero
+			return _string_format ("%.0f", numero)
 		end
 		
 		function _detalhes:ToK2Min (numero)
@@ -248,6 +248,7 @@
 		function _detalhes:NoToK (numero)
 			return _math_floor (numero)
 		end
+		
 		-- thanks http://richard.warburton.it
 		function _detalhes:comma_value (n)
 			if (not n) then return "0" end
@@ -256,6 +257,10 @@
 				return "0"
 			end
 			local left,num,right = _string_match (n,'^([^%d]*%d)(%d*)(.-)$')
+			return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
+		end
+		function _detalhes:comma_value_raw (n)
+			local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
 			return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
 		end
 		
@@ -387,6 +392,10 @@
 			local left,num,right = _string_match (n,'^([^%d]*%d)(%d*)(.-)$')
 			return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
 		end
+		function _detalhes:comma_value_raw (n)
+			local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
+			return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
+		end
 		
 		wipe (_detalhes.ToKFunctions)
 		
@@ -471,7 +480,7 @@
 			function_cache [str] = func
 		end
 	
-		local okey, value = _pcall (func, parameters_cache [1], parameters_cache [2])
+		local okey, value = _pcall (func, parameters_cache [1], parameters_cache [2], parameters_cache [3], parameters_cache [4])
 		if (not okey) then
 			_detalhes:Msg ("|cFFFF9900error on custom text|r:", value)
 			return 0
@@ -479,12 +488,14 @@
 		return value or 0
 	end
 
-	function _detalhes.string.replace (str, v1, v2, v3, v4, v5)
+	function _detalhes.string.replace (str, v1, v2, v3, v4, v5, v6, v7)
 		arguments_cache [1] = v1
 		arguments_cache [2] = v2
 		arguments_cache [3] = v3
 		parameters_cache [1] = v4
 		parameters_cache [2] = v5
+		parameters_cache [3] = v6
+		parameters_cache [4] = v7
 		
 		return (str:gsub ("{data(%d+)}", replace_arg):gsub ("{func(.-)}", run_function)) 
 	end
@@ -592,21 +603,25 @@
 			end
 			
 			if (tpe == "table") then
-				s = s .. space .. "[" .. key .. "] = |cFFa9ffa9table {|r\n"
+				if (type (key) == "number") then
+					s = s .. space .. "[" .. key .. "] = |cFFa9ffa9table {|r\n"
+				else
+					s = s .. space .. "[\"" .. key .. "\"] = |cFFa9ffa9table {|r\n"
+				end
 				s = s .. _detalhes.table.dump (value, nil, deep+1)
 				s = s .. space .. "|cFFa9ffa9}|r\n"
 				
 			elseif (tpe == "string") then
-				s = s .. space .. "[" .. key .. "] = '|cFFfff1c1" .. value .. "|r'\n"
+				s = s .. space .. "[\"" .. key .. "\"] = '|cFFfff1c1" .. value .. "|r'\n"
 				
 			elseif (tpe == "number") then
-				s = s .. space .. "[" .. key .. "] = |cFFffc1f4" .. value .. "|r\n"
+				s = s .. space .. "[\"" .. key .. "\"] = |cFFffc1f4" .. value .. "|r\n"
 				
 			elseif (tpe == "function") then
-				s = s .. space .. "|cFFa9a9ff[|r" .. key .. "|cFFa9a9ff]|r = |cFFa9a9fffunction()|r\n"
+				s = s .. space .. "|cFFa9a9ff[\"|r" .. key .. "|cFFa9a9ff\"]|r = |cFFa9a9fffunction()|r\n"
 				
 			elseif (tpe == "boolean") then
-				s = s .. space .. "[" .. key .. "] = |cFF99d0ff" .. (value and "true" or "false") .. "|r\n"
+				s = s .. space .. "[\"" .. key .. "\"] = |cFF99d0ff" .. (value and "true" or "false") .. "|r\n"
 				
 			end
 			

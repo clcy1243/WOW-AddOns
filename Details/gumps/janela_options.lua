@@ -552,6 +552,8 @@ function _detalhes:OpenOptionsWindow (instance, no_reopen, section)
 		local feedback_image = g:NewImage (window, [[Interface\Buttons\UI-RADIOBUTTON]], 8, 9, "artwork", {20/64, 27/64, 4/16, 11/16})
 		feedback_image:SetPoint ("right", feedback_button, "left", -1, 0)
 		
+		feedback_button:Hide()
+		
 	--> translate
 --[[
 		local translate_button = g:NewButton (window, _, "$parentOpenTranslateButton", nil, 140, 14, _detalhes.OpenTranslateWindow, nil, nil, nil, Loc ["STRING_TRANSLATE_LANGUAGE"], 1)
@@ -1392,14 +1394,6 @@ local menus2 = {
 			window_icon:SetPoint (12, -12)
 			window_icon:Hide()
 			
-			--> decrease the width of menu background
-			--menu_background:SetSize (163, 488)
-			--menu_background:SetPoint ("topleft", window.widget, "topleft", 23, -78)
-			--menu_background:Hide()
-			--sub_background:SetPoint ("topleft", window.widget, "topleft", 192, -80)
-			--sub_background:SetPoint ("bottomright", window.widget, "bottomright", -30, 27)
-			--sub_background:Hide()
-
 			--> hide the dog and other stuff
 			bigdog:Hide()
 			window.descAnchorTopLeftImage:Hide()
@@ -1419,28 +1413,12 @@ local menus2 = {
 			
 			--> location
 			fillbars:SetPoint ("bottomleft", window.widget, "bottomleft", 17, 16)
-			
---			forge_button:SetTemplate (options_button_template)
---			forge_button:SetSize(120, 20) --
---			history_button:SetTemplate (options_button_template)
---			history_button:SetSize(120, 20)
 			fillbars:SetTemplate (options_button_template)
 			fillbars:SetSize(120, 20)
 			changelog:SetTemplate (options_button_template)
 			changelog:SetSize(120, 20)
 			feedback_button:SetTemplate (options_button_template)
 			feedback_button:SetSize(120, 20)
-			
-			--feedback_button.textcolor = "white"
-			--changelog.textcolor = "white"
-			--fillbars.textcolor = "white"
---			history_button.textcolor = "C_OptionsButtonOrange"
---			forge_button.textcolor = "C_OptionsButtonOrange"
-			
---			history_button:SetHook ("OnEnter", extra_buttons_on_enter)
---			history_button:SetHook ("OnLeave", extra_buttons_on_leave)
---			forge_button:SetHook ("OnEnter", extra_buttons_on_enter)
---			forge_button:SetHook ("OnLeave", extra_buttons_on_leave)
 			
 			feedback_button.textsize = 10
 			changelog.textsize = 10
@@ -1455,22 +1433,7 @@ local menus2 = {
 			changelog_image:Hide()
 			fillbars_image:Hide()
 			feedback_image:Hide()
-			
---			history_button:ClearAllPoints()
---			forge_button:ClearAllPoints()
-			--forge_button:SetPoint ("topright", -17, -47)
---			forge_button:SetPoint ("bottomleft", fillbars, "topleft", 0, 2)
-			--history_button:SetPoint ("right", forge_button, "left", -2, 0)
---			history_button:SetPoint ("bottomleft", changelog, "topleft", 0, 2)
-			--forge_button:Hide()
-			--history_button:Hide()
 
-			--group_editing_help:ClearAllPoints()
-			--group_editing_help:SetPoint ("bottomleft", instances_string.widget, "topleft", -5, 2)
-			--group_editing:ClearAllPoints()
-			--group_editing:SetPoint ("left", group_editing_help, "right", 2, 0)
-			--DetailsOptionsWindowGroupEditingText:ClearAllPoints()
-			--DetailsOptionsWindowGroupEditingText:SetPoint ("left", group_editing, "right", 2, 0)
 			DetailsOptionsWindowGroupEditingText:ClearAllPoints()
 			DetailsOptionsWindowGroupEditingText:SetPoint ("bottomright", instances.widget, "topright", 0, 2)
 			
@@ -3096,7 +3059,7 @@ function window:CreateFrame16()
 		if (not _detalhes:GetPlugin ("DETAILS_PLUGIN_CHART_VIEWER")) then
 			local label = g:NewLabel (frame16, _, "$parentPluginWarningLabel", "PluginWarningLabel", Loc ["STRING_OPTIONS_CHART_PLUGINWARNING"], "GameFontNormal")
 			local image = g:NewImage (frame16, [[Interface\DialogFrame\UI-Dialog-Icon-AlertNew]])
-			label:SetPoint ("topright", frame16, "topright", -42, -15)
+			label:SetPoint ("topright", frame16, "topright", -42, -10)
 			label:SetJustifyH ("left")
 			label:SetWidth (160)
 			image:SetPoint ("right", label, "left", -7, 0)	
@@ -3112,18 +3075,11 @@ function window:CreateFrame16()
 		local big_code_editor = g:NewSpecialLuaEditorEntry (frame16, 643, 382, "bigCodeEditor", "$parentBigCodeEditor")
 		big_code_editor:SetPoint ("topleft", frame16, "topleft", 7, -70)
 		big_code_editor:SetFrameLevel (frame16:GetFrameLevel()+6)
-		big_code_editor:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], 
-		tile = 1, tileSize = 16, edgeSize = 16, insets = {left = 5, right = 5, top = 5, bottom = 5}})
-		big_code_editor:SetBackdropColor (0, 0, 0, 1)
+		big_code_editor:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1,tile = 1, tileSize = 16})
+		DetailsFramework:ReskinSlider (big_code_editor.scroll)
+		big_code_editor:SetBackdropColor (0.5, 0.5, 0.5, 0.95)
+		big_code_editor:SetBackdropBorderColor (0, 0, 0, 1)
 		big_code_editor:Hide()
-		
-		big_code_editor:SetBackdropColor (0, 0, 0, 0.95)
-		local background = g:NewImage (big_code_editor, [[Interface\ARCHEOLOGY\Arch-BookCompletedLeft]])
-		background:SetPoint ("topleft", big_code_editor, "topleft")
-		background:SetPoint ("bottomright", big_code_editor, "bottomright")
-		background:SetDesaturated (true)
-		background:SetTexCoord (1, 0, 0, 0.9)
-		background:SetAlpha (0.2)		
 		
 		local accept = function()
 			big_code_editor:ClearFocus()
@@ -3183,47 +3139,39 @@ function window:CreateFrame16()
 			frame16.userTimeCaptureFillPanel:Refresh()
 		end
 		
-		local big_code_editor2 = g:NewSpecialLuaEditorEntry (frame16, 643, 382, "exportEditor", "$parentExportEditor", true)
+		local big_code_editor2 = g:NewSpecialLuaEditorEntry (frame16, 643, 402, "exportEditor", "$parentExportEditor", true)
 		big_code_editor2:SetPoint ("topleft", frame16, "topleft", 7, -70)
 		big_code_editor2:SetFrameLevel (frame16:GetFrameLevel()+6)
-		big_code_editor2:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], 
-		tile = 1, tileSize = 16, edgeSize = 16, insets = {left = 5, right = 5, top = 5, bottom = 5}})
-		big_code_editor2:SetBackdropColor (0, 0, 0, 1)
+		big_code_editor2:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1,tile = 1, tileSize = 16})
+		DetailsFramework:ReskinSlider (big_code_editor2.scroll)
+		big_code_editor2:SetBackdropColor (0.5, 0.5, 0.5, 0.95)
+		big_code_editor2:SetBackdropBorderColor (0, 0, 0, 1)
 		big_code_editor2:Hide()
-		
-		big_code_editor2:SetBackdropColor (0, 0, 0, 0.95)
-		local background = g:NewImage (big_code_editor2, [[Interface\ARCHEOLOGY\Arch-BookCompletedLeft]])
-		background:SetPoint ("topleft", big_code_editor2, "topleft")
-		background:SetPoint ("bottomright", big_code_editor2, "bottomright")
-		background:SetDesaturated (true)
-		background:SetTexCoord (1, 0, 0, 0.9)
-		background:SetAlpha (0.2)
 		
 		local close_export_box = function()
 			big_code_editor2:ClearFocus()
 			big_code_editor2:Hide()
 		end
-		local close_export = g:NewButton (big_code_editor2, nil, "$parentClose", "closeButton", 24, 24, close_export_box, nil, nil, [[Interface\Buttons\UI-CheckBox-Check]])
+		
+		local close_export = g:NewButton (big_code_editor2, nil, "$parentClose", "closeButton", 120, 20, close_export_box)
 		close_export:SetPoint (10, 18)
-		local close_export_label = g:NewLabel (big_code_editor2, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_CLOSE"])
-		close_export_label:SetPoint ("left", close_export, "right", 2, 0)
+		close_export:SetIcon ([[Interface\Buttons\UI-CheckBox-Check]])
+		close_export:SetText (Loc ["STRING_OPTIONS_CHART_CLOSE"])
+		close_export:SetTemplate (options_button_template)
 		
 		local export_function = function (index)
 			local data = _detalhes.savedTimeCaptures [index]
 			if (data) then
-			
-				local serialized = _detalhes:Serialize (data)
-				local encoded = _detalhes._encode:Encode (serialized)
-				
-				--serialized = LibStub:GetLibrary ("LibCompress"):CompressLZW (serialized)
-				--local serialized = LibStub:GetLibrary ("LibCompress"):Compress (func)
-				
-				big_code_editor2:SetText (encoded)
-				
-				big_code_editor2:Show()
-				big_code_editor2.editbox:HighlightText()
-				big_code_editor2.editbox:SetFocus (true)
-				
+				local encoded = Details:CompressData (data, "print")
+				if (encoded) then
+					big_code_editor2:SetText (encoded)
+					
+					big_code_editor2:Show()
+					big_code_editor2.editbox:HighlightText()
+					big_code_editor2.editbox:SetFocus (true)
+				else
+					Details:Msg ("error exporting the time capture.") --localize-me
+				end
 			end
 		end
 		
@@ -3291,20 +3239,15 @@ function window:CreateFrame16()
 		panel:Refresh()
 		
 		--> add panel
-			local addframe = g:NewPanel (frame16, nil, "$parentUserTimeCapturesAddPanel", "userTimeCaptureAddPanel", 644, 382)
-			addframe.backdrop = {bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], 
-			tile = 1, tileSize = 16, edgeSize = 16, insets = {left = 3, right = 3, top = 2, bottom = 2}}
+			local addframe = g:NewPanel (frame16, nil, "$parentUserTimeCapturesAddPanel", "userTimeCaptureAddPanel", 644, 402)
 			addframe:SetPoint (8, -70)
 			addframe:SetFrameLevel (7)
 			addframe:Hide()
-			
-			addframe:SetBackdropColor (0, 0, 0, 0.95)
-			local background = g:NewImage (addframe, [[Interface\ARCHEOLOGY\Arch-BookCompletedLeft]])
-			background:SetPoint ("topleft", addframe, "topleft")
-			background:SetPoint ("bottomright", addframe, "bottomright")
-			background:SetDesaturated (true)
-			background:SetTexCoord (1, 0, 0, 0.9)
-			background:SetAlpha (0.2)
+
+			addframe:SetPoint ("topleft", frame16, "topleft", 7, -70)
+			addframe:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1,tile = 1, tileSize = 16})
+			addframe:SetBackdropColor (0.5, 0.5, 0.5, 0.95)
+			addframe:SetBackdropBorderColor (0, 0, 0, 1)
 
 			--> name
 				local capture_name = g:NewLabel (addframe, nil, "$parentNameLabel", "nameLabel", Loc ["STRING_OPTIONS_CHART_ADDNAME"])
@@ -3316,7 +3259,11 @@ function window:CreateFrame16()
 				local capture_func = g:NewLabel (addframe, nil, "$parentFunctionLabel", "functionLabel", Loc ["STRING_OPTIONS_CHART_ADDCODE"])
 				local capture_func_entry = g:NewSpecialLuaEditorEntry (addframe.widget, 300, 200, "funcEntry", "$parentFuncEntry")
 				capture_func_entry:SetPoint ("topleft", capture_func.widget, "topright", 2, 0)
-				capture_func_entry:SetSize (500, 200)
+				capture_func_entry:SetSize (500, 220)
+				capture_func_entry:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
+				capture_func_entry:SetBackdropBorderColor (0, 0, 0, 1)
+				capture_func_entry:SetBackdropColor (0, 0, 0, .5)
+				DetailsFramework:ReskinSlider (capture_func_entry.scroll)
 				
 			--> icon
 				local capture_icon = g:NewLabel (addframe, nil, "$parentIconLabel", "iconLabel", Loc ["STRING_OPTIONS_CHART_ADDICON"])
@@ -3352,84 +3299,72 @@ function window:CreateFrame16()
 					DetailsIconPickFrame:Hide()
 				end
 			end
-			local addbutton = g:NewButton (frame16, nil, "$parentAddButton", "addbutton", 100, 21, add, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_ADD"], nil, options_button_template)
-			--addbutton:InstallCustomTexture()
+			
+			local addbutton = g:NewButton (frame16, nil, "$parentAddButton", "addbutton", 120, 20, add, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_ADD"], nil, options_button_template)
 			addbutton:SetPoint ("bottomright", panel, "topright", -30, 0)
 			addbutton:SetIcon ([[Interface\PaperDollInfoFrame\Character-Plus]], 12, 12, nil, nil, nil, 4)
 			window:CreateLineBackground2 (frame16, "addbutton", "addbutton", nil, nil, {1, 0.8, 0}, button_color_rgb)
 			addbutton:SetTextColor (button_color_rgb)
-
-			local left = g:NewImage (frame16, "Interface\\PaperDollInfoFrame\\PaperDollSidebarTabs", 64, 13, "artwork", {0, 1, 0, 0.05078125})
-			left:SetPoint ("bottomright", addbutton, "bottomleft",  34, 0)
-			left:SetBlendMode ("ADD")
-			left:Hide()
-			local right = g:NewImage (frame16, "Interface\\PaperDollInfoFrame\\PaperDollSidebarTabs", 64, 13, "artwork", {0, 1, 0.0546875, 0.1015625})
-			right:SetPoint ("bottomleft", addbutton, "bottomright",  0, 0)
-			right:SetBlendMode ("ADD")
 			
 		--> open import panel button
 		
-			local importframe = g:NewSpecialLuaEditorEntry (frame16, 644, 382, "importEditor", "$parentImportEditor", true)
+			local importframe = g:NewSpecialLuaEditorEntry (frame16, 644, 402, "importEditor", "$parentImportEditor", true)
 			local font, size, flag = importframe.editbox:GetFont()
 			importframe.editbox:SetFont (font, 9, flag)
-			
 			importframe:SetPoint ("topleft", frame16, "topleft", 8, -70)
 			importframe:SetFrameLevel (frame16:GetFrameLevel()+6)
-			importframe:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], 
-			tile = 1, tileSize = 16, edgeSize = 16, insets = {left = 5, right = 5, top = 5, bottom = 5}})
-			importframe:SetBackdropColor (0, 0, 0, 1)
+			importframe:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1,tile = 1, tileSize = 16})
+			DetailsFramework:ReskinSlider (importframe.scroll)
+			importframe:SetBackdropColor (0.5, 0.5, 0.5, 0.95)
+			importframe:SetBackdropBorderColor (0, 0, 0, 1)
 			importframe:Hide()
 			
-			importframe:SetBackdropColor (0, 0, 0, 0.95)
-			local background = g:NewImage (importframe, [[Interface\ARCHEOLOGY\Arch-BookCompletedLeft]])
-			background:SetPoint ("topleft", importframe, "topleft")
-			background:SetPoint ("bottomright", importframe, "bottomright")
-			background:SetDesaturated (true)
-			background:SetTexCoord (1, 0, 0, 0.9)
-			background:SetAlpha (0.2)	
-
 			local doimport = function()
 				local text = importframe:GetText()
 				
-				local decode = _detalhes._encode:Decode (text)
-				if (type (decode) ~= "string") then
-					_detalhes:Msg (Loc ["STRING_CUSTOM_IMPORT_ERROR"])
-					return
-				end
-				
-				local unserialize = select (2, _detalhes:Deserialize (decode))
-				
-				if (type (unserialize) == "table") then
-					if (unserialize[1] and unserialize[2] and unserialize[3] and unserialize[4] and unserialize[5]) then
-						local register = _detalhes:TimeDataRegister (unpack (unserialize))
-						if (type (register) == "string") then
-							_detalhes:Msg (register)
+				text = DetailsFramework:Trim (text)
+
+				local dataTable = Details:DecompressData (text, "print")
+				if (dataTable) then
+					local unserialize = dataTable
+					
+					if (type (unserialize) == "table") then
+						if (unserialize[1] and unserialize[2] and unserialize[3] and unserialize[4] and unserialize[5]) then
+							local register = _detalhes:TimeDataRegister (unpack (unserialize))
+							if (type (register) == "string") then
+								_detalhes:Msg (register)
+							end
+						else
+							_detalhes:Msg (Loc ["STRING_OPTIONS_CHART_IMPORTERROR"])
 						end
 					else
 						_detalhes:Msg (Loc ["STRING_OPTIONS_CHART_IMPORTERROR"])
 					end
+					
+					importframe:Hide()
+					panel:Refresh()
 				else
-					_detalhes:Msg (Loc ["STRING_OPTIONS_CHART_IMPORTERROR"])
+					_detalhes:Msg (Loc ["STRING_CUSTOM_IMPORT_ERROR"])
+					return
 				end
-				
-				importframe:Hide()
-				panel:Refresh()
 			end
 	
-			local accept_import = g:NewButton (importframe, nil, "$parentAccept", "acceptButton", 24, 24, doimport, nil, nil, [[Interface\Buttons\UI-CheckBox-Check]])
+			local accept_import = g:NewButton (importframe, nil, "$parentAccept", "acceptButton", 120, 20, doimport)
+			accept_import:SetIcon ([[Interface\Buttons\UI-CheckBox-Check]])
 			accept_import:SetPoint (10, 18)
-			local accept_import_label = g:NewLabel (importframe, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_IMPORT"])
-			accept_import_label:SetPoint ("left", accept_import, "right", 2, 0)
+			accept_import:SetText (Loc ["STRING_OPTIONS_CHART_IMPORT"])
+			accept_import:SetTemplate (options_button_template)
 			
 			local cancelimport = function()
 				importframe:ClearFocus()
 				importframe:Hide()
 			end
 			
-			local cancel_changes = g:NewButton (importframe, nil, "$parentCancel", "CancelButton", 20, 20, cancelimport, nil, nil, [[Interface\PetBattles\DeadPetIcon]])
-			cancel_changes:SetPoint (100, 17)
-			local cancel_changes_label = g:NewLabel (importframe, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_CANCEL"])
-			cancel_changes_label:SetPoint ("left", cancel_changes, "right", 2, 0)
+			local cancel_changes = g:NewButton (importframe, nil, "$parentCancel", "CancelButton", 120, 20, cancelimport)
+			cancel_changes:SetIcon ([[Interface\PetBattles\DeadPetIcon]])
+			cancel_changes:SetText (Loc ["STRING_OPTIONS_CHART_CANCEL"])
+			cancel_changes:SetPoint (132, 18)
+			cancel_changes:SetTemplate (options_button_template)
 		
 			local import = function() 
 				importframe:Show()
@@ -3444,23 +3379,15 @@ function window:CreateFrame16()
 					DetailsIconPickFrame:Hide()
 				end
 			end
-			local importbutton = g:NewButton (frame16, nil, "$parentImportButton", "importbutton", 100, 21, import, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_IMPORT"], nil, options_button_template)
-			--importbutton:InstallCustomTexture()
+			
+			local importbutton = g:NewButton (frame16, nil, "$parentImportButton", "importbutton", 120, 20, import, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_IMPORT"], nil, options_button_template)
 			importbutton:SetPoint ("right", addbutton, "left", -4, 0)
 			importbutton:SetIcon ([[Interface\Buttons\UI-GuildButton-PublicNote-Up]], 14, 14, nil, nil, nil, 4)
 			window:CreateLineBackground2 (frame16, "importbutton", "importbutton", nil, nil, {1, 0.8, 0}, button_color_rgb)
 			importbutton:SetTextColor (button_color_rgb)
-			
-			local left = g:NewImage (frame16, "Interface\\PaperDollInfoFrame\\PaperDollSidebarTabs", 64, 13, "artwork", {0, 1, 0, 0.05078125})
-			left:SetPoint ("bottomright", importbutton, "bottomleft",  34, 0)
-			left:SetBlendMode ("ADD")
-			local right = g:NewImage (frame16, "Interface\\PaperDollInfoFrame\\PaperDollSidebarTabs", 64, 13, "artwork", {0, 1, 0.0546875, 0.1015625})
-			right:SetPoint ("bottomleft", importbutton, "bottomright",  0, 0)
-			right:SetBlendMode ("ADD")
-			right:Hide()
 	
 		--> close button
-			local closebutton = g:NewButton (addframe, nil, "$parentAddCloseButton", "addClosebutton", 100, 21, function() addframe:Hide() end, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_CLOSE"], nil, options_button_template)
+			local closebutton = g:NewButton (addframe, nil, "$parentAddCloseButton", "addClosebutton", 120, 20, function() addframe:Hide() end, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_CLOSE"], nil, options_button_template)
 			--closebutton:InstallCustomTexture()
 			
 		--> confirm add capture
@@ -3500,12 +3427,11 @@ function window:CreateFrame16()
 				if (DetailsIconPickFrame and DetailsIconPickFrame:IsShown()) then
 					DetailsIconPickFrame:Hide()
 				end
-				addframe:Hide();
+				addframe:Hide()
 
 			end
 			
-			local addcapturebutton = g:NewButton (addframe, nil, "$parentAddCaptureButton", "addCapturebutton", 100, 21, addcapture, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_ADD2"], nil, options_button_template)
-			--addcapturebutton:InstallCustomTexture()
+			local addcapturebutton = g:NewButton (addframe, nil, "$parentAddCaptureButton", "addCapturebutton", 120, 21, addcapture, nil, nil, nil, Loc ["STRING_OPTIONS_CHART_ADD2"], nil, options_button_template)
 	
 		--> anchors
 			local start = 25
@@ -3517,6 +3443,9 @@ function window:CreateFrame16()
 			
 			addcapturebutton:SetIcon ([[Interface\Buttons\UI-CheckBox-Check]], 18, 18, nil, nil, nil, 4)
 			closebutton:SetIcon ([[Interface\PetBattles\DeadPetIcon]], 14, 14, nil, nil, nil, 4)
+			
+			addcapturebutton:SetTemplate (options_button_template)
+			closebutton:SetTemplate (options_button_template)
 			
 			window:CreateLineBackground2 (addframe.widget, closebutton, closebutton, nil, nil, {1, 0.8, 0}, button_color_rgb)
 			closebutton:SetTextColor (button_color_rgb)
@@ -3585,31 +3514,18 @@ function window:CreateFrame15()
 		end
 		
 		local panel = g:NewFillPanel (frame15, header, "$parentCustomSpellsFillPanel", "customSpellsFillPanel", 640, 382, total_lines, fill_row, false)
-
 		panel:Refresh()
 	
 	--> add
-
 		--> add panel
 			local addframe = g:NewPanel (frame15, nil, "$parentCustomSpellsAddPanel", "customSpellsAddPanel", 644, 382)
-			addframe.backdrop = {bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], 
-			tile = 1, tileSize = 16, edgeSize = 16, insets = {left = 3, right = 3, top = 2, bottom = 2}}
-
-			addframe:SetPoint (8, -70)
+			addframe:SetPoint (8, -80)
 			addframe:SetFrameLevel (7)
-			addframe:Hide()
-			
-			addframe:SetBackdropColor (0, 0, 0, 0.95)
-			local background = g:NewImage (addframe, [[Interface\ACHIEVEMENTFRAME\UI-Achievement-StatsBackground]])
-			background:SetPoint ("topleft", addframe, "topleft")
-			background:SetPoint ("bottomright", addframe, "bottomright")
-			background:SetDesaturated (true)
-			background:SetTexCoord (1, 0, 0, 1)
-			background:SetAlpha (0.4)
-			
-			local desc = Loc ["STRING_OPTIONS_SPELL_SPELLID_DESC"]
-			local desc_spellid = g:NewLabel (addframe, nil, "$parentSpellidDescLabel", "spellidDescLabel", desc)
-			
+			addframe:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1,tile = 1, tileSize = 16})
+			addframe:SetBackdropColor (0.5, 0.5, 0.5, 0.95)
+			addframe:SetBackdropBorderColor (0, 0, 0, 1)
+			addframe:Hide()			
+
 			local spellid = g:NewLabel (addframe, nil, "$parentSpellidLabel", "spellidLabel", Loc ["STRING_OPTIONS_SPELL_ADDSPELLID"])
 			local spellname = g:NewLabel (addframe, nil, "$parentSpellnameLabel", "spellnameLabel", Loc ["STRING_OPTIONS_SPELL_ADDNAME"])
 			local spellicon = g:NewLabel (addframe, nil, "$parentSpelliconLabel", "spelliconLabel", Loc ["STRING_OPTIONS_SPELL_ADDICON"])
@@ -3628,9 +3544,9 @@ function window:CreateFrame15()
 				end
 			end
 			local spellid_entry = g:NewSpellEntry (addframe, spellid_entry_func, 160, 20, nil, nil, "spellidEntry", "$parentSpellidEntry")
+			spellid_entry:SetTemplate (options_dropdown_template)
 			spellid_entry:SetPoint ("left", spellid, "right", 2, 0)
 			
-
 			local icon_button_func = function (texture)
 				addframe.spellIconButton.icon.texture = texture
 			end
@@ -3640,51 +3556,9 @@ function window:CreateFrame15()
 			icon_button:InstallCustomTexture()
 			icon_button:SetPoint ("left", spellicon, "right", 2, 0)
 			
-			local all_cached_spells = {}
-			
-			local refresh_cache = function (self) 
-			
-				local offset = FauxScrollFrame_GetOffset (self)
-				local total = #all_cached_spells
-				
-				for index = 1, #self.lines1 do
-					
-					local label1 = self.lines1 [index]
-					local label2 = self.lines2 [index]
-					
-					local data = all_cached_spells [index + offset]
-					
-					if (data) then
-						label1.text = data [1]
-						label2.text = data [2]
-					else
-						label1.text = ""
-						label2.text = ""
-					end
-					
-				end
-				
-			end
-			local scrollframe =  CreateFrame ("scrollframe", "SpellCacheBrowserFrame", addframe.widget, "FauxScrollFrameTemplate")
-			scrollframe:SetScript ("OnVerticalScroll", function (self, offset) FauxScrollFrame_OnVerticalScroll (self, offset, 10, refresh_cache) end)
-			scrollframe:SetSize (250, 140)
-			scrollframe.lines1 = {}
-			scrollframe.lines2 = {}
-			scrollframe:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, edgeSize = 8, tileSize = 5})
-			
-			for i = 1, 10 do
-				local label1 = g:NewLabel (scrollframe, nil, "$parentLabel1" .. i, nil)
-				local label2 = g:NewLabel (scrollframe, nil, "$parentLabel2" .. i, nil)
-				local y = (i-1) * 13 * -1 - 5
-				label1:SetPoint (3, y)
-				label2:SetPoint (70, y)
-				tinsert (scrollframe.lines1, label1)
-				tinsert (scrollframe.lines2, label2)
-			end
-			
 		--> close button
-			local closebutton = g:NewButton (addframe, nil, "$parentAddCloseButton", "addClosebutton", 100, 21, function() addframe:Hide(); table.wipe (all_cached_spells) end, nil, nil, nil, Loc ["STRING_OPTIONS_SPELL_CLOSE"], nil, options_button_template)
-			--closebutton:InstallCustomTexture()
+			local closebutton = g:NewButton (addframe, nil, "$parentAddCloseButton", "addClosebutton", 120, 20, function() addframe:Hide() end, nil, nil, nil, Loc ["STRING_OPTIONS_SPELL_CLOSE"], nil, options_button_template)
+			
 			local bg = window:CreateLineBackground2 (addframe.widget, closebutton, closebutton, nil, nil, {1, 0.8, 0}, button_color_rgb)
 			closebutton:SetTextColor (button_color_rgb)
 			
@@ -3717,10 +3591,9 @@ function window:CreateFrame15()
 					DetailsIconPickFrame:Hide()
 				end
 				addframe:Hide();
-				table.wipe (all_cached_spells)
 			end
-			local addspellbutton = g:NewButton (addframe, nil, "$parentAddSpellButton", "addSpellbutton", 100, 21, addspell, nil, nil, nil, Loc ["STRING_OPTIONS_SPELL_ADD"], nil, options_button_template)
-			--addspellbutton:InstallCustomTexture()
+			
+			local addspellbutton = g:NewButton (addframe, nil, "$parentAddSpellButton", "addSpellbutton", 120, 20, addspell, nil, nil, nil, Loc ["STRING_OPTIONS_SPELL_ADD"], nil, options_button_template)
 			local bg2 = window:CreateLineBackground2 (addframe.widget, addspellbutton, addspellbutton, nil, nil, {1, 0.8, 0}, button_color_rgb)
 			addspellbutton:SetTextColor (button_color_rgb)
 			bg:SetFrameLevel (bg2:GetFrameLevel()-1)
@@ -3730,51 +3603,20 @@ function window:CreateFrame15()
 			
 			addspellbutton:SetPoint ("bottomright", addframe, "bottomright", -5, 5)
 			closebutton:SetPoint ("right", addspellbutton, "left", -4, 0)
-			
-			desc_spellid:SetPoint (50, -30)
-			scrollframe:SetPoint ("topleft", addframe.widget, "topleft", 50, -110)
-			spellid:SetPoint (50, -285)
-			spellname:SetPoint (50, -310)
-			spellicon:SetPoint (50, -335)
-			
-			
-			scrollframe:Show()
-		
-			local update_cache_scroll = function()
-			
-				table.wipe (all_cached_spells)
-			
-				for spellid, t in pairs (_detalhes.spellcache) do 
-					tinsert (all_cached_spells, {spellid, t[1]})
-				end
-			
-				table.sort (all_cached_spells, function (t1, t2) local a = t1 and t1[2] or "z"; local b = t2 and t2[2] or "z"; return a < b end)
-			
-				FauxScrollFrame_Update (scrollframe, math.max (11, #all_cached_spells), 10, 12)
-				refresh_cache (scrollframe)
-			end
+
+			spellid:SetPoint (50, -10)
+			spellname:SetPoint (50, -35)
+			spellicon:SetPoint (50, -60)
 		
 		--> open add panel button
 			local add = function() 
-				update_cache_scroll()
 				addframe:Show()
 			end
-			local addbutton = g:NewButton (frame15, nil, "$parentAddButton", "addbutton", 100, 21, add, nil, nil, nil, Loc ["STRING_OPTIONS_SPELL_ADDSPELL"], nil, options_button_template)
-			--addbutton:InstallCustomTexture()
-			
+			local addbutton = g:NewButton (frame15, nil, "$parentAddButton", "addbutton", 120, 20, add, nil, nil, nil, Loc ["STRING_OPTIONS_SPELL_ADDSPELL"], nil, options_button_template)
 			window:CreateLineBackground2 (frame15, "addbutton", "addbutton", nil, nil, {1, 0.8, 0}, button_color_rgb)
 			addbutton:SetTextColor (button_color_rgb)
-			
-			addbutton:SetPoint ("bottomright", panel, "topright", -30, 0)
-			
+			addbutton:SetPoint ("bottomright", panel, "topright", -00, 1)
 			addbutton:SetIcon ([[Interface\PaperDollInfoFrame\Character-Plus]], 12, 12, nil, nil, nil, 4)
-			
-			local left = g:NewImage (frame15, "Interface\\PaperDollInfoFrame\\PaperDollSidebarTabs", 64, 13, "artwork", {0, 1, 0, 0.05078125})
-			left:SetPoint ("bottomright", addbutton, "bottomleft",  34, 0)
-			left:SetBlendMode ("ADD")
-			local right = g:NewImage (frame15, "Interface\\PaperDollInfoFrame\\PaperDollSidebarTabs", 64, 13, "artwork", {0, 1, 0.0546875, 0.1015625})
-			right:SetPoint ("bottomleft", addbutton, "bottomright",  0, 0)
-			right:SetBlendMode ("ADD")
 	
 	--> anchors
 	
@@ -4088,6 +3930,25 @@ function window:CreateFrame1()
 		local box = g:NewTextEntry (frame1, _, "$parentNicknameEntry", "nicknameEntry", SLIDER_WIDTH, TEXTENTRY_HEIGHT, onPressEnter, nil, nil, nil, nil, options_dropdown_template)
 		box:SetFontObject ("SystemFont_Outline_Small")
 		
+		--create a reset nickname button
+			g:NewButton (box, _, "$parentResetNicknameButton", "resetNicknameButton", 16, 16, function()
+				Details:ResetPlayerPersona()
+				local playerName = UnitName ("player")
+				local playerPersona = Details:GetNicknameTable (playerName)
+				
+				if (playerPersona) then
+					box:SetText (playerPersona[1])
+				end
+			end)
+			frame1.resetNicknameButton = box.resetNicknameButton
+			frame1.resetNicknameButton:SetPoint ("left", box, "right", 0, 0)
+			frame1.resetNicknameButton:SetNormalTexture ([[Interface\Glues\LOGIN\Glues-CheckBox-Check]] or [[Interface\Buttons\UI-GroupLoot-Pass-Down]])
+			frame1.resetNicknameButton:SetHighlightTexture ([[Interface\Glues\LOGIN\Glues-CheckBox-Check]] or [[Interface\Buttons\UI-GROUPLOOT-PASS-HIGHLIGHT]])
+			frame1.resetNicknameButton:SetPushedTexture ([[Interface\Glues\LOGIN\Glues-CheckBox-Check]] or [[Interface\Buttons\UI-GroupLoot-Pass-Up]])
+			frame1.resetNicknameButton:GetNormalTexture():SetDesaturated (true)
+			frame1.resetNicknameButton.tooltip = Loc ["STRING_OPTIONS_RESET_TO_DEFAULT"]
+		---------
+			
 		frame1.nicknameEntry:SetPoint ("left", frame1.nicknameLabel, "right", 2, 0)
 
 		window:CreateLineBackground2 (frame1, "nicknameEntry", "nicknameLabel", Loc ["STRING_OPTIONS_NICKNAME_DESC"])
@@ -5188,11 +5049,11 @@ function window:CreateFrame13()
 		window:CreateLineBackground2 (frame13, select_profileErase_dropdown, select_profileErase_label, Loc ["STRING_OPTIONS_PROFILES_ERASE_DESC"])
 		
 	--> reset profile
-	
+		
 		function _detalhes:RefreshOptionsAfterProfileReset()
 			_detalhes:OpenOptionsWindow (_detalhes:GetInstance(1))
 		end
-	
+		
 		local reset_profile = function()
 			local current_instance = _G.DetailsOptionsWindow.instance
 			_detalhes:ResetProfile (_detalhes:GetCurrentProfileName())
@@ -5200,7 +5061,6 @@ function window:CreateFrame13()
 		end
 		
 		local profile_reset_button = g:NewButton (frame13, _, "$parentProfileResetButton", "profileResetButton", window.buttons_width, 18, reset_profile, nil, nil, nil, Loc ["STRING_OPTIONS_PROFILES_RESET"], nil, options_button_template)
-		--profile_reset_button:InstallCustomTexture (nil, nil, nil, nil, nil, true)
 		frame13.profileResetButton:SetIcon ([[Interface\Buttons\UI-RefreshButton]], 14, 14, nil, {0, 1, 0, 0.9375}, nil, 4, 2)
 		frame13.profileResetButton:SetTextColor (button_color_rgb)
 		
@@ -5208,6 +5068,57 @@ function window:CreateFrame13()
 		hiddenlabel:SetPoint ("left", profile_reset_button, "left")
 		
 		window:CreateLineBackground2 (frame13, "profileResetButton", "profileResetButton", Loc ["STRING_OPTIONS_PROFILES_RESET_DESC"], nil, {1, 0.8, 0}, button_color_rgb)
+		
+	--> import export functions
+		local export_profile = function()
+			local str = Details:ExportCurrentProfile()
+			if (str) then
+				_detalhes:ShowImportWindow (str, nil, "Details! Export Profile")
+				
+				--[=[ debug
+				local uncompress = Details:DecompressData (str, "print")
+				if (uncompress) then
+					Details:Dump (uncompress)
+				else
+					print ("failed...")
+				end
+				--]=]
+			end
+		end
+		
+		local import_profile = function()
+			--when clicking in the okay button in the import window, it send the text in the first argument
+			_detalhes:ShowImportWindow ("", function (profileString)
+				if (type (profileString) ~= "string" or string.len (profileString) < 2) then
+					return
+				end
+				
+				--prompt text panel returns what the user inserted in the text field in the first argument
+				DetailsFramework:ShowTextPromptPanel ("Insert a Name for the New Profile:", function (newProfileName)
+					Details:ImportProfile (profileString, newProfileName)
+				end)
+			end, "Details! Import Profile (paste string)")
+		end	
+		
+	--> import profile
+		local profileImportButton = g:NewButton (frame13, _, "$parentProfileImportButton", "profileImportButton", window.buttons_width, 18, import_profile, nil, nil, nil, "Import Profile", nil, options_button_template) --> localize-me
+		frame13.profileImportButton:SetIcon ([[Interface\BUTTONS\UI-GuildButton-OfficerNote-Up]], 14, 14, nil, {0, 1, 0, 1}, nil, 4, 2)
+		frame13.profileImportButton:SetTextColor (button_color_rgb)
+		
+		local hiddenlabel = g:NewLabel (frame13, _, "$parentProfileImportButtonLabel", "profileImportButtonLabel", "", "GameFontHighlightLeft")
+		hiddenlabel:SetPoint ("left", profileImportButton, "left")
+		
+		window:CreateLineBackground2 (frame13, "profileImportButton", "profileImportButton", "Import current profile", nil, {1, 0.8, 0}, button_color_rgb)
+		
+	-->  export profile
+		local profileExportButton = g:NewButton (frame13, _, "$parentProfileExportButton", "profileExportButton", window.buttons_width, 18, export_profile, nil, nil, nil, "Export Current Profile", nil, options_button_template) --> localize-me
+		frame13.profileExportButton:SetIcon ([[Interface\Buttons\UI-GuildButton-MOTD-Up]], 14, 14, nil, {1, 0, 0, 1}, nil, 4, 2)
+		frame13.profileExportButton:SetTextColor (button_color_rgb)
+		
+		local hiddenlabel = g:NewLabel (frame13, _, "$parentProfileExportButtonLabel", "profileExportButtonLabel", "", "GameFontHighlightLeft")
+		hiddenlabel:SetPoint ("left", profileExportButton, "left")
+		
+		window:CreateLineBackground2 (frame13, "profileExportButton", "profileExportButton", "Export current profile", nil, {1, 0.8, 0}, button_color_rgb)
 		
 	--> save window position within profile
 	
@@ -5245,6 +5156,8 @@ function window:CreateFrame13()
 			{select_profileCopy_label, 7},
 			{select_profileErase_label, 8},
 			{profile_reset_button, 9, true},
+			{profileExportButton},
+			{profileImportButton},
 			
 		}
 		
@@ -5311,69 +5224,6 @@ function window:CreateFrame3()
 	custom_texture_cancel:SetHook ("OnLeave", function (self, capsule)
 		self:GetNormalTexture():SetBlendMode("BLEND")
 	end)
-	
-	
-	
-	
-	
-	--> import box
-	function frame3:CreateImportBox()
-		local textbox = g:NewSpecialLuaEditorEntry (frame3, 443, 80, "TextBox", "$parentTextBox", true)
-		textbox:SetPoint ("bottomleft", frame3, "bottomleft", 30, 30)
-		textbox:SetFrameLevel (frame3:GetFrameLevel()+6)
-		textbox:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], edgeFile = [[Interface\Tooltips\UI-Tooltip-Border]], 
-		tile = 1, tileSize = 16, edgeSize = 16, insets = {left = 5, right = 5, top = 5, bottom = 5}})
-		textbox:SetBackdropColor (0, 0, 0, 1)
-		textbox:Hide()
-		
-		frame3.TextBox.editbox:SetScript ("OnEditFocusGained", function (self) self:HighlightText() end)
-		
-		local close_export_box = function()
-			textbox:ClearFocus()
-			textbox:Hide()
-		end
-		
-		--export
-		local close_export = g:NewButton (textbox, nil, "$parentClose", "export_close_button", 24, 24, close_export_box, nil, nil, [[Interface\Buttons\UI-CheckBox-Check]])
-		close_export:SetPoint (10, 18)
-		local close_export_label = g:NewLabel (textbox, nil, nil, "export_close", Loc ["STRING_OPTIONS_CHART_CLOSE"])
-		close_export_label:SetPoint ("left", close_export, "right", 2, 0)
-		local copy_export_label = g:NewLabel (textbox, nil, nil, "export_copy", Loc ["STRING_OPTIONS_SAVELOAD_EXPORT_COPY"])
-		copy_export_label:SetPoint ("bottomright", textbox, "topright", -6, 1)
-		
-		--import
-		local doimport = function()
-			
-			local text = textbox:GetText()
-			
-			local decode = _detalhes._encode:Decode (text)
-			if (type (decode) ~= "string") then
-				_detalhes:Msg (Loc ["STRING_CUSTOM_IMPORT_ERROR"])
-				return
-			end
-			
-			local unserialize = select (2, _detalhes:Deserialize (decode))
-			
-			if (type (unserialize) == "table") then
-				_detalhes.savedStyles [#_detalhes.savedStyles+1] = unserialize
-				_detalhes:Msg (Loc ["STRING_OPTIONS_SAVELOAD_IMPORT_OKEY"])
-				textbox:Hide()
-			else
-				_detalhes:Msg (Loc ["STRING_CUSTOM_IMPORT_ERROR"])
-				return
-			end
-		end
-		
-		local accept_import = g:NewButton (textbox, nil, "$parentAccept", "import_accept_button", 24, 24, doimport, nil, nil, [[Interface\Buttons\UI-CheckBox-Check]])
-		accept_import:SetPoint (10, 18)
-		local accept_import_label = g:NewLabel (textbox, nil, nil, "import_accept_label", Loc ["STRING_OPTIONS_CHART_IMPORT"])
-		accept_import_label:SetPoint ("left", accept_import, "right", 2, 0)
-		
-		local cancel_changes = g:NewButton (textbox, nil, "$parentCancel", "import_cancel_button", 20, 20, close_export_box, nil, nil, [[Interface\PetBattles\DeadPetIcon]])
-		cancel_changes:SetPoint (100, 17)
-		local cancel_changes_label = g:NewLabel (textbox, nil, nil, "import_cancel_label", Loc ["STRING_OPTIONS_CHART_CANCEL"])
-		cancel_changes_label:SetPoint ("left", cancel_changes, "right", 2, 0)
-	end
 	
 	--> Skin
 		local titulo_skin = g:NewLabel (frame3, _, "$parentTituloSkin", "tituloSkinLabel", Loc ["STRING_OPTIONS_SKIN_A"], "GameFontNormal", 16)
@@ -5529,7 +5379,6 @@ function window:CreateFrame3()
 		g:NewLabel (frame3, _, "$parentSaveSkinLabel", "saveSkinLabel", Loc ["STRING_OPTIONS_SAVELOAD_PNAME"], "GameFontHighlightLeft")
 		frame3.saveStyleName:SetPoint ("left", frame3.saveSkinLabel, "right", 2)
 		g:NewButton (frame3, _, "$parentSaveStyleButton", "saveStyle", 50, 18, saveStyleFunc, nil, nil, nil, Loc ["STRING_OPTIONS_SAVELOAD_SAVE"], nil, options_button_template)
-		--frame3.saveStyle:InstallCustomTexture()
 		
 		window:CreateLineBackground2 (frame3, "saveStyleName", "saveSkinLabel", Loc ["STRING_OPTIONS_SAVELOAD_CREATE_DESC"])
 
@@ -5567,12 +5416,10 @@ function window:CreateFrame3()
 		g:NewLabel (frame3, _, "$parentToAllStyleLabel", "toAllStyleLabel", "", "GameFontHighlightLeft")
 		g:NewLabel (frame3, _, "$parentmakeDefaultLabel", "makeDefaultLabel", "", "GameFontHighlightLeft")
 		
-		g:NewButton (frame3, _, "$parentToAllStyleButton", "applyToAll", 160, 18, applyToAll, nil, nil, nil, Loc ["STRING_OPTIONS_SAVELOAD_APPLYTOALL"], 1, options_button_template)
-		--frame3.applyToAll:InstallCustomTexture (nil, nil, nil, nil, nil, true)
+		g:NewButton (frame3, _, "$parentToAllStyleButton", "applyToAll", 160, 20, applyToAll, nil, nil, nil, Loc ["STRING_OPTIONS_SAVELOAD_APPLYTOALL"], 1, options_button_template)
 		window:CreateLineBackground2 (frame3, "applyToAll", "applyToAll", Loc ["STRING_OPTIONS_SAVELOAD_APPLYALL_DESC"], nil, {1, 0.8, 0}, button_color_rgb)
 		
-		g:NewButton (frame3, _, "$parentMakeDefaultButton", "makeDefault", 160, 18, makeDefault, nil, nil, nil, Loc ["STRING_OPTIONS_SAVELOAD_MAKEDEFAULT"], nil, options_button_template)
-		--frame3.makeDefault:InstallCustomTexture (nil, nil, nil, nil, nil, true)
+		g:NewButton (frame3, _, "$parentMakeDefaultButton", "makeDefault", 160, 20, makeDefault, nil, nil, nil, Loc ["STRING_OPTIONS_SAVELOAD_MAKEDEFAULT"], nil, options_button_template)
 		window:CreateLineBackground2 (frame3, "makeDefault", "makeDefault", Loc ["STRING_OPTIONS_SAVELOAD_STD_DESC"], nil, {1, 0.8, 0}, button_color_rgb)
 		
 		frame3.toAllStyleLabel:SetPoint ("left", frame3.applyToAll, "left")
@@ -5699,28 +5546,12 @@ function window:CreateFrame3()
 		g:NewLabel (frame3, _, "$parentExportCustomSkinLabel", "ExportCustomSkinLabel", Loc ["STRING_OPTIONS_SAVELOAD_EXPORT"], "GameFontHighlightLeft")
 		--
 		local onSelectCustomSkinToExport = function (_, _, index)
-			if (not frame3.TextBox) then
-				frame3:CreateImportBox()
+			local compressedData = Details:CompressData (_detalhes.savedStyles [index], "print")
+			if (compressedData) then
+				_detalhes:ShowImportWindow (compressedData, nil, "Details! Export Skin")
+			else
+				Details:Msg ("failed to export skin.") --localize-me
 			end
-			
-			frame3.TextBox.import_accept_button:Hide()
-			frame3.TextBox.import_accept_label:Hide()
-			frame3.TextBox.import_cancel_button:Hide()
-			frame3.TextBox.import_cancel_label:Hide()
-			
-			frame3.TextBox.export_close_button:Show()
-			frame3.TextBox.export_close:Show()
-			frame3.TextBox.export_copy:Show()
-			
-			frame3.TextBox:Show()
-			
-			local serialized = _detalhes:Serialize (_detalhes.savedStyles [index])
-			local encoded = _detalhes._encode:Encode (serialized)
-			
-			frame3.TextBox:SetText (encoded)
-			frame3.TextBox.editbox:HighlightText()
-			frame3.TextBox.editbox:SetFocus (true)
-			
 			_G.DetailsOptionsWindow3CustomSkinExportDropdown.MyObject:Select (false)
 		end
 
@@ -5743,26 +5574,33 @@ function window:CreateFrame3()
 	--> Import Button
 	
 		local import_saved = function()
-			if (not frame3.TextBox) then
-				frame3:CreateImportBox()
-			end
+			--when clicking in the okay button in the import window, it send the text in the first argument
+			_detalhes:ShowImportWindow ("", function (skinString)
+				if (type (skinString) ~= "string" or string.len (skinString) < 2) then
+					return
+				end
+
+				skinString = DetailsFramework:Trim (skinString)
+
+				local dataTable = Details:DecompressData (skinString, "print")
+				if (dataTable) then
+					--add the new skin
+					_detalhes.savedStyles [#_detalhes.savedStyles+1] = dataTable
+					_detalhes:Msg (Loc ["STRING_OPTIONS_SAVELOAD_IMPORT_OKEY"])
+					
+					--refresh skin dropdowns
+					_G.DetailsOptionsWindow3CustomSkinLoadDropdown.MyObject:Refresh()
+					_G.DetailsOptionsWindow3CustomSkinRemoveDropdown.MyObject:Refresh()
+					_G.DetailsOptionsWindow3CustomSkinExportDropdown.MyObject:Refresh()
+				else
+					Details:Msg (Loc ["STRING_CUSTOM_IMPORT_ERROR"])
+				end
 			
-			frame3.TextBox.import_accept_button:Show()
-			frame3.TextBox.import_accept_label:Show()
-			frame3.TextBox.import_cancel_button:Show()
-			frame3.TextBox.import_cancel_label:Show()
-			
-			frame3.TextBox.export_close_button:Hide()
-			frame3.TextBox.export_close:Hide()
-			frame3.TextBox.export_copy:Hide()
-			
-			frame3.TextBox:SetText ("")
-			frame3.TextBox:Show()
-			frame3.TextBox:SetFocus (true)
+			end, "Details! Import Skin (paste string)") --localize-me
 			
 		end
 	
-		g:NewButton (frame3, _, "$parentImportButton", "ImportButton", 160, 18, import_saved, nil, nil, nil, Loc ["STRING_OPTIONS_SAVELOAD_IMPORT"], nil, options_button_template)
+		g:NewButton (frame3, _, "$parentImportButton", "ImportButton", 160, 20, import_saved, nil, nil, nil, Loc ["STRING_OPTIONS_SAVELOAD_IMPORT"], nil, options_button_template)
 		--frame3.ImportButton:InstallCustomTexture (nil, nil, nil, nil, nil, true)
 		frame3.ImportButton:SetIcon ([[Interface\Buttons\UI-GuildButton-PublicNote-Up]], 14, 14, nil, nil, nil, 4, 2)
 		frame3.ImportButton:SetTextColor (button_color_rgb)
@@ -5882,6 +5720,7 @@ function window:CreateFrame3()
 		--general anchor
 		g:NewLabel (frame3, _, "$parentSkinSelectionAnchor", "SkinSelectionAnchorLabel", Loc ["STRING_OPTIONS_SKIN_SELECT_ANCHOR"], "GameFontNormal")
 		g:NewLabel (frame3, _, "$parentSkinPresetAnchor", "SkinPresetAnchorLabel", Loc ["STRING_OPTIONS_SKIN_PRESETS_ANCHOR"], "GameFontNormal")
+		g:NewLabel (frame3, _, "$parentSkinPresetConfigAnchor", "SkinPresetConfigAnchorLabel", Loc ["STRING_OPTIONS_SKIN_PRESETSCONFIG_ANCHOR"], "GameFontNormal")
 		
 		frame3.saveStyle:SetPoint ("left", frame3.saveStyleName, "right", 2)
 		
@@ -5897,7 +5736,8 @@ function window:CreateFrame3()
 			{"SkinPresetAnchorLabel", 4, true},
 			{"saveSkinLabel", 5},
 			
-			{"loadCustomSkinLabel", 6, true},
+			{"SkinPresetConfigAnchorLabel", 6, true},
+			{"loadCustomSkinLabel"},
 			{"removeCustomSkinLabel", 7},
 			{"ExportCustomSkinLabel", 8},
 			
@@ -10887,6 +10727,19 @@ function window:CreateFrame11()
 		
 		window:CreateLineBackground2 (frame11, "EnabledFirstHitSlider", "EnabledFirstHitLabel", Loc ["STRING_OPTIONS_RT_FIRST_HIT_DESC"])
 		
+		--> death menu
+		g:NewLabel (frame11, _, "$parentShowDeathMenuLabel", "ShowDeathMenuLabel", "Show Death Menu", "GameFontHighlightLeft") --localize-me
+		g:NewSwitch (frame11, _, "$parentShowDeathMenuSlider", "ShowDeathMenuSlider", 60, 20, _, _, _detalhes.on_death_menu, nil, nil, nil, nil, options_switch_template)
+
+		frame11.ShowDeathMenuSlider:SetPoint ("left", frame11.ShowDeathMenuLabel, "right", 2)
+		frame11.ShowDeathMenuSlider:SetAsCheckBox()
+		frame11.ShowDeathMenuSlider.OnSwitch = function (_, _, value)
+			_detalhes.on_death_menu = value
+			_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
+		end
+		
+		window:CreateLineBackground2 (frame11, "ShowDeathMenuSlider", "ShowDeathMenuLabel", "Show a panel below the Release / Death Recap panel with some shortcuts for Raid Leaders.") --localize-me
+		
 	--> anchors
 	
 		--announcers anchor
@@ -10933,6 +10786,7 @@ function window:CreateFrame11()
 			{"AnnouncersOther", 6, true},
 			{"EnabledPrePotLabel", 7},
 			{"EnabledFirstHitLabel", 8},
+			{"ShowDeathMenuLabel", 9},
 		}
 		
 		window:arrange_menu (frame11, right_side, window.right_start_at, window.top_start_at)
@@ -11046,7 +10900,7 @@ function window:CreateFrame12()
 		g:NewSwitch (bframe, _, "$parentToolbarSlider"..i, "toolbarPluginsSlider"..i, 60, 20, _, _, plugin_stable.enabled, nil, nil, nil, nil, options_switch_template)
 		bframe ["toolbarPluginsSlider"..i].PluginName = absName
 		tinsert (window.plugin_widgets, bframe ["toolbarPluginsSlider"..i])
-		bframe ["toolbarPluginsSlider"..i]:SetPoint ("topleft", frame4, "topleft", 415, y+1)
+		bframe ["toolbarPluginsSlider"..i]:SetPoint ("topleft", frame4, "topleft", 415, y)
 		bframe ["toolbarPluginsSlider"..i]:SetAsCheckBox()
 		bframe ["toolbarPluginsSlider"..i].OnSwitch = function (self, _, value)
 			plugin_stable.enabled = value
@@ -11059,7 +10913,7 @@ function window:CreateFrame12()
 		end
 		
 		if (pluginObject.OpenOptionsPanel) then
-			g:NewButton (bframe, nil, "$parentOptionsButton"..i, "OptionsButton"..i, 86, 18, pluginObject.OpenOptionsPanel, nil, nil, nil, Loc ["STRING_OPTIONS_PLUGINS_OPTIONS"], nil, options_button_template)
+			g:NewButton (bframe, nil, "$parentOptionsButton"..i, "OptionsButton"..i, 120, 20, pluginObject.OpenOptionsPanel, nil, nil, nil, Loc ["STRING_OPTIONS_PLUGINS_OPTIONS"], nil, options_button_template)
 			bframe ["OptionsButton"..i]:SetPoint ("topleft", frame4, "topleft", 510, y-0)
 			--bframe ["OptionsButton"..i]:InstallCustomTexture()
 			

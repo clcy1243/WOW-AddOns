@@ -1,13 +1,13 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2018 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2019 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 
 -- 
 -- Main non-UI code
 ------------------------------------------------------------
 
-PawnVersion = 2.0228
+PawnVersion = 2.0239
 
 -- Pawn requires this version of VgerCore:
 local PawnVgerCoreVersionRequired = 1.09
@@ -263,9 +263,12 @@ function PawnInitialize()
 		end)
 	
 	-- World map tooltip (for quest rewards)
-	hooksecurefunc(WorldMapTooltip, "SetHyperlink", function(self, ...) PawnUpdateTooltip("WorldMapTooltip", "SetHyperlink", ...) end) -- HandyNotes_DraenorTreasures compatibility
-	hooksecurefunc(WorldMapTooltip, "SetQuestLogItem", function(self, ...) PawnUpdateTooltip("WorldMapTooltip", "SetQuestLogItem", ...) end)
-	hooksecurefunc(WorldMapTooltip, "Hide", function(self, ...) PawnLastHoveredItem = nil end)
+	if WorldMapTooltip then
+		-- *** No longer needed in 8.1.5; the world map just uses GameTooltip.
+		hooksecurefunc(WorldMapTooltip, "SetHyperlink", function(self, ...) PawnUpdateTooltip("WorldMapTooltip", "SetHyperlink", ...) end) -- HandyNotes_DraenorTreasures compatibility
+		hooksecurefunc(WorldMapTooltip, "SetQuestLogItem", function(self, ...) PawnUpdateTooltip("WorldMapTooltip", "SetQuestLogItem", ...) end)
+		hooksecurefunc(WorldMapTooltip, "Hide", function(self, ...) PawnLastHoveredItem = nil end)
+	end
 	
 	-- The item link tooltip (only hook it if it's an actual item)
 	hooksecurefunc(ItemRefTooltip, "SetHyperlink",
@@ -320,7 +323,9 @@ function PawnInitialize()
 				PawnAttachIconToTooltip(ShoppingTooltip2, true)
 			end
 		end)
-	hooksecurefunc(WorldMapCompareTooltip1, "SetCompareItem",
+	if WorldMapCompareTooltip1 then
+		-- *** No longer necessary in 8.1.5
+		hooksecurefunc(WorldMapCompareTooltip1, "SetCompareItem",
 		function(self, ...)
 			local _, ItemLink1 = WorldMapCompareTooltip1:GetItem()
 			PawnUpdateTooltip("WorldMapCompareTooltip1", "SetCompareItem", ItemLink1, ...)
@@ -331,6 +336,7 @@ function PawnInitialize()
 				PawnAttachIconToTooltip(WorldMapCompareTooltip2, true)
 			end
 		end)
+	end
 	hooksecurefunc(ItemRefShoppingTooltip1, "SetCompareItem",
 		function(self, ...)
 			local _, ItemLink1 = ItemRefShoppingTooltip1:GetItem()
@@ -378,7 +384,7 @@ function PawnInitialize()
 		LinkWrangler.RegisterCallback("Pawn", PawnLinkWranglerOnTooltip, "refreshcomp")
 	end
 
-	-- WoW 7.1 in-bag upgrade icons
+	-- In-bag upgrade icons
 	PawnOriginalIsContainerItemAnUpgrade = IsContainerItemAnUpgrade
 	IsContainerItemAnUpgrade = function(bagID, slot, ...)
 		if PawnCommon.ShowBagUpgradeAdvisor then
@@ -389,7 +395,7 @@ function PawnInitialize()
 		else
 			return PawnOriginalIsContainerItemAnUpgrade(bagID, slot, ...)
 		end
-		-- FUTURE: Consider hooking ContainerFrameItemButton_UpdateItemUpgradeIcon instead, but then Pawn would need its own "retry when not enough information is available" logic.  But then Pawn also would no longer automatically integrate with other bag addons.
+		-- FUTURE: Consider hooking ContainerFrameItemButton_UpdateItemUpgradeIcon instead, but then Pawn would need its own "retry when not enough information is available" logic.  And Pawn also would no longer automatically integrate with other bag addons.
 	end
 
 	-- We're now effectively initialized.  Just the last steps of scale initialization remain.
@@ -406,6 +412,12 @@ function PawnInitialize()
 	-- Go through the user's scales and check them for errors.
 	for ScaleName, _ in pairs(PawnCommon.Scales) do
 		PawnCorrectScaleErrors(ScaleName)
+	end
+
+	-- Warn them if Pawn might be broken due to changing the thousands or decimal separator.
+	if (LARGE_NUMBER_SEPERATOR and PawnLocal.ThousandsSeparator ~= LARGE_NUMBER_SEPERATOR) or
+	(DECIMAL_SEPERATOR and PawnLocal.DecimalSeparator ~= DECIMAL_SEPERATOR) then
+		VgerCore.Fail("Pawn may provide incorrect advice due to a potential addon conflict: Pawn is not compatible with Combat Numbers Separator, Titan Panel Artifact Power, or other addons that change the way that numbers appear.")
 	end
 
 	-- If auto-spec is on, check their spec now in case they switched on a different PC.
@@ -593,6 +605,10 @@ function PawnInitializeOptions()
 	if PawnOptions.LastVersion < 2.0227 then
 		-- The relic advisor is off by default as of 2.2.27.
 		PawnCommon.ShowRelicUpgrades = false
+	end
+	if PawnCommon.LastVersion < 2.0232 then
+		-- When upgrading to 2.2.32, turn off this annoying debug option if they still had it on.
+		PawnCommon.DebugCache = nil
 	end
 	if PawnCommon.LastVersion < PawnMrRobotLastUpdatedVersion then
 		-- If the Ask Mr. Robot scales have been updated since the last time they used Pawn, re-scan gear.
@@ -1009,7 +1025,7 @@ function PawnGetItemData(ItemLink)
 		-- Then, the unenchanted stats.  But, we only need to do this if the item is enchanted or socketed.  PawnUnenchantItemLink
 		-- will return nil if the item isn't enchanted, so we can skip that process.
 		local UnenchantedItemLink = PawnUnenchantItemLink(ItemLink)
-		-- As of WoW 6.2,3, Item.Level is incorrect for upgraded items because GetItemInfo returns the wrong value.  PawnUnenchantItemLink could
+		-- As of WoW 6.2.3, Item.Level is incorrect for upgraded items because GetItemInfo returns the wrong value.  PawnUnenchantItemLink could
 		-- be enhanced here to get a number to add (+10) for upgradeable items if we decide we need that info.
 		if UnenchantedItemLink then
 			PawnDebugMessage(" ")

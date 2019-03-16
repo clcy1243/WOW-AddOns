@@ -10,7 +10,7 @@ local _, TSM = ...
 local Other = TSM.MainUI.Ledger.Common:NewPackage("Other")
 local L = TSM.L
 local SECONDS_PER_DAY = 24 * 60 * 60
-local private = { query = nil, characters = {}, characterFilter = ALL, typeFilter = "All", timeFrameFilter = 7 * SECONDS_PER_DAY }
+local private = { query = nil, characters = {}, characterFilter = ALL, typeFilter = "All", recordType = nil, timeFrameFilter = 30 * SECONDS_PER_DAY }
 local TIME_LIST = { ALL, L["Last 3 Days"], L["Last 7 Days"], L["Last 14 Days"], L["Last 30 Days"], L["Last 60 Days"] }
 local TIME_KEYS = { 0, 3 * SECONDS_PER_DAY, 7 * SECONDS_PER_DAY, 14 * SECONDS_PER_DAY, 30 * SECONDS_PER_DAY, 60 * SECONDS_PER_DAY }
 local TYPE_LIST = {
@@ -52,10 +52,12 @@ end
 -- ============================================================================
 
 function private.DrawOtherExpensesPage()
+	TSM.UI.AnalyticsRecordPathChange("main", "ledger", "expenses", "other")
 	return private.DrawOtherPage("expense")
 end
 
 function private.DrawOtherRevenuePage()
+	TSM.UI.AnalyticsRecordPathChange("main", "ledger", "revenue", "other")
 	return private.DrawOtherPage("income")
 end
 
@@ -70,6 +72,7 @@ function private.DrawOtherPage(recordType)
 		private.query = TSM.Accounting.Money.CreateQuery()
 			:OrderBy("time", false)
 	end
+	private.recordType = recordType
 	private.UpdateQuery()
 
 	return TSMAPI_FOUR.UI.NewElement("Frame", "content")
@@ -133,7 +136,6 @@ function private.DrawOtherPage(recordType)
 			:GetScrollingTableInfo()
 				:NewColumn("type")
 					:SetTitles(L["Type"])
-					:SetWidth(110)
 					:SetFont(TSM.UI.Fonts.FRIZQT)
 					:SetFontHeight(12)
 					:SetJustifyH("LEFT")
@@ -152,6 +154,7 @@ function private.DrawOtherPage(recordType)
 				:NewColumn("otherCharacter")
 					:SetTitles(L["Other Character"])
 					:SetFont(TSM.UI.Fonts.FRIZQT)
+					:SetWidth(160)
 					:SetFontHeight(12)
 					:SetJustifyH("LEFT")
 					:SetTextInfo("otherPlayer")
@@ -160,7 +163,7 @@ function private.DrawOtherPage(recordType)
 				:NewColumn("amount")
 					:SetTitles(L["Amount"])
 					:SetWidth(120)
-					:SetFont(TSM.UI.Fonts.RobotoMedium)
+					:SetFont(TSM.UI.Fonts.FRIZQT)
 					:SetFontHeight(12)
 					:SetJustifyH("RIGHT")
 					:SetTextInfo("amount", TSM.Money.ToString)
@@ -229,7 +232,7 @@ end
 
 function private.UpdateQuery()
 	private.query:ResetFilters()
-		:Equal("recordType", "expense")
+		:Equal("recordType", private.recordType)
 	if private.typeFilter ~= "All" then
 		private.query:Equal("type", private.typeFilter)
 	end

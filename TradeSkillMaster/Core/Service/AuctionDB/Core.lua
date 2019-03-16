@@ -11,10 +11,8 @@ local AuctionDB = TSM:NewPackage("AuctionDB")
 local L = TSM.L
 local private = {
 	region = nil,
-	globalKeyLookup = {},
-	regionDataUS = nil,
-	regionDataEU = nil,
 	realmData = {},
+	regionData = nil,
 	realmScanTime = nil,
 }
 
@@ -33,16 +31,10 @@ function AuctionDB.OnEnable()
 		for _, info in ipairs(appData) do
 			local realm, data = unpack(info)
 			local downloadTime = "?"
-			if realm == "US" then
+			if realm == private.region then
 				local regionData, lastUpdate = private.LoadRegionAppData(data)
 				if regionData then
-					private.regionDataUS = regionData
-					downloadTime = SecondsToTime(time() - lastUpdate).." ago"
-				end
-			elseif realm == "EU" then
-				local regionData, lastUpdate = private.LoadRegionAppData(data)
-				if regionData then
-					private.regionDataEU = regionData
+					private.regionData = regionData
 					downloadTime = SecondsToTime(time() - lastUpdate).." ago"
 				end
 			elseif TSMAPI.AppHelper:IsCurrentRealm(realm) then
@@ -134,69 +126,13 @@ function AuctionDB.GetRealmItemData(itemString, key)
 end
 
 function AuctionDB.GetRegionItemData(itemString, key)
-	if private.region == "US" then
-		return private.GetRegionItemDataHelper(private.regionDataUS, key, itemString)
-	elseif private.region == "EU" then
-		return private.GetRegionItemDataHelper(private.regionDataEU, key, itemString)
-	else
-		-- unsupported region (or PTR)
-		return
-	end
+	return private.GetRegionItemDataHelper(private.regionData, key, itemString)
 end
 
 function AuctionDB.GetRegionSaleInfo(itemString, key)
 	-- need to divide the result by 100
-	if private.region == "US" then
-		local result = private.GetRegionItemDataHelper(private.regionDataUS, key, itemString)
-		return result and (result / 100) or nil
-	elseif private.region == "EU" then
-		local result = private.GetRegionItemDataHelper(private.regionDataEU, key, itemString)
-		return result and (result / 100) or nil
-	else
-		-- unsupported region (or PTR)
-		return
-	end
-end
-
-function AuctionDB.GetGlobalItemData(itemString, key)
-	-- translate to region keys
-	if not private.globalKeyLookup[key] then
-		private.globalKeyLookup[key] = gsub(key, "^global", "region")
-	end
-	key = private.globalKeyLookup[key]
-	local valueUS = private.GetRegionItemDataHelper(private.regionDataUS, key, itemString)
-	local valueEU = private.GetRegionItemDataHelper(private.regionDataEU, key, itemString)
-	if valueUS and valueEU then
-		-- average the regions to get the global value
-		return TSMAPI_FOUR.Util.Round((valueUS + valueEU) / 2)
-	elseif valueUS then
-		return valueUS
-	elseif valueEU then
-		return valueEU
-	else
-		-- neither region has a valid price
-		return
-	end
-end
-
-function AuctionDB.GetGlobalSaleInfo(itemString, key)
-	if not private.globalKeyLookup[key] then
-		private.globalKeyLookup[key] = gsub(key, "^global", "region")
-	end
-	key = private.globalKeyLookup[key]
-	local valueUS = private.GetRegionItemDataHelper(private.regionDataUS, key, itemString)
-	local valueEU = private.GetRegionItemDataHelper(private.regionDataEU, key, itemString)
-	if valueUS and valueEU then
-		-- average the regions to get the global value
-		return TSMAPI_FOUR.Util.Round((valueUS + valueEU) / 2) / 100
-	elseif valueUS then
-		return valueUS / 100
-	elseif valueEU then
-		return valueEU / 100
-	else
-		-- neither region has a valid price
-		return
-	end
+	local result = private.GetRegionItemDataHelper(private.regionData, key, itemString)
+	return result and (result / 100) or nil
 end
 
 

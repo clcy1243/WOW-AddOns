@@ -1,4 +1,4 @@
-﻿local Gladius = _G.Gladius
+local Gladius = _G.Gladius
 if not Gladius then
 	DEFAULT_CHAT_FRAME:AddMessage(format("Module %s requires Gladius", "Announcements"))
 end
@@ -20,7 +20,6 @@ local IsAddOnLoaded = IsAddOnLoaded
 local IsArenaSkirmish = IsArenaSkirmish
 local IsInInstance = IsInInstance
 local SendChatMessage = SendChatMessage
-local UnitAura = UnitAura
 local UnitClass = UnitClass
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax

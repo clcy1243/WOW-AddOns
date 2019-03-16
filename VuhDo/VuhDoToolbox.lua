@@ -695,7 +695,7 @@ local tActionLowerName;
 local tIsMacroKnown;
 local tIsSpellKnown; 
 local tIsTalentKnown;
-function VUHDO_isActionValid(anActionName, anIsCustom)
+function VUHDO_isActionValid(anActionName, anIsCustom, anIsHostile)
 
 	if (anActionName or "") == "" then
 		return nil;
@@ -703,15 +703,25 @@ function VUHDO_isActionValid(anActionName, anIsCustom)
 
 	tActionLowerName = strlower(anActionName);
 
-	if VUHDO_SPELL_KEY_ASSIST == tActionLowerName
-	 or VUHDO_SPELL_KEY_FOCUS == tActionLowerName
-	 or VUHDO_SPELL_KEY_MENU == tActionLowerName
-	 or VUHDO_SPELL_KEY_TELL == tActionLowerName
-	 or VUHDO_SPELL_KEY_TARGET == tActionLowerName 
-	 or VUHDO_SPELL_KEY_EXTRAACTIONBUTTON == tActionLowerName 
-	 or VUHDO_SPELL_KEY_MOUSELOOK == tActionLowerName 
-	 or VUHDO_SPELL_KEY_DROPDOWN == tActionLowerName then
-		return VUHDO_I18N_COMMAND, 0.8, 1, 0.8, "CMD";
+	if anIsHostile then
+		if (VUHDO_SPELL_KEY_ASSIST == tActionLowerName 
+		 or VUHDO_SPELL_KEY_FOCUS == tActionLowerName
+		 or VUHDO_SPELL_KEY_TARGET == tActionLowerName 
+		 or VUHDO_SPELL_KEY_EXTRAACTIONBUTTON == tActionLowerName 
+		 or VUHDO_SPELL_KEY_MOUSELOOK == tActionLowerName) then
+			return VUHDO_I18N_COMMAND, 0.8, 1, 0.8, "CMD";
+		end
+	else
+		if VUHDO_SPELL_KEY_ASSIST == tActionLowerName 
+		 or VUHDO_SPELL_KEY_FOCUS == tActionLowerName 
+		 or VUHDO_SPELL_KEY_MENU == tActionLowerName 
+		 or VUHDO_SPELL_KEY_TELL == tActionLowerName 
+		 or VUHDO_SPELL_KEY_TARGET == tActionLowerName 
+		 or VUHDO_SPELL_KEY_EXTRAACTIONBUTTON == tActionLowerName 
+		 or VUHDO_SPELL_KEY_MOUSELOOK == tActionLowerName 
+		 or VUHDO_SPELL_KEY_DROPDOWN == tActionLowerName then 
+			return VUHDO_I18N_COMMAND, 0.8, 1, 0.8, "CMD";
+		end
 	end
 
 	tIsMacroKnown = GetMacroIndexByName(anActionName) ~= 0;
@@ -948,10 +958,15 @@ function VUHDO_round(number, digits)
 end
 
 
-function VUHDO_unitAura(aUnit, aSpell)
+
+function VUHDO_unitAura(aUnit, aSpell, aFilter)
+
+	if (aFilter == nil) then
+		aFilter = "HELPFUL";
+	end
 
 	for tCnt = 1, 40 do
-		local tSpellName, tIcon, tCount, tDebuffType, tDuration, tExpirationTime, tSource, tIsStealable, tNameplateShowPersonal, tSpellId, tCanApplyAura, tIsBossDebuff, tNameplateShowAll, tTimeMod, tValue1, tValue2, tValue3 = UnitAura(aUnit, tCnt);
+		local tSpellName, tIcon, tCount, tDebuffType, tDuration, tExpirationTime, tSource, tIsStealable, tNameplateShowPersonal, tSpellId, tCanApplyAura, tIsBossDebuff, tNameplateShowAll, tTimeMod, tValue1, tValue2, tValue3 = UnitAura(aUnit, tCnt, aFilter);
 
 		if (aSpell == tSpellName or tonumber(aSpell) == tSpellId) then
 			return tSpellName, tIcon, tCount, tDebuffType, tDuration, tExpirationTime, tSource, tIsStealable, tNameplateShowPersonal, tSpellId, tCanApplyAura, tIsBossDebuff, tNameplateShowAll, tTimeMod, tValue1, tValue2, tValue3;
@@ -963,4 +978,18 @@ function VUHDO_unitAura(aUnit, aSpell)
 end
 
 
+
+function VUHDO_unitBuff(aUnit, aSpell)
+
+	return VUHDO_unitAura(aUnit, aSpell, "HELPFUL");
+
+end
+
+
+
+function VUHDO_unitDebuff(aUnit, aSpell)
+
+	return VUHDO_unitAura(aUnit, aSpell, "HARMFUL");
+
+end
 

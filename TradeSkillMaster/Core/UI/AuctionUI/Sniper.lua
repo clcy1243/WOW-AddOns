@@ -30,6 +30,7 @@ end
 -- ============================================================================
 
 function private.GetSniperFrame()
+	TSM.UI.AnalyticsRecordPathChange("auction", "sniper")
 	if not private.hasLastScan then
 		private.contentPath = "selection"
 	end
@@ -52,6 +53,7 @@ function private.GetSniperContentFrame(viewContainer, path)
 end
 
 function private.GetSelectionFrame()
+	TSM.UI.AnalyticsRecordPathChange("auction", "sniper", "selection")
 	local frame = TSMAPI_FOUR.UI.NewElement("Frame", "selection")
 		:SetLayout("VERTICAL")
 		:SetStyle("background", "#272727")
@@ -97,6 +99,7 @@ function private.GetSelectionFrame()
 end
 
 function private.GetScanFrame()
+	TSM.UI.AnalyticsRecordPathChange("auction", "sniper", "scan")
 	return TSMAPI_FOUR.UI.NewElement("Frame", "scan")
 		:SetLayout("VERTICAL")
 		:SetStyle("background", "#272727")
@@ -109,7 +112,7 @@ function private.GetScanFrame()
 				:SetStyle("font", TSM.UI.Fonts.MontserratMedium)
 				:SetStyle("fontHeight", 14)
 				:SetStyle("textColor", "#ffffff")
-				:SetText(L["Cancel Scan"])
+				:SetText(L["Stop Scan"])
 				:SetScript("OnClick", private.CancelButtonOnClick)
 			)
 			:AddChild(TSMAPI_FOUR.UI.NewElement("Text", "title")
@@ -189,9 +192,7 @@ end
 
 function private.SelectionFrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", nil)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(nil)
 end
 
 function private.SelectionFrameOnHide(frame)
@@ -258,9 +259,7 @@ end
 
 function private.ScanFrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 38)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(38)
 	private.fsm:ProcessEvent("EV_SCAN_FRAME_SHOWN", frame)
 end
 
@@ -353,10 +352,10 @@ function private.FSMCreate()
 		if not context.scanFrame then
 			return
 		end
-		if selection.seller == UnitName("player") then
+		if selection and selection.seller == UnitName("player") then
 			context.scanFrame:GetElement("bottom.actionBtn"):SetDisabled(true)
 				:Draw()
-		elseif selection.isHighBidder then
+		elseif selection and selection.isHighBidder then
 			if context.scanType == "buyout" then
 				context.scanFrame:GetElement("bottom.actionBtn"):SetDisabled(false)
 					:Draw()
@@ -623,9 +622,9 @@ function private.FSMCreate()
 					context.numActioned = context.numActioned + 1
 				else
 					if context.scanType == "buyout" then
-						TSM:Printf(L["Failed to buy auction of %s."], context.findAuction:GetField("rawLink"))
+						TSM:Printf(L["Failed to buy auction of %s (x%s) for %s."], context.findAuction:GetField("rawLink"), context.findAuction:GetField("stackSize"), TSM.Money.ToString(context.findAuction:GetField("buyout")))
 					elseif context.scanType == "bid" then
-						TSM:Printf(L["Failed to bid on auction of %s."], context.findAuction:GetField("rawLink"))
+						TSM:Printf(L["Failed to bid on auction of %s (x%s) for %s."], context.findAuction:GetField("rawLink"), context.findAuction:GetField("stackSize"), TSM.Money.ToString(context.findAuction:GetField("bid")))
 					else
 						error("Invalid scanType: "..tostring(context.scanType))
 					end
@@ -637,7 +636,7 @@ function private.FSMCreate()
 		:AddState(TSMAPI_FOUR.FSM.NewState("ST_CONFIRMING_BID_BUY")
 			:SetOnEnter(function(context, success)
 				if not success then
-					TSM:Printf(L["Failed to buy auction of %s."], context.findAuction:GetField("rawLink"))
+					TSM:Printf(L["Failed to buy auction of %s (x%s) for %s."], context.findAuction:GetField("rawLink"), context.findAuction:GetField("stackSize"), TSM.Money.ToString(context.findAuction:GetField("buyout")))
 				end
 				context.numConfirmed = context.numConfirmed + 1
 				-- remove this row

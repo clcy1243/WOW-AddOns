@@ -79,11 +79,16 @@ local guildRanks = {}
 local selectedRank
 -- guild roster list
 local cbs_guild = {} -- contains all checkbuttons (roster)
+local currentGuildRank = {} -- sorted
+
 RefreshGuildRoster = function()
+	wipe(currentGuildRank)
 	guildFrame.scrollFrame:Reset()
 	-- roster above selected rank {"name", "class"}
 	local roster = GRA:GetGuildRoster(GRA:GetIndex(guildRanks, rankDropDown.selected))
-	local last = nil
+	GRA:Sort(roster, "rankIndex", "ascending", "class", "ascending", "name", "ascending")
+
+	local last, lastRank
 	-- create
 	for i = 1, #roster do
 		local playerName = roster[i].name
@@ -106,8 +111,13 @@ RefreshGuildRoster = function()
 		if i == 1 then
 			cbs_guild[playerName]:SetPoint("TOPLEFT", 5, 0)
 		else
-			cbs_guild[playerName]:SetPoint("TOP", last, "BOTTOM")
+			if lastRank ~= roster[i].rankIndex then
+				cbs_guild[playerName]:SetPoint("TOP", last, "BOTTOM", 0, -16)
+			else
+				cbs_guild[playerName]:SetPoint("TOP", last, "BOTTOM")
+			end
 		end
+		lastRank = roster[i].rankIndex
 		last = cbs_guild[playerName]
 	end
 end
@@ -163,7 +173,7 @@ RefreshGroupRoster = function()
 	for i = 1, GetNumGroupMembers("LE_PARTY_CATEGORY_HOME") do
 		local playerName, _, _, _, _, classFileName = GetRaidRosterInfo(i)
 		if playerName then
-			if not string.find(playerName, "-") then playerName = playerName .. "-" .. GetRealmName() end
+			if not string.find(playerName, "-") then playerName = playerName .. "-" .. GRA:GetRealmName() end
 			
 			table.insert(currentInGroup, {playerName, classFileName})
 			if not cbs_group[playerName] then
@@ -267,7 +277,7 @@ importBtn:SetScript("OnClick", function()
 					_G[GRA_R_Roster][n] = {["class"]=t.class, ["role"]="DPS"}
 				end
 			else
-				GRA:Print(L["Failed to import player %s, it's not in your guild."]:format(GRA:GetClassColoredName(n, t.class)))
+				GRA:Print(L["Failed to import, %s is not in your guild."]:format(GRA:GetClassColoredName(n, t.class)))
 			end
 		elseif _G[GRA_R_Roster][n] then  -- already exists, t.checked = false, then delete it
 			_G[GRA_R_Roster] = GRA:RemoveElementsByKeys(_G[GRA_R_Roster], {n})

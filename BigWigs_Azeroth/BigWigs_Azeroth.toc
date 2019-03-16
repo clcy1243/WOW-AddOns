@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80100
 
 ## Title: BigWigs [|cffeda55fAzeroth|r]
 ## Title-deDE: BigWigs [|cffeda55fAzeroth|r]
@@ -6,7 +6,7 @@
 ## Title-esMX: BigWigs [|cffeda55fAzeroth|r]
 ## Title-frFR: BigWigs [|cffeda55fAzeroth|r]
 ## Title-ruRU: BigWigs [|cffeda55fAzeroth|r]
-## Title-zhCN: BigWigs [|cffeda55fAzeroth|r]
+## Title-zhCN: BigWigs [|cffeda55f艾泽拉斯|r]
 ## Title-zhTW: BigWigs [|cffeda55fAzeroth|r]
 ## Title-itIT: BigWigs [|cffeda55fAzeroth|r]
 ## Title-ptBR: BigWigs [|cffeda55fAzeroth|r]
@@ -15,9 +15,9 @@
 ## Notes-deDE: BigWigs Azeroth Modules
 ## Notes-esES: BigWigs Azeroth Modules
 ## Notes-esMX: BigWigs Azeroth Modules
-## Notes-frFR: BigWigs Azeroth Modules
+## Notes-frFR: Modules BigWigs concernant Azeroth.
 ## Notes-ruRU: BigWigs Azeroth Modules
-## Notes-zhCN: BigWigs Azeroth Modules
+## Notes-zhCN: BigWigs 艾泽拉斯模块。
 ## Notes-zhTW: BigWigs Azeroth Modules
 ## Notes-itIT: BigWigs Azeroth Modules
 ## Notes-ptBR: BigWigs Azeroth Modules
@@ -28,6 +28,6 @@
 
 ## X-Category: Raid
 ## X-BigWigs-ExtraMenu: -947
-## X-BigWigs-LoadOn-WorldBoss: -942, 140163, -14, 138122, -14, 137374, -864, 138794, -895, 136385
+## X-BigWigs-LoadOn-WorldBoss: -942, 140163, -14, 138122, -14, 137374, -864, 138794, -895, 136385, -862, 132253, -896, 140252, -863, 132701
 
 modules.xml

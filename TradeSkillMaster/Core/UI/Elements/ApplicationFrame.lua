@@ -177,14 +177,14 @@ function ApplicationFrame.__init(self)
 	frame.resizingContent:Hide()
 	frame.resizingContent.texture = frame.resizingContent:CreateTexture(nil, "ARTWORK")
 	frame.resizingContent.texture:SetAllPoints()
-	frame.resizingContent.texture:SetColorTexture(TSM.UI.HexToRGBA("#363636"))
+	frame.resizingContent.texture:SetColorTexture(TSM.UI.HexToRGBA("#373737"))
 	frame.resizingContent.texture:Show()
 
 	frame.topEdge = frame:CreateTexture(nil, "BACKGROUND")
 	frame.topEdge:SetPoint("BOTTOMLEFT", frame.innerBorderFrame, "TOPLEFT")
 	frame.topEdge:SetPoint("BOTTOMRIGHT", frame.innerBorderFrame, "TOPRIGHT")
 	frame.topEdge:SetPoint("TOP", frame.headerBgCenter, "BOTTOM")
-	frame.topEdge:SetColorTexture(TSM.UI.HexToRGBA("#363636"))
+	frame.topEdge:SetColorTexture(TSM.UI.HexToRGBA("#373737"))
 end
 
 function ApplicationFrame.Acquire(self)
@@ -469,7 +469,7 @@ end
 function ApplicationFrame.ShowMoreButtonDialog(self, moreBtn, iter)
 	local frame = TSMAPI_FOUR.UI.NewElement("MenuDialogFrame", "moreDialog")
 		:SetLayout("VERTICAL")
-		:SetStyle("width", 180)
+		:SetStyle("width", 200)
 		:SetStyle("anchors", { { "TOPRIGHT", moreBtn:_GetBaseFrame(), "BOTTOM", 22, -16 } })
 		:SetStyle("padding.top", 8)
 		:SetStyle("padding.bottom", 4)
@@ -488,7 +488,7 @@ function ApplicationFrame.ShowMoreButtonDialog(self, moreBtn, iter)
 		)
 		numRows = numRows + 1
 	end
-	frame:SetStyle("height", 4 + numRows * 28)
+	frame:SetStyle("height", 12 + numRows * 20)
 	self:ShowDialogFrame(frame)
 end
 
@@ -571,6 +571,13 @@ function ApplicationFrame.Draw(self)
 	end
 	titleFrame:Draw()
 end
+
+function ApplicationFrame.SetBottomPadding(self, padding)
+	self:SetStyle("bottomPadding", padding)
+	local frame = self:_GetBaseFrame()
+	frame.innerBorderFrame:SetPoint("BOTTOMRIGHT", -INNER_FRAME_OFFSET, INNER_FRAME_OFFSET + (padding or 0))
+end
+
 
 
 
@@ -690,7 +697,6 @@ end
 function private.FrameOnDragStop(self)
 	self:_GetBaseFrame():StopMovingOrSizing()
 	self:_SavePositionAndSize()
-	self:Draw()
 end
 
 function private.DialogOnMouseUp(dialog)

@@ -225,27 +225,27 @@ function atributo_energy:AtualizarResources (qual_barra, colocacao, instancia)
 		porcentagem = _cstr ("%.1f", self.resource / instancia.top * 100)
 	end
 	
-	if (UsingCustomRightText) then
-		esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_resource, formated_rps, porcentagem, self))
-	else
-	
-		local bars_show_data = instancia.row_info.textR_show_data
-		local bars_brackets = instancia:GetBarBracket()
-		local bars_separator = instancia:GetBarSeparator()
+	local bars_show_data = instancia.row_info.textR_show_data
+	local bars_brackets = instancia:GetBarBracket()
+	local bars_separator = instancia:GetBarSeparator()
 
-		if (not bars_show_data [1]) then
-			formated_resource = ""
-		end
-		if (not bars_show_data [2]) then
-			formated_rps = ""
-		end
-		if (not bars_show_data [3]) then
-			porcentagem = ""
-		else
-			porcentagem = porcentagem .. "%"
-		end
-		
-		esta_barra.texto_direita:SetText (formated_resource .. bars_brackets[1] .. formated_rps .. bars_separator .. porcentagem .. bars_brackets[2])
+	if (not bars_show_data [1]) then
+		formated_resource = ""
+	end
+	if (not bars_show_data [2]) then
+		formated_rps = ""
+	end
+	if (not bars_show_data [3]) then
+		porcentagem = ""
+	else
+		porcentagem = porcentagem .. "%"
+	end
+	
+	local rightText = formated_resource .. bars_brackets[1] .. formated_rps .. bars_separator .. porcentagem .. bars_brackets[2]
+	if (UsingCustomRightText) then
+		esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_resource, formated_rps, porcentagem, self, instancia.showing, instancia, rightText))
+	else
+		esta_barra.texto_direita:SetText (rightText)
 	end
 	
 	esta_barra.texto_esquerdo:SetText (colocacao .. ". " .. self.nome)
@@ -665,20 +665,21 @@ function atributo_energy:AtualizaBarra (instancia, barras_container, qual_barra,
 	local esta_porcentagem = _math_floor ((esta_e_energy_total/instancia.top) * 100)
 
 	local formated_energy = SelectedToKFunction (_, esta_e_energy_total)
-	
-	if (UsingCustomRightText) then
-		esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_energy, "", porcentagem, self, instancia.showing))
+
+	if (not bars_show_data [1]) then
+		formated_energy = ""
+	end
+	if (not bars_show_data [3]) then
+		porcentagem = ""
 	else
-		if (not bars_show_data [1]) then
-			formated_energy = ""
-		end
-		if (not bars_show_data [3]) then
-			porcentagem = ""
-		else
-			porcentagem = porcentagem .. "%"
-		end
+		porcentagem = porcentagem .. "%"
+	end
 	
-		esta_barra.texto_direita:SetText (formated_energy .. bars_brackets[1] .. porcentagem .. bars_brackets[2])
+	local rightText = formated_energy .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
+	if (UsingCustomRightText) then
+		esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_energy, "", porcentagem, self, instancia.showing, instancia, rightText))
+	else
+		esta_barra.texto_direita:SetText (rightText)
 	end
 	
 	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip
@@ -783,7 +784,7 @@ function atributo_energy:KeyNames (sub_atributo)
 	return "total"
 end
 
----------> TOOLTIPS BIFURCA��O
+---------> TOOLTIPS BIFURCA��O ~tooltip
 
 local resource_bg_color = {.1, .1, .1, 0.6}
 local resource_bg_coords = {.6, 0.1, 0, 0.64453125}
@@ -909,9 +910,9 @@ function atributo_energy:ToolTipRegenRecebido (instancia, numero, barra, keydown
 		end
 	
 		local nome_magia, _, icone_magia = _GetSpellInfo (spell [1])
-		GameCooltip:AddLine (nome_magia..": ", FormatTooltipNumber (_,  spell [2]).." (".._cstr("%.1f", (spell [2]/total_regenerado) * 100).."%)")
+		GameCooltip:AddLine (nome_magia, FormatTooltipNumber (_,  spell [2]).." (".._cstr("%.1f", (spell [2]/total_regenerado) * 100).."%)")
 		GameCooltip:AddIcon (icone_magia, nil, nil, icon_size.W, icon_size.H, icon_border.L, icon_border.R, icon_border.T, icon_border.B)
-		_detalhes:AddTooltipBackgroundStatusbar()
+		_detalhes:AddTooltipBackgroundStatusbar (false, spell [2] / energy_tooltips_table [1][2] * 100)
 	end
 	
 	--> players
@@ -968,7 +969,7 @@ function atributo_energy:ToolTipRegenRecebido (instancia, numero, barra, keydown
 			break
 		end
 	
-		GameCooltip:AddLine (source [1]..": ", FormatTooltipNumber (_,  source [2]).." (".._cstr("%.1f", (source [2] / total_regenerado) * 100).."%)")
+		GameCooltip:AddLine (source [1], FormatTooltipNumber (_,  source [2]).." (".._cstr("%.1f", (source [2] / total_regenerado) * 100).."%)")
 		_detalhes:AddTooltipBackgroundStatusbar()
 		
 		local classe = source [3]
@@ -976,9 +977,9 @@ function atributo_energy:ToolTipRegenRecebido (instancia, numero, barra, keydown
 			classe = "UNKNOW"
 		end
 		if (classe == "UNKNOW") then
-			GameCooltip:AddIcon ("Interface\\LFGFRAME\\LFGROLE_BW", nil, nil, 14, 14, .25, .5, 0, 1)
+			GameCooltip:AddIcon ("Interface\\LFGFRAME\\LFGROLE_BW", nil, nil, icon_size.W, icon_size.H, .25, .5, 0, 1)
 		else
-			GameCooltip:AddIcon ("Interface\\AddOns\\Details\\images\\classes_small", nil, nil, 14, 14, _unpack (_detalhes.class_coords [classe]))
+			GameCooltip:AddIcon ("Interface\\AddOns\\Details\\images\\classes_small", nil, nil, icon_size.W, icon_size.H, _unpack (_detalhes.class_coords [classe]))
 		end
 		
 	end
@@ -1421,6 +1422,11 @@ end
 				if (not no_refresh) then
 					_detalhes.refresh:r_atributo_energy (actor, shadow)
 				end
+			
+			--> pets (add unique pet names)
+			for _, petName in _ipairs (actor.pets) do
+				DetailsFramework.table.addunique (shadow.pets, petName)
+			end
 			
 			--> total das energias (captura de dados)
 				shadow.total = shadow.total + actor.total

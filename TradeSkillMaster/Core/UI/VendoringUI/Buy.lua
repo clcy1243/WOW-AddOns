@@ -33,6 +33,7 @@ end
 -- ============================================================================
 
 function private.GetFrame()
+	TSM.UI.AnalyticsRecordPathChange("vendoring", "buy")
 	private.filterText = ""
 	if not private.query then
 		private.query = TSM.Vendoring.Buy.CreateMerchantQuery()
@@ -171,16 +172,11 @@ end
 
 function private.FrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 32)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(32)
 end
 
 function private.FrameOnHide(frame)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", nil)
-	baseFrame:Draw()
-	OpenStackSplitFrame()
+	StackSplitFrame:Hide()
 end
 
 function private.SearchInputOnTextChanged(input)
@@ -204,7 +200,7 @@ function private.RowOnClick(table, row, mouseButton)
 		private.splitFrame:SetParent(table:_GetBaseFrame())
 		private.splitFrame:SetAllPoints(table:_GetBaseFrame())
 		private.splitFrame.item = row:GetField("itemString")
-		OpenStackSplitFrame(math.huge, private.splitFrame, "TOPLEFT", "TOPRIGHT")
+		StackSplitFrame:OpenStackSplitFrame(math.huge, private.splitFrame, "TOPLEFT", "TOPRIGHT")
 	elseif mouseButton == "RightButton" then
 		TSM.Vendoring.Buy.BuyItem(row:GetFields("itemString", "stackSize"))
 	end

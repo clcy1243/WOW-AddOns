@@ -90,6 +90,7 @@ function _G._detalhes:Start()
 			self:InitializeAPIWindow()
 			self:InitializeRunCodeWindow()
 			self:InitializePlaterIntegrationWindow()
+			self:InitializeMacrosWindow()
 			
 		--> bookmarks
 			if (self.switch.InitSwitch) then
@@ -281,8 +282,6 @@ function _G._detalhes:Start()
 			self.listener:RegisterEvent ("UNIT_FACTION")
 			self.listener:RegisterEvent ("PLAYER_SPECIALIZATION_CHANGED")
 			self.listener:RegisterEvent ("PLAYER_TALENT_UPDATE")
-			
-			self.listener:RegisterEvent ("PLAYER_SPECIALIZATION_CHANGED")
 			
 			--test immersion stuff
 			------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------			
@@ -1293,6 +1292,9 @@ function _G._detalhes:Start()
 	
 	--> check is this is the first run of this version
 		if (self.is_version_first_run) then
+		
+		
+		
 			local enable_reset_warning = true
 		
 			local lower_instance = _detalhes:GetLowerInstanceNumber()
@@ -1318,9 +1320,10 @@ function _G._detalhes:Start()
 							local lineHeight = instance.row_info.height
 							local textSize = instance.row_info.font_size
 							if (lineHeight-1 <= textSize) then
-								instance.row_info.height = 21
-								instance.row_info.font_size = 16
-								instance:ChangeSkin()
+							-- no need this, scheduled to code cleanup
+							--	instance.row_info.height = 21
+							--	instance.row_info.font_size = 16
+							--	instance:ChangeSkin()
 							end
 						end
 					end
@@ -1849,9 +1852,18 @@ function _G._detalhes:Start()
 			_detalhes:RefreshPlaterIntegration()
 		end)
 
-	--> override the overall data flag on this release only (remove on the release)
-	Details.overall_flag = 0x10
+	--> override the overall data flag on this release only (remove on the next release)
+	--Details.overall_flag = 0x10
 
 end
 
 _detalhes.AddOnLoadFilesTime = GetTime()
+
+
+
+
+
+
+
+
+

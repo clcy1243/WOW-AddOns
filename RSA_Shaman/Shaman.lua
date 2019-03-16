@@ -39,7 +39,8 @@ function RSA.Resurrect(_, _, target, _, caster)
 		end
 		if RSA.db.profile.Shaman.Spells.AncestralSpirit.Whisper == true and dest ~= pName then
 			RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-			RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+			RSA.Print_Whisper(message, full_destName, RSA.Replacements, dest)
+			--RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
 			RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 		end
 		if RSA.db.profile.Shaman.Spells.AncestralSpirit.CustomChannel.Enabled == true then
@@ -95,11 +96,6 @@ function RSA_Shaman:OnEnable()
 			[108280] = { -- HEALING TIDE TOTEM
 				profile = 'HealingTide',
 				section = "Placed",
-			},
-			[2008] = { -- ANCESTRAL VISION
-				profile = 'AncestralSpirit',
-				section = 'End',
-				replacements = { TARGET = 1 }
 			},
 			[198103] = { -- EARTH ELEMENTAL
 				profile = 'EarthElemental'
@@ -347,7 +343,7 @@ function RSA_Shaman:OnEnable()
 					end
 					if RSA.db.profile.Shaman.Spells.Cloudburst.Whisper == true and dest ~= pName then
 						RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-						RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+						RSA.Print_Whisper(message, full_destName, RSA.Replacements, dest)
 						RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 					end
 					if RSA.db.profile.Shaman.Spells.Cloudburst.CustomChannel.Enabled == true then
@@ -715,7 +711,8 @@ function RSA_Shaman:OnEnable()
 					end
 					if RSA.db.profile.Shaman.Spells.AncestralProtection.Whisper == true and dest ~= pName then
 						RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = L["You"],}
-						RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+						--RSA.Print_Whisper(string.gsub(message, ".%a+.", RSA.String_Replace), full_destName)
+						RSA.Print_Whisper(message, full_destName, RSA.Replacements, dest)
 						RSA.Replacements = {["[SPELL]"] = spellinfo, ["[LINK]"] = spelllinkinfo, ["[TARGET]"] = dest,}
 					end
 					if RSA.db.profile.Shaman.Spells.AncestralProtection.CustomChannel.Enabled == true then

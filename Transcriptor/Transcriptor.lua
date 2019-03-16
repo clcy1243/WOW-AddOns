@@ -19,12 +19,14 @@ local logStartTime = nil
 local logging = nil
 local compareSuccess = nil
 local compareUnitSuccess = nil
+local compareEmotes = nil
 local compareStart = nil
 local compareAuraApplied = nil
 local compareStartTime = nil
 local collectPlayerAuras = nil
 local hiddenUnitAuraCollector, hiddenAuraInitList = nil, nil
 local hiddenAuraPermList = {}
+local unitTargetFilter = {}
 local shouldLogFlags = false
 local inEncounter, blockingRelease, limitingRes = false, false, false
 local mineOrPartyOrRaid = 7 -- COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID
@@ -103,24 +105,26 @@ local function InsertSpecialEvent(name)
 			end
 		end
 	end
+	if compareEmotes then
+		for id,tbl in next, compareEmotes do
+			for npcName, list in next, tbl do
+				list[#list+1] = {debugprofilestop(), name}
+			end
+		end
+	end
 end
 
 --------------------------------------------------------------------------------
 -- Utility
 --
 
-function GetMapID(name)
+function GetInstanceID(name)
 	name = name:lower()
 	for i=1,3000 do
-		local tbl = C_Map_GetMapInfo(i)
-		if tbl then
-			local fetchedName = tbl.name
-			if fetchedName then
-				local lowerFetchedName = fetchedName:lower()
-				if find(lowerFetchedName, name, nil, true) then
-					print(fetchedName..": "..i)
-				end
-			end
+		local fetchedName = GetRealZoneText(i)
+		local lowerFetchedName = fetchedName:lower()
+		if find(lowerFetchedName, name, nil, true) then
+			print(fetchedName..": "..i)
 		end
 	end
 end
@@ -205,16 +209,29 @@ do
 		local auraTbl, castTbl, summonTbl = {}, {}, {}
 		local aurasSorted, castsSorted, summonSorted = {}, {}, {}
 		local ignoreList = {
-			[234264] = true, -- Melted Armor (Goroth)
-			[233430] = true, -- Unbearable Torment (Demonic Inquisition)
-			[234332] = true, -- Hydra Acid (Mistress Sassz'ine)
-			[234995] = true, -- Lunar Suffusion (Sisters)
-			[234996] = true, -- Umbra Suffusion (Sisters)
-			[236726] = true, -- Lunar Barrage (Sisters)
-			[235732] = true, -- Spiritual Barrier (Desolate Host)
-			[235117] = true, -- Unstable Soul (Maiden of Vigilance)
-			[238028] = true, -- Light Remanence (Maiden of Vigilance)
-			[238408] = true, -- Fel Remanence (Maiden of Vigilance)
+			[43681] = true, -- Inactive (PvP)
+			[94028] = true, -- Inactive (PvP)
+			[66186] = true, -- Napalm (IoC PvP)
+			[66195] = true, -- Napalm (IoC PvP)
+			[66268] = true, -- Place Seaforium Bomb (IoC PvP)
+			[66271] = true, -- Carrying Seaforium (IoC PvP)
+			[66456] = true, -- Glaive Throw (IoC PvP)
+			[66518] = true, -- Airship Cannon (IoC PvP)
+			[66541] = true, -- Incendiary Rocket (IoC PvP)
+			[66542] = true, -- Incendiary Rocket (IoC PvP)
+			[66657] = true, -- Parachute (IoC PvP)
+			[66674] = true, -- Place Huge Seaforium Bomb (IoC PvP)
+			[67195] = true, -- Blade Salvo (IoC PvP)
+			[67200] = true, -- Blade Salvo (IoC PvP)
+			[67440] = true, -- Hurl Boulder (IoC PvP)
+			[67441] = true, -- Ram (IoC PvP)
+			[67452] = true, -- Rocket Blast (IoC PvP)
+			[67461] = true, -- Fire Cannon (IoC PvP)
+			[67796] = true, -- Ram (IoC PvP)
+			[67797] = true, -- Steam Rush (IoC PvP)
+			[68077] = true, -- Repair Cannon (IoC PvP)
+			[68298] = true, -- Parachute (IoC PvP)
+			[68377] = true, -- Carrying Huge Seaforium (IoC PvP)
 			[270620] = true, -- Psionic Blast (Zek'voz/Uldir || Mind Controlled player)
 			[272407] = true, -- Oblivion Sphere (Mythrax/Uldir || Orb spawning on player)
 			[263372] = true, -- Power Matrix (G'huun/Uldir || Holding the orb)
@@ -873,11 +890,26 @@ do
 
 	function sh.UNIT_SPELLCAST_STOP(unit, castId, spellId, ...)
 		if safeUnit(unit) then
-			return format("%s(%s) -%s- [[%s]]", UnitName(unit), UnitName(unit.."target"), GetSpellInfo(spellId), strjoin(":", tostringall(unit, castId, ...)))
+			unitTargetFilter[unit] = nil
+			return format("%s(%s) -%s- [[%s]]", UnitName(unit), UnitName(unit.."target"), GetSpellInfo(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
 		end
 	end
 	sh.UNIT_SPELLCAST_CHANNEL_STOP = sh.UNIT_SPELLCAST_STOP
-	sh.UNIT_SPELLCAST_INTERRUPTED = sh.UNIT_SPELLCAST_STOP
+
+	function sh.UNIT_SPELLCAST_INTERRUPTED(unit, castId, spellId, ...)
+		if safeUnit(unit) then
+			unitTargetFilter[unit] = nil
+
+			if specialEvents.UNIT_SPELLCAST_INTERRUPTED[spellId] then
+				local name = specialEvents.UNIT_SPELLCAST_INTERRUPTED[spellId][MobId(UnitGUID(unit))]
+				if name then
+					InsertSpecialEvent(name)
+				end
+			end
+
+			return format("%s(%s) -%s- [[%s]]", UnitName(unit), UnitName(unit.."target"), GetSpellInfo(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
+		end
+	end
 
 	function sh.UNIT_SPELLCAST_SUCCEEDED(unit, castId, spellId, ...)
 		if safeUnit(unit) then
@@ -894,11 +926,14 @@ do
 				end
 			end
 
-			return format("%s(%s) -%s- [[%s]]", UnitName(unit), UnitName(unit.."target"), GetSpellInfo(spellId), strjoin(":", tostringall(unit, castId, ...)))
+			return format("%s(%s) -%s- [[%s]]", UnitName(unit), UnitName(unit.."target"), GetSpellInfo(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
 		end
 	end
 	function sh.UNIT_SPELLCAST_START(unit, ...)
 		if safeUnit(unit) then
+			if bossUnits[unit] then
+				unitTargetFilter[unit] = true
+			end
 			local spellName, _, _, startTime, endTime = UnitCastingInfo(unit)
 			local time = ((endTime or 0) - (startTime or 0)) / 1000
 			return format("%s(%s) - %s - %ss [[%s]]", UnitName(unit), UnitName(unit.."target"), spellName or "NIL", time, strjoin(":", tostringall(unit, ...)))
@@ -909,6 +944,12 @@ do
 			local spellName, _, _, startTime, endTime = UnitChannelInfo(unit)
 			local time = ((endTime or 0) - (startTime or 0)) / 1000
 			return format("%s(%s) - %s - %ss [[%s]]", UnitName(unit), UnitName(unit.."target"), spellName or "NIL", time, strjoin(":", tostringall(unit, ...)))
+		end
+	end
+
+	function sh.UNIT_TARGET(unit)
+		if unitTargetFilter[unit] then
+			return format("%s#%s - %s#%s", unit, tostring(UnitName(unit)), tostring(UnitName(unit.."target")), tostring(UnitName(unit.."targettarget")))
 		end
 	end
 end
@@ -1034,7 +1075,21 @@ end
 function sh.ENCOUNTER_START(...)
 	compareStartTime = debugprofilestop()
 	wipe(data)
-	return strjoin("#", "ENCOUNTER_START", ...)
+	return strjoin("#", ...)
+end
+
+function sh.CHAT_MSG_RAID_BOSS_EMOTE(msg, npcName, ...)
+	local id = msg:match("|Hspell:([^|]+)|h")
+	if id then
+		local spellId = tonumber(id)
+		if spellId then
+			if not compareEmotes then compareEmotes = {} end
+			if not compareEmotes[spellId] then compareEmotes[spellId] = {} end
+			if not compareEmotes[spellId][npcName] then compareEmotes[spellId][npcName] = {compareStartTime} end
+			compareEmotes[spellId][npcName][#compareEmotes[spellId][npcName]+1] = debugprofilestop()
+		end
+	end
+	return strjoin("#", msg, npcName, tostringall(...))
 end
 
 do
@@ -1122,6 +1177,7 @@ local wowEvents = {
 	"UNIT_POWER_UPDATE",
 	"UPDATE_UI_WIDGET",
 	"UNIT_AURA",
+	"UNIT_TARGET",
 	"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
 	"UNIT_TARGETABLE_CHANGED",
 	"ENCOUNTER_START",
@@ -1163,6 +1219,7 @@ local eventCategories = {
 	UNIT_SPELLCAST_INTERRUPTED = "UNIT_SPELLCAST",
 	UNIT_SPELLCAST_CHANNEL_START = "UNIT_SPELLCAST",
 	UNIT_SPELLCAST_CHANNEL_STOP = "UNIT_SPELLCAST",
+	UNIT_TARGET = "UNIT_SPELLCAST",
 	ZONE_CHANGED = "ZONE_CHANGED",
 	ZONE_CHANGED_INDOORS = "ZONE_CHANGED",
 	ZONE_CHANGED_NEW_AREA = "ZONE_CHANGED",
@@ -1405,6 +1462,7 @@ do
 			shouldLogFlags = TranscriptIgnore.logFlags and true or false
 			wipe(data)
 
+			unitTargetFilter = {}
 			compareStartTime = debugprofilestop()
 			logStartTime = compareStartTime / 1000
 			self:UpdateHiddenAuraBlacklist()
@@ -1489,7 +1547,7 @@ function Transcriptor:StopLog(silent)
 			print(L["Logs will probably be saved to WoW\\WTF\\Account\\<name>\\SavedVariables\\Transcriptor.lua once you relog or reload the user interface."])
 		end
 
-		if compareSuccess or compareStart or compareAuraApplied or compareUnitSuccess then
+		if compareSuccess or compareStart or compareAuraApplied or compareUnitSuccess or compareEmotes then
 			currentLog.TIMERS = {}
 			if compareSuccess then
 				currentLog.TIMERS.SPELL_CAST_SUCCESS = {}
@@ -1745,6 +1803,69 @@ function Transcriptor:StopLog(silent)
 				end
 				table.sort(currentLog.TIMERS.UNIT_SPELLCAST_SUCCEEDED)
 			end
+			if compareEmotes then
+				currentLog.TIMERS.EMOTES = {}
+				for id,tbl in next, compareEmotes do
+					for npcName, list in next, tbl do
+						local n = format("%s-%d-npc:%s", GetSpellInfo(id) or "?", id, npcName)
+						local str
+						for i = 2, #list do
+							if not str then
+								local t = list[i] - list[1]
+								str = format("%s = pull:%.1f", n, t/1000)
+							else
+								if type(list[i]) == "table" then
+									if type(list[i-1]) == "number" then
+										local t = list[i][1]-list[i-1]
+										str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+									elseif type(list[i-1]) == "table" then
+										local t = list[i][1]-list[i-1][1]
+										str = format("%s, %s/%.1f", str, list[i][2], t/1000)
+									else
+										str = format("%s, %s", str, list[i][2])
+									end
+								else
+									if type(list[i-1]) == "table" then
+										if type(list[i-2]) == "table" then
+											if type(list[i-3]) == "table" then
+												if type(list[i-4]) == "table" then
+													local counter = 5
+													while type(list[i-counter]) == "table" do
+														counter = counter + 1
+													end
+													local tStage = list[i] - list[i-1][1]
+													local t = list[i] - list[i-counter]
+													str = format("%s, TooManyStages/%.1f/%.1f", str, tStage/1000, t/1000)
+												else
+													local tStage = list[i] - list[i-1][1]
+													local tStagePrevious = list[i] - list[i-2][1]
+													local tStagePreviousMore = list[i] - list[i-3][1]
+													local t = list[i] - list[i-4]
+													str = format("%s, %.1f/%.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, tStagePreviousMore/1000, t/1000)
+												end
+											else
+												local tStage = list[i] - list[i-1][1]
+												local tStagePrevious = list[i] - list[i-2][1]
+												local t = list[i] - list[i-3]
+												str = format("%s, %.1f/%.1f/%.1f", str, tStage/1000, tStagePrevious/1000, t/1000)
+											end
+										else
+											local tStage = list[i] - list[i-1][1]
+											local t = list[i] - list[i-2]
+											str = format("%s, %.1f/%.1f", str, tStage/1000, t/1000)
+										end
+									else
+										local t = list[i] - list[i-1]
+										str = format("%s, %.1f", str, t/1000)
+									end
+								end
+							end
+						end
+						currentLog.TIMERS.EMOTES[#currentLog.TIMERS.EMOTES+1] = str 
+					end
+				end
+				table.sort(currentLog.TIMERS.EMOTES)
+			end
 		end
 		if collectPlayerAuras then
 			if not currentLog.TIMERS then currentLog.TIMERS = {} end
@@ -1770,6 +1891,7 @@ function Transcriptor:StopLog(silent)
 		logging = nil
 		compareSuccess = nil
 		compareUnitSuccess = nil
+		compareEmotes = nil
 		compareStart = nil
 		compareAuraApplied = nil
 		compareStartTime = nil

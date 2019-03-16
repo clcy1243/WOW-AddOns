@@ -15,6 +15,7 @@ mod.respawnTime = 32
 
 local stage = 1
 local decayingFleshMonster = nil
+local poolofDarknessCount = 1
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -107,7 +108,8 @@ end
 
 function mod:OnEngage()
 	stage = 1
-	self:Bar(273361, 21) -- Pool of Darkness
+	poolofDarknessCount = 1
+	self:Bar(273361, 21, CL.count:format(self:SpellName(273361), poolofDarknessCount)) -- Pool of Darkness
 	self:CDBar(273365, self:Easy() and 41 or 30) -- Dark Revelation
 
 	self:CDBar("crawg", self:Mythic() and 46.5 or 37, CL.soon:format(L.crawg_msg), L.crawg_icon)
@@ -162,9 +164,10 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 273361 then -- Pool of Darkness
-		self:Message2(spellId, "orange")
+		self:Message2(spellId, "orange", CL.count:format(self:SpellName(spellId), poolofDarknessCount))
 		self:PlaySound(spellId, "info")
-		self:Bar(spellId, stage == 1 and 31.5 or 15.8)
+		poolofDarknessCount = poolofDarknessCount + 1
+		self:Bar(spellId, stage == 1 and 31.5 or 15.8, CL.count:format(self:SpellName(spellId), poolofDarknessCount))
 	elseif spellId == 274315 then -- Deathwish
 		self:Bar(274271, 28)
 	end
@@ -175,47 +178,31 @@ function mod:DarkRevelation(args)
 end
 
 do
-	local playerList, isOnMe = {}, nil
-
-	local function announce()
-		local meOnly = mod:CheckOption(273365, "ME_ONLY")
-
-		if isOnMe then
-			mod:TargetBar(273365, 10, mod:UnitName("player"))
-		else
-			mod:Bar(-18530, 10, -18530, 172884) -- Minion of Zul, spell_shadow_shadowfiend
-		end
-
-		if isOnMe and (meOnly or #playerList == 1) then
-			mod:Message2(273365, "blue", CL.you:format(("|T13700%d:0|t%s"):format(isOnMe, mod:SpellName(273365))))
-		elseif not meOnly then
-			local msg = ""
-			for i=1, #playerList do
-				local icon = ("|T13700%d:0|t"):format(i)
-				msg = msg .. icon .. mod:ColorName(playerList[i]) .. (i == #playerList and "" or ",")
-			end
-
-			mod:Message2(273365, "yellow", CL.other:format(mod:SpellName(273365), msg))
-		end
-
-		playerList = {}
-		isOnMe = nil
-	end
+	local playerList, playerIcons = mod:NewTargetList(), {}
+	local isOnMe = false
 
 	function mod:DarkRevelationApplied(args)
+		local maxExpected = self:Easy() and 1 or 2
+		local playerIconsCount = #playerIcons+1
 		playerList[#playerList+1] = args.destName
-		if #playerList == 1 then
-			self:SimpleTimer(announce, 0.1)
+		playerIcons[playerIconsCount] = playerIconsCount
+		if playerIconsCount == 1 then
+			isOnMe = false -- reset
 		end
 		if self:Me(args.destGUID) then
-			isOnMe = #playerList
+			isOnMe = true
 			self:PlaySound(args.spellId, "warning")
-			self:Say(args.spellId, CL.count_rticon:format(args.spellName, isOnMe, isOnMe))
+			self:Say(args.spellId, CL.count_rticon:format(args.spellName, playerIconsCount, playerIconsCount))
 			self:SayCountdown(args.spellId, 10)
+			self:TargetBar(args.spellId, 10, args.destName)
+		end
+		if playerIconsCount == maxExpected and not isOnMe then
+			self:Bar(-18530, 10, -18530, 172884) -- Minion of Zul, spell_shadow_shadowfiend
 		end
 		if self:GetOption(darkRevelationMarker) then
-			SetRaidTarget(args.destName, #playerList)
+			SetRaidTarget(args.destName, playerIconsCount)
 		end
+		self:TargetsMessage(args.spellId, "yellow", playerList, maxExpected, nil, nil, nil, playerIcons)
 	end
 end
 
@@ -254,21 +241,21 @@ end
 function mod:NazmaniCrusher(args)
 	self:Message2("crusher", "cyan", CL.soon:format(L.crusher_msg), L.crusher_icon)
 	self:PlaySound("crusher", "long")
-	self:CDBar("crusher", 62.5, L.crusher_msg, L.crusher_icon)
+	self:CDBar("crusher", 62.5, CL.soon:format(L.crusher_msg), L.crusher_icon)
 	self:Bar("crusher", 14, CL.spawning:format(L.crusher_msg), L.crusher_icon)
 end
 
 function mod:NazmaniBloodhexer(args)
 	self:Message2("bloodhexer", "cyan", CL.soon:format(L.bloodhexer_msg), L.bloodhexer_icon)
 	self:PlaySound("bloodhexer", "long")
-	self:CDBar("bloodhexer", 62.5, L.bloodhexer_msg, L.bloodhexer_icon)
+	self:CDBar("bloodhexer", 62.5, CL.soon:format(L.bloodhexer_msg), L.bloodhexer_icon)
 	self:Bar("bloodhexer", 14, CL.spawning:format(L.bloodhexer_msg), L.bloodhexer_icon)
 end
 
 function mod:BloodthirstyCrawg(args)
 	self:Message2("crawg", "cyan", CL.soon:format(L.crawg_msg), L.crawg_icon)
 	self:PlaySound("crawg", "long")
-	self:CDBar("crawg", 42.5, L.crawg_msg, L.crawg_icon)
+	self:CDBar("crawg", 42.5, CL.soon:format(L.crawg_msg), L.crawg_icon)
 	self:Bar("crawg", 14, CL.spawning:format(L.crawg_msg), L.crawg_icon)
 end
 
@@ -298,10 +285,10 @@ function mod:EngorgedBurst(args)
 end
 
 function mod:LocusofCorruption(args)
-	self:StopBar(L.crawg_msg)
-	self:StopBar(L.bloodhexer_msg)
-	self:StopBar(L.crusher_msg)
-	self:StopBar(273361) -- Pool of Blood
+	self:StopBar(CL.soon:format(L.crawg_msg))
+	self:StopBar(CL.soon:format(L.bloodhexer_msg))
+	self:StopBar(CL.soon:format(L.crusher_msg))
+	self:StopBar(CL.count:format(self:SpellName(273361), poolofDarknessCount)) -- Pool of Darkness
 	self:StopBar(273365) -- Dark Revelation
 
 	stage = 2
@@ -311,7 +298,7 @@ function mod:LocusofCorruption(args)
 	if self:Tank() then
 		self:CDBar(274358, 10) -- Rupturing Blood
 	end
-	self:CDBar(273361, 16) -- Pool of Blood
+	self:CDBar(273361, 16, CL.count:format(self:SpellName(273361), poolofDarknessCount)) -- Pool of Darkness
 	self:CDBar(274271, 26) -- Death Wish
 end
 
@@ -325,7 +312,7 @@ function mod:RupturingBloodApplied(args)
 	if self:Me(args.destGUID) then
 		self:CancelSayCountdown(args.spellId)
 		self:SayCountdown(args.spellId, 20, nil, 5)
-		self:PlaySound(args.spellId, "warning", nil, args.destName)
+		self:PlaySound(args.spellId, "warning")
 		self:StackMessage(args.spellId, args.destName, args.amount, "purple")
 	elseif self:Tank() and self:Tank(args.destName) then
 		local amount = args.amount or 1
@@ -343,39 +330,19 @@ function mod:RupturingBloodRemoved(args)
 end
 
 do
-	local playerList, isOnMe = {}, nil
-
-	local function announce()
-		local meOnly = mod:CheckOption(274271, "ME_ONLY")
-
-		if isOnMe and (meOnly or #playerList == 1) then
-			mod:Message2(274271, "blue", CL.you:format(("|T13700%d:0|t%s"):format(isOnMe, mod:SpellName(274271))))
-		elseif not meOnly then
-			local msg = ""
-			for i=1, #playerList do
-				local icon = ("|T13700%d:0|t"):format(i)
-				msg = msg .. icon .. mod:ColorName(playerList[i]) .. (i == #playerList and "" or ",")
-			end
-
-			mod:Message2(274271, "orange", CL.other:format(mod:SpellName(274271), msg))
-		end
-
-		playerList = {}
-		isOnMe = nil
-	end
+	local playerList, playerIcons = mod:NewTargetList(), {}
 
 	function mod:DeathwishApplied(args)
+		local playerIconsCount = #playerIcons+1
 		playerList[#playerList+1] = args.destName
-		if #playerList == 1 then
-			self:SimpleTimer(announce, 0.1)
-		end
+		playerIcons[playerIconsCount] = playerIconsCount
 		if self:Me(args.destGUID) then
-			isOnMe = #playerList
 			self:PlaySound(args.spellId, "alarm")
 		end
 		if self:GetOption(deathwishMarker) then
-			SetRaidTarget(args.destName, #playerList)
+			SetRaidTarget(args.destName, playerIconsCount)
 		end
+		self:TargetsMessage(args.spellId, "orange", playerList, 2, nil, nil, nil, playerIcons)
 	end
 end
 

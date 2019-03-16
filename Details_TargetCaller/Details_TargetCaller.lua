@@ -157,7 +157,7 @@ do
 		targetCaller.UpdateWindowBars()
 		currentTarget = GetUnitName ("target", true)
 		currentCombat = targetCaller:GetCurrentCombat()
-		targetCaller:RegisterEvent ("GROUP_ROSTER_UPDATED")
+		targetCaller:RegisterEvent ("GROUP_ROSTER_UPDATE")
 		targetCaller:RegisterEvent ("PLAYER_TARGET_CHANGED")
 		targetCaller.UpdateRoster()
 		
@@ -282,7 +282,7 @@ do
 		end
 		
 		currentTarget = ""
-		targetCaller:UnregisterEvent ("GROUP_ROSTER_UPDATED")
+		targetCaller:UnregisterEvent ("GROUP_ROSTER_UPDATE")
 		targetCaller:UnregisterEvent ("PLAYER_TARGET_CHANGED")
 		
 		--> show the overall when the update is done
@@ -384,7 +384,7 @@ do
 	
 	function targetCaller:OnEvent (_, event, ...)
 	
-		if (event == "GROUP_ROSTER_UPDATED") then
+		if (event == "GROUP_ROSTER_UPDATE") then
 			targetCaller.UpdateRoster()
 			
 		elseif (event == "PLAYER_TARGET_CHANGED") then

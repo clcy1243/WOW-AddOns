@@ -30,6 +30,7 @@ end
 -- ============================================================================
 
 function private.GetFrame()
+	TSM.UI.AnalyticsRecordPathChange("vendoring", "buyback")
 	private.query = private.query or TSM.Vendoring.Buyback.CreateQuery()
 	private.query:ResetOrderBy()
 	private.query:OrderBy("name", true)
@@ -110,7 +111,6 @@ function private.GetFrame()
 			)
 		)
 		:SetScript("OnUpdate", private.FrameOnUpdate)
-		:SetScript("OnHide", private.FrameOnHide)
 end
 
 function private.GetItemText(itemString)
@@ -125,15 +125,7 @@ end
 
 function private.FrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 32)
-	baseFrame:Draw()
-end
-
-function private.FrameOnHide(frame)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", nil)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(32)
 end
 
 function private.RowOnClick(_, row, mouseButton)

@@ -17,6 +17,7 @@ function RSA_Mage:OnEnable()
 	local pName = UnitName("player")
 	local Config_Polymorph = { -- POLYMORPH
 		profile = 'Polymorph',
+		section = "Cast",
 		replacements = { TARGET = 1 }
 	}
 	local Config_Polymorph_End = { -- POLYMORPH
@@ -129,6 +130,13 @@ function RSA_Mage:OnEnable()
 				section = "Cast",
 				replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
 			}
+		},
+		SPELL_DISPEL = {
+			[475] = { -- Remove Curse
+				profile = 'RemoveCurse',
+				section = "Dispel",
+				replacements = { TARGET = 1, extraSpellName = "[AURA]", extraSpellLink = "[AURALINK]" }
+			},
 		},
 		SPELL_HEAL = {
 			[87023] = { -- CAUTERIZE

@@ -31,6 +31,7 @@ end
 -- ============================================================================
 
 function private.GetFrame()
+	TSM.UI.AnalyticsRecordPathChange("vendoring", "sell")
 	private.filterText = ""
 	if private.query then
 		TSM.Vendoring.Sell.ResetBagsQuery(private.query)
@@ -170,16 +171,11 @@ end
 
 function private.FrameOnUpdate(frame)
 	frame:SetScript("OnUpdate", nil)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", 32)
-	baseFrame:Draw()
+	frame:GetBaseElement():SetBottomPadding(32)
 end
 
 function private.FrameOnHide(frame)
-	local baseFrame = frame:GetBaseElement()
-	baseFrame:SetStyle("bottomPadding", nil)
-	baseFrame:Draw()
-	OpenStackSplitFrame()
+	StackSplitFrame:Hide()
 end
 
 function private.SearchInputOnTextChanged(input)

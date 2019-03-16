@@ -1,7 +1,18 @@
-## Interface: 80000
+## Interface: 80100
 ## Title: BigWigs |cffff7f3f+|r|cffffffffCountdown: Overwatch|r
+## Title-deDE: BigWigs |cffff7f3f+|r|cffffffffCountdown: Overwatch|r
+## Title-esES: BigWigs |cffff7f3f+|r|cffffffffCuenta Atrás: Overwatch|r
+## Title-esEX: BigWigs |cffff7f3f+|r|cffffffffCuenta Atrás: Overwatch|r
+## Title-frFR: BigWigs |cffff7f3f+|r|cffffffffCompte à rebours : Overwatch|r
+## Title-itIT: BigWigs |cffff7f3f+|r|cffffffffConto alla Rovescia: Overwatch|r
+## Title-koKR: BigWigs |cffff7f3f+|r|cffffffff초읽기 : Overwatch|r
+## Title-ptBR: BigWigs |cffff7f3f+|r|cffffffffContagem Regressiva: Overwatch|r
+## Title-ruRU: BigWigs |cffff7f3f+|r|cffffffffОбратный отсчет: Overwatch|r
+## Title-zhCN: BigWigs |cffff7f3f+|r|cffffffff倒数：守望先锋|r
+## Title-zhTW: BigWigs |cffff7f3f+|r|cffffffff倒數：鬥陣特攻|r
 ## Author: Neb
-## Version: 1.0.16
+## Version: 1.1.0
 ## Dependencies: BigWigs
 
+Locales.lua
 Core.lua

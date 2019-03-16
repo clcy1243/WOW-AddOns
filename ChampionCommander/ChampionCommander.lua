@@ -129,10 +129,10 @@ MISSING=C(MISSING:sub(1,1):upper() .. MISSING:sub(2),"Red")
 local ctr=0
 -- Sometimes matchmakimng starts before these are defined, so I put here a sensible default (actually, this values are constans)
 function addon:MAXLEVEL()
-	return OHF.followerMaxLevel or 110
+	return OHF.followerMaxLevel or 120
 end
 function addon:MAXQUALITY()
-	return OHF.followerMaxQuality or 6
+	return OHF.followerMaxQuality or 4
 end
 function addon:MAXQLEVEL()
 	return addon:MAXLEVEL()+addon:MAXQUALITY()
@@ -457,9 +457,9 @@ function MixinFollowerIcon:ShowTooltip()
 --@end-non-debug@
 	end
 	local link = C_Garrison.GetFollowerLink(self.followerID);
-  local garrisonFollowerID=select(2,strsplit(":", link))
 	if link then
-	 local data=GarrisonFollowerTooltipTemplate_BuildDefaultDataForID(garrisonFollowerID)
+    local garrisonFollowerID=select(2,strsplit(":", link))
+    local data=GarrisonFollowerTooltipTemplate_BuildDefaultDataForID(garrisonFollowerID)
 	  data.levelxp=G.GetFollowerLevelXP(self.followerID)
 		data.xp=G.GetFollowerXP(self.followerID)
 		GarrisonFollowerTooltipTemplate_SetGarrisonFollower(gft,data)
