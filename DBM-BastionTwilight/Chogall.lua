@@ -1,12 +1,12 @@
 local mod	= DBM:NewMod(167, "DBM-BastionTwilight", nil, 72)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 190 $"):sub(12, -3))
+mod:SetRevision("20200222203750")
 mod:SetCreatureID(43324)
 mod:SetEncounterID(1029)
 mod:SetZone()
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
-mod:SetModelSound("Sound\\Creature\\Chogall\\VO_BT_Chogall_BotEvent15.ogg", "Sound\\Creature\\Chogall\\VO_BT_Chogall_BotEvent42.ogg")
+--mod:SetModelSound("Sound\\Creature\\Chogall\\VO_BT_Chogall_BotEvent15.ogg", "Sound\\Creature\\Chogall\\VO_BT_Chogall_BotEvent42.ogg")
 --Long: Foolish mortals-(Usurper's children!) nothing you have done- (Spawn of a lesser god!) I am TRYING to speak here. (Words, words, words. The Master wants murder.) ALL falls to chaos. ALL will be destroyed. (Chaos, chaos!) Your work here today changes nothing. (Chaos, chaos, all things end) No mortal may see what you have and live. Your end has come.
 --Short: (The Master sees, the Master sees!)
 
@@ -127,7 +127,7 @@ function mod:OnCombatStart(delay)
 		DBM.InfoFrame:SetHeader(Bloodlevel)
 		DBM.InfoFrame:Show(5, "playerpower", 10, ALTERNATE_POWER_INDEX)
 	end
-end	
+end
 
 function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
@@ -136,7 +136,7 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
-end 
+end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 91317 then

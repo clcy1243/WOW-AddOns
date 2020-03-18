@@ -4,10 +4,7 @@ if not ACP then return end
 
 --@non-debug@
 
-if (GetLocale() == "itIT") then
-	ACP:UpdateLocale(
-
-{
+L = {
 	["*** Enabling <%s> %s your UI ***"] = "*** Attivazione <%s> %s per la tua IU ***",
 	["*** Unknown Addon <%s> Required ***"] = "*** Addon sconosciuto <%s> richiesto ***",
 	["ACP: Some protected addons aren't loaded. Reload now?"] = "ACP: Alcuni addon protetti sono sono stati caricati. Ricaricare ora?",
@@ -66,7 +63,7 @@ if (GetLocale() == "itIT") then
 	["Remove from current selection"] = "Rimuovi dalla selezione corrente",
 	["Rename"] = "Rinomina",
 	--[[Translation missing --]]
-	--[[ ["Resurse-ToolTip"] = "",--]] 
+	["Resurse-ToolTip"] = "When enabling an addon, attempt to enable any addons the addon depends on",
 	["Save"] = "Salva",
 	["Save the current addon list to [%s]?"] = "Salva la lista di addon corrente su [%s]?",
 	["Set "] = "Raccolta ",
@@ -77,7 +74,9 @@ if (GetLocale() == "itIT") then
 	["when performing a reloadui."] = "quando esegui un ricaricaIU"
 }
 
-    )
+
+if (GetLocale() == "itIT") then
+	ACP:UpdateLocale(L)
 end
 
 --@end-non-debug@

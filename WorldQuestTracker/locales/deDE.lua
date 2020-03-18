@@ -65,10 +65,8 @@ L["S_MAPBAR_OPTIONSMENU_EQUIPMENTICONS"] = "Ausrüstungssymbole"
 L["S_MAPBAR_OPTIONSMENU_QUESTTRACKER"] = "Questverfolgung aktivieren"
 L["S_MAPBAR_OPTIONSMENU_REFRESH"] = "Aktualisieren"
 L["S_MAPBAR_OPTIONSMENU_SOUNDENABLED"] = "Ton aktivieren"
---[[Translation missing --]]
---[[ L["S_MAPBAR_OPTIONSMENU_STATUSBAR_ONDISABLE"] = ""--]] 
---[[Translation missing --]]
---[[ L["S_MAPBAR_OPTIONSMENU_STATUSBAR_VISIBILITY"] = ""--]] 
+L["S_MAPBAR_OPTIONSMENU_STATUSBAR_ONDISABLE"] = "Verwende '/wqt statusbar' oder die Addon-Option in den Interface-Optionen, um die Statusleiste erneut anzuzeigen."
+L["S_MAPBAR_OPTIONSMENU_STATUSBAR_VISIBILITY"] = "Statusleiste anzeigen"
 L["S_MAPBAR_OPTIONSMENU_STATUSBARANCHOR"] = "Oben anheften"
 L["S_MAPBAR_OPTIONSMENU_TOMTOM_WPPERSISTENT"] = "Ständige Wegpunkte"
 L["S_MAPBAR_OPTIONSMENU_TRACKER_CURRENTZONE"] = "Nur in meinem Gebiet"
@@ -89,43 +87,29 @@ L["S_MAPBAR_SORTORDER_TIMELEFTPRIORITY_OPTION"] = "Weniger als %d Stunden"
 L["S_MAPBAR_SORTORDER_TIMELEFTPRIORITY_SHOWTEXT"] = "Text für verbleibende Zeit"
 L["S_MAPBAR_SORTORDER_TIMELEFTPRIORITY_SORTBYTIME"] = "Nach verbleibender Zeit anordnen"
 L["S_MAPBAR_SORTORDER_TIMELEFTPRIORITY_TITLE"] = "Verbleibende Zeit"
-L["S_MAPBAR_SUMMARY"] = "Übersicht"
 L["S_MAPBAR_SUMMARYMENU_ACCOUNTWIDE"] = "Accountweit"
-L["S_MAPBAR_SUMMARYMENU_MOREINFO"] = "Linksklick: Mehr Info"
-L["S_MAPBAR_SUMMARYMENU_NOATTENTION"] = [=[Deine anderen Charaktere verfolgen
-keine Quests, deren verbleibende
-Zeit weniger als 2 Stunden beträgt!]=]
-L["S_MAPBAR_SUMMARYMENU_REQUIREATTENTION"] = "Erfordert Aufmerksamkeit"
-L["S_MAPBAR_SUMMARYMENU_TODAYREWARDS"] = "Heutige Belohnungen"
-L["S_MAPFRAME_ALIGN_CENTER"] = "mittig"
+L["S_OPTIONS_ACCESSIBILITY"] = "Barrierefreiheit"
 --[[Translation missing --]]
---[[ L["S_MAPFRAME_ALIGN_DESC"] = ""--]] 
-L["S_MAPFRAME_ALIGN_LEFT"] = "links"
+--[[ L["S_OPTIONS_ACCESSIBILITY_EXTRATRACKERMARK"] = ""--]] 
 --[[Translation missing --]]
---[[ L["S_OPTIONS_ANIMATIONS"] = ""--]] 
---[[Translation missing --]]
---[[ L["S_OPTIONS_MAPFRAME_ALIGN"] = ""--]] 
---[[Translation missing --]]
---[[ L["S_OPTIONS_MAPFRAME_ERROR_SCALING_DISABLED"] = ""--]] 
+--[[ L["S_OPTIONS_ACCESSIBILITY_SHOWBOUNTYRING"] = ""--]] 
+L["S_OPTIONS_ANIMATIONS"] = "Animationen verwenden"
+L["S_OPTIONS_MAPFRAME_ALIGN"] = "Kartenfenster zentrieren"
+L["S_OPTIONS_MAPFRAME_ERROR_SCALING_DISABLED"] = "Du musst zuerst 'Kartenfensterskalierung' aktivieren, kein Wert wurde geändert."
 L["S_OPTIONS_MAPFRAME_SCALE"] = "Kartenfensterskalierung"
 L["S_OPTIONS_MAPFRAME_SCALE_ENABLED"] = "Kartenfensterskalierung einschalten"
 --[[Translation missing --]]
 --[[ L["S_OPTIONS_QUESTBLACKLIST"] = ""--]] 
 L["S_OPTIONS_RESET"] = "Zurücksetzen"
 L["S_OPTIONS_SHOWFACTIONS"] = "Fraktionen anzeigen"
---[[Translation missing --]]
---[[ L["S_OPTIONS_TIMELEFT_NOPRIORITY"] = ""--]] 
+L["S_OPTIONS_TIMELEFT_NOPRIORITY"] = "Verbleibende Zeit nicht priorisieren"
 L["S_OPTIONS_TRACKER_RESETPOSITION"] = "Position zurücksetzen"
---[[Translation missing --]]
---[[ L["S_OPTIONS_WORLD_ANCHOR_LEFT"] = ""--]] 
---[[Translation missing --]]
---[[ L["S_OPTIONS_WORLD_ANCHOR_RIGHT"] = ""--]] 
+L["S_OPTIONS_WORLD_ANCHOR_LEFT"] = "Zur linken Seite anheften"
+L["S_OPTIONS_WORLD_ANCHOR_RIGHT"] = "Zur rechten Seite anheften"
 L["S_OPTIONS_WORLD_DECREASEICONSPERROW"] = "Quadrate pro Reihe verkleinern"
 L["S_OPTIONS_WORLD_INCREASEICONSPERROW"] = "Quadrate pro Reihe vergrößern"
---[[Translation missing --]]
---[[ L["S_OPTIONS_WORLD_ORGANIZE_BYMAP"] = ""--]] 
---[[Translation missing --]]
---[[ L["S_OPTIONS_WORLD_ORGANIZE_BYTYPE"] = ""--]] 
+L["S_OPTIONS_WORLD_ORGANIZE_BYMAP"] = "Nach Gebiet anordnen"
+L["S_OPTIONS_WORLD_ORGANIZE_BYTYPE"] = "Nach Questart anordnen"
 L["S_OPTIONS_ZONE_SHOWONLYTRACKED"] = "Nur verfolgte"
 L["S_OVERALL"] = "Insgesamt"
 L["S_PARTY"] = "Gruppe"
@@ -162,18 +146,17 @@ L["S_SUMMARYPANEL_LIFETIMESTATISTICS_CHARACTER"] = "Charakterspezifische Statist
 L["S_SUMMARYPANEL_OTHERCHARACTERS"] = "Andere Charaktere"
 L["S_TUTORIAL_AMOUNT"] = "Zeigt die zu erhaltene Anzahl an"
 L["S_TUTORIAL_CLICKTOTRACK"] = "Klicken, um eine Quest zu verfolgen."
-L["S_TUTORIAL_MAPALIGN"] = "Klicke hier, um die Ausrichtung der Weltkarte zu wählen."
 L["S_TUTORIAL_PARTY"] = "Wenn du in einer Gruppe bist, zeigt ein blauer Stern bei einer Quest an, dass diese alle Gruppenmitglieder haben."
+L["S_TUTORIAL_STATISTICS_BUTTON"] = "Klicke hier für Statistiken und eine Questliste anderer Charaktere."
 L["S_TUTORIAL_TIMELEFT"] = "Zeigt die verbleibende Zeit an (+4 Stunden, +90 Minuten, +30 Minuten, weniger als 30 Minuten)"
---[[Translation missing --]]
---[[ L["S_TUTORIAL_WORLDBUTTONS"] = ""--]] 
+L["S_TUTORIAL_WORLDBUTTONS"] = "Klicke hier, um zwischen den drei Typen der Übersicht umzuschalten: - |cFFFFAA11Nach Questart|r - |cFFFFAA11Nach Zone|r - |cFFFFAA11Keine|r Klicke |cFFFFAA11Quests ein/-ausblenden|r, um Questorte auszublenden."
 L["S_TUTORIAL_WORLDMAPBUTTON"] = "Diese Schaltfläche öffnet die Karte der Verheerten Inseln."
 L["S_UNKNOWNQUEST"] = "Unbekannte Quest"
+L["S_WHATSNEW"] = "Was gibt's Neues?"
 L["S_WORLDBUTTONS_SHOW_NONE"] = "Übersicht ausblenden"
 L["S_WORLDBUTTONS_SHOW_TYPE"] = "Übersicht anzeigen"
 L["S_WORLDBUTTONS_SHOW_ZONE"] = "Nach Zone anordnen"
---[[Translation missing --]]
---[[ L["S_WORLDBUTTONS_TOGGLE_QUESTS"] = ""--]] 
+L["S_WORLDBUTTONS_TOGGLE_QUESTS"] = "Quests ein-/ausblenden"
 L["S_WORLDMAP_QUESTLOCATIONS"] = "Questorte anzeigen"
 L["S_WORLDMAP_QUESTSUMMARY"] = "Questübersicht anzeigen"
 L["S_WORLDMAP_TOOGLEQUESTS"] = "Quests ein-/ausblenden"

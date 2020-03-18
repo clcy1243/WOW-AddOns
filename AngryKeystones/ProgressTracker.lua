@@ -224,7 +224,7 @@ local function ProgressBar_SetValue(self, percent)
 				reapingFrame:SetSize(56, 16)
 				reapingFrame:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
 		
-				reapingFrame.Icon = CreateFrame("Frame", nil, block, "ScenarioChallengeModeAffixTemplate")
+				reapingFrame.Icon = CreateFrame("Frame", nil, reapingFrame, "ScenarioChallengeModeAffixTemplate")
 				reapingFrame.Icon:SetPoint("LEFT", reapingFrame, "LEFT", 0, 0)
 				reapingFrame.Icon:SetSize(14, 14)
 				reapingFrame.Icon.Portrait:SetSize(12, 12)
@@ -252,8 +252,10 @@ local function ProgressBar_SetValue(self, percent)
 				self.ReapingFrame.Text:SetFormattedText("%d%%", value/total*100)
 			end
 			self.ReapingFrame:Show()
+			self.ReapingFrame.Icon:Show()
 		elseif self.ReapingFrame then
 			self.ReapingFrame:Hide()
+			self.ReapingFrame.Icon:Hide()
 		end
 	end
 end
@@ -261,7 +263,7 @@ end
 local function DeathCount_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 	GameTooltip:SetText(CHALLENGE_MODE_DEATH_COUNT_TITLE:format(self.count), 1, 1, 1)
-	GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(GetTimeStringFromSeconds(self.timeLost, false, true)))
+	GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(SecondsToClock(self.timeLost, false)))
 
 	GameTooltip:AddLine(" ")
 	local list = {}

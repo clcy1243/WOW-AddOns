@@ -13,6 +13,8 @@ VUHDO_LibCompress = LibStub:GetLibrary("LibCompress");
 VUHDO_LibCompressEncode = VUHDO_LibCompress:GetAddonEncodeTable();
 
 VUHDO_LibBase64 = LibStub:GetLibrary("LibBase64-1.0");
+VUHDO_LibCustomGlow = LibStub("LibCustomGlow-1.0");
+VUHDO_LibNickTag = LibStub("NickTag-1.0");
 
 VUHDO_LibSharedMedia:Register("font", "Arial Black", "Interface\\AddOns\\VuhDo\\Fonts\\ariblk.ttf");
 VUHDO_LibSharedMedia:Register("font", "Emblem",	"Interface\\AddOns\\VuhDo\\Fonts\\Emblem.ttf");
@@ -33,9 +35,9 @@ VUHDO_LibSharedMedia:Register("statusbar", "VuhDo - Plain White", "Interface\\Ad
 VUHDO_LibSharedMedia:Register("statusbar", "LiteStepLite", "Interface\\AddOns\\VuhDo\\Images\\LiteStepLite.tga");
 VUHDO_LibSharedMedia:Register("statusbar", "Tukui", "Interface\\AddOns\\VuhDo\\Images\\tukuibar.tga");
 
-VUHDO_LibSharedMedia:Register("sound", "Tribal Bass Drum", "Sound\\Doodad\\BellTollTribal.wav");
-VUHDO_LibSharedMedia:Register("sound", "Thorns", "Sound\\Spells\\Thorns.wav	");
-VUHDO_LibSharedMedia:Register("sound", "Elf Bell Toll", "Sound\\Doodad\\BellTollNightElf.wav");
+VUHDO_LibSharedMedia:Register("sound", "Tribal Bass Drum", 566027);
+VUHDO_LibSharedMedia:Register("sound", "Thorns", 569022);
+VUHDO_LibSharedMedia:Register("sound", "Elf Bell Toll", 566558);
 
 VUHDO_LibSharedMedia:Register("border", "Plain White", "Interface\\AddOns\\VuhDo\\Images\\white_square_16_16");
 

@@ -50,11 +50,15 @@ local function spellOption(order, spellID, ...)
 	if (spellname ~= nil) then
 		return {
 			type = 'toggle',
-			name = "\124T" .. icon .. ":24\124t" .. spellname,							
-			desc = function () 
-				GameTooltip:SetHyperlink(GetSpellLink(spellID));
-				--GameTooltip:Show();
-			end,
+			name = "\124T" .. icon .. ":24\124t" .. spellname,			
+			desc = function ()
+				--GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")				
+				--GameTooltip:SetHyperlink(GetSpellLink(spellID))			
+				--Fix this.
+				
+				--GameTooltip:Show(GetSpellLink(spellID))
+				--GameTooltip:Show(descr)  
+			end, -- https://i.imgur.com/ChzUb.jpg
 			descStyle = "custom",
 					order = order,
 		}
@@ -74,6 +78,7 @@ local function listOption(spellList, listType, ...)
 		local GSA_SpellName = GSA.spellList[listType][v]
 		if GSA_SpellName then
 			rawset (args, GSA_SpellName, spellOption(k, v))
+			GameTooltip:Hide()
 		else 
 		end
 	end
@@ -238,48 +243,53 @@ function GSA:OnOptionCreate()
 								type = 'toggle',
 								name = L["Anywhere"],
 								desc = L["Alert works anywhere"],
-								order = 1,
+								order = 10,
+							},
+							--onlyflagged = {
+							--	type = 'toggle',
+							--	name = L["OnlyIfPvPFlagged"],
+							--	desc = L["OnlyIfPvPFlaggedDesc"],
+							--	disabled = function() return not gsadb.field or gsadb.all end,
+							--	order = 20,
+							--},
+							NewLine1 = {
+								type= 'description',
+								order = 30,
+								name= '',
 							},
 							arena = {
 								type = 'toggle',
 								name = L["Arena"],
 								desc = L["Alert only works in arena"],
 								disabled = function() return gsadb.all end,
-								order = 4,
-							},
-							NewLine1 = {
-								type= 'description',
-								order = 6,
-								name= '',
+								order = 40,
 							},
 							battleground = {
 								type = 'toggle',
 								name = L["Battleground"],
 								desc = L["Alert only works in BG"],
 								disabled = function() return gsadb.all end,
-								order = 2,
+								order = 50,
 							},
-							--epicbattleground = {
-								--type = 'toggle',
-								--name = L["epicbattleground"],
-								--desc = L["epicbattlegroundDesc"],
-								--disabled = function() return gsadb.all end,
-								--order = 3,
-							--},
+							epicbattleground = {
+								type = 'toggle',
+								name = L["epicbattleground"],
+								desc = L["epicbattlegroundDesc"],
+								disabled = function() return gsadb.all end,
+								order = 60,
+							},
+							NewLine2 = {
+								type= 'description',
+								order = 70,
+								name= '',
+							},
 							field = {
 								type = 'toggle',
 								name = L["World"],
 								desc = L["Alert works anywhere else then anena, BG, dungeon instance"],
 								disabled = function() return gsadb.all end,
-								order = 5,
+								order = 80,
 							},
---							onlyflagged = {
---								type = 'toggle',
---								name = L["OnlyIfPvPFlagged"],
---								desc = L["OnlyIfPvPFlaggedDesc"],
---								disabled = function() return not gsadb.field or gsadb.all end,
---								order = 6,
---							},
 						},
 					},
 					voice = {
@@ -377,7 +387,6 @@ function GSA:OnOptionCreate()
 								values = self.GSA_LANGUAGE,
 								order = 1,
 							},
-
 						},
 				},
 				spellGeneral = {
@@ -444,12 +453,12 @@ function GSA:OnOptionCreate()
 								desc = L["In arena, alert when enemy is drinking"],
 								order = 20,
 							},
-							tankTauntsON = { -- AuraApplied
-								type = 'toggle',
-								name = L["TankTauntsON"],
-								desc = L["TankTauntsON_Desc"],
-								order = 25,
-							},
+							--tankTauntsON = { -- AuraApplied
+								--type = 'toggle',
+								--name = L["TankTauntsON"],
+								--desc = L["TankTauntsON_Desc"],
+								--order = 25,
+							--},
 							generalaura = { --AuraApplied
 								type = 'group',
 								inline = true,
@@ -483,7 +492,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cffFF7D0ADruid|r"],
 								order = 70,
-								args = listOption({102560,102543,102558,33891,61336,22812,252216,1850,69369,102342,102351,155835,29166,194223,236696,163505,106951},"auraApplied"),
+								args = listOption({102560,102543,102558,33891,61336,22812,252216,1850,69369,102342,102351,155835,29166,194223,236696,305497,163505,106951},"auraApplied"),
 							},
 							hunter = { -- AuraApplied
 								type = 'group',
@@ -497,7 +506,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cff69CCF0Mage|r"],
 								order = 90,
-								args = listOption({45438,12042,12472,198111,198144,86949,87024},"auraApplied"),
+								args = listOption({45438,12042,12472,198111,198144,86949,87024,190319},"auraApplied"),
 							},
 							monk = { -- AuraApplied
 								type = 'group',
@@ -518,14 +527,14 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cffFFFFFFPriest|r"],
 								order = 120,
-								args = listOption({33206,47585,47788,197862,197871,200183,197268,193223,47536,194249,218413,15286,213610,213602,196762},"auraApplied"),
+								args = listOption({33206,47585,47788,197862,197871,200183,197268,193223,47536,194249,218413,15286,213610,213602},"auraApplied"),
 							},
 							rogue = { -- AuraApplied
 								type = 'group',
 								inline = true,
 								name = L["|cffFFF569Rogue|r"],
 								order = 130,
-								args = listOption({2983,31224,5277,51690,121471,185313,185422,199754,31230,45182,1833,1330,6770,207736},"auraApplied"), 
+								args = listOption({2983,31224,5277,51690,121471,185313,185422,199754,31230,45182,1833,1330,6770,207736,1966},"auraApplied"), 
 							},
 							shaman	= { -- AuraApplied
 								type = 'group',
@@ -563,13 +572,13 @@ function GSA:OnOptionCreate()
 								desc = L["Alert works only when your current target or focus gains the buff effect or use the ability"],
 								order = 1,
 							},
-							tankTauntsOFF = { -- AuraRemoved
-								type = 'toggle',
-								name = L["TankTauntsOFF"],
-								desc = L["TankTauntsOFF_Desc"],
-								disabled = function() return not gsadb.tankTauntsON or gsadb.aruaRemoved end,
-								order = 2,
-							},
+							--tankTauntsOFF = { -- AuraRemoved
+							--	type = 'toggle',
+							--	name = L["TankTauntsOFF"],
+							--	desc = L["TankTauntsOFF_Desc"],
+							--	disabled = function() return not gsadb.tankTauntsON or gsadb.aruaRemoved end,
+							--	order = 2,
+							--},
 							generalauradown = { --AuraRemoved
 								type = 'group',
 								inline = true,
@@ -596,7 +605,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cffFF7D0ADruid|r"],
 								order = 6,
-								args = listOption({102560,102543,102558,33891,117679,236696},"auraRemoved"), 
+								args = listOption({102560,102543,102558,33891,117679,236696,29166},"auraRemoved"), 
 							},
 							hunter = { -- AuraRemoved
 								type = 'group',
@@ -610,7 +619,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cff69CCF0Mage|r"],
 								order = 8,
-								args = listOption({45438,198111,198144},"auraRemoved"),
+								args = listOption({45438,198111,198144,190319,12042,12472},"auraRemoved"),
 							},
 							monk = { -- AuraRemoved
 								type = 'group',
@@ -624,21 +633,21 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cffF58CBAPaladin|r"],
 								order = 10,
-								args = listOption({1022,642,31850,205191,184662,86659,228049,25771,216331,204018},"auraRemoved"),
+								args = listOption({1022,642,31850,205191,184662,86659,228049,25771,216331,204018,210294,6940,199448},"auraRemoved"),
 							},
 							priest	= { -- AuraRemoved
 								type = 'group',
 								inline = true,
 								name = L["|cffFFFFFFPriest|r"],
 								order = 11,
-								args = listOption({33206,47585,109964,197268,193223,194249,218413,15286,213610,215769,196762,213602},"auraRemoved"),
+								args = listOption({33206,47585,109964,197268,193223,194249,218413,15286,213610,215769,213602},"auraRemoved"),
 							},
 							rogue = { -- AuraRemoved
 								type = 'group',
 								inline = true,
 								name = L["|cffFFF569Rogue|r"],
 								order = 12,
-								args = listOption({31224,5277,74001,51690,199754},"auraRemoved"),
+								args = listOption({31224,5277,74001,51690,199754,1966},"auraRemoved"),
 							},
 							shaman	= { -- AuraRemoved
 								type = 'group',
@@ -652,7 +661,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cff9482C9Warlock|r"],
 								order = 14,
-								args = listOption({212295},"auraRemoved"),
+								args = listOption({212295,104773,196098,113860,113858},"auraRemoved"),
 							},
 							warrior	= { -- AuraRemoved
 								type = 'group',
@@ -742,7 +751,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cffFFFFFFPriest|r"],
 								order = 110,
-								args = listOption({9484,605,32375,265202},"castStart"),
+								args = listOption({9484,605,32375,265202,289666},"castStart"),
 							},
 							--rogue = { -- CastStart
 							--	type = 'group',
@@ -763,7 +772,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cff9482C9Warlock|r"],
 								order = 140,
-								args = listOption({5782,710,152108,691,712,697,112866,112867,112870,112868,112869,30146,157757,157898,688,30108,116858,30283,115268,6358,265187},"castStart"),
+								args = listOption({5782,710,152108,691,712,697,112866,112867,112870,112868,112869,30146,157757,157898,688,30108,116858,30283,115268,6358,265187,29893,183601,6201},"castStart"),
 							},
 							--warrior = { -- CastStart
 							--	type = 'group',
@@ -791,15 +800,22 @@ function GSA:OnOptionCreate()
 								type = 'toggle',
 								name = L["PvP Trinketed Class"],
 								desc = L["Also announce class name with trinket alert when hostile targets use PvP trinket in arena"],
-								disabled = function() return not gsadb.trinket2 end,
+								--disabled = function() return not gsadb.trinket end,
 								order = 13,
 							},
 							success = { -- CastSuccess
 								type = 'toggle',
 								name = L["CastingSuccess"],
 								desc = L["CastingSuccess_Desc"],
-								disabled = function() return gsadb.castStart end,
+								--disabled = function() return gsadb.castStart end,
 								order = 15,
+							},
+							connected = { -- CastSuccess
+								type = 'toggle',
+								name = L["Connected"],
+								desc = L["Connected_Desc"],
+								--disabled = function() return gsadb.castStart end,
+								order = 17,
 							},
 							cure = { -- CastSuccess
 								type = 'toggle',
@@ -811,20 +827,20 @@ function GSA:OnOptionCreate()
 								type = 'toggle',
 								name = L["HealerDispel"],
 								desc = L["HealerDispel_Desc"],
-								order = 25,
+								order = 24,
 							},
 							purge = { -- CastSuccess
 								type = 'toggle',
 								name = L["Purge"],
 								desc = L["PurgeDesc"],
-								order = 28,
+								order = 26,
 							},
 							general = { -- CastSuccess
 								type = 'group',
 								inline = true,
 								name = L["General Abilities"],
 								order = 30,
-								args = listOption({178207,2825,272678,80353,90355,160452,32182,204361,204362,28730,232633,25046,50613,69179,155145,129597,202719,80483,107079,20549,58984,20594,7744,59752,42292,214027,208683,195710,23034,23035,213664,6262,265221,256948,257040,255654},"castSuccess"),
+								args = listOption({178207,2825,272678,80353,90355,160452,32182,204361,204362,28730,232633,25046,50613,69179,155145,129597,202719,80483,107079,20549,58984,20594,7744,59752,287712,295707,42292,214027,195710,208683,23034,23035,213664,6262,265221,256948,257040,255654,305252},"castSuccess"),
 							},
 							enemyInterrupts = { -- CastSuccess
 								type = 'group',
@@ -866,7 +882,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cff69CCF0Mage|r"],
 								order = 90,
-								args = listOption({66,12051,30449,110959,153561,198158,190319,205021,235219,235450,235313,11426,205025,108839,31661},"castSuccess"),
+								args = listOption({66,12051,30449,110959,153561,198158,205021,235219,235450,235313,11426,205025,108839,31661},"castSuccess"),
 							},
 							monk = { -- CastSuccess
 								type = 'group',
@@ -887,7 +903,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cffFFFFFFPriest|r"],
 								order = 120,
-								args = listOption({8122,34433,64044,15487,64843,19236,123040,204263,2050,88625,205369,211522,108968,271466,62618,263165,73325,215769,209780},"castSuccess"),
+								args = listOption({8122,34433,64044,15487,64843,19236,123040,204263,2050,88625,205369,211522,108968,271466,62618,263165,73325,215769,209780,289657},"castSuccess"),
 							},
 							rogue = { -- CastSuccess
 								type = 'group',
@@ -915,7 +931,7 @@ function GSA:OnOptionCreate()
 								inline = true,
 								name = L["|cff9482C9Warlock|r"],
 								order = 150,
-								args = listOption({6789,5484,48020,111859,111895,111896,111897,111898,1122,205180,201996,199954,199892,199890},"castSuccess"),
+								args = listOption({6789,48020,111859,111895,111896,111897,111898,1122,205180,201996,199954,199892,199890,80240},"castSuccess"),
 							},
 							warrior	= { -- CastSuccess
 								type = 'group',

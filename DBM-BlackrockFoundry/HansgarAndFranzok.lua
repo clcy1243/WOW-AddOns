@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1155, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 39 $"):sub(12, -3))
+mod:SetRevision("20200222221214")
 mod:SetCreatureID(76974, 76973)
 mod:SetEncounterID(1693)
 mod:SetZone()
@@ -33,22 +33,18 @@ local specWarnStampersEnd				= mod:NewSpecialWarningEnd(174825, nil, nil, nil, 1
 local timerDisruptingRoar				= mod:NewCastTimer(2.5, 160838, nil, "SpellCaster")
 local timerDisruptingRoarCD				= mod:NewCDTimer(45, 160838, nil, "SpellCaster")
 local timerSkullcrackerCD				= mod:NewCDTimer(22, 153470, nil, "Healer", nil, 5, nil, DBM_CORE_HEALER_ICON)
-local timerCripplingSupplex				= mod:NewCastTimer(9.5, 156938, nil, "Tank|Healer", nil, 5, nil, DBM_CORE_TANK_ICON)
+local timerCripplingSupplex				= mod:NewCastTimer(9.5, 156938, nil, "Tank|Healer", nil, 5, nil, DBM_CORE_TANK_ICON, nil, 2, 4)
 local timerJumpSlamCD					= mod:NewNextTimer(34, "ej9854", nil, nil, nil, 3)
 mod:AddTimerLine(ENCOUNTER_JOURNAL_SECTION_FLAG12)
-local timerSmartStamperCD				= mod:NewNextTimer(12, 162124, nil, nil, nil, 6, nil, DBM_CORE_HEROIC_ICON)--Activation
+local timerSmartStamperCD				= mod:NewNextTimer(12, 162124, nil, nil, nil, 6, nil, DBM_CORE_HEROIC_ICON, nil, 1, 4)--Activation
 
 --local berserkTimer						= mod:NewBerserkTimer(360)
-
-local countSmartStampers				= mod:NewCountdown(12, 160582)
-local countCripplingSupplex				= mod:NewCountdown("Alt9.5", 156938, "Tank|Healer", 2)
 
 mod.vb.phase = 1
 mod.vb.stamperDodgeCount = 0
 mod.vb.bossUp = "NoBody"
 mod.vb.firstJump = false
 mod.vb.jumpCount = 0
-local cachedGUID = nil
 
 function mod:JumpTarget(targetname, uId)
 	if not targetname then return end
@@ -76,7 +72,6 @@ function mod:OnCombatStart(delay)
 	timerDisruptingRoarCD:Start(-delay)
 	if self:IsMythic() then
 		timerSmartStamperCD:Start(13-delay)
-		countSmartStampers:Start(13-delay)
 --		berserkTimer:Start(-delay)
 	end
 end
@@ -129,17 +124,15 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 			specWarnStampers:Play("watchstep")
 		elseif self.vb.phase == 4 then--Second belt 25% (75 Energy) (Fire plates, then stampers)
 			specWarnSearingPlates:Show()
-			specWarnSearingPlates:Play("watchstep")	
+			specWarnSearingPlates:Play("watchstep")
 		end
 	elseif spellId == 156546 or spellId == 156542 then
 		specWarnCripplingSupplex:Schedule(6)--warn 3 seconds before, stun removed in 6.1
 		timerCripplingSupplex:Start()
-		countCripplingSupplex:Start()
 	elseif spellId == 157926 then--Jump Activation
 		self.vb.firstJump = false--So reset firstjump
 		self.vb.jumpCount = 0
 		DBM:Debug("157926: Jump Activation")
-		cachedGUID = UnitGUID(uId)
 		timerJumpSlamCD:Start()
 	elseif spellId == 157922 then--First jump must use 157922
 		local temptarget = UnitName(uId.."target") or "nil"
@@ -172,7 +165,6 @@ function mod:UNIT_TARGETABLE_CHANGED(uId)
 				specWarnSearingPlatesEnd:Show()
 				if self:IsMythic() then
 					timerSmartStamperCD:Start()
-					countSmartStampers:Start()
 					specWarnSearingPlatesEnd:Play("gather")--Must restack for smart stampers
 				else
 					specWarnSearingPlatesEnd:Play("safenow")
@@ -181,7 +173,6 @@ function mod:UNIT_TARGETABLE_CHANGED(uId)
 				specWarnStampersEnd:Show()
 				if self:IsMythic() then
 					timerSmartStamperCD:Start()
-					countSmartStampers:Start()
 					specWarnStampersEnd:Play("gather")--Must restack for smart stampers
 				else
 					specWarnStampersEnd:Play("safenow")

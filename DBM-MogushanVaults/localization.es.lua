@@ -1,10 +1,12 @@
-if GetLocale() ~= "esES" and GetLocale() ~= "esMX" then return end
+if GetLocale() ~= "esES" and GetLocale() ~= "esMX" then
+	return
+end
 local L
 
 --------------------------
 -- La guardia de piedra --
 --------------------------
-L= DBM:GetModLocalization(679)
+L = DBM:GetModLocalization(679)
 
 L:SetWarningLocalization({
 	SpecWarnOverloadSoon		= "¡%s en breve!", -- prepare survival ablility or move boss. need more specific message.
@@ -14,7 +16,6 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SpecWarnOverloadSoon		= "Mostrar aviso especial antes de Sobrecarga", -- need to change this, i can not translate this with good grammer. please help.
 	specWarnBreakJasperChains	= "Mostrar aviso especial cuando sea seguro romper $spell:130395",
-	ArrowOnJasperChains			= "Mostrar flecha cuando estés afectado por $spell:130395",
 	InfoFrame					= "Mostrar marco de información con la energía de los jefes, petrificación de los jugadores y qué jefe está lanzando la petrificación"
 })
 
@@ -25,7 +26,7 @@ L:SetMiscLocalization({
 ------------------------
 -- Feng el Detestable --
 ------------------------
-L= DBM:GetModLocalization(689)
+L = DBM:GetModLocalization(689)
 
 L:SetWarningLocalization({
 	WarnPhase			= "Fase %d",
@@ -41,23 +42,23 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Fire		= "¡Oh, exaltado! ¡Soy tu herramienta para desgarrar la carne de los huesos!",
-	Arcane		= "¡Oh, sabio eterno! ¡Transmíteme tu sapiencia Arcana!",
-	Nature		= "¡Oh, gran espíritu! ¡Otórgame el poder de la tierra!",--I did not log this one, text is probably not right
-	Shadow		= "¡Almas de campeones antiguos! ¡Concededme vuestro escudo!"
+	Fire	= "¡Oh, exaltado! ¡Soy tu herramienta para desgarrar la carne de los huesos!",
+	Arcane	= "¡Oh, sabio eterno! ¡Transmíteme tu sapiencia Arcana!",
+	Nature	= "¡Oh, gran espíritu! ¡Otórgame el poder de la tierra!",--I did not log this one, text is probably not right
+	Shadow	= "¡Almas de campeones antiguos! ¡Concededme vuestro escudo!"
 })
 
 --------------
 -- Gara'jal --
 --------------
-L= DBM:GetModLocalization(682)
+L = DBM:GetModLocalization(682)
 
 L:SetOptionLocalization({
-	SetIconOnVoodoo		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122151)
+	SetIconOnVoodoo	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(122151)
 })
 
 L:SetMiscLocalization({
-	Pull		= "¡Ya es hora de morir!"
+	Pull	= "¡Ya es hora de morir!"
 })
 
 ------------------------
@@ -66,7 +67,7 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization(687)
 
 L:SetWarningLocalization({
-	DarknessSoon		= "Escudo de la oscuridad en %d s"
+	DarknessSoon	= "Escudo de la oscuridad en %d s"
 })
 
 L:SetTimerLocalization({
@@ -91,7 +92,7 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerDespawnFloor		= "La plataforma desaparece"
+	timerDespawnFloor	= "La plataforma desaparece"
 })
 
 L:SetOptionLocalization({
@@ -103,7 +104,7 @@ L:SetOptionLocalization({
 ----------------------------
 -- Voluntad del Emperador --
 ----------------------------
-L= DBM:GetModLocalization(677)
+L = DBM:GetModLocalization(677)
 
 L:SetOptionLocalization({
 	InfoFrame		= "Mostrar marco de información de jugadores afectados por $spell:116525",

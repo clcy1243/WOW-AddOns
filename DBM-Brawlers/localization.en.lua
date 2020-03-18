@@ -39,6 +39,12 @@ L:SetMiscLocalization({
 	BizmoIgnored7	= "We've got a whole list of people who want to fight, you know.",
 	--Horde pre berserk
 	BazzelIgnored	= "Sheesh, guys! Hurry it up already!",
+	BazzelIgnored2	= "Uh oh... I smell smoke...",
+	BazzelIgnored3	= "Time's almost up!",
+	BazzelIgnored4	= "Is it gettin' hot in here?",
+	BazzelIgnored5	= "Fire's comin'!",
+	BazzelIgnored6	= "Let's keep it movin' in there!",
+	BazzelIgnored7	= "Alright, alright. We've got a line going out here, you know.",
 	--I wish there was a better way to do this....so much localizing. :(
 	Rank1			= "Rank 1",
 	Rank2			= "Rank 2",
@@ -75,6 +81,10 @@ L:SetGeneralLocalization({
 
 L:SetOptionLocalization({
 	SetIconOnBlat	= "Set icon (skull) on real Blat"
+})
+
+L:SetMiscLocalization({
+	Sand			= "Sand"
 })
 
 ------------
@@ -157,7 +167,7 @@ L:SetGeneralLocalization({
 L= DBM:GetModLocalization("BrawlLegacy")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Random"
+	name = "Brawlers: Other"
 })
 
 L:SetOptionLocalization({
@@ -170,7 +180,7 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization("BrawlChallenges")
 
 L:SetGeneralLocalization({
-	name = "Brawlers: Random 2"
+	name = "Brawlers: Other 2"
 })
 
 L:SetWarningLocalization({

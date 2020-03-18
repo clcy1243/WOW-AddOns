@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2019 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2020 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 -- 
 -- Gem information
@@ -328,7 +328,7 @@ local PawnGemData120Uncommon =
 
 
 --========================================
--- Level 110 crafted rare prismatic gems
+-- Level 120 crafted rare prismatic gems
 --========================================
 local PawnGemData120Rare =
 {
@@ -337,6 +337,20 @@ local PawnGemData120Rare =
 { 154127, "HasteRating", 40 }, -- Quick Owlseye
 { 154128, "Versatility", 40 }, -- Versatile Royal Quartz
 { 154129, "MasteryRating", 40 }, -- Masterful Tidal Amethyst
+
+}
+
+
+--========================================
+-- Level 120 crafted epic prismatic gems
+--========================================
+local PawnGemData120Epic =
+{
+
+{ 168639, "CritRating", 50 }, -- Deadly Lava Lazuli
+{ 168641, "HasteRating", 50 }, -- Quick Sand Spinel
+{ 168642, "Versatility", 50 }, -- Versatile Dark Opal
+{ 168640, "MasteryRating", 50 }, -- Masterful Sea Currant
 
 }
 
@@ -355,6 +369,7 @@ local PawnGemData120Rare =
 
 PawnGemQualityLevels =
 {
+	{ 430, PawnGemData120Epic }, -- Azshara's Eternal Palace heroic
 	{ 385, PawnGemData120Rare }, -- Darkshore warfront and Battle for Dazar'Alor raid finder
 	{ 270, PawnGemData120Uncommon }, -- above Legion legendaries
 	{ 225, PawnGemData110Epic }, -- Heroic Antorus

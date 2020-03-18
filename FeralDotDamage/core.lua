@@ -616,6 +616,7 @@ end
 
 local kickqueue = CreateFrame("Frame")
 kickqueue.elapsed = 0
+kickqueue:Hide()
 kickqueue:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = self.elapsed + elapsed
 	

@@ -442,11 +442,11 @@ function VUHDO_OnEvent(_, anEvent, anArg1, anArg2, anArg3, anArg4, anArg5, anArg
 			VUHDO_updateBouquetsForEvent(anArg1, 4); -- VUHDO_UPDATE_DEBUFF
 		end
 
-	elseif "UNIT_HEALTH" == anEvent then
+--	elseif "UNIT_HEALTH" == anEvent then
 		-- as of patch 7.1 we are seeing empty units on health related events
-		if anArg1 and (VUHDO_RAID or tEmptyRaid)[anArg1] then 
-			VUHDO_updateHealth(anArg1, 2); -- VUHDO_UPDATE_HEALTH
-		end
+--		if anArg1 and (VUHDO_RAID or tEmptyRaid)[anArg1] then 
+--			VUHDO_updateHealth(anArg1, 2); -- VUHDO_UPDATE_HEALTH
+--		end
 
 	-- TODO: is it ok to listen to both UNIT_HEALTH and UNIT_HEALTH_FREQUENT?
 	-- TODO: add options based on desired responsiveness and performance
@@ -468,6 +468,14 @@ function VUHDO_OnEvent(_, anEvent, anArg1, anArg2, anArg3, anArg4, anArg5, anArg
 				if "player" == anArg1 then VUHDO_updateBouquetsForEvent("player", 35); end -- VUHDO_UPDATE_CHI
 			elseif "HOLY_POWER" == anArg2 then
 				if "player" == anArg1 then VUHDO_updateBouquetsForEvent("player", 31); end -- VUHDO_UPDATE_OWN_HOLY_POWER
+			elseif "COMBO_POINTS" == anArg2 then
+				if "player" == anArg1 then VUHDO_updateBouquetsForEvent("player", 40); end -- VUHDO_UPDATE_COMBO_POINTS
+			elseif "SOUL_SHARDS" == anArg2 then
+				if "player" == anArg1 then VUHDO_updateBouquetsForEvent("player", 41); end -- VUHDO_UPDATE_SOUL_SHARDS
+			elseif "RUNES" == anArg2 then
+				if "player" == anArg1 then VUHDO_updateBouquetsForEvent("player", 42); end -- VUHDO_UPDATE_RUNES
+			elseif "ARCANE_CHARGES" == anArg2 then
+				if "player" == anArg1 then VUHDO_updateBouquetsForEvent("player", 43); end -- VUHDO_UPDATE_ARCANE_CHARGES
 			elseif "ALTERNATE" == anArg2 then
 				VUHDO_updateBouquetsForEvent(anArg1, 30); -- VUHDO_UPDATE_ALT_POWER
 			else
@@ -656,7 +664,7 @@ function VUHDO_OnEvent(_, anEvent, anArg1, anArg2, anArg3, anArg4, anArg5, anArg
 	elseif "LFG_PROPOSAL_SUCCEEDED" == anEvent then
 		VUHDO_lateRaidReload();
 	--elseif("UPDATE_MACROS" == anEvent) then
-		--VUHDO_timeReloadUI(0.1); -- @WARNING Lï¿½dt wg. shield macro alle 8 sec.
+		--VUHDO_timeReloadUI(0.1); -- @WARNING Lädt wg. shield macro alle 8 sec.
 
 	elseif "UNIT_FACTION" == anEvent then
 		if (VUHDO_RAID or tEmptyRaid)[anArg1] then VUHDO_updateBouquetsForEvent(anArg1, VUHDO_UPDATE_MINOR_FLAGS); end
@@ -680,6 +688,29 @@ function VUHDO_OnEvent(_, anEvent, anArg1, anArg2, anArg3, anArg4, anArg5, anArg
 			VUHDO_updateBouquetsForEvent(anArg1, VUHDO_UPDATE_PHASE); 
 		end
 		
+	elseif "RUNE_POWER_UPDATE" == anEvent then
+		VUHDO_updateBouquetsForEvent("player", 42); -- VUHDO_UPDATE_RUNES
+
+	elseif "PLAYER_SPECIALIZATION_CHANGED" == anEvent then
+		if VUHDO_VARIABLES_LOADED and not InCombatLockdown() then
+			if "player" == anArg1 then
+				local tSpecNum = tostring(GetSpecialization()) or "1";
+				local tBestProfile = VUHDO_getBestProfileAfterSpecChange();
+
+				-- event sometimes fires multiple times so we must de-dupe
+				if (VUHDO_SPEC_LAYOUTS["selected"] ~= VUHDO_SPEC_LAYOUTS[tSpecNum]) or 
+					(VUHDO_CONFIG["CURRENT_PROFILE"] ~= tBestProfile) then
+					VUHDO_activateSpecc(tSpecNum);
+				end
+			end
+
+			if ((VUHDO_RAID or tEmptyRaid)[anArg1] ~= nil) then
+				VUHDO_resetTalentScan(anArg1);
+				VUHDO_initDebuffs(); -- Talentabhängige Debuff-Fähigkeiten neu initialisieren.
+				VUHDO_timeReloadUI(1);
+			end
+		end
+
 	else
 		VUHDO_Msg("Error: Unexpected event: " .. anEvent);
 	end
@@ -697,6 +728,15 @@ local function VUHDO_setPanelsVisible(anIsVisible)
 	else
 		VUHDO_Msg("Not possible during combat!");
 	end
+end
+
+
+
+--
+local function VUHDO_printAbout()
+
+	VUHDO_Msg("VuhDo |cffffe566['vu:du:]|r v" .. VUHDO_VERSION .. " (use /vd). Currently maintained by Ivaria@US-Hyjal in honor of Marshy.");
+
 end
 
 
@@ -831,8 +871,11 @@ function VUHDO_slashCmd(aCommand)
 		VUHDO_xMsg(#tProfile, #tCompressed, #tUnCompressed);]]
 
 
+	elseif tCommandWord == "ab" or tCommandWord == "about" then
+		VUHDO_printAbout();
+
 	elseif aCommand == "?" or strfind(tCommandWord, "help")	or aCommand == "" then
-		local tLines = VUHDO_splitString(VUHDO_I18N_COMMAND_LIST, "ï¿½");
+		local tLines = VUHDO_splitString(VUHDO_I18N_COMMAND_LIST, "§");
 
 		for _, tCurLine in ipairs(tLines) do 
 			VUHDO_MsgC(tCurLine);
@@ -905,7 +948,11 @@ function VUHDO_updateGlobalToggles()
 	 	or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_OTHER_POWERS)
 	 	or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_ALT_POWER)
 	 	or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_OWN_HOLY_POWER)
-	 	or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_CHI),
+	 	or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_CHI)
+		or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_COMBO_POINTS) 
+		or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_SOUL_SHARDS) 
+		or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_RUNES) 
+		or VUHDO_isAnyoneInterstedIn(VUHDO_UPDATE_ARCANE_CHARGES),
 		"UNIT_DISPLAYPOWER", "UNIT_MAXPOWER", "UNIT_POWER_UPDATE", "UNIT_POWER_FREQUENT"
 	);
 
@@ -1168,7 +1215,7 @@ local function VUHDO_doReloadRoster(anIsQuick)
 			end
 		end
 
-		VUHDO_initDebuffs(); -- Verzï¿½gerung nach Taltentwechsel-Spell?
+		VUHDO_initDebuffs(); -- Verzögerung nach Taltentwechsel-Spell?
 	end
 end
 
@@ -1451,7 +1498,7 @@ end
 
 local VUHDO_ALL_EVENTS = {
 	"VARIABLES_LOADED", "PLAYER_ENTERING_WORLD",
-	"UNIT_HEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH",
+	"UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", -- "UNIT_HEALTH",
 	"UNIT_AURA",
 	"UNIT_TARGET",
 	"GROUP_ROSTER_UPDATE", "INSTANCE_ENCOUNTER_ENGAGE_UNIT", "UPDATE_ACTIVE_BATTLEFIELD",  
@@ -1462,7 +1509,7 @@ local VUHDO_ALL_EVENTS = {
 	"LEARNED_SPELL_IN_TAB",
 	"PLAYER_FLAGS_CHANGED",
 	"PLAYER_LOGOUT",
-	"UNIT_DISPLAYPOWER", "UNIT_MAXPOWER", "UNIT_POWER_UPDATE",
+	"UNIT_DISPLAYPOWER", "UNIT_MAXPOWER", "UNIT_POWER_UPDATE", "RUNE_POWER_UPDATE", 
 	"UNIT_SPELLCAST_SENT", "UNIT_SPELLCAST_SUCCEEDED",
 	"PARTY_MEMBER_ENABLE", "PARTY_MEMBER_DISABLE",
 	"COMBAT_LOG_EVENT_UNFILTERED",
@@ -1488,6 +1535,7 @@ local VUHDO_ALL_EVENTS = {
 	"UNIT_ABSORB_AMOUNT_CHANGED",
 	"INCOMING_SUMMON_CHANGED",
 	"UNIT_PHASE",
+	"PLAYER_SPECIALIZATION_CHANGED",
 };
 
 
@@ -1520,5 +1568,6 @@ function VUHDO_OnLoad(anInstance)
 
 	anInstance:SetScript("OnEvent", VUHDO_OnEvent);
 	anInstance:SetScript("OnUpdate", VUHDO_OnUpdate);
-	VUHDO_Msg("VuhDo |cffffe566['vu:du:]|r v" .. VUHDO_VERSION .. " (use /vd). Currently maintained by Ivaria@US-Hyjal in honor of Marshy.");
+
+	VUHDO_printAbout();
 end

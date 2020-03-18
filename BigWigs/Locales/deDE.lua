@@ -1,11 +1,16 @@
 local L = BigWigsAPI:NewLocale("BigWigs", "deDE")
 if not L then return end
 
-L.getNewRelease = "Dein BigWigs ist veraltet (/bwv), aber du kannst es mit Hilfe des Twitch Clients einfach aktualisieren. Alternativ kannst du es auch von curse.com oder wowinterface.com herunterladen und manuell aktualisieren."
+L.getNewRelease = "Dein BigWigs ist veraltet (/bwv), aber du kannst es mit Hilfe des Twitch Clients einfach aktualisieren. Alternativ kannst du es auch von curseforge.com oder wowinterface.com herunterladen und manuell aktualisieren."
 L.warnTwoReleases = "Dein BigWigs ist 2 Versionen älter als die neueste Version! Deine Version könnte Fehler, fehlende Funktionen oder völlig falsche Timer beinhalten. Es wird dringend empfohlen, BigWigs zu aktualisieren."
 L.warnSeveralReleases = "|cffff0000Dein BigWigs ist um %d Versionen veraltet!! Wir empfehlen dir DRINGEND, BigWigs zu aktualisieren, um Synchronisationsprobleme zwischen dir und anderen Spielern zu verhindern!|r"
 
-L.gitHubDesc = "BigWigs ist Open-Source-Software auf GitHub. Wir sind immer auf der Suche nach neuen Menschen, die uns helfen, und jeder ist willkommen, unseren Code zu inspizieren, Beiträge zu leisten und Fehlerberichte einzureichen. BigWigs ist hauptsächlich durch die großartige WoW-Gemeinschaft im Laufe der Zeit zu etwas Großem geworden.\n\n|cFF33FF99Unsere API ist nun dokumentiert und frei lesbar im Wiki auf GitHub.|r"
+L.gitHubDesc = "BigWigs ist Open-Source-Software auf GitHub. Wir sind immer auf der Suche nach neuen Menschen, die uns helfen, und jeder ist willkommen, unseren Code zu inspizieren, Beiträge zu leisten und Fehlerberichte einzureichen. BigWigs ist hauptsächlich durch die großartige WoW-Gemeinschaft im Laufe der Zeit zu etwas Großem geworden."
+
+L.testNameplate = "Ziel erkannt, erstelle Test Leiste über Namensplakette des Ziels."
+
+--L.classicWarning1 = "|cFF33FF99BigWigs|r: You're using the wrong version of BigWigs on a classic server."
+--L.classicWarning2 = "|cFF33FF99BigWigs|r: Please install the classic version of BigWigs."
 
 L.options = "Optionen"
 L.raidBosses = "Schlachtzugsbosse"
@@ -17,6 +22,7 @@ L.INFOBOX = L.infobox
 L.INFOBOX_desc = L.infobox_desc
 
 L.disabledAddOn = "Du hast das Addon |cFF436EEE%s|r deaktiviert, Timer werden nicht angezeigt."
+L.alternativeName = "%s (|cFF436EEE%s|r)"
 
 L.activeBossModules = "Aktive Bossmodule:"
 L.advanced = "Erweiterte Optionen"
@@ -125,6 +131,8 @@ L.SAY_COUNTDOWN = "Sprechblasen-Countdown"
 L.SAY_COUNTDOWN_desc = "Sprechblasen sind gut sichtbar. BigWigs nutzt oftmals Sprechblasen zum Herunterzählen, um Spieler in der Nähe vor auslaufenden Fähigkeiten zu warnen."
 L.ME_ONLY_EMPHASIZE = "Hervorheben (nur auf mir)"
 L.ME_ONLY_EMPHASIZE_desc = "Die Aktivierung dieser Option hebt Nachrichten zu dieser Fähigkeit NUR DANN hervor, wenn diese auf Dich angewandt wurden. Dadurch werden diese größer und sichtbarer dargestellt."
+L.NAMEPLATEBAR = "Leisten an Namensplaketten"
+L.NAMEPLATEBAR_desc = "Manchmal werden Leisten an Namensplaketten angezeigt wenn mehr als ein Gegner den gleichen Zauber wirkt. Wenn diese Fähigkeit von einer Leiste an der Namensplakette begleitet wird, die ausgeblendet werden soll, deaktiviere diese Option."
 
 -- Media.lua
 L.Beware = "Hütet Euch (Algalon)"

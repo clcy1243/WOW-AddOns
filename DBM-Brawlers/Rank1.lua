@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("BrawlRank1", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 18446 $"):sub(12, -3))
+mod:SetRevision("20200203000317")
 --mod:SetModelID(46327)--Last Boss of Rank 1
 mod:SetZone()
 
@@ -11,7 +11,7 @@ mod:RegisterEvents(
 --	"SPELL_AURA_REMOVED"
 )
 
-local warnChomp					= mod:NewSpellAnnounce(135342, 4)--Bruce
+local warnChomp					= mod:NewSpellAnnounce(135342, 4, nil, false, 2)--Bruce
 local warnDaFifHammer			= mod:NewSpellAnnounce(290486, 3)--Thog Hammerspace
 local warnCantataofFlooting		= mod:NewSpellAnnounce(140983, 3)
 
@@ -20,7 +20,7 @@ local specWarnDaFifHammer		= mod:NewSpecialWarningDodge(290486, nil, nil, nil, 1
 local specWarnCantataofFlooting	= mod:NewSpecialWarningInterrupt(140983, "HasInterrupt", nil, nil, 1, 2)--Grandpa Grumplefloot
 
 local timerChompCD				= mod:NewCDTimer(8, 135342, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)--Bruce
-local timerDaFifHammerCD		= mod:NewCDTimer(23.1, 290486, nil, nil, nil, 3)--Bruce
+local timerDaFifHammerCD		= mod:NewCDTimer(22.6, 290486, nil, nil, nil, 3)--Thog Hammerspace
 --local timerCantataofFlootingCD	= mod:NewCDTimer(8, 140983, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
 
 local brawlersMod = DBM:GetModByName("Brawlers")
@@ -35,6 +35,7 @@ function mod:SPELL_CAST_START(args)
 			specWarnChomp:Play("shockwave")
 		else
 			warnChomp:Show()--Give reg warnings for spectators
+			timerChompCD:SetSTFade(true)
 		end
 	elseif spellId == 290486 then
 		timerDaFifHammerCD:Start()
@@ -43,6 +44,7 @@ function mod:SPELL_CAST_START(args)
 			specWarnDaFifHammer:Play("shockwave")
 		else
 			warnDaFifHammer:Show()--Give reg warnings for spectators
+			timerDaFifHammerCD:SetSTFade(true)
 		end
 	elseif spellId == 140983 then
 		--timerCantataofFlootingCD:Start()
@@ -51,6 +53,7 @@ function mod:SPELL_CAST_START(args)
 			specWarnCantataofFlooting:Play("kickcast")
 		else
 			warnCantataofFlooting:Show()--Give reg warnings for spectators
+			--timerCantataofFlootingCD:SetSTFade(true)
 		end
 	end
 end

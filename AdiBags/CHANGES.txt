@@ -1,12 +1,12 @@
-tag 08cdc44da430337b06859dd25a34659b597aaa6c v1.9.14
+tag e6bc76afdc3ae4d74c418918b35dec6e2d71a26c v1.9.18
 Author:	Talyrius <contact@talyrius.net>
-Date:	Wed Mar 13 09:20:14 2019 -0700
+Date:	Mon Nov 25 16:06:20 2019 -0800
 
-Tagging as v1.9.14.
+Tagging as v1.9.18.
 
-commit ad3c28afc543c718ffac77c1762298e00289cb68
+commit 1a01b34f9c5fd4a21b3291e85c1e2b8308a5bc43
 Author: Talyrius <contact@talyrius.net>
-Date:   Wed Mar 13 09:15:43 2019 -0700
+Date:   Mon Nov 25 15:43:39 2019 -0800
 
-    ItemLevel: Updated item level ranges for Season 2.
+    Updated for Patch 8.2.5.
 

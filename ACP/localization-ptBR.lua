@@ -1,11 +1,8 @@
-if not ACP then return end
+﻿if not ACP then return end
 
 --@non-debug@
 
-if (GetLocale() == "ptBR") then
-	ACP:UpdateLocale(
-
-{
+L = {
 	["*** Enabling <%s> %s your UI ***"] = "*** Ativando <%s> %s sua UI ***",
 	["*** Unknown Addon <%s> Required ***"] = "*** Addon desconhecido <%s> Necessário ***",
 	["ACP: Some protected addons aren't loaded. Reload now?"] = "ACP: Alguns addons protegidos não foram carregados. Recarregar agora?",
@@ -74,7 +71,9 @@ if (GetLocale() == "ptBR") then
 	["when performing a reloadui."] = "quando recarregar a interface."
 }
 
-    )
+
+if (GetLocale() == "ptBR") then
+	ACP:UpdateLocale(L)
 end
 
 --@end-non-debug@

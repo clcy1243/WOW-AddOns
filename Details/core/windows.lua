@@ -685,7 +685,7 @@
 				if (self.baseframe.stretch_direction == "top") then
 					for _, instancia in _ipairs (self.stretchToo) do
 						instancia.baseframe:SetHeight (self.baseframe:GetHeight())
-						local mod = (self.baseframe:GetHeight() - instancia.baseframe._place.altura) / 2
+						local mod = (self.baseframe:GetHeight() - (instancia.baseframe._place.altura or instancia.baseframe:GetHeight())) / 2
 						instancia:RestoreMainWindowPositionNoResize (instancia.baseframe._place, nil, mod)
 					end
 				elseif (self.baseframe.stretch_direction == "bottom") then
@@ -1243,7 +1243,7 @@
 			end			
 			
 			--wallpaper
-			local background = f:CreateTexture (nil, "border")
+			local background = f:CreateTexture ("$parentBackgroundImage", "border")
 			background:SetAlpha (0.3)
 			background:SetPoint ("topleft", f, "topleft", 6, -65)
 			background:SetPoint ("bottomright", f, "bottomright", -10, 28)
@@ -1386,7 +1386,7 @@
 							
 						--received one encounter table
 						elseif (guildSyncID == "A") then
-							f.DownloadedAmount = f.DownloadedAmount + 1
+							f.DownloadedAmount = (f.DownloadedAmount or 0) + 1
 							
 							--size = 1 byte per characters in the string
 							f.EstimateSize = length * f.RequestedAmount > f.EstimateSize and length * f.RequestedAmount or f.RequestedAmount
@@ -1454,6 +1454,7 @@
 				local instanceId = _detalhes:GetInstanceIdFromEncounterId (encounterId)
 				if (instanceId) then
 					local file, L, R, T, B = _detalhes:GetRaidBackground (instanceId)
+					
 					background:SetTexture (file)
 					background:SetTexCoord (L, R, T, B)
 				end
@@ -2489,9 +2490,9 @@
 						else
 							bookmark.atributo = bookmark.atributo or 1
 							bookmark.sub_atributo = bookmark.sub_atributo or 1
-							this_block.label.text = _detalhes.sub_atributos [bookmark.atributo].lista [bookmark.sub_atributo]
-							this_block.icon.texture = _detalhes.sub_atributos [bookmark.atributo].icones [bookmark.sub_atributo] [1]
-							this_block.icon.texcoord = _detalhes.sub_atributos [bookmark.atributo].icones [bookmark.sub_atributo] [2]
+							this_block.label.text = _detalhes.sub_atributos [bookmark.atributo] and _detalhes.sub_atributos [bookmark.atributo].lista [bookmark.sub_atributo]
+							this_block.icon.texture = _detalhes.sub_atributos [bookmark.atributo] and _detalhes.sub_atributos [bookmark.atributo].icones [bookmark.sub_atributo] [1]
+							this_block.icon.texcoord = _detalhes.sub_atributos [bookmark.atributo] and _detalhes.sub_atributos [bookmark.atributo].icones [bookmark.sub_atributo] [2]
 							this_block.bg:SetVertexColor (.4, .4, .4, .6)
 						end
 						
@@ -3044,6 +3045,7 @@
 	
 	function panel:Open (text, callback, host, default)
 		if (host) then
+			panel:ClearAllPoints()
 			panel:SetPoint ("center", host, "center")
 		end
 		
@@ -3384,7 +3386,10 @@
 				OnClick = function (self, button)
 				
 					if (button == "LeftButton") then
-					
+						if (IsControlKeyDown()) then
+							_detalhes:ToggleWindows()
+							return
+						end
 						--> 1 = open options panel
 						if (_detalhes.minimap.onclick_what_todo == 1) then
 							local lower_instance = _detalhes:GetLowerInstanceNumber()
@@ -3410,7 +3415,7 @@
 								_detalhes:ShutDownAllInstances()
 							end
 						end
-						
+
 					elseif (button == "RightButton") then
 					
 						GameTooltip:Hide()
@@ -3493,6 +3498,7 @@
 						tooltip:AddLine (Loc ["STRING_MINIMAP_TOOLTIP12"])
 					end
 					tooltip:AddLine (Loc ["STRING_MINIMAP_TOOLTIP2"])
+					tooltip:AddLine ("|cFFCFCFCFctrl + left click|r: show/hide windows")
 				end,
 			})
 			
@@ -4641,11 +4647,62 @@
 			cancel_script_button:SetPoint ("topleft", code_editor, "bottomleft", 0, button_y)
 			
 			--> create run now button
+			
+			--from weakauras, list of functions to block on scripts
+			--source https://github.com/WeakAuras/WeakAuras2/blob/520951a4b49b64cb49d88c1a8542d02bbcdbe412/WeakAuras/AuraEnvironment.lua#L66
+			local blockedFunctions = {
+				-- Lua functions that may allow breaking out of the environment
+				getfenv = true,
+				getfenv = true,
+				loadstring = true,
+				pcall = true,
+				xpcall = true,
+				getglobal = true,
+				
+				-- blocked WoW API
+				SendMail = true,
+				SetTradeMoney = true,
+				AddTradeMoney = true,
+				PickupTradeMoney = true,
+				PickupPlayerMoney = true,
+				TradeFrame = true,
+				MailFrame = true,
+				EnumerateFrames = true,
+				RunScript = true,
+				AcceptTrade = true,
+				SetSendMailMoney = true,
+				EditMacro = true,
+				SlashCmdList = true,
+				DevTools_DumpCommand = true,
+				hash_SlashCmdList = true,
+				CreateMacro = true,
+				SetBindingMacro = true,
+				GuildDisband = true,
+				GuildUninvite = true,
+				securecall = true,
+				
+				--additional
+				setmetatable = true,
+			}
+			
+			local functionFilter = setmetatable ({}, {__index = function (env, key)
+				if (key == "_G") then
+					return env
+					
+				elseif (blockedFunctions [key]) then
+					return nil
+					
+				else	
+					return _G [key]
+				end
+			end})
+			
 			local execute_script = function()
 				local script = code_editor:GetText()
 				local func, errortext = loadstring (script, "Q")
 				
 				if (func) then
+					setfenv (func, functionFilter)
 					gump:QuickDispatch (func)
 				else
 					errortext_frame:Flash (0.2, 0.2, 0.4, true, nil, nil, "NONE")
@@ -4673,21 +4730,24 @@
 -- ~API
 
 	function _detalhes:InitializeAPIWindow()
-		local DetailsAPIPanel = gump:CreateSimplePanel (UIParent, 700, 480, "Details! API", "DetailsAPIPanel")
-		DetailsAPIPanel.Frame = DetailsAPIPanel
-		DetailsAPIPanel.__name = "API"
-		DetailsAPIPanel.real_name = "DETAILS_APIWINDOW"
-		DetailsAPIPanel.__icon = [[Interface\AddOns\Details\images\icons]]
-		DetailsAPIPanel.__iconcoords = {449/512, 480/512, 62/512, 83/512}
-		DetailsAPIPanel.__iconcolor = "DETAILS_API_ICON"
-		DetailsPluginContainerWindow.EmbedPlugin (DetailsAPIPanel, DetailsAPIPanel, true)
+		local DetailsAPI2Frame = gump:CreateSimplePanel (UIParent, 700, 480, "Details! API", "DetailsAPI2Frame")
+		DetailsAPI2Frame.Frame = DetailsAPI2Frame
+		DetailsAPI2Frame.__name = "API"
+		DetailsAPI2Frame.real_name = "DETAILS_APIWINDOW"
+		DetailsAPI2Frame.__icon = [[Interface\AddOns\Details\images\icons]]
+		DetailsAPI2Frame.__iconcoords = {449/512, 480/512, 62/512, 83/512}
+		DetailsAPI2Frame.__iconcolor = "DETAILS_API_ICON"
+		DetailsPluginContainerWindow.EmbedPlugin (DetailsAPI2Frame, DetailsAPI2Frame, true)
 		
-		function DetailsAPIPanel.RefreshWindow()
+		function DetailsAPI2Frame.RefreshWindow()
 			_detalhes.OpenAPI()
 		end
 	end
 	
 	function _detalhes.OpenAPI()
+	
+	
+		--[=[
 		if (not DetailsAPIPanel or not DetailsAPIPanel.Initialized) then
 			
 			local f = DetailsAPIPanel or gump:CreateSimplePanel (UIParent, 700, 480, "Details! API", "DetailsAPIPanel")
@@ -4742,6 +4802,357 @@
 		
 		--DetailsAPIPanel:Show()
 		DetailsPluginContainerWindow.OpenPlugin (DetailsAPIPanel)
+		
+		--]=]
+
+		if (not DetailsAPI2Frame or not DetailsAPI2Frame.Initialized) then
+
+			--menu settings
+			
+			DetailsAPI2Frame.Initialized = true
+			
+			local panelWidth = 800
+			local panelHeight = 610
+			local scrollWidth = 200
+			local scrollHeight = 570
+			local lineHeight = 20
+			local lineAmount = 27
+			local backdropColor = {.2, .2, .2, 0.2}
+			local backdropColorOnEnter = {.8, .8, .8, 0.4}
+			local backdropColorSelected = {1, 1, .8, 0.4}
+			local yStart = -30
+			local xAnchorPoint = 250
+			local parametersAmount = 10
+			local returnAmount = 10
+
+			--local Api2Frame = DetailsFramework:CreateSimplePanel (UIParent, panelWidth, panelHeight, "Details! API 2.0", "DetailsAPI2Frame")
+			local Api2Frame = DetailsAPI2Frame 
+			
+			Api2Frame:SetFrameStrata ("FULLSCREEN")
+			Api2Frame:SetPoint ("center")
+			DetailsFramework:ApplyStandardBackdrop (Api2Frame, false, 1.2)
+			
+			--store
+			local apiFunctionNames = {}
+			local parametersLines = {}
+			local returnLines = {}
+			local currentSelected = 1
+			
+			local api = Details.API_Description.namespaces[1].api
+			
+			--on select api on the menu
+			local onSelectAPI = function (self)
+				local apiName = apiFunctionNames [self.index]
+				if (not apiName) then
+					Details:Msg ("API name not found:", apiName)
+					return
+				end
+				
+				--fill the box in the right with information about the API
+				local apiInfo = api [self.index]
+				if (not apiInfo) then
+					Details:Msg ("API information for api not found", apiName)
+					return
+				end
+				
+				currentSelected = self.index
+				
+				--update name and desc
+				Api2Frame.ApiFunctionName.text = apiName
+				Api2Frame.ApiFunctionDesc.text = apiInfo.desc
+				
+				--update the copy line text box
+				local parameters = ""
+				for parameterIndex, parameterInfo in ipairs (apiInfo.parameters) do
+					if (parameterInfo.required) then
+						parameters = parameters .. parameterInfo.name .. ", "
+					end
+				end
+				parameters = parameters:gsub (", $", "")
+				
+				local returnValues = "local "
+				for returnIndex, returnInfo in ipairs (apiInfo.returnValues) do
+					returnValues = returnValues .. returnInfo.name .. ", "
+				end
+				returnValues = returnValues:gsub (", $", "")
+				returnValues = returnValues .. " = "
+				
+				if (parameters ~= "") then
+					Api2Frame.ApiCopy.text = returnValues .. "Details." .. apiName .. "( " .. parameters .. " )"
+				else
+					Api2Frame.ApiCopy.text = returnValues .. "Details." .. apiName .. "()"
+				end
+				
+				Api2Frame.ApiCopy:SetFocus (true)
+				Api2Frame.ApiCopy:HighlightText()
+				
+				--parameters
+				for i = 1, #parametersLines do
+					local parameterLine = parametersLines [i]
+					local parameterInfo = apiInfo.parameters [i]
+					
+					if (parameterInfo) then
+						parameterLine:Show()
+						parameterLine.index = i
+						parameterLine.name.text = parameterInfo.name
+						parameterLine.typeData.text = parameterInfo.type
+						parameterLine.required.text = parameterInfo.required and "yes" or "no"
+						parameterLine.default.text = parameterInfo.default or ""
+					else
+						parameterLine:Hide()
+					end
+				end	
+				
+				--return values
+				for i = 1, #returnLines do
+					local returnLine = returnLines [i]
+					local returnInfo = apiInfo.returnValues [i]
+				
+					if (returnInfo) then
+						returnLine:Show()
+						returnLine.index = i
+						returnLine.name.text = returnInfo.name
+						returnLine.typeData.text = returnInfo.type
+						returnLine.desc.text = returnInfo.desc
+						
+					else
+						returnLine:Hide()
+					end
+				end
+				
+				--refresh the scroll box
+				Api2Frame.scrollMenu:Refresh()
+			end
+			
+			--menu scroll
+			local apiMenuScrollRefresh = function (self, data, offset, total_lines)
+				for i = 1, total_lines do
+					local index = i + offset
+					local apiName = data [index]
+					if (apiName) then
+						local line = self:GetLine (i)
+						line.text:SetText (apiName)
+						line.index = index
+						
+						if (currentSelected == index) then
+							line:SetBackdropColor (unpack (backdropColorSelected))
+						else
+							line:SetBackdropColor (unpack (backdropColor))
+						end
+					end
+				end
+			end
+			
+			for apiIndex, apiDesc in ipairs (api) do
+				tinsert (apiFunctionNames, apiDesc.name)
+			end
+			
+			local api2ScrollMenu = DetailsFramework:CreateScrollBox (Api2Frame, "$parentApi2MenuScroll", apiMenuScrollRefresh, apiFunctionNames, scrollWidth, scrollHeight, lineAmount, lineHeight)
+			DetailsFramework:ReskinSlider (api2ScrollMenu)
+			api2ScrollMenu:SetPoint ("topleft", Api2Frame, "topleft", 10, yStart)
+			Api2Frame.scrollMenu = api2ScrollMenu
+			
+			local lineOnEnter = function (self)
+				self:SetBackdropColor (unpack (backdropColorOnEnter))
+				
+				local apiName = apiFunctionNames [self.index]
+				if (not apiName) then
+					return
+				end
+				
+				--fill the box in the right with information about the API
+				local apiInfo = api [self.index]
+				if (not apiInfo) then
+					return
+				end
+				
+				GameCooltip2:Preset(2)
+				GameCooltip2:SetOwner (self, "left", "right", 2, 0)
+				GameCooltip2:AddLine (apiInfo.desc)
+				GameCooltip2:ShowCooltip()
+			end
+			
+			local lineOnLeave = function (self)
+				if (currentSelected == self.index) then
+					self:SetBackdropColor (unpack (backdropColorSelected))
+				else
+					self:SetBackdropColor (unpack (backdropColor))
+				end
+				
+				GameCooltip2:Hide()
+			end
+			
+			--create lines
+			for i = 1, lineAmount do 
+				api2ScrollMenu:CreateLine (function (self, index)
+					local line = CreateFrame ("button", "$parentLine" .. index, self)
+					line:SetPoint ("topleft", self, "topleft", 1, -((index-1)*(lineHeight+1)) - 1)
+					line:SetSize (scrollWidth - 2, lineHeight)
+					line.index = index
+					
+					line:SetScript ("OnEnter", lineOnEnter)
+					line:SetScript ("OnLeave", lineOnLeave)
+					
+					line:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
+					line:SetBackdropColor (unpack (backdropColor))
+				
+					line.text = DetailsFramework:CreateLabel (line)
+					line.text:SetPoint ("left", line, "left", 2, 0)
+					
+					line:SetScript ("OnMouseDown", onSelectAPI)
+					
+					return line
+				end)
+			end
+
+			--info box
+				local infoWidth = panelWidth - xAnchorPoint - 10
+				--api name
+				Api2Frame.ApiFunctionName = DetailsFramework:CreateLabel (Api2Frame, "", 14, "orange")
+				Api2Frame.ApiFunctionName:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, yStart)
+				--api desc
+				Api2Frame.ApiFunctionDesc = DetailsFramework:CreateLabel (Api2Frame)
+				Api2Frame.ApiFunctionDesc:SetPoint ("topleft", Api2Frame.ApiFunctionName, "bottomleft", 0, -2)
+				Api2Frame.ApiFunctionDesc.width = infoWidth
+				Api2Frame.ApiFunctionDesc.height = 22
+				Api2Frame.ApiFunctionDesc.valign = "top"
+				
+				--api func to copy
+				local apiCopyString = DetailsFramework:CreateLabel (Api2Frame, "Copy String", 12, "orange")
+				apiCopyString:SetPoint ("topleft", Api2Frame.ApiFunctionDesc, "bottomleft", 0, -20)
+				Api2Frame.ApiCopy = DetailsFramework:CreateTextEntry (Api2Frame, function() end, infoWidth, 20)
+				Api2Frame.ApiCopy:SetPoint ("topleft", apiCopyString, "bottomleft", 0, -2)
+				Api2Frame.ApiCopy:SetTemplate (DetailsFramework:GetTemplate ("button", "DETAILS_CUSTOMDISPLAY_CODE_BOX"))
+				
+				--parameters
+				local parametersYStart = yStart - 110
+				local parametersString = DetailsFramework:CreateLabel (Api2Frame, "Parameters", 12, "orange")
+				parametersString:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, parametersYStart)
+				
+				parametersYStart = parametersYStart - 20
+				
+				local space1, space2, space3 = 150, 300, 450
+				local parametersHeader = CreateFrame ("frame", nil, Api2Frame)
+				parametersHeader:SetSize (infoWidth, 20)
+				parametersHeader:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, parametersYStart)
+				parametersHeader:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
+				parametersHeader:SetBackdropColor (unpack (backdropColor))
+				parametersHeader.name = DetailsFramework:CreateLabel (parametersHeader, "Name", 12, "yellow")
+				parametersHeader.typeData = DetailsFramework:CreateLabel (parametersHeader, "Type", 12, "yellow")
+				parametersHeader.required = DetailsFramework:CreateLabel (parametersHeader, "Is Required", 12, "yellow")
+				parametersHeader.default = DetailsFramework:CreateLabel (parametersHeader, "Default Value", 12, "yellow")
+				parametersHeader.name:SetPoint ("left", parametersHeader, "left", 2, 0)
+				parametersHeader.typeData:SetPoint ("left", parametersHeader, "left", space1, 0)
+				parametersHeader.required:SetPoint ("left", parametersHeader, "left", space2, 0)
+				parametersHeader.default:SetPoint ("left", parametersHeader, "left", space3, 0)
+				
+				local parameterOnEnter = function (self) 
+					GameCooltip2:Preset(2)
+					GameCooltip2:SetOwner (self)
+					
+					--fill the box in the right with information about the API
+					local apiInfo = api [currentSelected]
+					if (not apiInfo) then
+						return
+					end
+					GameCooltip2:AddLine (apiInfo.parameters [self.index].desc)
+					GameCooltip2:ShowCooltip()
+					
+					self:SetBackdropColor (unpack (backdropColorOnEnter))
+				end
+				local parameterOnLeave = function (self) 
+					GameCooltip2:Hide()
+					self:SetBackdropColor (unpack (backdropColor))
+				end
+				
+				for i = 1, parametersAmount do
+					local parameterLine = {}
+					local f = CreateFrame ("frame", nil, Api2Frame)
+					f:SetSize (infoWidth, 20)
+					f:SetScript ("OnEnter", parameterOnEnter)
+					f:SetScript ("OnLeave", parameterOnLeave)
+					f:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
+					f:SetBackdropColor (unpack (backdropColor))
+					f:Hide()
+					
+					f.name = DetailsFramework:CreateLabel (f)
+					f.typeData = DetailsFramework:CreateLabel (f)
+					f.required = DetailsFramework:CreateLabel (f)
+					f.default = DetailsFramework:CreateLabel (f)
+					
+					f:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, parametersYStart + (-i * 20))
+					
+					f.name:SetPoint ("left", f, "left", 2, 0)
+					f.typeData:SetPoint ("left", f, "left", space1, 0)
+					f.required:SetPoint ("left", f, "left", space2, 0)
+					f.default:SetPoint ("left", f, "left", space3, 0)
+					
+					tinsert (parametersLines, f)
+				end
+			
+			--return value box
+				local returnYStart = yStart - 260
+				local returnString = DetailsFramework:CreateLabel (Api2Frame, "Return Values", 12, "orange")
+				returnString:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, returnYStart)
+				
+				returnYStart = returnYStart - 20
+				
+				local space1 = 200
+				local returnHeader = CreateFrame ("frame", nil, Api2Frame)
+				returnHeader:SetSize (infoWidth, 20)
+				returnHeader:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, returnYStart)
+				returnHeader:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
+				returnHeader:SetBackdropColor (unpack (backdropColor))
+				returnHeader.name = DetailsFramework:CreateLabel (returnHeader, "Name", 12, "yellow")
+				returnHeader.typeData = DetailsFramework:CreateLabel (returnHeader, "Type", 12, "yellow")
+				returnHeader.name:SetPoint ("left", returnHeader, "left", 2, 0)
+				returnHeader.typeData:SetPoint ("left", returnHeader, "left", space1, 0)
+
+				local returnOnEnter = function (self) 
+					self:SetBackdropColor (unpack (backdropColorOnEnter))
+				end
+				local returnOnLeave = function (self) 
+					self:SetBackdropColor (unpack (backdropColor))
+				end
+				
+				for i = 1, returnAmount do
+					local parameterLine = {}
+					local f = CreateFrame ("frame", nil, Api2Frame)
+					f:SetSize (infoWidth, 20)
+					f:SetScript ("OnEnter", returnOnEnter)
+					f:SetScript ("OnLeave", returnOnLeave)
+					f:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
+					f:SetBackdropColor (unpack (backdropColor))
+					f:Hide()
+					
+					f.name = DetailsFramework:CreateLabel (f)
+					f.typeData = DetailsFramework:CreateLabel (f)
+					
+					f.desc = DetailsFramework:CreateLabel (f, "", 10, "gray")
+					f.desc.width = infoWidth
+					f.desc.height = 60
+					f.desc.valign = "top"
+					
+					f:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, returnYStart + (-i * 20))
+					
+					f.name:SetPoint ("left", f, "left", 2, 0)
+					f.typeData:SetPoint ("left", f, "left", space1, 0)
+					
+					f.desc:SetPoint ("topleft", f.name, "bottomleft", 0, -5)
+					
+					tinsert (returnLines, f)
+				end
+
+			function Api2Frame.Refresh()
+				onSelectAPI (api2ScrollMenu.Frames [1])
+			end
+		end
+		
+		DetailsAPI2Frame:Show()
+		DetailsAPI2Frame.Refresh()
+		
+		DetailsPluginContainerWindow.OpenPlugin (DetailsAPI2Frame)
+		
 	end
 	
 	
@@ -5700,7 +6111,7 @@ local CreateEventTrackerFrame = function (parent, name)
 			
 			--> set its backdrop
 			line:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tile = true, tileSize = 16, insets = {left = 0, right = 0, top = 0, bottom = 0}})
-			line:SetBackdropColor (1, 1, 1, 0.75)
+			--line:SetBackdropColor (1, 1, 1, 0.75)
 			
 			--> statusbar
 			local statusbar = CreateFrame ("statusbar", "$parentStatusBar", line)
@@ -5884,9 +6295,9 @@ local CreateEventTrackerFrame = function (parent, name)
 					line.LeftText:SetText (_detalhes:GetOnlyName (ability [ABILITYTABLE_CASTERNAME]))
 					
 					if (ability [ABILITYTABLE_ISENEMY]) then
-						line:SetBackdropColor (1, .3, .3, 0.75)
+						line:SetBackdropColor (1, .3, .3, 0.5)
 					else
-						line:SetBackdropColor (1, 1, 1, 0.75)
+						line:SetBackdropColor (1, 1, 1, 0.5)
 					end
 					
 					if (ability [ABILITYTABLE_SPELLTYPE] == SPELLTYPE_COOLDOWN) then
@@ -6081,16 +6492,9 @@ local CreateEventTrackerFrame = function (parent, name)
 		scrollframe:SetBackdropColor (0, 0, 0, 0)
 		
 		--> get tables used inside the combat parser
-		local cooldownList1 = _detalhes.DefensiveCooldownSpellsNoBuff
-		local cooldownList2 = _detalhes.DefensiveCooldownSpells
-		
-		local attackCooldownsList1 = _detalhes.AttackCooldownSpells
-		
-		local crowdControlList1 = _detalhes.CrowdControlSpells
-		
-		--> remove thise spells on shipping
-		--cooldownList1 [194679] = {60, 10}
-		--cooldownList1 [221699] = {60, 10}
+		local cooldownListFromFramework = DetailsFramework.CooldownsAllDeffensive
+		local attackCooldownsFromFramework = DetailsFramework.CooldownsAttack
+		local crowdControlFromFramework = DetailsFramework.CrowdControlSpells
 		
 		local combatLog = CreateFrame ("frame")
 		combatLog:RegisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
@@ -6099,28 +6503,35 @@ local CreateEventTrackerFrame = function (parent, name)
 		
 		--> combat parser
 		local is_player = function (flag)
+			if (not flag) then
+				return false
+			end
 			return bit.band (flag, OBJECT_TYPE_PLAYER) ~= 0
 		end
 		local is_enemy = function (flag)
+			if (not flag) then
+				return false
+			end
 			return bit.band (flag, OBJECT_TYPE_ENEMY) ~= 0
 		end
+		
 		combatLog:SetScript ("OnEvent", function (self, event)
 			
 			local time, token, hidding, caster_serial, caster_name, caster_flags, caster_flags2, target_serial, target_name, target_flags, target_flags2, spellid, spellname, spelltype, extraSpellID, extraSpellName, extraSchool = CombatLogGetCurrentEventInfo()
 			local added = false
 			
 			--> defensive cooldown
-			if (token == "SPELL_CAST_SUCCESS" and (cooldownList1 [spellid] or cooldownList2 [spellid]) and is_player (caster_flags)) then 
+			if (token == "SPELL_CAST_SUCCESS" and (cooldownListFromFramework [spellid]) and is_player (caster_flags)) then 
 				tinsert (CurrentShowing, 1, {SPELLTYPE_COOLDOWN, spellid, caster_name, target_name, time, false, GetTime(), caster_serial, is_enemy (caster_flags), target_serial})
 				added = true
 				
 			--> offensive cooldown
-			elseif (token == "SPELL_CAST_SUCCESS" and (attackCooldownsList1 [spellid]) and is_player (caster_flags)) then 
+			elseif (token == "SPELL_CAST_SUCCESS" and (attackCooldownsFromFramework [spellid]) and is_player (caster_flags)) then 
 				tinsert (CurrentShowing, 1, {SPELLTYPE_OFFENSIVE, spellid, caster_name, target_name, time, false, GetTime(), caster_serial, is_enemy (caster_flags), target_serial})
 				added = true
 			
 			--> crowd control
-			elseif (token == "SPELL_AURA_APPLIED" and (crowdControlList1 [spellid])) then
+			elseif (token == "SPELL_AURA_APPLIED" and (crowdControlFromFramework [spellid])) then
 				--check if isnt a pet
 				if (target_flags and is_player (target_flags)) then
 					tinsert (CurrentShowing, 1, {SPELLTYPE_CROWDCONTROL, spellid, caster_name, target_name, time, false, GetTime(), caster_serial, is_enemy (caster_flags), target_serial})
@@ -7052,3 +7463,12 @@ function _detalhes:ShowImportWindow (defaultText, confirmFunc, titleText)
 	end)
 end
 
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> api2 window
+
+function Details:ShowApi2()
+
+
+end

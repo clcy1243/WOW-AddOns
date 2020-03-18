@@ -13,12 +13,15 @@ L.warmup = "Warmup"
 L.warmup_desc = "Time until combat with the boss starts."
 
 L.already_registered = "|cffff0000WARNING:|r |cff00ff00%s|r (|cffffff00%s|r) already exists as a module in BigWigs, but something is trying to register it again. This usually means you have two copies of this module in your addons folder due to some addon updater failure. It is recommended that you delete any BigWigs folders you have and then reinstall it from scratch."
+L.testNameplate = "Target detected, creating a test nameplate bar over target nameplate."
 
 -- Loader / Options.lua
+L.classicWarning1 = "|cFF33FF99BigWigs|r: You're using the wrong version of BigWigs on a classic server."
+L.classicWarning2 = "|cFF33FF99BigWigs|r: Please install the classic version of BigWigs."
 L.officialRelease = "You are running an official release of BigWigs %s (%s)"
 L.alphaRelease = "You are running an ALPHA RELEASE of BigWigs %s (%s)"
 L.sourceCheckout = "You are running a source checkout of BigWigs %s directly from the repository."
-L.getNewRelease = "Your BigWigs is old (/bwv) but you can easily update it using the Twitch Client. Alternatively, you can update manually from curse.com or wowinterface.com."
+L.getNewRelease = "Your BigWigs is old (/bwv) but you can easily update it using the Twitch Client. Alternatively, you can update manually from curseforge.com or wowinterface.com."
 L.warnTwoReleases = "Your BigWigs is 2 releases out of date! Your version may have bugs, missing features, or completely incorrect timers. It is strongly recommended you update."
 L.warnSeveralReleases = "|cffff0000Your BigWigs is %d releases out of date!! We HIGHLY recommend you update to prevent syncing issues with other players!|r"
 
@@ -36,6 +39,7 @@ L.missingAddOn = "Please note that this zone requires the |cFF436EEE%s|r plugin 
 L.disabledAddOn = "You have the |cFF436EEE%s|r addon disabled, timers will not be shown."
 
 L.removeAddon = "Please remove '|cFF436EEE%s|r' as it's been replaced by '|cFF436EEE%s|r'."
+L.alternativeName = "%s (|cFF436EEE%s|r)"
 
 -- Media.lua
 L.Beware = "Beware (Algalon)"
@@ -80,7 +84,7 @@ L.slashDescRange = "|cFFFED000/range:|r Opens the range indicator."
 L.slashDescVersion = "|cFFFED000/bwv:|r Performs a BigWigs version check."
 L.slashDescConfig = "|cFFFED000/bw:|r Opens the BigWigs configuration."
 
-L.gitHubDesc = "BigWigs is open source software hosted on GitHub. We are always looking for new people to help us out and everyone is welcome to inspect our code, make contributions and submit bug reports. BigWigs is as great as it is today largely in part to the great WoW community helping us out.\n\n|cFF33FF99Our API is now documented and freely readable on the GitHub wiki.|r"
+L.gitHubDesc = "BigWigs is open source software hosted on GitHub. We are always looking for new people to help us out and everyone is welcome to inspect our code, make contributions and submit bug reports. BigWigs is as great as it is today largely in part to the great WoW community helping us out."
 
 L.BAR = "Bars"
 L.MESSAGE = "Messages"
@@ -124,6 +128,8 @@ L.SAY_COUNTDOWN = "Say Countdown"
 L.SAY_COUNTDOWN_desc = "Chat bubbles are easy to spot. BigWigs will use multiple say messages counting down to alert people nearby that an ability on you is about to expire."
 L.ME_ONLY_EMPHASIZE = "Emphasize (me only)"
 L.ME_ONLY_EMPHASIZE_desc = "Enabling this will emphasize any messages associated with this ability ONLY if it is casted on you, making them larger and more visible."
+L.NAMEPLATEBAR = "Nameplate Bars"
+L.NAMEPLATEBAR_desc = "Bars are sometimes attached to nameplates when more than one mob casts the same spell. If this ability is accompanied by a nameplate bar that you want to hide, disable this option."
 
 L.advanced = "Advanced options"
 L.back = "<< Back"
@@ -142,4 +148,3 @@ L.mythic = "Mythic"
 L.wipes = "Wipes:"
 L.kills = "Kills:"
 L.best = "Best:"
-

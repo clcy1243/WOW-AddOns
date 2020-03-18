@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(744, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 122 $"):sub(12, -3))
+mod:SetRevision("20200223183033")
 mod:SetCreatureID(62543)
 mod:SetEncounterID(1504)
 mod:SetZone()
@@ -40,13 +40,11 @@ local timerUnseenStrike					= mod:NewCastTimer(4.8, 123017)
 local timerUnseenStrikeCD				= mod:NewCDTimer(53, 123017, nil, nil, nil, 3) -- 53~61 cd.
 local timerIntensifyCD					= mod:NewNextTimer(60, 123471)
 local timerBladeTempest					= mod:NewBuffActiveTimer(9, 125310)
-local timerBladeTempestCD				= mod:NewNextTimer(60, 125310, nil, nil, nil, 2)--Always cast after immediately intensify since they essencially have same CD
+local timerBladeTempestCD				= mod:NewNextTimer(60, 125310, nil, nil, nil, 2, nil, nil, nil, 1, 4)--Always cast after immediately intensify since they essencially have same CD
 
-local countdownTempest					= mod:NewCountdown(60, 125310)
 local berserkTimer						= mod:NewBerserkTimer(490)
 
 mod:AddBoolOption("RangeFrame", "Ranged")--For Wind Step
-mod:AddBoolOption("UnseenStrikeArrow")
 
 local intensifyCD = 60
 local phase2 = false
@@ -64,7 +62,6 @@ function mod:OnCombatStart(delay)
 	end
 	if self:IsHeroic() then
 		timerBladeTempestCD:Start(-delay)
-		countdownTempest:Start(-delay)
 	end
 	if self.Options.RangeFrame and not self:IsDifficulty("lfr25") then
 		DBM.RangeCheck:Show(10)
@@ -74,9 +71,6 @@ end
 function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
-	end
-	if self.Options.UnseenStrikeArrow then
-		DBM.Arrow:Hide()
 	end
 end
 
@@ -118,7 +112,6 @@ function mod:SPELL_CAST_START(args)
 		specWarnBladeTempest:Show()
 		timerBladeTempest:Start()
 		timerBladeTempestCD:Start()
-		countdownTempest:Start()
 	end
 end
 
@@ -137,8 +130,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
-	if msg:find("spell:122949") then--Does not show in combat log except for after it hits. IT does fire a UNIT_SPELLCAST event but has no target info. You can get target 1 sec faster with UNIT_AURA but it's more cpu and not worth the trivial gain IMO
-		local target = DBM:GetUnitFullName(target)
+	if msg:find("spell:122949") and target then--Does not show in combat log except for after it hits. IT does fire a UNIT_SPELLCAST event but has no target info. You can get target 1 sec faster with UNIT_AURA but it's more cpu and not worth the trivial gain IMO
+		target = DBM:GetUnitFullName(target)
 		warnUnseenStrike:Show(target)
 		timerUnseenStrike:Start()
 		timerUnseenStrikeCD:Start()
@@ -147,9 +140,6 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 			yellUnseenStrike:Yell()
 		else
 			specWarnUnseenStrikeOther:Show(target)
-			if self.Options.UnseenStrikeArrow then
-				DBM.Arrow:ShowRunTo(target, 3, 5)
-			end
 		end
 	end
 end
@@ -174,7 +164,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 		timerUnseenStrikeCD:Cancel()
 		timerIntensifyCD:Cancel()
 		timerBladeTempestCD:Cancel()
-		countdownTempest:Cancel()
 		specWarnStormUnleashed:Show()
 	end
 end

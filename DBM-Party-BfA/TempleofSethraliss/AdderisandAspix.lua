@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(2142, "DBM-Party-BfA", 6, 1001)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 18153 $"):sub(12, -3))
+mod:SetRevision("20200211010544")
 mod:SetCreatureID(133379, 133944)
 mod:SetEncounterID(2124)
 mod:SetZone()
+mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
 
@@ -58,7 +59,7 @@ local timerArcDashCD				= mod:NewCDTimer(23, 263424, nil, nil, nil, 3)
 
 mod:AddRangeFrameOption("8")
 mod:AddInfoFrameOption(263246, true)
-mod:AddSetIconOption("SetIconOnNoLit", 263246, true, true)
+mod:AddSetIconOption("SetIconOnNoLit", 263246, true, true, {8})
 
 mod.vb.noLitShield = nil
 
@@ -77,7 +78,7 @@ end
 function mod:OnCombatStart(delay)
 	self.vb.noLitShield = nil
 	--Adderis should be in winds, Aspix timers started by Lightning Shield buff
-	timerCycloneStrikeCD:Start(9.8-delay)
+	timerCycloneStrikeCD:Start(9-delay)
 	if not self:IsNormal() then
 		timerArcingBladeCD:Start(7.3-delay)
 	end
@@ -102,6 +103,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 263246 then--Lightning Shield
 		warnLightningShield:Show(args.destName)
+		warnLightningShield:Play("targetchange")
 		local cid = self:GetCIDFromGUID(args.destGUID)
 		--Start lightning timers and stop wind
 		if cid == 133379 then--Adderis
@@ -135,7 +137,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	end
 end
---mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
@@ -199,16 +200,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerArcDashCD:Start()
 	end
 end
-
---[[
-function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 228007 and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
-		specWarnGTFO:Show()
-		specWarnGTFO:Play("watchfeet")
-	end
-end
-mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
---]]
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)

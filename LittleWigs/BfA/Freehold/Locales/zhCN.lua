@@ -27,7 +27,7 @@ L = BigWigs:NewBossLocale("Council o' Captains", "zhCN")
 if L then
 	L.crit_brew = "爆击酒"
 	L.haste_brew = "急速酒"
-	L.bad_brew = "坏酒别吃！"
+	L.bad_brew = "坏酒！"
 end
 
 L = BigWigs:NewBossLocale("Ring of Booty", "zhCN")
@@ -35,9 +35,9 @@ if L then
 	L.custom_on_autotalk = "自动对话"
 	L.custom_on_autotalk_desc = "立即选择对话选项以开始战斗。"
 
-	-- Gather 'round and place yer bets! We got a new set of vict-- uh... competitors! Take it away, Gurgthok and Wodin!
+	-- 来来来，下注了！又来了一群受害——呃，参赛者！交给你们了，古尔戈索克和伍迪！
 	L.lightning_warmup = "又来了一群受害"
-	-- It's a greased up pig? I'm beginning to think this is not a professional setup. Oh well... grab the pig and you win
+	-- 抹了油的猪？我开始对这场比赛的专业性产生怀疑了。好吧……抓到猪就算你赢。
 	L.lightning_warmup_2 = "我开始对这场比赛的专业性产生怀疑了"
 
 	L.lightning = "闪电"

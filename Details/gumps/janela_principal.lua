@@ -612,7 +612,7 @@ local movement_onupdate = function (self, elapsed)
 			show_instance_ids()
 			instance_ids_shown = nil
 			
-			if (need_show_group_guide) then
+			if (need_show_group_guide and not DetailsFramework.IsClassicWow()) then
 				_detalhes.MicroButtonAlert.Text:SetText (Loc ["STRING_WINDOW1ATACH_DESC"])
 				_detalhes.MicroButtonAlert:SetPoint ("bottom", need_show_group_guide.baseframe, "top", 0, 30)
 				_detalhes.MicroButtonAlert:SetHeight (320)
@@ -748,10 +748,12 @@ local movement_onupdate = function (self, elapsed)
 							instancia_alvo:SnapAlert()
 							_detalhes.snap_alert.playing = true
 							
-							_detalhes.MicroButtonAlert.Text:SetText (string.format (Loc ["STRING_ATACH_DESC"], self.instance.meu_id, instancia_alvo.meu_id))
-							_detalhes.MicroButtonAlert:SetPoint ("bottom", instancia_alvo.baseframe.cabecalho.modo_selecao.widget, "top", 0, 18)
-							_detalhes.MicroButtonAlert:SetHeight (200)
-							_detalhes.MicroButtonAlert:Show()
+							if (not DetailsFramework.IsClassicWow()) then
+								_detalhes.MicroButtonAlert.Text:SetText (string.format (Loc ["STRING_ATACH_DESC"], self.instance.meu_id, instancia_alvo.meu_id))
+								_detalhes.MicroButtonAlert:SetPoint ("bottom", instancia_alvo.baseframe.cabecalho.modo_selecao.widget, "top", 0, 18)
+								_detalhes.MicroButtonAlert:SetHeight (200)
+								_detalhes.MicroButtonAlert:Show()
+							end
 						end
 					end
 				end
@@ -1018,7 +1020,10 @@ local function move_janela (baseframe, iniciando, instancia, just_updating)
 		_detalhes.snap_alert.playing = false
 		_detalhes.snap_alert.animIn:Stop()
 		_detalhes.snap_alert.animOut:Play()
-		_detalhes.MicroButtonAlert:Hide()
+		
+		if (not DetailsFramework.IsClassicWow()) then
+			_detalhes.MicroButtonAlert:Hide()
+		end
 
 		if (instancia_alvo and instancia_alvo.ativa and instancia_alvo.baseframe) then
 			instancia_alvo.h_esquerda:Stop()
@@ -1155,7 +1160,6 @@ local function BFrame_scripts (baseframe, instancia)
 end
 
 local function backgrounddisplay_scripts (backgrounddisplay, baseframe, instancia)
-
 	backgrounddisplay:SetScript ("OnEnter", function (self)
 		OnEnterMainWindow (instancia, self)
 	end)
@@ -2179,7 +2183,7 @@ local icon_frame_on_enter = function (self)
 			
 			local class_icon, class_L, class_R, class_T, class_B = _detalhes:GetClassIcon (class)
 			
-			local spec_id, spec_name, spec_description, spec_icon, spec_role, spec_class = GetSpecializationInfoByID (spec or 0) --thanks pas06
+			local spec_id, spec_name, spec_description, spec_icon, spec_role, spec_class = DetailsFramework.GetSpecializationInfoByID (spec or 0) --thanks pas06
 			local spec_L, spec_R, spec_T, spec_B 
 			if (spec_id) then
 				spec_L, spec_R, spec_T, spec_B  = unpack (_detalhes.class_specs_coords [spec])
@@ -2411,12 +2415,16 @@ local icon_frame_create_animation = function()
 end
 
 local icon_frame_on_click_down = function (self)
-	self:GetParent():GetParent().icone_classe:SetPoint ("left", self:GetParent():GetParent(), "left", 1, -1)
+	local instanceID = self.instance_id
+	local instanceObject = Details:GetInstance (instanceID)
+	self:GetParent():GetParent().icone_classe:SetPoint ("left", self:GetParent():GetParent(), "left", instanceObject.row_info.icon_offset[1] + 1, instanceObject.row_info.icon_offset[2] + -1)
 end
 
 local icon_frame_on_click_up = function (self, button)
 
-	self:GetParent():GetParent().icone_classe:SetPoint ("left", self:GetParent():GetParent(), "left")
+	local instanceID = self.instance_id
+	local instanceObject = Details:GetInstance (instanceID)
+	self:GetParent():GetParent().icone_classe:SetPoint ("left", self:GetParent():GetParent(), "left", instanceObject.row_info.icon_offset[1], instanceObject.row_info.icon_offset[2])
 
 	if (button == "LeftButton") then
 		--> open the rank panel
@@ -3038,9 +3046,9 @@ local hide_click_func = function()
 	--empty
 end
 
-function _detalhes:InstanceAlert (msg, icon, time, clickfunc, doflash)
+function _detalhes:InstanceAlert (msg, icon, time, clickfunc, doflash, forceAlert)
 	
-	if (_detalhes.streamer_config.no_alerts) then
+	if (not forceAlert and _detalhes.streamer_config.no_alerts) then
 		return
 	end
 	
@@ -3469,7 +3477,8 @@ function gump:CriaJanelaPrincipal (ID, instancia, criando)
 	backgrounddisplay:SetFrameLevel (3)
 	backgroundframe.instance = instancia
 	backgrounddisplay.instance = instancia
-
+	instancia.windowBackgroundDisplay = backgrounddisplay
+	
 	--> row frame is the parent of rows, it have setallpoints on baseframe
 	local rowframe = CreateFrame ("frame", "DetailsRowFrame"..ID, _UIParent)
 	rowframe:SetAllPoints (baseframe)
@@ -3484,6 +3493,8 @@ function gump:CriaJanelaPrincipal (ID, instancia, criando)
 	switchbutton:SetPoint ("topleft", backgrounddisplay, "topleft")
 	switchbutton:SetPoint ("bottomright", backgrounddisplay, "bottomright")
 	switchbutton:SetFrameLevel (backgrounddisplay:GetFrameLevel()+1)
+	
+	instancia.windowSwitchButton = switchbutton
 	
 	--> avoid mouse hover over a high window when the menu is open for a lower instance.
 	local anti_menu_overlap = CreateFrame ("frame", "Details_WindowFrameAntiMenuOverlap" .. ID, UIParent)
@@ -4085,6 +4096,7 @@ function gump:CriaNovaBarra (instancia, index)
 	icon_frame:SetPoint ("topleft", icone_classe, "topleft")
 	icon_frame:SetPoint ("bottomright", icone_classe, "bottomright")
 	icon_frame:SetFrameLevel (new_row.statusbar:GetFrameLevel()+1)
+	icon_frame.instance_id = instancia.meu_id
 	icon_frame.row = new_row
 	new_row.icon_frame = icon_frame
 	
@@ -4123,7 +4135,7 @@ function gump:CriaNovaBarra (instancia, index)
 	return new_row
 end
 
-function _detalhes:SetBarTextSettings (size, font, fixedcolor, leftcolorbyclass, rightcolorbyclass, leftoutline, rightoutline, customrighttextenabled, customrighttext, percentage_type, showposition, customlefttextenabled, customlefttext, smalloutline_left, smalloutlinecolor_left, smalloutline_right, smalloutlinecolor_right)
+function _detalhes:SetBarTextSettings (size, font, fixedcolor, leftcolorbyclass, rightcolorbyclass, leftoutline, rightoutline, customrighttextenabled, customrighttext, percentage_type, showposition, customlefttextenabled, customlefttext, smalloutline_left, smalloutlinecolor_left, smalloutline_right, smalloutlinecolor_right, translittext)
 	
 	--> size
 	if (size) then
@@ -4206,6 +4218,11 @@ function _detalhes:SetBarTextSettings (size, font, fixedcolor, leftcolorbyclass,
 	--> show position number
 	if (type (showposition) == "boolean") then
 		self.row_info.textL_show_number = showposition
+	end
+
+	--> translit text by Vardex (https://github.com/Vardex May 22, 2019)
+	if (type (translittext) == "boolean") then
+		self.row_info.textL_translit_text = translittext
 	end
 	
 	self:InstanceReset()
@@ -4603,6 +4620,8 @@ function _detalhes:InstanceRefreshRows (instancia)
 		end
 		
 		local icon_force_grayscale = self.row_info.icon_grayscale
+		
+		local icon_offset_x, icon_offset_y = unpack (self.row_info.icon_offset)
 	
 	--custom right text
 		local custom_right_text_enabled = self.row_info.textR_enable_custom_text
@@ -4663,7 +4682,7 @@ function _detalhes:InstanceRefreshRows (instancia)
 				row.icone_classe:Hide()
 			else
 				row.icone_classe:ClearAllPoints()
-				row.icone_classe:SetPoint ("left", row, "left")
+				row.icone_classe:SetPoint ("left", row, "left", icon_offset_x, icon_offset_y)
 				row.icone_classe:Show()
 				
 				if (start_after_icon) then
@@ -4695,7 +4714,7 @@ function _detalhes:InstanceRefreshRows (instancia)
 			else
 			
 				row.icone_classe:ClearAllPoints()
-				row.icone_classe:SetPoint ("right", row, "right")
+				row.icone_classe:SetPoint ("right", row, "right", icon_offset_x, icon_offset_y)
 				row.icone_classe:Show()
 				
 				if (start_after_icon) then
@@ -4817,6 +4836,9 @@ function _detalhes:InstanceRefreshRows (instancia)
 	end
 	
 	self:SetBarGrowDirection()
+	
+	self:UpdateClickThrough()
+	
 
 end
 
@@ -4875,15 +4897,6 @@ function _detalhes:InstanceWallpaper (texture, anchor, alpha, texcoord, width, h
 	end
 	
 	if (not wallpaper.texture and not texture) then
-	--[[ 7.1.5 isn't sending the background on the 5� return value ~cleanup
-		local spec = GetSpecialization()
-		if (spec) then
-			local _, _, _, _, _background = GetSpecializationInfo (spec)
-			if (_background) then
-				texture = "Interface\\TALENTFRAME\\".._background
-			end
-		end
-	--]]	
 		texture = "Interface\\AddOns\\Details\\images\\background"
 		
 		texcoord = {0, 1, 0, 0.7}
@@ -5167,6 +5180,12 @@ function _detalhes:InstanceColor (red, green, blue, alpha, no_save, change_statu
 
 --	print (self.skin, self.meu_id)
 	local skin = _detalhes.skins [self.skin]
+	if (not skin) then --the skin isn't available any more
+		Details:Msg ("Skin " .. (self.skin or "?") .. " not found, changing to 'Minimalistic'.")
+		Details:Msg ("Recommended to change the skin in the option panel > Skin Selection.")
+		skin = _detalhes.skins ["Minimalistic"]
+		self.skin = "Minimalistic"
+	end
 	
 	--[[
 	self.baseframe.rodape.esquerdo:SetVertexColor (red, green, blue)
@@ -6075,7 +6094,7 @@ function _detalhes:GetSegmentInfo (index)
 			elseif (combat.instance_type == "party") then
 				local ej_id = combat.is_boss.ej_instance_id
 				if (ej_id) then
-					local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = EJ_GetInstanceInfo (ej_id)
+					local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = DetailsFramework.EncounterJournal.EJ_GetInstanceInfo (ej_id)
 					if (bgImage) then
 						background = bgImage
 						background_coords = party_wallpaper_tex
@@ -6162,6 +6181,7 @@ local build_segment_list = function (self, elapsed)
 		local dungeon_run_id = false
 		
 		--> history table (segments container)
+		local isMythicDungeon = false
 		for i = _detalhes.segments_amount, 1, -1 do
 			
 			if (i <= fill) then
@@ -6176,6 +6196,16 @@ local build_segment_list = function (self, elapsed)
 					--print (thisCombat.is_boss.name, thisCombat.instance_type, _detalhes:GetRaidIcon (thisCombat.is_boss.mapid), thisCombat.is_boss.ej_instance_id)
 
 					if (thisCombat.is_mythic_dungeon_segment) then
+					
+						if (not isMythicDungeon) then
+							--GameCooltip:AddLine ("$div", nil, nil, -5, -13)
+							isMythicDungeon = thisCombat.is_mythic_dungeon_run_id
+						else
+							if (isMythicDungeon ~= thisCombat.is_mythic_dungeon_run_id) then
+							--	GameCooltip:AddLine ("$div", nil, nil, -5, -13)
+								isMythicDungeon = thisCombat.is_mythic_dungeon_run_id
+							end
+						end
 					
 						local mythicDungeonInfo = thisCombat:GetMythicDungeonInfo()
 					
@@ -6208,11 +6238,12 @@ local build_segment_list = function (self, elapsed)
 								
 							else
 								if (segmentID == "trashoverall") then
-									--CoolTip:AddLine (encounterName .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")", _detalhes.gump:IntegerToTimer (combat_time), 1, dungeon_color, "gray")
-									CoolTip:AddLine ((encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")", _detalhes.gump:IntegerToTimer (endedAt - startedAt), 1, dungeon_color, "gray")
+									local trashIcon = "|TInterface\\AddOns\\Details\\images\\icons:16:16:0:0:512:512:14:58:98:160|t"
+									CoolTip:AddLine (trashIcon .. "" .. (encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")", _detalhes.gump:IntegerToTimer (endedAt - startedAt), 1, dungeon_color, "gray")
 									CoolTip:AddLine ((encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")", nil, 2, "white", "white")
 								else
-									CoolTip:AddLine ((encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_BOSS"] .. ")", _detalhes.gump:IntegerToTimer (combat_time), 1, dungeon_color, "gray")
+									local skull = "|TInterface\\AddOns\\Details\\images\\icons:16:16:0:0:512:512:496:512:0:16|t"
+									CoolTip:AddLine (skull .. "" .. (encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_BOSS"] .. ")", _detalhes.gump:IntegerToTimer (combat_time), 1, dungeon_color, "gray")
 									CoolTip:AddLine ((encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_BOSS"] .. ")", nil, 2, "white", "white")
 								end
 								CoolTip:AddIcon ([[Interface\AddOns\Details\images\icons]], "main", "left", 14, 10, 479/512, 510/512, 24/512, 51/512)
@@ -6236,11 +6267,25 @@ local build_segment_list = function (self, elapsed)
 							if (segmentID == "trashoverall") then
 								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
 								local totalRealTime = endedAt - startedAt
-								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (endedAt - startedAt) .. " [|cFFFF3300" .. _detalhes.gump:IntegerToTimer (totalRealTime - decorrido) .. "|r]", 2, "white", "white")
+								local wasted = totalRealTime - decorrido
+								
+								--wasted time
+								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_WASTED_TIME"] .. ":", "|cFFFF3300" .. _detalhes.gump:IntegerToTimer (wasted) .. " (" .. floor (wasted / totalRealTime * 100) .. "%)|r", 2, "white", "white")
+								CoolTip:AddStatusBar (100, 2, 0, 0, 0, 0.35, false, false, "Skyline")
+								
+								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (endedAt - startedAt), 2, "white", "white")
+								
 							elseif (isMythicOverallSegment) then
 								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
 								local totalRealTime = endedAt - startedAt
-								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (totalRealTime) .. " [|cFFFF3300" .. _detalhes.gump:IntegerToTimer (totalRealTime - decorrido) .. "|r]", 2, "white", "white")
+								local wasted = totalRealTime - decorrido
+								
+								--wasted time
+								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_WASTED_TIME"] .. ":", "|cFFFF3300" .. _detalhes.gump:IntegerToTimer (wasted) .. " (" .. floor (wasted / totalRealTime * 100) .. "%)|r", 2, "white", "white")
+								CoolTip:AddStatusBar (100, 2, 0, 0, 0, 0.35, false, false, "Skyline")
+								
+								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (totalRealTime), 2, "white", "white")
+								
 							else
 								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_COMBATTIME"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
 							end
@@ -6252,6 +6297,7 @@ local build_segment_list = function (self, elapsed)
 							CoolTip:AddLine (Loc ["STRING_SEGMENT_START"] .. ":", thisCombat.data_inicio, 2, "white", "white")
 							CoolTip:AddLine (Loc ["STRING_SEGMENT_END"] .. ":", thisCombat.data_fim or "in progress", 2, "white", "white")
 							
+							CoolTip:AddStatusBar (100, 1, .3, .3, .3, 0.2, false, false, "Skyline")
 						else
 							--> the combat has mythic dungeon tag but doesn't have a mythic dungeon table information
 							--> so this is a trash cleanup segment
@@ -6279,7 +6325,8 @@ local build_segment_list = function (self, elapsed)
 						segment_info_added = true
 						
 					elseif (thisCombat.is_boss and thisCombat.is_boss.name) then
-					
+						
+						isMythicDungeon = false
 						local try_number = thisCombat.is_boss.try_number
 						local combat_time = thisCombat:GetCombatTime()
 					
@@ -6318,7 +6365,7 @@ local build_segment_list = function (self, elapsed)
 								if (index and name and encounterID) then
 									--EJ_SelectInstance (instanceID)
 									--creature info pode ser sempre 1, n�o usar o index do boss
-									local id, name, description, displayInfo, iconImage = EJ_GetCreatureInfo (1, encounterID)
+									local id, name, description, displayInfo, iconImage = DetailsFramework.EncounterJournal.EJ_GetCreatureInfo (1, encounterID)
 									if (iconImage) then
 										CoolTip:AddIcon (iconImage, 2, "top", 128, 64)
 									end
@@ -6335,7 +6382,7 @@ local build_segment_list = function (self, elapsed)
 							else
 								local ej_id = thisCombat.is_boss.ej_instance_id
 								if (ej_id and ej_id ~= 0) then
-									local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = EJ_GetInstanceInfo (ej_id)
+									local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = DetailsFramework.EncounterJournal.EJ_GetInstanceInfo (ej_id)
 									if (name) then
 										if (thisCombat.instance_type == "party") then
 											CoolTip:SetWallpaper (2, bgImage, party_wallpaper_tex, party_wallpaper_color, true)
@@ -6353,6 +6400,7 @@ local build_segment_list = function (self, elapsed)
 						end
 					
 					elseif (thisCombat.is_pvp) then
+						isMythicDungeon = false
 						CoolTip:AddLine (thisCombat.is_pvp.name, _, 1, battleground_color)
 						enemy = thisCombat.is_pvp.name
 						CoolTip:AddIcon ([[Interface\AddOns\Details\images\icons]], "main", "left", 16, 12, 0.251953125, 0.306640625, 0.205078125, 0.248046875)
@@ -6368,6 +6416,7 @@ local build_segment_list = function (self, elapsed)
 						end
 					
 					elseif (thisCombat.is_arena) then
+						isMythicDungeon = false
 						CoolTip:AddLine (thisCombat.is_arena.name, _, 1, "yellow")
 						enemy = thisCombat.is_arena.name
 						CoolTip:AddIcon ([[Interface\AddOns\Details\images\icons]], "main", "left", 16, 12, 0.251953125, 0.306640625, 0.205078125, 0.248046875)
@@ -6382,6 +6431,7 @@ local build_segment_list = function (self, elapsed)
 							--CoolTip:SetWallpaper (2, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
 						end
 					else
+						isMythicDungeon = false
 						enemy = thisCombat.enemy
 						if (enemy) then
 							CoolTip:AddLine (thisCombat.enemy .." (#"..i..")", _, 1, "yellow")
@@ -6513,13 +6563,27 @@ local build_segment_list = function (self, elapsed)
 					
 					if (segmentID == "trashoverall") then
 						local totalRealTime = endedAt - startedAt
+						local wasted = totalRealTime - decorrido
+						
 						CoolTip:AddLine (Loc["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
+						
+						--wasted time
+						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_WASTED_TIME"] .. ":", "|cFFFF3300" .. _detalhes.gump:IntegerToTimer (wasted) .. " (" .. floor (wasted / totalRealTime * 100) .. "%)|r", 2, "white", "white")
+						CoolTip:AddStatusBar (100, 2, 0, 0, 0, 0.35, false, false, "Skyline")
+						
 						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (endedAt - startedAt) .. " [|cFFFF3300" .. _detalhes.gump:IntegerToTimer (totalRealTime - decorrido) .. "|r]", 2, "white", "white")
 						
 					elseif (isMythicOverallSegment) then
 						CoolTip:AddLine (Loc["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
 						local totalRealTime = endedAt - startedAt
-						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (totalRealTime) .. " [|cFFFF3300" .. _detalhes.gump:IntegerToTimer (totalRealTime - decorrido) .. "|r]", 2, "white", "white")
+						local wasted = totalRealTime - decorrido
+						
+						
+						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (totalRealTime), 2, "white", "white")
+						
+						--wasted time
+						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_WASTED_TIME"] .. ":", "|cFFFF3300" .. _detalhes.gump:IntegerToTimer (wasted) .. " (" .. floor (wasted / totalRealTime * 100) .. "%)|r", 2, "white", "white")
+						CoolTip:AddStatusBar (100, 2, 0, 0, 0, 0.35, false, false, "Skyline")
 						
 					else
 						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_COMBATTIME"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
@@ -6571,7 +6635,7 @@ local build_segment_list = function (self, elapsed)
 					if (encounter_name and instanceID and instanceID ~= 0) then
 						local index, name, description, encounterID, rootSectionID, link = _detalhes:GetEncounterInfoFromEncounterName (instanceID, encounter_name)
 						if (index and name and encounterID) then
-							local id, name, description, displayInfo, iconImage = EJ_GetCreatureInfo (index, encounterID)
+							local id, name, description, displayInfo, iconImage = DetailsFramework.EncounterJournal.EJ_GetCreatureInfo (index, encounterID)
 							if (iconImage) then
 								CoolTip:AddIcon (iconImage, 2, "top", 128, 64)
 							end
@@ -6586,7 +6650,7 @@ local build_segment_list = function (self, elapsed)
 					else
 						local ej_id = _detalhes.tabela_vigente.is_boss.ej_instance_id
 						if (ej_id and ej_id ~= 0) then
-							local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = EJ_GetInstanceInfo (ej_id)
+							local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = DetailsFramework.EncounterJournal.EJ_GetInstanceInfo (ej_id)
 							if (name) then
 								if (_detalhes.tabela_vigente.instance_type == "party") then
 									CoolTip:SetWallpaper (2, bgImage, party_wallpaper_tex, party_wallpaper_color, true)
@@ -6790,6 +6854,57 @@ function _detalhes:RefreshMicroDisplays()
 	_detalhes.StatusBar:UpdateOptions (self)
 end
 
+
+--from weakauras, list of functions to block on scripts
+--source https://github.com/WeakAuras/WeakAuras2/blob/520951a4b49b64cb49d88c1a8542d02bbcdbe412/WeakAuras/AuraEnvironment.lua#L66
+local blockedFunctions = {
+	-- Lua functions that may allow breaking out of the environment
+	getfenv = true,
+	getfenv = true,
+	loadstring = true,
+	pcall = true,
+	xpcall = true,
+	getglobal = true,
+	
+	-- blocked WoW API
+	SendMail = true,
+	SetTradeMoney = true,
+	AddTradeMoney = true,
+	PickupTradeMoney = true,
+	PickupPlayerMoney = true,
+	TradeFrame = true,
+	MailFrame = true,
+	EnumerateFrames = true,
+	RunScript = true,
+	AcceptTrade = true,
+	SetSendMailMoney = true,
+	EditMacro = true,
+	SlashCmdList = true,
+	DevTools_DumpCommand = true,
+	hash_SlashCmdList = true,
+	CreateMacro = true,
+	SetBindingMacro = true,
+	GuildDisband = true,
+	GuildUninvite = true,
+	securecall = true,
+	
+	--additional
+	setmetatable = true,
+}
+
+--function filter
+local functionFilter = setmetatable ({}, {__index = function (env, key)
+	if (key == "_G") then
+		return env
+		
+	elseif (blockedFunctions [key]) then
+		return nil
+		
+	else	
+		return _G [key]
+	end
+end})
+
 function _detalhes:ChangeSkin (skin_name)
 
 	if (not skin_name) then
@@ -6923,13 +7038,14 @@ function _detalhes:ChangeSkin (skin_name)
 		self.break_snap_button:SetPushedTexture (skin_file)
 
 	--> update toolbar icons
+	local toolbar_buttons = {}
+	
 	do
 		local toolbar_icon_file = self.toolbar_icon_file
 		if (not toolbar_icon_file) then
 			toolbar_icon_file = [[Interface\AddOns\Details\images\toolbar_icons]]
 		end
 
-		local toolbar_buttons = {}
 		toolbar_buttons [1] = self.baseframe.cabecalho.modo_selecao
 		toolbar_buttons [2] = self.baseframe.cabecalho.segmento
 		toolbar_buttons [3] = self.baseframe.cabecalho.atributo
@@ -7070,26 +7186,217 @@ function _detalhes:ChangeSkin (skin_name)
 	--> set the scale
 		self:SetWindowScale()
 	
-	-->: refresh lock buttons
+	--> refresh lock buttons
 		self:RefreshLockedState()
 	
+	--> clear any control sscript running in this instance
+	self.bgframe:SetScript ("OnUpdate", nil)
+	self.bgframe.skin_script = nil
+	
+	--> check if the skin has control scripts to run
 	if (not just_updating or _detalhes.initializing) then
-		if (this_skin.callback) then
-			this_skin:callback (self, just_updating)
+		local callbackFunc = this_skin.callback
+		if (callbackFunc) then
+			setfenv (callbackFunc, functionFilter)
+			local okey, result = pcall (callbackFunc, this_skin, self, just_updating)
+			if (not okey) then
+				_detalhes:Msg ("|cFFFF9900error on skin callback function|r:", result)
+			end
 		end
 		
 		if (this_skin.control_script) then
-			if (this_skin.control_script_on_start) then
-				this_skin:control_script_on_start (self)
+			local onStartScript = this_skin.control_script_on_start
+			if (onStartScript) then
+				setfenv (onStartScript, functionFilter)
+				local okey, result = pcall (onStartScript, this_skin, self)
+				if (not okey) then
+					_detalhes:Msg ("|cFFFF9900error on skin control on start function|r:", result)
+				end
 			end
-			self.bgframe:SetScript ("OnUpdate", this_skin.control_script)
+			
+			local controlFunc = this_skin.control_script
+			setfenv (controlFunc, functionFilter)
+			self.bgframe:SetScript ("OnUpdate", controlFunc)
 			self.bgframe.skin_script = true
 			self.bgframe.skin = this_skin
-			--self.bgframe.skin_script_instance = true
 		end
 	end
-
+	
+	self:UpdateClickThrough()
 end
+
+--update the window click through state
+local updateClickThroughListener = _detalhes:CreateEventListener()
+function updateClickThroughListener:EnterCombat()
+	_detalhes:InstanceCall (function (instance)
+		C_Timer.After (1.5, function()
+			instance:UpdateClickThrough()
+		end)
+	end)
+end
+
+function updateClickThroughListener:LeaveCombat()
+	_detalhes:InstanceCall (function (instance)
+		C_Timer.After (1.5, function()
+			instance:UpdateClickThrough()
+		end)
+	end)
+end
+
+updateClickThroughListener:RegisterEvent ("COMBAT_PLAYER_ENTER", "EnterCombat")
+updateClickThroughListener:RegisterEvent ("COMBAT_PLAYER_LEAVE", "EnterCombat")
+
+function _detalhes:UpdateClickThroughSettings (inCombat, window, bars, toolbaricons)
+	if (inCombat ~= nil) then
+		self.clickthrough_incombatonly = inCombat
+	end
+	
+	if (window ~= nil) then
+		self.clickthrough_window = window
+	end
+	
+	if (bars ~= nil) then
+		self.clickthrough_rows = bars
+	end
+	
+	if (toolbaricons ~= nil) then
+		self.clickthrough_toolbaricons = toolbaricons
+	end
+	
+	self:UpdateClickThrough()
+end
+
+function _detalhes:UpdateClickThrough()
+	
+	local barsClickThrough = self.clickthrough_rows
+	local windowClickThrough = self.clickthrough_window
+	local onlyInCombat = self.clickthrough_incombatonly
+	local toolbarIcons = not self.clickthrough_toolbaricons
+
+	if (onlyInCombat) then
+
+		if (InCombatLockdown()) then
+			--player bars
+			if (barsClickThrough) then
+				for barIndex, barObject in _ipairs (self.barras) do 
+					barObject:EnableMouse (false)
+				end
+			else
+				for barIndex, barObject in _ipairs (self.barras) do 
+					barObject:EnableMouse (true)
+				end
+			end
+			
+			--window frames
+			if (windowClickThrough) then
+				self.baseframe:EnableMouse (false)
+				self.bgframe:EnableMouse (false)
+				self.rowframe:EnableMouse (false)
+				self.floatingframe:EnableMouse (false)
+				self.windowSwitchButton:EnableMouse (false)
+				self.windowBackgroundDisplay:EnableMouse (false)
+				self.baseframe.UPFrame:EnableMouse (false)
+
+			else
+				self.baseframe:EnableMouse (true)
+				self.bgframe:EnableMouse (true)
+				self.rowframe:EnableMouse (true)
+				self.floatingframe:EnableMouse (true)
+				self.windowSwitchButton:EnableMouse (true)
+				self.windowBackgroundDisplay:EnableMouse (true)
+				self.baseframe.UPFrame:EnableMouse (true)
+			end
+			
+			--titlebar icons
+			local toolbar_buttons = {}
+			toolbar_buttons [1] = self.baseframe.cabecalho.modo_selecao
+			toolbar_buttons [2] = self.baseframe.cabecalho.segmento
+			toolbar_buttons [3] = self.baseframe.cabecalho.atributo
+			toolbar_buttons [4] = self.baseframe.cabecalho.report
+			toolbar_buttons [5] = self.baseframe.cabecalho.reset
+			toolbar_buttons [6] = self.baseframe.cabecalho.fechar
+			
+			for i, button in ipairs (toolbar_buttons) do
+				button:EnableMouse (toolbar_buttons)
+			end
+			
+		else
+			--player bars
+			for barIndex, barObject in _ipairs (self.barras) do
+				barObject:EnableMouse (true)
+			end
+			
+			--window frames
+			self.baseframe:EnableMouse (true)
+			self.bgframe:EnableMouse (true)
+			self.rowframe:EnableMouse (true)
+			self.floatingframe:EnableMouse (true)
+			self.windowSwitchButton:EnableMouse (true)
+			self.windowBackgroundDisplay:EnableMouse (true)
+			self.baseframe.UPFrame:EnableMouse (true)
+			
+			--titlebar icons, forcing true because the player isn't in combat and the inCombat setting is enabled
+			local toolbar_buttons = {}
+			toolbar_buttons [1] = self.baseframe.cabecalho.modo_selecao
+			toolbar_buttons [2] = self.baseframe.cabecalho.segmento
+			toolbar_buttons [3] = self.baseframe.cabecalho.atributo
+			toolbar_buttons [4] = self.baseframe.cabecalho.report
+			toolbar_buttons [5] = self.baseframe.cabecalho.reset
+			toolbar_buttons [6] = self.baseframe.cabecalho.fechar
+			
+			for i, button in ipairs (toolbar_buttons) do
+				button:EnableMouse (true)
+			end
+		end
+	else
+
+		--player bars
+		if (barsClickThrough) then
+			for barIndex, barObject in _ipairs (self.barras) do 
+				barObject:EnableMouse (false)
+			end
+		else
+			for barIndex, barObject in _ipairs (self.barras) do 
+				barObject:EnableMouse (true)
+			end
+		end
+		
+		--window frame
+		if (windowClickThrough) then
+			self.baseframe:EnableMouse (false)
+			self.bgframe:EnableMouse (false)
+			self.rowframe:EnableMouse (false)
+			self.floatingframe:EnableMouse (false)
+			self.windowSwitchButton:EnableMouse (false)
+			self.windowBackgroundDisplay:EnableMouse (false)
+			self.baseframe.UPFrame:EnableMouse (false)
+
+		else
+			self.baseframe:EnableMouse (true)
+			self.bgframe:EnableMouse (true)
+			self.rowframe:EnableMouse (true)
+			self.floatingframe:EnableMouse (true)
+			self.windowSwitchButton:EnableMouse (true)
+			self.windowBackgroundDisplay:EnableMouse (true)
+			self.baseframe.UPFrame:EnableMouse (true)
+		end
+		
+		--titlebar icons
+		local toolbar_buttons = {}
+		toolbar_buttons [1] = self.baseframe.cabecalho.modo_selecao
+		toolbar_buttons [2] = self.baseframe.cabecalho.segmento
+		toolbar_buttons [3] = self.baseframe.cabecalho.atributo
+		toolbar_buttons [4] = self.baseframe.cabecalho.report
+		toolbar_buttons [5] = self.baseframe.cabecalho.reset
+		toolbar_buttons [6] = self.baseframe.cabecalho.fechar
+		
+		for i, button in ipairs (toolbar_buttons) do
+			button:EnableMouse (toolbarIcons)
+		end
+	end
+end
+
+--endd
 
 function _detalhes:DelayedCheckCombatAlpha (instance)
 	if (UnitAffectingCombat ("player") or InCombatLockdown()) then

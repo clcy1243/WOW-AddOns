@@ -1,6 +1,6 @@
-## Interface: 80100
+## Interface: 80200
 ## Author: Alea
-## Version: 297
+## Version: 298
 ## Title: FeralDotDamage
 ## Notes: 
 ## DefaultState: Enabled

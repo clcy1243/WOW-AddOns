@@ -128,7 +128,7 @@ end
 local function shouldReallyEnable(unit, moduleName, mobId, sync)
 	local module = bosses[moduleName]
 	if not module or module.enabled then return end
-	if (not module.VerifyEnable or module:VerifyEnable(unit, mobId)) then
+	if (not module.VerifyEnable or module:VerifyEnable(unit, mobId, GetBestMapForUnit("player"))) then
 		enableBossModule(module, sync)
 	end
 end
@@ -200,7 +200,13 @@ do
 		end
 	end
 	function core:RegisterEnableMob(module, ...) add(module.moduleName, enablemobs, ...) end
-	function core:GetEnableMobs() return enablemobs end
+	function core:GetEnableMobs()
+		local t = {}
+		for k,v in next, enablemobs do
+			t[k] = v
+		end
+		return t
+	end
 end
 
 -------------------------------------------------------------------------------
@@ -219,34 +225,48 @@ do
 		if a and messages[key] then
 			local color = colors[random(1, #colors)]
 			local sound = sounds[random(1, #sounds)]
+			local emphasized = random(1, 3) == 1
 			if random(1, 4) == 2 then
 				core:SendMessage("BigWigs_Flash", core, key)
 			end
 			core:Print(L.test .." - ".. color ..": ".. key)
-			core:SendMessage("BigWigs_Message", core, key, color..": "..key, color, messages[key])
+			core:SendMessage("BigWigs_Message", core, key, color..": "..key, color, messages[key], emphasized)
 			core:SendMessage("BigWigs_Sound", core, key, sound)
 			messages[key] = nil
 		end
 	end
 
+	local blockPrint = false
+	local lastSpell = 1
+	local lastTest = 1
 	function core:Test()
 		if not callbackRegistered then
 			LibStub("LibCandyBar-3.0").RegisterCallback(core, "LibCandyBar_Stop", barStopped)
 			callbackRegistered = true
 		end
 
-		local spell, icon
-		local _, _, offset, numSpells = GetSpellTabInfo(2) -- Main spec
-		for i = offset + 1, offset + numSpells do
-			spell = GetSpellBookItemName(i, "spell")
-			icon = GetSpellBookItemTexture(i, "spell")
-			if not messages[spell] then break end
+		local msg = CL.count:format(L.test, lastTest)
+		local icon = GetSpellTexture(lastSpell)
+		while not icon or icon == 136243 do -- 136243 = cogwheel
+			lastSpell = lastSpell + 1
+			icon = GetSpellTexture(lastSpell)
 		end
+		lastSpell = lastSpell + 1
+		lastTest = lastTest + 1
 
 		local time = random(11, 30)
-		messages[spell] = icon
+		messages[msg] = icon
 
-		core:SendMessage("BigWigs_StartBar", core, spell, spell, time, icon)
+		core:SendMessage("BigWigs_StartBar", core, msg, msg, time, icon)
+
+		local guid = UnitGUID("target")
+		if guid then
+			if not blockPrint then
+				blockPrint = true
+				core:Print(L.testNameplate)
+			end
+			core:SendMessage("BigWigs_StartNameplateBar", core, msg, msg, time, icon, false, guid)
+		end
 	end
 end
 
@@ -502,7 +522,7 @@ function core:IterateBossModules()
 	return next, bosses
 end
 
-function core:GetBossModule(moduleName, silent) 
+function core:GetBossModule(moduleName, silent)
 	if not silent and not bosses[moduleName] then
 		error(("No boss module named '%s' found."):format(moduleName))
 	else
@@ -525,7 +545,7 @@ end
 do
 	local GetSpellInfo, C_EncounterJournal_GetSectionInfo = GetSpellInfo, C_EncounterJournal.GetSectionInfo
 	local C = core.C -- Set from Constants.lua
-	local standardFlag = C.BAR + C.CASTBAR + C.MESSAGE + C.ICON + C.SOUND + C.SAY + C.SAY_COUNTDOWN + C.PROXIMITY + C.FLASH + C.ALTPOWER + C.VOICE + C.INFOBOX
+	local standardFlag = C.BAR + C.CASTBAR + C.MESSAGE + C.ICON + C.SOUND + C.SAY + C.SAY_COUNTDOWN + C.PROXIMITY + C.FLASH + C.ALTPOWER + C.VOICE + C.INFOBOX + C.NAMEPLATEBAR
 	local defaultToggles = setmetatable({
 		berserk = C.BAR + C.MESSAGE + C.SOUND,
 		proximity = C.PROXIMITY,
@@ -560,12 +580,16 @@ do
 			module.toggleDefaults = {}
 			for k, v in next, module.toggleOptions do
 				local bitflags = 0
+				local disabled = false
 				local t = type(v)
 				if t == "table" then
 					for i = 2, #v do
 						local flagName = v[i]
 						if C[flagName] then
 							bitflags = bitflags + C[flagName]
+						elseif flagName == "OFF" then
+							disabled = true
+							break
 						else
 							error(("%q tried to register '%q' as a bitflag for toggleoption '%q'"):format(module.moduleName, flagName, v[1]))
 						end
@@ -574,12 +598,19 @@ do
 					t = type(v)
 				end
 				-- mix in default toggles for keys we know
-				-- this allows for mod.toggleOptions = {1234, {"bosskill", "bar"}}
-				-- while bosskill usually only has message
+				-- this allows for mod.toggleOptions = {{1234, "bar", "message"}}
+				-- while option keys don't usually specify common features such as bar or message
 				for _, b in next, C do
 					if bit.band(defaultToggles[v], b) == b and bit.band(bitflags, b) ~= b then
 						bitflags = bitflags + b
 					end
+				end
+				if disabled then
+					if not module.toggleDisabled then
+						module.toggleDisabled = {}
+					end
+					module.toggleDisabled[v] = bitflags
+					bitflags = 0
 				end
 				if t == "string" then
 					local custom = v:match("^custom_(o[nf]f?)_.*")
@@ -606,9 +637,10 @@ do
 
 	local function moduleOptions(self)
 		if self.GetOptions then
-			local toggles, headers = self:GetOptions(CL)
+			local toggles, headers, altNames = self:GetOptions(CL)
 			if toggles then self.toggleOptions = toggles end
 			if headers then self.optionHeaders = headers end
+			if altNames then self.altNames = altNames end
 			self.GetOptions = nil
 		end
 		setupOptions(self)

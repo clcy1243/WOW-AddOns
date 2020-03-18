@@ -51,6 +51,12 @@ L.bars = "바"
 L.style = "모양"
 L.bigWigsBarStyleName_Default = "기본"
 
+-- L.nameplateBars = "Nameplate Bars"
+-- L.nameplateAutoWidth = "Match width of nameplate"
+-- L.nameplateAutoWidthDesc = "Sets the width of nameplate bars to the with of their parent nameplate."
+-- L.nameplateOffsetY = "Y Offset"
+-- L.nameplateOffsetYDesc = "Offset from the top of the nameplate for upwards bars and the bottom of the nameplate for downwards bars."
+
 L.clickableBars = "클릭 가능한 바"
 L.clickableBarsDesc = "BigWigs 바는 기본적으로 클릭을 무시합니다. 이 방법으로 커서가 바 위에 있을 때도 바 뒤의 물건을 대상 지정할 수 있고 바 뒤에 있는 대상에게 광역 주문을 사용할 수 있으며, 카메라 각도를 변경하는 등의 동작을 가능하게 합니다. |cffff4411클릭 가능한 바를 활성화하면 이런 동작들이 더이상 작동하지 않습니다.|r 당신이 바를 마우스 클릭하면 바가 클릭을 차단합니다.\n"
 L.interceptMouseDesc = "바가 마우스 클릭을 수신하도록 활성화합니다."
@@ -134,14 +140,22 @@ L.blockEmotes = "화면 중앙의 감정표현 차단"
 L.blockEmotesDesc = "몇몇 우두머리는 특정 능력에 감정표현을 표시합니다, 이 메시지는 너무 길고 설명적입니다. 우리는 게임 플레이를 방해하지 않으면서 당신이 특별한 행동을 하지 않아도 되는, 작고 더 알맞은 메시지를 만들려고 노력합니다.\n\n참고하세요: 우두머리 감정표현를 읽고 싶다면 여전히 대화에서 확인할 수 있습니다."
 L.blockMovies = "반복되는 동영상 차단"
 L.blockMoviesDesc = "우두머리 전투 동영상이 한번만 재생되도록 허용합니다 (각 한번씩 볼수 있도록) 그 후엔 차단됩니다."
-L.blockGarrison = "주둔지 알림 차단"
-L.blockGarrisonDesc = "주둔지 알림은 여러가지를 표시하지만 주로 추종자 임무 완료를 표시합니다.\n\n이 알림들은 우두머리 전투 중 UI를 치명적으로 가릴 수 있습니다, 따라서 차단을 권장합니다."
+--L.blockFollowerMission = "주둔지 알림 차단" -- Rename to follower mission
+--L.blockFollowerMissionDesc = "주둔지 알림은 여러가지를 표시하지만 주로 추종자 임무 완료를 표시합니다.\n\n이 알림들은 우두머리 전투 중 UI를 치명적으로 가릴 수 있습니다, 따라서 차단을 권장합니다."
 L.blockGuildChallenge = "길드 도전 알림 차단"
 L.blockGuildChallengeDesc = "길드 도전 알림은 여러가지를 표시하지만 주로 당신의 길드 파티의 영웅 던전이나 도전 모드 던전 완료를 표시합니다.\n\n이 알림들은 우두머리 전투 중 UI를 치명적으로 가릴 수 있습니다, 따라서 차단을 권장합니다."
 L.blockSpellErrors = "주문 실패 메시지 차단"
 L.blockSpellErrorsDesc = "일반적으로 화면 상단에 표시되는 \"마법이 아직 준비되지 않았습니다\" 같은 메시지를 차단합니다."
 --L.disableSfx = "Disable sound effects"
 --L.disableSfxDesc = "The 'Sound Effects' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
+--L.blockTooltipQuests = "Block tooltip quest objectives"
+--L.blockTooltipQuestsDesc = "When you need to kill a boss for a quest, it will usually show as '0/1 complete' in the tooltip when you place your mouse over the boss. This will be hidden whilst in combat with that boss to prevent the tooltip growing very large."
+--L.blockObjectiveTracker = "Hide quest tracker"
+--L.blockObjectiveTrackerDesc = "The quest objective tracker will be hidden during a boss encounter to clear up screen space.\n\nThis will NOT happen if you are in a mythic+ or are tracking an achievement."
+
+L.subzone_grand_bazaar = "대시장" -- Battle of Dazar'alor raid (Battle for Azeroth)
+L.subzone_port_of_zandalar = "잔달라 항구" -- Battle of Dazar'alor raid (Battle for Azeroth)
+--L.subzone_eastern_transept = "Eastern Transept" -- Auchindoun dungeon (Warlords of Draenor)
 
 -----------------------------------------------------------------------
 -- Colors.lua

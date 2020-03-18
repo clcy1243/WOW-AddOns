@@ -11,6 +11,25 @@ if L then
 	L.halberd = "Alabardeiro Kultireno"
 	L.raider = "Saqueador Maré-férrea"
 	L.vanguard = "Vanguarda Kultirena"
+	L.marksman = "Atirador Perito Kultireno"
+	L.buccaneer = "Bucaneiro Rato de Porão"
+	L.invader = "Invasor Grimpagris"
+	L.dockhound = "Cão das Docas Rosnador"
+	L.shredder = "Retalhador Contracorrente"
+	L.packmaster = "Caravaneiro Cão das Docas"
+	L.bomber = "Bombardeiro Pichenegro"
+end
+
+L = BigWigs:NewBossLocale("Sergeant Bainbridge", "ptBR")
+if L then
+	-- L.remaining = "%s on %s, %d remaining"
+	-- L.remaining_boss = "%s on BOSS, %d remaining"
+end
+
+L = BigWigs:NewBossLocale("Chopper Redhook", "ptBR")
+if L then
+	-- L.remaining = "%s on %s, %d remaining"
+	-- L.remaining_boss = "%s on BOSS, %d remaining"
 end
 
 L = BigWigs:NewBossLocale("Viq'Goth", "ptBR")

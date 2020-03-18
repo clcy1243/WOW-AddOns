@@ -13,22 +13,105 @@ end
 
 
 --
+local tChiCount;
+local tChiMax;
 local function VUHDO_chiCalculator(anInfo)
 	if anInfo["connected"] and not anInfo["dead"] then
-		return UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_CHI), UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_CHI)
+		tChiCount = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_CHI);
+		tChiMax = UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_CHI);
+
+		return (tChiCount > 0) and tChiCount or "", (tChiMax > 0) and tChiMax or "";
 	else
-		return 0, 0;
+		return "", nil;
 	end
 end
 
 
 
 --
+local tHolyPowerCount;
+local tHolyPowerMax;
 local function VUHDO_holyPowerCalculator(anInfo)
 	if anInfo["connected"] and not anInfo["dead"] then
-		return UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_HOLY_POWER), UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_HOLY_POWER);
+		tHolyPowerCount = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_HOLY_POWER);
+		tHolyPowerMax = UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_HOLY_POWER);
+
+		return (tHolyPowerCount > 0) and tHolyPowerCount or "", (tHolyPowerMax > 0) and tHolyPowerMax or "";
 	else
-		return 0, 0;
+		return "", nil;
+	end
+end
+
+
+
+--
+local tComboPointsCount;
+local tComboPointsMax;
+local function VUHDO_comboPointsCalculator(anInfo)
+	if anInfo["connected"] and not anInfo["dead"] then
+		tComboPointsCount = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_COMBO_POINTS);
+		tComboPointsMax = UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_COMBO_POINTS);
+
+		return (tComboPointsCount > 0) and tComboPointsCount or "", (tComboPointsMax > 0) and tComboPointsMax or "";
+		
+	else
+		return "", nil;
+	end
+end
+
+
+
+--
+local tSoulShardsCount;
+local tSoulShardsMax;
+local function VUHDO_soulShardsCalculator(anInfo)
+	if anInfo["connected"] and not anInfo["dead"] then
+		tSoulShardsCount = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_SOUL_SHARDS);
+		tSoulShardsMax = UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_SOUL_SHARDS);
+
+		return (tSoulShardsCount > 0) and tSoulShardsCount or "", (tSoulShardsMax > 0) and tSoulShardsMax or "";
+	else
+		return "", nil;
+	end
+end
+
+
+
+--
+local tReadyRuneCount;
+local tReadyRuneMax;
+local tIsRuneReady;
+local function VUHDO_runesCalculator(anInfo)
+	if anInfo["connected"] and not anInfo["dead"] and anInfo["unit"] == "player" then
+		tReadyRuneCount = 0;
+
+		for i = 1, 6 do
+			_, _, tIsRuneReady = GetRuneCooldown(i);
+
+			tReadyRuneCount = tReadyRuneCount + (tIsRuneReady and 1 or 0);
+		end
+
+		tReadyRuneMax = UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_RUNES);
+
+		return (tReadyRuneCount > 0) and tReadyRuneCount or "", (tReadyRuneMax > 0) and tReadyRuneMax or "";
+	else
+		return "", nil;
+	end
+end
+
+
+
+--
+local tArcaneChargesCount;
+local tArcaneChargesMax;
+local function VUHDO_arcaneChargesCalculator(anInfo)
+	if anInfo["connected"] and not anInfo["dead"] then
+		tArcaneChargesCount = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_ARCANE_CHARGES);
+		tArcaneChargesMax = UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_ARCANE_CHARGES);
+
+		return (tArcaneChargesCount > 0) and tArcaneChargesCount or "", (tArcaneChargesMax > 0) and tArcaneChargesMax or "";
+	else
+		return "", nil;
 	end
 end
 
@@ -136,7 +219,7 @@ end
 ---------------------------------------------------------------------------------
 
 function VUHDO_initTextProviderConfig()
-  -- Falls man mal was lï¿½scht oder umbenennt
+  -- Falls man mal was löscht oder umbenennt
 	for tIndicatorName, anIndicatorConfig in pairs(VUHDO_INDICATOR_CONFIG["TEXT_INDICATORS"]) do
 		for tIndex, tProviderName in pairs(anIndicatorConfig["TEXT_PROVIDER"]) do
 			if not VUHDO_TEXT_PROVIDERS[tProviderName] then
@@ -192,6 +275,30 @@ VUHDO_TEXT_PROVIDERS = {
 		["calculator"] = VUHDO_holyPowerCalculator,
 		["validator"] = VUHDO_absoluteValidator,
 		["interests"] = { VUHDO_UPDATE_OWN_HOLY_POWER, VUHDO_UPDATE_DC, VUHDO_UPDATE_ALIVE },
+	},
+	["COMBO_POINTS_N"] = {
+		["displayName"] = "Combo Points: <#n>",
+		["calculator"] = VUHDO_comboPointsCalculator,
+		["validator"] = VUHDO_absoluteValidator,
+		["interests"] = { VUHDO_UPDATE_COMBO_POINTS, VUHDO_UPDATE_DC, VUHDO_UPDATE_ALIVE },
+	},
+	["SOUL_SHARDS_N"] = {
+		["displayName"] = "Soul Shards: <#n>",
+		["calculator"] = VUHDO_soulShardsCalculator,
+		["validator"] = VUHDO_absoluteValidator,
+		["interests"] = { VUHDO_UPDATE_SOUL_SHARDS, VUHDO_UPDATE_DC, VUHDO_UPDATE_ALIVE },
+	},
+	["RUNES_N"] = {
+		["displayName"] = "Runes: <#n>",
+		["calculator"] = VUHDO_runesCalculator,
+		["validator"] = VUHDO_absoluteValidator,
+		["interests"] = { VUHDO_UPDATE_RUNES, VUHDO_UPDATE_DC, VUHDO_UPDATE_ALIVE },
+	},
+	["ARCANE_CHARGES_N"] = {
+		["displayName"] = "Arcane Charges: <#n>",
+		["calculator"] = VUHDO_arcaneChargesCalculator,
+		["validator"] = VUHDO_absoluteValidator,
+		["interests"] = { VUHDO_UPDATE_ARCANE_CHARGES, VUHDO_UPDATE_DC, VUHDO_UPDATE_ALIVE },
 	},
 	["MANA_PERCENT"] = {
 		["displayName"] = "Mana: <#n>%",

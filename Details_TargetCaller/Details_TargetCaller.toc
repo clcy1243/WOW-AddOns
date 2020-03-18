@@ -1,4 +1,4 @@
-## Interface: 80100
+## Interface: 80300
 ## Title: Details Target Caller
 ## Notes: Plugin for Details
 ## RequiredDeps: Details

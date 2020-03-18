@@ -1,10 +1,12 @@
-﻿if GetLocale() ~= "ruRU" then return end
+﻿if GetLocale() ~= "ruRU" then
+	return
+end
 local L
 
 ------------
 -- Protectors of the Endless --
 ------------
-L= DBM:GetModLocalization(683)
+L = DBM:GetModLocalization(683)
 
 L:SetWarningLocalization({
 	warnGroupOrder		= "Ротация: группа %s",
@@ -20,7 +22,7 @@ L:SetOptionLocalization({
 ------------
 -- Tsulong --
 ------------
-L= DBM:GetModLocalization(742)
+L = DBM:GetModLocalization(742)
 
 L:SetMiscLocalization{
 	Victory	= "Спасибо вам, незнакомцы. Я свободен."
@@ -29,20 +31,20 @@ L:SetMiscLocalization{
 -------------------------------
 -- Lei Shi --
 -------------------------------
-L= DBM:GetModLocalization(729)
+L = DBM:GetModLocalization(729)
 
 L:SetWarningLocalization({
-	warnHideOver			= "%s закончилось"
+	warnHideOver	= "%s закончилось"
 })
 
 L:SetTimerLocalization({
-	timerSpecialCD			= "Восст. Спец-способность (%d)"
+	timerSpecialCD	= "Восст. Спец-способность (%d)"
 })
 
 L:SetOptionLocalization({
-	warnHideOver			= "Предупреждение о появлении босса после $spell:123244",
-	timerSpecialCD			= "Отсчет времени до следующей спец-способности",
-	RangeFrame				= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(3, 123121) .. "<br/>(Показывает всех во время $spell:123244, иначе только танков)"
+	warnHideOver	= "Предупреждение о появлении босса после $spell:123244",
+	timerSpecialCD	= "Отсчет времени до следующей спец-способности",
+	RangeFrame		= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(3, 123121) .. "<br/>(Показывает всех во время $spell:123244, иначе только танков)"
 })
 
 L:SetMiscLocalization{
@@ -52,7 +54,7 @@ L:SetMiscLocalization{
 ----------------------
 -- Sha of Fear --
 ----------------------
-L= DBM:GetModLocalization(709)
+L = DBM:GetModLocalization(709)
 
 L:SetWarningLocalization({
 	MoveForward					= "Пробегите через босса",
@@ -71,6 +73,6 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	warnBreathOnPlatform		= "Предупреждать о $spell:119414 когда вы на платформе<br/>(не рекомендуется, для рейд лидера)",
 	specWarnBreathOfFearSoon	= "Предупреждать заранее о $spell:119414, если на вас нет баффа $spell:117964",
-	specWarnMovement			= "Спец-предупреждение куда двигаться при выстрелах $spell:120047<br/>(Нажмите чтобы скопировать ссылку <a href=\"http://mysticalos.com/terraceofendlesssprings.jpg\">|cff3588ffhttp://mysticalos.com/terraceofendlesssprings.jpg|r</a>)",
+	specWarnMovement			= "Спец-предупреждение куда двигаться при выстрелах $spell:120047",
 	timerSpecialAbility			= "Отсчет времени до следующей спец-способности на второй фазе"
 })

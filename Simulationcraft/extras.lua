@@ -24,7 +24,7 @@ Simulationcraft.RoleTable = {
   -- Monk
   [268] = 'tank',
   [269] = 'attack',
-  [270] = 'hybrid',
+  [270] = 'attack',
   -- Paladin
   [65] = 'attack',
   [66] = 'tank',
@@ -48,7 +48,7 @@ Simulationcraft.RoleTable = {
   -- Warrior
   [71] = 'attack',
   [72] = 'attack',
-  [73] = 'attack'
+  [73] = 'tank'
 }
 
 -- regionID lookup
@@ -263,3 +263,20 @@ Simulationcraft.upgradeTable = {
   [531] = 2 -- 2/2 -> 10
 }
 
+Simulationcraft.zandalariLoaBuffs = {
+  [292359] = 'akunda',
+  [292360] = 'bwonsamdi',
+  [292362] = 'gonk',
+  [292363] = 'kimbul',
+  [292364] = 'kragwa',
+  [292361] = 'paku',
+}
+
+Simulationcraft.azeriteEssenceSlotsMajor = {
+  0
+}
+
+Simulationcraft.azeriteEssenceSlotsMinor = {
+  1,
+  2
+}

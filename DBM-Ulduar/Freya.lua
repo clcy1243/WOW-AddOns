@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Freya", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 278 $"):sub(12, -3))
+mod:SetRevision("20200222200840")
 
 mod:SetCreatureID(32906)
 mod:SetEncounterID(1133)
@@ -76,7 +76,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnTremor:Play("stopcast")
 		timerTremorCD:Start()
 	end
-end 
+end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 62678 then -- Summon Allies of Nature
@@ -120,7 +120,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args:IsSpellID(62451, 62865) and args:IsPlayer() then
 		specWarnBeam:Show()
 		specWarnBeam:Play("runaway")
-	end 
+	end
 end
 
 function mod:SPELL_AURA_REMOVED(args)
@@ -137,18 +137,10 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if msg == L.SpawnYell then
-		adds[33202] = true
-		adds[32916] = true
-		adds[32919] = true
-	end
-end
-
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 33202 or cid == 32916 or cid == 32919 then
-		if self:AntiSpam(20) and not self:IsTrivial(85) then
+		if self:AntiSpam(17, 1) and not self:IsTrivial(85) then
 			timerSimulKill:Start()
 			warnSimulKill:Show()
 		end
@@ -161,5 +153,12 @@ function mod:UNIT_DIED(args)
 			timerSimulKill:Stop()
 		end
 	end
+end
 
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if msg == L.SpawnYell then
+		adds[33202] = true
+		adds[32916] = true
+		adds[32919] = true
+	end
 end

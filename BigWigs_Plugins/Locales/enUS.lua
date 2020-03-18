@@ -50,6 +50,12 @@ L.bars = "Bars"
 L.style = "Style"
 L.bigWigsBarStyleName_Default = "Default"
 
+L.nameplateBars = "Nameplate Bars"
+L.nameplateAutoWidth = "Match width of nameplate"
+L.nameplateAutoWidthDesc = "Sets the width of nameplate bars to the with of their parent nameplate."
+L.nameplateOffsetY = "Y Offset"
+L.nameplateOffsetYDesc = "Offset from the top of the nameplate for upwards bars and the bottom of the nameplate for downwards bars."
+
 L.clickableBars = "Clickable Bars"
 L.clickableBarsDesc = "BigWigs bars are click-through by default. This way you can target objects or launch targetted AoE spells behind them, change the camera angle, and so on, while your cursor is over the bars. |cffff4411If you enable clickable bars, this will no longer work.|r The bars will intercept any mouse clicks you perform on them.\n"
 L.interceptMouseDesc = "Enables bars to receive mouse clicks."
@@ -134,14 +140,22 @@ L.blockEmotes = "Block middle-screen emotes"
 L.blockEmotesDesc = "Some bosses show emotes for certain abilities, these messages are both way too long and descriptive. We try to produce smaller, more fitting messages that do not interfere with the gameplay, and don't tell you specifically what to do.\n\nPlease note: Boss emotes will still be visible in chat if you wish to read them."
 L.blockMovies = "Block repeated movies"
 L.blockMoviesDesc = "Boss encounter movies will only be allowed to play once (so you can watch each one) and will then be blocked."
-L.blockGarrison = "Block garrison popups"
-L.blockGarrisonDesc = "Garrison popups show for a few things, but mainly when a follower mission is completed.\n\nThese popups can cover up critical parts of your UI during a boss fight, so we recommend blocking them."
+L.blockFollowerMission = "Block follower mission popups"
+L.blockFollowerMissionDesc = "Follower mission popups show for a few things, but mainly when a follower mission is completed.\n\nThese popups can cover up critical parts of your UI during a boss fight, so we recommend blocking them."
 L.blockGuildChallenge = "Block guild challenge popups"
 L.blockGuildChallengeDesc = "Guild challenge popups show for a few things, mainly when a group in your guild completes a heroic dungeon or a challenge mode dungeon.\n\nThese popups can cover up critical parts of your UI during a boss fight, so we recommend blocking them."
 L.blockSpellErrors = "Block spell failed messages"
 L.blockSpellErrorsDesc = "Messages such as \"Spell is not ready yet\" that usually show at the top of the screen will be blocked."
 L.disableSfx = "Disable sound effects"
 L.disableSfxDesc = "The 'Sound Effects' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
+L.blockTooltipQuests = "Block tooltip quest objectives"
+L.blockTooltipQuestsDesc = "When you need to kill a boss for a quest, it will usually show as '0/1 complete' in the tooltip when you place your mouse over the boss. This will be hidden whilst in combat with that boss to prevent the tooltip growing very large."
+L.blockObjectiveTracker = "Hide quest tracker"
+L.blockObjectiveTrackerDesc = "The quest objective tracker will be hidden during a boss encounter to clear up screen space.\n\nThis will NOT happen if you are in a mythic+ or are tracking an achievement."
+
+L.subzone_grand_bazaar = "Grand Bazaar" -- Battle of Dazar'alor raid (Battle for Azeroth)
+L.subzone_port_of_zandalar = "Port of Zandalar" -- Battle of Dazar'alor raid (Battle for Azeroth)
+L.subzone_eastern_transept = "Eastern Transept" -- Auchindoun dungeon (Warlords of Draenor)
 
 -----------------------------------------------------------------------
 -- Colors.lua

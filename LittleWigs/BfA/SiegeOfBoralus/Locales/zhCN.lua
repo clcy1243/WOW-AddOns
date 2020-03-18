@@ -11,6 +11,25 @@ if L then
 	L.halberd = "库尔提拉斯戟兵"
 	L.raider = "铁潮袭击者"
 	L.vanguard = "库尔提拉斯先锋"
+	L.marksman = "库尔提拉斯神射手"
+	L.buccaneer = "水鼠帮海盗"
+	L.invader = "艾什凡入侵者"
+	L.dockhound = "咆哮的港口猎犬"
+	L.shredder = "激流破浪者"
+	L.packmaster = "港口猎犬训练师"
+	L.bomber = "黑油投弹者"
+end
+
+L = BigWigs:NewBossLocale("Sergeant Bainbridge", "zhCN")
+if L then
+	L.remaining = "%2$s中了%1$s，场上还剩%3$d个"
+	L.remaining_boss = "首领中了%s，场上还剩%d个"
+end
+
+L = BigWigs:NewBossLocale("Chopper Redhook", "zhCN")
+if L then
+	L.remaining = "%2$s中了%1$s，场上还剩%3$d个"
+	L.remaining_boss = "首领中了%s，场上还剩%d个"
 end
 
 L = BigWigs:NewBossLocale("Viq'Goth", "zhCN")

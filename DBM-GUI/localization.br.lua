@@ -1,4 +1,4 @@
-if GetLocale() ~= "ptBR" then return end
+﻿if GetLocale() ~= "ptBR" then return end
 
 if not DBM_GUI_Translations then DBM_GUI_Translations = {} end
 
@@ -22,8 +22,8 @@ L.TabCategory_PVP 			= "PVP"
 L.TabCategory_OTHER    		= "Outros módulos"
 
 L.BossModLoaded 			= "%s estatísticas"
-L.BossModLoad_now 			= [[Esse módulo não está carregado. 
-Ele será carregado quando você entrar na instância. 
+L.BossModLoad_now 			= [[Esse módulo não está carregado.
+Ele será carregado quando você entrar na instância.
 Você também pode clicar no botão para carregar o módulo manualmente.]]
 
 L.PosX						= 'Posição X'
@@ -122,7 +122,6 @@ L.ShowDefeatMessage 		= "Exibir mensagens ao vencer chefes no quadro de chat"
 L.ShowGuildMessages 		= "Exibir mensagens de puxada/vitória/derrota no quadro de chat"
 L.WhisperMessages			= "Opções de mensagens de sussurro"
 L.AutoRespond 				= "Responder automaticamente a sussurros durante a luta"
-L.EnableStatus 				= "Responder a sussurros de 'status'"
 L.WhisperStats 				= "Incluir estatísticas de derrotas/vitórias nas respostas a sussurros"
 
 -- Tab: Barsetup
@@ -150,9 +149,7 @@ L.ExpandUpwards				= "Expandir para cima"
 L.FillUpBars				= "Barras enchem"
 L.ClickThrough				= "Desabilitar eventos de mouse (permite clicar através das barras)"
 L.Bar_Decimal				= "Exibir porcentagens abaixo do temporizador: %d"
-L.Bar_DBMOnly				= "As opções abaixo só funcionam com o estilo de barra \"DBM\" ."
 L.Bar_EnlargeTime			= "Barras aumentam abaixo deste tempo: %d"
-L.Bar_EnlargePercent		= "Barras aumentam abaixo desta porcentagem: %0.1f%%"
 L.BarSpark					= "Barra faísca"
 L.BarFlash					= "Barra pisca quando estiver para expirar"
 L.BarSort					= "selecionar pelo tempo restante"
@@ -162,7 +159,6 @@ L.BarSort					= "selecionar pelo tempo restante"
 L.Panel_SpecWarnFrame		= "Avisos Especiais"
 L.Area_SpecWarn				= "Opções de Avisos Especiais"
 L.ShowSWarningsInChat 		= "Exibir avisos especiais no quadro de chat"
-L.SpecWarn_FlashFrame		= "Brilhar tela em avisos especiais"
 L.SpecWarn_FlashFrameRepeat	= "Repetir %d vezes (se habilitado)"
 L.SpecWarn_Font				= "Fonte utilizada para avisos especiais"
 L.SpecWarn_FontSize			= "Tamanho da fonte"
@@ -175,10 +171,6 @@ L.SpecWarn_FlashAlpha		= "Alfa da piscada: %0.1f"
 L.SpecWarn_DemoButton		= "Mostrar exemplo"
 L.SpecWarn_MoveMe			= "Definir posição"
 L.SpecWarn_ResetMe			= "Redefinir padrões"
-L.SpecialWarnSound			= "Definir som para aviso especial afetando você ou sua função na raid"
-L.SpecialWarnSound2			= "Definir som para aviso especial afetando todos na raid"
-L.SpecialWarnSound3			= "Definir som para aviso especial MUITO IMPORTANTE"
-L.SpecialWarnSound4			= "Definir som para aviso especial se sair correndo"
 
 -- Tab: Spoken Alerts Frame
 L.Panel_SpokenAlerts		= "Avisos falados"
@@ -198,8 +190,8 @@ L.SpecWarn_AlwaysVoice		= "Sempre tocar todos os avisos falados (Substitui opç�
 
 
 -- Tab: Global Filter
-L.Panel_SpamFilter			= "DBM Desligamentos globais & filtros"
-L.Area_SpamFilter_Outgoing	= "DBM opções de desligamentos globais & filtros"
+L.Panel_SpamFilter			= "Desligamentos globais & filtros"
+L.Area_SpamFilter_Outgoing	= "opções de desligamentos globais & filtros"
 L.SpamBlockNoShowAnnounce	= "Não exibir anúncios ou tocar avisos sonoros"
 L.SpamBlockNoSetIcon		= "Não marcar jogadores com ícones"
 L.SpamBlockNoRangeFrame		= "Não exibir quadro de distancia"
@@ -256,7 +248,7 @@ L.AFKHealthWarning			= "Tocar som de alerta quando você estiver perdendo vida e
 L.Area_AutoLogging			= "opções de relatórios automáticos"
 L.AutologBosses				= "Gravar automaticamente o relatório de encontro com os chefes utilizando o relatório de combate da Blizzard(Requer que seja usado /dbm pull antes do chefe <a href=\"http://www.warcraftlogs.com\">|cff3588ffwarcraftlogs.com|r</a> compatibilidade)"
 L.AdvancedAutologBosses		= "Gravar automaticamente o encontro com o chefe utilizando o Transcritor"
-L.LogOnlyRaidBosses			= "Só gravar encontros com chefes de raid (exclui Localizador de Raids/Grupos/Cenários)"
+L.LogOnlyNonTrivial			= "Só gravar encontros com chefes de raid (exclui Localizador de Raids/Grupos/Cenários)"
 L.Area_3rdParty				= "opções de add0ns de terceiros"
 L.ShowBBOnCombatStart		= "Fazer checagem de Buff com Big Brother no início do combate"
 L.BigBrotherAnnounceToRaid	= "Anunciar resultados do Big Brother para a raid"

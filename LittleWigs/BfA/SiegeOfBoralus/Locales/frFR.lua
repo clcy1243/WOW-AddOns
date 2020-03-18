@@ -11,6 +11,25 @@ if L then
 	L.halberd = "Hallebardier kultirassien"
 	L.raider = "Ecumeur des Lamineurs"
 	L.vanguard = "Avant-garde de Kul Tiras"
+	L.marksman = "Tireur d'élite de Kul Tiras"
+	L.buccaneer = "Boucanier des Soutaillons"
+	L.invader = "Envahisseur corsandre"
+	L.dockhound = "Molosse des quais hargneux"
+	L.shredder = "Déchiqueteur des marées"
+	L.packmaster = "Dresseur des quais"
+	L.bomber = "Bombardier carbutan"
+end
+
+L = BigWigs:NewBossLocale("Sergeant Bainbridge", "frFR")
+if L then
+	-- L.remaining = "%s on %s, %d remaining"
+	-- L.remaining_boss = "%s on BOSS, %d remaining"
+end
+
+L = BigWigs:NewBossLocale("Chopper Redhook", "frFR")
+if L then
+	-- L.remaining = "%s on %s, %d remaining"
+	-- L.remaining_boss = "%s on BOSS, %d remaining"
 end
 
 L = BigWigs:NewBossLocale("Viq'Goth", "frFR")

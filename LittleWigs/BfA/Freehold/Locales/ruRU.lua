@@ -25,9 +25,9 @@ end
 
 L = BigWigs:NewBossLocale("Council o' Captains", "ruRU")
 if L then
-	--L.crit_brew = "Crit Brew"
-	--L.haste_brew = "Haste Brew"
-	--L.bad_brew = "Bad Brew"
+	L.crit_brew = "Критовое пиво"
+	L.haste_brew = "Ускоряющее пиво"
+	L.bad_brew = "Плохое пиво"
 end
 
 L = BigWigs:NewBossLocale("Ring of Booty", "ruRU")
@@ -35,13 +35,13 @@ if L then
 	L.custom_on_autotalk = "Авторазговор"
 	L.custom_on_autotalk_desc = "Мгновенный выбор опции запуска боя в диалоге."
 
-	-- Gather 'round and place yer bets! We got a new set of vict-- uh... competitors! Take it away, Gurgthok and Wodin!
-	-- L.lightning_warmup = "new set of vict--"
-	-- It's a greased up pig? I'm beginning to think this is not a professional setup. Oh well... grab the pig and you win
-	-- L.lightning_warmup_2 = "not a professional setup"
+	-- Делайте ваши ставки! К нам пожаловали новые жерт... претенденты! А теперь слово Гаргтоку и Водину!
+	L.lightning_warmup = "новые жерт..."
+	-- Обмазанная маслом свинья? А это точно профессиональная арена?...Ох, ладно. Ловите свинью!
+	L.lightning_warmup_2 = "точно профессиональная арена"
 
 	L.lightning = "Молния"
-	-- L.lightning_caught = "Lightning caught after %.1f seconds!"
+	L.lightning_caught = "Молния поймана спустя %.1f секунд!"
 	L.ludwig = "Людвиг фон Тортоллен"
 	L.trothak = "Тротак"
 end

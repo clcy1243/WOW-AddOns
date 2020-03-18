@@ -109,24 +109,16 @@ L["ICONMENU_CTRLGROUP_UNAVAILABLEID_DESC"] = [[Only the first icon in a group (i
 L["ERROR_MISSINGFILE_REQFILE"] = "A required file"
 L["ERROR_MISSINGFILE"] = [[A complete restart of WoW is required to use TellMeWhen %s.
 
-%s was not loaded. 
-
-Would you like to restart WoW now?]]
+%s was not loaded.]]
 L["ERROR_MISSINGFILE_NOREQ"] = [[A complete restart of WoW may be required to fully use TellMeWhen %s:
 
-%s was not loaded.
-
-Would you like to restart WoW now?]]
+%s was not loaded.]]
 L["ERROR_MISSINGFILE_OPT"] = [[A complete restart of WoW is required to configure TellMeWhen %s:
 
-%s was not loaded.
-
-Would you like to restart WoW now?]]
+%s was not loaded.]]
 L["ERROR_MISSINGFILE_OPT_NOREQ"] = [[A complete restart of WoW may be required to fully configure TellMeWhen %s:
 
-%s was not loaded.
-
-Would you like to restart WoW now?]]
+%s was not loaded.]]
 
 
 L["ANCHOR_CURSOR_DUMMY"] = "TellMeWhen Cursor Anchor Dummy"
@@ -639,6 +631,7 @@ L["AIR"] = "Air"
 L["MUSHROOM"] = "Mushroom %d"
 L["RUNEOFPOWER"] = "Rune %d"
 L["GENERICTOTEM"] = "Totem %d"
+L["GENERICTOTEM_ANY"] = "Any Totem"
 L["RUNES"] = "Rune(s) to check"
 
 
@@ -669,6 +662,11 @@ L["ICONMENU_MANACHECK"] = "Power check"
 L["ICONMENU_MANACHECK_DESC"] = "Check this to enable changing the color of the icon when you are out of mana/rage/runic power/etc."
 L["ICONMENU_COOLDOWNCHECK"] = "Cooldown check"
 L["ICONMENU_COOLDOWNCHECK_DESC"] = "Check this to cause the icon to be considered unusable if it is on cooldown."
+L["ICONMENU_GCDASUNUSABLE"] = "Don't ignore GCD"
+L["ICONMENU_GCDASUNUSABLE_DESC"] = [[Normally, TellMeWhen classifies cooldowns on GCD as being usable.
+
+Enable this setting to prevent that behavior, making spells on the GCD be treated as unusable.]]
+
 L["ICONMENU_IGNORERUNES"] = "Ignore Runes"
 L["ICONMENU_IGNORERUNES_DESC"] = "Check this to treat the cooldown as usable if the only thing hindering it is a rune cooldown (or a global cooldown)."
 L["ICONMENU_IGNORERUNES_DESC_DISABLED"] = "You must enable the \"Cooldown check\" setting to enable the \"Ignore Runes\" setting."
@@ -845,6 +843,8 @@ L["UIPANEL_BAR_BORDERBAR"] = "Bar Border"
 L["UIPANEL_BAR_BORDERBAR_DESC"] = "Set a border around the bar."
 L["UIPANEL_BAR_BORDERCOLOR"] = "Border Color"
 L["UIPANEL_BAR_BORDERCOLOR_DESC"] = "Change the color of the icon and bar borders."
+L["UIPANEL_BAR_ICONBORDERINSET"] = "Inset Icon Border"
+L["UIPANEL_BAR_ICONBORDERINSET_DESC"] = "Cause the icon border to overlay on the icon, instead of surrounding it."
 L["UIPANEL_BAR_SIZE_X"] = "Icon Width"
 L["UIPANEL_BAR_SIZE_X_DESC"] = "Modifies the width of icons in this group."
 L["UIPANEL_BAR_SIZE_Y"] = "Icon Height"
@@ -874,6 +874,8 @@ L["UIPANEL_ROLE_DESC"] = "Check to allow this group to show when your current sp
 L["ROLEf"] = "Role: %s"
 L["UIPANEL_PTSINTAL"] = "Points in talent"
 L["UIPANEL_TALENTLEARNED"] = "Talent learned"
+L["UIPANEL_AZESSLEARNED"] = "Azerite Essence Active"
+L["UIPANEL_AZESSLEARNED_MAJOR"] = "Major Azerite Essence Active"
 L["UIPANEL_PVPTALENTLEARNED"] = "PvP Talent learned"
 L["UIPANEL_GLYPH"] = "Glyph active"
 L["UIPANEL_GLYPH_DESC"] = "Checks if you have a particular glyph active."
@@ -1497,7 +1499,7 @@ If you have any control blocks (e.g. if/then), you'll need return statements.
 |cff7fffff-|r To get a reference to the 'unit' for Unit Conditions, use variable "thisunit". 
 |cff7fffff-|r To insert a reference to another icon by GUID, shift click that icon while this editbox has focus.
 
-If more help is needed (but not help about how to write Lua code), open a ticket on CurseForge. For help on how to write Lua, go to the internet.]]
+If more help is needed (but not help about how to write Lua code), try the TMW Discord. For help on how to write Lua, go to the internet.]]
 
 
 L["CONDITIONPANEL_OLD"] = "<|cffff1300OLD|r>"
@@ -1826,7 +1828,7 @@ L["GROUPSELECT_TOOLTIP"] = [[|cff7fffffClick|r to edit.
 |cff7fffffClick-and-drag|r to reorder or change domain.]]
 
 L["GROUP_UNAVAILABLE"] = "|TInterface/PaperDollInfoFrame/UI-GearManager-LeaveItem-Transparent:20|t This group cannot be shown due to its overly-restrictive spec/role settings."
-
+L["GROUP_CANNOT_INTERACTIVELY_POSITION"] = "Cannot interactively reposition %s because the anchor target is restricted. Use the manual position controls in the group settings."
 
 --[=[L["CNDT_SLIDER_DESC_BASE"] = [[|cff7fffffMousewheel|r to adjust.
 |cff7fffffShift-Mousewheel|r to adjust x10.
@@ -1891,7 +1893,7 @@ L["HELP"] = "Help"
 L["HELP_ISSUES"] = "Bugs & Feature Requests"
 L["HELP_ISSUES_DESC"] = [[Report bugs and request features on the official TellMeWhen issue tracker on GitHub.]]
 L["HELP_COMMUNITY"] = "Community Discord"
-L["HELP_COMMUNITY_DESC"] = [[Join the official TellMeWhen discord! 
+L["HELP_COMMUNITY_DESC"] = [[Join the official TellMeWhen discord!
 
 Ask questions, share configuration, or just hang out with other TellMeWhen users.]]
 
@@ -2190,13 +2192,9 @@ L["SOUND_SOUNDTOPLAY"] = "Sound to Play"
 L["SOUND_CUSTOM"] = "Custom sound file"
 L["SOUND_CUSTOM_DESC"] = [[Insert the path to a custom sound to play. You can also input a numeric Sound Kit ID.
 
-Here are some examples, where "file" is the name of your sound, and "ext" is the file's extension (ogg or mp3 only!):
+Files must be nested under the "Interface" folder in WoW's installation - e.g. "Interface/AddOns/file.ext". Only ogg and mp3 formats are supported.
 
-- "CustomSounds/file.ext": a file placed in a new folder named "CustomSounds" that is in WoW's root directory (the same location as Wow.exe, Interface and WTF folders, etc)
-
-- "Interface/AddOns/file.ext": a loose file in the AddOns folder
-
-- "file.ext": a loose file in WoW's root directory
+Sound Kit IDs can be found by browsing https://www.wowhead.com/sounds - the URL for the page for each sound contains the Sound Kit ID.
 
 NOTE: WoW must be restarted before it will recognize files that did not exist when it was started up.]]
 L["SOUND_TAB"] = "Sound"
@@ -2256,6 +2254,9 @@ L["SOUND_CHANNEL_DESC"] = [[Choose the sound channel and volume setting that you
 Selecting %q will let sounds be played even when sounds are turned off.]]
 L["SOUND_CHANNEL_MASTER"] = "Master"
 
+L["SOUND_ERROR_BADFILE"] = [[This sound cannot be played because the file was not found.
+
+If this is a custom sound file, ensure the file is nested under the "Interface" folder in WoW's installation, and that you have restarted the game since putting it there.]]
 L["SOUND_ERROR_ALLDISABLED"] = [[This sound cannot be tested because the game sounds are completely disabled.
 
 Change this setting in Blizzard's sound options.]]
@@ -2275,6 +2276,9 @@ L["SOUNDERROR2"] = [[Custom WAV files are not supported by WoW 4.0+
 
 (Sounds built into WoW will still work, though)]]
 L["SOUNDERROR3"] = "Only OGG and MP3 files are supported!"
+L["SOUNDERROR4"] = [[Since WoW 8.2, custom files must be under the Interface directory. 
+
+Your entered path should start with "Interface/".]]
 
 L["ANN_TAB"] = "Text"
 L["ANN_TAB_DESC"] = [[Outputs text to chat channels, UI frames, or other AddOns.]]
@@ -2291,6 +2295,7 @@ L["ANN_STICKY"] = "Sticky"
 L["ANN_SHOWICON"] = "Show icon texture"
 L["ANN_SHOWICON_DESC"] = "Some text destinations can show a texture along with the text. Check this to enable that feature."
 L["ANN_SUB_CHANNEL"] = "Sub section"
+L["ANN_INSTANCE_RESTRICTED"] = [[Due to Blizzard restrictions, this method only works when inside an instance or when used with a Click trigger.]]
 L["ANN_WHISPERTARGET"] = "Whisper target"
 L["ANN_WHISPERTARGET_DESC"] = [[Input the name of the player that you would like to whisper.
 
@@ -2427,7 +2432,7 @@ L["EVENTS_SETTINGS_COUNTER_NAME_DESC"] = [[Enter the name of the counter to be m
 
 Counter names must be lower-case with no spaces.
 
-Use this counter name in other places where you would like to check this counter (Conditions and Text Displays via the [Counter] DogTag)
+Use this counter name in other places where you would like to check this counter (Conditions, and Text Displays via the [Counter] DogTag)
 
 
 Advanced Users: Counters are stored in TMW.COUNTERS[counterName] = value.   Call TMW:Fire( "TMW_COUNTER_MODIFIED", counterName ) if you change a counter in a custom Lua script.]]
@@ -2437,7 +2442,7 @@ L["EVENTS_SETTINGS_TIMER_NAME_DESC"] = [[Enter the name of the timer to be modif
 
 Timer names must be lower-case with no spaces.
 
-Use this timer name in other places where you would like to check this timer (Conditions and Text Displays via the [Timer] DogTag)]]
+Use this timer name in other places where you would like to check this timer (Conditions, and Text Displays via the [Timer] DogTag)]]
 
 
 L["EVENTS_SETTINGS_COUNTER_OP"] = "Operation"
@@ -2506,6 +2511,10 @@ L["CLEU_SPELL_ENERGIZE_DESC"] = "Occurs when resources (health/mana/rage/energy/
 L["CLEU_SPELL_EXTRA_ATTACKS"] = "Extra Attacks Gained"
 L["CLEU_SPELL_EXTRA_ATTACKS_DESC"] = "Occurs when extra melee swings are granted by procs."
 L["CLEU_SPELL_HEAL"] = "Heal"
+L["CLEU_SPELL_HEAL_CRIT"] = "Heal Crit"
+L["CLEU_SPELL_HEAL_CRIT_DESC"] = [[Occurs when any heal does critical healing. This will occur at the same time as the %q event.]]
+L["CLEU_SPELL_HEAL_NONCRIT"] = "Heal Non-Crit"
+L["CLEU_SPELL_HEAL_NONCRIT_DESC"] = [[Occurs when any heal does non-critical healing. This will occur at the same time as the %q event.]]
 L["CLEU_SPELL_INSTAKILL"] = "Instant Kill"
 L["CLEU_SPELL_INTERRUPT"] = "Interrupt - Spell Interrupted"
 L["CLEU_SPELL_INTERRUPT_DESC"] = [[Occurs when a spell cast is interrupted.
@@ -2521,7 +2530,7 @@ Icon can be filtered by the spell that caused the interrupt. The spell that was 
 Note the difference between the two interrupt events - both will always occur when a spell is interrupted, but each filters the spells involved differently.]]
 L["CLEU_SPELL_LEECH"] = "Resource Leech"
 L["CLEU_SPELL_LEECH_DESC"] = "Occurs when resources (health/mana/rage/energy/etc) are removed from one unit and simultaneously given to another."
-L["CLEU_SPELL_MISSED"] = "Spell Miss"
+L["CLEU_SPELL_MISSED"] = "Spell Miss/Resist"
 L["CLEU_SPELL_CREATE"] = "Spell Create"
 L["CLEU_SPELL_CREATE_DESC"] = "Occurs when an object, such as a hunter trap or a mage portal, is created."
 L["CLEU_SPELL_SUMMON"] = "Spell Summon"
@@ -2547,6 +2556,12 @@ L["CLEU_PARTY_KILL"] = "Party Kill"
 L["CLEU_PARTY_KILL_DESC"] = "Occurs when someone in your party kills something."
 
 
+L["CLEU_SPELL_MISSED_DODGE"] = "Spell/Ability Dodge" -- custom event
+L["CLEU_SPELL_MISSED_PARRY"] = "Spell/Ability Parry" -- custom event
+L["CLEU_SPELL_MISSED_BLOCK"] = "Spell/Ability Block" -- custom event
+L["CLEU_SWING_MISSED_DODGE"] = "Swing Dodge" -- custom event
+L["CLEU_SWING_MISSED_PARRY"] = "Swing Parry" -- custom event
+L["CLEU_SWING_MISSED_BLOCK"] = "Swing Block" -- custom event
 
 L["CLEU_CAT_CAST"] = "Casts"
 L["CLEU_CAT_SWING"] = "Melee/Ranged"
@@ -2851,7 +2866,7 @@ L["DR-Incapacitate"] = "Incapacitates"
 --L["DR-Entrapment"] = "Entrapment"
 --L["DR-MindControl"] = "Mind Control"
 --L["DR-ShortDisorient"] = "Short Mesmerizes/Disorients"
---L["DR-Disarm"] = "Disarms"
+L["DR-Disarm"] = "Disarms"
 --L["DR-RandomRoot"] = "Short/Random roots"
 --L["DR-ControlledRoot"] = "Controlled roots"
 --L["DR-DragonsBreath"] = "Dragon's Breath"

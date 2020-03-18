@@ -20,9 +20,11 @@ mod:RegisterEnableMob(
 	136470, -- Refreshment Vendor
 	130435, -- Addled Thug
 	137029, -- Ordnance Specialist
-	134012, -- Taskmaster Askari 
+	134012, -- Taskmaster Askari
 	133463, -- Venture Co. War Machine
-	136643  -- Azerite Extractor
+	136643, -- Azerite Extractor
+	136139, -- Mechanized Peacekeeper
+	130485  -- Mechanized Peacekeeper
 )
 
 --------------------------------------------------------------------------------
@@ -47,6 +49,7 @@ if L then
 	L.specialist = "Ordnance Specialist"
 	L.taskmaster = "Taskmaster Askari"
 	L.warmachine = "Venture Co. War Machine"
+	L.peacekeeper = "Mechanized Peacekeeper"
 end
 
 --------------------------------------------------------------------------------
@@ -65,6 +68,7 @@ function mod:GetOptions()
 		281621, -- Concussion Charge
 		-- Venture Co. Earthshaper
 		268709, -- Earth Shield
+		263202, -- Rock Lance
 		-- Stonefury
 		268702, -- Furious Quake
 		263215, -- Tectonic Barrier
@@ -95,7 +99,9 @@ function mod:GetOptions()
 		{263601, "TANK"}, -- Desperate Measures
 		-- Venture Co. War Machine
 		{269429, "TANK"}, -- Charged Shot
-
+		-- Mechanized Peacekeeper
+		{262412, "NAMEPLATEBAR"}, -- Energy Shield
+		263628, -- Charged Claw
 	}, {
 		[268846] = L.tester,
 		[269302] = L.assassin,
@@ -113,12 +119,11 @@ function mod:GetOptions()
 		[269090] = L.specialist,
 		[263601] = L.taskmaster,
 		[269429] = L.warmachine,
+		[262412] = L.peacekeeper,
 	}
 end
 
 function mod:OnBossEnable()
-	self:RegisterMessage("BigWigs_OnBossEngage", "Disable")
-
 	self:Log("SPELL_CAST_START", "EchoBlade", 268846)
 	self:Log("SPELL_CAST_START", "ForceCannon", 268865)
 	self:Log("SPELL_CAST_START", "ToxicBlades", 269302)
@@ -126,6 +131,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "ConcussionCharge", 281621)
 	self:Log("SPELL_CAST_START", "EarthShield", 268709)
 	self:Log("SPELL_AURA_APPLIED", "EarthShieldApplied", 268709)
+	self:Log("SPELL_CAST_START", "RockLance", 263202)
 	self:Log("SPELL_CAST_START", "FuriousQuake", 268702)
 	self:Log("SPELL_CAST_START", "TectonicBarrier", 263215)
 	self:Log("SPELL_AURA_APPLIED", "TectonicBarrierApplied", 263215)
@@ -149,7 +155,9 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "ArtilleryBarrage", 269090)
 	self:Log("SPELL_AURA_APPLIED", "DesperateMeasuresApplied", 263601)
 	self:Log("SPELL_CAST_START", "ChargedShot", 269429)
-
+	self:Log("SPELL_CAST_START", "EnergyShield", 262412)
+	self:Log("SPELL_CAST_START", "ChargedClaw", 263628)
+	self:Log("SPELL_CAST_SUCCESS", "ChargedClawSuccess", 263628)
 end
 
 --------------------------------------------------------------------------------
@@ -177,9 +185,16 @@ function mod:ToxicBlades(args)
 end
 
 -- Mech Jockey
-function mod:ActivateMech(args)
-	self:Message2(args.spellId, "red", CL.casting:format(args.spellName))
-	self:PlaySound(args.spellId, "warning", "interrupt")
+do
+	local prev = 0
+	function mod:ActivateMech(args)
+		local t = args.time
+		if t-prev > 1.5 then
+			prev = t
+			self:Message2(args.spellId, "red", CL.casting:format(args.spellName))
+			self:PlaySound(args.spellId, "warning")
+		end
+	end
 end
 
 function mod:ConcussionCharge(args)
@@ -188,18 +203,40 @@ function mod:ConcussionCharge(args)
 end
 
 -- Venture Co. Earthshaper
-function mod:EarthShieldApplied(args)
-	if not UnitIsPlayer(args.destName) then
-		self:Message2(args.spellId, "red", CL.other:format(args.spellName, args.destName))
-		if self:Dispeller("magic", true) then
-			self:PlaySound(args.spellId, "alarm")
+do
+	local prev = 0
+	function mod:EarthShield(args)
+		local t = args.time
+		if t-prev > 1.5 then
+			prev = t
+			self:Message2(args.spellId, "yellow", CL.casting:format(args.spellName))
+			self:PlaySound(args.spellId, "alert")
 		end
 	end
 end
 
-function mod:EarthShield(args)
-	self:Message2(args.spellId, "red", CL.casting:format(args.spellName))
-	self:PlaySound(args.spellId, "warning", "interrupt")
+do
+	local prev = 0
+	function mod:EarthShieldApplied(args)
+		local t = args.time
+		if t-prev > 1.5 and not UnitIsPlayer(args.destName) and self:Dispeller("magic", true) then
+			prev = t
+			self:Message2(args.spellId, "yellow", CL.other:format(args.spellName, args.destName))
+			self:PlaySound(args.spellId, "info")
+		end
+	end
+end
+
+do
+	local prev = 0
+	function mod:RockLance(args)
+		local t = args.time
+		if t-prev > 1.5 then
+			prev = t
+			self:Message2(args.spellId, "red", CL.casting:format(args.spellName))
+			self:PlaySound(args.spellId, "alert", "interrupt")
+		end
+	end
 end
 
 -- Stonefury
@@ -277,7 +314,6 @@ end
 function mod:TransmuteEnemyToGoo(args)
 	self:Message2(args.spellId, "red", CL.casting:format(args.spellName))
 	self:PlaySound(args.spellId, "warning", "interrupt")
-	self:TargetBar(args.spellId, 10, args.destName)
 end
 
 function mod:TransmuteEnemyToGooApplied(args)
@@ -302,15 +338,21 @@ do
 			self:PlaySound(args.spellId, "alert")
 		end
 	end
+end
 
+do
+	local prev = 0
 	function mod:MiningCharge(args)
-		local unit = self:GetUnitIdByGUID(args.sourceGUID)
-		if unit and UnitAffectingCombat(unit) then
-			self:Message2(args.spellId, "yellow")
-			self:PlaySound(args.spellId, "info", "watchstep")
+		local t = args.time
+		if t-prev > 1.5 then
+			local unit = self:GetUnitIdByGUID(args.sourceGUID)
+			if unit and UnitAffectingCombat(unit) then
+				prev = t
+				self:Message2(args.spellId, "yellow")
+				self:PlaySound(args.spellId, "info", "watchstep")
+			end
 		end
 	end
-
 end
 
 -- Refreshment Vendor
@@ -369,4 +411,17 @@ end
 function mod:ChargedShot(args)
 	self:Message2(args.spellId, "orange", CL.casting:format(args.spellName))
 	self:PlaySound(args.spellId, "alarm")
+end
+
+function mod:EnergyShield(args)
+    self:NameplateBar(args.spellId, 22.5, args.sourceGUID)
+end
+
+function mod:ChargedClaw(args)
+	self:Message2(args.spellId, "red")
+	self:PlaySound(args.spellId, "alarm")
+end
+
+function mod:ChargedClawSuccess(args)
+	self:TargetBar(args.spellId, 10, args.sourceName)
 end

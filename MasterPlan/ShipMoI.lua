@@ -1,7 +1,6 @@
 local _, T = ...
 if T.Mark ~= 50 then return end
 local L, G, EV, api = T.L, T.Garrison, T.Evie, T.MissionsUI
-local GameTooltip = AltGameTooltip or GameTooltip
 
 local function dismissTooltip(self)
 	if GameTooltip:IsOwned(self) then
@@ -56,7 +55,7 @@ local moiHandle do
 		b:SetSize(21, 21)
 		local t = b:CreateTexture(nil, "ARTWORK")
 		t:SetAllPoints()
-		t, b.Icon = b:CreateTexture(nil, "ARWORK", nil, 1), t
+		t, b.Icon = b:CreateTexture(nil, "ARTWORK", nil, 1), t
 		t:SetSize(34.5, 34.5)
 		t:SetPoint("CENTER")
 		b.Border, b.info = t, {}

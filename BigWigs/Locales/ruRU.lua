@@ -1,11 +1,16 @@
 local L = BigWigsAPI:NewLocale("BigWigs", "ruRU")
 if not L then return end
 
-L.getNewRelease = "Ваш BigWigs устарел(/bwv), но вы можете легко его обновить с помощью Twitch Client. Также, Вы можете обновиться вручную на сайтах curse.com или wowinterface.com."
+L.getNewRelease = "Ваш BigWigs устарел(/bwv), но вы можете легко его обновить с помощью Twitch Client. Также, Вы можете обновиться вручную на сайтах curseforge.com или wowinterface.com."
 L.warnTwoReleases = "Ваш BigWigs устарел на две версии! Ваша версию может содержать ошибки, меньше возможностей, а может быть и неправильные таймеры. Крайне рекомендуется обновиться."
 L.warnSeveralReleases = "|cffff0000Ваш BigWigs устарел на %d версий!! ОЧЕНЬ рекомендуется обновиться, чтобы предотвратить ошибки синхронизации с другими игроками!|r"
 
-L.gitHubDesc = "BigWigs это программное обеспечение с открытым исходным кодом, который размещен на GitHub. Мы всегда ищем новых людей, чтобы помочь нам, и каждый желающий может осмотреть наш код, внести свой вклад и отправить отчеты об ошибках. BigWigs хорош, только благодаря помощи большей части сообщества WoW.\n\n|cFF33FF99Наше API теперь задокументировано и свободно читается на GitHub wiki.|r"
+L.gitHubDesc = "BigWigs это программное обеспечение с открытым исходным кодом, который размещен на GitHub. Мы всегда ищем новых людей, чтобы помочь нам, и каждый желающий может осмотреть наш код, внести свой вклад и отправить отчеты об ошибках. BigWigs хорош, только благодаря помощи большей части сообщества WoW."
+
+--L.testNameplate = "Target detected, creating a test nameplate bar over target nameplate."
+
+--L.classicWarning1 = "|cFF33FF99BigWigs|r: You're using the wrong version of BigWigs on a classic server."
+--L.classicWarning2 = "|cFF33FF99BigWigs|r: Please install the classic version of BigWigs."
 
 L.options = "Настройки"
 L.raidBosses = "Рейдовые боссы"
@@ -17,6 +22,7 @@ L.INFOBOX = L.infobox
 L.INFOBOX_desc = L.infobox_desc
 
 L.disabledAddOn = "У вас выключена модификация |cFF436EEE%s|r, таймеры не будут показываться."
+L.alternativeName = "%s (|cFF436EEE%s|r)"
 
 L.activeBossModules = "Активные модули боссов:"
 L.advanced = "Дополнительные настройки"
@@ -125,6 +131,8 @@ L.SAY_COUNTDOWN = "Отсчет в /сказать"
 L.SAY_COUNTDOWN_desc = "Облачка чата легко заметить. BigWigs будет производить отсчет в /сказать, чтобы оповестить рядом стоящих игроков об окончании времени способности на Вас."
 L.ME_ONLY_EMPHASIZE = "Выделить (только для себя)"
 L.ME_ONLY_EMPHASIZE_desc = "С включенной опцией все сообщения, связанные с данной способностью будут выделенны ТОЛЬКО тогда, когда использованы на Вас, становясь более заметными."
+-- L.NAMEPLATEBAR = "Nameplate Bars"
+-- L.NAMEPLATEBAR_desc = "Bars are sometimes attached to nameplates when more than one mob casts the same spell. If this ability is accompanied by a nameplate bar that you want to hide, disable this option."
 
 -- Media.lua
 L.Beware = "Берегитесь (Алгалон)"

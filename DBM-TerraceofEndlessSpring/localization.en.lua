@@ -3,7 +3,7 @@ local L
 ------------
 -- Protectors of the Endless --
 ------------
-L= DBM:GetModLocalization(683)
+L = DBM:GetModLocalization(683)
 
 L:SetWarningLocalization({
 	warnGroupOrder		= "Rotate In: Group %s",
@@ -20,7 +20,7 @@ L:SetOptionLocalization({
 ------------
 -- Tsulong --
 ------------
-L= DBM:GetModLocalization(742)
+L = DBM:GetModLocalization(742)
 
 L:SetOptionLocalization({
 	warnLightOfDay	= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.target:format(123716)
@@ -33,20 +33,20 @@ L:SetMiscLocalization{
 -------------------------------
 -- Lei Shi --
 -------------------------------
-L= DBM:GetModLocalization(729)
+L = DBM:GetModLocalization(729)
 
 L:SetWarningLocalization({
-	warnHideOver			= "%s has ended"
+	warnHideOver	= "%s has ended"
 })
 
 L:SetTimerLocalization({
-	timerSpecialCD			= "Special CD (%d)"
+	timerSpecialCD	= "Special CD (%d)"
 })
 
 L:SetOptionLocalization({
-	warnHideOver			= "Show warning when $spell:123244 has ended",
-	timerSpecialCD			= "Show timer for special ability CD",
-	RangeFrame				= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(3, 123121) .. "<br/>(Shows everyone during Hide, otherwise, only shows tanks)"
+	warnHideOver	= "Show warning when $spell:123244 has ended",
+	timerSpecialCD	= "Show timer for special ability CD",
+	RangeFrame		= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(3, 123121) .. "<br/>(Shows everyone during Hide, otherwise, only shows tanks)"
 })
 
 L:SetMiscLocalization{
@@ -56,7 +56,7 @@ L:SetMiscLocalization{
 ----------------------
 -- Sha of Fear --
 ----------------------
-L= DBM:GetModLocalization(709)
+L = DBM:GetModLocalization(709)
 
 L:SetWarningLocalization({
 	MoveForward					= "Move Through",
@@ -66,17 +66,17 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerSpecialAbilityCD		= "Next Special Ability",
-	timerSpoHudCD				= "Fear / Waterspout CD",
-	timerSpoStrCD				= "Waterspout / Strike CD",
-	timerHudStrCD				= "Fear / Strike CD"
+	timerSpecialAbilityCD	= "Next Special Ability",
+	timerSpoHudCD			= "Fear / Waterspout CD",
+	timerSpoStrCD			= "Waterspout / Strike CD",
+	timerHudStrCD			= "Fear / Strike CD"
 })
 
 L:SetOptionLocalization({
 	warnThrash					= DBM_CORE_AUTO_ANNOUNCE_OPTIONS.spell:format(131996),
 	warnBreathOnPlatform		= "Show $spell:119414 warning when you are on platform<br/>(not recommended, for raid leader)",
 	specWarnBreathOfFearSoon	= "Show pre-special warning for $spell:119414 if you not have a $spell:117964 buff",
-	specWarnMovement			= "Show special warning to move when $spell:120047 is being fired<br/>(Click to copy link <a href=\"http://mysticalos.com/terraceofendlesssprings.jpg\">|cff3588ffhttp://mysticalos.com/terraceofendlesssprings.jpg|r</a>)",
+	specWarnMovement			= "Show special warning to move when $spell:120047 is being fired",
 	timerSpecialAbility			= "Show timer for when next special ability will be cast",
 	RangeFrame					= DBM_CORE_AUTO_RANGE_OPTION_TEXT:format(2, 119519),
 	SetIconOnHuddle				= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(120629)

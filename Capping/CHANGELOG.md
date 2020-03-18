@@ -1,7 +1,6 @@
 # Capping
 
-## [v8.1.0](https://github.com/BigWigsMods/Capping/tree/v8.1.0) (2018-12-18)
-[Full Changelog](https://github.com/BigWigsMods/Capping/compare/v8.0.21...v8.1.0)
+## [v8.3.1](https://github.com/BigWigsMods/Capping/tree/v8.3.1) (2020-01-16)
+[Full Changelog](https://github.com/BigWigsMods/Capping/compare/v8.3.0...v8.3.1)
 
-- bump toc  
-- Fix rare error, closes #20  
+- Update for the new Deepwind Gorge.  

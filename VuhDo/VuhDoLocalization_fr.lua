@@ -1,18 +1,18 @@
 if (GetLocale() ~= "frFR") then
 	return;
 end
--- ï¿½ = \195\160
--- ï¿½ = \195\162
--- ï¿½ = \195\166
--- ï¿½ = \195\167
--- ï¿½ = \195\168
--- ï¿½ = \195\169
--- ï¿½ = \195\170
--- ï¿½ = \195\175
--- ï¿½ = \195\180
--- ï¿½ = \195\185
--- ï¿½ = \197\146
--- ï¿½ = \197\147
+-- à = \195\160
+-- â = \195\162
+-- æ = \195\166
+-- ç = \195\167
+-- è = \195\168
+-- é = \195\169
+-- ê = \195\170
+-- ï = \195\175
+-- ô = \195\180
+-- ù = \195\185
+-- Œ = \197\146
+-- œ = \197\147
 -- @EXACT = true: Translation has to be the exact(!) match in the clients language,
 --                beacause it carries technical semantics
 -- @EXACT = false: Translation can be done freely, because text is only descriptive
@@ -70,15 +70,16 @@ VUHDO_I18N_SHOW_BUFF_WATCH = "Montrer le suivi des buffs";
 -- Chat messages
 -- @EXACT = false
 VUHDO_I18N_COMMAND_LIST = "\n|cffffe566 - [ Commandes VuhDo] -|r";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½|cffffe566opt|r[ions] - Opions de VuhDo";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½|cffffe566res|r[et] - R\195\169initialiser la position des panneaux";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½|cffffe566lock|r - V\195\169rouiller/D\195\169v\195\169rouiller les panneaux";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½|cffffe566mm, map, minimap|r - Afficher/Cacher l'ic\195\180ne sur la minimap";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½|cffffe566show, hide, toggle|r - Afficher/Cacher les panneaux";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½|cffffe566load|r - [Profile],[Key Layout]";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½[broad]|cffffe566cast, mt|r[s] - Diffuser les tanks principaux";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½|cffffe566role|r - R\195\169initialiser le r\195\180le des joueurs";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "ï¿½|cffffe566help,?|r - Cette liste de commandes\n";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566opt|r[ions] - Opions de VuhDo";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566res|r[et] - R\195\169initialiser la position des panneaux";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566lock|r - V\195\169rouiller/D\195\169v\195\169rouiller les panneaux";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566mm, map, minimap|r - Afficher/Cacher l'ic\195\180ne sur la minimap";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566show, hide, toggle|r - Afficher/Cacher les panneaux";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566load|r - [Profile],[Key Layout]";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n[broad]|cffffe566cast, mt|r[s] - Diffuser les tanks principaux";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566role|r - R\195\169initialiser le r\195\180le des joueurs";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566ab|r[out] - About this add-on";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566help,?|r - Cette liste de commandes\n";
 VUHDO_I18N_BAD_COMMAND = "Commande inconnue! Taper '/vuhdo help' or '/vd ?' pour la liste des commandes.";
 VUHDO_I18N_CHAT_SHOWN = "|cffffe566visible|r.";
 VUHDO_I18N_CHAT_HIDDEN = "|cffffe566cach\195\169|r.";
@@ -126,7 +127,7 @@ VUHDO_I18N_BUFFC_SKIN = "Peau";
 -- Mage
 VUHDO_I18N_BUFFC_ARMOR_MAGE = "Armure";
 -- Death Knight
-VUHDO_BUFFC_PRESENCE    = "Prï¿½sence";
+VUHDO_BUFFC_PRESENCE    = "Présence";
 -- Warrior
 VUHDO_I18N_BUFFC_SHOUT = "Cri";
 -- Hunter
@@ -467,4 +468,20 @@ VUHDO_I18N_DEF_BOUQUET_ROLE_AND_SUMMON = "Role & Summon Status Icon";
 VUHDO_I18N_BOUQUET_IS_PHASED = "Icon: Is Phased";
 VUHDO_I18N_BOUQUET_IS_WAR_MODE_PHASED = "Icon: Is War Mode Phased";
 VUHDO_I18N_DEF_BOUQUET_IS_PHASED = "Is Phased Icon";
+
+-- 3.101
+VUHDO_I18N_DEF_PLAYER_COMBO_POINTS = "Player Combo Points";
+VUHDO_I18N_BOUQUET_OWN_COMBO_POINTS_EQUALS = "Flag: Own Combo Points ==";
+VUHDO_I18N_DEF_PLAYER_SOUL_SHARDS = "Player Soul Shards";
+VUHDO_I18N_BOUQUET_OWN_SOUL_SHARDS_EQUALS = "Flag: Own Soul Shards ==";
+VUHDO_I18N_DEF_PLAYER_RUNES = "Player Runes";
+VUHDO_I18N_BOUQUET_OWN_RUNES_EQUALS = "Flag: Own Runes ==";
+VUHDO_I18N_DEF_PLAYER_ARCANE_CHARGES = "Player Arcane Charges";
+VUHDO_I18N_BOUQUET_OWN_ARCANE_CHARGES_EQUALS = "Flag: Own Arcane Charges ==";
+VUHDO_I18N_DEBUFF_BLACKLIST_ADDED = "Added \"[%s] %s\" to the debuff backlist.";
+
+-- 3.104
+VUHDO_I18N_PLAY_SOUND_FILE_ERR = "Could not play sound \"%s\": %s";
+VUHDO_I18N_PLAY_SOUND_FILE_DEBUFF_ERR = "Could not play sound \"%s\" for standard debuff. Adjust your settings under 'VuhDo Options > Debuffs > Standard > Debuff Sound'.";
+VUHDO_I18N_PLAY_SOUND_FILE_CUSTOM_DEBUFF_ERR = "Could not play sound \"%s\" for custom debuff \"%s\". Adjust your settings under 'VuhDo Options > Debuffs > Custom'.";
 

@@ -1,10 +1,12 @@
-﻿if GetLocale() ~= "ruRU" then return end
+﻿if GetLocale() ~= "ruRU" then
+	return
+end
 local L
 
 ------------
 -- Imperial Vizier Zor'lok --
 ------------
-L= DBM:GetModLocalization(745)
+L = DBM:GetModLocalization(745)
 
 L:SetWarningLocalization({
 	warnAttenuation		= "%s у %s (%s)",
@@ -22,19 +24,19 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Platform		= "летит к одной из своих платформ!",
-	Defeat			= "Мы не погрузимся в отчаяние. Если она хочет, чтобы мы погибли – так и будет."
+	Platform	= "летит к одной из своих платформ!",
+	Defeat		= "Мы не погрузимся в отчаяние. Если она хочет, чтобы мы погибли – так и будет."
 })
 
 ------------
 -- Blade Lord Ta'yak --
 ------------
-L= DBM:GetModLocalization(744)
+L = DBM:GetModLocalization(744)
 
 -------------------------------
 -- Garalon --
 -------------------------------
-L= DBM:GetModLocalization(713)
+L = DBM:GetModLocalization(713)
 
 L:SetWarningLocalization({
 	warnCrush		= "%s",
@@ -43,7 +45,6 @@ L:SetWarningLocalization({
 
 L:SetOptionLocalization({
 	specwarnUnder	= "Спец-предупреждение, когда вы стоите под боссом",
-	countdownCrush	= DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(122774).." (только в героическом режиме)"
 })
 
 L:SetMiscLocalization({
@@ -54,12 +55,12 @@ L:SetMiscLocalization({
 ----------------------
 -- Wind Lord Mel'jarak --
 ----------------------
-L= DBM:GetModLocalization(741)
+L = DBM:GetModLocalization(741)
 
 ------------
 -- Amber-Shaper Un'sok --
 ------------
-L= DBM:GetModLocalization(737)
+L = DBM:GetModLocalization(737)
 
 L:SetWarningLocalization({
 	warnReshapeLife				= "%s на >%s< (%d)",
@@ -75,8 +76,8 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization{
-	timerDestabalize			= "Дестабилизация (%2$d) : %1$s",
-	timerAmberExplosionAMCD		= "Восст. Взрыв: Чудовище"
+	timerDestabalize		= "Дестабилизация (%2$d) : %1$s",
+	timerAmberExplosionAMCD	= "Восст. Взрыв: Чудовище"
 }
 
 L:SetOptionLocalization({
@@ -90,18 +91,17 @@ L:SetOptionLocalization({
 	specwarnAmberExplosionAM	= "Спец-предупреждение для прерывания $spell:122402 у Янтарного чудовища",
 	specwarnAmberExplosionOther	= "Спец-предупреждение для прерывания $spell:122398 у Мутировавшего организма",
 	timerAmberExplosionAMCD		= "Отсчет времени до следующего $spell:122402 у Янтарного чудовища",
-	InfoFrame					= "Информационное окно для игроков с низким уровнем силы воли",
-	FixNameplates				= "Автоматически отключать мешающие полоски здоровья, когда вы<br/>в мутировавшем организме (восстанавливает настройку после выхода из боя)"
+	InfoFrame					= "Информационное окно для игроков с низким уровнем силы воли"
 })
 
 L:SetMiscLocalization({
-	WillPower					= "Сила воли"
+	WillPower	= "Сила воли"
 })
 
 ------------
 -- Grand Empress Shek'zeer --
 ------------
-L= DBM:GetModLocalization(743)
+L = DBM:GetModLocalization(743)
 
 L:SetWarningLocalization({
 	warnAmberTrap	= "Прогресс создания ловушки: (%d/5)"
@@ -123,9 +123,5 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("HoFTrash")
 
 L:SetGeneralLocalization({
-	name =	"Трэш мобы Сердца Страха"
-})
-
-L:SetOptionLocalization({
-	UnseenStrikeArrow	= "Показывать стрелку DBM, когда на ком-то $spell:122949"
+	name	= "Трэш мобы Сердца Страха"
 })

@@ -1,11 +1,16 @@
 local L = BigWigsAPI:NewLocale("BigWigs", "zhCN")
 if not L then return end
 
-L.getNewRelease = "你的 BigWigs 已过期（/bwv）但是可以使用 Twitch 客户端简单升级。另外，也可以从 curse.com 或 wowinterface.com 手动升级。"
+L.getNewRelease = "你的 BigWigs 已过期（/bwv）但是可以使用 Twitch 客户端简单升级。另外，也可以从 curseforge.com 或 wowinterface.com 手动升级。"
 L.warnTwoReleases = "你的 BigWigs 已过期2个发行版！你的版本可能有错误，功能缺失或不正确的计时器。所以强烈建议你升级。"
 L.warnSeveralReleases = "|cffff0000你的 BigWigs 已过期%d发行版！！我们*强烈*建议你更新，以防止把问题同步给其他玩家！|r"
 
-L.gitHubDesc = "BigWigs 是一个在 GitHub 上的开源软件。我们一直在寻找新的朋友帮助我们和欢迎任何人检测我们的代码，做出贡献和提交错误报告。BigWigs 今天的伟大很大程度上一部分因为伟大的魔兽世界社区帮助我们。\n\n|cFF33FF99我们的 API 现在已在 GitHub 维基记录并且可以自由读取。|r"
+L.gitHubDesc = "BigWigs 是一个在 GitHub 上的开源软件。我们一直在寻找新的朋友帮助我们和欢迎任何人检测我们的代码，做出贡献和提交错误报告。BigWigs 今天的伟大很大程度上一部分因为伟大的魔兽世界社区帮助我们。"
+
+L.testNameplate = "已检测到目标，在目标姓名板上创建一个测试姓名板条。"
+
+L.classicWarning1 = "|cFF33FF99BigWigs|r：你在经典怀旧服务器上正在使用错误版本的 BigWigs。"
+L.classicWarning2 = "|cFF33FF99BigWigs|r：请安装经典怀旧版本 BigWigs。"
 
 L.options = "选项"
 L.raidBosses = "团队首领"
@@ -17,6 +22,7 @@ L.INFOBOX = L.infobox
 L.INFOBOX_desc = L.infobox_desc
 
 L.disabledAddOn = "你的 |cFF436EEE%s|r 插件已禁用，计时器将不被显示。"
+L.alternativeName = "%s（|cFF436EEE%s|r）"
 
 L.activeBossModules = "激活首领模块："
 L.advanced = "高级选项"
@@ -125,6 +131,8 @@ L.SAY_COUNTDOWN = "说话冷却"
 L.SAY_COUNTDOWN_desc = "聊天泡泡很容易被发现。BigWigs 将使用多个说话消息倒计时提醒附近的人身上的技能即将到期。"
 L.ME_ONLY_EMPHASIZE = "醒目（自身）"
 L.ME_ONLY_EMPHASIZE_desc = "启用此选项将醒目如只作用于自身相关技能的任一信息，使它们更大更明显。"
+L.NAMEPLATEBAR = "姓名板条"
+L.NAMEPLATEBAR_desc = "当多个怪物施放相同的法术时，有时会在姓名板上附加条。如果此技能要伴随姓名板条隐藏，则禁用此选项。"
 
 -- Media.lua
 L.Beware = "当心（奥尔加隆）"

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(2157, "DBM-Party-BfA", 8, 1001)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 18044 $"):sub(12, -3))
+mod:SetRevision("20200211010544")
 mod:SetCreatureID(131318)
 mod:SetEncounterID(2111)
 mod:SetZone()
@@ -54,7 +54,7 @@ function mod:SPELL_CAST_START(args)
 		if cid == 131318 then--Main boss
 			timerBloodBoltCD:Start()
 		else
-		
+
 		end
 	elseif spellId == 260894 and self:AntiSpam(3, 1) then
 		specWarnCreepingRot:Show()
@@ -63,7 +63,7 @@ function mod:SPELL_CAST_START(args)
 		if cid == 131318 then--Main boss
 			timerCreepingRotCD:Start()
 		else
-		
+
 		end
 	elseif spellId == 264757 then
 		specWarnSanguineFeast:Show()
@@ -72,31 +72,9 @@ function mod:SPELL_CAST_START(args)
 		if cid == 131318 then--Main boss
 			timerSanguineFeastCD:Start()
 		else
-		
+
 		end
 	elseif spellId == 264603 then
 		timerBloodMirrorCD:Start()
 	end
 end
-
---[[
-function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 228007 and destGUID == UnitGUID("player") and self:AntiSpam(2, 4) then
-		specWarnGTFO:Show()
-		specWarnGTFO:Play("watchfeet")
-	end
-end
-mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
-
-function mod:UNIT_DIED(args)
-	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 124396 then
-		
-	end
-end
-
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
-	if spellId == 257939 then
-	end
-end
---]]

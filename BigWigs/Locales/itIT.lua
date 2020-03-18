@@ -1,11 +1,16 @@
 local L = BigWigsAPI:NewLocale("BigWigs", "itIT")
 if not L then return end
 
---L.getNewRelease = "Your BigWigs is old (/bwv) but you can easily update it using the Twitch Client. Alternatively, you can update manually from curse.com or wowinterface.com."
+--L.getNewRelease = "Your BigWigs is old (/bwv) but you can easily update it using the Twitch Client. Alternatively, you can update manually from curseforge.com or wowinterface.com."
 --L.warnTwoReleases = "Your BigWigs is 2 releases out of date! Your version may have bugs, missing features, or completely incorrect timers. It is strongly recommended you update."
 --L.warnSeveralReleases = "|cffff0000Your BigWigs is %d releases out of date!! We HIGHLY recommend you update to prevent syncing issues with other players!|r"
 
---L.gitHubDesc = "BigWigs is open source software hosted on GitHub. We are always looking for new people to help us out and everyone is welcome to inspect our code, make contributions and submit bug reports. BigWigs is as great as it is today largely in part to the great WoW community helping us out.\n\n|cFF33FF99Our API is now documented and freely readable on the GitHub wiki.|r"
+--L.gitHubDesc = "BigWigs is open source software hosted on GitHub. We are always looking for new people to help us out and everyone is welcome to inspect our code, make contributions and submit bug reports. BigWigs is as great as it is today largely in part to the great WoW community helping us out."
+
+--L.testNameplate = "Target detected, creating a test nameplate bar over target nameplate."
+
+--L.classicWarning1 = "|cFF33FF99BigWigs|r: You're using the wrong version of BigWigs on a classic server."
+--L.classicWarning2 = "|cFF33FF99BigWigs|r: Please install the classic version of BigWigs."
 
 --L.options = "Options"
 --L.raidBosses = "Raid Bosses"
@@ -17,6 +22,7 @@ if not L then return end
 --L.INFOBOX_desc = L.infobox_desc
 
 --L.disabledAddOn = "You have the |cFF436EEE%s|r addon disabled, timers will not be shown."
+L.alternativeName = "%s (|cFF436EEE%s|r)"
 
 L.activeBossModules = "Moduli dei Combattimenti Attivi:"
 L.advanced = "Opzioni Avanzate"
@@ -125,6 +131,8 @@ L.zoneMessagesDesc = "Disabilitando questa opzione BigWigs non mostrerà più i 
 --L.SAY_COUNTDOWN_desc = "Chat bubbles are easy to spot. BigWigs will use multiple say messages counting down to alert people nearby that an ability on you is about to expire."
 --L.ME_ONLY_EMPHASIZE = "Emphasize (me only)"
 --L.ME_ONLY_EMPHASIZE_desc = "Enabling this will emphasize any messages associated with this ability ONLY if it is casted on you, making them larger and more visible."
+-- L.NAMEPLATEBAR = "Nameplate Bars"
+-- L.NAMEPLATEBAR_desc = "Bars are sometimes attached to nameplates when more than one mob casts the same spell. If this ability is accompanied by a nameplate bar that you want to hide, disable this option."
 
 -- Media.lua
 L.Beware = "Attenti! (Algalon)"

@@ -1155,6 +1155,8 @@ L["STRING_OPTIONS_TEXT_LOUTILINE"] = "Text Shadow"
 L["STRING_OPTIONS_TEXT_LOUTILINE_DESC"] = "Enable or disable the outline for left text."
 L["STRING_OPTIONS_TEXT_LPOSITION"] = "Show Number"
 L["STRING_OPTIONS_TEXT_LPOSITION_DESC"] = "Show position number on the player's name left side."
+L["STRING_OPTIONS_TEXT_LTRANSLIT"] = "Translit"
+L["STRING_OPTIONS_TEXT_LTRANSLIT_DESC"] = "Make those russian letters that no one understand to be presented as western letters."
 L["STRING_OPTIONS_TEXT_RIGHT_ANCHOR"] = "Right Text:"
 L["STRING_OPTIONS_TEXT_ROUTILINE_DESC"] = "Enable or disable the outline for right text."
 L["STRING_OPTIONS_TEXT_ROWICONS_ANCHOR"] = "Icons:"
@@ -1503,6 +1505,7 @@ L["STRING_SEGMENTS_LIST_OVERALL"] = "overall"
 L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "Time in Combat"
 L["STRING_SEGMENTS_LIST_TOTALTIME"] = "Total Time"
 L["STRING_SEGMENTS_LIST_TRASH"] = "trash"
+L["STRING_SEGMENTS_LIST_WASTED_TIME"] = "Not In Combat"
 L["STRING_SHIELD_HEAL"] = "Prevented"
 L["STRING_SHIELD_OVERHEAL"] = "Wasted"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "right click to close"
@@ -1563,7 +1566,8 @@ L["STRING_TOTAL"] = "Total"
 L["STRING_TRANSLATE_LANGUAGE"] = "Help Translate Details!"
 L["STRING_TUTORIAL_FULLY_DELETE_WINDOW"] = [=[You closed a window and you may reopen it at any time.
 To fully delete a window, go to Options -> Window: General -> Delete.]=]
-L["STRING_TUTORIAL_OVERALL1"] = "adjust overall settings on options panel > PvE/PvP."
+L["STRING_TUTORIAL_OVERALL1"] = [=[adjust overall settings on options panel > PvE/PvP
+overall data updates when you leave combat, use 'Dynamic Overall Damage' from 'Custom' to update on real time.]=]
 L["STRING_UNKNOW"] = "Unknown"
 L["STRING_UNKNOWSPELL"] = "Unknow Spell"
 L["STRING_UNLOCK"] = [=[Ungroup windows

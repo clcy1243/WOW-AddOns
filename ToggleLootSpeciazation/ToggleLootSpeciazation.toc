@@ -1,0 +1,8 @@
+## Interface: 80000
+## Title: ToggleLootSpeciazation
+## Notes: 根据当前boss自动切换拾取专精，请在“冒险指南”中设置
+## Author: 老胡
+## Version: 8.0
+## SavedVariablesPerCharacter: lootspecs
+
+ToggleLootSpeciazation.lua

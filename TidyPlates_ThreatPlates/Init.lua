@@ -20,6 +20,8 @@ local LibStub = LibStub
 local LibStub = LibStub
 ThreatPlates.L = LibStub("AceLocale-3.0"):GetLocale("TidyPlatesThreat")
 ThreatPlates.Media = LibStub("LibSharedMedia-3.0")
+Addon.LibCustomGlow = LibStub("LibCustomGlow-1.0")
+Addon.LibAceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 ---------------------------------------------------------------------------------------------------
 -- Define AceAddon TidyPlatesThreat
@@ -27,6 +29,8 @@ ThreatPlates.Media = LibStub("LibSharedMedia-3.0")
 TidyPlatesThreat = LibStub("AceAddon-3.0"):NewAddon("TidyPlatesThreat", "AceConsole-3.0", "AceEvent-3.0")
 -- Global for DBM to differentiate between Threat Plates and Tidy Plates: Threat
 TidyPlatesThreatDBM = true
+
+Addon.Animations = {}
 
 --------------------------------------------------------------------------------------------------
 -- General Functions
@@ -36,6 +40,12 @@ TidyPlatesThreatDBM = true
 ThreatPlates.RGB = function(red, green, blue, alpha)
 	local color = { r = red/255, g = green/255, b = blue/255 }
 	if alpha then color.a = alpha end
+	return color
+end
+
+ThreatPlates.RGB_WITH_HEX = function(red, green, blue, alpha)
+	local color = ThreatPlates.RGB(red, green, blue, alpha)
+	color.colorStr = CreateColor(color.r, color.g, color.b, color.a):GenerateHexColor()
 	return color
 end
 

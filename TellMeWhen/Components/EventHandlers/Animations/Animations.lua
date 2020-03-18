@@ -1,4 +1,4 @@
--- --------------------
+﻿-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -22,8 +22,6 @@ local next, pairs, ipairs, type, assert, tinsert, sort =
 	  next, pairs, ipairs, type, assert, tinsert, sort
 local random, floor =
 	  random, floor
-local InCombatLockdown =
-	  InCombatLockdown
 	  
 -- GLOBALS: UIParent, CreateFrame
 

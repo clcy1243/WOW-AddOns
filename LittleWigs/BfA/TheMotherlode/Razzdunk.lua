@@ -17,9 +17,11 @@ function mod:GetOptions()
 		"stages",
 		260280, -- Gatling Gun
 		{260829, "ICON", "SAY"}, -- Homing Missile
-		271456, -- Drill Smash
 		276229, -- Micro Missiles
-		--270277, -- Big Red Rocket XXX Missing from logs, UNIT event?
+		271456, -- Drill Smash
+	}, {
+		[260280] = -18916, -- Stage One: Big Guns
+		[271456] = -17498, -- Stage Two: Drill!
 	}
 end
 
@@ -30,7 +32,6 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "ConfigurationDrill", 260189)
 	self:Log("SPELL_CAST_START", "DrillSmash", 271456)
 	self:Log("SPELL_CAST_START", "MicroMissiles", 276229)
-	--self:Log("SPELL_CAST_START", "BigRedRocket", 270277)
 	self:Log("SPELL_CAST_SUCCESS", "ConfigurationCombat", 260190)
 
 end
@@ -72,12 +73,13 @@ function mod:ConfigurationDrill(args)
 	self:PlaySound("stages", "info")
 	self:StopBar(260829) -- Homing Missile
 	self:StopBar(260280) -- Gatling Gun
+	self:StopBar(CL.cast:format(self:SpellName(276229))) --  Micro Missiles Cast Bar
 end
 
 do
 	local function printTarget(self, name, guid)
 		self:TargetMessage2(271456, "orange", name)
-		self:PlaySound(271456, "alert", "watchstep")
+		self:PlaySound(271456, "alert", "watchstep", name)
 	end
 
 	function mod:DrillSmash(args)
@@ -98,11 +100,6 @@ do
 		end
 	end
 end
-
--- function mod:BigRedRocket(args)
-	-- self:Message2(args.spellId, "yellow")
-	-- self:Playsound(args.spellId, "long")
--- end
 
 function mod:ConfigurationCombat(args)
 	self:Message2("stages", "cyan", args.spellName, args.spellId)

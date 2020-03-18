@@ -6,7 +6,7 @@
  local LSM = LibStub("LibSharedMedia-3.0")
  local self, GSA, PlaySoundFile = GladiatorlosSA, GladiatorlosSA, PlaySoundFile
  local GSA_TEXT = "|cff69CCF0GladiatorlosSA2|r (|cffFFF569/gsa|r)"
- local GSA_VERSION = "|cffFF7D0A B7 |r(|cFF00FF968.1.5 Battle for Azeroth|r)"
+ local GSA_VERSION = "|cffFF7D0A 2.2.1|r(|cFF00FF968.3 Battle for Azeroth|r)"
  local GSA_AUTHOR = " "
  local gsadb
  local soundz,sourcetype,sourceuid,desttype,destuid = {},{},{},{},{}
@@ -95,61 +95,8 @@
 		ronlyTF = false,
 		drinking = false,
 		class = false,
+		connected = false,
 		interruptedfriendly = true,
-		
-		-- Unrecorded abilities
-		_PHDragonCharge = false,
-		_PHheroicLeap = false,
-		aimedShot = false,
-		beastWithin = false,
-		BeastWithinDown = false,
-		boomTrap = false,
-		BullRush = false,
-		CurseOfFragility = false,
-		CurseOfTongues = false,
-		CurseOfWeakness = false,
-		dancingRuneWeapon = false,
-		DeathChain = false,
-		DeathPact = false,
-		DeathsAdvance = false,
-		DemonicTyrant = false,
-		divineProtection = false,
-		doubleBarrel = false,
-		DragonBreath = false,
-		ExecutionSentence = false,
-		Feint = false,
-		FeintDown = false,
-		Fireblood = false,
-		Flourish = false,
-		Healthstone = false,
-		hibernate = false,
-		Icefury = false,
-		Interlope = false,
-		intimidation = false,
-		lastStand = false,
-		MightyOxKick = false,
-		Neurotoxin = false,
-		NimbleBrew = false,
-		Overrun = false,
-		Premonition = false,
-		RaiseDead = false,
-		safeguard = false,
-		secondWind = false,
-		ShieldOfVirtue = false,
-		soothe = false,
-		SpatialRift = false,
-		SpatialRift2 = false,
-		Spellwarding = false,
-		SpellwardingDown = false,
-		survivalTactics = false,
-		sweepingStrikes = false,
-		SweepingStrikesDown = false,
-		TremorTotem = false,
-		UrsolsVortex = false,
-		warpath = false,
-		
-		--purge = false,
-		--spellSteal = false,
 		
 		custom = {},
 	}	
@@ -309,14 +256,66 @@
 		self:PlaySound(list[spellID],extend,genderZ)
 
  end
+ 
+ function GSA:CheckFriendlyDebuffs(spellID)
+	if spellID == 87204 or			-- Vampiric Touch Horrify
+		spellID == 196364 or 		-- Unstable Affliction Silence
+		spellID == 1330 or 			-- Garrote Silence
+		spellID == 1833 or 			-- Cheap Shot
+		spellID == 6770 or 			-- Sap
+		spellID == 3355 or 			-- Freezing Trap
+		spellID == 212332 or 		-- Smash (DK Abomination)
+		spellID == 212337 or 		-- Powerful Smash (DK Abomination)
+		spellID == 91800 or 		-- Gnaw (DK Ghoul)
+		spellID == 91797 or 		-- Monstrous Claw (DK Ghoul)
+		spellID == 163505 or 		-- Rake Stun
+		spellID == 199086 or 		-- Warpath Stun
+		spellID == 202335 or 		-- Double Barrel Stun
+		spellID == 215652 or 		-- Shield of Virtue silence
+		spellID == 19577 or 		-- Intimidation (pet stun)
+		spellID == 302144 then 		-- Gladiator's Maledict
+		return true
+	end
+end
 
- function GladiatorlosSA:COMBAT_LOG_EVENT_UNFILTERED(event , ...)
+function GSA:CheckForEpicBG(instanceMapID)	-- Determines if battleground is in list of epic bgs.
+	if instanceMapID == 2118 or		-- Wintergrasp [Epic]
+		instanceMapID == 30 or		-- Alterac Valley
+		instanceMapID == 628 or		-- Isle of Conquest
+		instanceMapID == 1280 or	-- Southshore vs Tarren Mill
+		instanceMapID == 1191 or	-- Trashcan
+		instanceMapID == 2197 then	-- Korrak's Revenge		
+		return true
+	end
+end
+
+-- Checks settings and world location to determine if alerts should occur.
+function GSA:CanTalkHere()
 	--Disable By Location
 	local _,currentZoneType = IsInInstance()
 	local _,_,_,_,_,_,_,instanceMapID = GetInstanceInfo()
-	if (not ((currentZoneType == "none" and gsadb.field) or (currentZoneType == "pvp" and gsadb.battleground) or (currentZoneType == ("arena" or "scenario") and gsadb.arena) or gsadb.all)) then
+	local isPvP = UnitIsWarModeDesired("player")
+	if (not ((currentZoneType == "none" and gsadb.field and not gsadb.onlyFlagged) or 												-- World
+		--(currentZoneType == "none" and gsadb.field and (gsadb.onlyFlagged and UnitIsWarModeDesired("player"))) or
+		(currentZoneType == "pvp" and gsadb.battleground and not self:CheckForEpicBG(instanceMapID)) or 	-- Battleground
+		(currentZoneType == "pvp" and gsadb.epicbattleground and self:CheckForEpicBG(instanceMapID)) or		-- Epic Battleground
+		(currentZoneType == "arena" and gsadb.arena) or 													-- Arena
+		(currentZoneType == "scenario" and gsadb.arena) or 													-- Scenario
+		gsadb.all)) then																					-- Anywhere
+		return false
+	end
+	return true
+end
+	
+
+ function GladiatorlosSA:COMBAT_LOG_EVENT_UNFILTERED(event , ...)
+ 	local _,currentZoneType = IsInInstance()
+	-- Checks if alerts should occur here.
+	if (not self:CanTalkHere()) then
 		return
 	end
+
+	
 	local timestamp,event,hideCaster,sourceGUID,sourceName,sourceFlags,sourceFlags2,destGUID,destName,destFlags,destFlags2,spellID = CombatLogGetCurrentEventInfo()
 	--select ( 1 , ... );
 	if not GSA_EVENT[event] then return end
@@ -372,29 +371,19 @@
 	sourceuid.any = true
 
 	if (event == "SPELL_AURA_APPLIED" and desttype[COMBATLOG_FILTER_HOSTILE_PLAYERS] and (not gsadb.aonlyTF or destuid.target or destuid.focus) and not gsadb.aruaApplied) then
-	--The following section is to disable alerts for aura applications (such as dispel protection) from your team onto theirs. IDs should be identical to the ones below.
-	-- 87204 = Vampiric Embrace || 196364 = Unstable Affliction || 1330 = Garrote - Silence || 1833 = Cheap Shot || 6770 = Sap || 3355 = Freezing Trap || 212332 = Smash (DK Abomination) || 212337 = Powerful Smash (DK Abomination) || 91800 = Gnaw (DK Ghoul) || 91797 = Monstrous Blow (DK Ghoul) || 163505 = Druid Rake Stun || 199086 = Warpath stun || 202335 = Double Barrel stun || 215652 = Shield of Virtue silence || 19577 = Intimidation (hunter pet stun)
-		if spellID == 87204 or spellID == 196364 or spellID == 1330 or spellID == 1833 or spellID == 6770 or spellID == 3355 or spellID == 212332 or spellID == 212337 or spellID == 91800 or spellID == 91797 or spellID == 163505 or spellID == 199086 or spellID == 202335 or spellID == 215652 or spellID == 19577 then return end
-			--if (MapID == 40 or InstanceMapID == 4710) and gsadb.epicbattleground then return end
-				self:PlaySpell("auraApplied", spellID, sourceGUID, destGUID)
+		if self:CheckFriendlyDebuffs(spellID) then
+			return 
+		end
+		self:PlaySpell("auraApplied", spellID, sourceGUID, destGUID)
 	elseif (event == "SPELL_AURA_APPLIED" and (desttype[COMBATLOG_FILTER_FRIENDLY_UNITS] or desttype[COMBATLOG_FILTER_ME]) and (not gsadb.aonlyTF or destuid.target or destuid.focus) and not gsadb.auraApplied) then
-	--The following section is to enable alerts for aura applications (such as dispel protection) onto your team from theirs. IDs should be identical to the ones below.
-		if spellID == 87204 or spellID == 196364 or spellID == 1330 or spellID == 1833 or spellID == 6770 or spellID == 3355 or spellID == 212332 or spellID == 212337 or spellID == 91800 or spellID == 91797 or spellID == 163505 or spellID == 199086 or spellID == 202335 or spellID == 215652 or spellID == 19577 then
-			--if (MapID == 40 or InstanceMapID == 4710) and gsadb.epicbattleground then return end
-				self:PlaySpell("auraApplied", spellID, sourceGUID, destGUID)
+		if self:CheckFriendlyDebuffs(spellID) then
+			self:PlaySpell("auraApplied", spellID, sourceGUID, destGUID)
 		end
 	elseif (event == "SPELL_AURA_REMOVED" and desttype[COMBATLOG_FILTER_HOSTILE_PLAYERS] and (not gsadb.ronlyTF or destuid.target or destuid.focus) and not gsadb.auraRemoved) then
-			--if (MapID == 40 or InstanceMapID == 4710) and gsadb.epicbattleground then return end
 			self:PlaySpell("auraRemoved", spellID, sourceGUID, destGUID)
 	elseif (event == "SPELL_CAST_START" and sourcetype[COMBATLOG_FILTER_HOSTILE_PLAYERS] and (not gsadb.conlyTF or sourceuid.target or sourceuid.focus) and not gsadb.castStart) then
-			--if (MapID == 40 or InstanceMapID == 4710) and gsadb.epicbattleground then return end
-				--if spellID == 2060 or spellID == 82326 or spellID == 77472 or spellID == 5185 or spellID == 116670 or spellID == 194509 or spellID == 152118 then
-				--	if currentZoneType == "arena" then
-				--		self:PlaySpell("castStart", spellID, sourceGUID, destGUID)
-				--else return end
 			self:PlaySpell("castStart", spellID, sourceGUID, destGUID)
 	elseif (event == "SPELL_CAST_SUCCESS" and sourcetype[COMBATLOG_FILTER_HOSTILE_PLAYERS] and (not gsadb.sonlyTF or sourceuid.target or sourceuid.focus) and not gsadb.castSuccess) then
-			--if (MapID == 40 or InstanceMapID == 4710) and gsadb.epicbattleground then return end
 		if self:Throttle(tostring(spellID).."default", 0.05) then return end
 		if gsadb.class and currentZoneType == "arena" then
 			if spellID == 42292 or spellID == 208683 or spellID == 195710 then

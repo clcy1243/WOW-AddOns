@@ -90,14 +90,22 @@ local function parseLogInfo(logName, log)
 	end
 	if not version then return end
 
-	local killed, encounter, duration = nil, nil, 0
+	local killed, encounter, duration = false, nil, 0
 	if log.COMBAT then
 		-- should probably handle multiple encounters in one log, but meh
 		for _, line in next, log.COMBAT do
 			if line:find("ENCOUNTER_START", nil, true) then
-				encounter = line:match("ENCOUNTER_START#%d+#(.-)#") -- "<61.75 21:43:59> [ENCOUNTER_START] ENCOUNTER_START#1954#Maiden of Virtue#23#5"
+				-- "<1.94 23:38:46> [ENCOUNTER_START] ENCOUNTER_START#2051#Kil'jaeden#15#24"
+				encounter = line:match("%d+#(.-)#%d+#%d+")
+			elseif line:find("ENCOUNTER_END", nil, true) then
+				-- "<524.88 23:47:29> [ENCOUNTER_END] 2051#Kil'jaeden#15#24#1"
+				local e, k = line:match("%d+#(.-)#%d+#%d+#(%d)$")
+				encounter = e
+				killed = tonumber(k) == 1
+				break
 			elseif line:find("BOSS_KILL", nil, true) then
-				encounter = line:match("#(.-)$") -- "<220.90 21:46:38> [BOSS_KILL] 1954#Maiden of Virtue"
+				-- "<524.88 23:47:29> [BOSS_KILL] 2051#Kil'jaeden"
+				encounter = line:match("#(.-)$")
 				killed = true
 				break
 			end
@@ -282,7 +290,44 @@ do
 		return InCombatLockdown()
 	end
 
-	local events = nil
+	local eventCategories = {
+		PLAYER_REGEN_DISABLED = "COMBAT",
+		PLAYER_REGEN_ENABLED = "COMBAT",
+		ENCOUNTER_START = "COMBAT",
+		ENCOUNTER_END = "COMBAT",
+		BOSS_KILL = "COMBAT",
+		CHAT_MSG_MONSTER_EMOTE = "MONSTER",
+		CHAT_MSG_MONSTER_SAY = "MONSTER",
+		CHAT_MSG_MONSTER_WHISPER = "MONSTER",
+		CHAT_MSG_MONSTER_YELL = "MONSTER",
+		CHAT_MSG_RAID_BOSS_EMOTE = "MONSTER",
+		CHAT_MSG_RAID_BOSS_WHISPER = "MONSTER",
+		RAID_BOSS_EMOTE = "MONSTER",
+		RAID_BOSS_WHISPER = "MONSTER",
+		UNIT_SPELLCAST_START = "UNIT_SPELLCAST",
+		UNIT_SPELLCAST_STOP = "UNIT_SPELLCAST",
+		UNIT_SPELLCAST_SUCCEEDED = "UNIT_SPELLCAST",
+		UNIT_SPELLCAST_INTERRUPTED = "UNIT_SPELLCAST",
+		UNIT_SPELLCAST_CHANNEL_START = "UNIT_SPELLCAST",
+		UNIT_SPELLCAST_CHANNEL_STOP = "UNIT_SPELLCAST",
+		ZONE_CHANGED = "ZONE_CHANGED",
+		ZONE_CHANGED_INDOORS = "ZONE_CHANGED",
+		ZONE_CHANGED_NEW_AREA = "ZONE_CHANGED",
+		SCENARIO_UPDATE = "SCENARIO",
+		SCENARIO_CRITERIA_UPDATE = "SCENARIO",
+		PLAY_MOVIE = "MOVIE",
+		CINEMATIC_START = "MOVIE",
+		START_TIMER = "PVP",
+		CHAT_MSG_BG_SYSTEM_HORDE = "PVP",
+		CHAT_MSG_BG_SYSTEM_ALLIANCE = "PVP",
+		CHAT_MSG_BG_SYSTEM_NEUTRAL = "PVP",
+		ARENA_OPPONENT_UPDATE = "PVP",
+		BigWigs_Message = "BigWigs",
+		BigWigs_StartBar = "BigWigs",
+		DBM_Announce = "DBM",
+		DBM_TimerStart = "DBM",
+		DBM_TimerStop = "DBM",
+	}
 
 	function GetOptions()
 		local logs = Transcriptor:GetAll()
@@ -294,13 +339,6 @@ do
 		UpdateAddOnMemoryUsage()
 		local mem = GetAddOnMemoryUsage("Transcriptor") / 1000
 		mem = ("|cff%s%.01f MB|r"):format(mem > 60 and "ff2020" or "ffd200", mem)
-
-		if not events then
-			events = {}
-			for _, v in next, Transcriptor.events do
-				events[v] = v
-			end
-		end
 
 		local options = {
 			name = L["Transcriptor"],
@@ -377,25 +415,50 @@ do
 					hidden = function() return not next(logs) end,
 					order = 9,
 				},
-				ignored = {
+				-- part of the zone tree
+				ignoredEvents = {
 					type = "group",
 					name = "|cffffffff"..L["Ignored Events"].."|r",
+					get = function(info)
+						local key = info[#info]
+						return TranscriptIgnore[key]
+					end,
+					set = function(info, value)
+						local key = info[#info]
+						TranscriptIgnore[key] = value or nil
+					end,
 					order = -1,
 					args = {
-						ignored = {
-							type = "multiselect",
-							name = L["Ignored Events"],
-							get = function(info, key) return TranscriptIgnore[key] end,
-							set = function(info, key, value)
-								TranscriptIgnore[key] = value or nil
+						reset = {
+							type = "execute",
+							name = RESET,
+							func = function()
+								wipe(TranscriptIgnore)
 							end,
-							values = events,
-							width = "double",
+							width = "full",
+							order = 0,
 						},
 					},
 				},
 			},
 		}
+
+		local ignoredEvents = options.args.ignoredEvents.args
+		for _, event in next, Transcriptor.events do
+			local cat = eventCategories[event] or "GENERAL"
+			if not ignoredEvents[cat] then
+				ignoredEvents[cat] = {
+					type = "group", inline = true,
+					name = cat,
+					args = {},
+				}
+			end
+			ignoredEvents[cat].args[event] = {
+				type = "toggle",
+				name = event,
+				width = "full",
+			}
+		end
 
 		for key, log in next, logs do
 			local info, ts, zone, encounter, killed = parseLogInfo(key, log)

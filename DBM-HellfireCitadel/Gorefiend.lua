@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1372, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 35 $"):sub(12, -3))
+mod:SetRevision("20200222221214")
 mod:SetCreatureID(90199)
 mod:SetEncounterID(1783)
 mod:SetZone()
@@ -23,45 +23,42 @@ mod:RegisterEventsInCombat(
 
 --(ability.id = 181973 or ability.id = 181582 or ability.id = 187814) and type = "begincast" or (ability.id = 179977 or ability.id = 182170 or ability.id = 181085) and type = "cast" or (ability.id = 179864 or ability.id = 185982 or ability.id = 189131) and (type = "applydebuff" or type = "applybuff")
 --TODO, Touch of Doom was 25 seconds in LFR, tested after heroic. changed? VERIFY
-local warnShadowofDeath					= mod:NewTargetCountAnnounce(179864, 3)
-local warnTouchofDoom					= mod:NewTargetAnnounce(179978, 4)
-local warnSharedFate					= mod:NewTargetCountAnnounce(179909, 4, nil, "-Tank", 2)--Announce all 2/3
-local warnHungerforLife					= mod:NewTargetAnnounce(180148, 3, nil, false)--Knowing who has it not very important, only if it's on you
-local warnGoreboundSpiritSoon			= mod:NewSoonAnnounce("ej11020", 3, 187814)
-local warnRagingCharge					= mod:NewSpellAnnounce(187814, 3, nil, "Melee")
-local warnCrushingDarkness				= mod:NewCastAnnounce(180017, 3, 6, nil, false)
+local warnShadowofDeath				= mod:NewTargetCountAnnounce(179864, 3)
+local warnTouchofDoom				= mod:NewTargetAnnounce(179978, 4)
+local warnSharedFate				= mod:NewTargetCountAnnounce(179909, 4, nil, "-Tank", 2)--Announce all 2/3
+local warnHungerforLife				= mod:NewTargetAnnounce(180148, 3, nil, false)--Knowing who has it not very important, only if it's on you
+local warnGoreboundSpiritSoon		= mod:NewSoonAnnounce("ej11020", 3, 187814)
+local warnRagingCharge				= mod:NewSpellAnnounce(187814, 3, nil, "Melee")
+local warnCrushingDarkness			= mod:NewCastAnnounce(180017, 3, 6, nil, false)
 
-local specWarnShadowofDeath				= mod:NewSpecialWarningYouCount(179864, nil, nil, nil, 1, 5)
-local specWarnShadowofDeathTank			= mod:NewSpecialWarningTaunt(179864, nil, nil, nil, 1, 2)
-local specWarnTouchofDoom				= mod:NewSpecialWarningRun(179977, nil, nil, nil, 4, 2)
-local yellTouchofDoom					= mod:NewYell(179977)
-local specWarnDoomWell					= mod:NewSpecialWarningMove(179995)
-local specWarnSharedFate				= mod:NewSpecialWarningMoveTo(179908, nil, nil, nil, 3, 2)--Only non rooted player get moveto. rooted player can't do anything.
-local yellSharedFate					= mod:NewYell(179909, 135484)--Only rooted player should yell
-local specWarnFeastofSouls				= mod:NewSpecialWarningSpell(181973, nil, nil, nil, 2)--Energy based
-local specWarnFeastofSoulsEnded			= mod:NewSpecialWarningEnd(181973)
-local specWarnHungerforLife				= mod:NewSpecialWarningRun(180148, nil, nil, nil, 4, 2)
-local specWarnEnragedSpirit				= mod:NewSpecialWarningSwitch("ej11378", "-Healer")
-local specWarnGoreboundSpirit			= mod:NewSpecialWarningSwitch("ej11020", "-Healer")
-local specWarnBurning					= mod:NewSpecialWarningStack(185189, nil, 4)
-local specWarnBurningOther				= mod:NewSpecialWarningTaunt(185189, nil, nil, nil, nil, 2)
-local specWarnBellowingShout			= mod:NewSpecialWarningInterrupt(181582, "HasInterrupt", nil, 2, 1, 2)
+local specWarnShadowofDeath			= mod:NewSpecialWarningYouCount(179864, nil, nil, nil, 1, 5)
+local specWarnShadowofDeathTank		= mod:NewSpecialWarningTaunt(179864, nil, nil, nil, 1, 2)
+local specWarnTouchofDoom			= mod:NewSpecialWarningRun(179977, nil, nil, nil, 4, 2)
+local yellTouchofDoom				= mod:NewYell(179977)
+local specWarnDoomWell				= mod:NewSpecialWarningMove(179995)
+local specWarnSharedFate			= mod:NewSpecialWarningMoveTo(179908, nil, nil, nil, 3, 2)--Only non rooted player get moveto. rooted player can't do anything.
+local yellSharedFate				= mod:NewYell(179909, 135484)--Only rooted player should yell
+local specWarnFeastofSouls			= mod:NewSpecialWarningSpell(181973, nil, nil, nil, 2)--Energy based
+local specWarnFeastofSoulsEnded		= mod:NewSpecialWarningEnd(181973)
+local specWarnHungerforLife			= mod:NewSpecialWarningRun(180148, nil, nil, nil, 4, 2)
+local specWarnEnragedSpirit			= mod:NewSpecialWarningSwitch("ej11378", "-Healer")
+local specWarnGoreboundSpirit		= mod:NewSpecialWarningSwitch("ej11020", "-Healer")
+local specWarnBurning				= mod:NewSpecialWarningStack(185189, nil, 4)
+local specWarnBurningOther			= mod:NewSpecialWarningTaunt(185189, nil, nil, nil, nil, 2)
+local specWarnBellowingShout		= mod:NewSpecialWarningInterrupt(181582, "HasInterrupt", nil, 2, 1, 2)
 
-local timerShadowofDeathCDDps			= mod:NewTimer(30, "SoDDPS2", 179864, "Dps", nil, 5)
-local timerShadowofDeathCDTank			= mod:NewTimer(30, "SoDTank2", 179864, "Tank", nil, 5)
-local timerShadowofDeathCDHealer		= mod:NewTimer(30, "SoDHealer2", 179864, "Healer", nil, 5)
-local timerTouchofDoomCD				= mod:NewCDTimer(18, 179977, nil, nil, nil, 3)--25 seconds in LFR, tested after heroic. changed? VERIFY
-local timerSharedFateCD					= mod:NewNextCountTimer(29, 179909, nil, "-Tank", 2, 3, nil, DBM_CORE_DEADLY_ICON)--29-31
-local timerCrushingDarknessCD			= mod:NewNextTimer(10, 180017, nil, false, 2, 2)--Actually 16, but i delay start by 6 seconds for reduced spam
-local timerFeastofSouls					= mod:NewNextTimer(123.5, 181973, nil, nil, nil, 6)--Probably next timer too, or close to it, depends how consistent energy gains are, may have small variation, like gruul
+local timerShadowofDeathCDDps		= mod:NewTimer(30, "SoDDPS2", 179864, "Dps", nil, 5)
+local timerShadowofDeathCDTank		= mod:NewTimer(30, "SoDTank2", 179864, "Tank", nil, 5)
+local timerShadowofDeathCDHealer	= mod:NewTimer(30, "SoDHealer2", 179864, "Healer", nil, 5)
+local timerTouchofDoomCD			= mod:NewCDTimer(18, 179977, nil, nil, nil, 3)--25 seconds in LFR, tested after heroic. changed? VERIFY
+local timerSharedFateCD				= mod:NewNextCountTimer(29, 179909, nil, "-Tank", 2, 3, nil, DBM_CORE_DEADLY_ICON)--29-31
+local timerCrushingDarknessCD		= mod:NewNextTimer(10, 180017, nil, false, 2, 2)--Actually 16, but i delay start by 6 seconds for reduced spam
+local timerFeastofSouls				= mod:NewNextTimer(123.5, 181973, nil, nil, nil, 6)--Probably next timer too, or close to it, depends how consistent energy gains are, may have small variation, like gruul
 
-local timerDigest						= mod:NewCastTimer(40, 181295, nil, nil, nil, nil, nil, DBM_CORE_DEADLY_ICON)
-local timerCrushingDarkness				= mod:NewCastTimer(6, 180017, nil, false)
+local timerDigest					= mod:NewCastTimer(40, 181295, nil, nil, nil, nil, nil, DBM_CORE_DEADLY_ICON, nil, 1, 8)
+local timerCrushingDarkness			= mod:NewCastTimer(6, 180017, nil, false)
 
---local berserkTimer					= mod:NewBerserkTimer(360)
-
-local countdownShadowofDeath			= mod:NewCountdownFades("Alt5", 179864)
-local countdownDigest					= mod:NewCountdown("Alt40", 181295, nil, nil, 8)
+--local berserkTimer				= mod:NewBerserkTimer(360)
 
 mod:AddSetIconOption("SetIconOnFate", 179909)
 mod:AddSetIconOption("SetIconOnDoom", 179977, false)
@@ -177,7 +174,7 @@ function mod:OnCombatEnd()
 	if self.Options.InfoFrame then
 		DBM.InfoFrame:Hide()
 	end
-end 
+end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
@@ -213,7 +210,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnShadowofDeath:CombinedShow(0.5, self.vb.shadowOfDeathCount, args.destName)
 		if args:IsPlayer() then
 			specWarnShadowofDeath:Show(self.vb.shadowOfDeathCount)
-			countdownShadowofDeath:Start()
 			specWarnShadowofDeath:Play("teleyou")
 		end
 		--Check if it's a tank (todo, maybe just change it to count == 2 to reduce cpu, the tank is pretty much always 2/6
@@ -272,10 +268,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			if self:IsMythic() then
 				timerDigest:Start(35)
-				countdownDigest:Start(35)
 			else
 				timerDigest:Start()
-				countdownDigest:Start()
 			end
 			playerDown = true
 			if self.Options.RangeFrame then
@@ -325,7 +319,6 @@ function mod:SPELL_AURA_REMOVED(args)
 	elseif spellId == 181295 then
 		if args:IsPlayer() then
 			timerDigest:Stop()
-			countdownDigest:Cancel()
 			playerDown = false
 			if self.Options.RangeFrame and self:IsInCombat() then
 				DBM.RangeCheck:Show(5)
@@ -399,7 +392,7 @@ function mod:OnSync(msg)
 				timerShadowofDeathCDTank:Start(60, "1x"..DBM_CORE_TANK_ICON)
 			elseif count == 3 then--Healer 2x (1 timer)
 				timerShadowofDeathCDHealer:Start(45, "2x"..DBM_CORE_HEALER_ICON)
-			end	
+			end
 		else
 			if count == 1 or count == 4 then--DPS 3x (2 timers)
 				local numPlayers = 1

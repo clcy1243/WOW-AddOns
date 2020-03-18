@@ -326,68 +326,69 @@ L["STRING_MENU_CLOSE_INSTANCE_DESC2"] = "要永久刪除視窗，請看設定選
 L["STRING_MENU_INSTANCE_CONTROL"] = "視窗控制"
 L["STRING_MINIMAP_TOOLTIP1"] = "|cFFCFCFCF左鍵|r: 開啟設定選項"
 L["STRING_MINIMAP_TOOLTIP11"] = "|cFFCFCFCF左鍵|r: 清空所有片段"
-L["STRING_MINIMAP_TOOLTIP12"] = "|cFFCFCFCF左鍵點擊|r: 顯示/隱藏視窗"
-L["STRING_MINIMAP_TOOLTIP2"] = "|cFFCFCFCF左鍵點擊|r: 快速選單"
-L["STRING_MINIMAPMENU_CLOSEALL"] = "關閉全部"
-L["STRING_MINIMAPMENU_HIDEICON"] = "隱藏小地圖圖示"
+L["STRING_MINIMAP_TOOLTIP12"] = "|cFFCFCFCF左鍵|r: 顯示/隱藏視窗"
+L["STRING_MINIMAP_TOOLTIP2"] = "|cFFCFCFCF右鍵|r: 快速選單"
+L["STRING_MINIMAPMENU_CLOSEALL"] = "全部關閉"
+L["STRING_MINIMAPMENU_HIDEICON"] = "隱藏小地圖按鈕"
 L["STRING_MINIMAPMENU_LOCK"] = "鎖定"
 L["STRING_MINIMAPMENU_NEWWINDOW"] = "新增視窗"
 L["STRING_MINIMAPMENU_REOPENALL"] = "全部重開"
 L["STRING_MINIMAPMENU_UNLOCK"] = "解鎖"
 L["STRING_MINIMUM"] = "最小化"
 L["STRING_MINIMUM_SHORT"] = "最小"
-L["STRING_MINITUTORIAL_BOOKMARK1"] = "右鍵點擊視窗任何區域中打開書籤！"
-L["STRING_MINITUTORIAL_BOOKMARK2"] = "書籤是快速訪問最喜歡頁面的捷徑。"
+L["STRING_MINITUTORIAL_BOOKMARK1"] = "右鍵點擊視窗中的任何區域打開書籤!"
+L["STRING_MINITUTORIAL_BOOKMARK2"] = "書籤可以快速顯示最愛的視窗。"
 L["STRING_MINITUTORIAL_BOOKMARK3"] = "右鍵點擊關閉書籤面板。"
 L["STRING_MINITUTORIAL_BOOKMARK4"] = "不再顯示"
-L["STRING_MINITUTORIAL_CLOSECTRL1"] = "|cFFFFFF00Ctrl + 右鍵點擊|r 關閉視窗！"
-L["STRING_MINITUTORIAL_CLOSECTRL2"] = "如果你想重新打開它，去模式選單->視窗控制或選項面板。\""
-L["STRING_MINITUTORIAL_OPTIONS_PANEL1"] = "哪個視窗正在編輯。"
-L["STRING_MINITUTORIAL_OPTIONS_PANEL2"] = "勾選後，該組中的所有視窗也將改變。"
-L["STRING_MINITUTORIAL_OPTIONS_PANEL3"] = [=[要創建一個群組，拖動視窗＃2到視窗＃1附近。
+L["STRING_MINITUTORIAL_CLOSECTRL1"] = "|cFFFFFF00Ctrl + 右鍵點擊|r 關閉視窗!"
+L["STRING_MINITUTORIAL_CLOSECTRL2"] = "要重新打開視窗，請到 模式選單 -> 視窗控制 或 選項面板。"
+L["STRING_MINITUTORIAL_OPTIONS_PANEL1"] = "正在編輯哪個視窗。"
+L["STRING_MINITUTORIAL_OPTIONS_PANEL2"] = "勾選時，群組中的所有視窗都會跟著變更。"
+L["STRING_MINITUTORIAL_OPTIONS_PANEL3"] = [=[要建立群組，請將 視窗 #2 拖曳到 視窗 #1 旁。
 
-點擊 |cFFFFFF00取消|r 按钮拆分群组]=]
-L["STRING_MINITUTORIAL_OPTIONS_PANEL4"] = "創建測試計量條來測試你的配置。"
-L["STRING_MINITUTORIAL_OPTIONS_PANEL5"] = "當編輯組啟用時，群組中的所有視窗都改變了。"
-L["STRING_MINITUTORIAL_OPTIONS_PANEL6"] = "在此選擇你想改變哪個視窗的外觀。"
-L["STRING_MINITUTORIAL_WINDOWS1"] = [=[你剛建立了一組視窗群組。
-點擊鎖頭圖示去分開它。]=]
+要解散群組，請按下 |cFFFFFF00取消群組|r 按鈕。]=]
+L["STRING_MINITUTORIAL_OPTIONS_PANEL4"] = "建立測試條來測試設定。"
+L["STRING_MINITUTORIAL_OPTIONS_PANEL5"] = "啟用編輯群組時，群組中的所有視窗都會變更。"
+L["STRING_MINITUTORIAL_OPTIONS_PANEL6"] = "在此選擇來改變視窗外觀。"
+L["STRING_MINITUTORIAL_WINDOWS1"] = [=[你剛建立了視窗群組。
+
+點一下小鎖圖示來取消群組。]=]
 L["STRING_MINITUTORIAL_WINDOWS2"] = [=[視窗已被鎖定。
 
-點擊標題列去向上拖拉。]=]
+拖曳標題列可以上下拉伸。]=]
 L["STRING_MIRROR_IMAGE"] = "鏡像"
 L["STRING_MISS"] = "未命中"
 L["STRING_MODE_ALL"] = "所有的"
-L["STRING_MODE_GROUP"] = "一般"
-L["STRING_MODE_OPENFORGE"] = "光環監控"
-L["STRING_MODE_PLUGINS"] = "插件"
-L["STRING_MODE_RAID"] = "插件: 團隊"
-L["STRING_MODE_SELF"] = "插件: 單人"
-L["STRING_MORE_INFO"] = "查看右邊方框檢視更多資訊"
+L["STRING_MODE_GROUP"] = "標準"
+L["STRING_MODE_OPENFORGE"] = "光環清單"
+L["STRING_MODE_PLUGINS"] = "外掛套件"
+L["STRING_MODE_RAID"] = "外掛套件: 團隊"
+L["STRING_MODE_SELF"] = "外掛套件: 單人"
+L["STRING_MORE_INFO"] = "查看右邊的方框來獲得更多資訊。"
 L["STRING_MULTISTRIKE"] = "雙擊"
 L["STRING_MULTISTRIKE_HITS"] = "雙擊命中"
-L["STRING_MUSIC_DETAILS_ROBERTOCARLOS"] = [=[你無法試著遺忘
-我將與你同在
-Details只是渺小的我們]=]
+L["STRING_MUSIC_DETAILS_ROBERTOCARLOS"] = [=[無法忘記的
+你和我的點點滴滴
+Details]=]
 L["STRING_NEWROW"] = "正在等待更新..."
-L["STRING_NEWS_REINSTALL"] = "在更新之後發現問題。試著輸入'/details reinstall'指令"
-L["STRING_NEWS_TITLE"] = "此版更新事項"
+L["STRING_NEWS_REINSTALL"] = "更新後有問題嗎? 請試試輸入指令 /details reinstall"
+L["STRING_NEWS_TITLE"] = "更新資訊"
 L["STRING_NO"] = "沒有"
-L["STRING_NO_DATA"] = "數據已被清除"
-L["STRING_NO_SPELL"] = "沒有已使用的技能"
-L["STRING_NO_TARGET"] = "沒有發現目標"
+L["STRING_NO_DATA"] = "資料已被清空"
+L["STRING_NO_SPELL"] = "沒有已使用的法術"
+L["STRING_NO_TARGET"] = "沒有找到目標。"
 L["STRING_NO_TARGET_BOX"] = "沒有可用目標"
-L["STRING_NOCLOSED_INSTANCES"] = [=[沒有可關閉視窗，
-請建立一個新視窗。]=]
-L["STRING_NOLAST_COOLDOWN"] = "沒有使用冷卻技能"
-L["STRING_NOMORE_INSTANCES"] = [=[已達最大視窗上限。
-在選項面板改變上限。]=]
-L["STRING_NORMAL_HITS"] = "普攻命中"
-L["STRING_NUMERALSYSTEM"] = "數字縮寫制度"
-L["STRING_NUMERALSYSTEM_ARABIC_MYRIAD_EASTASIA"] = "使用在東方亞洲國家，分成千和萬。"
+L["STRING_NOCLOSED_INSTANCES"] = [=[沒有已關閉的視窗，
+點一下建立新視窗。]=]
+L["STRING_NOLAST_COOLDOWN"] = "沒有已使用的冷卻"
+L["STRING_NOMORE_INSTANCES"] = [=[已達最多視窗數量的上限。
+請在選項面板中更改限制。]=]
+L["STRING_NORMAL_HITS"] = "一般命中"
+L["STRING_NUMERALSYSTEM"] = "數字系統"
+L["STRING_NUMERALSYSTEM_ARABIC_MYRIAD_EASTASIA"] = "用於東方亞洲國家，分成千和萬。"
 L["STRING_NUMERALSYSTEM_ARABIC_WESTERN"] = "西方"
-L["STRING_NUMERALSYSTEM_ARABIC_WESTERN_DESC"] = "常見的系統，分成千和百萬。"
-L["STRING_NUMERALSYSTEM_DESC"] = [=[選擇使用那種數字縮寫制度
+L["STRING_NUMERALSYSTEM_ARABIC_WESTERN_DESC"] = "最常用的方式，分成千和百萬。"
+L["STRING_NUMERALSYSTEM_DESC"] = [=[選擇要使用的數字縮寫系統
 ]=]
 L["STRING_NUMERALSYSTEM_MYRIAD_EASTASIA"] = "東方亞洲"
 L["STRING_OFFHAND_HITS"] = "副手"
@@ -495,13 +496,13 @@ Example:
 
 |cFFFFFF00Escape Sequences|r: 用它來改變顏色或加入材質。搜尋“UI跳脫序列”('UI escape sequences')以獲取更多資訊。
 指令必是英文Lua語法,如套用{資料1},UI是看不明,必須使用{data1},請參考文字列編緝器格式]=]
-L["STRING_OPTIONS_BARS"] = "計量列表一般設定"
+L["STRING_OPTIONS_BARS"] = "計量條一般設定"
 L["STRING_OPTIONS_BARS_CUSTOM_TEXTURE"] = "自訂材質檔案"
 L["STRING_OPTIONS_BARS_CUSTOM_TEXTURE_DESC"] = [=[
 |cFFFFFF00重要|r： 圖片必須為256x32像素。]=]
 L["STRING_OPTIONS_BARS_DESC"] = "這些選項設定計量條外觀"
-L["STRING_OPTIONS_BARSORT"] = "計量列表排序"
-L["STRING_OPTIONS_BARSORT_DESC"] = "遞增或是遞減計量列表排序。"
+L["STRING_OPTIONS_BARSORT"] = "計量條排序"
+L["STRING_OPTIONS_BARSORT_DESC"] = "遞增或是遞減計量條排序。"
 L["STRING_OPTIONS_BARSTART"] = "計量條在圖示之後"
 L["STRING_OPTIONS_BARSTART_DESC"] = [=[讓頂部材質一開始出現在圖標的左邊而不是右邊
 使用帶有透明區域的圖標集時，這是非常有用的]=]
@@ -658,7 +659,7 @@ L["STRING_OPTIONS_DEATHLIMIT_DESC"] = [=[設定死亡顯示的事件數量。
 L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = "死亡日誌最小治療"
 L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = [=[死亡日誌在這個閾值下不會顯示治療。
 
-|cFFFFFF00提示|r:按右鍵可手動輸入值。]=]
+|cFFFFFF00提示|r：按右鍵可手動輸入此值。]=]
 L["STRING_OPTIONS_DESATURATE_MENU"] = "降低飽和度"
 L["STRING_OPTIONS_DESATURATE_MENU_DESC"] = "啟用這個選項，所有工具列上的選單圖標會變成黑跟白"
 L["STRING_OPTIONS_DISABLE_ALLDISPLAYSWINDOW"] = "禁用'全部顯示'選單"
@@ -966,10 +967,11 @@ L["STRING_OPTIONS_PS_ABBREVIATE_NONE"] = "沒有"
 --[[ L["STRING_OPTIONS_PS_ABBREVIATE_TOKMIN"] = ""--]] 
 L["STRING_OPTIONS_PVPFRAGS"] = "僅 PvP 蓄意傷害"
 L["STRING_OPTIONS_PVPFRAGS_DESC"] = "當啟用, 只有殺死敵對玩家計數時從 |cFFFFFF00傷害 > 蓄意傷害|r 顯示。"
---[[Translation missing --]]
---[[ L["STRING_OPTIONS_REALMNAME"] = ""--]] 
---[[Translation missing --]]
---[[ L["STRING_OPTIONS_REALMNAME_DESC"] = ""--]] 
+L["STRING_OPTIONS_REALMNAME"] = "移除伺服器名"
+L["STRING_OPTIONS_REALMNAME_DESC"] = [=[如果開啟，將不會顯示角色的伺服器名。
+
+|cFFFFFF00關閉|r: Charles-Netherwing
+|cFFFFFF00開啟|r: Charles]=]
 L["STRING_OPTIONS_REPORT_ANCHOR"] = "報告"
 L["STRING_OPTIONS_REPORT_HEALLINKS"] = "有用的法術連結"
 L["STRING_OPTIONS_REPORT_HEALLINKS_DESC"] = [=[發送報告並啟用此選項時,|cFF55FF55有幫助|r法術是用法術鏈結來報告的，而不是它的名字。
@@ -1081,8 +1083,7 @@ L["STRING_OPTIONS_SEGMENTSSAVE_DESC"] = [=[要在遊戲期間保存多少段(記
 L["STRING_OPTIONS_SENDFEEDBACK"] = "回饋"
 L["STRING_OPTIONS_SHOW_SIDEBARS"] = "顯示邊框"
 L["STRING_OPTIONS_SHOW_SIDEBARS_DESC"] = "顯示或隱藏視窗邊框。"
---[[Translation missing --]]
---[[ L["STRING_OPTIONS_SHOW_STATUSBAR"] = ""--]] 
+L["STRING_OPTIONS_SHOW_STATUSBAR"] = "顯示狀態條"
 --[[Translation missing --]]
 --[[ L["STRING_OPTIONS_SHOW_STATUSBAR_DESC"] = ""--]] 
 --[[Translation missing --]]
@@ -1113,15 +1114,13 @@ L["STRING_OPTIONS_SKIN_ELVUI_BUTTON3_DESC"] = [=[修改工具提示:
 L["STRING_OPTIONS_SKIN_EXTRA_OPTIONS_ANCHOR"] = "外觀選項:"
 L["STRING_OPTIONS_SKIN_LOADED"] = "外觀成功加載。"
 L["STRING_OPTIONS_SKIN_PRESETS_ANCHOR"] = "保存外觀:"
---[[Translation missing --]]
---[[ L["STRING_OPTIONS_SKIN_PRESETSCONFIG_ANCHOR"] = ""--]] 
+L["STRING_OPTIONS_SKIN_PRESETSCONFIG_ANCHOR"] = "管理已保存的皮膚:"
 L["STRING_OPTIONS_SKIN_REMOVED"] = "刪除外觀"
 L["STRING_OPTIONS_SKIN_RESET_TOOLTIP"] = "重置提示邊框"
 L["STRING_OPTIONS_SKIN_RESET_TOOLTIP_DESC"] = "將提示邊框顏色和紋理設置為默認值。"
 L["STRING_OPTIONS_SKIN_SELECT"] = "選擇一個外觀"
 L["STRING_OPTIONS_SKIN_SELECT_ANCHOR"] = "外觀選擇:"
---[[Translation missing --]]
---[[ L["STRING_OPTIONS_SOCIAL"] = ""--]] 
+L["STRING_OPTIONS_SOCIAL"] = "社交"
 --[[Translation missing --]]
 --[[ L["STRING_OPTIONS_SOCIAL_DESC"] = ""--]] 
 L["STRING_OPTIONS_SPELL_ADD"] = "添加"
@@ -1173,6 +1172,10 @@ L["STRING_OPTIONS_TEXT_LOUTILINE"] = "文本陰影"
 L["STRING_OPTIONS_TEXT_LOUTILINE_DESC"] = "啟用/禁用文本的輪廓陰影。"
 L["STRING_OPTIONS_TEXT_LPOSITION"] = "顯示號數"
 L["STRING_OPTIONS_TEXT_LPOSITION_DESC"] = "顯示在玩家姓名左側的排名號碼。"
+--[[Translation missing --]]
+--[[ L["STRING_OPTIONS_TEXT_LTRANSLIT"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["STRING_OPTIONS_TEXT_LTRANSLIT_DESC"] = ""--]] 
 L["STRING_OPTIONS_TEXT_RIGHT_ANCHOR"] = "右邊文本:"
 L["STRING_OPTIONS_TEXT_ROUTILINE_DESC"] = "啟用或禁用右文本輪廓。"
 L["STRING_OPTIONS_TEXT_ROWICONS_ANCHOR"] = "圖示:"
@@ -1540,6 +1543,8 @@ L["STRING_SEGMENTS_LIST_OVERALL"] = "整體"
 L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "戰鬥時間"
 L["STRING_SEGMENTS_LIST_TOTALTIME"] = "總時間"
 L["STRING_SEGMENTS_LIST_TRASH"] = "垃圾"
+--[[Translation missing --]]
+--[[ L["STRING_SEGMENTS_LIST_WASTED_TIME"] = ""--]] 
 L["STRING_SHIELD_HEAL"] = "阻止"
 L["STRING_SHIELD_OVERHEAL"] = "浪費"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "按右鍵可關閉"

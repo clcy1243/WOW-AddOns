@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Kologarn", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 280 $"):sub(12, -3))
+mod:SetRevision("20200222200840")
 mod:SetCreatureID(32930)--, 32933, 32934
 mod:SetEncounterID(1137)
 mod:SetModelID(28638)
@@ -34,7 +34,7 @@ local yellBeam					= mod:NewYell(63346)
 local timerCrunch10             = mod:NewTargetTimer(6, 63355)
 local timerNextSmash			= mod:NewCDTimer(20.4, 64003, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)
 local timerNextShockwave		= mod:NewCDTimer(15.9, 63982, nil, nil, nil, 2)--15.9-20
-local timerNextEyebeam			= mod:NewCDTimer(20.4, 63346, nil, nil, nil, 3)
+local timerNextEyebeam			= mod:NewCDTimer(18.2, 63346, nil, nil, nil, 3)
 local timerNextGrip				= mod:NewCDTimer(20, 64292, nil, nil, nil, 3)
 local timerRespawnLeftArm		= mod:NewTimer(48, "timerLeftArm", nil, nil, nil, 1)
 local timerRespawnRightArm		= mod:NewTimer(48, "timerRightArm", nil, nil, nil, 1)
@@ -87,7 +87,7 @@ end
 function mod:SPELL_AURA_APPLIED_DOSE(args)
 	if args.spellId == 64002 then		        -- Crunch Armor (25-man only)
 		warnCrunchArmor:Show(args.destName)
-        if args.amount >= 2 then 
+        if args.amount >= 2 then
             if args:IsPlayer() then
                 specWarnCrunchArmor2:Show(args.amount)
                 specWarnCrunchArmor2:Play("stackhigh")
@@ -143,7 +143,7 @@ function mod:OnTranscriptorSync(msg, targetName)
 		if self:AntiSpam(5, targetName) then--Antispam sync by target name, since this doesn't use dbms built in onsync handler.
 			warnFocusedEyebeam:Show(targetName)
 			if self.Options.SetIconOnEyebeamTarget then
-				self:SetIcon(targetName, 5, 8) 
+				self:SetIcon(targetName, 5, 8)
 			end
 		end
 	end

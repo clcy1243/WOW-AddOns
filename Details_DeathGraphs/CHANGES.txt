@@ -1,7 +1,10 @@
-changeset:   93:29003b0aedd1
-tag:         v8.1.0.093
-user:        Tercioo
-date:        Fri Mar 08 14:18:47 2019 -0300
-summary:     - Code cleanup and Localization updates.
+lightweight tag 4b23458ba6672303389f55448d937f818bd9c3b3 v8.3.0.100
+Author:	Tercio Jose <terciob19@hotmail.com>
+Date:	Sun Mar 8 16:47:25 2020 -0300
 
+commit 4b23458ba6672303389f55448d937f818bd9c3b3
+Author: Tercio Jose <terciob19@hotmail.com>
+Date:   Sun Mar 8 16:47:25 2020 -0300
+
+    Cleanup of old code not used anymore
 

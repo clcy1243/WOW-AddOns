@@ -241,7 +241,6 @@ local function OnUpdateWidget(widget_frame, elapsed)
   -- Update the number of seconds since the last update
   widget_frame.TimeSinceLastUpdate = widget_frame.TimeSinceLastUpdate + elapsed
 
-  local widget = widget_frame.Widget
   if widget_frame.TimeSinceLastUpdate >= UPDATE_INTERVAL then
     widget_frame.TimeSinceLastUpdate = 0
 
@@ -379,12 +378,9 @@ end
 
 function Widget:PLAYER_ENTERING_WORLD()
   -- From KuiNameplates: Update icons after zoning to workaround UnitPowerMax returning 0 when
-  -- zoning into/out of instanced PVP
-  local _, instanceType = IsInInstance()
-  if instanceType == "pvp" or instanceType == "arena" then
-    self:DetermineUnitPower()
-    self:UpdateLayout()
-  end
+  -- zoning into/out of instanced PVP, also in timewalking dungeons
+  self:DetermineUnitPower()
+  self:UpdateLayout()
 end
 
 -- As this event is only registered for druid characters, ShowInShapeshiftForm is true by initialization for all other classes
@@ -496,6 +492,7 @@ function Widget:OnTargetUnitAdded(tp_frame, unit)
     widget_frame:SetParent(tp_frame)
     widget_frame:SetFrameLevel(tp_frame:GetFrameLevel() + 7)
 
+    widget_frame:ClearAllPoints()
     -- Updates based on settings / unit style
     local db = self.db
     if unit.style == "NameOnly" or unit.style == "NameOnly-Unique" then

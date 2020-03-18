@@ -60,11 +60,12 @@ local function OnUpdateCastBar(self, elapsed)
   end
 
   self:Hide()
+  self:GetParent().unit.IsInterrupted = false
 end
 
 local function OnHideCastBar(self)
-  -- OnStopCasting is hiding the castbar and may be triggered before or after SPELL_INTERRUPT
-  -- So we have to show the castbar again or not hide it if the interrupt message should still be shown.
+  -- OnUpdateCastMidway is hiding the castbar if the unit is no longer casting
+  -- So we have to show the castbar again
   if self.FlashTime > 0 then
     self:Show()
   end
@@ -78,7 +79,7 @@ end
 
 local function SetAllColors(self, rBar, gBar, bBar, aBar, rBackdrop, gBackdrop, bBackdrop, aBackdrop)
   self:SetStatusBarColor(rBar or 1, gBar or 1, bBar or 1, aBar or 1)
-  self.Border:SetBackdropColor(rBackdrop or 1, gBackdrop or 1, bBackdrop or 1, aBackdrop or 1)
+  self.Background:SetVertexColor(rBackdrop or 1, gBackdrop or 1, bBackdrop or 1, aBackdrop or 1)
 end
 
 local function SetHealthBarTexture(self, style)
@@ -87,11 +88,15 @@ local function SetHealthBarTexture(self, style)
 end
 
 local function SetStatusBarBackdropHealthbar(self, backdrop_texture, edge_texture, edge_size, offset)
+  self.Background:SetTexture(backdrop_texture)
+  self.Background:SetPoint("TOPLEFT", self:GetStatusBarTexture(), "TOPRIGHT")
+  self.Background:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT")
+
   self.Border:ClearAllPoints()
   self.Border:SetPoint("TOPLEFT", self, "TOPLEFT", - offset, offset)
   self.Border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", offset, - offset)
   self.Border:SetBackdrop({
-    bgFile = backdrop_texture,
+    -- bgFile = backdrop_texture,
     edgeFile = edge_texture,
     edgeSize = edge_size,
     insets = { left = offset, right = offset, top = offset, bottom = offset },
@@ -120,6 +125,7 @@ function Addon:CreateHealthbar(parent)
   frame:SetFrameLevel(parent:GetFrameLevel() + 5)
 
   frame.Border = CreateFrame("Frame", nil, frame)
+  frame.Background = frame:CreateTexture(nil, "BACKGROUND")
   frame.EliteBorder = CreateFrame("Frame", nil, frame)
   frame.ThreatBorder = CreateFrame("Frame", nil, frame)
 
@@ -210,6 +216,7 @@ function Addon:CreateCastbar(parent)
   frame:SetFrameLevel(parent:GetFrameLevel() + 4)
 
   frame.Border = CreateFrame("Frame", nil, frame)
+  frame.Background = frame:CreateTexture(nil, "BACKGROUND")
   frame.InterruptBorder = CreateFrame("Frame", nil, frame)
   frame.Overlay = CreateFrame("Frame", nil, frame)
 

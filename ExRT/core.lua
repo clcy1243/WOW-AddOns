@@ -1,54 +1,8 @@
---	04.12.2018
+--	05.03.2020
 
---[[
-3930
-* BFA Update
-
-3940
-* Raid Cooldowns: Some tweak for quick setup spells
-* Raid Cooldowns: fixes for test mode
-* Invite tools: removed loot method options
-* Minor fixes
-
-3950
-* Raid Inspect: ilvl fix
-* Minor fixes
-
-3970
-* New module: Visual note [test mode]
-* Note: parts of note can be shown only for specific role. Use {D}...{/D},{H}...{/H},{T}...{/T} format
-* Note: parts of note can be shown only for specific players. Use {p:PlayerName,OtherPlayerName}...{/p} format
-* Note: autoload removed
-* Note: added option for text colors in edit mode
-* Raid Inspect: You can check all alternate azerite choices in tier if you hover azerite icon
-* Fight log: fixed calculations for players in mind control
-* Removed outdated modules
-* Minor fixes
-
-3975
-* Fixes for note editing
-
-3990
-* Note: copy-pasting with colors must be much easier
-* Note: added button "Duplicate"
-* Note: added 5ppl dungeons to bosses list
-* Note: added highlighting drafts for nearest bosses
-* Note: added {icon:PATH} format for any ingame icon (older format for spells still works ({spell:SPELL_ID}))
-* Visual note: fixes
-* Visual note: outdated versions no longer supports
-* Raid Inspect: added bfa achievements (BFA 5ppl, Uldir)
-* Raid Inspect: fixed weapon enchants for dk & hunters
-
-4000
-* 8.1 Update
-* Note: added ability to move notes position in list
-* Note: added "{time:2:45}" template for dynamic timer
-* Visual note: added movement tool
-* Fight log: short boss pulls are not recorded
-]]
 local GlobalAddonName, ExRT = ...
 
-ExRT.V = 4000
+ExRT.V = 4140
 ExRT.T = "R"
 
 ExRT.OnUpdate = {}		--> таймеры, OnUpdate функции
@@ -58,6 +12,7 @@ ExRT.MiniMapMenu = {}		--> изменение меню кнопки на мин�
 ExRT.Modules = {}		--> список всех модулей
 ExRT.ModulesLoaded = {}		--> список загруженных модулей [для Dev & Advanced]
 ExRT.ModulesOptions = {}
+ExRT.Classic = {}		--> функции для работы на классик клиенте
 ExRT.Debug = {}
 ExRT.RaidVersions = {}
 ExRT.Temp = {}
@@ -77,8 +32,15 @@ do
 	local version, buildVersion, buildDate, uiVersion = GetBuildInfo()
 	
 	ExRT.clientUIinterface = uiVersion
-	local expansion,majorPatch,minorPatch = (version or "1.0.0"):match("^(%d+)%.(%d+)%.(%d+)")
+	local expansion,majorPatch,minorPatch = (version or "2.0.0"):match("^(%d+)%.(%d+)%.(%d+)")
 	ExRT.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0)
+end
+if ExRT.clientVersion < 20000 then
+	ExRT.isClassic = true
+	ExRT.T = "Classic"
+end
+if ExRT.clientVersion >= 80300 then
+	ExRT.is83 = true
 end
 -------------> smart DB <-------------
 ExRT.SDB = {}
@@ -146,9 +108,9 @@ do
 			
 			self.options.CreateTilte = mod_Options_CreateTitle
 			
-			if enableLoadInCombat then
+			--if enableLoadInCombat then
 				self.options.enableLoadInCombat = true
-			end
+			--end
 			
 			ExRT.ModulesOptions[#ExRT.ModulesOptions + 1] = self.options
 			
@@ -197,7 +159,7 @@ function ExRT.mod:HookEvent(event)
 	self.eventsCounter[event] = self.eventsCounter[event] and self.eventsCounter[event] + 1 or 1
 end
 
-	
+
 function ExRT.mod:RegisterEvents(...)
 	for i=1,select("#", ...) do
 		local event = select(i,...)
@@ -226,6 +188,38 @@ function ExRT.mod:UnregisterEvents(...)
 		end
 		self.main.events[event] = nil
 		ExRT.F.dprint(self.name,'UnregisterEvent',event)
+	end
+end
+if ExRT.isClassic then
+	function ExRT.mod:RegisterEvents(...)
+		for i=1,select("#", ...) do
+			local event = select(i,...)
+			if event ~= "COMBAT_LOG_EVENT_UNFILTERED" then
+				pcall(self.main.RegisterEvent,self.main,event)
+			else
+				if not self.CLEU then self.CLEU = CreateFrame("Frame") end
+				self.CLEU:SetScript("OnEvent",self.main.COMBAT_LOG_EVENT_UNFILTERED)
+				self.CLEU:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+			end
+			self.main.events[event] = true
+			ExRT.F.dprint(self.name,'RegisterEvent',event)
+		end
+	end
+	
+	function ExRT.mod:UnregisterEvents(...)
+		for i=1,select("#", ...) do
+			local event = select(i,...)
+			if event ~= "COMBAT_LOG_EVENT_UNFILTERED" then
+				pcall(self.main.UnregisterEvent,self.main,event)
+			else
+				if self.CLEU then
+					self.CLEU:SetScript("OnEvent",nil)
+					self.CLEU:UnregisterAllEvents()
+				end
+			end
+			self.main.events[event] = nil
+			ExRT.F.dprint(self.name,'UnregisterEvent',event)
+		end
 	end
 end
 
@@ -318,8 +312,10 @@ do
 			end
 		end
 	end)
-	petBattleTracker:RegisterEvent("PET_BATTLE_OPENING_START")
-	petBattleTracker:RegisterEvent("PET_BATTLE_CLOSE")
+	if not ExRT.isClassic then
+		petBattleTracker:RegisterEvent("PET_BATTLE_OPENING_START")
+		petBattleTracker:RegisterEvent("PET_BATTLE_CLOSE")
+	end
 	function ExRT.mod:RegisterHideOnPetBattle(frame)
 		hideOnPetBattle[#hideOnPetBattle + 1] = frame
 	end

@@ -3,6 +3,7 @@ if not L then return end
 if L then
 	L.prelate = "圣武士阿克阿尔"
 	L.flamespeaker = "拉斯塔利火语者"
+	L.hulk = "复生的蛮兵"
 	L.enforcer = "永恒执行者"
 	L.punisher = "拉斯塔利惩罚者"
 	L.vessel = "邦桑迪的使者"
@@ -74,7 +75,7 @@ end
 
 L = BigWigs:NewBossLocale("King Rastakhan", "zhCN")
 if L then
-	--L.leap_cancelled = "Leap Cancelled"
+	L.leap_cancelled = "飞跃已取消"
 end
 
 L = BigWigs:NewBossLocale("High Tinker Mekkatorque", "zhCN")
@@ -108,7 +109,7 @@ if L then
 	L.port_side_txt = "左舰" -- port
 
 	L.custom_on_stop_timers = "总是显示技能条"
-	L.custom_on_stop_timers_desc = "吉安娜下次会随机释放非冷却技能。当此选项开启，这些技能条将保留在屏幕上。"
+	L.custom_on_stop_timers_desc = "吉安娜下次会随机释放非冷却技能。当此选项启用，这些技能条将保留在屏幕上。"
 
 	L.frozenblood_player = "%s（%d人）"
 

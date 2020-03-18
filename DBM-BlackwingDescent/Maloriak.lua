@@ -1,12 +1,12 @@
 local mod	= DBM:NewMod(173, "DBM-BlackwingDescent", nil, 73)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 182 $"):sub(12, -3))
+mod:SetRevision("20200222203750")
 mod:SetCreatureID(41378)
 mod:SetEncounterID(1025)
 mod:SetZone()
 mod:SetUsedIcons(1, 2, 3, 4, 6, 7, 8)
-mod:SetModelSound("Sound\\Creature\\Nefarian\\VO_BD_Nefarian_MaloriakIntro01.ogg", "Sound\\Creature\\Maloriak\\VO_BD_Maloriak_Event05.ogg")
+--mod:SetModelSound("Sound\\Creature\\Nefarian\\VO_BD_Nefarian_MaloriakIntro01.ogg", "Sound\\Creature\\Maloriak\\VO_BD_Maloriak_Event05.ogg")
 --Long: Maloriak, try not to lose to these mortals. Semicompetent help is SO hard to create.
 --Short: Mix and stir, apply heat...
 
@@ -36,7 +36,7 @@ local warnMagmaJets				= mod:NewSpellAnnounce(78194, 4, nil, "Tank")
 local warnEngulfingDarkness		= mod:NewSpellAnnounce(92754, 4, nil, "Tank|Healer")--Heroic Ability
 local warnPhase2Soon			= mod:NewPrePhaseAnnounce(2, 3)
 local warnPhase2				= mod:NewPhaseAnnounce(2, 4)
- 
+
 local timerPhase				= mod:NewTimer(49, "TimerPhase", 89250)--Just some random cauldron icon not actual spellid
 local timerBitingChill			= mod:NewBuffFadesTimer(10, 77760)
 local timerFlashFreeze			= mod:NewCDTimer(14, 77699)--Varies on other abilities CDs

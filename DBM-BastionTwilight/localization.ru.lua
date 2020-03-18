@@ -66,7 +66,7 @@ L:SetOptionLocalization({
 	SpecWarnSearingWinds	= "Спец-предупреждение, когда у вас не хватает ауры $spell:83500<br/>(~10сек перед началом применения)",
 	timerTransition			= "Показывать таймер перехода в другую фазу",
 	RangeFrame				= "Автоматически показывать окно проверки дистанции при надобности",
-	yellScrewed				= "Кричать, когда на вас одновременно $spell:83099 и $spell:92307",	
+	yellScrewed				= "Кричать, когда на вас одновременно $spell:83099 и $spell:92307",
 	InfoFrame				= "Показывать игроков без $spell:83581 или $spell:83500",
 	HeartIceIcon			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(82665),
 	BurningBloodIcon		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(82660),
@@ -134,7 +134,6 @@ L:SetOptionLocalization({
 	TimerEggWeaken		= "Отсчет времени восстановления $spell:87654",
 	TimerOrbs			= "Отсчет времени до следующих сфер (таймер может быть неточным)",
 	SetIconOnOrbs		= "Устанавливать метки на игроков, имеющих агро от сфер<br/>(Предполагаемые цели сфер)",
-	OrbsCountdown		= "Звуковой отсчет перед появлением сфер",
 	InfoFrame			= "Показывать список игроков, имеющих агро"
 })
 

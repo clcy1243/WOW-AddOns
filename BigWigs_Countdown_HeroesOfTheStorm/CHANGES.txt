@@ -1,18 +1,24 @@
-tag abaff3459750156a3370eea0d357c665325ca8f8 1.2.2
+tag f9389bdf3922be1d17ac9f455f44b593aec61fb2 1.2.7
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Tue Dec 18 00:56:15 2018 -0600
+Date:	Tue Jan 14 12:13:31 2020 -0600
 
-Tagging as 1.2.2
+Tagging as 1.2.7
 
-commit 820592306945826ede864beb59f0254e9f26a6a7
+commit 020f42c463b9d5fc96dc0e927dd3c19ad80f563c
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Tue Dec 18 00:52:44 2018 -0600
+Date:   Mon Jan 13 18:11:09 2020 -0600
 
-    Update TOC for 8.1
+    Update TOC for 8.3
 
-commit 6154dab7d347564dd2cdf367f5388a6b5f8430db
+commit 92d6ea1d5ebfbca6a75d235cbc609ab3313e622a
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Tue Dec 18 00:50:31 2018 -0600
+Date:   Mon Jan 13 18:04:34 2020 -0600
 
-    Add Mal'Ganis and "The Kid"
+    Add Deathwing
+
+commit 22fa78b64010bb65497cf906e949345cdd3bf2c8
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Mon Jan 13 17:55:29 2020 -0600
+
+    Update TOC for 8.2.5
 

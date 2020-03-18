@@ -124,14 +124,20 @@ function mod:ExplosiveBurstRemoved(args)
 end
 
 function mod:Deadeye(args)
-	self:TargetMessage2(args.spellId, "red", args.destName)
-	self:PlaySound(args.spellId, "warning", nil, args.destName)
+	local deadeyeInfo = deadeyes[args.destName] -- [1] is stacks
+	if deadeyeInfo then
+		self:StackMessage(args.spellId, args.destName, deadeyeInfo[1]+1, "red")
+		self:PlaySound(args.spellId, "warning", nil, args.destName)
+	else
+		self:TargetMessage2(args.spellId, "orange", args.destName)
+		self:PlaySound(args.spellId, "info", nil, args.destName)
+	end
 	self:Bar(args.spellId, 27.5)
 	self:CastBar(args.spellId, 5)
 end
 
 function mod:DeadeyeApplied(args)
-	deadeyes[args.destName] = {args.amount or 1, 80, 0}
+	deadeyes[args.destName] = {args.amount or 1, GetTime()+80, 80}
 	self:SetInfoBarsByTable(256038, deadeyes)
 end
 

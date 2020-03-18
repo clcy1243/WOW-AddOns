@@ -1,4 +1,4 @@
-<Ui>
+﻿<Ui>
 
 	<Frame name="TellMeWhen_OptionsModuleContainer" virtual="true" hidden="true">
 		<KeyValues>
@@ -1452,7 +1452,7 @@
 					<OnClick>
 						TMW.IE.db.global.ConfigWarning = false
 						self:GetParent():Hide()
-						TMW.wIE:Load(1)
+						TMW.IE:Load(1)
 					</OnClick>
 				</Scripts>
 			</Button>

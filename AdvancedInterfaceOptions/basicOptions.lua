@@ -8,11 +8,9 @@ local SetCVar = function(...) -- Suppress errors trying to set read-only cvars
 	return status
 end
 
--- luacheck: globals GetSortBagsRightToLeft SetSortBagsRightToLeft GetInsertItemsLeftToRight SetInsertItemsLeftToRight
--- luacheck: globals UIDropDownMenu_AddButton UIDropDownMenu_CreateInfo UIDropDownMenu_SetSelectedValue
--- luacheck: globals AdvancedInterfaceOptionsSaved COMBAT_TEXT_FLOAT_MODE
--- luacheck: globals BlizzardOptionsPanel_UpdateCombatText GameFontHighlightSmall StaticPopup_Show PetFrame PlayerFrame TargetFrame
--- luacheck: globals TextStatusBar_UpdateTextString PlayerFrameAlternateManaBar MainMenuExpBar MAX_PARTY_MEMBERS UVARINFO
+local function IsClassic()
+    return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+end
 
 AdvancedInterfaceOptionsSaved = {}
 local DBVersion = 3
@@ -172,7 +170,9 @@ AIO:SetAllPoints()
 AIO.name = addonName
 
 -- Register all of our widgets here so we can iterate over them
+-- luacheck: ignore
 local Widgets = {} -- [frame] = cvar
+
 
 -------------
 -- Checkbox widget
@@ -359,18 +359,21 @@ subText:SetText('These options allow you to toggle various options that have bee
 local playerTitles = newCheckbox(AIO, 'UnitNamePlayerPVPTitle')
 local playerGuilds = newCheckbox(AIO, 'UnitNamePlayerGuild')
 local playerGuildTitles = newCheckbox(AIO, 'UnitNameGuildTitle')
-local fadeMap = newCheckbox(AIO, 'mapFade')
+local fadeMap = not IsClassic() and newCheckbox(AIO, 'mapFade')
 local secureToggle = newCheckbox(AIO, 'secureAbilityToggle')
 local luaErrors = newCheckbox(AIO, 'scriptErrors')
 local targetDebuffFilter = newCheckbox(AIO, 'noBuffDebuffFilterOnTarget')
-local reverseCleanupBags = newCheckbox(AIO, 'reverseCleanupBags',
-	function(self)
-		return GetSortBagsRightToLeft()
-	end,
-	function(self, checked)
-		SetSortBagsRightToLeft(checked)
-	end
-)
+local reverseCleanupBags
+if not IsClassic() then
+    reverseCleanupBags = newCheckbox(AIO, 'reverseCleanupBags',
+        function(self)
+            return GetSortBagsRightToLeft()
+        end,
+        function(self, checked)
+            SetSortBagsRightToLeft(checked)
+        end
+    )
+end
 local lootLeftmostBag = newCheckbox(AIO, 'lootLeftmostBag',
 	function(self)
 		return GetInsertItemsLeftToRight()
@@ -433,20 +436,27 @@ actionCamModeDropdown.initialize = function(dropdown)
 end
 actionCamModeDropdown:HookScript("OnShow", actionCamModeDropdown.initialize)
 
-local cameraFactor = newSlider(AIO, 'cameraDistanceMaxZoomFactor', 1, 2.6, 0.1)
+local cameraFactor = newSlider(AIO, 'cameraDistanceMaxZoomFactor', 1, IsClassic() and 3.4 or 2.6, 0.1)
 cameraFactor:SetPoint('TOPLEFT', actionCamModeDropdown, 'BOTTOMLEFT', 20, -20)
 
 playerTitles:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", 0, -8)
 playerGuilds:SetPoint("TOPLEFT", playerTitles, "BOTTOMLEFT", 0, -4)
 playerGuildTitles:SetPoint("TOPLEFT", playerGuilds, "BOTTOMLEFT", 0, -4)
-fadeMap:SetPoint("TOPLEFT", playerGuildTitles, "BOTTOMLEFT", 0, -4)
-secureToggle:SetPoint("TOPLEFT", fadeMap, "BOTTOMLEFT", 0, -4)
+if not IsClassic() then
+	fadeMap:SetPoint("TOPLEFT", playerGuildTitles, "BOTTOMLEFT", 0, -4)
+end
+secureToggle:SetPoint("TOPLEFT", IsClassic() and playerGuildTitles or fadeMap, "BOTTOMLEFT", 0, -4)
 luaErrors:SetPoint("TOPLEFT", secureToggle, "BOTTOMLEFT", 0, -4)
 targetDebuffFilter:SetPoint("TOPLEFT", luaErrors, "BOTTOMLEFT", 0, -4)
-reverseCleanupBags:SetPoint("TOPLEFT", targetDebuffFilter, "BOTTOMLEFT", 0, -4)
-lootLeftmostBag:SetPoint("TOPLEFT", reverseCleanupBags, "BOTTOMLEFT", 0, -4)
-enableWoWMouse:SetPoint("TOPLEFT", lootLeftmostBag, "BOTTOMLEFT", 0, -4)
 
+if not IsClassic() then
+    reverseCleanupBags:SetPoint("TOPLEFT", targetDebuffFilter, "BOTTOMLEFT", 0, -4)
+    lootLeftmostBag:SetPoint("TOPLEFT", reverseCleanupBags, "BOTTOMLEFT", 0, -4)
+    enableWoWMouse:SetPoint("TOPLEFT", lootLeftmostBag, "BOTTOMLEFT", 0, -4)
+else
+    lootLeftmostBag:SetPoint("TOPLEFT", targetDebuffFilter, "BOTTOMLEFT", 0, -4)
+    enableWoWMouse:SetPoint("TOPLEFT", lootLeftmostBag, "BOTTOMLEFT", 0, -4)
+end
 
 -- Checkbox to enforce all settings through reloads
 local enforceBox = newCheckbox(AIO, nil,
@@ -512,7 +522,6 @@ resetButton:SetScript('OnClick', function(self)
 	StaticPopup_Show('AIO_RESET_EVERYTHING')
 end)
 
-
 -- Chat section
 local AIO_Chat = CreateFrame('Frame', nil, InterfaceOptionsFramePanelContainer)
 AIO_Chat:Hide()
@@ -537,10 +546,16 @@ SubText_Chat:SetText('These options allow you to modify various chat settings th
 
 local chatMouseScroll = newCheckbox(AIO_Chat, 'chatMouseScroll')
 local chatDelay = newCheckbox(AIO_Chat, 'removeChatDelay')
+local classColors
+if IsClassic() then
+    classColors = newCheckbox(AIO_Chat, 'chatClassColorOverride')
+end
 
 chatDelay:SetPoint('TOPLEFT', SubText_Chat, 'BOTTOMLEFT', 0, -8)
 chatMouseScroll:SetPoint('TOPLEFT', chatDelay, 'BOTTOMLEFT', 0, -4)
-
+if IsClassic() then
+    classColors:SetPoint('TOPLEFT', chatMouseScroll, 'BOTTOMLEFT', 0, -4)
+end
 
 -- Floating Combat Text section
 local AIO_FCT = CreateFrame('Frame', nil, InterfaceOptionsFramePanelContainer)
@@ -591,14 +606,44 @@ end)
 fctfloatmodeDropdown:HookScript("OnLeave", GameTooltip_Hide)
 Widgets[ fctfloatmodeDropdown ] = 'floatingCombatTextFloatMode'
 
-local revUVARINFO = {}
-for k, v in pairs(UVARINFO) do
-	revUVARINFO[v.cvar] = k
-end
+-- UVARINFO was made local in patch 8.2.0
+local uvars = {
+	removeChatDelay = "REMOVE_CHAT_DELAY",
+	lockActionBars = "LOCK_ACTIONBAR",
+	buffDurations = "SHOW_BUFF_DURATIONS",
+	alwaysShowActionBars = "ALWAYS_SHOW_MULTIBARS",
+	showPartyPets = "SHOW_PARTY_PETS",
+	showPartyBackground = "SHOW_PARTY_BACKGROUND",
+	showTargetOfTarget = "SHOW_TARGET_OF_TARGET",
+	autoQuestWatch = "AUTO_QUEST_WATCH",
+	lootUnderMouse = "LOOT_UNDER_MOUSE",
+	autoLootDefault = "AUTO_LOOT_DEFAULT",
+	enableFloatingCombatText = "SHOW_COMBAT_TEXT",
+	floatingCombatTextLowManaHealth = "COMBAT_TEXT_SHOW_LOW_HEALTH_MANA",
+	floatingCombatTextAuras = "COMBAT_TEXT_SHOW_AURAS",
+	floatingCombatTextAuras = "COMBAT_TEXT_SHOW_AURA_FADE",
+	floatingCombatTextCombatState = "COMBAT_TEXT_SHOW_COMBAT_STATE",
+	floatingCombatTextDodgeParryMiss = "COMBAT_TEXT_SHOW_DODGE_PARRY_MISS",
+	floatingCombatTextDamageReduction = "COMBAT_TEXT_SHOW_RESISTANCES",
+	floatingCombatTextRepChanges = "COMBAT_TEXT_SHOW_REPUTATION",
+	floatingCombatTextReactives = "COMBAT_TEXT_SHOW_REACTIVES",
+	floatingCombatTextFriendlyHealers = "COMBAT_TEXT_SHOW_FRIENDLY_NAMES",
+	floatingCombatTextComboPoints = "COMBAT_TEXT_SHOW_COMBO_POINTS",
+	floatingCombatTextEnergyGains = "COMBAT_TEXT_SHOW_ENERGIZE",
+	floatingCombatTextPeriodicEnergyGains = "COMBAT_TEXT_SHOW_PERIODIC_ENERGIZE",
+	floatingCombatTextFloatMode = "COMBAT_TEXT_FLOAT_MODE",
+	floatingCombatTextHonorGains = "COMBAT_TEXT_SHOW_HONOR_GAINED",
+	alwaysShowActionBars = "ALWAYS_SHOW_MULTIBARS",
+	showCastableBuffs = "SHOW_CASTABLE_BUFFS",
+	showDispelDebuffs = "SHOW_DISPELLABLE_DEBUFFS",
+	showArenaEnemyFrames = "SHOW_ARENA_ENEMY_FRAMES",
+	showArenaEnemyCastbar = "SHOW_ARENA_ENEMY_CASTBAR",
+	showArenaEnemyPets = "SHOW_ARENA_ENEMY_PETS",
+}
 
 local function FCT_SetValue(self, checked)
 	addon:SetCVar(self.cvar, checked)
-	_G[revUVARINFO[self.cvar]] = checked and "1" or "0" -- update uvars
+	_G[uvars[self.cvar]] = checked and "1" or "0"
 	BlizzardOptionsPanel_UpdateCombatText()
 end
 
@@ -799,7 +844,7 @@ SubText_NP:SetPoint('TOPLEFT', Title_NP, 'BOTTOMLEFT', 0, -8)
 SubText_NP:SetPoint('RIGHT', -32, 0)
 SubText_NP:SetText('These options allow you to modify Nameplate Options.')
 
-local nameplateDistance = newSlider(AIO_NP, 'nameplateMaxDistance', 10, 100)
+local nameplateDistance = newSlider(AIO_NP, 'nameplateMaxDistance', 10, IsClassic() and 20 or 100)
 nameplateDistance:SetPoint('TOPLEFT', SubText_NP, 'BOTTOMLEFT', 0, -20)
 
 local nameplateAtBase = newCheckbox(AIO_NP, 'nameplateOtherAtBase')
@@ -854,7 +899,9 @@ spellStartRecovery.maxText:SetFormattedText("%d %s", spellStartRecovery.minMaxVa
 InterfaceOptions_AddCategory(AIO, addonName)
 InterfaceOptions_AddCategory(AIO_Chat, addonName)
 InterfaceOptions_AddCategory(AIO_C, addonName)
-InterfaceOptions_AddCategory(AIO_FCT, addonName)
+if not IsClassic() then
+    InterfaceOptions_AddCategory(AIO_FCT, addonName)
+end
 -- InterfaceOptions_AddCategory(AIO_ST, addonName)
 InterfaceOptions_AddCategory(AIO_NP, addonName)
 

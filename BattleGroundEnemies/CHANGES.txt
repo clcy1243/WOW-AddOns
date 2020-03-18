@@ -1,0 +1,24 @@
+lightweight tag 8e6a5951465d82b6a2778690b9479e036e550ac2 v3.1.9.9
+Author:	GitHub <noreply@github.com>
+Date:	Thu Mar 21 23:16:52 2019 +0100
+
+commit 8e6a5951465d82b6a2778690b9479e036e550ac2
+Author: bullsei <bullsei@users.noreply.github.com>
+Date:   Thu Mar 21 23:16:52 2019 +0100
+
+    Update CHANGELOG.md
+
+commit 0adca723d280afa8e5531079ba58fc39bea7089d
+Author: bullsei <bullsei@users.noreply.github.com>
+Date:   Thu Mar 21 23:15:16 2019 +0100
+
+    Update Main.lua
+
+commit 0a0a6768abf30e0cfb89e41407c4c96ad65b80f1
+Author: bullsei <bullsei@users.noreply.github.com>
+Date:   Thu Mar 21 23:10:57 2019 +0100
+
+    Error prevention UI Scale
+    
+    Don't call UI_SCALE_CHANGED too frequently when in combat
+

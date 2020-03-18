@@ -50,6 +50,12 @@ L.bars = "Barres"
 L.style = "Style"
 L.bigWigsBarStyleName_Default = "Défaut"
 
+-- L.nameplateBars = "Nameplate Bars"
+-- L.nameplateAutoWidth = "Match width of nameplate"
+-- L.nameplateAutoWidthDesc = "Sets the width of nameplate bars to the with of their parent nameplate."
+-- L.nameplateOffsetY = "Y Offset"
+-- L.nameplateOffsetYDesc = "Offset from the top of the nameplate for upwards bars and the bottom of the nameplate for downwards bars."
+
 L.clickableBars = "Barres cliquables"
 L.clickableBarsDesc = "Par défaut, les barres de BigWigs ignorent la souris. Vous pouvez ainsi cibler ou lancer des sorts de zone derrière elles, changer l'angle de la caméra, ... tandis que votre curseur survole les barres. |cffff4411Si vous activez ceci, tout cela ne sera plus d'application.|r Les barres intercepteront tout clic que vous effectuez sur elles.\n"
 L.interceptMouseDesc = "Permet aux barres de recevoir les clics de la souris."
@@ -134,14 +140,22 @@ L.blockEmotes = "Bloquer les émotes du centre de l'écran"
 L.blockEmotesDesc = "Certains boss affichent des émotes pour certaines techniques, des messages qui sont bien trop longs et descriptifs. Nous essayons de produire des messages plus courts et appropriés qui n'interfèrent pas avec votre expérience de jeu et qui ne vous disent pas spécifiquement ce qu'il faut faire.\n\nVeuillez noter que les émotes des boss seront toujours visibles dans la fenêtre de discussion au cas où vous désireriez les lire."
 L.blockMovies = "Bloquer les cinématiques déjà vues"
 L.blockMoviesDesc = "Les cinématiques des rencontres de boss ne seront autorisées à être jouées qu'une seule fois (afin que vous puissiez les voir toutes au moins une fois) et seront ensuite bloquées."
-L.blockGarrison = "Bloquer les popups de fief"
-L.blockGarrisonDesc = "Les popups de fief s'affichent de temps en temps, principalement quand un sujet a terminé une mission.\n\nCes popups pouvant cacher des éléments critiques de votre interface pendant les rencontres de boss, nous vous recommandons de les bloquer."
+--L.blockFollowerMission = "Bloquer les popups de fief" -- Rename to follower mission
+--L.blockFollowerMissionDesc = "Les popups de fief s'affichent de temps en temps, principalement quand un sujet a terminé une mission.\n\nCes popups pouvant cacher des éléments critiques de votre interface pendant les rencontres de boss, nous vous recommandons de les bloquer."
 L.blockGuildChallenge = "Bloquer les popups de défi de guilde"
 L.blockGuildChallengeDesc = "Les popups de défi de guilde s'affichent de temps en temps, principalement quand un groupe de votre guilde termine un donjon héroïque ou un donjon en mode défi.\n\nCes popups pouvant cacher des éléments critiques de votre interface pendant les rencontres de boss, nous vous recommandons de les bloquer."
 L.blockSpellErrors = "Bloquer les messages de sorts échoués"
 L.blockSpellErrorsDesc = "Les messages tels que \"Le sort n'est pas encore utilisable\" qui s'affichent en haut de l'écran seront bloqués."
 --L.disableSfx = "Disable sound effects"
 --L.disableSfxDesc = "The 'Sound Effects' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
+--L.blockTooltipQuests = "Block tooltip quest objectives"
+--L.blockTooltipQuestsDesc = "When you need to kill a boss for a quest, it will usually show as '0/1 complete' in the tooltip when you place your mouse over the boss. This will be hidden whilst in combat with that boss to prevent the tooltip growing very large."
+--L.blockObjectiveTracker = "Hide quest tracker"
+--L.blockObjectiveTrackerDesc = "The quest objective tracker will be hidden during a boss encounter to clear up screen space.\n\nThis will NOT happen if you are in a mythic+ or are tracking an achievement."
+
+L.subzone_grand_bazaar = "Le Grand bazar" -- Battle of Dazar'alor raid (Battle for Azeroth)
+L.subzone_port_of_zandalar = "Port de Zandalar" -- Battle of Dazar'alor raid (Battle for Azeroth)
+--L.subzone_eastern_transept = "Eastern Transept" -- Auchindoun dungeon (Warlords of Draenor)
 
 -----------------------------------------------------------------------
 -- Colors.lua

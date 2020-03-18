@@ -1,8 +1,10 @@
 # LittleWigs
 
-## [v8.1.6](https://github.com/BigWigsMods/LittleWigs/tree/v8.1.6) (2019-03-11)
-[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v8.1.5...v8.1.6)
+## [v8.3.11](https://github.com/BigWigsMods/LittleWigs/tree/v8.3.11) (2020-03-08)
+[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v8.3.10...v8.3.11)
 
-- BfA/AtalDazar: Add Rezan initial timers and add Frenzied Charge target message (#425)  
-- BfA/Freehold/Kragg: Fix Stage 2 initial timers and message (#424)  
-- BfA/TheMotherlode/Razzdunk:  Add Micro Missiles cast bar and add target message for Drill smash (#423)  
+- Update ruRU (#519)  
+- Update ruRU (#518)  
+- Update ruRU (#516)  
+- Update ruRU (#514)  
+- BfA/WaycrestManor/Heartsbane: Improve timers (#517)  

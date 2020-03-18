@@ -56,7 +56,7 @@ All functions:
 	:Tooltip(str)		-> [add tooltip]
 	:OnChange(func)		-> SetScript("OnTextChanged",func)
 -> ELib:ScrollFrame(parent,isOld)
-	:Height(px)		-> [set heeight]
+	:Height(px)		-> [set height]
 -> ELib:Button(parent,text,template)
 	:Tooltip(str)		-> [add tooltip]
 -> ELib:Icon(parent,textureIcon,size,isButton)
@@ -80,6 +80,7 @@ All functions:
 	:Hyperlinks()		-> enable hyperlinks in text (spells,items,etc)
 	:ToTop()		-> set scroll vaule to min
 	:GetTextHighlight()	-> get highlight positions [start,end]
+-> ELib:MultiEdit3(parent)
 -> ELib:Frame(parent,template)
 	:Texture(texture,layer)	-> create and/or set texture
 	:Texture(cR,cG,cB,cA,layer) -> create and/or set texture
@@ -151,7 +152,7 @@ CheckButton	ExRTRadioButtonModernTemplate
 local GlobalAddonName, ExRT = ...
 local isExRT = GlobalAddonName == "ExRT"
 
-local libVersion = 32
+local libVersion = 35
 
 if type(ELib)=='table' and type(ELib.V)=='number' and ELib.V > libVersion then return end
 
@@ -198,6 +199,7 @@ do
 	end
 	local function Widget_OnShow(self,func,disableFirstRun)
 		if not func then
+			self:SetScript("OnShow",nil)
 			return self
 		end
 		self:SetScript("OnShow",func)
@@ -282,6 +284,9 @@ do
 		return GlobalAddonName.."UIGlobal"..tostring(GlobalIndexNow)
 	end
 end
+
+local UIDropDownMenu_StartCounting = UIDropDownMenu_StartCounting or ExRT.NULLfunc or function()end
+local UIDropDownMenu_StopCounting = UIDropDownMenu_StopCounting or ExRT.NULLfunc or function()end
 
 --=======================================================================
 --=======================================================================
@@ -1433,6 +1438,8 @@ function ELib.AddShadowComment(self,hide,moduleName,userComment,userFontSize,use
 		local selfHeight = self:GetHeight()
 		self.userCommentString = ELib.CreateText(self,selfWidth,selfHeight,"BOTTOMRIGHT", -5, 20,"RIGHT","BOTTOM",DEFAULT_FONT, userFontSize or 18,userComment or "",nil,0,0,0,nil,userOutline)
 		self.userCommentString:SetTextColor(0, 0, 0, 0.7)
+		self.userCommentString:SetShadowColor(1,1,1,1)
+		self.userCommentString:SetShadowOffset(1,-1)
 	end
 end
 
@@ -2925,6 +2932,14 @@ do
 			end
 		end
 	end
+	local function Widget_SetFontSize(self,size)
+		local obj = self:GetFontString()
+		obj:SetFont(obj:GetFont(),size)
+
+		return self
+	end
+
+
 		
 	function ELib:Button(parent,text,template)
 		if template == 0 then
@@ -2942,6 +2957,7 @@ do
 		)
 		self._Disable = self.Disable	self.Disable = Widget_Disable
 		self.GetTextObj = Widget_GetTextObj
+		self.FontSize = Widget_SetFontSize
 		
 		return self
 	end
@@ -3282,6 +3298,9 @@ do
 		
 		if not self.T then
 			line.text = ELib:Text(line,"List"..tostring(i),self.fontSize or 12):Point("TOPLEFT",self.isCheckList and 24 or 3,0):Point("TOPRIGHT",-3,0):Size(0,16):Color():Shadow()
+			if self.fontName then
+				line.text:Font(self.fontName,self.fontSize or 12)
+			end
 			line:SetFontString(line.text)
 			line:SetPushedTextOffset(2, -1)
 		else
@@ -3289,6 +3308,9 @@ do
 			for j=1,#self.T do
 				local width = self.T[j]
 				local textObj = ELib:Text(line,"List",self.fontSize or 12):Size(width,16):Color():Shadow():Left()
+				if self.fontName then
+					textObj:Font(self.fontName,self.fontSize or 12)
+				end
 				line['text'..j] = textObj
 				if width == 0 then
 					zeroWidth = j
@@ -3475,6 +3497,22 @@ do
 		end
 		return self
 	end
+	local function Widget_Font(self,fontName,fontSize)
+		self.fontSize = fontSize
+		self.fontName = fontName
+		if not self.T then
+			for i=1,#self.List do
+				self.List[i].text:SetFont(fontName,size)
+			end
+		else
+			for i=1,#self.List do
+				for j=1,#self.T do
+					self.List[i]['text'..j]:SetFont(fontName,size)
+				end
+			end
+		end
+		return self
+	end
 	local function CreateScrollList(parent,list)
 		local self = CreateFrame("Frame",nil,parent)
 		self.Frame = ELib:ScrollFrame(self):Point(0,0)
@@ -3488,7 +3526,8 @@ do
 		
 		Mod(self,
 			'Update',Widget_Update,
-			'FontSize',Widget_FontSize
+			'FontSize',Widget_FontSize,
+			'Font',Widget_Font
 		)
 		self._Size = self.Size	self.Size = Widget_SetSize
 		
@@ -4178,6 +4217,7 @@ function ELib.ScrollDropDown.ToggleDropDownMenu(self,level)
 	if self.additionalToggle then
 		self.additionalToggle(self)
 	end
+	dropDown:ClearAllPoints()
 	dropDown:SetPoint("TOPRIGHT",self,"BOTTOMRIGHT",-16,0)
 	dropDown.Slider:SetMinMaxValues(1,max(count-maxLinesNow+1,1))
 	if isModern then 
@@ -5311,3 +5351,1101 @@ do
 	end
 end
 
+do
+	local function utf8charbytes(s, i)
+		-- argument defaults
+		i = i or 1
+	
+		-- argument checking
+		if type(s) ~= "string" then
+			error("bad argument #1 to 'utf8charbytes' (string expected, got ".. type(s).. ")")
+		end
+		if type(i) ~= "number" then
+			error("bad argument #2 to 'utf8charbytes' (number expected, got ".. type(i).. ")")
+		end
+	
+		local c = s:byte(i)
+	
+		-- determine bytes needed for character, based on RFC 3629
+		-- validate byte 1
+		if c > 0 and c <= 127 then
+			-- UTF8-1
+			return 1
+	
+		elseif c >= 194 and c <= 223 then
+			-- UTF8-2
+			local c2 = s:byte(i + 1)
+	
+			if not c2 then
+				error("UTF-8 string terminated early")
+			end
+	
+			-- validate byte 2
+			if c2 < 128 or c2 > 191 then
+				error("Invalid UTF-8 character")
+			end
+	
+			return 2
+	
+		elseif c >= 224 and c <= 239 then
+			-- UTF8-3
+			local c2 = s:byte(i + 1)
+			local c3 = s:byte(i + 2)
+	
+			if not c2 or not c3 then
+				error("UTF-8 string terminated early")
+			end
+	
+			-- validate byte 2
+			if c == 224 and (c2 < 160 or c2 > 191) then
+				error("Invalid UTF-8 character")
+			elseif c == 237 and (c2 < 128 or c2 > 159) then
+				error("Invalid UTF-8 character")
+			elseif c2 < 128 or c2 > 191 then
+				error("Invalid UTF-8 character")
+			end
+	
+			-- validate byte 3
+			if c3 < 128 or c3 > 191 then
+				error("Invalid UTF-8 character")
+			end
+	
+			return 3
+	
+		elseif c >= 240 and c <= 244 then
+			-- UTF8-4
+			local c2 = s:byte(i + 1)
+			local c3 = s:byte(i + 2)
+			local c4 = s:byte(i + 3)
+	
+			if not c2 or not c3 or not c4 then
+				error("UTF-8 string terminated early")
+			end
+	
+			-- validate byte 2
+			if c == 240 and (c2 < 144 or c2 > 191) then
+				error("Invalid UTF-8 character")
+			elseif c == 244 and (c2 < 128 or c2 > 143) then
+				error("Invalid UTF-8 character")
+			elseif c2 < 128 or c2 > 191 then
+				error("Invalid UTF-8 character")
+			end
+			
+			-- validate byte 3
+			if c3 < 128 or c3 > 191 then
+				error("Invalid UTF-8 character")
+			end
+	
+			-- validate byte 4
+			if c4 < 128 or c4 > 191 then
+				error("Invalid UTF-8 character")
+			end
+	
+			return 4
+	
+		else
+			error("Invalid UTF-8 character")
+		end
+	end
+	
+	
+	local function UpdateScroll(self)
+		local height = self:GetHeight()
+		
+		local prevMin,prevMax = self.ScrollBar:GetMinMaxValues()
+		local prevVal = self.ScrollBar:GetValue()
+		local changeToMax = prevVal >= prevMax
+	
+		local low = (self.TextLines[1]:GetTop() or 0) - (self.TextLines[#self.Lines]:GetBottom() or 0)
+		self:SetNewHeight(math.max(4+low,height))
+	
+		if not self.TextLines[self.cursorY] then
+			return
+		end
+	
+		local cursorPosBot = math.max((self.TextLines[1]:GetTop() or 0) - (self.TextLines[self.cursorY]:GetBottom() or 0) - height,0)
+		local cursorPosTop = math.max((self.TextLines[1]:GetTop() or 0) - (self.TextLines[self.cursorY]:GetTop() or 0),0)
+	
+		if (prevVal < cursorPosBot) then
+			self.ScrollBar:SetValue(cursorPosBot)
+		elseif prevVal < cursorPosBot + height then
+			--all is ok
+			self.ScrollBar:SetValue(prevVal)
+		elseif prevVal > cursorPosTop then
+			self.ScrollBar:SetValue(cursorPosTop)
+		else
+			self.ScrollBar:SetValue(prevVal)
+		end
+	end
+	
+	local COLOR1 = "f92672" --lua
+	local COLOR2 = "e6db74" --string
+	local COLOR3 = "75715e" --comment
+	local COLOR4 = "5dffed" -- ()=.
+	local COLOR5 = "ae81ff" --numbers
+
+	local lua_str = {
+		["function"] = true,
+		["end"] = true,
+		["if"] = true,
+		["elseif"] = true,
+		["else"] = true,
+		["then"] = true,
+		["false"] = true,
+		["do"] = true,
+		["and"] = true,
+		["break"] = true,
+		["for"] = true,
+		["local"] = true,
+		["nil"] = true,
+		["not"] = true,
+		["or"] = true,
+		["return"] = true,
+		["while"] = true,
+		["until"] = true,
+		["repeat"] = true,
+	}
+
+	local function ReplaceLua1(pre,str,fin)
+		if lua_str[str] then
+			return pre.."|cff"..COLOR1..str.."|r"..fin
+		end
+	end
+	local function ReplaceLua2(str,fin)
+		if lua_str[str] then
+			return "|cff"..COLOR1..str.."|r"..fin
+		end
+	end
+	local function ReplaceLua3(pre,str)
+		if lua_str[str] then
+			return pre.."|cff"..COLOR1..str.."|r"
+		end
+	end
+	local function ReplaceLua4(str)
+		if lua_str[str] then
+			return "|cff"..COLOR1..str.."|r"
+		end
+	end
+
+	local function ReplaceString(str)
+		str = str:gsub("|c........",""):gsub("|r","")
+		return "|cff"..COLOR2..str.."|r"
+	end
+
+	local function ReplaceComment(str)
+		str = str:gsub("|c........",""):gsub("|r","")
+		return "|cff"..COLOR3..str.."|r"
+	end
+	
+	local function ModdedSetText(self,text)
+		self:_SetText(text)
+	
+		if self.parent.SyntaxLUA then
+			text = text
+				:gsub("(%A)([%d]+)","%1|cff"..COLOR5.."%2|r")
+	
+				:gsub("(%A)(%l+)(%A)",ReplaceLua1):gsub("^(%l+)(%A)",ReplaceLua2):gsub("(%A)(%l+)$",ReplaceLua3):gsub("^(%l+)$",ReplaceLua4)
+	
+				:gsub("[\\/]+","|cff"..COLOR1.."%1|r")	
+		
+				:gsub("([%(%)%.=,%[%]<>%+{}#]+)","|cff"..COLOR4.."%1|r")
+	
+				:gsub('("[^"]+")',ReplaceString)
+	
+				:gsub('(%-%-.-)$',ReplaceComment)
+		end
+	
+		self.coloredLine:SetText(text)
+	end
+
+	local function Widget_SetSyntax(self,syntax)
+		syntax = syntax:lower()
+		if syntax == "lua" then
+			self.SyntaxLUA = true
+		else
+			self.SyntaxLUA = nil
+		end
+		self:UpdateText()
+
+		return self
+	end
+	
+	local function UpdateText(self)
+		for i=1,#self.Lines do
+			local tLine = self.TextLines[i]
+			if not tLine then
+				tLine = self.C:CreateFontString(nil,"ARTWORK","GameFontWhite")
+	
+				self.TextLines[i] = tLine
+	
+				tLine:SetJustifyH("LEFT")
+				tLine:SetJustifyV("TOP")
+			
+				--tLine:SetPoint("RIGHT",self.C,-2,0)
+				tLine:SetWidth((self.width or 400)-20-4)
+			
+				tLine:SetFont(GameFontWhite:GetFont(),12)
+				
+				tLine.parent = self
+
+				tLine._SetText = tLine.SetText
+				tLine.SetText = ModdedSetText
+	
+				local coloredLine = self.C:CreateFontString(nil,"ARTWORK","GameFontWhite")
+				coloredLine:SetJustifyH("LEFT")
+				coloredLine:SetJustifyV("TOP")
+				coloredLine:SetWidth((self.width or 400)-20-4)
+				coloredLine:SetFont(GameFontWhite:GetFont(),12)
+			
+				tLine.coloredLine = coloredLine
+				tLine:SetAlpha(0)
+	
+				if i==1 then
+					tLine:SetPoint("TOPLEFT",self.C,2,-2)
+				else
+					tLine:SetPoint("TOPLEFT",self.TextLines[i-1],"BOTTOMLEFT",0,-1)
+				end
+	
+				coloredLine:SetPoint("TOPLEFT",tLine)
+			end
+			
+			local text = self.Lines[i]
+			if text == "" then
+				text = " "
+			end
+	
+			tLine:SetText(text)
+		end
+		for i=#self.Lines+1,#self.TextLines do
+			self.TextLines[i]:SetText("")
+		end
+		self:UpdateScroll()
+		if self.OnChangeFunc then
+			self:OnChangeFunc()
+		end
+	end
+	
+	local function OnTextChanged(self,userInput)
+		text = self:GetText()
+		if not userInput then
+			if text ~= "" and not self.ctrl then
+				self:SetText("")
+			end
+			return
+		end
+		if self.parent:GetHighlight() and self.ctrl then
+			self:GetScript("OnKeyDown")(self,"BACKSPACE")
+		end
+		if text == "\n" then
+			self:SetText("")
+			return
+		end
+		local lines, cursorX, cursorY = self.parent.Lines, self.parent.cursorX, self.parent.cursorY
+		if text:find("\n") then
+			local l = {strsplit("\n",text)}
+			local toend = lines[cursorY]:sub(cursorX)
+			lines[cursorY] = lines[cursorY]:sub(1,cursorX-1) .. l[1]
+			for i=2,#l-1 do
+				tinsert(lines,cursorY+i-1,l[i])
+			end
+			tinsert(lines,cursorY+#l-1,l[#l]..toend)
+			self.parent.cursorY = cursorY + #l
+			self.parent.cursorX = #l[#l]
+		else
+			lines[cursorY] = lines[cursorY] or ""
+			lines[cursorY] = lines[cursorY]:sub(1,cursorX-1) .. text .. lines[cursorY]:sub(cursorX)
+			self.parent.cursorX = cursorX + #text
+		end
+		self:SetText("")
+		self.parent:UpdateText()
+	end
+	
+	local function GetHighlightTexture(self,c)
+		if not self.HighlightsTextures[c] then
+			self.HighlightsTextures[c] = self:GetParent():CreateTexture()
+			self.HighlightsTextures[c]:SetColorTexture(1,1,1,.3)
+		end
+		self.HighlightsTextures[c]:ClearAllPoints()
+		self.HighlightsTextures[c]:Show()
+	
+		return self.HighlightsTextures[c]
+	end
+	
+	local function Highlight(self,sX,sY,fX,fY)
+		self.HighlightsTextures = self.HighlightsTextures or {}
+		if not sX then
+			for i=1,#self.HighlightsTextures do
+				self.HighlightsTextures[i]:Hide()
+			end
+			self.highlightSX = nil
+			self.highlightSY = nil
+			self.highlightFX = nil
+			self.highlightFY = nil
+			return
+		end
+		if sY == fY then
+			if sX > fX then
+				fX,sX = sX,fX
+			end
+		else
+			if sY > fY then
+				fX,sX = sX,fX
+				fY,sY = sY,fY
+			end
+		end
+		local c = 0
+		for i=sY+1,fY-1 do
+			c = c + 1
+			local t = GetHighlightTexture(self,c)
+			t:SetPoint("TOPLEFT",self.TextLines[i],0,0)
+			t:SetSize((self.parent.width or 400)-20-4,12)
+		end
+		if sY ~= fY then
+			c = c + 1
+		
+			local line = self.TextLines[sY]
+			if line then
+				local l,t = line:GetLeft(),line:GetTop()
+				for i=1,line:GetWidth() do
+					local x = line:FindCharacterIndexAtCoordinate(l+i,t)
+					if x == sX then
+						local t = GetHighlightTexture(self,c)
+						t:SetPoint("TOPLEFT",line,i,0)
+						t:SetSize((self.parent.width or 400)-20-4,12)
+	
+						break
+					end
+				end
+			end
+	
+			c = c + 1
+			local line = self.TextLines[fY]
+			if line then
+				local l,t = line:GetLeft(),line:GetTop()
+				for i=1,line:GetWidth() do
+					local x = line:FindCharacterIndexAtCoordinate(l+i,t)
+					if x == fX then
+						local t = GetHighlightTexture(self,c)
+						t:SetPoint("TOPLEFT",line,0,0)
+						t:SetSize(i,12)
+	
+						break
+					end
+				end
+			end
+	
+			local copyPaste = self.parent.Lines[sY]:sub(sX)
+			for i=sY+1,fY-1 do
+				copyPaste = copyPaste .. "\n" .. self.parent.Lines[i]
+			end
+			copyPaste = copyPaste .. "\n" .. self.parent.Lines[fY]:sub(1,fX-1)
+			self.copyPaste = copyPaste
+		else
+			c = c + 1
+		
+			local line = self.TextLines[sY]
+			if line then
+				local l,t = line:GetLeft(),line:GetTop()
+				local s
+				for i=1,line:GetWidth() do
+					local x = line:FindCharacterIndexAtCoordinate(l+i,t)
+					if x == sX and not s then
+						s = i
+					elseif x == fX then
+						local t = GetHighlightTexture(self,c)
+						t:SetPoint("TOPLEFT",line,s,0)
+						t:SetSize(i-s,12)
+	
+						break					
+					end
+				end
+			end
+	
+			local copyPaste = self.parent.Lines[sY]:sub(sX,fX-1)
+			self.copyPaste = copyPaste
+		end
+		self.highlightSX = sX
+		self.highlightSY = sY
+		self.highlightFX = fX
+		self.highlightFY = fY
+		for i=c+1,#self.HighlightsTextures do
+			self.HighlightsTextures[i]:Hide()
+		end
+	end
+
+	local function GetHighlight(self)
+		if self.EditBox.highlightSX then
+			local text = ""
+			if self.EditBox.highlightSY == self.EditBox.highlightFY then
+				text = self.Lines[self.EditBox.highlightSY]:sub(self.EditBox.highlightSX,self.EditBox.highlightFX)
+			else
+				text = self.Lines[self.EditBox.highlightSY]:sub(self.EditBox.highlightSX)
+				for i=self.EditBox.highlightSY+1,self.EditBox.highlightFY-1 do
+					text = text .. "\n" .. self.Lines[i]
+				end
+				text = text .. "\n" .. self.Lines[self.highlightFY]:sub(1,self.EditBox.highlightFX)
+			end
+			return text
+		end
+	end
+	
+	local function OnKeyDown(self,key)
+		if key == "BACKSPACE" then
+			local lines, cursorX, cursorY = self.parent.Lines, self.parent.cursorX, self.parent.cursorY
+			if self.highlightSX then
+				self.parent.cursorX = self.highlightSX
+				self.parent.cursorY = self.highlightSY
+				lines[self.parent.cursorY] = lines[self.parent.cursorY]:sub(1,self.parent.cursorX-1) .. lines[self.highlightFY]:sub(self.highlightFX) 
+				for i=self.highlightFY,self.parent.cursorY+1,-1 do
+					tremove(lines,i)
+				end
+				Highlight(self)
+			elseif self.parent.cursorX == 1 then
+				if self.parent.cursorY == 1 then
+					return
+				end
+				
+				self.parent.cursorY = self.parent.cursorY - 1
+				self.parent.cursorX = math.max(#lines[self.parent.cursorY]+1,1)
+
+				lines[self.parent.cursorY] = lines[self.parent.cursorY] .. lines[self.parent.cursorY+1]
+				tremove(lines,self.parent.cursorY+1)
+			else
+				local s = lines[self.parent.cursorY]
+				local pos = 1
+				local last = 0
+			
+				while pos < self.parent.cursorX do
+					last = utf8charbytes(s, pos)
+					pos = pos + last
+				end
+		
+				lines[self.parent.cursorY] = lines[self.parent.cursorY] or ""
+				lines[self.parent.cursorY] = lines[self.parent.cursorY]:sub(1,self.parent.cursorX-last-1) .. lines[self.parent.cursorY]:sub(self.parent.cursorX)
+				self.parent.cursorX = self.parent.cursorX - last
+			end
+	
+			self.parent:UpdateText()	
+		elseif key == "DELETE" then
+			local lines, cursorX, cursorY = self.parent.Lines, self.parent.cursorX, self.parent.cursorY
+			if self.highlightSX then
+				self.parent.cursorX = self.highlightSX
+				self.parent.cursorY = self.highlightSY
+				lines[self.parent.cursorY] = lines[self.parent.cursorY]:sub(1,self.parent.cursorX-1) .. lines[self.highlightFY]:sub(self.highlightFX) 
+				for i=self.highlightFY,self.parent.cursorY+1,-1 do
+					tremove(lines,i)
+				end
+				Highlight(self)
+			else
+				local s = lines[self.parent.cursorY]
+				local pos = 1
+				local last = 0
+				local bytes = s:len()
+			
+				while pos <= bytes and pos <= self.parent.cursorX do
+					last = utf8charbytes(s, pos)
+					pos = pos + last
+				end
+				if self.parent.cursorX <= bytes then
+					lines[self.parent.cursorY] = lines[self.parent.cursorY] or ""
+					lines[self.parent.cursorY] = lines[self.parent.cursorY]:sub(1,self.parent.cursorX-1) .. lines[self.parent.cursorY]:sub(self.parent.cursorX + last)
+				else
+					lines[self.parent.cursorY] = lines[self.parent.cursorY] or ""
+					lines[self.parent.cursorY] = lines[self.parent.cursorY] .. (lines[self.parent.cursorY+1] or "")
+					tremove(lines,self.parent.cursorY+1)
+				end
+			end
+	
+			self.parent:UpdateText()	
+		elseif key == "ENTER" then
+			local lines, cursorX, cursorY = self.parent.Lines, self.parent.cursorX, self.parent.cursorY
+			local str = lines[self.parent.cursorY]:sub(self.parent.cursorX)
+			lines[self.parent.cursorY] = lines[self.parent.cursorY]:sub(1,self.parent.cursorX-1)
+	
+			tinsert(lines,self.parent.cursorY+1,str)
+	
+			self.parent.cursorY = self.parent.cursorY + 1
+			self.parent.cursorX = 1
+			lines[self.parent.cursorY] = lines[self.parent.cursorY] or ""
+	
+			self.parent:UpdateText()
+		elseif key == "LEFT" then
+			local lines, cursorX, cursorY = self.parent.Lines, self.parent.cursorX, self.parent.cursorY
+			local s = lines[self.parent.cursorY]
+			local pos = 1
+			local last = 0
+			local bytes = s:len()
+		
+			while pos <= bytes and pos < self.parent.cursorX do
+				last = utf8charbytes(s, pos)
+				pos = pos + last
+			end
+	
+			local s = #lines[self.parent.cursorY]:sub(self.parent.cursorX-last,self.parent.cursorX-1)
+			self.parent.cursorX = self.parent.cursorX - s
+			if self.parent.cursorX <= 0 or s == 0 then
+				if self.parent.cursorY ~= 1 then
+					self.parent.cursorY = math.max(self.parent.cursorY - 1,1)
+					self.parent.cursorX = math.max(#lines[self.parent.cursorY]+1,1)
+				end
+			end
+	
+			Highlight(self)
+		elseif key == "RIGHT" then
+			local lines, cursorX, cursorY = self.parent.Lines, self.parent.cursorX, self.parent.cursorY
+			local s = lines[self.parent.cursorY]
+			local pos = 1
+			local last = 0
+			local bytes = s:len()
+		
+			while pos <= bytes and pos <= self.parent.cursorX do
+				last = utf8charbytes(s, pos)
+				pos = pos + last
+			end
+	
+			local s = #lines[self.parent.cursorY]:sub(self.parent.cursorX,self.parent.cursorX+last-1)
+			self.parent.cursorX = self.parent.cursorX + s
+			if self.parent.cursorX > #lines[self.parent.cursorY] + 1 or s == 0 then
+				if not lines[self.parent.cursorY+1] then
+					return
+				end
+				self.parent.cursorY = cursorY + 1
+				self.parent.cursorX = 1
+			end
+	
+			Highlight(self)
+		elseif key == "UP" then
+			local lines, cursorX, cursorY = self.parent.Lines, self.parent.cursorX, self.parent.cursorY
+			if self.parent.cursorY == 1 then
+				return
+			end
+			self.parent.cursorY = self.parent.cursorY - 1
+	
+			local s = lines[self.parent.cursorY]
+			local pos = 1
+			local last = 0
+			local last_len = 0
+			local bytes = s:len()
+		
+			while pos <= bytes and pos < self.parent.cursorX do
+				last = utf8charbytes(s, pos)
+				pos = pos + last
+			end
+			self.parent.cursorX = pos
+			self.parent.cursorX = math.min(self.parent.cursorX,#lines[self.parent.cursorY]+1)
+	
+			Highlight(self)
+		elseif key == "DOWN" then
+			local lines, cursorX, cursorY = self.parent.Lines, self.parent.cursorX, self.parent.cursorY
+			if self.parent.cursorY == #lines then
+				return
+			end
+			self.parent.cursorY = self.parent.cursorY + 1
+	
+			local s = lines[self.parent.cursorY]
+			local pos = 1
+			local last = 0
+			local last_len = 0
+			local bytes = s:len()
+		
+			while pos <= bytes and pos < self.parent.cursorX do
+				last = utf8charbytes(s, pos)
+				pos = pos + last
+			end
+			self.parent.cursorX = pos
+			self.parent.cursorX = math.min(self.parent.cursorX,#lines[self.parent.cursorY]+1)
+	
+			Highlight(self)
+		elseif key == "LCTRL" then
+			if self.copyPaste then
+				self.ctrl = true
+				self:SetText(self.copyPaste)
+				self:HighlightText()
+			end
+		end
+	end
+	  
+	
+	local function OnKeyUp(self,key)
+		if key == "LCTRL" then
+			self.ctrl = nil
+			self:SetText("")
+		end
+	end
+	
+	local function MouseToCursor(self)
+		local x,y = GetCursorPosition()
+		local s = self:GetEffectiveScale()
+		x, y = x/s, y/s
+	
+		local parent = self:GetParent()
+	
+		local hPosX,hPosY
+		for i=1,#parent.TextLines do
+			local line = parent.TextLines[i]
+			local pos,hover = line:FindCharacterIndexAtCoordinate(x,y)
+			if hover then
+				if line:GetText() == " " then
+					pos = 1
+				end
+				return pos, i
+			end
+		end
+	end
+	
+	local function OnMouseDown(self,button,...)
+		self.OldOnMouseDown(self,button,...)
+	
+		local parent = self:GetParent()
+		if parent.EditBox.LastFocus > GetTime() then
+			return
+		end
+	
+		local x,y = MouseToCursor(self)
+	
+		if x and not IsShiftKeyDown() then
+			parent.cursorY,parent.cursorX = y,x
+			parent.EditBox.blink = 0
+			Highlight(parent.EditBox)
+			self.isHighlight = true
+			self.highlightStartX = x
+			self.highlightStartY = y
+		elseif IsShiftKeyDown() and self.highlightStartX then
+			parent.cursorY,parent.cursorX = y,x
+			self.isHighlight = true
+		end
+	end
+	local function OnMouseUp(self,button)
+		if self.isHighlight then
+			self.isHighlight = nil
+			local x,y = MouseToCursor(self)
+	
+			if x then
+				local parent = self:GetParent()
+				parent.cursorY,parent.cursorX = y,x
+				parent.EditBox.blink = 0
+	
+				if x ~= self.highlightStartX or y ~= self.highlightStartY then
+					Highlight(parent.EditBox,self.highlightStartX,self.highlightStartY,x,y)
+				else
+					Highlight(parent.EditBox)
+				end
+			end
+		end
+	end
+	local function OnEditFocusGained(self)
+		self.IsFocus = true
+		self.blink = 0
+		--self.LastFocus = GetTime() + 0.1
+	end
+	local function OnEditFocusLost(self)
+		self.IsFocus = false
+	end
+	local function EditBoxOnUpdate(self,elapsed)
+		if not self.IsFocus then
+			self.Cursor:SetAlpha(0)
+			return
+		end
+		self.blink = self.blink + elapsed
+		if self.blink > 1 then
+			self.blink = self.blink % 1
+		end
+		self.Cursor:SetAlpha(self.blink >= 0.5 and 0 or 1)
+		local parent = self.parent
+		if parent.cursorX ~= self.prevX or parent.cursorY ~= self.prevY then
+			local line = self.TextLines[parent.cursorY]
+			if line then
+				local l,t = line:GetLeft(),line:GetTop()
+				local h = math.ceil(math.floor(line:GetHeight()+0.5)/12)
+				local BREAK
+				for i=0,line:GetWidth() do
+					for j=1,h do
+						local x = line:FindCharacterIndexAtCoordinate(l+i,t-(j-1)*12-2)
+						if x == parent.cursorX then
+							self.Cursor:ClearAllPoints()
+							self.Cursor:SetPoint("TOPLEFT",line,i,-(j-1)*12)
+							self.prevX = parent.cursorX
+							self.prevY = parent.cursorY
+							self.blink = 0
+							BREAK = true
+							self.parent:UpdateScroll()
+							if self.parent.OnCursorChanged then
+								self.parent:OnCursorChanged(self.Cursor, parent.cursorX, parent.cursorY)
+							end
+							parent.posText:SetText(parent.cursorY..":"..parent.cursorX)
+							break
+						end
+					end
+					if BREAK then
+						break
+					end
+				end
+			end
+		end
+		parent = self:GetParent()
+		if parent.isHighlight then
+			self.isHighlight = nil
+			local x,y = MouseToCursor(parent)
+
+			if x then
+				if x ~= parent.highlightStartX or y ~= parent.highlightStartY then
+					Highlight(self,parent.highlightStartX,parent.highlightStartY,x,y)
+				else
+					Highlight(self)
+				end
+			end
+		end
+	end
+	
+	local function Widget_SetSize(self,width,height)
+		self.width = width
+		self.height = height
+		self._Size(self,width,height)
+		for i=1,#self.TextLines do
+			self.TextLines[i]:SetWidth(width-24)
+			self.TextLines[i].coloredLine:SetWidth(width-24)
+		end
+		self:UpdateText()
+		return self
+	end
+	
+	local function Widget_GetText(self)
+		return table.concat(self.Lines,"\n")
+	end
+	local function Widget_SetText(self,text)
+		self.Lines = {strsplit("\n",text)}
+		self:UpdateText()
+	end
+	local function Widget_OnChange(self,func)
+		self.OnChangeFunc = func
+
+		return self
+	end
+	local function Widget_OnCursorChanged(self,func)
+		self.OnCursorChanged = func
+
+		return self
+	end
+	local function Widget_Highlight(self)
+		Highlight(self.EditBox,1,1,#self.Lines[#self.Lines],#self.Lines)
+	end
+
+	local function Widget_GetCursorPosition(self)
+		local lines, cursorX, cursorY = self.Lines, self.cursorX, self.cursorY
+		local pos = 0
+		for i=1,cursorY-1 do
+			pos = pos + #lines[i] + 1
+		end
+		pos = pos + cursorX
+
+		return pos
+	end
+	local function Widget_SetCursorPosition(self,x,y,scrollFromBottom)
+		self.cursorX, self.cursorY = x,y
+		if scrollFromBottom then
+			self.ScrollBar:SetValue(select(2,self.ScrollBar:GetMinMaxValues()))
+		end
+		self:UpdateScroll()
+	end
+	local function Widget_SetFocus(self)
+		self.EditBox:SetFocus()
+	end
+	local function Widget_Insert(self,text)
+		self.EditBox:Insert(text)
+	end
+		
+	
+	function ELib:MultiEdit3(parent)
+		local self = ELib:MultiEdit(parent)
+		self.cursorY = 1
+		self.cursorX = 1
+	
+		self.TextLines = {}
+		self.EditBox.TextLines = self.TextLines
+		
+		self.Lines = {""}
+	
+		self.UpdateScroll = UpdateScroll
+		self.UpdateText = UpdateText
+
+		self.posText = self:CreateFontString(nil,"ARTWORK","GameFontWhite")
+		self.posText:SetJustifyH("RIGHT")
+		self.posText:SetJustifyV("BOTTOM")
+		self.posText:SetPoint("BOTTOMRIGHT",-22,2)
+		self.posText:SetFont(self.posText:GetFont(),8)
+		self.posText:SetAlpha(0)
+	
+		self.EditBox.parent = self
+		self.EditBox:SetAlpha(0)
+		self.EditBox:EnableMouse(false)
+		
+		self.EditBox:SetScript("OnCursorChanged",nil)
+		self.EditBox:SetScript("OnTextChanged",OnTextChanged)
+	
+		self.EditBox:SetScript("OnKeyDown",OnKeyDown)
+		self.EditBox:SetScript("OnKeyUp",OnKeyUp)
+	
+		self.C.OldOnMouseDown = self.C:GetScript("OnMouseDown")
+		self.C:SetScript("OnMouseDown",OnMouseDown)
+		self.C:SetScript("OnMouseUp",OnMouseUp)
+		
+		self.EditBox.Cursor = self.C:CreateTexture(nil,"BACKGROUND")
+		self.EditBox.Cursor:SetSize(2,12)
+		self.EditBox.Cursor:SetColorTexture(1,1,1)
+		self.EditBox.Cursor:SetPoint("TOPLEFT",self.EditBox,2,-2)
+		
+		self.EditBox:SetScript("OnEditFocusGained",OnEditFocusGained)
+		self.EditBox:SetScript("OnEditFocusLost",OnEditFocusLost)
+		
+		self.EditBox.blink = 0
+		self.EditBox.LastFocus = 0
+		
+		self.EditBox:SetScript("OnUpdate",EditBoxOnUpdate)
+	
+		self._Size = self.Size
+		self.Size = Widget_SetSize
+	
+		self.SetText = Widget_SetText
+		self.GetText = Widget_GetText
+		self.OnChange = Widget_OnChange
+		self.OnCursorChanged = Widget_OnCursorChanged
+		self.Highlight = Widget_Highlight
+		self.GetHighlight = GetHighlight
+		self.SetFocus = Widget_SetFocus
+		self.Insert = Widget_Insert
+
+		self.GetCursorPosition = Widget_GetCursorPosition
+		self.SetCursorPosition = Widget_SetCursorPosition
+
+		self.SetSyntax = Widget_SetSyntax
+	
+		self:UpdateText()
+		return self
+	end
+end
+
+function ELib:FixPreloadFont(parent,fontObj,font,size,params)
+	local frame = CreateFrame("Frame",nil,parent)
+	frame:SetPoint("TOPLEFT")
+	frame:SetSize(1,1)
+
+	frame:SetScript("OnUpdate",function(self,elapsed)
+		if elapsed > .3 then
+			return
+		end
+		if type(fontObj) == "function" then
+			if fontObj(parent) then
+				self:SetScript("OnUpdate",nil)
+				self:Hide()
+			end
+		else
+			fontObj:SetFont(GameFontWhite:GetFont(), size - 1)
+			fontObj:SetFont(font, size, params)
+			self:SetScript("OnUpdate",nil)
+			self:Hide()
+		end
+	end)
+end
+
+
+do
+	local function Widget_Size(self,width,height)
+		self.axisX:SetWidth(width-10)
+		self.axisY:SetHeight(height-20+2)
+
+		self:SetSize(width,height)
+
+		self.width = width-10
+		self.height = height-20
+
+		return self
+	end
+	local function Widget_Update(self)
+		local maxX = #self.data
+		local maxY = 0
+		for i=1,maxX do
+			for j=1,#self.data[i] do
+				if type(self.data[i][j]) == 'table' then
+					local sum = 0
+					for k=1,#self.data[i][j] do
+						sum = sum + self.data[i][j][k]
+					end
+					maxY = max(maxY,sum)
+				else
+					maxY = max(maxY,self.data[i][j])
+				end
+			end
+		end
+		local col_media_count = 0
+		local textX_media_count = 0
+		local textX_skip = 0
+		local per_col = self.width / max(maxX,1)
+		for i=1,maxX do
+			local d = self.data[i]
+
+			local width = per_col * 0.8
+			local sub_width = width / #d
+
+			for j=1,#d do
+				local sub_d = d[j]
+				local is_sub_d
+				if type(sub_d) == 'table' then
+					sub_d = sub_d[1]
+					is_sub_d = true
+				end
+				col_media_count = col_media_count + 1
+				local media = self.media.cols[col_media_count]
+				if not media then
+					media = self:CreateTexture()
+					self.media.cols[col_media_count] = media
+				end
+
+				local height, heightFix = sub_d/maxY*self.height, 0
+				if height < 1 then
+					height = 1
+					heightFix = -1
+					media:SetAlpha(0)
+					media.skip = true
+				else
+					media:SetAlpha(1)
+					media.skip = false
+				end
+				media:ClearAllPoints()
+				media:SetPoint("BOTTOMLEFT",self.axisX,"TOPLEFT",per_col*(i-1)+per_col*0.1+(j-1)*sub_width,heightFix)
+				media:SetSize(sub_width,height)
+				local color = self.data["c"..j] or self.data["c"..j.."_"..1] or self.media.colors[j]
+				media:SetColorTexture(unpack(color))
+				media:Show()
+
+				media.dataX = d.x or i
+				media.dataY = sub_d
+				media.dataT = self.data["t"..j] or self.data["t"..j.."_"..1]
+
+				if is_sub_d then
+					sub_d = d[j]
+					local prev = media
+					for k=2,#sub_d do
+						col_media_count = col_media_count + 1
+						local media = self.media.cols[col_media_count]
+						if not media then
+							media = self:CreateTexture()
+							self.media.cols[col_media_count] = media
+						end
+		
+						local height, heightFix = sub_d[k]/maxY*self.height, 0
+						if height < 1 then
+							height = 1
+							heightFix = -1
+							media:SetAlpha(0)
+							media.skip = true
+						else
+							media:SetAlpha(1)
+							media.skip = false
+						end
+						media:ClearAllPoints()
+						media:SetPoint("BOTTOM",prev,"TOP",0,heightFix)
+						media:SetSize(sub_width,height)
+						local color = self.data["c"..j.."_"..k] or self.media.colors[#self.media.colors - k + 2]
+						media:SetColorTexture(unpack(color))
+						media:Show()
+
+						media.dataX = d.x or i
+						media.dataY = sub_d[k]
+						media.dataT = self.data["t"..j.."_"..k]
+					end
+				end
+			end
+
+			if textX_skip <= 0 then
+				textX_media_count = textX_media_count + 1
+				local media = self.media.textX[textX_media_count]
+				if not media then
+					media = self:CreateFontString(nil,"ARTWORK","GameFontWhite")
+					self.media.textX[textX_media_count] = media
+				end
+	
+				media:SetPoint("TOP",self.axisX,"BOTTOMLEFT",(i-1)*per_col + per_col/2,-2)
+				local textX = self.TextX and self:TextX(i,d) or i 
+				media:SetText(textX)
+				media:Show()
+
+				local text_width = media:GetStringWidth()
+				if (text_width + 5) > per_col then
+					textX_skip = floor((text_width + 5) / per_col)
+				end
+			else
+				textX_skip = textX_skip - 1
+			end
+		end
+		for i=col_media_count+1,#self.media.cols do
+			self.media.cols[i]:Hide()
+		end
+		for i=textX_media_count+1,#self.media.textX do
+			self.media.textX[i]:Hide()
+		end
+
+		return self
+	end
+	local function Widget_OnUpdate(self)
+		local tip, c
+		for i=1,#self.media.cols do
+			c = self.media.cols[i]
+			if not c:IsShown() then
+				break
+			end
+			if c:IsMouseOver() then
+				if not c.skip then
+					tip = c
+				end
+				break
+			end
+		end
+		if tip then
+			if self.tip_IsShown ~= tip then
+				GameTooltip:SetOwner(tip,"ANCHOR_RIGHT")
+				local text = self.TooltipText and self:TooltipText(tip) or tip.dataY
+				GameTooltip:SetText(text)
+				GameTooltip:Show()
+				self.tip_IsShown = tip
+			end
+		elseif self.tip_IsShown then
+			GameTooltip_Hide()
+			self.tip_IsShown = nil
+		end
+	end
+	function ELib:GraphCol(parent)
+		local self = CreateFrame("Frame",nil,parent)
+		
+		self.axisX = self:CreateTexture(nil, "BACKGROUND")
+		self.axisX:SetHeight(2)
+		self.axisX:SetPoint("TOPLEFT",self,"BOTTOMLEFT",10,20)
+		self.axisX:SetColorTexture(0.6, 0.6, 1, 1)
+		
+		self.axisY = self:CreateTexture(nil, "BACKGROUND")
+		self.axisY:SetWidth(2)
+		self.axisY:SetPoint("BOTTOMRIGHT",self,"BOTTOMLEFT",10,20-2)
+		self.axisY:SetColorTexture(0.6, 0.6, 1, 1)
+		
+		self.data = {}
+		self.media = {
+			cols = {},
+			textX = {},
+			colors = {
+				{.8,0,0},
+				{0,.8,0},
+				{.8,.8,0},
+				{0,0,.8},
+				{0,.8,.8},
+				{.8,0,.8},
+			}
+		}
+
+		Mod(self)
+		self.Size = Widget_Size
+		self.Update = Widget_Update
+
+		self:SetScript("OnUpdate",Widget_OnUpdate)
+			
+		return self
+	end
+end

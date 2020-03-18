@@ -198,7 +198,10 @@ TMW.BE = {
 			   -116, -- Frostbolt                           (mage, frost)
 			  -1715, -- Hamstring                           (warrior, arms)
 			   2120, -- Flamestrike                         (mage, fire)
-			  -3409, -- Crippling Poison                    (rogue, assassination)
+			   
+			   -- Crippling Poison intentionally not by name -
+			   -- 3408 is the buff that goes on the rogue who has applied it to their weapons.
+			   3409, -- Crippling Poison                    (rogue, assassination)
 			  -3600, -- Earthbind                           (shaman, general)
 			  -5116, -- Concussive Shot                     (hunter, beast mastery/marksman)
 			  -6343, -- Thunder Clap                        (warrior, protection)
@@ -510,6 +513,8 @@ TMW.BE = {
 			 287568, -- Enveloping Protection               (Ward of Envelopment, Battle of Dazar'alor raid)
 			 287722, -- Death Denied                        (priest, azerite trait)
 			 288024, -- Diamond Barrier                     (Diamond-Laced Refracting Prism, Battle of Dazar'alor raid)
+			 295271, -- Umbral Shell                        (Void Stone, Crucible of Storms raid)
+			 295431, -- Ephemeral Vigor                     (Abyssal Speaker's Gauntlets, Crucible of Storms raid)
 		},
 		ImmuneToMagicCC = {
 			    642, -- Divine Shield                       (paladin, general)

@@ -1,11 +1,8 @@
-if not ACP then return end
+﻿if not ACP then return end
 
 --@non-debug@
 
-if (GetLocale() == "koKR") then
-	ACP:UpdateLocale(
-
-{
+L = {
 	["*** Enabling <%s> %s your UI ***"] = "*** 애드온 <%s> %s 사용 ***",
 	["*** Unknown Addon <%s> Required ***"] = "*** 알 수 없는 애드온 <%s>|1을;를; 요청 ***",
 	["ACP: Some protected addons aren't loaded. Reload now?"] = "ACP: 일부 보호된 애드온은 로드되지 않습니다. 지금 재시작할까요?",
@@ -74,7 +71,9 @@ if (GetLocale() == "koKR") then
 	["when performing a reloadui."] = "ReloadUI를 했을 때"
 }
 
-    )
+
+if (GetLocale() == "koKR") then
+	ACP:UpdateLocale(L)
 end
 
 --@end-non-debug@

@@ -14,12 +14,15 @@ L.warmup  = "Calentamiento"
 L.warmup_desc  = "Tiempo hasta que el combate con el jefe comience."
 
 L.already_registered  = "|cffff0000ATENCIóN:|r |cff00ff00%s|r (|cffffff00%s|r) ya existe ese módulo en BigWigs, pero sin embargo está intentando registrarlo de nuevo. Esto normalmente ocurre cuando tienes varias copias de este módulo en tu carpeta de addons posiblemente por una actualización fallida. Es recomendable que borres la carpeta de BigWigs y lo reinstales por completo."
+--L.testNameplate = "Target detected, creating a test nameplate bar over target nameplate."
 
 -- Loader / Options.lua
+--L.classicWarning1 = "|cFF33FF99BigWigs|r: You're using the wrong version of BigWigs on a classic server."
+--L.classicWarning2 = "|cFF33FF99BigWigs|r: Please install the classic version of BigWigs."
 L.officialRelease  = "Estás usando la versión oficial de BigWigs %s (%s)"
 L.alphaRelease  = "Estás usando la VERSION ALPHA de BigWigs %s (%s)"
 L.sourceCheckout  = "Estás usando la versión de BigWigs %s directamente del repositorio."
-L.getNewRelease  = "Tu BigWigs está desfasado (/bwv) pero puedes actualizarlo fácilmente con el cliente de Twitch. También puedes actualizarlo manualmente desde curse.com o wowinterface.com."
+L.getNewRelease  = "Tu BigWigs está desfasado (/bwv) pero puedes actualizarlo fácilmente con el cliente de Twitch. También puedes actualizarlo manualmente desde curseforge.com o wowinterface.com."
 L.warnTwoReleases  = "Tu BigWigs está 2 versiones desfasado! Tu versión puede tener fallos, faltarle características, o temporizadores incorrectos. Es muy recomendable que lo actualices."
 L.warnSeveralReleases  = "|cffff0000Tu BigWigs está desfasado %d actualizaciones!! Te recomendamos MUCHÍSIMO que lo actualices cuanto antes para prevenir problemas de sincronización con otros jugadores!|r"
 
@@ -37,6 +40,7 @@ L.missingAddOn  = "Tenga en cuenta que esta zona requiere el plugin |cFF436EEE%s
 L.disabledAddOn  = "Tienes el addon |cFF436EEE%s|r deshabilitado, los contadores no se mostraran."
 
 L.removeAddon  = "Por favor elimina '|cFF436EEE%s|r' ya que está siendo reemplazado por '|cFF436EEE%s|r'."
+L.alternativeName = "%s (|cFF436EEE%s|r)"
 
 -- Media.lua
 L.Beware = "Cuidado (Algalon)"
@@ -81,7 +85,7 @@ L.slashDescRange  = "|cFFFED000/range:|r Abre el indicador de rango."
 L.slashDescVersion  = "|cFFFED000/bwv:|r Realiza un chequeo de versiónes de BigWigs."
 L.slashDescConfig  = "|cFFFED000/bw:|r Abre la configuración de BigWigs."
 
-L.gitHubDesc  = "BigWigs es de código abierto alojado en GitHub. Siempre estamos buscando gente para ayudarnos y cualquiera es bienvenido para inspeccionar nuestro código, hacer contribuciones y reportar errores. BigWigs es tan genial a día de hoy en gran parte por la gran comunidad de WoW que nos ayuda.\n\n|cFF33FF99Ahora nuestra API está documentada y puede leerla libremente en el wiki de GitHub.|r"
+L.gitHubDesc  = "BigWigs es de código abierto alojado en GitHub. Siempre estamos buscando gente para ayudarnos y cualquiera es bienvenido para inspeccionar nuestro código, hacer contribuciones y reportar errores. BigWigs es tan genial a día de hoy en gran parte por la gran comunidad de WoW que nos ayuda."
 
 L.BAR  = "Barras"
 L.MESSAGE  = "Mensajes"
@@ -123,8 +127,10 @@ L.CASTBAR = "Barras de lanzamiento"
 L.CASTBAR_desc = "Barras de lanzamiento se muestran a veces con ciertos jefes, normalmente para atraer la atención de que una habilidad crítica está en camino. Si esta habilidad está acompañada por una barra de lanzamiento que quieres ocultar, desactiva esta opción."
 L.SAY_COUNTDOWN = "Decir cuenta atrás"
 L.SAY_COUNTDOWN_desc = "Las burbujas de chat son fáciles de detectar. BigWigs usará múltiples mensajes de cuenta atrás para alertar a los que estén cerca que una habilidad en ti está a punto de expirar."
---L.ME_ONLY_EMPHASIZE = "Emphasize (me only)"
---L.ME_ONLY_EMPHASIZE_desc = "Enabling this will emphasize any messages associated with this ability ONLY if it is casted on you, making them larger and more visible."
+L.ME_ONLY_EMPHASIZE = "Enfatizar (sólo en mi)"
+L.ME_ONLY_EMPHASIZE_desc = "Habilitar esto enfatizará cualquier mensaje asociado con esta habilidad SOLO si se lanza sobre ti, mostrandolo más grande y visible."
+-- L.NAMEPLATEBAR = "Nameplate Bars"
+-- L.NAMEPLATEBAR_desc = "Bars are sometimes attached to nameplates when more than one mob casts the same spell. If this ability is accompanied by a nameplate bar that you want to hide, disable this option."
 
 L.advanced  = "Opciones avanzadas"
 L.back  = "<< Volver"
@@ -143,4 +149,3 @@ L.mythic  = "Mítico"
 L.wipes  = "Wipes:"
 L.kills  = "Muertes:"
 L.best  = "El mejor:"
-

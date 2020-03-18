@@ -317,7 +317,7 @@ function WorldQuestTracker.HideWorldQuestsOnWorldMap()
 		widget.questID = nil
 	end
 	--faction lines (deprecated)
-	for _, widget in ipairs (extra_widgets) do --linhas e bolas de fac��es
+	for _, widget in ipairs (extra_widgets) do --hide lines and indicators for factions
 		widget:Hide()
 	end
 	
@@ -1308,7 +1308,7 @@ function WorldQuestTracker.UpdateWorldQuestsOnWorldMap (noCache, showFade, isQue
 								end
 							end
 
-							if (filters [filter] or rarity == LE_WORLD_QUEST_QUALITY_EPIC or (forceShowBrokenShore and WorldQuestTracker.IsArgusZone (mapId))) then --force show broken shore questsmapId == 1021
+							if (filters [filter] or worldQuestType == LE_QUEST_TAG_TYPE_FACTION_ASSAULT or rarity == LE_WORLD_QUEST_QUALITY_EPIC or (forceShowBrokenShore and WorldQuestTracker.IsNewEXPZone (mapId))) then --force show broken shore questsmapId == 1021
 								tinsert (questsAvailable [mapId], {questID, order, info.numObjectives, info.x, info.y, filter})
 								shownQuests = shownQuests + 1
 								
@@ -1732,10 +1732,6 @@ if (WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MaximizeButton) then
 	WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MaximizeButton:HookScript ("OnClick", function()
 		WorldQuestTracker.UpdateZoneSummaryFrame()
 		WorldQuestTracker.UpdateStatusBarAnchors()
-		
-		if (WorldQuestTracker.MapAnchorButton) then
-			WorldQuestTracker.MapAnchorButton:UpdateButton()
-		end
 	end)
 end
 

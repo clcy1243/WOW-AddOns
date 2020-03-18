@@ -1,10 +1,10 @@
 local mod	= DBM:NewMod(339, "DBM-BaradinHold", nil, 74)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 174 $"):sub(12, -3))
+mod:SetRevision("20200222203750")
 mod:SetCreatureID(55869)
 mod:SetEncounterID(1332)
-mod:SetModelSound("sound\\CREATURE\\ALIZABAL\\VO_BH_ALIZABAL_INTRO_01.OGG", "sound\\CREATURE\\ALIZABAL\\VO_BH_ALIZABAL_RESET_01.OGG")
+--mod:SetModelSound("sound\\CREATURE\\ALIZABAL\\VO_BH_ALIZABAL_INTRO_01.OGG", "sound\\CREATURE\\ALIZABAL\\VO_BH_ALIZABAL_RESET_01.OGG")
 mod:SetZone()
 
 mod:RegisterCombat("combat")
@@ -20,11 +20,11 @@ local warnSeethingHate			= mod:NewTargetAnnounce(105067, 3)
 
 local specWarnBladeDance		= mod:NewSpecialWarningRun(104995, nil, nil, nil, 4)
 local specWarnSkewer			= mod:NewSpecialWarningSpell(104936, "Tank|Healer")
-local specWarnSeethingHate		= mod:NewSpecialWarningYou(105067, "Tank")--off tank may need this warn. 
+local specWarnSeethingHate		= mod:NewSpecialWarningYou(105067, "Tank")--off tank may need this warn.
 
 local timerBladeDance			= mod:NewBuffActiveTimer(15, 104995, nil, nil, nil, 6)
 local timerBladeDanceCD			= mod:NewCDTimer(60, 104995, nil, nil, nil, 6)
-local timerFirstSpecial			= mod:NewTimer(8, "TimerFirstSpecial", "Interface\\Icons\\Spell_Nature_WispSplode")--Whether she casts skewer or seething after a blade dance is random. This generic timer just gives you a timer for whichever she'll do.
+local timerFirstSpecial			= mod:NewTimer(8, "TimerFirstSpecial", "136116")--Whether she casts skewer or seething after a blade dance is random. This generic timer just gives you a timer for whichever she'll do.
 local timerSkewer				= mod:NewTargetTimer(8, 104936, nil, false, 2, 5, nil, DBM_CORE_TANK_ICON)
 local timerSkewerCD				= mod:NewNextTimer(20.5, 104936, nil, "Tank", 2, 5, nil, DBM_CORE_TANK_ICON)
 local timerSeethingHate			= mod:NewTargetTimer(9, 105067)
@@ -73,7 +73,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		warnSeethingHate:Show(args.destName)
 		timerSeethingHate:Start(args.destName)
-		if args:IsPlayer() then		
+		if args:IsPlayer() then
 			specWarnSeethingHate:Show()
 		end
 	elseif args.spellId == 105784 then--It seems the cast ID was disabled on live, so now gotta do this the dumb way.

@@ -139,14 +139,24 @@ end
 --    --Addon:SetThreatColor(unit, true)
 --  elseif command == "quest" then
 --		Addon:PrintQuests()
---	elseif command == "tank" then
---		print ("GUID:", UnitGUID("target"))
+--	elseif command == "test" then
+--		local settings = TidyPlatesThreat.db.profile.uniqueSettings
 --
---		local unit_type, _,  _, _, _, npc_id, _ = strsplit("-", UnitGUID("target"))
---		print ("  =>:", unit_type, npc_id)
+--		local i = 0
+--		for k, v in pairs(settings) do
+--			i = i + 1
+--			print (i, "=>", k, "=", v, " => ", v and v.name and v.name)
+--			if type(i) == "number" and v.name and v.name ~= "<Enter name here>" then
+--				print ("  => Custom")
+--			end
+--		end
 --	elseif command == "migrate" then
 --		Addon.MigrateDatabase(cmd_list[2])
 --		--		--PrintHelp()
+--	elseif command == "dbm1" then
+--		DBM.Nameplate:Show(true, UnitGUID("target"), 255824, nil, nil, nil, true, {0.5, 0, 0.55, 0.75})
+--	elseif command == "dbm2" then
+--		DBM.Nameplate:Hide(true, UnitGUID("target"), 255824, nil, nil, nil, true, {0.5, 0, 0.55, 0.75})
 ----	else
 ----		TP.Print(L["Unknown option: "] .. input, true)
 ----		PrintHelp()

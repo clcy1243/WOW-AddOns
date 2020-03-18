@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("IronCouncil", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 278 $"):sub(12, -3))
+mod:SetRevision("20200222200840")
 mod:SetCreatureID(32867, 32927, 32857)
 mod:SetEncounterID(1140)
 mod:DisableEEKillDetection()--Fires for first one dying not last
@@ -11,10 +11,10 @@ mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 61920 63479 61879 63483 61915 61903 63493 62274 63489 62273",
+	"SPELL_CAST_START 61920 63479 61879 61903 63493 62274 63489 62273",
 	"SPELL_CAST_SUCCESS 63490 62269 64321 61974 61869 63481",
-	"SPELL_AURA_APPLIED 61903 63493 62269 63490 62277 63967 64637 61888 63486 61887 61912 63494",
-	"SPELL_AURA_REMOVED 64637 61888",
+	"SPELL_AURA_APPLIED 61903 63493 62269 63490 62277 63967 64637 61888 63486 61887 61912 63494 63483 61915",
+	"SPELL_AURA_REMOVED 64637 61888 63483 61915",
 	"UNIT_DIED"
 )
 
@@ -31,6 +31,7 @@ local timerLightningWhirl		= mod:NewCastTimer(5, 63483, nil, nil, nil, 4, nil, D
 local specwarnLightningTendrils	= mod:NewSpecialWarningRun(63486, nil, nil, nil, 4, 2)
 local timerLightningTendrils	= mod:NewBuffActiveTimer(27, 63486, nil, nil, nil, 6)
 local specwarnOverload			= mod:NewSpecialWarningRun(63481, nil, nil, nil, 4, 2)
+local specWarnLightningWhirl	= mod:NewSpecialWarningInterrupt(63483, "HasInterrupt", nil, nil, 1, 2)
 mod:AddBoolOption("AlwaysWarnOnOverload", false, "announce")
 
 -- Steelbreaker
@@ -40,7 +41,7 @@ local timerFusionPunchCast		= mod:NewCastTimer(3, 61903, nil, nil, nil, 5, nil, 
 local timerFusionPunchActive	= mod:NewTargetTimer(4, 61903, nil, nil, nil, 5, nil, DBM_CORE_TANK_ICON..DBM_CORE_MAGIC_ICON)
 local warnOverwhelmingPower		= mod:NewTargetAnnounce(61888, 2)
 local timerOverwhelmingPower	= mod:NewTargetTimer(25, 61888, nil, nil, nil, 5, nil, DBM_CORE_TANK_ICON)
-local warnStaticDisruption		= mod:NewTargetAnnounce(61912, 3) 
+local warnStaticDisruption		= mod:NewTargetAnnounce(61912, 3)
 mod:AddBoolOption("SetIconOnOverwhelmingPower", false)
 mod:AddBoolOption("SetIconOnStaticDisruption", false)
 
@@ -80,12 +81,10 @@ local function warnStaticDisruptionTargets(self)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 61920 then -- Supercharge - Unleashes one last burst of energy as the caster dies, increasing all allies damage by 25% and granting them an additional ability.	
+	if args.spellId == 61920 then -- Supercharge
 		warnSupercharge:Show()
 	elseif args:IsSpellID(63479, 61879) then	-- Chain light
 		warnChainlight:Show()
-	elseif args:IsSpellID(63483, 61915) then	-- LightningWhirl
-		timerLightningWhirl:Start()
 	elseif args:IsSpellID(61903, 63493) then	-- Fusion Punch
 		warnFusionPunch:Show()
 		timerFusionPunchCast:Start()
@@ -137,12 +136,18 @@ function mod:SPELL_AURA_APPLIED(args)
 		specwarnLightningTendrils:Play("justrun")
 	elseif args:IsSpellID(61912, 63494) then	-- Static Disruption (Hard Mode)
 		disruptTargets[#disruptTargets + 1] = args.destName
-		if self.Options.SetIconOnStaticDisruption then 
+		if self.Options.SetIconOnStaticDisruption then
 			self:SetIcon(args.destName, self.vb.disruptIcon, 20)
 		end
 		self.vb.disruptIcon = self.vb.disruptIcon - 1
 		self:Unschedule(warnStaticDisruptionTargets)
 		self:Schedule(0.3, warnStaticDisruptionTargets, self)
+	elseif args:IsSpellID(63483, 61915) then	-- LightningWhirl
+		timerLightningWhirl:Start()
+		if self:CheckInterruptFilter(args.destGUID, false, true) then
+			specWarnLightningWhirl:Show(args.destName)
+			specWarnLightningWhirl:Play("kickcast")
+		end
 	end
 end
 
@@ -151,6 +156,8 @@ function mod:SPELL_AURA_REMOVED(args)
 		if self.Options.SetIconOnOverwhelmingPower then
 			self:SetIcon(args.destName, 0)
 		end
+	elseif args:IsSpellID(63483, 61915) then	-- LightningWhirl
+		timerLightningWhirl:Stop()
 	end
 end
 

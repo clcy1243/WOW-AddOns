@@ -1,4 +1,10 @@
-	--[[ options panel file --]]
+--[[ 
+	options panel file 
+	please note: this file was wrote on 2012 when Details! had only 5 options,
+	the addon got bigger but I keeped the same format, you're free to judge my decision.
+--]]
+
+
 
 --[[
 	search for "~number" without the quotes to quick access the page:
@@ -3984,7 +3990,7 @@ function window:CreateFrame1()
 		frame1.chooseAvatarButton:SetTextColor (button_color_rgb)
 		
 		g:NewLabel (frame1, _, "$parentChooseAvatarLabel", "ChooseAvatarLabel", Loc ["STRING_OPTIONS_AVATAR"], "GameFontHighlightLeft")
-		frame1.ChooseAvatarLabel:SetPoint ("topright", frame1.chooseAvatarButton, "topright", -50, -25)
+		frame1.ChooseAvatarLabel:SetPoint ("topright", frame1.chooseAvatarButton, "topright", -50, -35)
 		frame1.ChooseAvatarLabel:SetTextColor (button_color_rgb)
 
 	--> avatar preview
@@ -4016,16 +4022,16 @@ function window:CreateFrame1()
 			return true
 		end)
 		frame1.chooseAvatarButton:SetHook ("OnMouseDown", function()
-			frame1.avatarPreview:SetPoint (avatar_x_anchor2+2, -158)
-			frame1.avatarPreview2:SetPoint (avatar_x_anchor2+2, -160)
-			frame1.avatarNickname:SetPoint (avatar_x_anchor2+110, -192)
-			frame1.ChooseAvatarLabel:SetPoint ("topright", frame1.chooseAvatarButton, "topright", -49, -26)
+			frame1.avatarPreview:SetPoint (avatar_x_anchor2+2, -138)
+			frame1.avatarPreview2:SetPoint (avatar_x_anchor2+2, -140)
+			frame1.avatarNickname:SetPoint (avatar_x_anchor2+110, -172)
+			frame1.ChooseAvatarLabel:SetPoint ("topright", frame1.chooseAvatarButton, "topright", -49, -36)
 		end)
 		frame1.chooseAvatarButton:SetHook ("OnMouseUp", function()
-			frame1.avatarPreview:SetPoint (avatar_x_anchor2+1, -157)
-			frame1.avatarPreview2:SetPoint (avatar_x_anchor2+1, -159)
-			frame1.avatarNickname:SetPoint (avatar_x_anchor2+109, -191)
-			frame1.ChooseAvatarLabel:SetPoint ("topright", frame1.chooseAvatarButton, "topright", -50, -25)
+			frame1.avatarPreview:SetPoint (avatar_x_anchor2+1, -137)
+			frame1.avatarPreview2:SetPoint (avatar_x_anchor2+1, -139)
+			frame1.avatarNickname:SetPoint (avatar_x_anchor2+109, -171)
+			frame1.ChooseAvatarLabel:SetPoint ("topright", frame1.chooseAvatarButton, "topright", -50, -35)
 		end)
 		
 		--window:CreateLineBackground2 (frame1, "chooseAvatarButton", "chooseAvatarButton", Loc ["STRING_OPTIONS_AVATAR_DESC"], nil, {1, 0.8, 0}, button_color_rgb)
@@ -4270,7 +4276,7 @@ function window:CreateFrame1()
 			frame1.CreateWindowButton:SetIcon ([[Interface\Buttons\UI-AttributeButton-Encourage-Up]], nil, nil, nil, nil, nil, nil, 2)
 			frame1.CreateWindowButton:SetTextColor (button_color_rgb)
 			
-		--set color
+		--set window color
 			local windowcolor_callback = function (button, r, g, b, a)
 			
 				local instance = _G.DetailsOptionsWindow.instance
@@ -4356,6 +4362,72 @@ function window:CreateFrame1()
 			frame1.ClassColorsButton:SetIcon ([[Interface\AddOns\Details\images\icons]], nil, nil, nil, {430/512, 459/512, 4/512, 30/512}, nil, nil, 2) -- , "orange"
 			frame1.ClassColorsButton:SetTextColor (button_color_rgb)
 		
+		--click through ~clickthrough
+			
+			--in combat only
+			g:NewLabel (frame1, _, "$parentclickThroughInCombatLabel", "clickThroughInCombatLabel", "In Combat Only", "GameFontHighlightLeft")
+			
+			g:NewSwitch (frame1, _, "$parentclickThroughInCombatSlider", "clickThroughInCombatSlider", 60, 20, _, _, _G.DetailsOptionsWindow.instance.clickthrough_incombatonly, nil, nil, nil, nil, options_switch_template)
+			frame1.clickThroughInCombatSlider:SetAsCheckBox()
+			
+			frame1.clickThroughInCombatSlider:SetPoint ("left", frame1.clickThroughInCombatLabel, "right", 2, 0)
+			frame1.clickThroughInCombatSlider.OnSwitch = function (self, _, value) --> slider, fixedValue, sliderValue (false, true)
+				_G.DetailsOptionsWindow.instance:UpdateClickThroughSettings (value)
+				
+				if (_detalhes.options_group_edit and not DetailsOptionsWindow.loading_settings) then
+					for _, this_instance in ipairs (_G.DetailsOptionsWindow.instance:GetInstanceGroup()) do
+						if (this_instance ~= _G.DetailsOptionsWindow.instance) then
+							this_instance:UpdateClickThroughSettings (value)
+						end
+					end
+				end
+			end
+			
+			window:CreateLineBackground2 (frame1, "clickThroughInCombatSlider", "clickThroughInCombatLabel", "Only apply click through when in combat.")
+			
+			--window
+			g:NewLabel (frame1, _, "$parentclickThroughWindowLabel", "clickThroughWindowLabel", "Affect Window", "GameFontHighlightLeft")
+			
+			g:NewSwitch (frame1, _, "$parentclickThroughWindowSlider", "clickThroughWindowSlider", 60, 20, _, _, _G.DetailsOptionsWindow.instance.clickthrough_window, nil, nil, nil, nil, options_switch_template)
+			frame1.clickThroughWindowSlider:SetAsCheckBox()
+			
+			frame1.clickThroughWindowSlider:SetPoint ("left", frame1.clickThroughWindowLabel, "right", 2, 0)
+			frame1.clickThroughWindowSlider.OnSwitch = function (self, _, value) --> slider, fixedValue, sliderValue (false, true)
+				_G.DetailsOptionsWindow.instance:UpdateClickThroughSettings (nil, value)
+				
+				if (_detalhes.options_group_edit and not DetailsOptionsWindow.loading_settings) then
+					for _, this_instance in ipairs (_G.DetailsOptionsWindow.instance:GetInstanceGroup()) do
+						if (this_instance ~= _G.DetailsOptionsWindow.instance) then
+							this_instance:UpdateClickThroughSettings (nil, value)
+						end
+					end
+				end
+			end
+			
+			window:CreateLineBackground2 (frame1, "clickThroughWindowSlider", "clickThroughWindowLabel", "The window will be click through.")
+			
+			--bars
+			g:NewLabel (frame1, _, "$parentclickThroughBarsLabel", "clickThroughBarsLabel", "Affect Bars", "GameFontHighlightLeft")
+			
+			g:NewSwitch (frame1, _, "$parentclickThroughBarsSlider", "clickThroughBarsSlider", 60, 20, _, _, _G.DetailsOptionsWindow.instance.clickthrough_rows, nil, nil, nil, nil, options_switch_template)
+			frame1.clickThroughBarsSlider:SetAsCheckBox()
+			
+			frame1.clickThroughBarsSlider:SetPoint ("left", frame1.clickThroughBarsLabel, "right", 2, 0)
+			frame1.clickThroughBarsSlider.OnSwitch = function (self, _, value) --> slider, fixedValue, sliderValue (false, true)
+				_G.DetailsOptionsWindow.instance:UpdateClickThroughSettings (nil, nil, value)
+				
+				if (_detalhes.options_group_edit and not _G.DetailsOptionsWindow.loading_settings) then
+					for _, this_instance in ipairs (_G.DetailsOptionsWindow.instance:GetInstanceGroup()) do
+						if (this_instance ~= _G.DetailsOptionsWindow.instance) then
+							this_instance:UpdateClickThroughSettings (nil, nil, value)
+						end
+					end
+				end
+			end
+			
+			window:CreateLineBackground2 (frame1, "clickThroughBarsSlider", "clickThroughBarsLabel", "Player bars will be click through, won't show tooltips when hover hover them.")
+			
+		
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	--> Time Type
@@ -4394,6 +4466,8 @@ function window:CreateFrame1()
 		
 		g:NewLabel (frame1, _, "$parentWindowControlsAnchor", "WindowControlsLabel", Loc ["STRING_OPTIONS_WC_ANCHOR"], "GameFontNormal")
 		g:NewLabel (frame1, _, "$parentToolsAnchor", "ToolsLabel", Loc ["STRING_OPTIONS_TOOLS_ANCHOR"], "GameFontNormal")
+		
+		g:NewLabel (frame1, _, "$parentClickThroughAnchor", "clickThroughLabel", "Click Through", "GameFontNormal")
 
 		local w_start = 10
 		
@@ -4405,22 +4479,20 @@ function window:CreateFrame1()
 		frame1.GeneralIdentityLabel:SetPoint (avatar_x_anchor, window.top_start_at)
 		
 		frame1.nicknameLabel:SetPoint (avatar_x_anchor, -115)
-		frame1.chooseAvatarButton:SetPoint (avatar_x_anchor+1, -140)
+		frame1.chooseAvatarButton:SetPoint (avatar_x_anchor+1, -115)
 		
-		frame1.avatarPreview:SetPoint (avatar_x_anchor2+1, -157)
-		frame1.avatarPreview2:SetPoint (avatar_x_anchor2+1, -159)
-		frame1.avatarNickname:SetPoint (avatar_x_anchor2+109, -191)
+		frame1.avatarPreview:SetPoint (avatar_x_anchor2+1, -137)
+		frame1.avatarPreview2:SetPoint (avatar_x_anchor2+1, -139)
+		frame1.avatarNickname:SetPoint (avatar_x_anchor2+109, -171)
 		
-		frame1.IgnoreNicknamesLabel:SetPoint (avatar_x_anchor, -235)
-		frame1.realmNameLabel:SetPoint (avatar_x_anchor, -255)
+		frame1.IgnoreNicknamesLabel:SetPoint (avatar_x_anchor, -215)
+		frame1.realmNameLabel:SetPoint (avatar_x_anchor, -235)
 		
 		--frame1.ToolsLabel:SetPoint (avatar_x_anchor, -265)
 		--frame1.EraseDataLabel:SetPoint (avatar_x_anchor, -290)
 		--frame1.BookmarkButton:SetPoint (avatar_x_anchor, -315)
 		--frame1.ClassColorsButton:SetPoint (avatar_x_anchor, -340)
-		
 
-		
 		local x = avatar_x_anchor
 		
 		local right_side = {
@@ -4428,11 +4500,16 @@ function window:CreateFrame1()
 			{"LockButton", 2},
 			{"CloseButton", 3},
 			{"BreakSnapButton", 4},
-			{"SetWindowColorButton", 5},
-			{"CreateWindowButton", 6, true},
+			--{"SetWindowColorButton", 5},
+			{"CreateWindowButton", 6}, --, true
+			
+			{"clickThroughLabel", 14, true},
+			{"clickThroughInCombatLabel", 15},
+			{"clickThroughWindowLabel", 16},
+			{"clickThroughBarsLabel", 17},
 		}
 		
-		window:arrange_menu (frame1, right_side, x, -285)
+		window:arrange_menu (frame1, right_side, x, -265)
 		
 		local left_side = {
 			{"GeneralAnchorLabel", 1, true},
@@ -4452,6 +4529,9 @@ function window:CreateFrame1()
 			{frame1.EraseDataLabel, 11},
 			{frame1.BookmarkButton, 12},
 			{frame1.ClassColorsButton, 13},
+			
+
+			
 			
 			--{"WindowControlsLabel", 9, true},
 			--{"LockButton", 10},
@@ -6696,6 +6776,30 @@ function window:CreateFrame5()
 		
 		window:CreateLineBackground2 (frame5, "PositionNumberSlider", "PositionNumberLabel", Loc ["STRING_OPTIONS_TEXT_LPOSITION_DESC"])
 		
+		--> left translit text by Vardex (https://github.com/Vardex May 22, 2019)
+		g:NewSwitch (frame5, _, "$parentTranslitTextSlider", "TranslitTextSlider", 60, 20, _, _, instance.row_info.textL_translit_text, nil, nil, nil, nil, options_switch_template)
+		g:NewLabel (frame5, _, "$parentTranslitTextLabel", "TranslitTextLabel", Loc ["STRING_OPTIONS_TEXT_LTRANSLIT"], "GameFontHighlightLeft")
+
+		frame5.TranslitTextSlider:SetPoint ("left", frame5.TranslitTextLabel, "right", 2)
+		frame5.TranslitTextSlider:SetAsCheckBox()
+		frame5.TranslitTextSlider.OnSwitch = function (self, instance, value)
+			instance:SetBarTextSettings (nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, value)
+
+			if (_detalhes.options_group_edit and not DetailsOptionsWindow.loading_settings) then
+				for _, this_instance in ipairs (instance:GetInstanceGroup()) do
+					if (this_instance ~= instance) then
+						this_instance:SetBarTextSettings (nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, value)
+					end
+				end
+			end
+
+			_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
+		end
+
+		window:CreateLineBackground2 (frame5, "TranslitTextSlider", "TranslitTextLabel", Loc ["STRING_OPTIONS_TEXT_LTRANSLIT_DESC"])
+
+
+
 	--> right outline
 		g:NewSwitch (frame5, _, "$parentTextRightOutlineSlider", "textRightOutlineSlider", 60, 20, _, _, instance.row_info.textR_outline, nil, nil, nil, nil, options_switch_template)
 		g:NewLabel (frame5, _, "$parentTextRightOutlineLabel", "textRightOutlineLabel", Loc ["STRING_OPTIONS_TEXT_LOUTILINE"], "GameFontHighlightLeft")
@@ -7210,6 +7314,7 @@ function window:CreateFrame5()
 			{"OutlineSmallColorLabelLeft", 2},
 			{"classColorsLeftTextLabel", 3},
 			{"PositionNumberLabel", 4},
+			{"TranslitTextLabel", 5},
 			{"cutomLeftTextLabel", 5, true},
 			{"cutomLeftTextEntryLabel", 6},
 		}
@@ -9029,6 +9134,18 @@ function window:CreateFrame9()
 			
 			local onSelectSecTexture = function (self, instance, texturePath) 
 				
+				local textureOptions = window.WallpaperTextureOptions
+				local selectedTextureOption
+				for textureBracket, textureTables in pairs (textureOptions) do
+					for i = 1, #textureTables do
+						local textureTable = textureTables [i]
+						if (textureTable.value == texturePath) then
+							selectedTextureOption = textureTable
+							break
+						end
+					end
+				end
+				
 				if (texturePath:find ("TALENTFRAME")) then
 				
 					instance:InstanceWallpaper (texturePath, nil, nil, {0, 1, 0, 0.703125}, nil, nil, {1, 1, 1, 1})
@@ -9076,13 +9193,13 @@ function window:CreateFrame9()
 					end
 				
 				else
-				
-					instance:InstanceWallpaper (texturePath, nil, nil, {0, 1, 0, 1}, nil, nil, {1, 1, 1, 1})
+					local texCoords = selectedTextureOption and selectedTextureOption.texcoord
+					instance:InstanceWallpaper (texturePath, nil, nil, texCoords or {0, 1, 0, 1}, nil, nil, {1, 1, 1, 1})
 					
 					if (_detalhes.options_group_edit and not DetailsOptionsWindow.loading_settings) then
 						for _, this_instance in ipairs (instance:GetInstanceGroup()) do
 							if (this_instance ~= instance) then
-								this_instance:InstanceWallpaper (texturePath, nil, nil, {0, 1, 0, 1}, nil, nil, {1, 1, 1, 1})
+								this_instance:InstanceWallpaper (texturePath, nil, nil, texCoords or {0, 1, 0, 1}, nil, nil, {1, 1, 1, 1})
 							end
 						end
 					end
@@ -9104,6 +9221,13 @@ function window:CreateFrame9()
 			end
 		
 			local subMenu = {
+				
+				["DESIGN"] = {
+					{value = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]], label = "Horizontal Gradient", onclick = onSelectSecTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]], texcoord = nil},
+					{value = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Parchment-Highlight]], label = "Golden Highlight", onclick = onSelectSecTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Parchment-Highlight]], texcoord = {0.35, 0.655, 0.0390625, 0.859375}},
+					{value = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Stat-Buttons]], label = "Gray Gradient", onclick = onSelectSecTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Stat-Buttons]], texcoord = {0, 1, 97/128, 1}},
+					{value = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Borders]], label = "Orange Gradient", onclick = onSelectSecTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Borders]], texcoord = {160/512, 345/512, 80/256, 130/256}},
+				},
 				
 				["ARCHEOLOGY"] = {
 					{value = [[Interface\ARCHEOLOGY\Arch-BookCompletedLeft]], label = "Book Wallpaper", onclick = onSelectSecTexture, icon = [[Interface\ARCHEOLOGY\Arch-BookCompletedLeft]], texcoord = nil},
@@ -9283,6 +9407,8 @@ function window:CreateFrame9()
 					{value = [[Interface\TALENTFRAME\bg-warrior-protection]], label = "Protection", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_warrior_defensivestance]], texcoord = nil}
 				},
 			}
+			
+			window.WallpaperTextureOptions = subMenu
 		
 			local buildBackgroundMenu2 = function() 
 				return  subMenu [frame9.backgroundDropdown.value] or {label = "", value = 0}
@@ -9294,6 +9420,7 @@ function window:CreateFrame9()
 			end
 		
 			local backgroundTable = {
+				{value = "DESIGN", label = "Design", onclick = onSelectMainTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]]},
 				{value = "ARCHEOLOGY", label = "Archeology", onclick = onSelectMainTexture, icon = [[Interface\ARCHEOLOGY\Arch-Icon-Marker]]},
 				{value = "CREDITS", label = "Burning Crusade", onclick = onSelectMainTexture, icon = [[Interface\ICONS\TEMP]]},
 				{value = "LOGOS", label = "Logos", onclick = onSelectMainTexture, icon = [[Interface\WorldStateFrame\ColumnIcon-FlagCapture0]]},
@@ -9334,16 +9461,6 @@ function window:CreateFrame9()
 			if (value) then
 				--> primeira vez que roda:
 				if (not instance.wallpaper.texture) then
-					--[[ 7.1.5 isn't sending the background on the 5� return value ~cleanup
-					local spec = GetSpecialization()
-					if (spec) then
-						local id, name, description, icon, _background, role = GetSpecializationInfo (spec)
-						if (_background) then
-							instance.wallpaper.texture = "Interface\\TALENTFRAME\\".._background
-						end
-					end
-					instance.wallpaper.texcoord = {0, 1, 0, 0.703125}
-					--]]
 					instance.wallpaper.texture = "Interface\\AddOns\\Details\\images\\background"
 				end
 				
@@ -10826,6 +10943,14 @@ function window:CreateFrame12()
 				GameCooltip:Show()
 			end
 		end
+
+		if (self.hasDesc) then
+			GameCooltip:Preset (2)
+			GameCooltip:AddLine (self.hasDesc)
+			GameCooltip:SetType ("tooltip")
+			GameCooltip:SetOwner (self, "bottomleft", "topleft", 150, -2)
+			GameCooltip:Show()
+		end
  	end
 	
 	local on_leave = function (self)
@@ -10844,7 +10969,7 @@ function window:CreateFrame12()
 	
 	local y = -20
 	
-	--toolbar
+	--> toolbar
 	g:NewLabel (frame4, _, "$parentToolbarPluginsLabel", "toolbarLabel", Loc ["STRING_OPTIONS_PLUGINS_TOOLBAR_ANCHOR"], "GameFontNormal", 16)
 	frame4.toolbarLabel:SetPoint ("topleft", frame4, "topleft", 10, y)
 	
@@ -10869,8 +10994,32 @@ function window:CreateFrame12()
 	
 	y = y - 30
 	
+	--> toolbar plugins loop
 	local i = 1
-	local allplugins_toolbar = _detalhes.ToolBar.NameTable
+	local allplugins_toolbar = _detalhes.ToolBar.NameTable --where is store all plugins for the title bar
+
+	--first loop and see which plugins isn't installed
+	--then add a 'ghost' plugin so the player can download
+
+	local allExistentToolbarPlugins = {
+		{"DETAILS_PLUGIN_CHART_VIEWER", "Details_ChartViewer", "Chart Viewer", "View combat data in handsome charts.", "https://www.curseforge.com/wow/addons/details-chart-viewer-plugin"},
+		{"DETAILS_PLUGIN_DEATH_GRAPHICS", "Details_DeathGraphs", "Advanced Death Logs", "Encounter endurance per player (who's dying more), deaths timeline by enemy spells and regular death logs.", "https://www.curseforge.com/wow/addons/details-advanced-death-logs-plug"},
+		--{"Details_RaidPowerBars", "Raid Power Bars", "Alternate power bar in a details! window", "https://www.curseforge.com/wow/addons/details_raidpowerbars/"},
+		--{"Details_TargetCaller", "Target Caller", "Show raid damage done to an entity since you targetted it.", "https://www.curseforge.com/wow/addons/details-target-caller-plugin"},
+		{"DETAILS_PLUGIN_TIME_LINE", "Details_TimeLine", "Time Line", "View raid cooldowns usage, debuff gain, boss casts in a fancy time line.", "https://www.curseforge.com/wow/addons/details_timeline"},
+	}
+
+	local allExistentRaidPlugins = {
+		--{"DETAILS_PLUGIN_CHART_VIEWER", "Details_ChartViewer", "Chart Viewer", "View combat data in handsome charts.", "https://www.curseforge.com/wow/addons/details-chart-viewer-plugin"},
+		--{"DETAILS_PLUGIN_DEATH_GRAPHICS", "Details_DeathGraphs", "Advanced Death Logs", "Encounter endurance per player (who's dying more), deaths timeline by enemy spells and regular death logs.", "https://www.curseforge.com/wow/addons/details-advanced-death-logs-plug"},
+		{"DETAILS_PLUGIN_RAID_POWER_BARS", "Details_RaidPowerBars", "Raid Power Bars", "Alternate power bar in a details! window", "https://www.curseforge.com/wow/addons/details_raidpowerbars/"},
+		{"DETAILS_PLUGIN_TARGET_CALLER", "Details_TargetCaller", "Target Caller", "Show raid damage done to an entity since you targetted it.", "https://www.curseforge.com/wow/addons/details-target-caller-plugin"},
+		--{"DETAILS_PLUGIN_TIME_LINE", "Details_TimeLine", "Time Line", "View raid cooldowns usage, debuff gain, boss casts in a fancy time line.", "https://www.curseforge.com/wow/addons/details_timeline"},
+	}	
+
+	local installedToolbarPlugins = {}
+	local installedRaidPlugins = {}
+
 	for absName, pluginObject in pairs (allplugins_toolbar) do 
 	
 		local bframe = CreateFrame ("frame", "OptionsPluginToolbarBG", frame4)
@@ -10920,11 +11069,64 @@ function window:CreateFrame12()
 			window:CreateLineBackground2 (bframe, "OptionsButton"..i, "OptionsButton"..i, nil, nil, {1, 0.8, 0}, button_color_rgb)
 			bframe ["OptionsButton"..i]:SetTextColor (button_color_rgb)
 			bframe ["OptionsButton"..i]:SetIcon ([[Interface\Buttons\UI-OptionsButton]], 14, 14, nil, {0, 1, 0, 1}, nil, 3)
-			
 		end
 		
 		i = i + 1
 		y = y - 20
+
+		--plugins installed, adding their abs name
+		DetailsFramework.table.addunique (installedToolbarPlugins, absName)
+	
+	end
+
+	local notInstalledColor = "gray"
+
+	for o = 1, #allExistentToolbarPlugins do
+		local pluginAbsName = allExistentToolbarPlugins [o] [1]
+		if (not DetailsFramework.table.find (installedToolbarPlugins, pluginAbsName)) then
+
+			local absName = pluginAbsName
+			local pluginObject = {
+				__icon = "",
+				__name = allExistentToolbarPlugins [o] [3],
+				__author = "Not Installed",
+				__version = "",
+				OpenOptionsPanel = false,
+			}
+
+			local bframe = CreateFrame ("frame", "OptionsPluginToolbarBG", frame4)
+			bframe:SetSize (640, 20)
+			bframe:SetPoint ("topleft", frame4, "topleft", 10, y)
+			bframe:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 1, right = 1, top = 0, bottom = 1}})
+			bframe:SetBackdropColor (.3, .3, .3, .3)
+			bframe:SetScript ("OnEnter", on_enter)
+			bframe:SetScript ("OnLeave", on_leave)
+			--bframe.plugin = pluginObject
+			bframe.id = i
+			bframe.hasDesc = allExistentToolbarPlugins [o] [4]
+			
+			g:NewImage (bframe, pluginObject.__icon, 18, 18, nil, nil, "toolbarPluginsIcon"..i, "$parentToolbarPluginsIcon"..i)
+			bframe ["toolbarPluginsIcon"..i]:SetPoint ("topleft", frame4, "topleft", 10, y)
+		
+			g:NewLabel (bframe, _, "$parentToolbarPluginsLabel"..i, "toolbarPluginsLabel"..i, pluginObject.__name)
+			bframe ["toolbarPluginsLabel"..i]:SetPoint ("left", bframe ["toolbarPluginsIcon"..i], "right", 2, 0)
+			bframe ["toolbarPluginsLabel"..i].color = notInstalledColor
+			
+			g:NewLabel (bframe, _, "$parentToolbarPluginsLabel2"..i, "toolbarPluginsLabel2"..i, pluginObject.__author)
+			bframe ["toolbarPluginsLabel2"..i]:SetPoint ("topleft", frame4, "topleft", 180, y-4)
+			bframe ["toolbarPluginsLabel2"..i].color = notInstalledColor
+			
+			g:NewLabel (bframe, _, "$parentToolbarPluginsLabel3"..i, "toolbarPluginsLabel3"..i, pluginObject.__version)
+			bframe ["toolbarPluginsLabel3"..i]:SetPoint ("topleft", frame4, "topleft", 290, y-4)
+			bframe ["toolbarPluginsLabel3"..i].color = notInstalledColor
+
+			local installButton = DetailsFramework:CreateButton (bframe, function() Details:CopyPaste (allExistentToolbarPlugins [o] [5]) end, 120, 20, "Install")
+			installButton:SetTemplate (options_button_template)
+			installButton:SetPoint ("topleft", frame4, "topleft", 510, y-0)
+			
+			i = i + 1
+			y = y - 20			
+		end
 	end
 	
 	y = y - 10
@@ -11012,10 +11214,61 @@ function window:CreateFrame12()
 			bframe ["OptionsButton"..i]:SetTextColor (button_color_rgb)
 			bframe ["OptionsButton"..i]:SetIcon ([[Interface\Buttons\UI-OptionsButton]], 14, 14, nil, {0, 1, 0, 1}, nil, 3)
 		end
+
+		--plugins installed, adding their abs name
+		DetailsFramework.table.addunique (installedRaidPlugins, absName)
 		
 		i = i + 1
 		y = y - 20
 	end
+
+	for o = 1, #allExistentRaidPlugins do
+		local pluginAbsName = allExistentRaidPlugins [o] [1]
+		if (not DetailsFramework.table.find (installedRaidPlugins, pluginAbsName)) then
+
+			local absName = pluginAbsName
+			local pluginObject = {
+				__icon = "",
+				__name = allExistentRaidPlugins [o] [3],
+				__author = "Not Installed",
+				__version = "",
+				OpenOptionsPanel = false,
+			}
+
+			local bframe = CreateFrame ("frame", "OptionsPluginToolbarBG", frame4)
+			bframe:SetSize (640, 20)
+			bframe:SetPoint ("topleft", frame4, "topleft", 10, y)
+			bframe:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 1, right = 1, top = 0, bottom = 1}})
+			bframe:SetBackdropColor (.3, .3, .3, .3)
+			bframe:SetScript ("OnEnter", on_enter)
+			bframe:SetScript ("OnLeave", on_leave)
+			--bframe.plugin = pluginObject
+			bframe.id = i
+			bframe.hasDesc = allExistentRaidPlugins [o] [4]
+			
+			g:NewImage (bframe, pluginObject.__icon, 18, 18, nil, nil, "toolbarPluginsIcon"..i, "$parentToolbarPluginsIcon"..i)
+			bframe ["toolbarPluginsIcon"..i]:SetPoint ("topleft", frame4, "topleft", 10, y)
+		
+			g:NewLabel (bframe, _, "$parentToolbarPluginsLabel"..i, "toolbarPluginsLabel"..i, pluginObject.__name)
+			bframe ["toolbarPluginsLabel"..i]:SetPoint ("left", bframe ["toolbarPluginsIcon"..i], "right", 2, 0)
+			bframe ["toolbarPluginsLabel"..i].color = notInstalledColor
+			
+			g:NewLabel (bframe, _, "$parentToolbarPluginsLabel2"..i, "toolbarPluginsLabel2"..i, pluginObject.__author)
+			bframe ["toolbarPluginsLabel2"..i]:SetPoint ("topleft", frame4, "topleft", 180, y-4)
+			bframe ["toolbarPluginsLabel2"..i].color = notInstalledColor
+			
+			g:NewLabel (bframe, _, "$parentToolbarPluginsLabel3"..i, "toolbarPluginsLabel3"..i, pluginObject.__version)
+			bframe ["toolbarPluginsLabel3"..i]:SetPoint ("topleft", frame4, "topleft", 290, y-4)
+			bframe ["toolbarPluginsLabel3"..i].color = notInstalledColor
+
+			local installButton = DetailsFramework:CreateButton (bframe, function() Details:CopyPaste (allExistentRaidPlugins [o] [5]) end, 120, 20, "Install")
+			installButton:SetTemplate (options_button_template)
+			installButton:SetPoint ("topleft", frame4, "topleft", 510, y-0)
+			
+			i = i + 1
+			y = y - 20			
+		end
+	end	
 	
 	y = y - 10
 
@@ -11264,7 +11517,7 @@ end --> if not window
 		_G.DetailsOptionsWindow1AbbreviateDropdown.MyObject:Select (_detalhes.ps_abbreviation)
 		_G.DetailsOptionsWindow1SliderUpdateSpeed.MyObject:SetValue (_detalhes.update_speed)
 		_G.DetailsOptionsWindow1AnimateSlider.MyObject:SetValue (_detalhes.use_row_animations)
-
+		
 		_G.DetailsOptionsWindow1WindowControlsAnchor:SetText (string.format (Loc ["STRING_OPTIONS_WC_ANCHOR"], editing_instance.meu_id))
 		
 		_G.DetailsOptionsWindow1EraseDataDropdown.MyObject:Select (_detalhes.segments_auto_erase)
@@ -11278,6 +11531,10 @@ end --> if not window
 			else
 				_G.DetailsOptionsWindow1LockButton.MyObject:SetText (Loc ["STRING_OPTIONS_WC_LOCK"])
 			end
+			
+			_G.DetailsOptionsWindow1clickThroughInCombatSlider.MyObject:SetValue (editing_instance.clickthrough_incombatonly)
+			_G.DetailsOptionsWindow1clickThroughWindowSlider.MyObject:SetValue (editing_instance.clickthrough_window)
+			_G.DetailsOptionsWindow1clickThroughBarsSlider.MyObject:SetValue (editing_instance.clickthrough_rows)  
 		end
 		
 		_G.DetailsOptionsWindow1BreakSnapButton.MyObject:Disable()
@@ -11439,6 +11696,9 @@ end --> if not window
 		
 		_G.DetailsOptionsWindow5PositionNumberSlider.MyObject:SetFixedParameter (editing_instance)
 		_G.DetailsOptionsWindow5PositionNumberSlider.MyObject:SetValue (editing_instance.row_info.textL_show_number)
+
+		_G.DetailsOptionsWindow5TranslitTextSlider.MyObject:SetFixedParameter (editing_instance)
+		_G.DetailsOptionsWindow5TranslitTextSlider.MyObject:SetValue (editing_instance.row_info.textL_translit_text)
 
 		_G.DetailsOptionsWindow5BracketDropdown.MyObject:SetFixedParameter (editing_instance)
 		_G.DetailsOptionsWindow5SeparatorDropdown.MyObject:SetFixedParameter (editing_instance)

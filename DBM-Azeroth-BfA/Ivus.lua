@@ -7,10 +7,10 @@ else--Horde
 	dungeonID, creatureID = 2329, 144946--Ivus the Forest Lord
 	breathId, strikeId, gtfoId = 282404, 282489, 282414
 end
-local mod	= DBM:NewMod(dungeonID, "DBM-Azeroth-BfA", nil, 1028)
+local mod	= DBM:NewMod(dungeonID, "DBM-Azeroth-BfA", 4, 1028)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 18134 $"):sub(12, -3))
+mod:SetRevision("20200203000317")
 mod:SetCreatureID(creatureID)
 --mod:SetEncounterID(2263)
 --mod:DisableESCombatDetection()
@@ -31,7 +31,6 @@ local warnPetrifyEnded					= mod:NewEndAnnounce(282615, 2, nil, nil, nil, nil, n
 
 local specWarnBreath					= mod:NewSpecialWarningSpell(breathId, nil, nil, nil, 1, 2)
 local specWarnShockwaveYou				= mod:NewSpecialWarningYou(282463, nil, nil, nil, 1, 2)
-local yellShockwave						= mod:NewYell(282463)
 local specWarnShockwaveClose			= mod:NewSpecialWarningClose(282463, nil, nil, nil, 1, 2)
 local specWarnShockwave					= mod:NewSpecialWarningDodge(282463, nil, nil, nil, 2, 2)
 local specWarnGroundSpell				= mod:NewSpecialWarningSpell(strikeId, nil, nil, nil, 3, 2)
@@ -40,14 +39,6 @@ local specWarnGTFO						= mod:NewSpecialWarningGTFO(gtfoId, nil, nil, nil, 1, 8)
 local timerBreathCD						= mod:NewCDTimer(71.5, breathId, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)--71-76?
 local timerShockwaveCD					= mod:NewCDTimer(23, 282463, nil, nil, nil, 3)--23-25
 local timerGroundSpellCD				= mod:NewCDTimer(71.5, strikeId, nil, nil, nil, 3)--71-76?
-
---local berserkTimer					= mod:NewBerserkTimer(600)
-
---local countdownCollapsingWorld			= mod:NewCountdown(50, 243983, true, 3, 3)
---local countdownRupturingBlood				= mod:NewCountdown("Alt12", 244016, false, 2, 3)
---local countdownFelstormBarrage			= mod:NewCountdown("AltTwo32", 244000, nil, nil, 3)
-
---mod:AddReadyCheckOption(37460, false)
 
 function mod:ShockwaveTarget(targetname, uId)
 	if not targetname then
@@ -58,7 +49,6 @@ function mod:ShockwaveTarget(targetname, uId)
 	if targetname == UnitName("player") then
 		specWarnShockwaveYou:Show()
 		specWarnShockwaveYou:Play("runaway")
-		yellShockwave:Yell()
 	elseif self:CheckNearby(10, targetname) then
 		specWarnShockwaveClose:Show(targetname)
 		specWarnShockwaveClose:Play("runaway")
@@ -97,7 +87,7 @@ function mod:SPELL_CAST_START(args)
 		--timerGroundSpellCD:Start()
 	elseif spellId == 282615 or spellId == 287554 then
 		warnPetrify:Show()
-		warnPetrify:Play("pchange")
+		warnPetrify:Play("phasechange")
 		timerShockwaveCD:Stop()
 		timerBreathCD:Stop()
 		timerGroundSpellCD:Stop()
@@ -116,7 +106,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 282615 or spellId == 287554 then
 		warnPetrifyEnded:Show()
-		warnPetrifyEnded:Play("pchange")
+		warnPetrifyEnded:Play("phasechange")
 		--Horde
 		--"<68.97 22:37:20> [CLEU] SPELL_AURA_REMOVED#Creature-0-3133-1-14200-144946-00001081D1#Ivus the Forest Lord#Creature-0-3133-1-14200-144946-00001081D1#Ivus the Forest Lord#282615#Petrify#BUFF#nil", -- [1876]
 		--"<85.15 22:37:36> [CLEU] SPELL_CAST_START#Creature-0-3133-1-14200-144946-00001081D1#Ivus the Forest Lord##nil#282463#Shockwave#nil#nil", -- [2224]

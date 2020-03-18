@@ -15,7 +15,7 @@ local CVF = ChartViewer.Frame
 --> desc
 ChartViewer:SetPluginDescription (Loc ["STRING_PLUGIN_DESC"])
 
-local plugin_version = "v2.81" 
+local plugin_version = "v2.90" 
 
 local function CreatePluginFrames (data)
 
@@ -250,11 +250,11 @@ end
 			
 			--put in order
 			for index, tab in ipairs (ChartViewer.tabs) do 
-				local frame = ChartViewer:TabGetFrame (index)
-				frame:Show()
-				frame:SetText (tab.name)
-				frame.index = index
-				frame:SetPoint ("topleft", frame:GetParent(), "topleft", 50 + ( (index-1) * 100), -30)
+				local tabFrame = ChartViewer:TabGetFrame (index)
+				tabFrame:Show()
+				tabFrame:SetText (tab.name)
+				tabFrame.index = index
+				tabFrame:SetPoint ("topleft", tabFrame:GetParent(), "topleft", 50 + ( (index-1) * 100), -30)
 			end
 			
 			--hide not used tabs
@@ -269,7 +269,6 @@ end
 			end
 			
 			--click on the selected tab
-
 			ChartViewer:TabClick (ChartViewer.tab_container [tab_selected])
 		end
 	
@@ -344,16 +343,26 @@ end
 			local frame = ChartViewer.tab_container [index]
 			if (not frame) then
 				frame = ChartViewer:TabCreateFrame (index)
+				frame.widget.index = index
 				frame.index = index
 				tinsert (ChartViewer.tab_container, frame)
 			end
 			return frame
 		end
 		function ChartViewer:TabCreateFrame (index)
-			local frame = CreateFrame ("button", "ChartViewerTab" .. index, ChartViewerWindowFrame, "ChartViewerTabFrameTemplate")
-			--cleanup default scripts
-			frame:SetScript ("OnDoubleClick", nil)
-			frame:SetScript ("OnDragStart", nil)
+			local onClick = function (self, button)
+				if (self.lastclick and self.lastclick + 0.2 > GetTime()) then
+					DETAILS_PLUGIN_CHART_VIEWER:TabDoubleClick (self)
+					self.lastclick = nil
+					return
+				end
+				self.lastclick = GetTime()
+				if (button == "LeftButton") then
+					ChartViewer:TabClick (self)
+				end			
+			end
+			local frame = DetailsFramework:CreateButton (ChartViewerWindowFrame, onClick, 20, 20)
+			frame:SetTemplate ("DETAILS_TAB_BUTTON_TEMPLATE")
 			frame:SetAlpha (0.8)
 			return frame
 		end
@@ -364,21 +373,17 @@ end
 		end
 		function ChartViewer:TabHighlight (index)
 			for i = 1, #ChartViewer.tab_container do
-				local tab_frame = ChartViewer:TabGetFrame (i)
+				local tabFrame = ChartViewer:TabGetFrame (i)
 				if (i == index) then
-					tab_frame.leftSelectedTexture:SetVertexColor (1, .7, 0, 1)
-					tab_frame.middleSelectedTexture:SetVertexColor (1, .7, 0, 1)
-					tab_frame.rightSelectedTexture:SetVertexColor (1, .7, 0, 1)
+					tabFrame:SetTemplate ("DETAILS_TAB_BUTTONSELECTED_TEMPLATE")
 				else
-					tab_frame.leftSelectedTexture:SetVertexColor (1, 1, 1, 1)
-					tab_frame.middleSelectedTexture:SetVertexColor (1, 1, 1, 1)
-					tab_frame.rightSelectedTexture:SetVertexColor (1, 1, 1, 1)
+					tabFrame:SetTemplate ("DETAILS_TAB_BUTTON_TEMPLATE")
 				end
 			end
 
 		end
 		
-		--if is a boss encounter,force close the window
+		--if is a boss encounter, force close the window
 		local check_for_boss = function()
 			if (_detalhes and _detalhes.tabela_vigente and _detalhes.tabela_vigente.is_boss) then
 				if (CVF and CVF:IsShown()) then
@@ -493,7 +498,7 @@ end
 		frame:SetToplevel (true)
 	
 		--> using details framework
-		local chart_panel = ChartViewer:GetFramework():CreateChartPanel (frame, frame:GetWidth()-20, frame:GetHeight()-20, "ChartViewerWindowFrameChartFrame") --318
+		local chart_panel = ChartViewer:GetFramework():CreateChartPanel (frame, frame:GetWidth()-20, frame:GetHeight()-20, "ChartViewerWindowFrameChartFrame")
 		chart_panel:SetPoint ("topleft", frame, "topleft", 8, -65)
 		chart_panel:SetTitle ("")
 		chart_panel:SetFrameStrata ("HIGH")
@@ -526,9 +531,10 @@ end
 		end
 		
 		chart_panel:SetBackdrop({
-				edgeFile = "Interface\\DialogFrame\\UI-DialogBox-gold-Border", tile = true, tileSize = 16, edgeSize = 5,
+				edgeFile = [[Interface\Buttons\WHITE8X8]], tile = true, tileSize = 16, edgeSize = 1,
 				insets = {left = 1, right = 1, top = 0, bottom = 1},})
-
+		chart_panel:SetBackdropBorderColor (0, 0, 0, 1)
+		
 		local g = chart_panel
 		
 		g:Reset()
@@ -562,6 +568,7 @@ end
 			local segments = ChartViewer:GetCombatSegments()
 			local segments_start_index = 1
 			
+			--avoid selecting a trash segment during raids
 			if (IsInInstance() and (combat.is_trash or not combat.is_boss)) then
 				for i = 1, #segments do
 					local this_combat = segments [i]
@@ -621,7 +628,7 @@ end
 					end
 				end
 			
-			elseif (tab_type == 1 and elapsed_time > 12) then
+			elseif (tab_type == 1 and elapsed_time > 12) then --current segment
 			
 				local chart_data = combat.TimeData [capture_name]
 				if (chart_data and chart_data.max_value and chart_data.max_value > 0) then
@@ -631,7 +638,7 @@ end
 					end
 				end
 			
-			elseif (tab_type == 2) then
+			elseif (tab_type == 2) then --last 5 segments
 			
 				local color_index = 1
 				local boss_index = 1
@@ -892,12 +899,16 @@ local create_segment_dropdown = function()
 		local segments = ChartViewer:GetCombatSegments()
 		local return_table = {}
 		
-		for index, combat in ipairs (segments) do 
-			if (combat.is_boss and combat.is_boss.index) then
-				local l, r, t, b, icon = ChartViewer:GetBossIcon (combat.is_boss.mapid, combat.is_boss.index)
-				return_table [#return_table+1] = {value = index, label = "#" .. index .. " " .. combat.is_boss.name, icon = icon, texcoord = {l, r, t, b}, onclick = on_segment_chosen}
-			--else
-			--	return_table [#return_table+1] = {value = index, label = "#" .. index .. " " .. (combat.enemy or "unknown"), icon = [[Interface\Buttons\UI-GuildButton-PublicNote-Up]], onclick = on_segment_chosen}
+		for index, combat in ipairs (segments) do
+			--verify if the combat has a valid chart to display
+			if (next (combat.TimeData)) then
+				if (combat.is_boss and combat.is_boss.index) then
+					local l, r, t, b, icon = ChartViewer:GetBossIcon (combat.is_boss.mapid, combat.is_boss.index)
+					return_table [#return_table+1] = {value = index, label = "#" .. index .. " " .. combat.is_boss.name, icon = icon, texcoord = {l, r, t, b}, onclick = on_segment_chosen}
+					
+				else
+					return_table [#return_table+1] = {value = index, label = "#" .. index .. " " .. (combat.enemy or "unknown"), icon = [[Interface\Buttons\UI-GuildButton-PublicNote-Up]], onclick = on_segment_chosen}
+				end
 			end
 		end
 		
@@ -1177,7 +1188,6 @@ local create_add_tab_panel = function()
 end
 
 function ChartViewer:OnEvent (_, event, ...)
-
 
 	if (event == "ADDON_LOADED") then
 		local AddonName = select (1, ...)

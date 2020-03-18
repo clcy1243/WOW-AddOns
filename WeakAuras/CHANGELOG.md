@@ -1,30 +1,26 @@
-# [2.11.6](https://github.com/WeakAuras/WeakAuras2/tree/2.11.6) (2019-02-26)
+# [2.16.6](https://github.com/WeakAuras/WeakAuras2/tree/2.16.6) (2020-02-14)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.11.5...2.11.6)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.16.5...2.16.6)
 
 ## Highlights
 
- Fixed the remaining cooldown issues and introduced a new button that tells you which auras you still need to upgrade to BuffTrigger2 
+ - Actually enable templates for classic
+- Bug fixes 
 
 ## Commits
 
-InfusOnWoW (6):
+InfusOnWoW (4):
 
-- Fix Cooldown Ready trigger
-- Track spellIds for spells to detect changes in overriding
-- Set SetKeepModelOnHide for those models that are currently shown
-- Remove unused table
-- Fix procs resetting spell cooldowns
-- Fix performance problems due to cooldown tracking
+- BuffTrigger2: Fix ghost states
+- Fix Masque integration with clones and zoom/keep aspect ratio
+- Adjust conditions on moving/deleting/duplicating conditions
+- Fix multiple display of encounter ids
 
-mrbuds (8):
+emptyrivers (1):
 
-- fix padWithLinebreaks (#1194)
-- add missing TODO: remove
-- fix tab selection
-- show trigger when click on icon
-- update BT2upgrade icon on ReloadTriggerOptions
-- reminder to remove code after legacy trigger is removed
-- add warning icon on auras with legacy aura trigger (#1053)
-- Cast trigger: fix name condition #1172
+- add 'reset entry' button to arrays in user mode
+
+mrbuds (1):
+
+- classic: WeakAurasTemplates was not moved to correct folder
 

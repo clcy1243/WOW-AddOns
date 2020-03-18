@@ -18,7 +18,8 @@
 	local _math_floor = math.floor --> api local
 	local _ipairs = ipairs --> api local
 
-
+	local UnitGroupRolesAssigned = DetailsFramework.UnitGroupRolesAssigned
+	
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> status bar core functions
 
@@ -1116,13 +1117,18 @@ do
 				local instance = child.instance
 				if (child.enabled and instance:IsEnabled()) then
 					-- atualiza a threat
-					local isTanking, status, threatpct, rawthreatpct, threatvalue = _UnitDetailedThreatSituation ("player", "target")
-					if (threatpct) then
-						child.text:SetText (_math_floor (threatpct).."%")
-						if (Threat.isTank) then
-							child.text:SetTextColor (_math_abs (threatpct-100)*0.01, threatpct*0.01, 0, 1)
+					if (not DetailsFramework.IsClassicWow()) then
+						local isTanking, status, threatpct, rawthreatpct, threatvalue = _UnitDetailedThreatSituation ("player", "target")
+						if (threatpct) then
+							child.text:SetText (_math_floor (threatpct).."%")
+							if (Threat.isTank) then
+								child.text:SetTextColor (_math_abs (threatpct-100)*0.01, threatpct*0.01, 0, 1)
+							else
+								child.text:SetTextColor (threatpct*0.01, _math_abs (threatpct-100)*0.01, 0, 1)
+							end
 						else
-							child.text:SetTextColor (threatpct*0.01, _math_abs (threatpct-100)*0.01, 0, 1)
+							child.text:SetText ("0%")
+							child.text:SetTextColor (1, 1, 1, 1)
 						end
 					else
 						child.text:SetText ("0%")

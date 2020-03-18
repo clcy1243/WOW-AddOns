@@ -1,10 +1,12 @@
-﻿if GetLocale() ~= "deDE" then return end
+﻿if GetLocale() ~= "deDE" then
+	return
+end
 local L
 
 ------------
 -- The Stone Guard --
 ------------
-L= DBM:GetModLocalization(679)
+L = DBM:GetModLocalization(679)
 
 L:SetWarningLocalization({
 	SpecWarnOverloadSoon		= "%s bald!",
@@ -14,7 +16,6 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	SpecWarnOverloadSoon		= "Spezialwarnung bevor eine Überladung gewirkt werden kann",
 	specWarnBreakJasperChains	= "Spezialwarnung, wenn es sicher ist die $spell:130395 zu sprengen",
-	ArrowOnJasperChains			= "Zeige DBM-Pfeil, wenn du von $spell:130395 betroffen bist",
 	InfoFrame					= "Zeige Infofenster für Bossenergie, Spielerversteinerung und welcher Boss Versteinerung wirkt"
 })
 
@@ -25,7 +26,7 @@ L:SetMiscLocalization({
 ------------
 -- Feng the Accursed --
 ------------
-L= DBM:GetModLocalization(689)
+L = DBM:GetModLocalization(689)
 
 L:SetWarningLocalization({
 	WarnPhase			= "Phase %d",
@@ -39,19 +40,19 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Fire		= "Oh, Erhabener! Durch mich sollt Ihr das Fleisch von den Knochen schmelzen!",
-	Arcane		= "Oh, Weiser der Zeitalter! Vertraut mir Euer arkanes Wissen an!",
-	Nature		= "Oh, großer Geist! Gewährt mir die Macht der Erde!",
-	Shadow		= "Große Seele vergangener Helden! Gewährt mir Euren Schild!"
+	Fire	= "Oh, Erhabener! Durch mich sollt Ihr das Fleisch von den Knochen schmelzen!",
+	Arcane	= "Oh, Weiser der Zeitalter! Vertraut mir Euer arkanes Wissen an!",
+	Nature	= "Oh, großer Geist! Gewährt mir die Macht der Erde!",
+	Shadow	= "Große Seele vergangener Helden! Gewährt mir Euren Schild!"
 })
 
 -------------------------------
 -- Gara'jal the Spiritbinder --
 -------------------------------
-L= DBM:GetModLocalization(682)
+L = DBM:GetModLocalization(682)
 
 L:SetMiscLocalization({
-	Pull		= "Jetzt is' Sterbenszeit!"
+	Pull	= "Jetzt is' Sterbenszeit!"
 })
 
 ----------------------
@@ -60,7 +61,7 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization(687)
 
 L:SetWarningLocalization({
-	DarknessSoon		= "Schild der Dunkelheit in %d Sekunden"
+	DarknessSoon	= "Schild der Dunkelheit in %d Sekunden"
 })
 
 L:SetTimerLocalization({
@@ -69,8 +70,8 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	DarknessSoon		= "Zeige Vorwarnungscountdown für $spell:117697 (5s zuvor)",
-	timerUSRevive		= "Zeige Zeit bis sich $spell:117506 neu formen"
+	DarknessSoon	= "Zeige Vorwarnungscountdown für $spell:117697 (5s zuvor)",
+	timerUSRevive	= "Zeige Zeit bis sich $spell:117506 neu formen"
 })
 
 ------------
@@ -83,7 +84,7 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerDespawnFloor		= "Boden verschwindet"
+	timerDespawnFloor	= "Boden verschwindet"
 })
 
 L:SetOptionLocalization({
@@ -94,7 +95,7 @@ L:SetOptionLocalization({
 ------------
 -- Will of the Emperor --
 ------------
-L= DBM:GetModLocalization(677)
+L = DBM:GetModLocalization(677)
 
 L:SetOptionLocalization({
 	InfoFrame		= "Zeige Infofenster für Spieler, welche von $spell:116525 betroffen sind",

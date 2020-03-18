@@ -74,8 +74,6 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:RegisterMessage("BigWigs_OnBossEngage", "Disable")
-
 	self:Log("SPELL_CAST_START", "TerrifyingScreech", 255041)
 	self:Log("SPELL_CAST_START", "FrenziedCharge", 255567)
 	self:Log("SPELL_CAST_SUCCESS", "BulwarkofJuju", 253721)
@@ -104,7 +102,7 @@ end
 do
 	local function printTarget(self, name, guid)
 		self:TargetMessage2(255567, "yellow", name)
-		self:PlaySound(255567, "alert", "watchstep")
+		self:PlaySound(255567, "alert", "watchstep", name)
 		if self:Me(guid) then
 			self:Say(255567)
 		end

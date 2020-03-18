@@ -1,0 +1,18 @@
+tag 498ef8b4e5b95da82e1059c85eabee1be8965d2e 2018-08-01-release
+Author:	AlexFolland <lexlexlex@gmail.com>
+Date:	Wed Aug 1 03:12:23 2018 -0700
+
+2018-08-01-release
+
+commit b690dc8ef43cbb75234c2eb5d5fdb281dbc5a0cc
+Author: AlexFolland <lexlexlex@gmail.com>
+Date:   Wed Aug 1 03:11:42 2018 -0700
+
+    toc update
+
+commit 298a5555ff68c3ae5766f94447a9f4c336cd8120
+Author: AlexFolland <lexlexlex@gmail.com>
+Date:   Wed Aug 1 03:11:16 2018 -0700
+
+    readd deprecated HasSoulstone function
+

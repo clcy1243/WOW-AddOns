@@ -5,8 +5,10 @@
 
 local mod, CL = BigWigs:NewBoss("Lord Stormsong", 1864, 2155)
 if not mod then return end
-mod:RegisterEnableMob(134060)
+-- Enable on trash before the boss to be sure the module is enabled for the warmup RP.
+mod:RegisterEnableMob(134060, 134423) -- Lord Stormsong, Abyss Dweller
 mod.engageId = 2132
+mod.respawnTime = 30
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -28,6 +30,10 @@ function mod:GetOptions()
 		268347, -- Void Bolt
 		269097, -- Waken the Void
 		269131, -- Ancient Mindbender
+		{268896, "DISPEL"}, -- Mind Rend
+	}, {
+		[268347] = "general",
+		[268896] = "heroic",
 	}
 end
 
@@ -38,6 +44,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "WakentheVoid", 269097)
 	self:Log("SPELL_CAST_SUCCESS", "AncientMindbender", 269131)
 	self:Log("SPELL_AURA_APPLIED", "AncientMindbenderApplied", 269131)
+	self:Log("SPELL_AURA_APPLIED", "MindRendApplied", 268896)
 end
 
 function mod:OnEngage()
@@ -80,4 +87,11 @@ end
 function mod:AncientMindbenderApplied(args)
 	self:TargetMessage2(args.spellId, "red", args.destName)
 	self:PlaySound(args.spellId, "warning", nil, args.destName)
+end
+
+function mod:MindRendApplied(args)
+	if self:Dispeller("magic", nil, args.spellId) or self:Me(args.destGUID) then
+		self:TargetMessage2(args.spellId, "orange", args.destName)
+		self:PlaySound(args.spellId, "alert", nil, args.destName)
+	end
 end

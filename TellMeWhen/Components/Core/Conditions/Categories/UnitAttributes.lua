@@ -77,7 +77,9 @@ ConditionCategory:RegisterCondition(2,    "ALIVE", {
 		return
 			ConditionObject:GetUnitChangedEventString(CNDT:GetUnit(c.Unit)),
 			-- UNIT_FLAGS is probably good enough, but fires much less than _HEALTH
-			ConditionObject:GenerateNormalEventString("UNIT_FLAGS", CNDT:GetUnit(c.Unit))
+			ConditionObject:GenerateNormalEventString("UNIT_FLAGS", CNDT:GetUnit(c.Unit)),
+			ConditionObject:GenerateNormalEventString("PLAYER_UNGHOST"),
+			ConditionObject:GenerateNormalEventString("PLAYER_DEAD")
 			-- ConditionObject:GenerateNormalEventString("UNIT_HEALTH", CNDT:GetUnit(c.Unit))
 	end,
 })
@@ -538,7 +540,8 @@ ConditionCategory:RegisterCondition(13.1,   "UNITRACE", {
 
 			["VoidElf"] = {order = 6.1, text = Name("Void Elf")},
 			["LightforgedDraenei"] = {order = 6.2, text = Name("Lightforged Draenei")},
-			["DarkIronDwarf"] = {order = 6.3, text = Name("Dark Iron Dwarf"), space = true},
+			["DarkIronDwarf"] = {order = 6.3, text = Name("Dark Iron Dwarf")},
+			["KulTiran"] = {order = 6.4, text = Name("Kul Tiran"), space = true},
 
 			["Orc"] = {order = 7, text = Name("Orc")},
 			["Scourge"] = {order = 8, text = Name("Undead")},
@@ -548,8 +551,9 @@ ConditionCategory:RegisterCondition(13.1,   "UNITRACE", {
 			["Goblin"] = {order = 12, text = Name("Goblin")},
 
 			["Nightborne"] = {order = 12.1, text = Name("Nightborne")},
-			["HighmountainTauren"] = {order = 12.2, text = Name("Highmountain Tauren"), space = true},
+			["HighmountainTauren"] = {order = 12.2, text = Name("Highmountain Tauren")},
 			["MagharOrc"] = {order = 12.3, text = Name("Mag'har Orc")},
+			["ZandalariTroll"] = {order = 12.4, text = Name("Zandalari Troll"), space = true},
 
 			["Pandaren"] = {order = 13, text = Name("Pandaren")},
 

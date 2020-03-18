@@ -46,6 +46,21 @@ L= DBM:GetModLocalization(2102)
 -----------------------
 L= DBM:GetModLocalization(2093)
 
+L:SetWarningLocalization({
+	warnGoodBrew		= "%s 시전: 3초",
+	specWarnBrewOnBoss	= "버프 맥주 - %s 자리로 이동"
+})
+
+L:SetOptionLocalization({
+	warnGoodBrew		= "버프 맥주가 시전되면 경고 보기",
+	specWarnBrewOnBoss	= "보스 자리에 버프 맥주가 나오면 특수 경고 보기"
+})
+
+L:SetMiscLocalization({
+	critBrew		= "극대화 맥주",
+	hasteBrew		= "가속 맥주"
+})
+
 -----------------------
 -- Ring of Booty --
 -----------------------
@@ -334,4 +349,60 @@ L = DBM:GetModLocalization("WaycrestTrash")
 
 L:SetGeneralLocalization({
 	name =	"웨이크레스트 저택 일반몹"
+})
+
+-----------------------
+-- <<<Operation: Mechagon>>> --
+-----------------------
+-----------------------
+-- King Gobbamak --
+-----------------------
+L= DBM:GetModLocalization(2357)
+
+-----------------------
+-- Gunker --
+-----------------------
+L= DBM:GetModLocalization(2358)
+
+-----------------------
+-- Trixie & Naeno --
+-----------------------
+L= DBM:GetModLocalization(2360)
+
+-----------------------
+-- HK-8 Aerial Oppression Unit --
+-----------------------
+L= DBM:GetModLocalization(2355)
+
+-----------------------
+-- Tussle Tonks --
+-----------------------
+L= DBM:GetModLocalization(2336)
+
+L:SetMiscLocalization({
+	openingRP		= "통계상으로 아주 이례적인 일이군요! 방문객들이 아직 살아 있었습니다!"
+})
+
+-----------------------
+-- K.U.-J.0. --
+-----------------------
+L= DBM:GetModLocalization(2339)
+
+-----------------------
+-- Machinist's Garden --
+-----------------------
+L= DBM:GetModLocalization(2348)
+
+-----------------------
+-- King Mechagon --
+-----------------------
+L= DBM:GetModLocalization(2331)
+
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("MechagonTrash")
+
+L:SetGeneralLocalization({
+	name =	"메카곤 일반몹"
 })

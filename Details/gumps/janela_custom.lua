@@ -875,7 +875,7 @@
 					local import = function()
 						local text = editbox:GetText()
 						
-						local deserialized_object = Plater.DecompressData (text, "print")
+						local deserialized_object = Details:DecompressData (text, "print")
 						
 						if (not deserialized_object) then
 							_detalhes:Msg (Loc ["STRING_CUSTOM_IMPORT_ERROR"])
@@ -1180,7 +1180,7 @@
 						GameTooltip:AddLine (button.MyObject.actor)
 						GameTooltip:Show()
 						
-						local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = EJ_GetInstanceInfo (button.MyObject.ej_id)
+						local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = DetailsFramework.EncounterJournal.EJ_GetInstanceInfo (button.MyObject.ej_id)
 						
 						modelFrameTexture:SetTexture (bgImage)
 						modelFrameTexture:SetTexCoord (3/512, 370/512, 5/512, 429/512)
@@ -1388,7 +1388,7 @@
 						GameTooltip:AddLine (button.MyObject.actor)
 						GameTooltip:Show()
 						
-						local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = EJ_GetInstanceInfo (button.MyObject.ej_id)
+						local name, description, bgImage, buttonImage, loreImage, dungeonAreaMapID, link = DetailsFramework.EncounterJournal.EJ_GetInstanceInfo (button.MyObject.ej_id)
 						
 						modelFrameTexture:SetTexture (bgImage)
 						modelFrameTexture:SetTexCoord (3/512, 370/512, 5/512, 429/512)

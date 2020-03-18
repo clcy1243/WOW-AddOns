@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(709, "DBM-TerraceofEndlessSpring", nil, 320)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 122 $"):sub(12, -3))
+mod:SetRevision("20200222213340")
 mod:SetCreatureID(60999)--61042 Cheng Kang, 61046 Jinlun Kun, 61038 Yang Guoshi, 61034 Terror Spawn
 mod:SetEncounterID(1431)
 mod:SetUsedIcons(8, 7, 6, 5, 4)
@@ -56,7 +56,7 @@ local specWarnSubmerge					= mod:NewSpecialWarningCount(120455, nil, nil, nil, 2
 
 -- Normal and heroic Phase 1
 local timerThrashCD						= mod:NewCDTimer(9, 131996, nil, "Tank|Healer", nil, 5)--Every 9-12 seconds.
-local timerBreathOfFearCD				= mod:NewNextTimer(33.3, 119414, nil, nil, nil, 2)--Based off bosses energy, he casts at 100 energy, and gains about 3 energy per second, so every 33-34 seconds is a breath.
+local timerBreathOfFearCD				= mod:NewNextTimer(33.3, 119414, nil, nil, nil, 2, nil, nil, nil, 1, 8)--Based off bosses energy, he casts at 100 energy, and gains about 3 energy per second, so every 33-34 seconds is a breath.
 local timerOminousCackleCD				= mod:NewNextTimer(45.5, 119693, nil, nil, nil, 3)
 local timerDreadSpray					= mod:NewBuffActiveTimer(8, 120047)
 local timerDreadSprayCD					= mod:NewNextTimer(20.5, 120047, nil, nil, nil, 2)
@@ -79,8 +79,6 @@ local timerHudStrCD						= mod:NewTimer(10, "timerHudStrCD", 64044, nil, false, 
 
 local berserkTimer						= mod:NewBerserkTimer(900)
 
-local countdownBreathOfFear				= mod:NewCountdown(33.3, 119414, nil, nil, 10)
-
 mod:AddBoolOption("RangeFrame")--For Eerie Skull (2 yards) and Unstable Bolt (3 yards)
 mod:AddBoolOption("SetIconOnHuddle")
 
@@ -90,7 +88,6 @@ mod.vb.specialsCast = 000--Huddle(100), Spout(10), Strike(1)
 mod.vb.thrashCount = 0
 mod.vb.submergeCount = 0
 mod.vb.specialCount = 0
-local huddleIcon = 8
 local wallLight, fearless, waterspout, huddleinterror = DBM:GetSpellInfo(117964), DBM:GetSpellInfo(118977), DBM:GetSpellInfo(120519), DBM:GetSpellInfo(120629)
 local ominousCackleTargets = {}
 local platformGUIDs = {}
@@ -137,7 +134,6 @@ end
 local function warnHuddleInTerrorTargets()
 	warnHuddleInTerror:Show(mod.vb.specialCount, table.concat(huddleInTerrorTargets, "<, >"))
 	table.wipe(huddleInTerrorTargets)
-	huddleIcon = 8
 end
 
 local function startSpecialTimers(self)
@@ -190,7 +186,6 @@ function mod:LeavePlatform()
 			shaPower = shaPower / 3 --Divide it by 3 (cause he gains 3 power per second and we need to know how many seconds to subtrack from fear CD)
 			if (not fearlessApplied and shaPower < 30.3) or (fearlessApplied and shaPower < 5) then--If you have no fearless and breath timer less then 3s, you may not reach to wall. So ignore below 3 sec. Also if you have fearless and breath timer less then 28.3s, not need to warn breath.
 				timerBreathOfFearCD:Start(33.3-shaPower)
-				countdownBreathOfFear:Start(33.3-shaPower)
 				if shaPower < 26.3 then
 					self:ScheduleMethod(26.3-shaPower, "CheckWall")
 				elseif not fearlessApplied then
@@ -212,14 +207,12 @@ function mod:OnCombatStart(delay)
 	end
 	timerBreathOfFearCD:Start(-delay)
 	self:ScheduleMethod(26.3-delay, "CheckWall")
-	countdownBreathOfFear:Start(33.3-delay)
 	platformSent = false
 	onPlatform = false
 	self.vb.phase = 1
 	self.vb.dreadSprayCounter = 0
 	self.vb.thrashCount = 0
 	self.vb.submergeCount = 0
-	huddleIcon = 8
 	MobID = nil
 	self.vb.specialsCast = 000
 	table.wipe(ominousCackleTargets)
@@ -266,7 +259,6 @@ function mod:SPELL_AURA_APPLIED(args)
 	if spellId == 119414 and self:AntiSpam(5, 1) and self.vb.phase < 2 then--using this with antispam is still better then registering SPELL_CAST_SUCCESS for a single event when we don't have to. Less cpu cause mod won't have to check every SPELL_CAST_SUCCESS event.
 		if not platformSent or self.Options.warnBreathOnPlatform then--not in middle, not your problem
 			timerBreathOfFearCD:Start()
-			countdownBreathOfFear:Start(33.3)
 			self:ScheduleMethod(26.3, "CheckWall")--check before 7s, 5s is too late.
 		end
 	elseif spellId == 129147 then
@@ -276,7 +268,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			timerThrashCD:Cancel()
 			specWarnOminousCackleYou:Show()
 			if not self.Options.warnBreathOnPlatform then
-				countdownBreathOfFear:Cancel()
 				timerBreathOfFearCD:Cancel()
 				self:UnscheduleMethod("CheckPlatformLeaved")
 				self:UnscheduleMethod("CheckWall")
@@ -293,7 +284,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerDreadSprayCD:Start(args.sourceGUID)
 	elseif spellId == 119888 and MobID and MobID == args:GetSrcCreatureID() then
 		timerDeathBlossom:Show()
-	elseif spellId == 118977 and args:IsPlayer() then--Fearless, you're leaving platform 
+	elseif spellId == 118977 and args:IsPlayer() then--Fearless, you're leaving platform
 		timerFearless:Start()
 		self:UnscheduleMethod("CheckPlatformLeaved")
 		self:LeavePlatform()
@@ -382,7 +373,7 @@ end
 
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
-	if spellId == 129147 and args:IsPlayer() then -- Move onPlatform check when Ominous Cackle debuff removes (actually reachs platform). Because on 25 man, you can see other platform warning and timer while flying to platform. (not actually reachs platform). This causes health frame error and etc error. 
+	if spellId == 129147 and args:IsPlayer() then -- Move onPlatform check when Ominous Cackle debuff removes (actually reachs platform). Because on 25 man, you can see other platform warning and timer while flying to platform. (not actually reachs platform). This causes health frame error and etc error.
 		onPlatform = true
 	elseif spellId == 120047 then
 		timerDreadSpray:Cancel(args.sourceGUID)
@@ -441,12 +432,12 @@ function mod:SPELL_CAST_SUCCESS(args)--Handling Dread Sprays
 			if self.vb.dreadSprayCounter == 6 then
 				MoveWarningForward:Show()
 			end
-		end	
+		end
 		if MobID == 61042 then
 			if self.vb.dreadSprayCounter == 6 then
 				MoveWarningForward:Show()
 			end
-		end	
+		end
 		if MobID == 61038 then
 			if self.vb.dreadSprayCounter == 3 then
 				MoveWarningRight:Show()
@@ -479,7 +470,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 		self.vb.specialCount = 0
 		timerThrashCD:Cancel()
 		timerBreathOfFearCD:Cancel()
-		countdownBreathOfFear:Cancel()
 		timerOminousCackleCD:Cancel()
 		timerDreadSpray:Cancel()
 		timerDreadSprayCD:Cancel()

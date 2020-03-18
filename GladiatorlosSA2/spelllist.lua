@@ -18,6 +18,7 @@
 			[257428] = "drinking",
 			[272819] = "drinking",
 			[279739] = "drinking",
+			--Was I drunk when I did this??
 			
 			-- Backlash (Aura Applied)
 			[87204] = "backlashFear", -- Vampiric Touch Dispel (Priest)
@@ -71,6 +72,7 @@
 			--[200851] = "rageOfSleeper",
 			--[203727] = "thorns", -- (Resto)
 			[236696] = "thorns", -- (Feral/Balance)
+			[305497] = "thorns", -- Resto/Feral/Balance 8.2
 			[163505] = "rakeStun",
 
 			-- Hunter (Aura Applied)
@@ -97,6 +99,7 @@
 			[198144] = "iceForm",
 			[86949] = "cauterize",
 			[87024] = "cauterize",
+			[190319] = "Combustion",
 
 			-- Monk (Aura Applied)
 			[122278] = "dampenHarm",
@@ -154,7 +157,7 @@
 			[218413] = "voidForm",
 			[15286] = "vampiricEmbrace",
 			[213602] = "greaterFade",
-			[196762] = "innerFocus",
+			--[196762] = "innerFocus",
 
 			-- Rogue (Aura Applied)
 			[185313] = "shadowDance",
@@ -217,7 +220,7 @@
 			[199086] = "warpath", -- Warpath
 			
 			-- Tank Taunts (Aura Applied)
-			[206891] = "tankTauntsON", -- Tank Taunts On
+			--[206891] = "tankTauntsON", -- Tank Taunts On
 		},
 		auraRemoved = {					-- aura removed [spellid] = ".mp3 file name",
 			[642] = "bubbleDown",				--Divine Shield
@@ -282,6 +285,7 @@
 			[15286] = "vampiricEmbraceDown",	--Vampiric Embrace
 			--[203727] = "thornsDown",			--Thorns (Resto)
 			[236696] = "thornsDown",			--Thorns (Feral)
+			[305497] = "thornsDown",			--Thorns 8.2
 			[209584] = "zenFocusTeaDown",		--Zen Focus Tea
 			[216890] = "SpellreflectionDown", 		-- Arms/Fury
 			[23920] = "SpellreflectionDown",			-- Protection
@@ -292,14 +296,25 @@
 			[215769] = "redeemerDown",			-- Spirit of the Redeemer (Priest pretend death talent)
 			[236273] = "duelDown",				-- Duel (Warrior PvP Talent)
 			[213602] = "greaterFadeDown",	-- Greater Fade
-			[196762] = "innerFocusDown",		-- Inner Focus 
+			--[196762] = "innerFocusDown",		-- Inner Focus 
 			[260708] = "SweepingStrikesDown",-- Sweeping Strikes
 			[223658] = "SafeguardDown",		-- Safeguard
 			[204018] = "SpellwardingDown",	-- Blessing of Spellwarding
 			[212704] = "BeastWithinDown",	-- The Beast Within; Beastial Wrath Fear/Horror Immunity Honor Talent
 			[1966] = "FeintDown",			-- Feint
+			[210294] = "DivineFavorDown", -- Divine Favor
+			[104773] = "UnendingResolveDown", -- Unending Resolve
+			[190319] = "combustionDown", -- Combustion
+			[12042] = "APDown", -- Arcane Power
+			[12472] = "icyVeinsDown", -- Icy Veins
+			[29166] = "innervateDown", -- Innervate
+			[6940] = "sacrificeDown", -- Blessing of Sacrifice
+			[199448] = "sacrificeDown", -- Ultimate Sacrifice
+			[196098] = "darkSoulDown", -- Dark Soul
+			[113860] = "darkSoulDown", -- Dark Soul
+			[113858] = "darkSoulDown", -- Dark Soul
 		--TANK TAUNTS
-			[206891] = "tankTauntsOFF", 			-- Tank Taunts Down
+			--[206891] = "tankTauntsOFF", 			-- Tank Taunts Down
 			},
 		castStart = {					-- cast start [spellid] = ".mp3 file name",
 		
@@ -392,6 +407,7 @@
 			[32375] = "massDispell",
 			--[207946] = "lightsWrath",
 			[265202] = "holyWordSalvation", -- Holy Word Salvation
+			[289666] = "greaterHeal", -- >:(
 
 			-- Rogue (Spell Casting)
 				--None! :D
@@ -405,6 +421,7 @@
 			[269352] = "hex", -- Skeletal Hatchling
 			[277778] = "hex", -- Zandalari Tendonripper
 			[277784] = "hex", -- Wicker Mongrel
+			[309328] = "hex", -- Living Honey
 			--[207778] = "giftOfTheQueen",
 			[191634] = "stormkeeper",
 			[210714] = "Icefury", -- Icefury
@@ -432,6 +449,9 @@
 			[115268] = "seduction",
 			--[211714] = "_PHthalkiel",
 			[265187] = "DemonicTyrant", -- Summon Demonic Tyrant
+			[29893] = "CreateHealthstone",
+			[183601] = "CreateHealthstone",
+			[6201] = "CreateHealthstone",
 
 			-- Warrior (Spell Casting)
 				--None! :D
@@ -487,6 +507,7 @@
 			[269352] = "success", -- Skeletal Hatchling
 			[277778] = "success", -- Zandalari Tendonripper
 			[277784] = "success", -- Wicker Mongrel
+			[309328] = "success", -- Living Honey
 				--
 			[5782] = "success", -- Fear (Warlock)
 			[33786] = "success", -- Cyclone (Druid)
@@ -495,6 +516,10 @@
 			[20066] = "success", -- Repentence (Paladin)
 			[605] = "success", -- Mind Control (Priest)
 			[2637] = "success", -- Hibernate (Druid)/leave/lea
+			
+			-- Connected (Big Beefy cast-time abilities that successfully connect.)
+			[203286] = "connected", -- Greater Pyro
+			[116858] = "connected", -- Chaos Bolt
 			
 			-- Purges
 			[528] = "purge",		-- Dispel Magic (Priest)
@@ -526,15 +551,17 @@
 			[58984] = "shadowmeld",
 			[20594] = "stoneform",
 			[7744] = "willOfTheForsaken",
-			[42292] = "trinket2",
+			[42292] = "trinket",
 			[59752] = "everyMan", 
+			[287712] = "haymaker",
+			[295707] = "regeneratin",
 --			[214027] = "trinket1", -- Adaptation Legion
 --			[195756] = "trinket1", -- Adaptation Legion
 --			[195885] = "trinket1", -- Adaptation Legion
 --			[195895] = "trinket1", -- Adaptation Legion
 --			[195845] = "trinket1", -- Adaptation Legion
-			[208683] = "trinket2", -- Gladiator's Medallion Legion
-			[195710] = "trinket3", -- Honorable Medallion Legion
+			[208683] = "trinket", -- Gladiator's Medallion Legion
+			[195710] = "trinket", -- Honorable Medallion Legion
 			[23035] = "battleStandard",
 			[23034] = "battleStandard",
 			[213664] = "NimbleBrew", -- Nimble Brew consumable
@@ -543,6 +570,9 @@
 			[256948] = "SpatialRift", -- Spatial Rift (Void Elf)
 			[257040] = "SpatialRift2", -- Spatial Rift Teleport (Spatial Warp) (Void Elf)
 			[255654] = "BullRush", -- Bull Rush (Highmountain Racial)
+			-- Gladiator's Maledict :^)
+			--[302144] = "maledict",
+			[305252] = "maledict", -- 8.2 
 			
 			-- Death Knight (Cast Success)
 			[47528] = "mindFreeze",
@@ -615,7 +645,7 @@
 			[5215] = "prowl",
 			[22570] = "maim",
 			[236026] = "maim",
-			[209749] = "_PHfaerieSwarm",
+			[209749] = "faerieSwarm",
 			--[210722] = "_PHashamanesFrenzy",
 			[2908] = "soothe",
 			[202246] = "Overrun", -- Overrun Guardian Druid Honor Talent
@@ -653,7 +683,6 @@
 			--[153595] = "CometStorm",
 			[153561] = "Meteor",
 			[198158] = "massInvis",
-			[190319] = "Combustion",
 			[30449] = "spellSteal",
 			[205021] = "rayOfFrost",
 			[235219] = "coldSnap",
@@ -718,6 +747,7 @@
 			[73325] = "leapOfFaith",
 			[215769] = "redeemer",
 			[209780] = "Premonition", -- Premonition
+			[289657] = "holywordconcentration",
 
 			-- Rogue (Cast Success)
 			[2094] = "blind",
@@ -747,6 +777,7 @@
 			[198103] = "earthElemental", -- Updated for Legion
 			[192249] = "stormElemental", -- Updated for Legion
 			[204437] = "lightningLasso",
+			[305483] = "lightningLasso", -- 8.2
 			[51490] = "thunderstorm",
 			
 			-- Shaman (Totems)
@@ -782,6 +813,7 @@
 			[251523] = "spellLock",
 			[251922] = "spellLock",
 			[288047] = "spellLock",
+			[119898] = "spellLock", -- OH LOOK ANOTHER ONE
 			[48020] = "demonicCircleTeleport",
 			[111859] = "grimoireOfService",
 			[111895] = "grimoireOfService",
@@ -797,6 +829,7 @@
 			[199954] = "CurseOfFragility", -- Curse of Fragility
 			[199892] = "CurseOfWeakness", -- Curse of Weakness
 			[199890] = "CurseOfTongues", -- Curse of Tongues
+			[80240] = "havoc",
 
 			-- Warrior (Cast Success)
 			[97462] = "commandingShout",
@@ -813,8 +846,8 @@
 			[236077] = "disarm",
 			[236236] = "disarm",
 			[236320] = "warBanner",
-			[6544] = "_PHheroicLeap",
-			[206572] = "_PHDragonCharge", -- Dragon Charge
+			[6544] = "heroicLeap",
+			[206572] = "DragonCharge", -- Dragon Charge
 		},
 		friendlyInterrupt = {			--friendly interrupt [spellid] = ".mp3 file name",
 			[19647] = "lockout", -- Spell Lock
@@ -823,6 +856,7 @@
 			[212619] = "lockout", -- Spell Lock
 			[119910] = "lockout", -- Spell Lock
 			[115781] = "lockout", -- Spell Lock (Optical Blast)
+			[119898] = "lockout", -- Spell Lock YET AGAIN
 			[2139] = "lockout", -- Counterspell
 			[1766] = "lockout", -- Kick
 			[6552] = "lockout", -- Pummel
@@ -843,6 +877,7 @@
 			[212619] = "interrupted", -- Spell Lock
 			[119910] = "interrupted", -- Spell Lock
 			[115781] = "interrupted", -- Spell Lock (Optical Blast)
+			[119898] = "interrupted", -- Spell Lock YET AGAIN
 			[2139] = "interrupted", -- Counterspell
 			[1766] = "interrupted", -- Kick
 			[6552] = "interrupted", -- Pummel

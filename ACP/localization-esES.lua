@@ -2,10 +2,7 @@ if not ACP then return end
 
 --@non-debug@
 
-if (GetLocale() == "esES") then
-	ACP:UpdateLocale(
-
-{
+L = {
 	["*** Enabling <%s> %s your UI ***"] = "*** Activando <%s> %s su IU ***",
 	["*** Unknown Addon <%s> Required ***"] = "*** Accesorio desconocido <%s> requerido ***",
 	["ACP: Some protected addons aren't loaded. Reload now?"] = "ACP: Algunos accesorios protegidos no se encuentran cargados. ¿Recargar ahora?",
@@ -74,6 +71,8 @@ if (GetLocale() == "esES") then
 	["when performing a reloadui."] = "cuando realice RecargarIU."
 }
 
-    )
+
+if (GetLocale() == "esES") then
+	ACP:UpdateLocale(L)
 end
 --@end-non-debug@

@@ -4,7 +4,7 @@ BigWigs:AddSounds("Heartsbane Triad", {
 	[260741] = "alarm",
 	[260773] = "warning",
 	[260805] = "long",
-	[260926] = "alarm",
+	[260907] = "alarm",
 	[268086] = {"alert","warning"},
 })
 
@@ -21,21 +21,24 @@ BigWigs:AddSounds("Raal the Gluttonous", {
 	[264734] = "warning",
 	[264923] = "warning",
 	[264931] = "long",
-	[265002] = "alert",
+	[265005] = "alert",
 })
 
 BigWigs:AddSounds("Lord and Lady Waycrest", {
 	[261438] = "alert",
 	[261440] = "warning",
 	[261447] = "info",
+	[268278] = "alert",
 	[268306] = "alarm",
+	["stages"] = {"info","long"},
 })
 
 BigWigs:AddSounds("Gorak Tul", {
 	[266181] = "warning",
-	[266198] = "long",
+	[266198] = {"info","long"},
 	[266225] = "alert",
 	[266266] = "info",
+	[268202] = "alert",
 })
 
 BigWigs:AddSounds("Waycrest Manor Trash", {
@@ -65,4 +68,5 @@ BigWigs:AddSounds("Waycrest Manor Trash", {
 	[265880] = "alarm",
 	[265881] = "alert",
 	[271174] = "alert",
+	[278474] = "alert",
 })

@@ -7,6 +7,7 @@ local mod, CL = BigWigs:NewBoss("Adderis and Aspix", 1877, 2142)
 if not mod then return end
 mod:RegisterEnableMob(133379, 133944) -- Adderis, Aspix
 mod.engageId = 2124
+mod.respawnTime = 20
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -21,10 +22,14 @@ local cycloneStrikeCount = 0
 function mod:GetOptions()
 	return {
 		{263246, "ICON"}, -- Lightning Shield
-		{263371, "SAY", "SAY_COUNTDOWN"}, -- Conduction
-		{263309, "SAY", "FLASH"}, -- Cyclone Strike
 		263257, -- Static Shock
+		{263371, "SAY", "SAY_COUNTDOWN"}, -- Conduction
 		263424, -- Arc Dash
+		{263309, "SAY", "FLASH"}, -- Cyclone Strike
+	}, {
+		[263246] = "general",
+		[263257] = -18484, -- Aspix
+		[263424] = -18485, -- Adderis
 	}
 end
 
@@ -54,7 +59,8 @@ do
 	function mod:UNIT_POWER_FREQUENT(event, unit)
 		local guid = UnitGUID(unit)
 		local t = GetTime()
-		if t-prevDash > 2 and self:MobId(guid) == 133379 then -- Adderis
+		-- Adderis gets 100 energy when he dies
+		if t-prevDash > 2 and self:MobId(guid) == 133379 and not UnitIsDead(unit) then -- Adderis
 			if UnitPower(unit) == 100 then
 				prevDash = t
 				self:Message2(263424, "orange") -- Arc Dash
@@ -105,7 +111,7 @@ do
 			self:Flash(263309) -- Cyclone Strike
 		end
 	end
-	
+
 	function mod:CycloneStrike(args)
 		cycloneStrikeCount = cycloneStrikeCount + 1
 		if cycloneStrikeCount % 2 == 1 then

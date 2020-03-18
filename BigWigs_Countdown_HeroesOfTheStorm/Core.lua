@@ -104,14 +104,15 @@ local announcers = {
 	-- Brawl/Event
 	Arena = "Arena",
 	Commodore = "Commodore",
-	-- LuchaA = "El Guapo", -- same for all languages
 	MiraA = "Mira Han",
 	Toy18A = "\"The Kid\"",
 	-- Warcraft
 	AlexstraszaA = "Alexstrasza",
+	AnduinA = "Anduin",
 	AnubarakAnnouncer = "Anub'arak",
 	ArthasA = "Arthas",
 	BrightwingA = "Brightwing",
+	DeathwingA = "Deathwing",
 	ETCA = "E.T.C.",
 	FalstadA = "Falstad",
 	GarroshA = "Garrosh",
@@ -139,9 +140,9 @@ local announcers = {
 	TychusA = "Tychus",
 	ZeratulA = "Zeratul",
 	-- Diablo
-	-- ButcherA = "Butcher", -- same for all languages
 	DiabloA = "Diablo",
 	DeckardA = "Deckard Cain",
+	ImperiusA = "Imperius",
 	MephistoA = "Mephisto",
 	WitchDoctorA = "Nazeebo",
 	BarbarianA = "Sonya",
@@ -155,9 +156,14 @@ local announcers = {
 	-- Skins
 	TyraelMechaA = "Mecha Tyrael",
 	-- Nexus
+	NexusHunterA = "Qhira",
 	OrpheaA = "Orphea",
-	-- Misc
-	-- CloakenA = "Cloaken", -- same for all languages
+}
+
+local snowflakes = {
+	ButcherA = "Butcher", -- Grunts and growls
+	CloakenA = "Cloaken", -- English for all locales
+	LuchaA = "El Guapo", -- Spanish for all locales
 }
 
 function ns.RegisterVoices()
@@ -181,43 +187,16 @@ function ns.RegisterVoices()
 		})
 	end
 
-	-- Butcher (It's just grunts and growls)
-	-- This is reversed from HotS so 2/1 are the more distinctive sounds
-	local k, v = "ButcherA", "Butcher"
-	local id = ("Heroes of the Storm: %s"):format(v)
-	if not BigWigsAPI:HasCountdown(id) then
-		BigWigsAPI:RegisterCountdown(id, L.key_short:format(L.heroes, L[k] or v), {
-			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_DismissBark02.ogg",
-			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_VOX_Attack08.ogg",
-			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_VOX_GetHitSmall02.ogg",
-			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_VOX_GetHitSmall01.ogg",
-			"Interface\\AddOns\\BigWigs_Countdown_HeroesOfTheStorm\\enUS\\ButcherA_VOX_GetHitSmall04.ogg",
-		})
-	end
-
-	-- El Guapo (Spanish for all locales)
-	local k, v = "LuchaA", "El Guapo"
-	local id = ("Heroes of the Storm: %s"):format(v)
-	if not BigWigsAPI:HasCountdown(id) then
-		BigWigsAPI:RegisterCountdown(id, L.key_short:format(L.heroes, L[k] or v), {
-			path:format("enUS", k, 1),
-			path:format("enUS", k, 2),
-			path:format("enUS", k, 3),
-			path:format("enUS", k, 4),
-			path:format("enUS", k, 5),
-		})
-	end
-
-	-- Cloaken (English for all locales)
-	local k, v = "CloakenA", "Cloaken"
-	local id = ("Heroes of the Storm: %s"):format(v)
-	if not BigWigsAPI:HasCountdown(id) then
-		BigWigsAPI:RegisterCountdown(id, L.key_short:format(L.heroes, L[k] or v), {
-			path:format("enUS", k, 1),
-			path:format("enUS", k, 2),
-			path:format("enUS", k, 3),
-			path:format("enUS", k, 4),
-			path:format("enUS", k, 5),
-		})
+	for k, v in next, snowflakes do
+		local id = ("Heroes of the Storm: %s"):format(v)
+		if not BigWigsAPI:HasCountdown(id) then
+			BigWigsAPI:RegisterCountdown(id, L.key_short:format(L.heroes, L[k] or v), {
+				path:format("enUS", k, 1),
+				path:format("enUS", k, 2),
+				path:format("enUS", k, 3),
+				path:format("enUS", k, 4),
+				path:format("enUS", k, 5),
+			})
+		end
 	end
 end

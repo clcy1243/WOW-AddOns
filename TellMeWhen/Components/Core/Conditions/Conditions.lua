@@ -1,4 +1,4 @@
--- --------------------
+﻿-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -797,6 +797,11 @@ CNDT.Substitutions = {
 	src = "c.NameFirst",
 	rep = function(conditionData, conditionSettings, name, name2)
 		return strWrap(TMW:GetSpells(name).First)
+	end,
+},{
+	src = "c.NameStrings",
+	rep = function(conditionData, conditionSettings, name, name2)
+		return strWrap(";" .. table.concat(TMW:GetSpells(name).StringArray, ";") .. ";")
 	end,
 },{
 	src = "c.NameString",

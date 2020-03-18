@@ -1,40 +1,45 @@
-**r686:**
+**r696:**
 
-> Added tracking for new collectibles that were added to Island Expeditions in 8.1 (the accuracy remains highly debatable)
+> Added tracking for collectibles obtained from Horrific Visions (experimental)
+<br>Added tracking for the Zan-Tien Lasso (dropped by mogu in the Vale of Eternal Blossoms)
+<br>Added tracking for pets obtained from 8.3 paragon caches
+<br>Added missing toggle for BFA content in the configuration UI
 
-> The tooltip for Mekkatorque (Normal/Heroic/Mythic) and Lady Jaina Proudmoore (LFR) should now show that the G.M.O.D. can be obtained from this encounter in the respective difficulty
-<br>Attempts for the Kaldorei Nightsaber mount (Drop: Darkshore) should now be tracked correctly for both factions
+> Updated group size recommendations for 8.3 collectibles
+<br>Updated drop rate estimations for mounts obtained in BFA dungeons
 
------
-
-**r685:**
-
-> Updated tracking for the G.M.O.D. mount to account for a recent hotfix by Blizzard
+> Fixed an issue that could cause additional attempts to be registered when Dunegorger Kraulok died nearby, but wasn't actually engaged
+<br>Fixed the detection of pets obtained in the Firelands raid (see notes below)
 
 Developer Notes:
-> This mount now drops from Lady Jaina Proudmoore in LFR difficulty only. The tooltip won't indicate this until it can be corrected in a future update.
+> It appears that Blizzard broke the statistics for the Firelands raid when adding its Timewalking version. Detection for all bosses except Ragnaros and Alysrazor was changed to use NPC looting in order to work around this bug as best as possible, but attempts for items dropped by those two bosses might not always be detected until statistics are being updated correctly again
 
 -----
 
-**r684:**
+**r695:**
 
-> Added tracking for collectibles that can be obtained in the Battle of Dazar'alor raid (experimental)
-
-> Fishing from pools in Skettis (Draenor) should no longer incorrectly add attempts for Mr. Pinchy
-<br>Attempts for the Everburning Treant pet should now be properly tracked for players of both factions
-
------
-
-**r683:**
-
-> Added tracking for collectibles dropped by rares in Darkshore
-<br>Added defeat detection for Midnight's Eternal Reins (Return to Karazhan)
-
-> Fixed tracking for pets obtained from BFA paragon reward boxes 
+> Added tracking for missing collectibles dropped from rares in Uldum and Vale of the Eternal Blossoms
+<br>Added defeat detection for collectibles dropped from rares in Uldum and Vale of the Eternal Blossoms
+<br>Added tracking for Crimson Skipper (dropped by Honey Smasher)
+<br>Added tracking for Mollie (dropped by Dunegorger Kraulok)
 
 -----
 
-**r682:**
+**r694:**
 
-> Added tracking for BFA paragon reputation rewards
-<br>Added an option to display TSM pricing data in the addon's tooltips (courtesy of zsml) - This feature requires the TradeSkillMaster addon
+> Added tracking for collectibles dropped from rares in Uldum and Vale of the Eternal Blossoms (experimental)
+
+-----
+
+**r693:**
+
+> Fixed integration with the TradeSkillMaster4 addon (used to display pricing info in Rarity's tooltip)
+
+-----
+
+**r692:**
+
+> Added defeat detection for all relevant rares in Nazjatar and Mechagon Island
+
+> Fixed tracking for the Timewalking version of the Ozumat encounter (Throne of the Tides)
+<br>Fixed waypoint coordinates for Rukhmar and Sha of Anger (courtesy of divinemaiden)

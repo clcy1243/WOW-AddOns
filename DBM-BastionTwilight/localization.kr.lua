@@ -56,7 +56,7 @@ L:SetMiscLocalization({
 	Quake			= "발밑의 땅이 불길하게 우르릉거립니다...",
 	Thundershock	= "주변의 공기가 에너지로 진동합니다...",
 	Switch			= "우리가 상대하겠다!",--"We will handle them!" comes 3 seconds after this one
-	Phase3			= "꽤나 인상적이었다만...",--"BEHOLD YOUR DOOM!" is about 13 seconds after	
+	Phase3			= "꽤나 인상적이었다만...",--"BEHOLD YOUR DOOM!" is about 13 seconds after
 	Kill			= "이럴 수가...",
 	blizzHatesMe	= "봉화랑 벼락 막대 같이 걸렸어요! 비켜주세요!",
 	WrongDebuff		= "%s 없음"
@@ -90,7 +90,7 @@ L:SetTimerLocalization({
 	TimerEggWeakening 	= "황혼 껍질 사라짐",
 	TimerEggWeaken		= "황혼 껍질 재생성",
 	TimerOrbs			= "구슬 가능"
-})	
+})
 
 L:SetOptionLocalization({
 	WarnOrbSoon			= "구슬 예상 초읽기 알림 보기(5초 전부터, 1초 마다)(부정확함)",
@@ -102,7 +102,6 @@ L:SetOptionLocalization({
 	TimerEggWeaken		= "$spell:87654 재생성 바 보기",
 	TimerOrbs			= "구슬 대기시간 바 보기(부정확함)",
 	SetIconOnOrbs		= "구슬 생성 예상시 위협 수준이 있는 대상에게 전술 목표 아이콘 설정",
-	OrbsCountdown		= "구슬 생성 이전에 초읽기 소리 듣기",
 	InfoFrame			= "위협 수준 획득(구슬 예상 대상)을 정보 창으로 보기"
 })
 

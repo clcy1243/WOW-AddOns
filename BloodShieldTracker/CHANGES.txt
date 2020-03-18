@@ -1,12 +1,12 @@
-tag 6f8af0ec65e79506775c3d71547a935acc93bb35 8.1.0
+tag 194908cf437efb727e4dfe8aa413c5452edbd693 8.2.0
 Author:	Talryn <git@talryn.sent.com>
-Date:	Mon Dec 17 01:32:32 2018 -0500
+Date:	Tue Jun 25 13:54:44 2019 -0400
 
-Tag as 8.1.0.
+Tag as 8.2.0.
 
-commit aa7ca88f01de815ee24d17bb741c0d1e73c4b933
+commit 5d9ec40ae25ac84ee312d9eb2eaaaa0f363747a7
 Author: Talryn <git@talryn.sent.com>
-Date:   Mon Dec 17 01:30:14 2018 -0500
+Date:   Tue Jun 25 13:54:34 2019 -0400
 
-    Update TOC for 8.1.
+    Update TOC for 8.2.
 

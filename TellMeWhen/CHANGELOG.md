@@ -1,3 +1,91 @@
+## v8.7.4
+### Bug Fixes
+* Fix #1762 - Suggestion list insertion via left-click not working due to bizarre new focus-clearing mechanism in WoW 8.3.
+
+## v8.7.3
+* Added a new "Any Totem" condition that will check all totem slots.
+
+### Bug Fixes
+* Fix #1742 - Errors related to improper escaping of user input for the suggestion list.
+* Fix #1755 - Swing Timer conditions with durations other than zero seconds were not triggering updates at the proper moment.
+
+## v8.7.2
+### Bug Fixes
+* Fixed handling of spell names in French that have a space before a colon.
+* More fixes for Blizzard's weird change in 8.2.5 that prevented UnitAura from defaulting to buffs unless explicitly told to.
+
+## v8.7.1
+### Bug Fixes
+* Fixed the buff/debuff "Either" setting for WoW 8.2.5.
+
+## v8.7.0
+* The Missing Buffs/Debuffs icon type now sorts by lowest duration first.
+* Switched to DRList-1.0 (from DRData-1.0) for DR category data.
+* Added events to the Combat Event icon type for swing & spell dodges/blocks/parries.
+* Added an option to Spell Cooldown icons and Cooldown conditions to prevent the GCD from being ignored.
+
+### Bug Fixes
+* Fixed an uncommon issue that could cause some event-driven icons to not update correctly after one of the units being tracked by an icon stops existing.
+
+## v8.6.9
+### Bug Fixes
+* Fixed an issue with Unit Conditions where the initial state of the conditions sometimes wouldn't be taken into account.
+* Changed the Slowed equivalency to track Crippling Poison by ID to prevent it from picking up the Rogue buff by the same name.
+* When scrolling with the mousewheel, sliders that happen to land under your mouse will no longer be adjusted as long as your cursor does not move.
+* Fixed an issue where the Artificial Maximum setting for Bar groups was not properly saving its value as a number.
+
+## v8.6.8
+* Re-releasing TellMeWhen for Retail WoW as 8.6.8 so it will be the latest file for people with out-of-date Twitch apps.
+ * IMPORTANT: If your Twitch app was installing TellMeWhen Classic into your Retail WoW installation, that means your Twitch app is out of date and needs to be updated.
+ * To update your Twitch app, open the menu in the top-left corner of the app and choose "Check for Updates" under the "Help" menu.
+
+## v8.6.7
+* Added an Inset option to the border for both Bar and Icon views.
+
+## v8.6.6
+* Added border options to the standard Icon view (#1705).
+* Added Heal Crit & Non-Crit events to the Combat Event icon (#1685).
+
+### Bug Fixes
+* Fixed a number of errors around the Azerite Essence Active conditions that would occur for characters without a Heart of Azeroth (i.e. sub level 120).
+* Fixed an issue that prevented a descriptive message from being visible in the icon editor when no icon is loaded.
+* Added workarounds to errors that will arise when anchoring a group to a "restricted" region (like a nameplate).
+* Fixed #1696: When swapping profiles, run snippets before setting up icons.
+
+## v8.6.5
+### Bug Fixes
+* The Major Azerite Essence Active condition will now properly update after changing essence.
+
+## v8.6.4
+* New Conditions: 
+ * Azerite Essence Active
+ * Major Azerite Essence Active
+* Added better error messages when testing sounds for sound notifications.
+
+### Bug Fixes
+* Fixed an issue where custom sounds entered by a SoundKitID would not play using the configured sound channel.
+
+## v8.6.3
+### Bug Fixes
+* Fixed #1698 (again): Utils.lua:438: attempt to index local 'path' (a number value)
+* Switched WoW-built-in sounds that TMW registers with LSM to use FileDataIDs instead of paths, since paths aren't allowed anymore in WoW 8.2.
+ * Note that if you have other addons which are still incorrectly registering these sounds (like Omen), they won't work for you.
+
+## v8.6.2
+### Bug Fixes
+* Fixed #1698: Utils.lua:438: attempt to index local 'path' (a number value)
+* Fixed #1699: Several lists when editing notifications were no longer displaying correctly, if at all, in WoW 8.2.
+
+## v8.6.1
+* Buff/Debuff equivalency improvements
+* Added Kul Tiran and Zandalari to the Unit Race condition
+
+### Bug Fixes
+* Fixed #1690: Framelevel issue with latest alphas of Masque.
+* Fixed #1694: Empty group shrinks to minimum size of 1 icon.
+* Fixed that Reactive Ability icons wouldn't use the No Mana state.
+* Fixed #1697: Error when logging in in WoW 8.2.
+
 ## v8.6.0
 
 ### Discord
@@ -10,6 +98,7 @@
 * You can now toggle an icon's enabled/disabled state by Ctrl+clicking it. (#22)
 * New setting for Combat Event icons: Only if Conditions Passing. (#20)
 * Unit Conditions can now be copied from one icon to another. (#18)
+* Added Raise Abomination to the totem icon type for DKs (#1688)
 
 ### Bug Fixes
 * Fixed a bug that caused export strings to sometimes contain a large amount of superfluous defaults.

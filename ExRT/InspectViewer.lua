@@ -17,8 +17,8 @@ module.db.itemsSlotTable = parentModule.db.itemsSlotTable
 module.db.classIDs = ExRT.GDB.ClassID
 module.db.glyphsIDs = {8,9,10,11,12,13}
 
-module.db.statsList = {'intellect','agility','strength','haste','mastery','crit','spellpower','multistrike','versatility','armor','leech','avoidance','speed'}
-module.db.statsListName = {L.InspectViewerInt,L.InspectViewerAgi,L.InspectViewerStr,L.InspectViewerHaste,L.InspectViewerMastery,L.InspectViewerCrit,L.InspectViewerSpd, L.InspectViewerMS, L.InspectViewerVer, L.InspectViewerBonusArmor, L.InspectViewerLeech, L.InspectViewerAvoidance, L.InspectViewerSpeed}
+module.db.statsList = {'intellect','agility','strength','haste','mastery','crit','spellpower','multistrike','versatility','armor','leech','avoidance','speed','corruption'}
+module.db.statsListName = {L.InspectViewerInt,L.InspectViewerAgi,L.InspectViewerStr,L.InspectViewerHaste,L.InspectViewerMastery,L.InspectViewerCrit,L.InspectViewerSpd, L.InspectViewerMS, L.InspectViewerVer, L.InspectViewerBonusArmor, L.InspectViewerLeech, L.InspectViewerAvoidance, L.InspectViewerSpeed,ITEM_MOD_CORRUPTION}
 
 module.db.baseStats = {	--By class IDs
 	strength =  {	1467,	1467,	0,	0,	0,	1467,	0,	0,	0,	0,	0,	0,	},
@@ -67,10 +67,15 @@ module.db.topEnchGems = {
 	--[5940]="Ring:Mastery:27",
 	--[5941]="Ring:Vers:27",
 
-	[5942]="Ring:Crit:37",
-	[5943]="Ring:Haste:37",
-	[5944]="Ring:Mastery:37",
-	[5945]="Ring:Vers:37",
+	--[5942]="Ring:Crit:37",
+	--[5943]="Ring:Haste:37",
+	--[5944]="Ring:Mastery:37",
+	--[5945]="Ring:Vers:37",
+
+	[6108]="Ring:Crit:60",
+	[6109]="Ring:Haste:60",
+	[6110]="Ring:Mastery:60",
+	[6111]="Ring:Vers:60",
 	
 	[5946]="Weapon:hot",
 	[5965]="Weapon:crit",
@@ -81,6 +86,11 @@ module.db.topEnchGems = {
 	[5966]="Weapon:armor",
 	[5949]="Weapon:elemental",
 	[5962]="Weapon:vers",
+
+	[6112]="Weapon:unk",
+	[6150]="Weapon:unk",
+	[6149]="Weapon:unk",
+	[6148]="Weapon:unk",
 
 	[5955]="HunterWeapon:crit",
 	[5956]="HunterWeapon:haste",
@@ -96,19 +106,41 @@ module.db.topEnchGems = {
 	--[153712]="Gem:vers:30",
 	--[153713]="Gem:mastery:30",
 
-	[153709]="Gem:int:40",
-	[153708]="Gem:agi:40",
-	[153707]="Gem:str:40",
+	[153709]="Gem:int:80",
+	[153708]="Gem:agi:80",
+	[153707]="Gem:str:80",
 
-	[154128]="Gem:vers:40",
-	[154129]="Gem:mastery:40",
-	[154126]="Gem:crit:40",
-	[154127]="Gem:haste:40",
+	[168638]="Gem:int:120",
+	[168637]="Gem:agi:120",
+	[168636]="Gem:str:120",
+
+	--[154128]="Gem:vers:40",
+	--[154129]="Gem:mastery:40",
+	--[154126]="Gem:crit:40",
+	--[154127]="Gem:haste:40",
+
+	[168642]="Gem:vers:50",
+	[168640]="Gem:mastery:50",
+	[168639]="Gem:crit:50",
+	[168641]="Gem:haste:50",
+	[169220]="Gem:movespeed:5",
 }
 
 
 module.db.achievementsList = {
-	{	--Uldir
+	{	--Nyalotha
+		L.S_ZoneT25Nyalotha,
+		14193,14194,14195,14196,14041,14043,14044,14045,14050,14046,14051,14048,14049,14052,14054,14055,
+	},{	--EP
+		L.S_ZoneT24Eternal,
+		13718,13719,13725,13726,13727,13728,13729,13730,13731,13732,13733,13784,13785,
+	},{	--CoS
+		L.S_ZoneT23Storms,
+		13414,13416,13417,13418,13419,
+	},{	--BfD
+		L.S_ZoneT23Siege,
+		13289,13290,13291,13292,13293,13295,13299,13300,13311,13312,13313,13314,13322,
+	},{	--Uldir
 		L.S_ZoneT22Uldir,
 		12521,12522,12523,12524,12526,12527,12529,12530,12531,12532,12533,12536,
 	},{	--BFA 5ppl
@@ -162,7 +194,15 @@ module.db.achievementsList = {
 	},
 }
 module.db.achievementsList_statistic = {
-	{	--Uldir
+	{
+		0,0,0,0,{14078,14079,14080,14082},{14089,14091,14093,14094},{14095,14096,14097,14098},{14101,14102,14104,14105},{14123,14124,14125,14126},{14107,14108,14109,14110},{14127,14128,14129,14130},{14111,14112,14114,14115},{14117,14118,14119,14120},{14207,14208,14210,14211},{14131,14132,14133,14134},{14135,14136,14137,14138}
+	},{	--EP
+		0,0,0,{13587,13588,13589,13590},{13595,13596,13597,13598},{13591,13592,13593,13594},{13600,13601,13602,13603},{13604,13605,13606,13607},{13608,13609,13610,13611},{13612,13613,13614,13615},{13616,13617,13618,13619},
+	},{	--CoS
+		0,{13404,13405,13406,13407},{13408,13411,13412,13413},
+	},{	--BfD
+		0,0,0,{13328,13329,13330,13331},{13332,13333,13334,13336},{13354,13355,13356,13357},{13358,13359,13361,13362},{13363,13364,13365,13366},{13367,13368,13369,13370},{13371,13372,13373,13374},{13375,13376,13377,13378},{13379,13380,13381,13382},
+	},{	--Uldir
 		0,0,0,{12786,12787,12788,12789},{12790,12791,12792,12793},{12798,12799,12800,12801},{12802,12803,12804,12805},{12794,12795,12796,12797},{12808,12809,12810,12811},{12813,12814,12815,12816},{12817,12818,12819,12820},
 	},{	--BFA 5ppl
 		0,{12777,12778,12779},{12720,12748,12749},{12763},{12728,12729,12745},{12774,12775,12776},{12773},{12780,12781,12782},{12750,12751,12752},{12766,12767,12768},{12783,12784,12785},
@@ -291,6 +331,11 @@ end
 
 function module.options:Load()
 	self:CreateTilte()
+
+	local GetSpecializationInfoByID = GetSpecializationInfoByID
+	if ExRT.isClassic then
+		GetSpecializationInfoByID = ExRT.Classic.GetSpecializationInfoByID
+	end
 	
 	local function reloadChks(self)
 		local clickID = self.id
@@ -327,7 +372,7 @@ function module.options:Load()
 
 	self.chkAchivs = ELib:Radio(self,ACHIEVEMENTS):Point(385,-28):AddButton():OnClick(reloadChks)
 	self.chkAchivs.id = 4
-	
+
 	do
 		local text = TOOLTIP_AZERITE_UNLOCK_LEVELS:gsub(" %(.*","")
 		self.chkArtifact = ELib:Radio(self,text):Point(260,-28):AddButton():OnClick(reloadChks)
@@ -343,7 +388,7 @@ function module.options:Load()
 			self.chkRelics:Hide()
 		end
 	end
-	
+
 	local inspectScantip = CreateFrame("GameTooltip", "ExRTInspectViewerScanningTooltip", nil, "GameTooltipTemplate")
 	inspectScantip:SetOwner(UIParent, "ANCHOR_NONE")
 
@@ -392,8 +437,8 @@ function module.options:Load()
 	module.db.colorizeLowIlvl685 = VExRT.InspectViewer.ColorizeLowIlvl685
 	module.db.colorizeNoValorUpgrade = VExRT.InspectViewer.ColorizeNoValorUpgrade
 	
-	local colorizeLowIlvl630 = 310
-	local colorizeLowIlvl685 = 350
+	local colorizeLowIlvl630 = 385
+	local colorizeLowIlvl685 = 430
 	if UnitLevel'player' <= 110 then
 		colorizeLowIlvl630 = 185
 		colorizeLowIlvl685 = 240	
@@ -455,7 +500,17 @@ function module.options:Load()
 	
 	local dropDownTable = {
 		[1] = {
-			ExRT.GDB.ClassList,
+			ExRT.isClassic and {
+				"WARRIOR",
+				"PALADIN",
+				"HUNTER",
+				"ROGUE",
+				"PRIEST",
+				"SHAMAN",
+				"MAGE",
+				"WARLOCK",
+				"DRUID",
+			} or ExRT.GDB.ClassList,
 		},
 		[2] = {
 			{"CLOTH","LEATHER","MAIL","PLATE"},
@@ -466,7 +521,11 @@ function module.options:Load()
 			{TANK,HEALER,DAMAGER,MELEE,RANGED},
 		},
 		[4] = {
-			{"_PALADIN_PRIEST_WARLOCK_DEMONHUNTER","_ROGUE_DEATHKNIGHT_MAGE_DRUID_","_WARRIOR_HUNTER_SHAMAN_MONK"},
+			{
+				ExRT.isClassic and "_PALADIN_PRIEST_WARLOCK" or "_PALADIN_PRIEST_WARLOCK_DEMONHUNTER",
+				ExRT.isClassic and "_ROGUE_MAGE_DRUID" or "_ROGUE_DEATHKNIGHT_MAGE_DRUID",
+				ExRT.isClassic and "_WARRIOR_HUNTER_SHAMAN" or "_WARRIOR_HUNTER_SHAMAN_MONK"
+			},
 		},
 	}
 	
@@ -564,6 +623,16 @@ function module.options:Load()
 	self.achievementsDropDown.List[ #self.achievementsDropDown.List + 1 ] = {text = L.minimapmenuclose,checkable = false,func = function()
 		ELib:DropDownClose()
 	end}
+
+	if ExRT.isClassic then
+		self.chkInfo:Hide()
+		self.chkAchivs:Hide()
+		self.chkArtifact:Hide()
+		self.chkRelics:Hide()
+		self.chkItemsTrack:Hide()
+
+		tremove(self.filterDropDown.List,3)
+	end
 	
 		
 	self.borderList = CreateFrame("Frame",nil,self)
@@ -644,7 +713,7 @@ function module.options:Load()
 			for i=1,GetNumGroupMembers() do
 				local name = GetRaidRosterInfo(i)
 				if name and not ExRT.F.table_find(db,name,1) then
-					db[#db + 1] = {name,nil,true}
+					db[#db + 1] = {name,nil,true,class = 100}
 				end
 			end
 		else
@@ -654,7 +723,7 @@ function module.options:Load()
 					name = name .. "-" .. realm
 				end
 				if name and not ExRT.F.table_find(db,name,1) then
-					db[#db + 1] = {name,nil,true}
+					db[#db + 1] = {name,nil,true,class = 100}
 				end
 			end
 		end
@@ -663,16 +732,16 @@ function module.options:Load()
 	function module.options.ReloadPage()
 		local nowDB = {}
 		for name,data in pairs(module.db.inspectDB) do
-			table.insert(nowDB,{name,data})
+			table.insert(nowDB,{name,data,class = data.classID or 100})
 		end
 		for name,_ in pairs(module.db.inspectQuery) do
 			if not module.db.inspectDB[name] then
-				table.insert(nowDB,{name})
+				table.insert(nowDB,{name,class = 100})
 			end
 		end
 		ReloadPage_CreateNowDB(nowDB)
 		
-		table.sort(nowDB,function(a,b) return a[1] < b[1] end)
+		table.sort(nowDB,function(a,b) if a.class == b.class then return a[1] < b[1] else return a.class < b.class end end)
 
 		local scrollNow = ExRT.F.Round(module.options.ScrollBar:GetValue())
 		local counter = 0
@@ -711,6 +780,9 @@ function module.options:Load()
 					if specIcon then
 						line.spec.texture:SetTexture(specIcon)
 						line.spec.id = spec
+					elseif ExRT.isClassic then
+						line.spec.texture:SetTexture("")
+						line.spec.id = nil
 					else
 						line.spec.texture:SetTexture("Interface\\Icons\\INV_MISC_QUESTIONMARK")
 						line.spec.id = nil
@@ -732,6 +804,7 @@ function module.options:Load()
 						item.border:Hide()
 						item.azerite = nil
 						item.azeriteExtra = nil
+						item.star:Hide()
 					end
 					line.perksData = nil
 					
@@ -775,13 +848,13 @@ function module.options:Load()
 									itemLevel = items_ilvl[slotID] or itemLevel
 									line.items[j].text:SetText("|c"..(itemColor or "ffffffff")..(itemLevel or ""))
 									
-									if (enchantID == 0 and ((slotID == 2 and UnitLevel'player' < 120) or (slotID == 15 and UnitLevel'player' < 120) or slotID == 11 or slotID == 12 or (slotID == 16 and UnitLevel'player' == 120)) and module.db.colorizeNoEnch) or
+									if not ExRT.isClassic and ((enchantID == 0 and ((slotID == 2 and UnitLevel'player' < 120) or (slotID == 15 and UnitLevel'player' < 120) or slotID == 11 or slotID == 12 or (slotID == 16 and UnitLevel'player' == 120)) and module.db.colorizeNoEnch) or
 										(items_ilvl[slotID] and items_ilvl[slotID] > 0 and items_ilvl[slotID] < colorizeLowIlvl630 and module.db.colorizeLowIlvl) or
 										(module.db.colorizeNoGems and ExRT.F.IsBonusOnItem(item,module.db.socketsBonusIDs) and IsItemHasNotGem(item)) or 
 										(module.db.colorizeNoGems and (slotID == 16 or slotID == 17) and itemQuality == 6 and IsArtifactItemHasNot3rdGem(item)) or 
 										(module.db.colorizeNoTopEnchGems and not IsTopEnchAndGems(item) and ((slotID == 2 and UnitLevel'player' < 120) or (slotID == 15 and UnitLevel'player' < 120) or slotID == 11 or slotID == 12 or (slotID == 16 and UnitLevel'player' == 120))) or
 										(module.db.colorizeNoValorUpgrade and not IsValorUpgraded(item)) or
-										(items_ilvl[slotID] and items_ilvl[slotID] > 0 and items_ilvl[slotID] < colorizeLowIlvl685 and module.db.colorizeLowIlvl685)
+										(items_ilvl[slotID] and items_ilvl[slotID] > 0 and items_ilvl[slotID] < colorizeLowIlvl685 and module.db.colorizeLowIlvl685))
 										then
 										line.items[j].border:Show()
 									end
@@ -925,15 +998,41 @@ function module.options:Load()
 						line.time:Hide()
 						line.otherInfo:Hide()
 						line.otherInfoTooltipFrame:Hide()
+
+						line.ilvl:SetText("")
 						
-						for j=1,16 do
-							line.items[j]:Hide()
-							line.items[j].border:Hide()
+						local it = -2
+
+						local db = data.essence					
+						if db then
+							if #db > 0 then
+								it = it + 1
+							end
+							for j=1,#db do
+								local power = db[j]
+								
+								local icon = line.items[it]
+								if not icon then
+									break
+								end
+								
+								icon.texture:SetTexture(power.icon)
+								icon.link = "spell:"..power.spellID
+								icon.sid = nil
+								local tier = power.link:gsub("%[.-%]","T"..power.tier..(power.isMajor and "+" or ""))
+								icon.text:SetText(tier or "")
+								if power.isMajor then
+									icon.star:Show()
+								end
+								icon:Show()
+								
+								it = it + 1
+							end
 						end
 
 						local db = data.azerite					
 						if db then
-							local it,lastItem = 0
+							local lastItem = 0
 							for j=1,#db do
 								local power = db[j]
 								if lastItem ~= power.item then
@@ -1022,7 +1121,7 @@ function module.options:Load()
 						line.back:SetGradientAlpha("HORIZONTAL", cR,cG,cB, 0, cR,cG,cB, 0.5)
 					end
 				else
-					for j=0,18 do
+					for j=-1,18 do
 						line.items[j]:Hide()
 					end
 					line.time:Show()
@@ -1321,7 +1420,7 @@ function module.options:Load()
 		line.ilvl = ELib:Text(line,"630.52",11):Color():Point(160,0):Size(50,30):Shadow()
 		
 		line.items = {}
-		for j=0,18 do
+		for j=-1,18 do
 			local item = ELib:Icon(line,nil,21,true):Point("LEFT",210+(24*(j-1)),0)
 			line.items[j] = item
 			item:SetScript("OnEnter",Lines_ItemIcon_OnEnter)
@@ -1350,7 +1449,15 @@ function module.options:Load()
 			item.border.background = item.border:CreateTexture(nil,"OVERLAY")
 			item.border.background:SetPoint("TOPLEFT")
 			item.border.background:SetPoint("BOTTOMRIGHT")
-			
+
+			item.star = item:CreateTexture(nil,"ARTWORK")
+			item.star:SetPoint("CENTER",item,"TOPLEFT",2,-2)
+			item.star:SetSize(18,18)
+			item.star:SetTexture([[Interface\AddOns\ExRT\media\star]])
+			item.star:Hide()
+
+			--3176475
+
 			--item.ilvl = ELib:Text(item,"",11):Color():Point("RIGHT",item,"LEFT",-2,0):Size(0,30):Outline()
 			
 			item.border:Hide()

@@ -44,14 +44,18 @@ local SocketInventoryItem   = _G.SocketInventoryItem
 local Timer                 = _G.C_Timer
 local AzeriteEmpoweredItem  = _G.C_AzeriteEmpoweredItem
 local AzeriteItem           = _G.C_AzeriteItem
+local AzeriteEssence        = _G.C_AzeriteEssence
 
 -- load stuff from extras.lua
-local upgradeTable  = Simulationcraft.upgradeTable
-local slotNames     = Simulationcraft.slotNames
-local simcSlotNames = Simulationcraft.simcSlotNames
-local specNames     = Simulationcraft.SpecNames
-local profNames     = Simulationcraft.ProfNames
-local regionString  = Simulationcraft.RegionString
+local upgradeTable        = Simulationcraft.upgradeTable
+local slotNames           = Simulationcraft.slotNames
+local simcSlotNames       = Simulationcraft.simcSlotNames
+local specNames           = Simulationcraft.SpecNames
+local profNames           = Simulationcraft.ProfNames
+local regionString        = Simulationcraft.RegionString
+local zandalariLoaBuffs   = Simulationcraft.zandalariLoaBuffs
+local essenceMinorSlots   = Simulationcraft.azeriteEssenceSlotsMinor
+local essenceMajorSlots   = Simulationcraft.azeriteEssenceSlotsMajor
 
 -- Most of the guts of this addon were based on a variety of other ones, including
 -- Statslog, AskMrRobot, and BonusScanner. And a bunch of hacking around with AceGUI.
@@ -253,10 +257,28 @@ local function GetGemItemID(itemLink, index)
   return 0
 end
 
+local function GetGemBonuses(itemLink, index)
+  local bonuses = {}
+  local _, gemLink = GetItemGem(itemLink, index)
+  if gemLink ~= nil then
+    local gemSplit = GetItemSplit(gemLink)
+    for index=1, gemSplit[OFFSET_BONUS_ID] do
+      bonuses[#bonuses + 1] = gemSplit[OFFSET_BONUS_ID + index]
+    end
+  end
+
+  if #bonuses > 0 then
+    return table.concat(bonuses, ':')
+  end
+
+  return 0
+end
+
 local function GetItemStringFromItemLink(slotNum, itemLink, itemLoc, debugOutput)
   local itemSplit = GetItemSplit(itemLink)
   local simcItemOptions = {}
   local gems = {}
+  local gemBonuses = {}
 
   -- Item id
   local itemId = itemSplit[OFFSET_ITEM_ID]
@@ -274,9 +296,11 @@ local function GetItemStringFromItemLink(slotNum, itemLink, itemLoc, debugOutput
       local gemId = GetGemItemID(itemLink, gemIndex)
       if gemId > 0 then
         gems[gemIndex] = gemId
+        gemBonuses[gemIndex] = GetGemBonuses(itemLink, gemIndex)
       end
     else
       gems[gemIndex] = 0
+      gemBonuses[gemIndex] = 0
     end
   end
 
@@ -284,9 +308,16 @@ local function GetItemStringFromItemLink(slotNum, itemLink, itemLoc, debugOutput
   while #gems > 0 and gems[#gems] == 0 do
     table.remove(gems, #gems)
   end
+  -- Remove any trailing zeros from the gem bonuses
+  while #gemBonuses > 0 and gemBonuses[#gemBonuses] == 0 do
+    table.remove(gemBonuses, #gemBonuses)
+  end
 
   if #gems > 0 then
     simcItemOptions[#simcItemOptions + 1] = 'gem_id=' .. table.concat(gems, '/')
+    if #gemBonuses > 0 then
+      simcItemOptions[#simcItemOptions + 1] = 'gem_bonus_id=' .. table.concat(gemBonuses, '/')
+    end
   end
 
   -- New style item suffix, old suffix style not supported
@@ -410,10 +441,13 @@ function Simulationcraft:GetBagItemStrings()
             -- slot starts at 39, I believe that is based on some older location values
             -- GetContainerItemInfo uses a 0-based slot index
             -- So take the slot from the unpack and subtract 39 to get the right index for GetContainerItemInfo.
+            --
             -- 2018/01/17 - Change magic number to 47 to account for new backpack slots. Not sure why it went up by 8
             -- instead of 4, possible blizz is leaving the door open to more expansion in the future?
+            --
+            -- 2020/01/24 - Change magic number to 51. Not sure why this changed again but it did! See y'all in 2022?
             container = BANK_CONTAINER
-            slot = slot - 47
+            slot = slot - 51
           end
           _, _, _, _, _, _, itemLink, _, _, itemId = GetContainerItemInfo(container, slot)
           if itemLink then
@@ -438,24 +472,101 @@ function Simulationcraft:GetBagItemStrings()
   return bagItems
 end
 
-function Simulationcraft:GetReoriginationArrayStacks()
-  local questStart = 53571
-  local questEnd = 53580
-  local stacks = 0
+-- Scan buffs to determine which loa racial this player has, if any
+function Simulationcraft:GetZandalariLoa()
+  local zandalariLoa = nil
+  for index = 1, 32 do
+    local _, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", index)
+    if spellId == nil then
+      break
+    end
+    if zandalariLoaBuffs[spellId] then
+      zandalariLoa = zandalariLoaBuffs[spellId]
+      break
+    end
+  end
+  return zandalariLoa
+end
 
-  for questId = questStart, questEnd do
-    if IsQuestFlaggedCompleted(questId) then
-      stacks = stacks + 1
+function Simulationcraft:AzeriteEssencesAvailable()
+  if AzeriteEssence then
+    return true
+  else
+    return false
+  end
+end
+
+function Simulationcraft:GetAzeriteEssencesString()
+  -- defensive check for live/PTR
+  if not Simulationcraft:AzeriteEssencesAvailable() then
+    return nil
+  end
+
+  local essenceStrings = {}
+  -- track if we've found something to export
+  -- characters that haven't unlocked the essences still report slot 0 as unlocked
+  local found = false
+
+  local milestones = AzeriteEssence.GetMilestones()
+  if milestones then
+    for _, milestone in pairs(milestones) do
+      if milestone.unlocked then
+        local essenceID = AzeriteEssence.GetMilestoneEssence(milestone.ID)
+        local spellID = AzeriteEssence.GetMilestoneSpell(milestone.ID)
+        if milestone.slot ~= nil then
+          if essenceID then
+            found = true
+            local essence = AzeriteEssence.GetEssenceInfo(essenceID)
+            essenceStrings[#essenceStrings + 1] = essence.ID .. ':' .. essence.rank
+          else
+            essenceStrings[#essenceStrings + 1] = 0 .. ':' .. 0
+          end
+        elseif spellID then
+          found = true
+          essenceStrings[#essenceStrings + 1] = spellID
+        else
+          -- shouldn't happen?
+        end
+      end
     end
   end
 
-  return stacks
+  if #essenceStrings > 0 and found then
+    return "azerite_essences=" .. table.concat(essenceStrings, '/')
+  else
+    return nil
+  end
 end
+
+function Simulationcraft:GetUnlockedAzeriteEssencesString()
+  -- defensive check for live/PTR
+  if not Simulationcraft:AzeriteEssencesAvailable() then
+    return nil
+  end
+
+  local unlockedEssences = {}
+  local essences = AzeriteEssence.GetEssences()
+  if essences then
+    for _, essence in pairs(essences) do
+      if essence.unlocked then
+        unlockedEssences[#unlockedEssences + 1] = essence.ID .. ':' .. essence.rank
+      end
+    end
+  end
+
+  if #unlockedEssences > 0 then
+    return 'azerite_essences_available=' .. table.concat(unlockedEssences, '/')
+  else
+    return nil
+  end
+end
+
 
 -- This is the workhorse function that constructs the profile
 function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
   -- addon metadata
   local versionComment = '# SimC Addon ' .. GetAddOnMetadata('Simulationcraft', 'Version')
+  local simcVersionWarning = '# Requires SimulationCraft 820-01 or newer'
 
   -- Basic player info
   local _, realmName, _, _, _, _, region, _, _, realmLatinName, _ = LibRealmInfo:GetRealmInfoByUnit('player')
@@ -474,11 +585,17 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
 
   -- Race info
   local _, playerRace = UnitRace('player')
+
   -- fix some races to match SimC format
   if playerRace == 'Scourge' then --lulz
     playerRace = 'Undead'
   else
     playerRace = FormatRace(playerRace)
+  end
+
+  local isZandalariTroll = false
+  if Tokenize(playerRace) == 'zandalari_troll' then
+    isZandalariTroll = true
   end
 
   -- Spec info
@@ -515,6 +632,10 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
     playerProfessions = ''
   end
 
+  -- create a header comment with basic player info and a date
+  local headerComment = "# " .. playerName .. ' - ' .. playerSpec .. ' - ' .. date('%Y-%m-%d %H:%M') .. ' - ' .. playerRegion .. '/' .. playerRealm
+
+
   -- Construct SimC-compatible strings from the basic information
   local player = Tokenize(playerClass) .. '="' .. playerName .. '"'
   playerLevel = 'level=' .. playerLevel
@@ -528,11 +649,23 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
   local playerTalents = CreateSimcTalentString()
 
   -- Build the output string for the player (not including gear)
-  local simulationcraftProfile = versionComment .. '\n'
   local simcPrintError = nil
+  local simulationcraftProfile = ''
+
+  simulationcraftProfile = simulationcraftProfile .. headerComment .. '\n'
+  simulationcraftProfile = simulationcraftProfile .. versionComment .. '\n'
+  simulationcraftProfile = simulationcraftProfile .. simcVersionWarning .. '\n'
+  simulationcraftProfile = simulationcraftProfile .. '\n'
+
   simulationcraftProfile = simulationcraftProfile .. player .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerLevel .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerRace .. '\n'
+  if isZandalariTroll then
+    local zandalari_loa = Simulationcraft:GetZandalariLoa()
+    if zandalari_loa then
+      simulationcraftProfile = simulationcraftProfile .. "zandalari_loa=" .. zandalari_loa .. '\n'
+    end
+  end
   simulationcraftProfile = simulationcraftProfile .. playerRegion .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerRealm .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerRole .. '\n'
@@ -540,6 +673,24 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
   simulationcraftProfile = simulationcraftProfile .. playerTalents .. '\n'
   simulationcraftProfile = simulationcraftProfile .. playerSpec .. '\n'
   simulationcraftProfile = simulationcraftProfile .. '\n'
+
+  -- gate all azerite essence stuff behind this check so addon will work in live and 8.2 PTR
+  if Simulationcraft:AzeriteEssencesAvailable() then
+    local essences = Simulationcraft:GetAzeriteEssencesString()
+    local unlockedEssences = Simulationcraft:GetUnlockedAzeriteEssencesString()
+
+    if essences then
+      simulationcraftProfile = simulationcraftProfile .. essences .. '\n'
+    end
+    if unlockedEssences then
+      -- output as a comment, SimC doesn't care about unlocked powers but users might
+      simulationcraftProfile = simulationcraftProfile .. '# ' .. unlockedEssences .. '\n'
+    end
+
+    if essences or unlockedEssences then
+      simulationcraftProfile = simulationcraftProfile .. '\n'
+    end
+  end
 
   -- Method that gets gear information
   local items = Simulationcraft:GetItemStrings(debugOutput)
@@ -563,14 +714,6 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
       simulationcraftProfile = simulationcraftProfile .. '# ' .. bagItems[i].name .. '\n'
       simulationcraftProfile = simulationcraftProfile .. '# ' .. bagItems[i].string .. '\n'
     end
-  end
-
-  -- collect additional info and output in comments
-  local reoriginationArrayStacks = Simulationcraft:GetReoriginationArrayStacks()
-  if reoriginationArrayStacks > 0 then
-    simulationcraftProfile = simulationcraftProfile .. '\n'
-    simulationcraftProfile = simulationcraftProfile .. '# Stacks of reorigination array based on hidden quest completion\n'
-    simulationcraftProfile = simulationcraftProfile .. '# bfa.reorigination_array_stacks=' .. reoriginationArrayStacks .. '\n'
   end
 
   if links and #links > 0 then
@@ -601,6 +744,9 @@ function Simulationcraft:PrintSimcProfile(debugOutput, noBags, links)
   SimcCopyFrameScrollText:SetText(simcPrintError or simulationcraftProfile)
   SimcCopyFrameScrollText:HighlightText()
   SimcCopyFrameScrollText:SetScript("OnEscapePressed", function(self)
+    SimcCopyFrame:Hide()
+  end)
+  SimcCopyFrameButton:SetScript("OnClick", function(self)
     SimcCopyFrame:Hide()
   end)
 end

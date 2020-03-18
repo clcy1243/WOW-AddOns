@@ -50,6 +50,7 @@ local VUHDO_DEBUFF_BLACKLIST = { };
 
 local UnitDebuff = UnitDebuff;
 local UnitBuff = UnitBuff;
+local UnitIsFriend = UnitIsFriend;
 local table = table;
 local GetTime = GetTime;
 local PlaySoundFile = PlaySoundFile;
@@ -187,13 +188,22 @@ end
 
 --
 local tNextSoundTime = 0;
-local function VUHDO_playDebuffSound(aSound)
+local function VUHDO_playDebuffSound(aSound, aDebuffName)
 	if (aSound or "") == "" or GetTime() < tNextSoundTime then
 		return;
 	end
 
-	PlaySoundFile(aSound);
-	tNextSoundTime = GetTime() + 2;
+	local tSuccess = VUHDO_playSoundFile(aSound);
+
+	if tSuccess then
+		tNextSoundTime = GetTime() + 2;
+	else
+		if aDebuffName then
+			VUHDO_Msg(format(VUHDO_I18N_PLAY_SOUND_FILE_CUSTOM_DEBUFF_ERR, aSound, aDebuffName));
+		else
+			VUHDO_Msg(format(VUHDO_I18N_PLAY_SOUND_FILE_DEBUFF_ERR, aSound));
+		end
+	end
 end
 
 
@@ -289,8 +299,11 @@ local tCurChosenStoredName;
 function VUHDO_determineDebuff(aUnit)
 	tInfo = (VUHDO_RAID or sEmpty)[aUnit];
 
-	if not tInfo then	return 0, ""; -- VUHDO_DEBUFF_TYPE_NONE
-	elseif VUHDO_CONFIG_SHOW_RAID then return tInfo["debuff"], tInfo["debuffName"]; end
+	if not tInfo then 
+		return 0, ""; -- VUHDO_DEBUFF_TYPE_NONE
+	elseif VUHDO_CONFIG_SHOW_RAID then 
+		return tInfo["debuff"], tInfo["debuffName"]; 
+	end
 
 	tUnitDebuffInfo = VUHDO_initDebuffInfos(aUnit);
 
@@ -303,7 +316,6 @@ function VUHDO_determineDebuff(aUnit)
 				break;
 			end
 
-			tStacks = tStacks or 0;
 			if (tExpiry or 0) == 0 then tExpiry = (sCurIcons[tName] or sEmpty)[2] or tNow; end
 
 			-- Custom Debuff?
@@ -313,14 +325,29 @@ function VUHDO_determineDebuff(aUnit)
 				sCurChosenType, sCurChosenName, sCurChosenSpellId = 6, tName, tSpellId; -- VUHDO_DEBUFF_TYPE_CUSTOM
 			end
 
-			if sCurIcons[tName] then tStacks = tStacks + sCurIcons[tName][3]; end
+			tStacks = tStacks or 0;
+
+			if sCurIcons[tName] then
+				-- if we de-dupe a debuff by name then ensure it is tracked as another "stack"
+				-- oddly by default UnitAura returns a "stack" of 0 for un-stackable debuffs 
+				-- in the common case (no de-dupe by name) we'll retain this default
+				if tStacks == 0 then
+					tStacks = 1;
+				end
+
+				if sCurIcons[tName][3] > 0 then 
+					tStacks = tStacks + sCurIcons[tName][3];
+				else
+					tStacks = tStacks + 1;
+				end
+			end
 
 			if tDebuffConfig[2] and ((tDebuffConfig[3] and tUnitCaster == "player") or (tDebuffConfig[4] and tUnitCaster ~= "player")) then -- Icon?
 				sCurIcons[tName] = VUHDO_getOrCreateIconArray(tIcon, tExpiry, tStacks, tDuration, false, tSpellId, tCnt);
 			end
 
 			tType = VUHDO_DEBUFF_TYPES[tTypeString];
-			tAbility = VUHDO_PLAYER_ABILITIES[tType];
+			tAbility = VUHDO_PLAYER_ABILITIES[tType] and UnitIsFriend("player", aUnit);
 			tIsRelevant = not VUHDO_IGNORE_DEBUFF_NAMES[tName]
 				and not (VUHDO_IGNORE_DEBUFFS_BY_CLASS[tInfo["class"] or ""] or sEmpty)[tName];
 
@@ -344,7 +371,8 @@ function VUHDO_determineDebuff(aUnit)
 					sCurIsStandard = true;
 				end
 
-				-- Entweder Fï¿½higkeit vorhanden ODER noch keiner gewï¿½hlt UND auch nicht entfernbare
+				-- Entweder Fähigkeit vorhanden ODER noch keiner gewählt UND auch nicht entfernbare
+				-- Either ability available OR none selected AND not removable (DETECT_DEBUFFS_REMOVABLE_ONLY)
 				if tType and (tAbility or (sCurChosenType == 0 and sIsNotRemovableOnly)) then -- VUHDO_DEBUFF_TYPE_NONE
 					sCurChosenType = tType;
 					tUnitDebuffInfo["CHOSEN"][1], tUnitDebuffInfo["CHOSEN"][2] = tIcon, tStacks;
@@ -382,9 +410,9 @@ function VUHDO_determineDebuff(aUnit)
 					tDebuffSettings = sAllDebuffSettings[tName] or sAllDebuffSettings[tostring(tDebuffInfo[6])];
 
 					if tDebuffSettings then -- particular custom debuff sound?
-						VUHDO_playDebuffSound(tDebuffSettings["SOUND"]);
+						VUHDO_playDebuffSound(tDebuffSettings["SOUND"], tName);
 					elseif VUHDO_CONFIG["CUSTOM_DEBUFF"]["SOUND"] then -- default custom debuff sound?
-						VUHDO_playDebuffSound(VUHDO_CONFIG["CUSTOM_DEBUFF"]["SOUND"]);
+						VUHDO_playDebuffSound(VUHDO_CONFIG["CUSTOM_DEBUFF"]["SOUND"], tName);
 					end
 				end
 

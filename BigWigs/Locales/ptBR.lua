@@ -14,12 +14,15 @@ L.warmup = "Preparar"
 L.warmup_desc = "Tempo até o combate com o chefe começar."
 
 L.already_registered = "|cffff0000ATENÇÃO:|r |cff00ff00%s|r (|cffffff00%s|r) já existe como um módulo do BigWigs, mas as vezes ele tenta registra-lo novamente. Isso normalmente significa que você tem duas cópias deste módulo na sua pasta de addOns devido a alguma falha ao atualizar um addOn. É recomendado que você delete todas as pastas do BigWigs existentes e reinstale-o novamente."
+--L.testNameplate = "Target detected, creating a test nameplate bar over target nameplate."
 
 -- Loader / Options.lua
+--L.classicWarning1 = "|cFF33FF99BigWigs|r: You're using the wrong version of BigWigs on a classic server."
+--L.classicWarning2 = "|cFF33FF99BigWigs|r: Please install the classic version of BigWigs."
 L.officialRelease = "Você está executando uma versão oficial do BigWigs %s (%s)"
 L.alphaRelease = "Você está executando uma versão ALPHA do BigWigs %s (%s)"
 L.sourceCheckout = "Você está executando uma cópia de código do BigWigs %s diretamente do repositório."
-L.getNewRelease = "Seu BigWigs está desatualizado (/bwv) mas você pode facilmente atualizá-lo usando o Twitch Client. Como alternativa, você pode atualizar manualmente em curse.com ou wowinterface.com."
+L.getNewRelease = "Seu BigWigs está desatualizado (/bwv) mas você pode facilmente atualizá-lo usando o Twitch Client. Como alternativa, você pode atualizar manualmente em curseforge.com ou wowinterface.com."
 L.warnTwoReleases = "Seu BigWigs está 2 versões desatualizado! Sua versão provavelmente contém bugs, faltam funcionalidades, ou possui contadores incorretos. É extremamente recomendado uma atualização."
 L.warnSeveralReleases = "|cffff0000Seu BigWigs está %d versões desatualizado!! Nós recomendamos EXTREMAMENTE a atualização para prevenir problemas de sincronização com outros jogadores!|r"
 
@@ -37,6 +40,7 @@ L.missingAddOn = "Por favor, note que esta zona requer o |cFF436EEE%s|r plugin p
 L.disabledAddOn = "Você desabilitou o addOn |cFF436EEE%s|r, contadores não serão exibidos."
 
 L.removeAddon = "Por favor remova '|cFF436EEE%s|r' porque este foi substituído por '|cFF436EEE%s|r'."
+L.alternativeName = "%s (|cFF436EEE%s|r)"
 
 -- Media.lua
 L.Beware = "Cuidado (Algalon)"
@@ -80,7 +84,7 @@ L.slashDescRange = "|cFFFED000/range:|r Abre o indicador de distância."
 L.slashDescVersion = "|cFFFED000/bwv:|r Realiza uma verificação da versão do BigWigs."
 L.slashDescConfig = "|cFFFED000/bw:|r Abre a configuração do BigWigs."
 
-L.gitHubDesc = "BigWigs é um software de código aberto hospedado no GitHub. Nós sempre estamos procurando por novas pessoas para ajudar e todos são bem-vindos para dar uma olhada no nosso código, fazer contribuições e reportar erros. BigWigs é incrível como é hoje, na maioria das vezes, devido a toda comunidade do WoW que nos ajuda.\n\n|cFF33FF99Nossa API agora é documentada e aberta para leitura na wiki do GitHub.|r"
+L.gitHubDesc = "BigWigs é um software de código aberto hospedado no GitHub. Nós sempre estamos procurando por novas pessoas para ajudar e todos são bem-vindos para dar uma olhada no nosso código, fazer contribuições e reportar erros. BigWigs é incrível como é hoje, na maioria das vezes, devido a toda comunidade do WoW que nos ajuda."
 
 L.BAR = "Barras"
 L.MESSAGE = "Mensagens"
@@ -124,6 +128,8 @@ L.INFOBOX_desc = L.infobox_desc
 --L.SAY_COUNTDOWN_desc = "Chat bubbles are easy to spot. BigWigs will use multiple say messages counting down to alert people nearby that an ability on you is about to expire."
 --L.ME_ONLY_EMPHASIZE = "Emphasize (me only)"
 --L.ME_ONLY_EMPHASIZE_desc = "Enabling this will emphasize any messages associated with this ability ONLY if it is casted on you, making them larger and more visible."
+-- L.NAMEPLATEBAR = "Nameplate Bars"
+-- L.NAMEPLATEBAR_desc = "Bars are sometimes attached to nameplates when more than one mob casts the same spell. If this ability is accompanied by a nameplate bar that you want to hide, disable this option."
 
 L.advanced = "Opções Avançadas"
 L.back = "<< Voltar"

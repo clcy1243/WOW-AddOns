@@ -15,7 +15,7 @@ local GetSpellInfo, GetSpellTexture, GetSpellDescription, C_EncounterJournal_Get
 local type, next, tonumber, gsub, lshift, band = type, next, tonumber, gsub, bit.lshift, bit.band
 
 -- Option bitflags
-local coreToggles = { "BAR", "MESSAGE", "ICON", "PULSE", "SOUND", "SAY", "PROXIMITY", "FLASH", "ME_ONLY", "EMPHASIZE", "TANK", "HEALER", "TANK_HEALER", "DISPEL", "ALTPOWER", "VOICE", "COUNTDOWN", "INFOBOX", "CASTBAR", "SAY_COUNTDOWN", "ME_ONLY_EMPHASIZE" }
+local coreToggles = { "BAR", "MESSAGE", "ICON", "PULSE", "SOUND", "SAY", "PROXIMITY", "FLASH", "ME_ONLY", "EMPHASIZE", "TANK", "HEALER", "TANK_HEALER", "DISPEL", "ALTPOWER", "VOICE", "COUNTDOWN", "INFOBOX", "CASTBAR", "SAY_COUNTDOWN", "ME_ONLY_EMPHASIZE", "NAMEPLATEBAR" }
 for i, toggle in next, coreToggles do
 	C[toggle] = lshift(1, i - 1)
 	if L[toggle] then
@@ -27,6 +27,7 @@ end
 -- Toggles that should actually be shown in the interface options
 local listToggles = { "BAR", "FLASH", "MESSAGE", "ICON", "SAY", "SAY_COUNTDOWN", "PROXIMITY", "ALTPOWER", "VOICE", "INFOBOX" }
 local roleToggles = { "TANK", "HEALER", "TANK_HEALER", "DISPEL" }
+-- NOTE: The toggle "OFF" is also valid for entirely disabling an option by default
 
 local used = nil
 function BigWigs:RegisterOption(key, name, desc)
@@ -91,19 +92,19 @@ function BigWigs:GetRoleOptions()
 	return roleToggles
 end
 
--- Display role icon/message in the option, texture 337497 = Interface\\EncounterJournal\\UI-EJ-Icons
+-- Display role message in the option
 local function getRoleStrings(module, key)
 	local option = module.toggleDefaults[key]
 	if band(option, C.TANK_HEALER) == C.TANK_HEALER then
-		return " |T337497:16:16:0:0:64:64:0:19:22:41|t|T337497:16:16:0:0:64:64:20:39:1:20|t", L.tankhealer
+		return L.tankhealer
 	elseif band(option, C.TANK) == C.TANK then
-		return " |T337497:16:16:0:0:64:64:0:19:22:41|t", L.tank
+		return L.tank
 	elseif band(option, C.HEALER) == C.HEALER then
-		return " |T337497:16:16:0:0:64:64:20:39:1:20|t", L.healer
+		return L.healer
 	elseif band(option, C.DISPEL) == C.DISPEL then
-		return " |T337497:16:16:0:0:255:66:229:247:7:27|t", L.dispeller
+		return L.dispeller
 	end
-	return "", ""
+	return ""
 end
 
 local function replaceIdWithName(msg)
@@ -122,7 +123,12 @@ end
 local function replaceIdWithDescription(msg)
 	local id = tonumber(msg)
 	if id > 0 then
-		return GetSpellDescription(id) or BigWigs:Print(("No spell description found for boss option using id %d."):format(id))
+		local desc = GetSpellDescription(id)
+		if desc then
+			return desc:gsub("[\r\n]+$", "") -- Remove stray CR+LF for e.g. 299250 spells that show another spell in their tooltip which isn't part of GetSpellDescription
+		else
+			BigWigs:Print(("No spell description found for boss option using id %d."):format(id))
+		end
 	else
 		local tbl = C_EncounterJournal_GetSectionInfo(-id)
 		if not tbl then
@@ -133,21 +139,23 @@ local function replaceIdWithDescription(msg)
 	end
 end
 
-function BigWigs:GetBossOptionDetails(module, bossOption)
-	local customBossOptions = BigWigs:GetCustomBossOptions()
-	local option = bossOption
-	local t = type(option)
-	if t == "table" then option = option[1]; t = type(option) end
+function BigWigs:GetBossOptionDetails(module, option)
+	local optionType = type(option)
+	if optionType == "table" then
+		option = option[1]
+		optionType = type(option)
+	end
 
-	if t == "string" then
+	local alternativeName = module.altNames and module.altNames[option]
+
+	if optionType == "string" then
+		local customBossOptions = BigWigs:GetCustomBossOptions()
 		if customBossOptions[option] then
 			return option, customBossOptions[option][1], customBossOptions[option][2], customBossOptions[option][4]
 		else
-			local roleIcon, roleDesc
-			if option:find("^custom_") then
-				roleIcon, roleDesc = "", ""
-			else
-				roleIcon, roleDesc = getRoleStrings(module, option)
+			local roleDesc = ""
+			if not option:find("^custom_") then
+				roleDesc = getRoleStrings(module, option)
 			end
 
 			local L = module:GetLocale(true)
@@ -159,7 +167,7 @@ function BigWigs:GetBossOptionDetails(module, bossOption)
 				else
 					title = gsub(title, "{(%-?%d-)}", replaceIdWithName) -- Allow embedding an id in a string.
 				end
-				title = title..roleIcon
+				title = title
 			end
 			if description then
 				if type(description) == "number" then
@@ -187,9 +195,9 @@ function BigWigs:GetBossOptionDetails(module, bossOption)
 			elseif type(icon) == "string" and not icon:find("\\", nil, true) then
 				icon = "Interface\\Icons\\" .. icon
 			end
-			return option, title, description, icon
+			return option, title, description, icon, alternativeName
 		end
-	elseif t == "number" then
+	elseif optionType == "number" then
 		if option > 0 then
 			local spellName, _, icon = GetSpellInfo(option)
 			if not spellName then
@@ -200,9 +208,11 @@ function BigWigs:GetBossOptionDetails(module, bossOption)
 			if not desc then
 				BigWigs:Error(("No spell description was returned for id %d!"):format(option))
 				desc = option
+			else
+				desc = desc:gsub("[\r\n]+$", "") -- Remove stray CR+LF for e.g. 299250 spells that show another spell in their tooltip which isn't part of GetSpellDescription
 			end
-			local roleIcon, roleDesc = getRoleStrings(module, option)
-			return option, spellName..roleIcon, roleDesc..desc, icon
+			local roleDesc = getRoleStrings(module, option)
+			return option, spellName, roleDesc..desc, icon, alternativeName
 		else
 			-- This is an EncounterJournal ID
 			local tbl = C_EncounterJournal_GetSectionInfo(-option)
@@ -215,11 +225,10 @@ function BigWigs:GetBossOptionDetails(module, bossOption)
 				title, description, abilityIcon = tbl.title, tbl.description, tbl.abilityIcon
 			end
 
-			local roleIcon, roleDesc = getRoleStrings(module, option)
-			return option, title..roleIcon, roleDesc..description, abilityIcon or false
+			local roleDesc = getRoleStrings(module, option)
+			return option, title, roleDesc..description, abilityIcon or false, alternativeName
 		end
 	end
 end
 
 BigWigs.C = C
-

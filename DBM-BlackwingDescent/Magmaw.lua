@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod(170, "DBM-BlackwingDescent", nil, 73)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 185 $"):sub(12, -3))
+mod:SetRevision("20200222203750")
 mod:SetCreatureID(41570)
 mod:SetEncounterID(1024) --no ES fires this boss.
 mod:SetZone()
-mod:SetModelSound("Sound\\Creature\\Nefarian\\VO_BD_Nefarian_MagmawIntro01.ogg", nil)
+--mod:SetModelSound("Sound\\Creature\\Nefarian\\VO_BD_Nefarian_MagmawIntro01.ogg", nil)
 --Long: I found this fascinating specimen in the lava underneath this very room. Magmaw should provide an adequate challenge for your pathetic little band.
 --Short: There isn't one
 
@@ -69,7 +69,7 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
-end 
+end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 78006 then--More than one spellid?

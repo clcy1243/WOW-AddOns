@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(2342, "DBM-ZuldazarRaid", 2, 1176)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 18401 $"):sub(12, -3))
+mod:SetRevision("20200206174247")
 mod:SetCreatureID(145261)
 mod:SetEncounterID(2271)
 --mod:DisableESCombatDetection()
@@ -45,7 +45,6 @@ local warnHexofLethargy					= mod:NewTargetAnnounce(284470, 2)
 --Stage Two: Toppling the Guardian
 local warnPhase2						= mod:NewPhaseAnnounce(2, 2)
 local warnLiquidGold					= mod:NewTargetAnnounce(287072, 2)
---local warnRupturingBlood				= mod:NewStackAnnounce(274358, 2, nil, "Tank")
 
 --The Zandalari Crown Jewels
 local specWarnGrosslyIncandescent		= mod:NewSpecialWarningYou(284798, nil, nil, nil, 1, 2)
@@ -53,7 +52,7 @@ local yellGrosslyIncandescent			= mod:NewYell(284798)
 --Stage One: Raiding The Vault
 ----General
 local specWarnCrush						= mod:NewSpecialWarningDodge(283606, nil, nil, nil, 2, 2)
-local specWarnChaoticDisplacement		= mod:NewSpecialWarningYou(289383, nil, nil, nil, 3, 2)
+local specWarnChaoticDisplacement		= mod:NewSpecialWarningYou(289383, nil, nil, nil, 3, 2, 4)
 local yellChaoticDisplacement			= mod:NewYell(289383, nil, false)
 ----The Hand of In'zashi
 local specWarnVolatileCharge			= mod:NewSpecialWarningMoveAway(283507, nil, nil, nil, 1, 2)
@@ -83,7 +82,7 @@ mod:AddTimerLine(DBM:EJ_GetSectionInfo(19495))
 local timerThiefsBane					= mod:NewBuffFadesTimer(30, 287424, nil, nil, nil, 3)
 --Stage One: Raiding The Vault
 local timerCrushCD						= mod:NewCDSourceTimer(55, 283604, nil, nil, nil, 3)--Both
-local timerChaoticDisplacementCD		= mod:NewCDTimer(30.3, 289383, nil, nil, nil, 3, nil, DBM_CORE_HEROIC_ICON)--Mythic
+local timerChaoticDisplacementCD		= mod:NewCDTimer(30.3, 289383, nil, nil, nil, 3, nil, DBM_CORE_MYTHIC_ICON)--Mythic
 ----The Hand of In'zashi
 local timerVolatileChargeCD				= mod:NewCDTimer(12.1, 283507, nil, nil, nil, 3)
 ----Yalat's Bulwark
@@ -103,13 +102,7 @@ local timerSurgingGoldCD				= mod:NewCDTimer(42.5, 289155, nil, nil, nil, 3)--Re
 
 --local berserkTimer					= mod:NewBerserkTimer(600)
 
---local countdownCollapsingWorld			= mod:NewCountdown(50, 243983, true, 3, 3)
---local countdownRupturingBlood				= mod:NewCountdown("Alt12", 244016, false, 2, 3)
---local countdownFelstormBarrage			= mod:NewCountdown("AltTwo32", 244000, nil, nil, 3)
-
 mod:AddNamePlateOption("NPAuraOnGoldenRadiance", 289776)
---mod:AddSetIconOption("SetIconDarkRev", 273365, true)
---mod:AddSetIconOption("SetIconGift", 255594, true)
 --mod:AddRangeFrameOption("8/10")
 mod:AddInfoFrameOption(284664, true)
 
@@ -141,7 +134,7 @@ do
 			local absorb = diamondTargets[unitName]
 			if absorb then
 				local absorbAmount = select(16, DBM:UnitDebuff(uId, 284527)) or 0
-				addLine(unitName, DBM_CORE_SHIELD.."-"..math.floor(absorbAmount))
+				addLine(unitName, DBM_CORE_SHIELD.."--"..math.floor(absorbAmount))
 			end
 		end
 		--Incandescent Stacks
@@ -366,7 +359,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnVolatileCharge:Show()
 			specWarnVolatileCharge:Play("runout")
 			yellVolatileCharge:Yell()
-			yellVolatileChargeFade:Countdown(8)
+			yellVolatileChargeFade:Countdown(spellId)
 		else
 			warnVolatileCharge:CombinedShow(0.3, args.destName)
 		end
@@ -376,7 +369,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnHexofLethargy:Play("stopmove")
 			yellHexofLethargy:Yell()
 			yellHexofLethargyFade:Cancel()
-			yellHexofLethargyFade:Countdown(30)
+			yellHexofLethargyFade:Countdown(spellId)
 		else
 			warnHexofLethargy:CombinedShow(0.3, args.destName)
 		end
@@ -385,7 +378,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnLiquidGold:Show()
 			specWarnLiquidGold:Play("runout")
 			yellLiquidGold:Yell()
-			yellLiquidGoldFade:Countdown(12)
+			yellLiquidGoldFade:Countdown(spellId)
 		else
 			warnLiquidGold:CombinedShow(0.3, args.destName)
 		end
@@ -393,7 +386,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnCoinShower:Show(GROUP)
 			yellCoinShower:Yell()
-			yellCoinShowerFade:Countdown(10)
+			yellCoinShowerFade:Countdown(spellId)
 		elseif not self:IsTank() then--Exclude only tanks
 			specWarnCoinShower:Show(args.destName)
 		end
@@ -498,7 +491,7 @@ function mod:UNIT_DIED(args)
 		timerFlamesofPunishmentCD:Stop()
 		timerCrushCD:Stop(L.Bulwark)
 	--elseif cid == 147218 then--Spirit of Gold
-		
+
 	end
 end
 

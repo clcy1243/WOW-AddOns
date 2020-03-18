@@ -168,7 +168,7 @@ BigWigs:AddColors("High Tinker Mekkatorque", {
 
 BigWigs:AddColors("Stormwall Blockade", {
 	[284262] = "orange",
-	[284362] = "yellow",
+	[284362] = {"blue","yellow"},
 	[284383] = "cyan",
 	[284405] = {"blue","red"},
 	[285000] = {"blue","purple"},
@@ -217,6 +217,7 @@ BigWigs:AddColors("Lady Jaina Proudmoore", {
 BigWigs:AddColors("Battle of Dazar'alor Trash", {
 	[288808] = "blue",
 	[288815] = "red",
+	[288959] = {"blue","yellow"},
 	[289772] = {"blue","red"},
 	[289917] = {"blue","orange"},
 	[289937] = "yellow",

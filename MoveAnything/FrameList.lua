@@ -56,11 +56,14 @@ local m = {
 		local c, e
 		c = API:GetCategory("Achievements & Quests")
 		API:AddElement({name = "AchievementFrame", displayName = "Achievements"}, c)
-		API:AddElement({name = "AchievementAlertFrame1", displayName = "Achievement Alert 1", runOnce = AchievementFrame_LoadUI, create = "AchievementAlertFrameTemplate"}, c)
-		API:AddElement({name = "AchievementAlertFrame2", displayName = "Achievement Alert 2", runOnce = AchievementFrame_LoadUI, create = "AchievementAlertFrameTemplate"}, c)
-		API:AddElement({name = "CriteriaAlertFrame1", displayName = "Criteria Alert 1", create = "CriteriaAlertFrameTemplate"}, c)
-		API:AddElement({name = "CriteriaAlertFrame2", displayName = "Criteria Alert 2", create = "CriteriaAlertFrameTemplate"}, c)
-		local gcaf = API:AddElement({name = "GuildChallengeAlertFrame", displayName = "Guild Challenge Achievement Alert"}, c)
+		local gcaf
+		if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then
+			API:AddElement({name = "AchievementAlertFrame1", displayName = "Achievement Alert 1", runOnce = AchievementFrame_LoadUI, create = "AchievementAlertFrameTemplate"}, c)
+			API:AddElement({name = "AchievementAlertFrame2", displayName = "Achievement Alert 2", runOnce = AchievementFrame_LoadUI, create = "AchievementAlertFrameTemplate"}, c)
+			API:AddElement({name = "CriteriaAlertFrame1", displayName = "Criteria Alert 1", create = "CriteriaAlertFrameTemplate"}, c)
+			API:AddElement({name = "CriteriaAlertFrame2", displayName = "Criteria Alert 2", create = "CriteriaAlertFrameTemplate"}, c)
+			gcaf = API:AddElement({name = "GuildChallengeAlertFrame", displayName = "Guild Challenge Achievement Alert"}, c)
+		end
 		API:AddElement({name = "ObjectiveTrackerFrameMover", displayName = "Objectives Window", scaleWH = 1}, c)
 		API:AddElement({name = "ObjectiveTrackerFrameScaleMover", displayName = "Objectives Window Scale"}, c)
 		API:AddElement({name = "ObjectiveTrackerBonusBannerFrame", displayName = "Objectives Banner Frame"}, c)
@@ -70,11 +73,12 @@ local m = {
 				HideUIPanel(QuestLogDetailFrame)
 			end
 		end}, c)]]
-		API:AddElement({name = "QuestLogPopupDetailFrame", displayName = "Quest Details"}, c)
+		if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then
+			API:AddElement({name = "QuestLogPopupDetailFrame", displayName = "Quest Details"}, c)
+		end
 		API:AddElement({name = "QuestNPCModel", displayName = "Quest Log NPC Model"}, c)
-		--local qlf = API:AddElement({name = "QuestLogFrame", displayName = "Quest Log"}, c)
 		local qf = API:AddElement({name = "QuestFrame", displayName = "Quest Offer / Return", runOnce = function()
-			hooksecurefunc(QuestFrame, "Show", function()
+			hooksecurefunc(WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC and QuestFrame or QuestLogFrame, "Show", function()
 				if MovAny:IsModified("QuestFrame") then
 					HideUIPanel(GossipFrame)
 				end
@@ -123,8 +127,8 @@ local m = {
 		API:AddElement({name = "QueueStatusMinimapButton", displayName = "Battleground Minimap Button"}, c)
 		API:AddElement({name = "QueueStatusFrame", displayName = "Battleground Minimap Button Tooltip"}, c)
 		--API:AddElement({name = "BattlefieldFrame", displayName = "Battleground Queue"}, c)
-		API:AddElement({name = "WorldStateScoreFrame", displayName = "Battleground Scoreboard"}, c)
-		API:AddElement({name = "WorldStateCaptureBar1", displayName = "Flag Capture Timer Bar", onlyOnceCreated = 1}, c)
+		API:AddElement({name = "UIWidgetTopCenterContainerFrame", displayName = "Battleground Scoreboard"}, c)
+		API:AddElement({name = "UIWidgetBelowMinimapContainerFrame", displayName = "Flag Capture Timer Bar", onlyOnceCreated = 1}, c)
 		local wsauf = API:AddElement({name = "WorldStateAlwaysUpFrame", displayName = "Top Center Status Display", noUnanchorRelatives = 1}, c)
 		API:AddElement({name = "AlwaysUpFrame1", displayName = "AlwaysUp Frame 1", create = "WorldStateAlwaysUpTemplate", onlyOnceCreated = 1}, c)
 		API:AddElement({name = "AlwaysUpFrame2", displayName = "AlwaysUp Frame 2", create = "WorldStateAlwaysUpTemplate", onlyOnceCreated = 1}, c)
@@ -225,17 +229,18 @@ local m = {
 		local gbmfc = API:AddElement({name = "GuildBankMoneyFrameCopperButton", displayName = "Guild Bank Money Copper"}, c)
 		API:AddElement({name = "VoidStorageFrame", displayName = "Void Storage"}, c) --refuseSync = MOVANY.FRAME_ONLY_WHEN_VOIDSTORAGE_IS_OPEN
 		c = API:GetCategory("Blizzard Bottom Bar")
-		API:AddElement({name = "MainMenuBar", displayName = "Main Bar", run = function ()
+		--[[API:AddElement({name = "MainMenuBar", displayName = "Main Bar", run = function ()
 			if not MovAny:IsModified(OverrideActionBar) then
 				local v = _G["OverrideActionBar"]
 				v:ClearAllPoints()
 				v:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", (UIParentGetWidth() / 2) - (v:GetWidth() / 2), 0)
 			end
 		end, hideList = {
-			{"MainMenuBarArtFrame", "BACKGROUND","ARTWORK"},
-			{"PetActionBarFrame", "OVERLAY"},
-			{"StanceBarFrame", "OVERLAY"},
-			{"MainMenuBar", "DISABLEMOUSE"},
+				{"MainMenuBarArtFrameBackground", "BACKGROUND", "ARTWORK"},
+				{"MainMenuBarArtFrame", "BACKGROUND", "ARTWORK"},
+				{"PetActionBarFrame", "OVERLAY"},
+				{"StanceBarFrame", "OVERLAY"},
+				{"MainMenuBar", "DISABLEMOUSE"},
 			}
 		}, c)
 		API:AddElement({name = "MainMenuBarArtFrameLeftEndCapMover", displayName = "Left Gryphon", noScale = 1}, c)
@@ -276,11 +281,11 @@ local m = {
 					MovAny.API:SyncElement("MainMenuExpBar")
 				end)
 			end
-		}, c)
-		API:AddElement({name = "HonorWatchBar", displayName = "Honor Bar"}, c)
-		API:AddElement({name = "ArtifactWatchBar", displayName = "Artifact Bar"}, c)
+		}, c)--]]
+		--API:AddElement({name = "HonorWatchBar", displayName = "Honor Bar"}, c)
+		--API:AddElement({name = "ArtifactWatchBar", displayName = "Artifact Bar"}, c)
 		--API:AddElement({name = "MainMenuBarMaxLevelBar", displayName = "Max Level Bar Filler", noFE = 1, noScale = 1}, c)
-		API:AddElement({name = "ReputationWatchBar", displayName = "Reputation Tracker Bar", runOnce = function()
+		--[[API:AddElement({name = "ReputationWatchBar", displayName = "Reputation Tracker Bar", runOnce = function()
 			if ReputationWatchBar_Update then
 				hooksecurefunc("ReputationWatchBar_Update", MovAny.hReputationWatchBar_Update)
 			end
@@ -294,7 +299,7 @@ local m = {
 				ReputationXPBarTexture2,
 				ReputationXPBarTexture3,
 			}
-		}, c)
+		}, c)--]]
 		API:AddElement({name = "MicroButtonsMover", displayName = "Micro Menu"}, c)
 		--API:AddElement({name = "MicroButtonsSplitMover", displayName = "Micro Menu - Split"}, c)
 		--API:AddElement({name = "MicroButtonsVerticalMover", displayName = "Micro Menu - Vertical"}, c)
@@ -430,7 +435,9 @@ local m = {
 		gbmfg:AddCategory(c)
 		gbmfs:AddCategory(c)
 		gbmfc:AddCategory(c)
-		gcaf:AddCategory(c)
+		if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then
+			gcaf:AddCategory(c)
+		end
 		API:AddElement({name = "GuildControlUI", displayName = "Guild Control"}, c)
 		local lfgf = API:AddElement({name = "LookingForGuildFrame", displayName = "Guild Finder"}, c)
 		--API:AddElement({name = "GuildInfoFrame", displayName = "Guild Info"}, c)

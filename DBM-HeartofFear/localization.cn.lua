@@ -1,13 +1,12 @@
-﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 1/26/2013
-
-if GetLocale() ~= "zhCN" then return end
+﻿if GetLocale() ~= "zhCN" then
+	return
+end
 local L
 
 ------------
 -- Imperial Vizier Zor'lok --
 ------------
-L= DBM:GetModLocalization(745)
+L = DBM:GetModLocalization(745)
 
 L:SetWarningLocalization({
 	warnAttenuation		= "%s：%s (%s)",
@@ -25,36 +24,31 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Platform			= "%s朝他其中一个平台飞去了！",
-	Defeat				= "我们不会向黑暗虚空的绝望屈服。如果女皇要我们去死，我们便照做。"
+	Platform	= "%s朝他其中一个平台飞去了！",
+	Defeat		= "我们不会向黑暗虚空的绝望屈服。如果女皇要我们去死，我们便照做。"
 })
-
 
 ------------
 -- Blade Lord Ta'yak --
 ------------
-L= DBM:GetModLocalization(744)
+L = DBM:GetModLocalization(744)
 
 L:SetOptionLocalization({
-	UnseenStrikeArrow	= "DBM箭头：当有人受到$spell:122949影响时",
 	RangeFrame			= "距离监视（10码）：$spell:123175"
 })
-
 
 -------------------------------
 -- Garalon --
 -------------------------------
-L= DBM:GetModLocalization(713)
+L = DBM:GetModLocalization(713)
 
 L:SetWarningLocalization({
 	warnCrush		= "%s",
 	specwarnUnder	= "远离紫圈！"
 })
 
-
 L:SetOptionLocalization({
 	specwarnUnder	= "特殊警报：当你在首领身体下方时",
-	countdownCrush	= DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT:format(122774).."（仅英雄难度）"
 })
 
 L:SetMiscLocalization({
@@ -65,16 +59,16 @@ L:SetMiscLocalization({
 ----------------------
 -- Wind Lord Mel'jarak --
 ----------------------
-L= DBM:GetModLocalization(741)
+L = DBM:GetModLocalization(741)
 
 L:SetMiscLocalization({
-	Reinforcements		= "风领主梅尔加拉克调遣援兵了！"
+	Reinforcements	= "风领主梅尔加拉克调遣援兵了！"
 })
 
 ------------
 -- Amber-Shaper Un'sok --
 ------------
-L= DBM:GetModLocalization(737)
+L = DBM:GetModLocalization(737)
 
 L:SetWarningLocalization({
 	warnReshapeLife				= "%s：>%s< (%d)",--Localized because i like class colors on warning and shoving a number into targetname broke it using the generic.
@@ -90,8 +84,8 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	timerDestabalize			= "动摇意志（%2$d）：%1$s",
-	timerAmberExplosionAMCD		= "爆炸冷却：琥珀畸怪"
+	timerDestabalize		= "动摇意志（%2$d）：%1$s",
+	timerAmberExplosionAMCD	= "爆炸冷却：琥珀畸怪"
 })
 
 L:SetOptionLocalization({
@@ -105,30 +99,29 @@ L:SetOptionLocalization({
 	specwarnAmberExplosionAM	= "特殊警报：打断琥珀畸怪的$spell:122402",
 	specwarnAmberExplosionOther	= "特殊警报：打断变异构造体的$spell:122398",
 	timerAmberExplosionAMCD		= "计时条：琥珀畸怪的下一次$spell:122402",
-	InfoFrame					= "信息框：意志值",
-	FixNameplates				= "在变为变异构造体后自动关闭影响战斗的姓名板<br/>（战斗结束后会自动恢复原始设置）"
+	InfoFrame					= "信息框：意志值"
 })
 
 L:SetMiscLocalization({
-	WillPower					= "意志"
+	WillPower	= "意志"
 })
 
 ------------
 -- Grand Empress Shek'zeer --
 ------------
-L= DBM:GetModLocalization(743)
+L = DBM:GetModLocalization(743)
 
 L:SetWarningLocalization({
-	warnAmberTrap		= "琥珀陷阱：%d/5"
+	warnAmberTrap	= "琥珀陷阱：%d/5"
 })
 
 L:SetOptionLocalization({
-	warnAmberTrap		= "警报：$spell:125826的生成，并提示进度", -- maybe bad translation.
-	InfoFrame			= "信息框：受$spell:125390效果影响的玩家",
-	RangeFrame			= "距离监视（5码）：$spell:123735"
+	warnAmberTrap	= "警报：$spell:125826的生成，并提示进度", -- maybe bad translation.
+	InfoFrame		= "信息框：受$spell:125390效果影响的玩家",
+	RangeFrame		= "距离监视（5码）：$spell:123735"
 })
 
 L:SetMiscLocalization({
-	PlayerDebuffs		= "凝视",
-	YellPhase3			= "别找借口了，女皇！消灭这些傻瓜，否则我会亲手杀了你！"
+	PlayerDebuffs	= "凝视",
+	YellPhase3		= "别找借口了，女皇！消灭这些傻瓜，否则我会亲手杀了你！"
 })

@@ -1,13 +1,13 @@
 local mod	= DBM:NewMod(324, "DBM-DragonSoul", nil, 187)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 190 $"):sub(12, -3))
+mod:SetRevision("20200222203750")
 mod:SetCreatureID(55308)
 mod:SetEncounterID(1294)
 --mod:DisableRegenDetection()--Uncomment in next dbm release
 mod:SetZone()
 mod:SetUsedIcons()
-mod:SetModelSound("sound\\CREATURE\\WarlordZonozz\\VO_DS_ZONOZZ_INTRO_01.OGG", "sound\\CREATURE\\WarlordZonozz\\VO_DS_ZONOZZ_SPELL_05.OGG")
+--mod:SetModelSound("sound\\CREATURE\\WarlordZonozz\\VO_DS_ZONOZZ_INTRO_01.OGG", "sound\\CREATURE\\WarlordZonozz\\VO_DS_ZONOZZ_SPELL_05.OGG")
 
 mod:RegisterCombat("combat")
 
@@ -105,7 +105,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnPsychicDrain:Show()
 		timerPsychicDrainCD:Start()
 	end
-end	
+end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
@@ -146,7 +146,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			self:Schedule(0.3, warnShadowsTargets)
 		end
 	end
-end		
+end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 
 function mod:SPELL_AURA_REMOVED(args)
