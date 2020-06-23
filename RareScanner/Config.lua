@@ -170,6 +170,14 @@ local DEFAULT_MAIN_CATEGORY = 0
 
 local general_options
 
+local function RS_Set(list)
+	local set = {}
+	for k, _ in pairs(list) do 
+		set[k] = true 
+	end
+	return set
+end
+
 local function GetGeneralOptions()
 	local orderedMarkers = {}
 	for k, v in pairs(private.MARKERS) do
@@ -489,13 +497,18 @@ local function GetDisplayOptions()
 					width = "full",
 					disabled = function() return not private.db.display.displayButton end,
 				},
+				separatorButtonPosition = {
+					order = 5,
+					type = "header",
+					name = AL["DISPLAY_BUTTON_SCALE_POSITION"],
+				},
 				scale = {
-					order = 5.1,
+					order = 6.1,
 					type = "range",
 					name = AL["DISPLAY_BUTTON_SCALE"],
 					desc = AL["DISPLAY_BUTTON_SCALE_DESC"],
 					min	= 0.4,
-					max	= 1,
+					max	= 1.1,
 					step = 0.01,
 					bigStep = 0.05,
 					get = function() return private.db.display.scale end,
@@ -505,29 +518,40 @@ local function GetDisplayOptions()
 					width = "double",
 					disabled = function() return not private.db.display.displayButton end,	
 				},
-				resetPosition = {
-					order = 5.2,
-					name = AL["RESET_POSITION"],
-					desc = AL["RESET_POSITION_DESC"],
-					type = "execute",
-					func = function() RareScanner:ResetPosition() end,
-					width = "normal",
-				},
 				test = {
-					order = 5.3,
+					order = 6.2,
 					name = AL["TEST"],
 					desc = AL["TEST_DESC"],
 					type = "execute",
 					func = function() RareScanner:Test() end,
 					width = "normal",
 				},
+				lockPosition = {
+					order = 7.1,
+					type = "toggle",
+					name = AL["LOCK_BUTTON_POSITION"],
+					desc = AL["LOCK_BUTTON_POSITION_DESC"],
+					get = function() return private.db.display.lockPosition end,
+					set = function(_, value)
+						private.db.display.lockPosition = value
+					end,
+					width = "double",
+				},
+				resetPosition = {
+					order = 7.2,
+					name = AL["RESET_POSITION"],
+					desc = AL["RESET_POSITION_DESC"],
+					type = "execute",
+					func = function() RareScanner:ResetPosition() end,
+					width = "normal",
+				},
 				separatorMessages = {
-					order = 6,
+					order = 8,
 					type = "header",
 					name = AL["MESSAGE_OPTIONS"],
 				},
 				displayRaidWarning = {
-					order = 7,
+					order = 9,
 					type = "toggle",
 					name = AL["SHOW_RAID_WARNING"],
 					desc = AL["SHOW_RAID_WARNING_DESC"],
@@ -538,7 +562,7 @@ local function GetDisplayOptions()
 					width = "full",
 				},
 				displayChatMessage = {
-					order = 8,
+					order = 10,
 					type = "toggle",
 					name = AL["SHOW_CHAT_ALERT"],
 					desc = AL["SHOW_CHAT_ALERT_DESC"],
@@ -549,12 +573,12 @@ local function GetDisplayOptions()
 					width = "full",
 				},
 				separatorNavigation = {
-					order = 9,
+					order = 11,
 					type = "header",
 					name = AL["NAVIGATION_OPTIONS"],
 				},
 				enableNavigation = {
-					order = 10,
+					order = 12,
 					type = "toggle",
 					name = AL["NAVIGATION_ENABLE"],
 					desc = AL["NAVIGATION_ENABLE_DESC"],
@@ -565,7 +589,7 @@ local function GetDisplayOptions()
 					width = "full",
 				},
 				navigationLockEntity = {
-					order = 11,
+					order = 13,
 					type = "toggle",
 					name = AL["NAVIGATION_LOCK_ENTITY"],
 					desc = AL["NAVIGATION_LOCK_ENTITY_DESC"],
@@ -577,12 +601,12 @@ local function GetDisplayOptions()
 					disabled = function() return not private.db.display.enableNavigation end,
 				},
 				separatorLog = {
-					order = 12,
+					order = 14,
 					type = "header",
 					name = AL["LOG_WINDOW_OPTIONS"],
 				},
 				displayLogWindow = {
-					order = 13,
+					order = 15,
 					type = "toggle",
 					name = AL["DISPLAY_LOG_WINDOW"],
 					desc = AL["DISPLAY_LOG_WINDOW_DESC"],
@@ -593,7 +617,7 @@ local function GetDisplayOptions()
 					width = "full",
 				},
 				autoHideLogWindow = {
-					order = 14,
+					order = 16,
 					type = "range",
 					name = AL["LOG_WINDOW_AUTOHIDE"],
 					desc = AL["LOG_WINDOW_AUTOHIDE_DESC"],
@@ -615,6 +639,38 @@ local function GetDisplayOptions()
 	return display_options
 end
 
+local sortValues = function(list)
+	local sortedValues = {}
+	for key, value in pairs (list) do
+		tinsert(sortedValues, value)
+	end
+	table.sort(sortedValues)
+	
+	local sortedKeys = {}
+	for i, sortedValue in ipairs(sortedValues) do
+		for key, value in pairs (list) do
+			if (sortedValue == value) then
+				tinsert(sortedKeys, key)
+				break
+			end
+		end
+	end
+	
+	return sortedKeys
+end
+
+local getZoneName = function(zoneID)
+	local continentInfo = C_Map.GetMapInfo(zoneID)
+	if (continentInfo) then	
+		-- For those zones with the same name, add a comment
+		if (AL["ZONE_"..zoneID] ~= "ZONE_"..zoneID) then
+			return string.format(AL["ZONE_"..zoneID], continentInfo.name)
+		else
+			return continentInfo.name
+		end
+	end
+end
+
 local filter_options
 
 local function GetFilterOptions()
@@ -622,11 +678,12 @@ local function GetFilterOptions()
 		-- load continent combo
 		local CONTINENT_MAP_IDS = {} 
 		for k, v in pairs(private.CONTINENT_ZONE_IDS) do
-			if (v.id) then
-				local continentInfo = C_Map.GetMapInfo(k)
-				CONTINENT_MAP_IDS[k] = continentInfo.name
-			else
-				CONTINENT_MAP_IDS[k] = AL["ZONES_CONTINENT_LIST"][k]
+			if (v.npcfilter) then
+				if (v.id) then
+					CONTINENT_MAP_IDS[k] = getZoneName(k)
+				else
+					CONTINENT_MAP_IDS[k] = AL["ZONES_CONTINENT_LIST"][k]
+				end
 			end
 		end
 	
@@ -636,22 +693,40 @@ local function GetFilterOptions()
 					if (private.ZONE_IDS[k]) then
 						local tempName = v
 						if (npcName) then
-							if ((private.ZONE_IDS[k].zoneID == zoneID or (type(private.ZONE_IDS[k].zoneID) == "table" and RS_Set(private.ZONE_IDS[k].zoneID)[zoneID])) and RS_tContains(v,npcName)) then
+							if (((type(private.ZONE_IDS[k].zoneID) == "table" and (RS_Set(private.ZONE_IDS[k].zoneID)[zoneID] or (private.SUBZONES_IDS[zoneID] and RS_tContains(private.SUBZONES_IDS[zoneID],RS_Set(private.ZONE_IDS[k].zoneID))))) or private.ZONE_IDS[k].zoneID == zoneID or (private.SUBZONES_IDS[zoneID] and RS_tContains(private.SUBZONES_IDS[zoneID],private.ZONE_IDS[k].zoneID))) and RS_tContains(v,npcName)) then
 								local i = 2
+								local sameNPC = false
 								while (filter_options.args.rareFilters.values[tempName]) do
+									-- If same NPC skip
+									if (filter_options.args.rareFilters.values[tempName] == k) then
+										sameNPC = true
+										break;
+									end
+									
 									tempName = v..' ('..i..')'
 									i = i+1
 								end
-								filter_options.args.rareFilters.values[tempName] = k
+								if (not sameNPC) then
+									filter_options.args.rareFilters.values[tempName] = k
+								end
 							end
 						else
-							if (private.ZONE_IDS[k].zoneID == zoneID or (type(private.ZONE_IDS[k].zoneID) == "table" and RS_Set(private.ZONE_IDS[k].zoneID)[zoneID])) then
+							if ((type(private.ZONE_IDS[k].zoneID) == "table" and (RS_Set(private.ZONE_IDS[k].zoneID)[zoneID] or (private.SUBZONES_IDS[zoneID] and RS_tContains(private.SUBZONES_IDS[zoneID],RS_Set(private.ZONE_IDS[k].zoneID))))) or private.ZONE_IDS[k].zoneID == zoneID or (private.SUBZONES_IDS[zoneID] and RS_tContains(private.SUBZONES_IDS[zoneID],private.ZONE_IDS[k].zoneID))) then
 								local i = 2
+								local sameNPC = false
 								while (filter_options.args.rareFilters.values[tempName]) do
+									-- If same NPC skip
+									if (filter_options.args.rareFilters.values[tempName] == k) then
+										sameNPC = true
+										break;
+									end
+									
 									tempName = v..' ('..i..')'
 									i = i+1
 								end
-								filter_options.args.rareFilters.values[tempName] = k
+								if (not sameNPC) then
+									filter_options.args.rareFilters.values[tempName] = k
+								end
 							end
 						end
 					else
@@ -675,9 +750,9 @@ local function GetFilterOptions()
 				filter_options.args.subzones.values = {}
 				private.filter_options_subzones = nil
 				table.foreach(private.CONTINENT_ZONE_IDS[continentID].zones, function(index, zoneID)	
-					local continentInfo = C_Map.GetMapInfo(zoneID)
-					if (continentInfo) then
-						filter_options.args.subzones.values[zoneID] = continentInfo.name
+					local zoneName = getZoneName(zoneID)
+					if (zoneName) then
+						filter_options.args.subzones.values[zoneID] = zoneName
 					end
 				end)
 			end
@@ -698,6 +773,7 @@ local function GetFilterOptions()
 					get = function() return private.db.rareFilters.filterOnlyMap end,
 					set = function(_, value)
 						private.db.rareFilters.filterOnlyMap = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 				},
@@ -725,6 +801,7 @@ local function GetFilterOptions()
 					name = AL["FILTER_CONTINENT"],
 					desc = AL["FILTER_CONTINENT_DESC"],
 					values = CONTINENT_MAP_IDS,
+					sorting = sortValues(CONTINENT_MAP_IDS),
 					get = function(_, key) 
 						-- initialize
 						if (not private.filter_options_continents) then
@@ -749,7 +826,7 @@ local function GetFilterOptions()
 						filter_options.args.rareFilters.values = {}
 						searchNpcByContinentID(key, private.filter_options_input)					
 					end,
-					width = "normal",
+					width = 1.0,
 				},
 				subzones = {
 					order = 3.2,
@@ -757,6 +834,12 @@ local function GetFilterOptions()
 					name = AL["FILTER_ZONE"],
 					desc = AL["FILTER_ZONE_DESC"],
 					values = {},
+					sorting = function() 
+						if (next(filter_options.args.subzones.values)) then
+							return sortValues(filter_options.args.subzones.values)
+						end
+						return nil;
+					end,
 					get = function(_, key) return private.filter_options_subzones end,
 					set = function(_, key, value)
 						private.filter_options_subzones = key
@@ -765,7 +848,7 @@ local function GetFilterOptions()
 						filter_options.args.rareFilters.values = {}
 						searchNpcByZoneID(key, private.filter_options_input)
 					end,
-					width = "normal",
+					width = 1.925,
 					disabled = function() return (next(filter_options.args.subzones.values) == nil) end,
 				},
 				rareFiltersClear = {
@@ -784,7 +867,7 @@ local function GetFilterOptions()
 						filter_options.args.rareFilters.values = {}
 						searchNpcByContinentID(DEFAULT_CONTINENT_MAP_ID)	
 					end,
-					width = "normal",
+					width = 0.5,
 				},
 				separator = {
 					order = 4,
@@ -808,6 +891,7 @@ local function GetFilterOptions()
 								private.db.general.filteredRares[v] = private.db.rareFilters.filtersToggled
 							end
 						end
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 				},
@@ -820,6 +904,7 @@ local function GetFilterOptions()
 					get = function(_, key) return private.db.general.filteredRares[key] end,
 					set = function(_, key, value)
 						private.db.general.filteredRares[key] = value;
+						RareScanner:UpdateMinimap(true)
 					end,
 				}
 			},
@@ -829,23 +914,16 @@ local function GetFilterOptions()
 	return filter_options
 end
 
-function RS_Set(list)
-	local set = {}
-	for _, l in ipairs(list) do set[l] = true end
-	return set
-end
-
 local zones_filter_options
 
 local function GetZonesFilterOptions()
-	if not zones_filter_options then
+	if not zones_filter_options then		
 		-- load continent combo
 		local CONTINENT_MAP_IDS = {} 
 		for k, v in pairs(private.CONTINENT_ZONE_IDS) do
 			if (v.zonefilter) then
 				if (v.id) then
-					local continentInfo = C_Map.GetMapInfo(k)
-					CONTINENT_MAP_IDS[k] = continentInfo.name
+					CONTINENT_MAP_IDS[k] = getZoneName(k)
 				else
 					CONTINENT_MAP_IDS[k] = AL["ZONES_CONTINENT_LIST"][k]
 				end
@@ -857,48 +935,46 @@ local function GetZonesFilterOptions()
 				table.foreach(private.CONTINENT_ZONE_IDS[continentID].zones, function(index, zoneID)
 					local tempName = nil
 					if (zoneName) then
-						local continentInfo = C_Map.GetMapInfo(zoneID)
-						local name = continentInfo.name
+						local name = getZoneName(zoneID)
 						if (string.find(string.upper(name), string.upper(zoneName))) then
 							tempName = name
 						end
 					else
-						local continentInfo = C_Map.GetMapInfo(zoneID)
-						tempName = continentInfo.name
+						tempName = getZoneName(zoneID)
 					end
 					
 					if (tempName) then
 						local i = 2
-						while (zones_filter_options.args.zoneFilters.values[tempName]) do
-							tempName = tempName..' ('..i..')'
+						local tempLoopName = tempName
+						while (zones_filter_options.args.zoneFilters.values[tempLoopName]) do
+							tempLoopName = tempName..' ('..i..')'
 							i = i+1
 						end
 						
-						zones_filter_options.args.zoneFilters.values[tempName] = zoneID
+						zones_filter_options.args.zoneFilters.values[tempLoopName] = zoneID
 					end
 				end)
 				if (private.CONTINENT_ZONE_IDS[continentID].extrazones) then
 					table.foreach(private.CONTINENT_ZONE_IDS[continentID].extrazones, function(index, zoneID)
 						local tempName = nil
 						if (zoneName) then
-							local continentInfo = C_Map.GetMapInfo(zoneID)
-							local name = continentInfo.name
+							local name = getZoneName(zoneID)
 							if (string.find(string.upper(name), string.upper(zoneName))) then
 								tempName = name
 							end
 						else
-							local continentInfo = C_Map.GetMapInfo(zoneID)
-							tempName = continentInfo.name
+							tempName = getZoneName(zoneID)
 						end
 					
 						if (tempName) then
 							local i = 2
-							while (zones_filter_options.args.zoneFilters.values[tempName]) do
-								tempName = tempName..' ('..i..')'
+							local tempLoopName = tempName
+							while (zones_filter_options.args.zoneFilters.values[tempLoopName]) do
+								tempLoopName = tempName..' ('..i..')'
 								i = i+1
 							end
 							
-							zones_filter_options.args.zoneFilters.values[tempName] = zoneID
+							zones_filter_options.args.zoneFilters.values[tempLoopName] = zoneID
 						end
 					end)
 				end
@@ -920,6 +996,7 @@ local function GetZonesFilterOptions()
 					get = function() return private.db.zoneFilters.filterOnlyMap end,
 					set = function(_, value)
 						private.db.zoneFilters.filterOnlyMap = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 				},
@@ -943,6 +1020,7 @@ local function GetZonesFilterOptions()
 					name = AL["FILTER_CONTINENT"],
 					desc = AL["FILTER_CONTINENT_DESC"],
 					values = CONTINENT_MAP_IDS,
+					sorting = sortValues(CONTINENT_MAP_IDS),
 					get = function(_, key) 
 						-- initialize
 						if (not private.zones_filter_options_continents) then
@@ -999,6 +1077,7 @@ local function GetZonesFilterOptions()
 								private.db.general.filteredZones[v] = private.db.zoneFilters.filtersToggled
 							end
 						end
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 				},
@@ -1018,6 +1097,7 @@ local function GetZonesFilterOptions()
 							end
 						end
 						private.db.general.filteredZones[key] = value;
+						RareScanner:UpdateMinimap(true)
 					end,
 				}
 			},
@@ -1284,6 +1364,18 @@ local function GetLootFilterOptions()
 							width = "full",
 							disabled = function() return (not private.db.loot.displayLoot and not private.db.loot.displayLootOnMap) end,
 						},
+						filterNotMatchingFaction = {
+							order = 7,
+							type = "toggle",
+							name = AL["LOOT_FILTER_NOT_MATCHING_FACTION"],
+							desc = AL["LOOT_FILTER_NOT_MATCHING_FACTION_DESC"],
+							get = function() return private.db.loot.filterNotMatchingFaction end,
+							set = function(_, value)
+								private.db.loot.filterNotMatchingFaction = value
+							end,
+							width = "full",
+							disabled = function() return (not private.db.loot.displayLoot and not private.db.loot.displayLootOnMap) end,
+						},
 					},
 					disabled = function() return (not private.db.loot.displayLoot and not private.db.loot.displayLootOnMap) end,
 				}
@@ -1329,6 +1421,7 @@ local function GetMapOptions()
 					get = function() return private.db.map.displayNpcIcons end,
 					set = function(_, value)
 						private.db.map.displayNpcIcons = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 				},
@@ -1340,6 +1433,7 @@ local function GetMapOptions()
 					get = function() return private.db.map.displayContainerIcons end,
 					set = function(_, value)
 						private.db.map.displayContainerIcons = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 				},
@@ -1351,6 +1445,7 @@ local function GetMapOptions()
 					get = function() return private.db.map.displayEventIcons end,
 					set = function(_, value)
 						private.db.map.displayEventIcons = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 				},
@@ -1359,32 +1454,47 @@ local function GetMapOptions()
 					type = "header",
 					name = AL["MAP_OPTIONS"],
 				},
-				displayNotDiscoveredMapIcons = {
+				displayFriendlyNpcIcons = {
 					order = 6,
+					type = "toggle",
+					name = AL["DISPLAY_FRIENDLY_NPC_ICONS"],
+					desc = AL["DISPLAY_FRIENDLY_NPC_ICONS_DESC"],
+					get = function() return private.db.map.displayFriendlyNpcIcons end,
+					set = function(_, value)
+						private.db.map.displayFriendlyNpcIcons = value
+						RareScanner:UpdateMinimap(true)
+					end,
+					width = "full",
+					disabled = function() return (not private.db.map.displayNpcIcons) end,
+				},
+				displayNotDiscoveredMapIcons = {
+					order = 7,
 					type = "toggle",
 					name = AL["DISPLAY_MAP_NOT_DISCOVERED_ICONS"],
 					desc = AL["DISPLAY_MAP_NOT_DISCOVERED_ICONS_DESC"],
 					get = function() return private.db.map.displayNotDiscoveredMapIcons end,
 					set = function(_, value)
 						private.db.map.displayNotDiscoveredMapIcons = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return (not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) end,
 				},
 				displayOldNotDiscoveredMapIcons = {
-					order = 7,
+					order = 8,
 					type = "toggle",
 					name = AL["DISPLAY_MAP_OLD_NOT_DISCOVERED_ICONS"],
 					desc = AL["DISPLAY_MAP_OLD_NOT_DISCOVERED_ICONS_DESC"],
 					get = function() return private.db.map.displayOldNotDiscoveredMapIcons end,
 					set = function(_, value)
 						private.db.map.displayOldNotDiscoveredMapIcons = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return ((not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) or not private.db.map.displayNotDiscoveredMapIcons) end,
 				},
 				keepShowingAfterDead = {
-					order = 8,
+					order = 9,
 					type = "toggle",
 					name = AL["MAP_SHOW_ICON_AFTER_DEAD"],
 					desc = AL["MAP_SHOW_ICON_AFTER_DEAD_DESC"],
@@ -1392,48 +1502,52 @@ local function GetMapOptions()
 					set = function(_, value)
 						private.db.map.keepShowingAfterDead = value
 						private.db.map.keepShowingAfterDeadReseteable = false
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return (not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) end,
 				},
 				keepShowingAfterDeadReseteable = {
-					order = 9,
+					order = 10,
 					type = "toggle",
 					name = AL["MAP_SHOW_ICON_AFTER_DEAD_RESETEABLE"],
 					desc = AL["MAP_SHOW_ICON_AFTER_DEAD_RESETEABLE_DESC"],
 					get = function() return private.db.map.keepShowingAfterDeadReseteable end,
 					set = function(_, value)
 						private.db.map.keepShowingAfterDeadReseteable = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return (not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) or private.db.map.keepShowingAfterDead end,
 				},
 				keepShowingAfterCollected = {
-					order = 10,
+					order = 11,
 					type = "toggle",
 					name = AL["MAP_SHOW_ICON_AFTER_COLLECTED"],
 					desc = AL["MAP_SHOW_ICON_AFTER_COLLECTED_DESC"],
 					get = function() return private.db.map.keepShowingAfterCollected end,
 					set = function(_, value)
 						private.db.map.keepShowingAfterCollected = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return (not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) end,
 				},
 				keepShowingAfterCompleted = {
-					order = 11,
+					order = 12,
 					type = "toggle",
 					name = AL["MAP_SHOW_ICON_AFTER_COMPLETED"],
 					desc = AL["MAP_SHOW_ICON_AFTER_COMPLETED_DESC"],
 					get = function() return private.db.map.keepShowingAfterCompleted end,
 					set = function(_, value)
 						private.db.map.keepShowingAfterCompleted = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return (not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) end,
 				},
 				maxSeenTime = {
-					order = 12,
+					order = 13,
 					type = "range",
 					name = AL["MAP_SHOW_ICON_MAX_SEEN_TIME"],
 					desc = AL["MAP_SHOW_ICON_MAX_SEEN_TIME_DESC"],
@@ -1445,12 +1559,13 @@ local function GetMapOptions()
 					set = function(_, value)
 						private.db.map.maxSeenTime = value
 						private.db.map.maxSeenTimeBak = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return ((not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) or private.db.map.disableLastSeenFilter) end,	
 				},
 				maxSeenTimeContainer = {
-					order = 13,
+					order = 14,
 					type = "range",
 					name = AL["MAP_SHOW_ICON_CONTAINER_MAX_SEEN_TIME"],
 					desc = AL["MAP_SHOW_ICON_CONTAINER_MAX_SEEN_TIME_DESC"],
@@ -1461,12 +1576,13 @@ local function GetMapOptions()
 					get = function() return private.db.map.maxSeenTimeContainer end,
 					set = function(_, value)
 						private.db.map.maxSeenTimeContainer = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return (not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) end,	
 				},
 				maxSeenTimeEvent = {
-					order = 14,
+					order = 15,
 					type = "range",
 					name = AL["MAP_SHOW_ICON_EVENT_MAX_SEEN_TIME"],
 					desc = AL["MAP_SHOW_ICON_EVENT_MAX_SEEN_TIME_DESC"],
@@ -1477,6 +1593,7 @@ local function GetMapOptions()
 					get = function() return private.db.map.maxSeenTimeEvent end,
 					set = function(_, value)
 						private.db.map.maxSeenTimeEvent = value
+						RareScanner:UpdateMinimap(true)
 					end,
 					width = "full",
 					disabled = function() return (not private.db.map.displayNpcIcons and not private.db.map.displayContainerIcons and not private.db.map.displayEventIcons) end,	

@@ -144,6 +144,32 @@ Addon.GLOW_TYPES = {
   AutoCast = L["Auto-Cast"],
 }
 
+Addon.CUSTOM_GLOW_FUNCTIONS = {
+  Button = { "ButtonGlow_Start", "ButtonGlow_Stop", 8 },
+  Pixel = { "PixelGlow_Start", "PixelGlow_Stop", 3 },
+  AutoCast = { "AutoCastGlow_Start", "AutoCastGlow_Stop", 4 },
+}
+
+Addon.CUSTOM_PLATES_GLOW_FRAMES = {
+  None = L["None"],
+  Healthbar = L["Healthbar"],
+  Castbar = L["Castbar"],
+  Icon = L["Icon"],
+}
+
+Addon.TARGET_TEXTURES = {
+  default = L["Default"],
+  squarethin = L["Thin Square"],
+  arrows = L["Arrow"],
+  arrow_down = L["Down Arrow"],
+  arrow_less_than = L["Less-Than Arrow"],
+  glow = L["Glow"],
+  threat_glow = L["Threat Glow"],
+  crescent = L["Crescent"],
+  bubble = L["Bubble"],
+  arrows_legacy = L["Arrow (Legacy)"],
+}
+
 ----------------------------------------------------------------------------------------------------
 -- Paths
 ---------------------------------------------------------------------------------------------------
@@ -404,6 +430,7 @@ ThreatPlates.DEFAULT_SETTINGS = {
       -- blizzFadingAlpha = 1, -- removed in 8.5.1
       useScaling = false,
       ShowTargetHighlight = true,
+      ShowFocusHighlight = true,
       ShowMouseoverHighlight = true,
       ForceHealthbarOnTarget = false,
       ForceOutOfCombat = false,
@@ -750,6 +777,23 @@ ThreatPlates.DEFAULT_SETTINGS = {
       ModeHPBar = false,
       ModeNames = false,
       HPBarColor = RGB(255, 0, 255), -- Magenta / Fuchsia
+      Size = 32,
+      HorizontalOffset = 8,
+      VerticalOffset = 0,
+    },
+    FocusWidget = {
+      ON = true,
+      theme = "arrow_down",
+      r = 0,
+      g = 0.8,
+      b = 0.8,
+      a = 1,
+      ModeHPBar = false,
+      ModeNames = false,
+      HPBarColor = RGB(0, 204, 204),
+      Size = 38,
+      HorizontalOffset = 0,
+      VerticalOffset = 12,
     },
     threatWidget = {
       ON = false,
@@ -964,11 +1008,40 @@ ThreatPlates.DEFAULT_SETTINGS = {
     },
     totemSettings = GetDefaultTotemSettings(),
     uniqueSettings = {
-      map = {},
       ["**"] = {
-        name = "<Enter name here>",
+        Trigger = {
+          Type = "Name",
+          Name = {
+            Input = "<Enter name here>",
+            AsArray = {}, -- Generated after entering Input with Addon.Split
+          },
+          Aura = {
+            Input = "",
+            AsArray = {}, -- Generated after entering Input with Addon.Split
+          },
+          Cast = {
+            Input = "",
+            AsArray = {}, -- Generated after entering Input with Addon.Split
+          },
+        },
+        Effects = {
+          Glow = {
+            Frame = "None",
+            Type = "Pixel",
+            CustomColor = false,
+            Color = { 0.95, 0.95, 0.32, 1 },
+          },
+        },
         showNameplate = true,
         ShowHeadlineView = false,
+        Enable = {
+          Never = false,
+          UnitReaction = {
+            FRIENDLY = true,
+            NEUTRAL = true,
+            HOSTILE = true,
+          },
+        },
         showIcon = true,
         useStyle = true,
         useColor = true,
@@ -977,7 +1050,11 @@ ThreatPlates.DEFAULT_SETTINGS = {
         allowMarked = true,
         overrideScale = false,
         overrideAlpha = false,
-        icon = "spell_shadow_shadowfiend.blp",
+        UseAutomaticIcon = true,
+        -- AutomaticIcon = "number",
+        icon = "INV_Misc_QuestionMark.blp",
+        -- SpellID = "number",
+        -- SpellName = "string",
         scale = 1,
         alpha = 1,
         color = {
@@ -1057,6 +1134,19 @@ ThreatPlates.DEFAULT_SETTINGS = {
         show = true,
         ShowInHeadlineView = false,
         ShowSpark = true,
+        ShowCastTime = true,
+        SpellNameText = {
+          HorizontalOffset = 2,
+          VerticalOffset = 0,
+        },
+        CastTimeText = {
+          HorizontalOffset = -2,
+          VerticalOffset = 0,
+          Font = {
+            HorizontalAlignment = "RIGHT",
+            VerticalAlignment = "CENTER",
+          },
+        },
       },
       name = { -- Names for Healthbar View
         show = true,
@@ -1080,10 +1170,9 @@ ThreatPlates.DEFAULT_SETTINGS = {
       level = {
         typeface = Addon.DEFAULT_FONT, -- old default: "Accidental Presidency",
         size = 9, -- old default: 12,
-        size = 9, -- old default: 12,
-        width = 20,
+        width = 30,
         height = 10, -- old default: 14,
-        x = 49, -- old default: 50,
+        x = 44, -- old default: 50,
         y = 0,
         align = "RIGHT",
         vertical = "CENTER", -- old default: "TOP",
@@ -1121,13 +1210,13 @@ ThreatPlates.DEFAULT_SETTINGS = {
       spelltext = {
         typeface = Addon.DEFAULT_FONT, -- old default: "Accidental Presidency",
         size = 8,  -- old default: 12
-        width = 110,
+        width = 120,
         height = 14,
-        x = 0,
-        y = -15,  -- old default: -13
-        x_hv = 0,
-        y_hv = -20,  -- old default: -13
-        align = "CENTER",
+        -- x = 0,       -- Removed in 9.2.0
+        -- y = -15,     -- Removed in 9.2.0 -- old default: -13
+        -- x_hv = 0,    -- Removed in 9.2.0
+        -- y_hv = -20,  -- Removed in 9.2.0 -- old default: -13
+        align = "LEFT",
         vertical = "CENTER",
         shadow = true,
         flags = "NONE",
@@ -1216,7 +1305,7 @@ ThreatPlates.DEFAULT_SETTINGS = {
     },
     threat = {
       ON = true,
-      marked = false,
+      -- marked = false, -- not used at all, removed in 9.2.0
       -- nonCombat = true, -- removed in 9.1.3
       UseThreatTable = true,
       UseHeuristicInInstances = false,

@@ -3,580 +3,321 @@ local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
 local AL = AceLocale:NewLocale("RareScanner", "frFR", false);
 
 if AL then
-	AL["ALARM_MESSAGE"] = "Un PNJ rare vient d'apparaître, vérifiez votre carte!"
+	AL["ALARM_MESSAGE"] = "Un PNJ rare vient d'apparaître, visible sur votre mini-carte !"
 	AL["ALARM_SOUND"] = "Son d'avertissement pour les PNJ rares"
-	AL["ALARM_SOUND_DESC"] = "Son joué lorsqu'un PNJ rare apparaît dans votre minicarte"
-	AL["ALARM_TREASURES_SOUND"] = "Son d'avertissement pour les événements / trésors"
-	AL["ALARM_TREASURES_SOUND_DESC"] = "Son émis lorsqu'un trésor / coffre ou événement apparaît sur votre mini-carte"
-	--[[Translation missing --]]
-	AL["AUTO_HIDE_BUTTON"] = "Autohide button and miniature"
-	--[[Translation missing --]]
-	AL["AUTO_HIDE_BUTTON_DESC"] = "Hides the button and the miniature automatically after the time selected (in seconds). If you select zero seconds the button and the miniature won't autohide"
-	--[[Translation missing --]]
-	AL["CLASS_HALLS"] = "Class Halls"
-	--[[Translation missing --]]
-	AL["CLEAR_FILTERS_SEARCH"] = "Clear"
-	--[[Translation missing --]]
-	AL["CLEAR_FILTERS_SEARCH_DESC"] = "Resets the form to the initial state"
-	--[[Translation missing --]]
-	AL["CLICK_TARGET"] = "Click to target NPC"
-	--[[Translation missing --]]
-	AL["CMD_HELP1"] = "List of commands"
-	--[[Translation missing --]]
-	AL["CMD_HELP2"] = "- Type \"/rarescanner show\" to show all the icons on the world map"
-	--[[Translation missing --]]
-	AL["CMD_HELP3"] = "- Type \"/rarescanner hide\" to hide all the icons on the world map"
-	--[[Translation missing --]]
-	AL["CMD_HELP4"] = "- Type \"/rarescanner toggle\" to show/hide all the icons on the world map"
-	--[[Translation missing --]]
-	AL["CMD_HELP5"] = "- Type \"/rarescanner toggle rares\" or \"/rarescanner tr\" to show/hide icons of NPCs on the world map"
-	--[[Translation missing --]]
-	AL["CMD_HELP6"] = "- Type \"/rarescanner toggle events\" or \"/rarescanner te\" to show/hide icons of events on the world map"
-	--[[Translation missing --]]
-	AL["CMD_HELP7"] = "- Type \"/rarescanner toggle treasures\" or \"/rarescanner tt\" to show/hide icons of treasures on the world map"
-	--[[Translation missing --]]
-	AL["CMD_HIDE"] = "Hiding RareScanner icons in the world map"
-	--[[Translation missing --]]
-	AL["CMD_HIDE_EVENTS"] = "Hiding RareScanner event icons in the world map"
-	--[[Translation missing --]]
-	AL["CMD_HIDE_RARES"] = "Hiding RareScanner rare icons in the world map"
-	--[[Translation missing --]]
-	AL["CMD_HIDE_TREASURES"] = "Hiding RareScanner treasure icons in the world map"
-	--[[Translation missing --]]
-	AL["CMD_SHOW"] = "Showing RareScanner icons in the world map"
-	--[[Translation missing --]]
-	AL["CMD_SHOW_EVENTS"] = "Showing RareScanner event icons in the world map"
-	--[[Translation missing --]]
-	AL["CMD_SHOW_RARES"] = "Showing RareScanner rare icons in the world map"
-	--[[Translation missing --]]
-	AL["CMD_SHOW_TREASURES"] = "Showing RareScanner treasure icons in the world map"
-	--[[Translation missing --]]
-	AL["CONTAINER"] = "Container"
-	--[[Translation missing --]]
-	AL["DATABASE_HARD_RESET"] = "Since the most recient expansion and with the last version of RareScanner big changes have occured in the database, which required a database reset in order to avoid inconsistencies. Sorry for the inconvenience."
-	--[[Translation missing --]]
-	AL["DISABLE_SEARCHING_RARE_TOOLTIP"] = "Disable alerts for this rare NPC"
-	--[[Translation missing --]]
-	AL["DISABLE_SOUND"] = "Disable audio alerts"
-	--[[Translation missing --]]
-	AL["DISABLE_SOUND_DESC"] = "When this is activated you won't receive audio alerts"
-	--[[Translation missing --]]
-	AL["DISABLED_SEARCHING_RARE"] = "Disabled alerts for this rare NPC: "
-	--[[Translation missing --]]
-	AL["DISPLAY"] = "Display"
-	--[[Translation missing --]]
-	AL["DISPLAY_BUTTON"] = "Toggle showing the button and the miniature"
-	--[[Translation missing --]]
-	AL["DISPLAY_BUTTON_CONTAINERS"] = "Toggle showing the button for treasures/chests"
-	--[[Translation missing --]]
-	AL["DISPLAY_BUTTON_CONTAINERS_DESC"] = "Toggle showing the button for treasures/chests. It doesn't affect the alarm sound and the chat alerts"
-	--[[Translation missing --]]
-	AL["DISPLAY_BUTTON_DESC"] = "When disabled the button and the miniature won't be shown again. It doesn't affect the alarm sound and the chat alerts"
-	--[[Translation missing --]]
-	AL["DISPLAY_BUTTON_SCALE"] = "Scale of the button and miniature"
-	--[[Translation missing --]]
-	AL["DISPLAY_BUTTON_SCALE_DESC"] = "This will adjust the scale of the button and miniature, being the value of 0.85 the original size"
-	--[[Translation missing --]]
-	AL["DISPLAY_CONTAINER_ICONS"] = "Toggle showing container icons on the world map"
-	--[[Translation missing --]]
-	AL["DISPLAY_CONTAINER_ICONS_DESC"] = "When disabled, icons of containers/treasures won't be shown on the world map."
-	--[[Translation missing --]]
-	AL["DISPLAY_EVENT_ICONS"] = "Toggle showing event icons on the world map"
-	--[[Translation missing --]]
-	AL["DISPLAY_EVENT_ICONS_DESC"] = "When disabled, icons of events won't be shown on the world map."
-	--[[Translation missing --]]
-	AL["DISPLAY_LOG_WINDOW"] = "Toggle showing the log window"
-	--[[Translation missing --]]
-	AL["DISPLAY_LOG_WINDOW_DESC"] = "When disabled the log window won't be shown again."
-	--[[Translation missing --]]
-	AL["DISPLAY_LOOT_ON_MAP"] = "Display loot on map tooltips"
-	--[[Translation missing --]]
-	AL["DISPLAY_LOOT_ON_MAP_DESC"] = "Toggle showing NPC/containers loot on the tooltip that shows up when you move the mouse over the icons"
-	--[[Translation missing --]]
-	AL["DISPLAY_LOOT_PANEL"] = "Toggle showing loot bar"
-	--[[Translation missing --]]
-	AL["DISPLAY_LOOT_PANEL_DESC"] = "When this is activated it will show a bar with the loot dropped by the NPC found"
-	--[[Translation missing --]]
-	AL["DISPLAY_MAP_NOT_DISCOVERED_ICONS"] = "Toggle showing not discovered icons on the map."
-	--[[Translation missing --]]
-	AL["DISPLAY_MAP_NOT_DISCOVERED_ICONS_DESC"] = "When disabled, icons of not discovered rare NPCs (the red and orange icons), containers or events won't be shown on the world map"
-	--[[Translation missing --]]
-	AL["DISPLAY_MAP_OLD_NOT_DISCOVERED_ICONS"] = "Toggle showing not discovered icons on the map for older expansions."
-	--[[Translation missing --]]
-	AL["DISPLAY_MAP_OLD_NOT_DISCOVERED_ICONS_DESC"] = "When disabled, icons of not discovered rare NPCs (the red and orange icons), containers or events won't be shown on the world map for areas that belong to older expansions."
-	--[[Translation missing --]]
-	AL["DISPLAY_MINIATURE"] = "Toggle showing the miniature"
-	--[[Translation missing --]]
-	AL["DISPLAY_MINIATURE_DESC"] = "When disabled the miniature won't be shown again."
-	--[[Translation missing --]]
-	AL["DISPLAY_NPC_ICONS"] = "Toggle showing rare NPC icons on the world map"
-	--[[Translation missing --]]
-	AL["DISPLAY_NPC_ICONS_DESC"] = "When disabled, icons of rare NPCs won't be shown on the world map."
-	--[[Translation missing --]]
-	AL["DISPLAY_OPTIONS"] = "Display options"
-	--[[Translation missing --]]
-	AL["DUNGEONS_SCENARIOS"] = "Dungeons/Scenarios"
-	--[[Translation missing --]]
-	AL["ENABLE_MARKER"] = "Toggle target marker"
-	--[[Translation missing --]]
-	AL["ENABLE_MARKER_DESC"] = "When this is activated it will show a marker on top of the target when you click the main button"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_CHAT"] = "Toggle searching for rare NPCs through chat messages"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_CHAT_DESC"] = "When this is activated you will be warned visually and with a sound everytime a rare NPC yells or a chat message related with a rare NPCs is detected."
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_CONTAINERS"] = "Toggle searching treasures or chests"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_CONTAINERS_DESC"] = "When this is activated you will be warned visually and with a sound everytime a treasure or chest shows up in your minimap"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_EVENTS"] = "Toggle searching events"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_EVENTS_DESC"] = "When this is activated you will be warned visually and with a sound everytime an event shows up in your minimap"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_GARRISON_CHEST"] = "Toggle searching garrison treasure"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_GARRISON_CHEST_DESC"] = "When this is activated you will be warned visually and with a sound everytime your garrison chest shows up in your minimap"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_IN_INSTANCE"] = "Toggle scanning in instances"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_IN_INSTANCE_DESC"] = "When this is activated the addon will work as usual while you are in an instance (dungeon, raid, etc)"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_ON_TAXI"] = "Toggle scanning while using a transportation"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_ON_TAXI_DESC"] = "When this is activated the addon will work as usual while you are using a transportation (flight, boat, etc.)"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_RARES"] = "Toggle searching rare NPCs"
-	--[[Translation missing --]]
-	AL["ENABLE_SCAN_RARES_DESC"] = "When this is activated you will be warned visually and with a sound everytime a rare NPC shows up in your minimap"
-	--[[Translation missing --]]
-	AL["ENABLE_SEARCHING_RARE_TOOLTIP"] = "Enable alerts for this rare NPC"
-	--[[Translation missing --]]
-	AL["ENABLE_TOMTOM_SUPPORT"] = "Toggle Tomtom's support"
-	--[[Translation missing --]]
-	AL["ENABLE_TOMTOM_SUPPORT_DESC"] = "When this is activated it will add a Tomtom's waypoint at the entitie's found coordinates"
-	--[[Translation missing --]]
-	AL["ENABLED_SEARCHING_RARE"] = "Enabled alerts for this rare NPC: "
-	--[[Translation missing --]]
-	AL["EVENT"] = "Event"
-	--[[Translation missing --]]
-	AL["FILTER"] = "NPC filters"
-	--[[Translation missing --]]
-	AL["FILTER_CONTINENT"] = "Continent/Category"
-	--[[Translation missing --]]
-	AL["FILTER_CONTINENT_DESC"] = "Continent or category name"
-	--[[Translation missing --]]
-	AL["FILTER_NPCS_ONLY_MAP"] = "Enable filters only in the world map"
-	--[[Translation missing --]]
-	AL["FILTER_NPCS_ONLY_MAP_DESC"] = "When enabled you will still get alerts from filtered NPCs but they won't show up in your world map. When disabled you won't get alerts from filtered NPCs at all."
-	--[[Translation missing --]]
-	AL["FILTER_RARE_LIST"] = "Filter searching for rare NPCs"
-	--[[Translation missing --]]
-	AL["FILTER_RARE_LIST_DESC"] = "Toggle searching for this rare NPC. When disabled you won't get an alert when this NPC is found."
-	--[[Translation missing --]]
+	AL["ALARM_SOUND_DESC"] = "Son joué lorsqu'un PNJ rare apparaît sur votre mini-carte"
+	AL["ALARM_TREASURES_SOUND"] = "Son d'avertissement pour les événements / trésors."
+	AL["ALARM_TREASURES_SOUND_DESC"] = "Son joué lorsqu'un trésor / coffre ou événement apparaît dans votre mini-carte"
+	AL["AUTO_HIDE_BUTTON"] = "Masque automatiquement le bouton et la miniature"
+	AL["AUTO_HIDE_BUTTON_DESC"] = "Masque automatiquement le bouton et la miniature après le temps sélectionné (en secondes). Si vous sélectionnez zéro seconde, le bouton et la miniature ne seront pas masqués automatiquement"
+	AL["CLASS_HALLS"] = "Domaines de classe."
+	AL["CLEAR_FILTERS_SEARCH"] = "Effacez"
+	AL["CLEAR_FILTERS_SEARCH_DESC"] = "Réinitialise le formulaire à l'état initial"
+	AL["CLICK_TARGET"] = "Cliquez pour cibler le PNJ"
+	AL["CMD_DISABLE_ALERTS"] = "RareScanner les PNJ, les trésors et les événements rares sont désactivés"
+	AL["CMD_DISABLE_CONTAINERS_ALERTS"] = "Les alertes des trésors de RareScanner sont désactivées"
+	AL["CMD_DISABLE_EVENTS_ALERTS"] = "Les alertes des événements de RareScanner sont désactivées"
+	AL["CMD_DISABLE_RARES_ALERTS"] = "Les alertes PNJ rares de RareScanner sont désactivées"
+	AL["CMD_ENABLE_ALERTS"] = "RareScanner les PNJ rares, les trésors et les événements sont activées"
+	AL["CMD_ENABLE_CONTAINERS_ALERTS"] = "RareScanner Alertes des trésors sont activées"
+	AL["CMD_ENABLE_EVENTS_ALERTS"] = "RareScanner les événements sont activées"
+	AL["CMD_ENABLE_RARES_ALERTS"] = "RareScanner les PNJ rares sont activées"
+	AL["CMD_HELP1"] = "Liste des commandes"
+	AL["CMD_HELP2"] = "Activer/désactiver tous les icônes sur la carte mondiale "
+	AL["CMD_HELP3"] = "Activer/désactiver les icônes des événements sur la carte du monde"
+	AL["CMD_HELP4"] = "Activer/désactiver les icônes des trésors sur la carte du monde"
+	AL["CMD_HELP5"] = "Activer/désactiver les icônes de PNJ rares sur la carte du monde"
+	AL["CMD_HELP6"] = "Activer/désactiver toutes les alertes"
+	AL["CMD_HELP7"] = "Activer/désactiver les alertes d'événements"
+	AL["CMD_HELP8"] = "Activer/désactiver les alertes des trésors"
+	AL["CMD_HELP9"] = "Activer/désactiver les alertes des PNJ rares"
+	AL["CMD_HIDE"] = "Désactive les icônes de RareScanner sur la carte du monde"
+	AL["CMD_HIDE_EVENTS"] = "Désactive les icônes des événements sur la carte du monde"
+	AL["CMD_HIDE_RARES"] = "Désactive les icônes rares sur la carte du monde"
+	AL["CMD_HIDE_TREASURES"] = "Désactive les icônes de trésor sur la carte du monde"
+	AL["CMD_SHOW"] = "Afficher les icônes de RareScanner sur la carte du monde"
+	AL["CMD_SHOW_EVENTS"] = "Affiche des icônes d'événements de RareScanner sur la carte du monde"
+	AL["CMD_SHOW_RARES"] = "Affiche des icônes rares de RareScanner sur la carte du monde"
+	AL["CMD_SHOW_TREASURES"] = "Affiche les icônes de trésor de RareScanner sur la carte du monde"
+	AL["CONTAINER"] = "Conteneur"
+	AL["DATABASE_HARD_RESET"] = "Depuis l'extension la plus récente et avec la dernière version de RareScanner, de grands changements se sont produits dans la base de données, ce qui a nécessité une réinitialisation de la base de données afin d'éviter les incohérences. Désolé pour le dérangement."
+	AL["DISABLE_SEARCHING_RARE_TOOLTIP"] = "Désactiver les alertes pour ce PNJ rare"
+	AL["DISABLE_SOUND"] = "Désactive les alertes audio"
+	AL["DISABLE_SOUND_DESC"] = "Lorsque cette option est activée, vous ne recevrez pas d'alertes audio"
+	AL["DISABLED_SEARCHING_RARE"] = "Alertes désactivées pour ce PNJ rare:"
+	AL["DISPLAY"] = "Affichage"
+	AL["DISPLAY_BUTTON"] = "Active l'affichage du bouton et de la miniature"
+	AL["DISPLAY_BUTTON_CONTAINERS"] = "Active le bouton pour les trésors et les coffres"
+	AL["DISPLAY_BUTTON_CONTAINERS_DESC"] = "Active le bouton pour les trésors et les coffres. Il n'affecte pas la sonnerie d'alarme et les alertes du chat"
+	AL["DISPLAY_BUTTON_DESC"] = "Lorsqu'il est désactivé, le bouton et la miniature ne seront plus affichés. Cela n'affecte pas le son de l'alarme et les alertes du chat"
+	AL["DISPLAY_BUTTON_SCALE"] = "Échelle du bouton et de la miniature"
+	AL["DISPLAY_BUTTON_SCALE_DESC"] = "Cela permettra d'ajuster l'échelle du bouton et de la miniature, soit la valeur de 0,85 de la taille originale"
+	AL["DISPLAY_BUTTON_SCALE_POSITION"] = "Options d'échelle et de position"
+	AL["DISPLAY_CONTAINER_ICONS"] = "Afficher les icônes des conteneurs sur la carte du monde"
+	AL["DISPLAY_CONTAINER_ICONS_DESC"] = "Lorsqu'elles sont désactivées, les icônes des conteneurs et des trésors ne seront pas affichées sur la carte du monde."
+	AL["DISPLAY_EVENT_ICONS"] = "Afficher les icônes des événements sur la carte du monde"
+	AL["DISPLAY_EVENT_ICONS_DESC"] = "Lorsqu'elles sont désactivées, les icônes des événements ne seront pas affichées sur la carte du monde."
+	AL["DISPLAY_LOG_WINDOW"] = "Afficher la fenêtre du journal"
+	AL["DISPLAY_LOG_WINDOW_DESC"] = "Lorsqu'elle est désactivée, la fenêtre du journal ne s'affichera plus."
+	AL["DISPLAY_LOOT_ON_MAP"] = "Afficher le butin sur les info-bulles de la carte"
+	AL["DISPLAY_LOOT_ON_MAP_DESC"] = "Affichage du butin des PNJs/conteneurs dans l'info-bulle qui apparaît lorsque vous passez la souris sur les icônes"
+	AL["DISPLAY_LOOT_PANEL"] = "Affiche la barre de butin"
+	AL["DISPLAY_LOOT_PANEL_DESC"] = "Lorsqu'il est activé, affiche une barre avec le butin disponible par le PNJ trouvé"
+	AL["DISPLAY_MAP_NOT_DISCOVERED_ICONS"] = "Active les icônes non découvertes sur la carte."
+	AL["DISPLAY_MAP_NOT_DISCOVERED_ICONS_DESC"] = "Lorsqu'elles sont désactivées, les icônes des PNJ rares non découverts (les icônes rouge et orange), des conteneurs ou des événements ne seront pas affichés sur la carte du monde"
+	AL["DISPLAY_MAP_OLD_NOT_DISCOVERED_ICONS"] = "Active les icônes non découvertes sur la carte pour les anciennes extensions"
+	AL["DISPLAY_MAP_OLD_NOT_DISCOVERED_ICONS_DESC"] = "Lorsqu'elles sont désactivées, les icônes des PNJ rares non découverts (les icônes rouge et orange), des conteneurs ou des événements ne seront pas affichés sur la carte du monde pour les zones qui appartiennent à des extensions plus anciennes."
+	AL["DISPLAY_MINIATURE"] = "Active l'affichage de la miniature."
+	AL["DISPLAY_MINIATURE_DESC"] = "Lorsqu'elle est désactivée, la miniature ne sera plus affichée."
+	AL["DISPLAY_NPC_ICONS"] = "Afficher les icônes rares des PNJ sur la carte du monde"
+	AL["DISPLAY_NPC_ICONS_DESC"] = "Lorsqu'elles sont désactivées, les icônes des PNJs rares ne seront plus affichées sur la carte du monde."
+	AL["DISPLAY_OPTIONS"] = "Options d'affichage"
+	AL["DUNGEONS_SCENARIOS"] = "Donjons / Scénarios"
+	AL["ENABLE_MARKER"] = "Active l'affichage du marqueur de la cible"
+	AL["ENABLE_MARKER_DESC"] = "Lorsque cette fonction est activée, un marqueur apparaîtra en haut de la cible lorsque vous cliquerez sur le bouton principal"
+	AL["ENABLE_SCAN_CHAT"] = "Active la recherche de PNJ rares par le biais de messages du chat"
+	AL["ENABLE_SCAN_CHAT_DESC"] = "Lorsque cette fonction est activée, vous serez averti visuellement et par un son chaque fois qu'un PNJ rare criera ou qu'un message du chat est en rapport avec le PNJ rare détecté."
+	AL["ENABLE_SCAN_CONTAINERS"] = "Active la recherche des trésors ou des coffres"
+	AL["ENABLE_SCAN_CONTAINERS_DESC"] = "Lorsque cette fonction est activée, vous serez averti visuellement et par un son chaque fois qu'un trésor ou un coffre apparaîtra sur votre minimap"
+	AL["ENABLE_SCAN_EVENTS"] = "Activer la recherche des événements"
+	AL["ENABLE_SCAN_EVENTS_DESC"] = "Lorsque cette fonction est activée, vous serez averti visuellement et par un son chaque fois qu'un événement apparaîtra sur votre minimap"
+	AL["ENABLE_SCAN_GARRISON_CHEST"] = "Active la recherche de trésor de la garnison."
+	AL["ENABLE_SCAN_GARRISON_CHEST_DESC"] = "Lorsque cette fonction est activée, vous serez averti visuellement et par un son chaque fois que votre coffre de garnison apparaîtra sur votre minimap"
+	AL["ENABLE_SCAN_IN_INSTANCE"] = "Active le scan dans les instances."
+	AL["ENABLE_SCAN_IN_INSTANCE_DESC"] = "Lorsque cette option est activée, l'addon fonctionnera comme d'habitude pendant que vous êtes dans une instance (donjon, raid, etc.)"
+	AL["ENABLE_SCAN_ON_TAXI"] = "Active le scan lors de l'utilisation d'un moyen de transport."
+	AL["ENABLE_SCAN_ON_TAXI_DESC"] = "Lorsque cette option est activée, l'addon fonctionne comme d'habitude lorsque vous utilisez un moyen de transport (vol, bateau, etc.)."
+	AL["ENABLE_SCAN_RARES"] = "Active la recherche des PNJ rares"
+	AL["ENABLE_SCAN_RARES_DESC"] = "Lorsque cette fonction est activée, vous serez averti visuellement et par un son chaque fois qu'un PNJ rare apparaîtra dans sur minimap"
+	AL["ENABLE_SEARCHING_RARE_TOOLTIP"] = "Active les alertes pour ce PNJ rare"
+	AL["ENABLE_TOMTOM_SUPPORT"] = "Active l'aide de l'addon Tomtom"
+	AL["ENABLE_TOMTOM_SUPPORT_DESC"] = "Lorsque cette fonction est activée, elle ajoute un point de cheminement Tomtom aux coordonnées trouvées de la créature."
+	AL["ENABLED_SEARCHING_RARE"] = "Active l'alerte pour ce PNJ rare :"
+	AL["EVENT"] = "Événement"
+	AL["FILTER"] = "Filtres des PNJ"
+	AL["FILTER_CONTINENT"] = "Continent/Catégorie"
+	AL["FILTER_CONTINENT_DESC"] = "Nom du continent ou de la catégorie"
+	AL["FILTER_NPCS_ONLY_MAP"] = "Active uniquement les filtres sur la carte mondiale"
+	AL["FILTER_NPCS_ONLY_MAP_DESC"] = "Lorsque cette fonction est activée, vous recevrez toujours des alertes de la part des PNJ filtrés, mais elles n'apparaîtront pas sur votre carte du monde. Lorsque cette option est désactivée, vous ne recevrez pas du tout d'alertes de la part des PNJ filtrés."
+	AL["FILTER_RARE_LIST"] = "Filtre de recherche pour les PNJ rares"
+	AL["FILTER_RARE_LIST_DESC"] = "Active la recherche de ce PNJ rare. Si vous le désactivé, vous ne serez pas alerté lorsque ce PNJ sera trouvé."
 	AL["FILTER_ZONE"] = "Zone"
-	--[[Translation missing --]]
-	AL["FILTER_ZONE_DESC"] = "Zone inside the continent or category"
-	--[[Translation missing --]]
-	AL["FILTER_ZONES_LIST"] = "Zone list"
-	--[[Translation missing --]]
-	AL["FILTER_ZONES_LIST_DESC"] = "Toggle alerts in this zone. When disabled you won't get an alert when a rare NPC, event or treasure is found in this zone."
-	--[[Translation missing --]]
-	AL["FILTER_ZONES_ONLY_MAP"] = "Enable filters only in the world map"
-	--[[Translation missing --]]
-	AL["FILTER_ZONES_ONLY_MAP_DESC"] = "When enabled you will still get alerts from NPCs that belong to filtered zones but they won't show up in your world map. When disabled you won't get alerts from NPCs that belong to filtered zones at all."
-	--[[Translation missing --]]
-	AL["FILTERS"] = "Rare NPCs filters"
-	--[[Translation missing --]]
-	AL["FILTERS_SEARCH"] = "Search"
-	--[[Translation missing --]]
-	AL["FILTERS_SEARCH_DESC"] = "Type the name of the NPC to filter the list below"
-	--[[Translation missing --]]
-	AL["GENERAL_OPTIONS"] = "General options"
-	--[[Translation missing --]]
-	AL["JUST_SPAWNED"] = "%s just showed up. Check your map!"
-	--[[Translation missing --]]
-	AL["LEFT_BUTTON"] = "Left-click"
-	--[[Translation missing --]]
-	AL["LOG_WINDOW_AUTOHIDE"] = "Autohide logged NPC buttons"
-	--[[Translation missing --]]
-	AL["LOG_WINDOW_AUTOHIDE_DESC"] = "Hides each NPC button after the time selected (in minutes). If you select zero minutes the buttons will remain until you close the log window, or it reaches the maximun number of buttons (in which case the oldest will be replaced)."
-	--[[Translation missing --]]
-	AL["LOG_WINDOW_OPTIONS"] = "Log window options"
-	--[[Translation missing --]]
-	AL["LOOT_CATEGORY_FILTERED"] = "Filter enabled for the category/subcategory: %s/%s. You can disable this filter by clicking again on the loot icon or from the RareScanner addon's menu"
-	--[[Translation missing --]]
-	AL["LOOT_CATEGORY_FILTERS"] = "Category filters"
-	--[[Translation missing --]]
-	AL["LOOT_CATEGORY_FILTERS_DESC"] = "Filter the loot shown by category"
-	--[[Translation missing --]]
-	AL["LOOT_CATEGORY_NOT_FILTERED"] = "Filter disabled for the category/subcategory: %s/%s"
-	--[[Translation missing --]]
-	AL["LOOT_DISPLAY_OPTIONS"] = "Display options"
-	--[[Translation missing --]]
-	AL["LOOT_DISPLAY_OPTIONS_DESC"] = "Display options for the loot bar"
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_COLLECTED"] = "Filter collected pets, mounts and toys."
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_COLLECTED_DESC"] = "When activated, only mounts, pets and toys that you haven't collected yet will be show on the loot bar. This filter doesn't affect other kinds of lootable items, whatsoever."
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_COMPLETED_QUEST"] = "Filter quest items that don't begin a new quest"
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_COMPLETED_QUEST_DESC"] = "When activated, any item that is a requirement for a quest, or that begins an already completed quest, won't show up on the loot bar."
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_NOT_EQUIPABLE"] = "Filter non-equipable items"
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_NOT_EQUIPABLE_DESC"] = "When activated, armor and weapons that this character cannot wear won't show up on the loot bar. This filter doesn't affect other kinds of lootable items, whatsoever."
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_NOT_MATCHING_CLASS"] = "Filter items that require a different class than yours"
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_NOT_MATCHING_CLASS_DESC"] = "When activated, any item that requires a specific class to be used that doesn't match yours, won't show up on the loot bar."
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_NOT_TRANSMOG"] = "Show only transmog armor and weapons"
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_NOT_TRANSMOG_DESC"] = "When activated, only armor and weapons that you haven't collected yet will be shown on the loot bar. This filter doesn't affect other kinds of lootable items, whatsoever."
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_SUBCATEGORY_DESC"] = "Toggle showing this kind of loot on the loot bar. When disabled you won't see any item that matches this category on the loot shown when you find a rare NPC."
-	--[[Translation missing --]]
-	AL["LOOT_FILTER_SUBCATEGORY_LIST"] = "Subcategories"
-	--[[Translation missing --]]
-	AL["LOOT_ITEMS_PER_ROW"] = "Number of items per row to display"
-	--[[Translation missing --]]
-	AL["LOOT_ITEMS_PER_ROW_DESC"] = "Sets the number of items to display per row on the loot bar. If the number is less than the maximum several rows will be displayed."
-	--[[Translation missing --]]
-	AL["LOOT_MAIN_CATEGORY"] = "Main category"
-	--[[Translation missing --]]
-	AL["LOOT_MAX_ITEMS"] = "Number of items to display"
-	--[[Translation missing --]]
-	AL["LOOT_MAX_ITEMS_DESC"] = "Sets the maximum number of items to display on the loot bar."
-	--[[Translation missing --]]
-	AL["LOOT_MIN_QUALITY"] = "Minimum loot quality"
-	--[[Translation missing --]]
-	AL["LOOT_MIN_QUALITY_DESC"] = "Defines the minimum loot quality to show in the loot bar"
-	--[[Translation missing --]]
-	AL["LOOT_OPTIONS"] = "Loot options"
-	--[[Translation missing --]]
-	AL["LOOT_OTHER_FILTERS"] = "Other filters"
-	--[[Translation missing --]]
-	AL["LOOT_OTHER_FILTERS_DESC"] = "Other filters"
-	--[[Translation missing --]]
-	AL["LOOT_PANEL_OPTIONS"] = "Loot bar options"
-	--[[Translation missing --]]
-	AL["LOOT_SUBCATEGORY_FILTERS"] = "Subcategory filters"
-	--[[Translation missing --]]
-	AL["LOOT_TOGGLE_FILTER"] = "Alt-Left-Click to toggle filter"
-	--[[Translation missing --]]
-	AL["LOOT_TOOLTIP_POSITION"] = "Loot tooltip position"
-	--[[Translation missing --]]
-	AL["LOOT_TOOLTIP_POSITION_DESC"] = "Defines where to show the loot tooltip that appears when you move the mouse over an icon, in respect to the button"
-	--[[Translation missing --]]
-	AL["MAIN_BUTTON_OPTIONS"] = "Main button options"
-	--[[Translation missing --]]
-	AL["MAP_MENU_DISABLE_LAST_SEEN_CONTAINER_FILTER"] = "Show containers that you saw a long time ago but that can respawn"
-	--[[Translation missing --]]
-	AL["MAP_MENU_DISABLE_LAST_SEEN_EVENT_FILTER"] = "Show events that you saw a long time ago but that can respawn"
-	--[[Translation missing --]]
-	AL["MAP_MENU_DISABLE_LAST_SEEN_FILTER"] = "Show rare NPCs that you saw a long time ago but that can respawn"
-	--[[Translation missing --]]
-	AL["MAP_MENU_SHOW_CONTAINERS"] = "Show container icons on map"
-	--[[Translation missing --]]
-	AL["MAP_MENU_SHOW_EVENTS"] = "Show event icons on map"
-	--[[Translation missing --]]
-	AL["MAP_MENU_SHOW_NOT_DISCOVERED"] = "Not discovered entities"
-	--[[Translation missing --]]
-	AL["MAP_MENU_SHOW_NOT_DISCOVERED_OLD"] = "Not discovered entities (older expansions)"
-	--[[Translation missing --]]
-	AL["MAP_MENU_SHOW_RARE_NPCS"] = "Show rare NPC icons on map"
-	--[[Translation missing --]]
-	AL["MAP_NEVER"] = "Never"
-	--[[Translation missing --]]
-	AL["MAP_OPTIONS"] = "Map options"
-	--[[Translation missing --]]
-	AL["MAP_SCALE_ICONS"] = "Scale of the icons"
-	--[[Translation missing --]]
-	AL["MAP_SCALE_ICONS_DESC"] = "This will adjust the scale of the icons, being the value of 1 the original size."
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_AFTER_COLLECTED"] = "Keep showing container icons after looted"
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_AFTER_COLLECTED_DESC"] = "When disabled the icon will disappear after you loot the container."
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_AFTER_COMPLETED"] = "Keep showing event icons after completion"
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_AFTER_COMPLETED_DESC"] = "When disabled the icon will disappear after you complete the event."
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_AFTER_DEAD"] = "Keep showing NPC icons after death"
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_AFTER_DEAD_DESC"] = "When disabled the icon will disappear after you kill the NPC. The icon will reappear as soon as you find the NPC again. This option only works with NPCs that keep being rares after killing them."
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_AFTER_DEAD_RESETEABLE"] = "Keep showing NPC icons after death (only in resetable zones)"
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_AFTER_DEAD_RESETEABLE_DESC"] = "When disabled the icon will disappear after you kill the NPC. The icon will reappear as soon as you find the NPC again. This option only works with NPCs that keep being rares after killing them in zones that reset with world quests."
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_CONTAINER_MAX_SEEN_TIME"] = "Timer to hide container icons (in minutes)"
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_CONTAINER_MAX_SEEN_TIME_DESC"] = "Sets the maximum number of minutes since you have seen the container. After that time, the icon won't be shown on the world map until you find the container again. If you select zero minutes the icons will be shown regardless of how long since you have seen the container. This filter doesn't apply to containers that are part of an achievement."
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_EVENT_MAX_SEEN_TIME"] = "Timer to hide event icons (in minutes)"
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_EVENT_MAX_SEEN_TIME_DESC"] = "Sets the maximum number of minutes since you have seen the event. After that time, the icon won't be shown on the world map until you find the event again. If you select zero minutes the icons will be shown regardless of how long since you have seen the event."
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_MAX_SEEN_TIME"] = "Timer to hide rare NPC icons (in hours)"
-	--[[Translation missing --]]
-	AL["MAP_SHOW_ICON_MAX_SEEN_TIME_DESC"] = "Sets the maximum number of hours since you have seen the NPC. After that time, the icon won't be shown on the world map until you find the NPC again. If you select zero hours the icons will be shown regardless of how long since you have seen the rare NPC."
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_ACHIEVEMENT"] = "This is an objective of the achievement %s"
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_ALREADY_COMPLETED"] = "This event is already completed. Restart on: %s"
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_ALREADY_KILLED"] = "This NPC is already killed. Restart on: %s"
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_ALREADY_OPENED"] = "This container is already opened. Restart on: %s"
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_CONTAINER_LOOTED"] = "Shift-Left-Click to set as looted."
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_DAYS"] = "days"
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_EVENT_DONE"] = "Shift-Left-Click to set as completed"
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_IGNORE_ICON"] = "Shift-Left-Click to hide this icon forever if it shouldn't be here."
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_KILLED"] = "Shift-Left-Click to set as killed"
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_NOT_FOUND"] = "You haven't seen this NPC and no one has shared it with you yet."
-	--[[Translation missing --]]
-	AL["MAP_TOOLTIP_SEEN"] = "Seen before: %s"
-	--[[Translation missing --]]
-	AL["MARKER"] = "Target marker"
-	--[[Translation missing --]]
-	AL["MARKER_DESC"] = "Choose the marker to add on top of the target when you click the main button."
-	--[[Translation missing --]]
-	AL["MESSAGE_OPTIONS"] = "Messages options"
-	--[[Translation missing --]]
-	AL["MIDDLE_BUTTON"] = "Middle-click"
-	--[[Translation missing --]]
-	AL["NAVIGATION_ENABLE"] = "Toggle navigation"
-	--[[Translation missing --]]
-	AL["NAVIGATION_ENABLE_DESC"] = "When enabled the navigation arrows will show up beside the main button to allow you access to newer or older entities found"
-	--[[Translation missing --]]
-	AL["NAVIGATION_LOCK_ENTITY"] = "Block display of new entities if one is already shown"
-	--[[Translation missing --]]
-	AL["NAVIGATION_LOCK_ENTITY_DESC"] = "When enabled, if the main button is displaying an entity in your screen, it won't update to a newer one automatically. An arrow will appear allowing you to access the new entity whenever you are ready"
-	--[[Translation missing --]]
-	AL["NAVIGATION_OPTIONS"] = "Navigation options"
-	--[[Translation missing --]]
-	AL["NAVIGATION_SHOW_NEXT"] = "Show next entity found"
-	--[[Translation missing --]]
-	AL["NAVIGATION_SHOW_PREVIOUS"] = "Show previous entity found"
-	--[[Translation missing --]]
-	AL["NOT_TARGETEABLE"] = "Not targeteable"
-	--[[Translation missing --]]
-	AL["NOTE_130350"] = "You have to ride this rare to the container that you will find by following the path to the right of this position."
-	--[[Translation missing --]]
-	AL["NOTE_131453"] = "You have to ride [Guardian of the Spring] to this position. The horse is a friendly rare that you will find by following the path to the left of this container."
-	--[[Translation missing --]]
-	AL["NOTE_135497"] = "Only available while doing the daily quest [Aid from Nordrassil] obtained from Mylune. While you are on this quest you will find mushrooms under the trees. Clicking on them might spawn this NPC."
-	--[[Translation missing --]]
-	AL["NOTE_149847"] = "When you aproach to him, he will tell you a colour that he hates. Once you know what colour it is, you have to go to the coordinates 63.41 where you will be painted that colour. When you will come back to his position, he will attack you."
-	--[[Translation missing --]]
-	AL["NOTE_150342"] = "Only available during the event [Drill Rig DR-TR35]."
-	--[[Translation missing --]]
-	AL["NOTE_150394"] = "In order to kill him you have to bring him to the coordinates 63.38, where there is a device with blue lightning. Once the NPC is touched by lightning, it will explode and you will be able to loot him."
-	--[[Translation missing --]]
-	AL["NOTE_151124"] = "You have to loot a [Smashed Transport Relay] from the enemies that appear during the event [Drill Rig DR-JD99] (coordinates 59.67) and then use it on the machine that is found on the platform."
-	--[[Translation missing --]]
-	AL["NOTE_151159"] = "He is available only when [Oglethorpe Obnoticus] is in Mechagon (coordinates 72.37). He wanders around Mechagon, so check in every street. Killing him makes [OOX-Avenger/MG] to spawn."
-	--[[Translation missing --]]
-	AL["NOTE_151202"] = "In order to summon him you have to connect the [Wires] on the shore, with the [Pylons] inside the water."
-	--[[Translation missing --]]
-	AL["NOTE_151296"] = "First check if [Oglethorpe Obnoticus] is in Mechagon (coordinates 72.37). If he is there, then you have to find and kill [OOX-Fleetfoot/MG] (it is a chicken robot wandering around Mechagon). Once you find him and kill him, come back to this icon's coordinates."
-	--[[Translation missing --]]
-	AL["NOTE_151308"] = "Only available during [Drill Rig] events."
-	--[[Translation missing --]]
-	AL["NOTE_151569"] = "You require a [Hundred-Fathom Lure] to summon it."
-	--[[Translation missing --]]
-	AL["NOTE_151627"] = "You need to use a [Exothermic Evaporator Coil] on the machine that is found on the platform."
-	--[[Translation missing --]]
-	AL["NOTE_151933"] = "In order to kill him you have to use [Beastbot Powerpack] (you can get the schema at the coordinates 60.41)."
-	--[[Translation missing --]]
-	AL["NOTE_152007"] = "It is wandering in this area, so the coordinates might not be very accurate."
-	--[[Translation missing --]]
-	AL["NOTE_152113"] = "Only available during the event [Drill Rig DR-CC88]."
-	--[[Translation missing --]]
-	AL["NOTE_152569"] = "When you aproach to him, he will tell you a colour that he hates. Once you know what colour it is, you have to go to the coordinates 63.41 where you will be painted that colour. When you will come back to his position, he will attack you."
-	--[[Translation missing --]]
-	AL["NOTE_152570"] = "When you aproach to him, he will tell you a colour that he hates. Once you know what colour it is, you have to go to the coordinates 63.41 where you will be painted that colour. When you will come back to his position, he will attack you."
-	--[[Translation missing --]]
-	AL["NOTE_153000"] = "Only available while the daily quest [Bugs, Lots of 'Em!] is active."
-	--[[Translation missing --]]
-	AL["NOTE_153200"] = "Only available during the event [Drill Rig DR-JD41]."
-	--[[Translation missing --]]
-	AL["NOTE_153205"] = "Only available during the event [Drill Rig DR-JD99]."
-	--[[Translation missing --]]
-	AL["NOTE_153206"] = "Only available during the event [Drill Rig DR-TR28]."
-	--[[Translation missing --]]
-	AL["NOTE_153228"] = "It shows up after killing a LOT of [Upgraded Sentry] that wander around the area."
-	--[[Translation missing --]]
-	AL["NOTE_154225"] = "He is available only on the interface that you can access using [Personal Time Displacer] that you can create with resources collected in Mechagon. Important: He won't spawn while Chromie's daily quest is available."
-	--[[Translation missing --]]
-	AL["NOTE_154332"] = "It is in a cave. The entrance is located at the coordinates 57,38."
-	--[[Translation missing --]]
-	AL["NOTE_154333"] = "It is in a cave. The entrance is located at the coordinates 57,38."
-	--[[Translation missing --]]
-	AL["NOTE_154342"] = "He is available only on the interface that you can access using [Personal Time Displacer] that you can create with resources collected in Mechagon."
-	--[[Translation missing --]]
-	AL["NOTE_154559"] = "It is in a cave. The entrance is located at the coordinates 70,58."
-	--[[Translation missing --]]
-	AL["NOTE_154604"] = "It is in a cave. The entrance is located at the coordinates 36,20."
-	--[[Translation missing --]]
-	AL["NOTE_154701"] = "Only available during the event [Drill Rig DR-CC61]."
-	--[[Translation missing --]]
-	AL["NOTE_154739"] = "Only available during the event [Drill Rig DR-CC73]."
-	--[[Translation missing --]]
-	AL["NOTE_155531"] = "You have to use the orb above him (Essence of the Sun) to get [Aura of the Sun] and be able to attack him."
-	--[[Translation missing --]]
-	AL["NOTE_156709"] = "You have to kill Faceless Despoiler (normal NPC) to force this one to spawn."
-	--[[Translation missing --]]
-	AL["NOTE_157162"] = "Inside the temple. The entrance is located at the coordinates 22,24."
-	--[[Translation missing --]]
-	AL["NOTE_158531"] = "You have to kill Voidwarped Neferset (normal NPC) to force this one to spawn."
-	--[[Translation missing --]]
-	AL["NOTE_158632"] = "You have to kill Burbling Fleshbeast (normal NPC) to force this one to spawn."
-	--[[Translation missing --]]
-	AL["NOTE_158706"] = "You have to kill Oozing Putrefaction (normal NPC) to force this one to spawn."
-	--[[Translation missing --]]
-	AL["NOTE_159087"] = "You have to kill N'Zoth Bonestripper (normal NPC) to force this one to spawn."
-	--[[Translation missing --]]
-	AL["NOTE_160968"] = "Inside the temple. The entrance is located at the coordinates 22,24."
-	--[[Translation missing --]]
-	AL["NOTE_162171"] = "It is in a cave. The entrance is located at the coordinates 45,58."
-	--[[Translation missing --]]
-	AL["NOTE_162352"] = "It is in a cave. The entrance is underwater at the coordinates 52,40."
-	--[[Translation missing --]]
-	AL["NOTE_280951"] = "Follow the railway until you find a cart. Ride it to discover the treasure."
-	--[[Translation missing --]]
-	AL["NOTE_287239"] = "If you are horde you have to complete Vol'dun campaign in order to have access to the temple."
-	--[[Translation missing --]]
-	AL["NOTE_289647"] = "The treasure is in a cave. The entrance is at the coordinates 65.11, between some trees almost on top of the mountain."
-	--[[Translation missing --]]
-	AL["NOTE_292673"] = "1 of 5 scrolls. Read all of them to discover the treasure [Secret of the Depths]. It is in the basement. Hide this icon manually once you read it."
-	--[[Translation missing --]]
-	AL["NOTE_292674"] = "2 of 5 scrolls. Read all of them to discover the treasure [Secret of the Depths]. It is under the wood floor, in the corner beside a bunch of candles. Hide this icon manually once you read it."
-	--[[Translation missing --]]
-	AL["NOTE_292675"] = "3 of 5 scrolls. Read all of them to discover the treasure [Secret of the Depths]. It is in the basement. Hide this icon manually once you read it."
-	--[[Translation missing --]]
-	AL["NOTE_292676"] = "4 of 5 scrolls. Read all of them to discover the treasure [Secret of the Depths]. It is in the top floor. Hide this icon manually once you read it."
-	--[[Translation missing --]]
-	AL["NOTE_292677"] = "5 of 5 scrolls. Read all of them to discover the treasure [Secret of the Depths]. It is in an underground cave. The entrance is under water at the coordinates 72.40 (water pool at the monastery). Hide this icon manually once you read it."
-	--[[Translation missing --]]
-	AL["NOTE_292686"] = "After reading the 5 scrolls, use the [Ominous Altar] to obtain [Secret of the Depths]. Warning: Using the altar will teleport you to the middle of the sea. Hide this icon manually once you use it."
-	--[[Translation missing --]]
-	AL["NOTE_293349"] = "It is inside the shed, on top of a shelf."
-	--[[Translation missing --]]
-	AL["NOTE_293350"] = "This treasure is hidden in a cave underneath. Go to the coordinates 61.38, and set the camera on top, then jump backwards through the little crack on the floor and land on the ledge."
-	--[[Translation missing --]]
-	AL["NOTE_293852"] = "You won't see this until you collect [Soggy Treasure Map] from the pirates at Freehold"
-	--[[Translation missing --]]
-	AL["NOTE_293880"] = "You won't see this until you collect [Fading Treasure Map] from the pirates at Freehold"
-	--[[Translation missing --]]
-	AL["NOTE_293881"] = "You won't see this until you collect [Yellowed Treasure Map] from the pirates at Freehold"
-	--[[Translation missing --]]
-	AL["NOTE_293884"] = "You won't see this until you collect [Singed Treasure Map] from the pirates at Freehold"
-	--[[Translation missing --]]
-	AL["NOTE_297828"] = "The raven flying on top holds the key. Kill it."
-	--[[Translation missing --]]
-	AL["NOTE_297891"] = "You have to disable the runes in this order: Left, Down, Up, Right"
-	--[[Translation missing --]]
-	AL["NOTE_297892"] = "You have to disable the runes in this order: Left, Right, Down, Up"
-	--[[Translation missing --]]
-	AL["NOTE_297893"] = "You have to disable the runes in this order: Right, Up, Left, Down"
-	--[[Translation missing --]]
-	AL["NOTE_326395"] = "You have to enable the [Arcane device] that is found on top of a table beside the chest in order to start the minigame. To pass the game you have to separate the three triangles. Click on the orbs to switch their positions."
-	--[[Translation missing --]]
-	AL["NOTE_326396"] = "You have to enable the [Arcane device] that is found on the ground beside the chest in order to start the minigame. To pass the game you have to separate the two rectangles. Click on the orbs to switch their positions."
-	--[[Translation missing --]]
-	AL["NOTE_326397"] = "You have to enable the [Arcane device] that is found on the ground beside the chest in order to start the minigame. To pass the game you have to line up three red runes."
-	--[[Translation missing --]]
-	AL["NOTE_326398"] = "You have to enable the [Arcane device] that is found on top of a table beside the chest in order to start the minigame. To pass the game you have to line up four cyan runes."
-	--[[Translation missing --]]
-	AL["NOTE_326399"] = "It's in a cave underwater. You have to complete a minigame where you have to shoot the fire balls before they touch the circles on the ground. Everytime a ball touches the ground or you use the spell without hitting a ball, the energy will decrease, and if it reaches zero then you will have to start again."
-	--[[Translation missing --]]
-	AL["NOTE_326400"] = "It is in a cave. You have to complete a minigame where you have to shoot the fire balls before they touch the circles on the ground. Everytime a ball touches the ground or you use the spell without hitting a ball, the energy will decrease, and if it reaches zero then you will have to start again."
-	--[[Translation missing --]]
-	AL["NOTE_326403"] = "It is inside the building. You have to access it from the back."
-	--[[Translation missing --]]
-	AL["NOTE_326405"] = "It is between some ruins in the highest level of the map."
-	--[[Translation missing --]]
-	AL["NOTE_326406"] = "It is on top of a mountain in the highest level of the map. It's hard to get there on foot, but it's possible from the south side."
-	--[[Translation missing --]]
-	AL["NOTE_326407"] = "It is on top of a mountain in the highest level of the map."
-	--[[Translation missing --]]
-	AL["NOTE_326408"] = "It is in a cave underwater. The entrance is in the lake to the south (coordinates 57,39)."
-	--[[Translation missing --]]
-	AL["NOTE_326410"] = "It is in a cave in the lower level of the map."
-	--[[Translation missing --]]
-	AL["NOTE_326411"] = "It is between some stones in the highest level of the map."
-	--[[Translation missing --]]
-	AL["NOTE_326413"] = "It is in a cave in the lower level of the map."
-	--[[Translation missing --]]
-	AL["NOTE_326415"] = "It requires flying or you can use a [Goblin Glider Kit] from the tall mountain beside. The chest is on top of the coral bridge."
-	--[[Translation missing --]]
-	AL["NOTE_326416"] = "It is in the highest level of the map, inside a tower in ruins."
-	--[[Translation missing --]]
-	AL["NOTE_329783"] = "It is on the roof (access at coordinates 83.33). You have to complete a minigame where you have to shoot the fire balls before they touch the circles on the ground. Everytime a ball touches the ground or you use the spell without hitting a ball, the energy will decrease, and if it reaches zero then you will have to start again."
-	--[[Translation missing --]]
-	AL["NOTE_332220"] = "You have to complete a minigame where you have to shoot the fire balls before they touch the circles on the ground. Everytime a ball touches the ground or you use the spell without hitting a ball, the energy will decrease, and if it reaches zero then you will have to start again."
-	--[[Translation missing --]]
-	AL["PROFILES"] = "Profiles"
-	--[[Translation missing --]]
+	AL["FILTER_ZONE_DESC"] = "Zone à l'intérieur du continent ou de la catégorie"
+	AL["FILTER_ZONES_LIST"] = "Liste des zones"
+	AL["FILTER_ZONES_LIST_DESC"] = "Active les alertes dans cette zone. Lorsque cette option est désactivée, vous ne recevrez pas d'alerte lorsqu'un PNJ, un événement ou un trésor rare est trouvé dans la zone."
+	AL["FILTER_ZONES_ONLY_MAP"] = "Active les filtres uniquement sur la carte du monde"
+	AL["FILTER_ZONES_ONLY_MAP_DESC"] = "Lorsque cette fonction est activée, vous recevrez toujours des alertes de PNJ appartenant à des zones filtrées, mais elles n'apparaîtront pas sur votre carte du monde. Lorsque cette option est désactivée, vous ne recevrez pas du tout d'alertes des PNJs qui appartiennent à des zones filtrées."
+	AL["FILTERS"] = "Filtres des PNJ rares"
+	AL["FILTERS_SEARCH"] = "Recherche"
+	AL["FILTERS_SEARCH_DESC"] = "Tapez le nom du PNJ pour filtrer la liste ci-dessous"
+	AL["GENERAL_OPTIONS"] = "Options générales"
+	AL["JUST_SPAWNED"] = "%s vient d’apparaître. Visible sur votre mini-carte !"
+	AL["LEFT_BUTTON"] = "Clic gauche"
+	AL["LOCK_BUTTON_POSITION"] = "Verrouillage de la position du bouton"
+	AL["LOCK_BUTTON_POSITION_DESC"] = "Lorsqu'il est activé, vous ne pourrez pas changer la position du bouton en le faisant glisser."
+	AL["LOG_WINDOW_AUTOHIDE"] = "Cacher automatiquement les boutons des PNJ enregistrés"
+	AL["LOG_WINDOW_AUTOHIDE_DESC"] = "Cache chaque bouton du PNJ après le temps sélectionné (en minutes). Si vous sélectionnez zéro minute, les boutons resteront jusqu'à ce que vous fermiez la fenêtre du journal, ou qu'elle atteigne le nombre maximum du boutons (dans ce cas, le plus ancien sera remplacé)."
+	AL["LOG_WINDOW_OPTIONS"] = "Options de la fenêtre du journal"
+	AL["LOOT_CATEGORY_FILTERED"] = "Filtre activé pour la catégorie/sous-catégorie : %s/%s. Vous pouvez désactiver ce filtre en cliquant à nouveau sur l'icône du butin ou dans le menu de l'addon RareScanner"
+	AL["LOOT_CATEGORY_FILTERS"] = "Filtres par catégorie"
+	AL["LOOT_CATEGORY_FILTERS_DESC"] = "Filtre le butin par catégorie"
+	AL["LOOT_CATEGORY_NOT_FILTERED"] = "Filtre désactivé pour la catégorie/sous-catégorie: %s/%s"
+	AL["LOOT_DISPLAY_OPTIONS"] = "Options d'affichage"
+	AL["LOOT_DISPLAY_OPTIONS_DESC"] = "Options d'affichage pour la barre de butin"
+	AL["LOOT_FILTER_COLLECTED"] = "Filtre les animaux domestiques, les montures et les jouets collectés."
+	AL["LOOT_FILTER_COLLECTED_DESC"] = "Lorsqu'ils sont activés, seuls les montures, les animaux de compagnie et les jouets que vous n'avez pas encore collectés seront affichés sur la barre du butin. Ce filtre n'affecte pas les autres types d'objets à piller, quels qu'ils soient."
+	AL["LOOT_FILTER_COMPLETED_QUEST"] = "Filtre les éléments de quête qui ne permettent pas de commencer une nouvelle quête"
+	AL["LOOT_FILTER_COMPLETED_QUEST_DESC"] = "Lorsqu'il est activé, tout objet qui est nécessaire à une quête, ou qui commence une quête déjà terminée, n'apparaîtra pas sur la barre de butin"
+	AL["LOOT_FILTER_NOT_EQUIPABLE"] = "Filtre les éléments non équipables"
+	AL["LOOT_FILTER_NOT_EQUIPABLE_DESC"] = "Lorsqu'ils sont activés, les armures et les armes que ce personnage ne peut pas porter n'apparaîtront pas sur la barre de butin. Ce filtre n'affecte pas les autres types d'objets à piller, quels qu'ils soient."
+	AL["LOOT_FILTER_NOT_MATCHING_CLASS"] = "Filtre les éléments qui nécessitent une classe différente de la vôtre"
+	AL["LOOT_FILTER_NOT_MATCHING_CLASS_DESC"] = "Une fois activé, tout objet nécessitant l'utilisation d'une classe spécifique qui ne correspond pas à la vôtre, n'apparaîtra pas sur la barre de butin."
+	AL["LOOT_FILTER_NOT_TRANSMOG"] = "Afficher que les armures et les armes transmogrifiable"
+	AL["LOOT_FILTER_NOT_TRANSMOG_DESC"] = "Lorsqu'elles sont activées, seules les armures et les armes que vous n'avez pas encore collectées seront affichées sur la barre de butin. Ce filtre n'affecte pas les autres types d'objets à piller, quels qu'ils soient."
+	AL["LOOT_FILTER_SUBCATEGORY_DESC"] = "Afficher ce type de butin sur la barre du butin. Lorsque cette option est désactivée, vous ne verrez aucun objet correspondant à cette catégorie sur le butin affiché lorsque vous trouvez un PNJ rare"
+	AL["LOOT_FILTER_SUBCATEGORY_LIST"] = "Sous-catégories"
+	AL["LOOT_ITEMS_PER_ROW"] = "Nombre d'articles à afficher par ligne"
+	AL["LOOT_ITEMS_PER_ROW_DESC"] = "Définit le nombre d'articles à afficher par ligne sur la barre de butin. Si le nombre est inférieur au maximum, plusieurs lignes seront affichées."
+	AL["LOOT_MAIN_CATEGORY"] = "Catégorie principale"
+	AL["LOOT_MAX_ITEMS"] = "Nombre d'objets à afficher"
+	AL["LOOT_MAX_ITEMS_DESC"] = "Règle le nombre d'objets maximum à afficher dans la barre de butin"
+	AL["LOOT_MIN_QUALITY"] = "Qualité minimale du butin"
+	AL["LOOT_MIN_QUALITY_DESC"] = "Définit la qualité minimale du butin à afficher dans la barre de butin"
+	AL["LOOT_OPTIONS"] = "Options du butin"
+	AL["LOOT_OTHER_FILTERS"] = "Autres filtres"
+	AL["LOOT_OTHER_FILTERS_DESC"] = "Autres filtres"
+	AL["LOOT_PANEL_OPTIONS"] = "Options de la barre du butin"
+	AL["LOOT_SUBCATEGORY_FILTERS"] = "Filtres de sous-catégories"
+	AL["LOOT_TOGGLE_FILTER"] = "Alt-Clic-gauche pour activer les filtres"
+	AL["LOOT_TOOLTIP_POSITION"] = "Position de l'info-bulle du butin"
+	AL["LOOT_TOOLTIP_POSITION_DESC"] = "Définit où afficher l'infobulle du butin qui apparaît lorsque vous passez la souris sur une icône, par rapport au bouton"
+	AL["MAIN_BUTTON_OPTIONS"] = "Options du bouton principal"
+	AL["MAP_MENU_DISABLE_LAST_SEEN_CONTAINER_FILTER"] = "Affiche les conteneurs que vous avez vus il y a longtemps mais qui ne peuvent se reproduire"
+	AL["MAP_MENU_DISABLE_LAST_SEEN_EVENT_FILTER"] = "Affiche les événements que vous avez vus il y a longtemps mais qui peuvent se reproduire"
+	AL["MAP_MENU_DISABLE_LAST_SEEN_FILTER"] = "Affiche les PNJ rares que vous avez déjà vus il y a longtemps mais qui peuvent revenir"
+	AL["MAP_MENU_SHOW_CONTAINERS"] = "Affiche les icônes des conteneurs sur la carte"
+	AL["MAP_MENU_SHOW_EVENTS"] = "Affiche les icônes des événements sur la carte"
+	AL["MAP_MENU_SHOW_NOT_DISCOVERED"] = "Entités non découvertes"
+	AL["MAP_MENU_SHOW_NOT_DISCOVERED_OLD"] = "Entités non découvertes (anciennes extensions)"
+	AL["MAP_MENU_SHOW_RARE_NPCS"] = "Afficher les icônes rares des PNJ sur la carte"
+	AL["MAP_NEVER"] = "Jamais"
+	AL["MAP_OPTIONS"] = "Options de la carte"
+	AL["MAP_SCALE_ICONS"] = "Échelle des icônes"
+	AL["MAP_SCALE_ICONS_DESC"] = "Cela permettra d'ajuster l'échelle des icônes, soit la valeur 1 de la taille originale."
+	AL["MAP_SHOW_ICON_AFTER_COLLECTED"] = "Continu à afficher les icônes des conteneurs après le pillage"
+	AL["MAP_SHOW_ICON_AFTER_COLLECTED_DESC"] = "Lorsqu'elle est désactivée, l'icône disparaîtra après le pillage du conteneur."
+	AL["MAP_SHOW_ICON_AFTER_COMPLETED"] = "Continu à afficher les icônes des événements après leur achèvement"
+	AL["MAP_SHOW_ICON_AFTER_COMPLETED_DESC"] = "Lorsqu'elle est désactivée, l'icône disparaît une fois que vous avez terminé l'événement."
+	AL["MAP_SHOW_ICON_AFTER_DEAD"] = "Continu à afficher les icônes du PNJ après la mort"
+	AL["MAP_SHOW_ICON_AFTER_DEAD_DESC"] = "Lorsqu'elle est désactivée, l'icône disparaîtra après avoir tué le PNJ. L'icône réapparaîtra dès que vous retrouverez le PNJ. Cette option ne fonctionne qu'avec les PNJ qui restent rares après avoir été tués."
+	AL["MAP_SHOW_ICON_AFTER_DEAD_RESETEABLE"] = "Continu à afficher les icônes des PNJ après la mort (uniquement dans les zones réinitialisables)"
+	AL["MAP_SHOW_ICON_AFTER_DEAD_RESETEABLE_DESC"] = "Lorsqu'elle est désactivée, l'icône disparaîtra après que vous aurez tué le PNJ. L'icône réapparaîtra dès que vous retrouverez le PNJ. Cette option ne fonctionne qu'avec les PNJ qui restent rares après avoir été tués dans des zones qui se réinitialisent avec les quêtes mondiales."
+	AL["MAP_SHOW_ICON_CONTAINER_MAX_SEEN_TIME"] = "Minuteur pour cacher les icônes des conteneurs (en minutes)"
+	AL["MAP_SHOW_ICON_CONTAINER_MAX_SEEN_TIME_DESC"] = "Définis le nombre maximum de minutes écoulées depuis que vous avez vu le conteneur. Après ce délai, l'icône ne sera pas affichée sur la carte du monde tant que vous n'aurez pas retrouvé le conteneur. Si vous sélectionnez zéro minute, les icônes s'afficheront, quel que soit le temps écoulé depuis que vous avez vu le conteneur. Ce filtre ne s'applique pas aux conteneurs qui font partie d'une réalisation."
+	AL["MAP_SHOW_ICON_EVENT_MAX_SEEN_TIME"] = "Minuteur pour cacher les icônes des événements (en minutes)"
+	AL["MAP_SHOW_ICON_EVENT_MAX_SEEN_TIME_DESC"] = "Définis le nombre maximum de minutes écoulées depuis que vous avez vu l'événement. Après ce délai, l'icône ne sera pas affichée sur la carte du monde tant que vous n'aurez pas retrouvé l'événement. Si vous sélectionnez zéro minute, les icônes s'afficheront quel que soit le temps écoulé depuis que vous avez vu l'événement."
+	AL["MAP_SHOW_ICON_MAX_SEEN_TIME"] = "Minuterie pour cacher les icônes rares des PNJ (en minutes)"
+	AL["MAP_SHOW_ICON_MAX_SEEN_TIME_DESC"] = "Définis le nombre maximum de minutes écoulées depuis que vous avez vu le NPC. Après ce délai, l'icône ne sera pas affichée sur la carte du monde tant que vous n'aurez pas retrouvé le PNJ. Si vous sélectionnez zéro minute, les icônes s'afficheront quel que soit le temps écoulé depuis que vous avez vu le PNJ rare."
+	AL["MAP_TOOLTIP_ACHIEVEMENT"] = "C'est un objectif de Hauts faits %s"
+	AL["MAP_TOOLTIP_ALREADY_COMPLETED"] = "Cet événement est déjà terminé. Redémarre dans : %s "
+	AL["MAP_TOOLTIP_ALREADY_KILLED"] = "Ce PNJ est déjà mort. Redémarre dans : %s"
+	AL["MAP_TOOLTIP_ALREADY_OPENED"] = "Ce conteneur est déjà ouvert. Redémarre dans : %s"
+	AL["MAP_TOOLTIP_CONTAINER_LOOTED"] = "Shift-Clic-Gauche pour définir comme pillé."
+	AL["MAP_TOOLTIP_DAYS"] = "jours"
+	AL["MAP_TOOLTIP_EVENT_DONE"] = "Shift-Clic-Gauche pour définir comme terminé"
+	AL["MAP_TOOLTIP_IGNORE_ICON"] = "Shift-Clic-Gauche pour désactiver cette icône pour toujours si elle ne devrait pas être là"
+	AL["MAP_TOOLTIP_KILLED"] = "Shift-Clic-Gauche pour définir comme tué"
+	AL["MAP_TOOLTIP_NOT_FOUND"] = "Vous n'avez pas vu ce PNJ"
+	AL["MAP_TOOLTIP_SEEN"] = "Vu précédemment : %s"
+	AL["MAP_TOOLTIP_SHOW_OVERLAY"] = "Cliquez sur le bouton gauche de la souris pour indiquer les autres zones de spot "
+	AL["MARKER"] = "Marqueur de cible"
+	AL["MARKER_DESC"] = "Choisissez le marqueur à ajouter au dessus de la cible lorsque vous cliquez sur le bouton principal."
+	AL["MESSAGE_OPTIONS"] = "Options de messages"
+	AL["MIDDLE_BUTTON"] = "Cliquez sur le bouton du milieu"
+	AL["NAVIGATION_ENABLE"] = "Active la navigation"
+	AL["NAVIGATION_ENABLE_DESC"] = "Lorsqu'elles sont activées, les flèches de navigation s'affichent à côté du bouton principal pour vous permettre d'accéder aux nouvelles ou anciennes créatures trouvées"
+	AL["NAVIGATION_LOCK_ENTITY"] = "Bloquer l'affichage de nouvelles créatures si elle est déjà affichée"
+	AL["NAVIGATION_LOCK_ENTITY_DESC"] = "Lorsqu'il est activé, si le bouton principal affiche une entité sur votre écran, il ne se mettra pas automatiquement à jour. Une flèche apparaîtra vous permettant d'accéder à la nouvelle créature lorsque vous serez prêt"
+	AL["NAVIGATION_OPTIONS"] = "Options de navigation"
+	AL["NAVIGATION_SHOW_NEXT"] = "Afficher la prochaine créature trouvée"
+	AL["NAVIGATION_SHOW_PREVIOUS"] = "Afficher la créature précédente trouvée"
+	AL["NOT_TARGETEABLE"] = "Non ciblable"
+	AL["NOTE_10263"] = "Le [Démoniste du Bouclier balafré] ouvre de temps en temps un portail d'où le PNJ rare peut être invoqué"
+	AL["NOTE_130350"] = "Vous devez chevaucher ce rare jusqu'au conteneur que vous trouverez en suivant le chemin à droite de cette position."
+	AL["NOTE_131453"] = "Vous devez monter [Gardien de la source] à cette position. Le cheval est d'une rareté amicale que vous trouverez en suivant le chemin à gauche de ce conteneur."
+	AL["NOTE_135497"] = "Disponible uniquement dans le cadre de la quête quotidienne [Nordrassil à la rescousse] obtenue auprès de Mylune. Pendant cette quête, vous trouverez des champignons sous les arbres. En cliquant dessus, vous pourrez peut-être faire naître ce PNJ."
+	AL["NOTE_149847"] = "Quand vous vous approchez, il vous dit une couleur qu'il déteste. Une fois que vous savez de quelle couleur il s'agit, vous devez vous rendre aux coordonnées 63.41 pour choisir cette couleur. Lorsque vous reviendrez à sa position, il vous attaquera."
+	AL["NOTE_150342"] = "Disponible uniquement pendant l'événement  [Foreuse DR-TR35]."
+	AL["NOTE_150394"] = "Pour le tuer, vous devez l'amener aux coordonnées 63.38, où se trouve un appareil avec un éclair bleu. Une fois que le PNJ sera touché par la foudre, il explosera et vous pourrez le piller"
+	AL["NOTE_151124"] = "Vous devez piller un [Relais de transport démoli] sur des ennemis qui apparaissent pendant l'événement [Foreuse DR-JD99] (coordonnées 59.67) et ensuite l'utiliser sur la machine qui se trouve sur la plate-forme."
+	AL["NOTE_151159"] = "Il n'est disponible que lorsque [Orguignard Odipnoticus] se trouve à Mechagon (coordonnées 72.37). Il se promène dans Mechagon, alors vérifiez chaque rue. Si vous le tuez, [Flipflop-OOX/MG] pourra apparaîtrer."
+	AL["NOTE_151202"] = "Pour l'invoquer, vous devez connecter les [Fils] sur la rive, avec les [Pylônes] à l'intérieur de l'eau."
+	AL["NOTE_151296"] = "Vérifiez d'abord si [Orguignard Odipnoticus] se trouve à Mechagon (coordonnées 72.37). S'il s'y trouve, vous devez trouver et tuer [Flipflop-OOX/MG] (c'est un robot-poulet qui se promène dans Mechagon). Une fois que vous l'avez trouvé et que vous l'avez tué, revenez aux coordonnées de cette icône."
+	AL["NOTE_151308"] = "Disponible uniquement lors des événements [Foreuse]."
+	AL["NOTE_151569"] = "Il vous faut un [Appât des cent lieues] pour l'invoquer"
+	AL["NOTE_151627"] = "Vous devez utiliser un [Bobine évaporatrice exothermique] sur la machine qui se trouve sur la plate-forme."
+	AL["NOTE_151933"] = "Pour le tuer, vous devez utiliser le [Bloc d’alimentation de robot-bête] (vous pouvez obtenir le schéma aux coordonnées 60.41)."
+	AL["NOTE_152007"] = "Il erre dans cette zone, de sorte que les coordonnées peuvent ne pas être très précises."
+	AL["NOTE_152113"] = "Disponible uniquement pendant l'événement [Foreuse DR-CC88]."
+	AL["NOTE_152569"] = "Quand vous l'approchez, il vous dit une couleur qu'il déteste. Une fois que vous savez de quelle couleur il s'agit, vous devez vous rendre aux coordonnées 63.41 où l'on vous peindra cette couleur. Lorsque vous reviendrez à sa position, il vous attaquera."
+	AL["NOTE_152570"] = "Quand vous l'approchez, il vous dit une couleur qu'il déteste. Une fois que vous savez de quelle couleur il s'agit, vous devez vous rendre aux coordonnées 63.41 où l'on vous peindra cette couleur. Lorsque vous reviendrez à sa position, il vous attaquera."
+	AL["NOTE_153000"] = "Disponible uniquement lorsque la quête quotidienne [Insectes à foison] est active."
+	AL["NOTE_153200"] = "Disponible uniquement pendant l'événement [Foreuse DR-JD41]."
+	AL["NOTE_153205"] = "Disponible uniquement pendant l'événement [Foreuse DR-JD99]. "
+	AL["NOTE_153206"] = "Disponible uniquement pendant l'événement [Foreuse DR-TR28]. "
+	AL["NOTE_153228"] = "Il apparaît après avoir tué un grand nombre de [Factionnaire amélioré] qui se trouve dans la région."
+	AL["NOTE_154225"] = "Il n'est disponible que sur l'interface à laquelle vous pouvez accéder en utilisant [Déplaceur temporel personnel] que vous pouvez créer avec les ressources collectées dans Mechagon. Important : il ne se reproduira pas tant que la quête quotidienne de Chromie sera disponible."
+	AL["NOTE_154332"] = "Il est dans une grotte. L'entrée est située aux coordonnées 57,38."
+	AL["NOTE_154333"] = "Il est dans une grotte. L'entrée est située aux coordonnées 57,38."
+	AL["NOTE_154342"] = "Il est disponible uniquement sur l'interface à laquelle vous pouvez accéder en utilisant [Déplaceur temporel personnel] que vous pouvez créer avec les ressources collectées dans Mechagon."
+	AL["NOTE_154559"] = "Il est dans une grotte. L'entrée est située aux coordonnées 70,58."
+	AL["NOTE_154604"] = "Il est dans une grotte. L'entrée est située aux coordonnées 36,20."
+	AL["NOTE_154701"] = "Disponible uniquement pendant l'événement [Foreuse DR-CC61]."
+	AL["NOTE_154739"] = "Disponible uniquement pendant l'événement [Foreuse DR-CC73]."
+	AL["NOTE_155531"] = "Vous devez utiliser l'orbe au-dessus de lui (Essence du Soleil) pour obtenir [Aura du Soleil] et être capable de l'attaquer."
+	AL["NOTE_156709"] = "Vous devez tuer Spoliateur sans-visage (PNJ normal) pour forcer celui-ci à apparaître."
+	AL["NOTE_157162"] = "A l'intérieur du temple. L'entrée est située aux coordonnées 22,24."
+	AL["NOTE_158531"] = "Vous devez tuer Neferset déformé par le Vide (PNJ normal) pour forcer celui-ci à apparaître."
+	AL["NOTE_158632"] = "Vous devez tuer Bête de chair gargouillante (PNJ normal) pour forcer celui-ci à apparaître."
+	AL["NOTE_158706"] = "Il faut tuer la Putréfaction suintante (PNJ normale) pour forcer celle-ci à apparaître."
+	AL["NOTE_159087"] = "Il faut tuer Gratte-les-os de N'Zoth (PNJ normal) pour forcer celui-ci à apparaître."
+	AL["NOTE_160968"] = "A l'intérieur du temple. L'entrée est située aux coordonnées 22,24."
+	AL["NOTE_162171"] = "Il est dans une grotte. L'entrée est située aux coordonnées 45,58."
+	AL["NOTE_162352"] = "Il est dans une grotte. L'entrée se trouve sous l'eau aux coordonnées 52,40."
+	AL["NOTE_280951"] = "Suivez le chemin de fer jusqu'à ce que vous trouviez une charrette. Conduisez-le pour découvrir le trésor."
+	AL["NOTE_287239"] = "Si vous êtes de la horde, vous devez compléter la campagne de Vol'dun pour avoir accès au temple."
+	AL["NOTE_289647"] = "Le trésor se trouve dans une grotte. L'entrée se trouve aux coordonnées 65.11, entre quelques arbres presque au sommet de la montagne."
+	AL["NOTE_292673"] = "1 sur 5 parchemins. Lisez-les tous pour découvrir le trésor [Secret des profondeurs]. Il se trouve au sous-sol. Cachez cette icône manuellement une fois que vous l'avez lue."
+	AL["NOTE_292674"] = "2 sur 5 parchemins. Lisez-les tous pour découvrir le trésor [Secret des profondeurs]. Il se trouve sous le plancher de bois, dans le coin à côté d'un tas de bougies. Cachez cette icône manuellement une fois que vous l'avez lue."
+	AL["NOTE_292675"] = "3 sur 5 parchemins. Lisez-les tous pour découvrir le trésor [Secret des profondeurs]. Il se trouve au sous-sol. Cachez cette icône manuellement une fois que vous l'avez lue."
+	AL["NOTE_292676"] = "4 sur 5 parchemins. Lisez-les tous pour découvrir le trésor [Secret des profondeurs]. Il se trouve au dernier étage. Cachez cette icône manuellement une fois que vous l'avez lue."
+	AL["NOTE_292677"] = "5 parchemins sur 5. Lisez-les tous pour découvrir le trésor [Secret des profondeurs]. Il se trouve dans une grotte souterraine. L'entrée est sous l'eau aux coordonnées 72.40 (bassin d'eau du monastère). Cachez cette icône manuellement une fois que vous l'aurez lue."
+	AL["NOTE_292686"] = "Après avoir lu les 5 parchemins, utilisez l'[Autel menaçant] pour obtenir le [Secret des profondeurs]. Attention : L'utilisation de l'autel vous téléportera au milieu de la mer. Cachez cette icône manuellement une fois que vous l'avez utilisée."
+	AL["NOTE_293349"] = "Il se trouve à l'intérieur du hangar, sur une étagère."
+	AL["NOTE_293350"] = "Ce trésor est caché dans une grotte en dessous. Allez aux coordonnées 61.38, et placez la caméra sur le dessus, puis sautez à l'envers par la petite fente au sol et atterrissez sur le rebord."
+	AL["NOTE_293852"] = "Vous ne le verrez pas tant que vous n'aurez pas récupéré la [carte au trésor détrempé] des pirates à Port-Liberté"
+	AL["NOTE_293880"] = "Vous ne le verrez pas tant que vous n'aurez pas récupéré [Carte au trésor effacée] des pirates à Port-Liberté"
+	AL["NOTE_293881"] = "Vous ne le verrez pas tant que vous n'aurez pas récupéré la [Carte au trésor jaunie] des pirates à Port-Liberté"
+	AL["NOTE_293884"] = "Vous ne le verrez pas tant que vous n'aurez pas récupéré la [Carte au trésor roussie] des pirates à Port-Liberté"
+	AL["NOTE_297828"] = "Les corbeaux qui volent au-dessus de vous ont la clé. Tuez-les."
+	AL["NOTE_297891"] = "Vous devez désactiver les runes dans cet ordre : Gauche, bas, haut, droite"
+	AL["NOTE_297892"] = "Vous devez désactiver les runes dans cet ordre : Gauche, droite, bas, haut"
+	AL["NOTE_297893"] = "Vous devez désactiver les runes dans cet ordre : Droite, Haut, Gauche, Bas"
+	AL["NOTE_326395"] = "Vous devez activer le [dispositif Arcanique] qui se trouve sur une table à côté du coffre pour pouvoir commencer le mini-jeu. Pour réussir le jeu, vous devez séparer les trois triangles. Cliquez sur les orbes pour changer leur position."
+	AL["NOTE_326396"] = "Vous devez activer le [dispositif arcanique] qui se trouve sur le sol à côté du coffre afin de lancer le mini-jeu. Pour réussir le jeu, vous devez séparer les deux rectangles. Cliquez sur les orbes pour changer leur position."
+	AL["NOTE_326397"] = "Vous devez activer le [dispositif arcanique] qui se trouve sur le sol à côté du coffre afin de lancer le mini-jeu. Pour réussir le jeu, vous devez aligner trois runes rouges."
+	AL["NOTE_326398"] = "Vous devez activer le [Dispositif arcanique] qui se trouve sur une table à côté du coffre pour pouvoir commencer le mini-jeu. Pour réussir le jeu, vous devez aligner quatre runes cyan."
+	AL["NOTE_326399"] = "Il est dans une grotte sous-marine. Vous devez réaliser un mini-jeu dans lequel vous devez tirer les boules de feu avant qu'elles ne touchent les cercles au sol. Chaque fois qu'une boule touche le sol ou que vous utilisez le sort sans toucher une boule, l'énergie diminue, et si elle atteint zéro, vous devez recommencer."
+	AL["NOTE_326400"] = "Il est dans une grotte. Vous devez réaliser un mini-jeu dans lequel vous devez tirer les boules de feu avant qu'elles ne touchent les cercles au sol. Chaque fois qu'une boule touche le sol ou que vous utilisez le sort sans toucher une boule, l'énergie diminue, et si elle atteint zéro, vous devez recommencer."
+	AL["NOTE_326403"] = "Il est à l'intérieur du bâtiment. Vous devez y accéder par l'arrière."
+	AL["NOTE_326405"] = "Elle se trouve entre les quelques ruines au plus haut niveau de la carte"
+	AL["NOTE_326406"] = "Il se trouve au sommet d'une montagne au plus haut niveau de la carte. Il est difficile de s'y rendre à pied, mais c'est possible depuis le côté sud."
+	AL["NOTE_326407"] = "Il se trouve au sommet d'une montagne au plus haut niveau de la carte."
+	AL["NOTE_326408"] = "Il se trouve dans une grotte sous-marine. L'entrée se trouve dans le lac au sud (coordonnées 57,39)."
+	AL["NOTE_326410"] = "Il se trouve dans une grotte au niveau inférieur de la carte."
+	AL["NOTE_326411"] = "Elle se trouve entre quelques pierres au niveau le plus élevé de la carte"
+	AL["NOTE_326413"] = "Il se trouve dans une grotte au niveau inférieur de la carte."
+	AL["NOTE_326415"] = "Il faut voler ou alors utiliser un [kit de planeur gobelin] en haut de la montagne à côté. Le coffre se trouve au sommet du pont de corail."
+	AL["NOTE_326416"] = "Il se trouve au plus haut niveau de la carte, à l'intérieur d'une tour en ruine."
+	AL["NOTE_329783"] = "Il se trouve sur le toit (accès aux coordonnées 83.33). Vous devez terminer un mini-jeu où vous devez tirer sur les boules de feu avant qu'elles ne touchent les cercles au sol. Chaque fois qu'une boule touche le sol ou que vous utilisez le sort sans toucher une boule, l'énergie diminue, et si elle atteint zéro, vous devez recommencer."
+	AL["NOTE_332220"] = "Vous devez terminer un mini-jeu où vous devez tirer sur les boules de feu avant qu'elles ne touchent les cercles au sol. Chaque fois qu'une boule touche le sol ou que vous utilisez le sort sans toucher une boule, l'énergie diminue, et si elle atteint zéro, vous devez recommencer."
+	AL["PROFILES"] = "Profils"
 	AL["RAIDS"] = "Raids"
-	--[[Translation missing --]]
-	AL["RESET_POSITION"] = "Reset position"
-	--[[Translation missing --]]
-	AL["RESET_POSITION_DESC"] = "Restores the original position of the main button."
-	--[[Translation missing --]]
-	AL["SHOW_CHAT_ALERT"] = "Toggle showing chat alerts"
-	--[[Translation missing --]]
-	AL["SHOW_CHAT_ALERT_DESC"] = "Shows a private message in the chat every time a treasure, chest or NPC is found"
-	--[[Translation missing --]]
-	AL["SHOW_RAID_WARNING"] = "Toggle showing raid warnings"
-	--[[Translation missing --]]
-	AL["SHOW_RAID_WARNING_DESC"] = "Shows a raid warning on your screen every time a treasure, chest or NPC is found"
-	--[[Translation missing --]]
-	AL["SOUND"] = "Sound"
-	--[[Translation missing --]]
-	AL["SOUND_OPTIONS"] = "Sound options"
-	--[[Translation missing --]]
+	AL["RESET_POSITION"] = "Réinitialise la position"
+	AL["RESET_POSITION_DESC"] = "Rétablis la position initiale du bouton principal."
+	AL["SHOW_CHAT_ALERT"] = "Affiche les alertes du chat"
+	AL["SHOW_CHAT_ALERT_DESC"] = "Affiche un message privé dans le chat à chaque apparition d'un trésor, coffre ou PNJ."
+	AL["SHOW_RAID_WARNING"] = "Active les avertissements de raid"
+	AL["SHOW_RAID_WARNING_DESC"] = "Affiche un avertissement de raid sur votre écran chaque fois qu'un trésor, un coffre ou un PNJ est trouvé"
+	AL["SOUND"] = "Son"
+	AL["SOUND_OPTIONS"] = "Options audio"
 	AL["SOUND_VOLUME"] = "Volume"
-	--[[Translation missing --]]
-	AL["SOUND_VOLUME_DESC"] = "Sets the sound volume level"
-	--[[Translation missing --]]
-	AL["SYNCRONIZATION_COMPLETED"] = "Syncronization completed"
-	--[[Translation missing --]]
-	AL["SYNCRONIZE"] = "Sync database"
-	--[[Translation missing --]]
-	AL["SYNCRONIZE_DESC"] = "This will analize which rare NPCs and treasures that are part of an achievement you have killed/collected already, and they will disappear from your map. There is no way to know the state of non-achievement rare NPCs and treasures, so they will remain in your map as they are currently shown."
-	--[[Translation missing --]]
-	AL["TEST"] = "Launch Test"
-	AL["TEST_DESC"] = "Appuyez sur le bouton pour afficher un exemple d'alerte. Vous pouvez faire glisser et déposer le panneau vers une autre position où il sera désormais affiché."
-	AL["TOC_NOTES"] = "Scanner mini-carte. Vous avertit visuellement avec un bouton et une miniature et émet un son à chaque fois qu'un PNJ, un trésor / coffre ou un événement rare apparaît dans votre mini-carte"
-	AL["TOGGLE_FILTERS"] = "Basculer les filtres"
-	AL["TOGGLE_FILTERS_DESC"] = "Basculer tous les filtres à la fois"
-	AL["TOOLTIP_BOTTOM"] = "Côté inférieur"
-	AL["TOOLTIP_CURSOR"] = "Suivre le curseur"
+	AL["SOUND_VOLUME_DESC"] = "Règle le niveau du volume sonore"
+	AL["SYNCRONIZATION_COMPLETED"] = "Syncronisation terminée"
+	AL["SYNCRONIZE"] = "Synchronisation de la base de données."
+	AL["SYNCRONIZE_DESC"] = "Cela vous permettra d'analyser les PNJs rares et les trésors qui font partie d'une réussite que vous avez déjà tuée/collectés, et ils disparaîtront de votre carte. Il n'y a aucun moyen de connaître l'état des PNJs et des trésors rares qui ne font pas partie d'une réussite, donc ils resteront dans votre carte tels qu'ils sont actuellement affichés."
+	AL["TEST"] = "Lancement du test"
+	AL["TEST_DESC"] = "Appuyez sur le bouton pour afficher un exemple d'alerte. Vous pouvez faire glisser le panneau jusqu'à une autre position où il sera désormais affiché."
+	AL["TOC_NOTES"] = "Minimap scanner. Vous avertit visuellement grâce à un bouton et une miniature et émet un son chaque fois qu'un PNJ, un trésor ou un événement rare apparaît dans votre minimap"
+	AL["TOGGLE_FILTERS"] = "Active les filtres"
+	AL["TOGGLE_FILTERS_DESC"] = "Activer tous les filtres à la fois"
+	AL["TOOLTIP_BOTTOM"] = "Côté bas"
+	AL["TOOLTIP_CURSOR"] = "Suivi du curseur"
 	AL["TOOLTIP_LEFT"] = "Côté gauche"
 	AL["TOOLTIP_RIGHT"] = "Côté droit"
-	AL["TOOLTIP_TOP"] = "Face supérieure"
-	AL["UNKNOWN"] = "Inconnue"
+	AL["TOOLTIP_TOP"] = "Côté haute"
+	AL["UNKNOWN"] = "Inconnu"
 	AL["UNKNOWN_TARGET"] = "Cible inconnue"
-	--[[Translation missing --]]
-	AL["ZONES_FILTER"] = "Zone filters"
+	AL["ZONES_FILTER"] = "Filtres de zone"
 	AL["ZONES_FILTERS_SEARCH_DESC"] = "Tapez le nom de la zone pour filtrer la liste ci-dessous"
 
 	-- CONTINENT names
 	AL["ZONES_CONTINENT_LIST"] = {
-		[9999] = "Class Halls"; --Class Halls
+		[9999] = "Domaines de classe"; --Class Halls
 		[9998] = "Île de Sombrelune"; --Darkmoon Island
-		[9997] = "Dungeons/Scenarios"; --Dungeons/Scenarios
+		[9997] = "Donjons/Scénarios"; --Dungeons/Scenarios
 		[9996] = "Raids"; --Raids
-		[9995] = "Unknown"; --Unknown
+		[9995] = "Inconnu"; --Unknown
+		[9994] = "Expedition islands"; --Expedition islands
 	}
 end

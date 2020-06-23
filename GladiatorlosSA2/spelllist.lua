@@ -746,7 +746,7 @@
 			[263165] = "voidTorrent",
 			[73325] = "leapOfFaith",
 			[215769] = "redeemer",
-			[209780] = "Premonition", -- Premonition
+			[305498] = "Premonition", -- Premonition
 			[289657] = "holywordconcentration",
 
 			-- Rogue (Cast Success)

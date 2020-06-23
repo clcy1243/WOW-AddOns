@@ -434,10 +434,11 @@ if AL then
 
 	-- CONTINENT names
 	AL["ZONES_CONTINENT_LIST"] = {
-		[9999] = "Class Halls"; --Class Halls
+		[9999] = "직업 전당"; --Class Halls
 		[9998] = "다크문 섬"; --Darkmoon Island
-		[9997] = "Dungeons/Scenarios"; --Dungeons/Scenarios
-		[9996] = "Raids"; --Raids
-		[9995] = "Unknown"; --Unknown
+		[9997] = "던전/시나리오"; --Dungeons/Scenarios
+		[9996] = "공격대"; --Raids
+		[9995] = "알수없음"; --Unknown
+		[9994] = "Expedition islands"; --Expedition islands
 	}
 end

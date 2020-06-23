@@ -1,10 +1,28 @@
-lightweight tag 149986e6cc374a575ae3fc49813a2d6b9122aa16 DetailsRetail.8.3.0.7282.140
+lightweight tag fe702cf97f9b718fc51a5c43555deaab72ce2b36 DetailsRetail.8.3.0.7336.141
 Author:	Tercio Jose <terciob19@hotmail.com>
-Date:	Sat Mar 14 13:40:14 2020 -0300
+Date:	Mon Jun 8 19:40:11 2020 -0300
 
-commit 149986e6cc374a575ae3fc49813a2d6b9122aa16
+commit fe702cf97f9b718fc51a5c43555deaab72ce2b36
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sat Mar 14 13:40:14 2020 -0300
+Date:   Mon Jun 8 19:40:11 2020 -0300
 
-    Removed the leftover print plus framework updates
+    Bump version
+
+commit b04b3473296f986f856c40a7a744cd0c4206699e
+Author: Cistoran <ivan017@gmail.com>
+Date:   Mon Jun 8 02:07:00 2020 -0600
+
+    Remove print messages for Spell Reflect spell info
+
+commit b04b3473296f986f856c40a7a744cd0c4206699e
+Author: Cistoran <ivan017@gmail.com>
+Date:   Mon Jun 8 02:07:00 2020 -0600
+
+    Remove print messages for Spell Reflect spell info
+
+commit b04b3473296f986f856c40a7a744cd0c4206699e
+Author: Cistoran <ivan017@gmail.com>
+Date:   Mon Jun 8 02:07:00 2020 -0600
+
+    Remove print messages for Spell Reflect spell info
 

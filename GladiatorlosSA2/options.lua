@@ -10,6 +10,7 @@ local GSA_OUTPUT = {["MASTER"] = L["Master"],["SFX"] = L["SFX"],["AMBIENCE"] = L
 
 function GSA:ShowConfig()
 	for i=1,2 do InterfaceOptionsFrame_OpenToCategory(GetAddOnMetadata("GladiatorlosSA2", "Title")) end -- ugly fix
+
 end
 
 function GSA:ShowConfig2() -- ***** @
@@ -38,6 +39,7 @@ local function setOption(info, value)
 	if value then
 		PlaySoundFile("Interface\\Addons\\"..gsadb.path_menu.."\\"..name..".ogg",gsadb.output_menu);
 	end
+	GSA:CanTalkHere()
 end
 
 local function getOption(info)
@@ -52,13 +54,11 @@ local function spellOption(order, spellID, ...)
 			type = 'toggle',
 			name = "\124T" .. icon .. ":24\124t" .. spellname,			
 			desc = function ()
-				--GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")				
-				--GameTooltip:SetHyperlink(GetSpellLink(spellID))			
-				--Fix this.
-				
-				--GameTooltip:Show(GetSpellLink(spellID))
-				--GameTooltip:Show(descr)  
+				GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")				
+				GameTooltip:SetHyperlink(GetSpellLink(spellID))			
+				GameTooltip:Show()  
 			end, -- https://i.imgur.com/ChzUb.jpg
+			-- why are you reading this disaster, go away this is embarrassing
 			descStyle = "custom",
 					order = order,
 		}
@@ -71,6 +71,7 @@ local function spellOption(order, spellID, ...)
 		}
 	end
 end
+
 
 local function listOption(spellList, listType, ...)
 	local args = {}

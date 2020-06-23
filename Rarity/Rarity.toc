@@ -2,7 +2,7 @@
 ## Interface: 80300
 ## X-Min-Interface: 80300
 ## Title: Rarity
-## Version: 1.0 (r696-release)
+## Version: 1.0 (r697-release-2)
 
 ## Notes: Tracks rare drops, including companions and mounts
 ## Notes-ruRU: Примечания

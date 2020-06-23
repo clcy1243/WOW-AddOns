@@ -1,0 +1,16 @@
+------------------------------------------------------------------------
+r25 | superk521 | 2014-10-25 13:07:01 +0000 (Sat, 25 Oct 2014) | 3 lines
+Changed paths:
+   A /tags/0.4.0 (from /trunk:24)
+
+tag as 0.4.0
+update for 6.0
+some cc spells are not included, will be added later
+------------------------------------------------------------------------
+r24 | superk521 | 2014-10-25 13:05:39 +0000 (Sat, 25 Oct 2014) | 1 line
+Changed paths:
+   M /trunk/ArenaStyle.lua
+   M /trunk/ArenaStyle.toc
+
+update for 6.0
+------------------------------------------------------------------------

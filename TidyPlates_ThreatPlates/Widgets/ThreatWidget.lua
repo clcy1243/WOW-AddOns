@@ -11,14 +11,18 @@ local Widget = Addon.Widgets:NewWidget("Threat")
 ---------------------------------------------------------------------------------------------------
 
 -- WoW APIs
-local CreateFrame, UNKNOWNOBJECT = CreateFrame, UNKNOWNOBJECT
-local UnitIsUnit, UnitThreatSituation, UnitName = UnitIsUnit, UnitThreatSituation, UnitName
+local UnitIsUnit = UnitIsUnit
 local GetNamePlateForUnit = C_NamePlate.GetNamePlateForUnit
 local GetRaidTargetIndex = GetRaidTargetIndex
 
 -- ThreatPlates APIs
 local TidyPlatesThreat = TidyPlatesThreat
 local GetThreatSituation = Addon.GetThreatSituation
+
+local _G =_G
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: CreateFrame
 
 local PATH = "Interface\\AddOns\\TidyPlates_ThreatPlates\\Widgets\\ThreatWidget\\"
 local THREAT_REFERENCE = {
@@ -59,7 +63,7 @@ end
 
 function Widget:Create(tp_frame)
   -- Required Widget Code
-  local widget_frame = CreateFrame("Frame", nil, tp_frame)
+  local widget_frame = _G.CreateFrame("Frame", nil, tp_frame)
   widget_frame:Hide()
 
   -- Custom Code
@@ -124,13 +128,11 @@ function Widget:UpdateFrame(widget_frame, unit)
     return
   end
 
-  local name, _ = UnitName(unit.unitid) or UNKNOWNOBJECT, nil
-  local unique_setting = TidyPlatesThreat.db.profile.uniqueSettings.map[name]
-  if unique_setting then
-    if not unique_setting.useStyle or not unique_setting.UseThreatColor then
-      widget_frame:Hide()
-      return
-    end
+  -- unique_setting.useStyle is already checked when setting the style of the nameplate (to custom)
+  local unique_setting = unit.CustomPlateSettings
+  if unique_setting and not unique_setting.UseThreatColor then
+    widget_frame:Hide()
+    return
   end
 
   local style = (Addon:PlayerRoleIsTank() and "tank") or "dps"
@@ -150,3 +152,23 @@ function Widget:UpdateFrame(widget_frame, unit)
 
   widget_frame:Show()
 end
+
+-- Load settings from the configuration which are shared across all aura widgets
+-- used (for each widget) in UpdateWidgetConfig
+--function Widget:UpdateSettings()
+--  self.db = TidyPlatesThreat.db.profile.Threat
+--
+--  for _, tp_frame in pairs(Addon.PlatesCreated) do
+--    local widget_frame = tp_frame.widgets.UniqueIcon
+--
+--    -- widget_frame could be nil if the widget as disabled and is enabled as part of a profile switch
+--    -- For these frames, UpdateAuraWidgetLayout will be called anyway when the widget is initalized
+--    -- (which happens after the settings update)
+--    if widget_frame and tp_frame.Active then
+--      -- Update the style as custom nameplates might have been changed and some units no longer
+--      -- may be unique
+--      Addon:SetStyle(widget_frame.unit)
+--      self:OnUnitAdded(widget_frame, widget_frame.unit)
+--    end
+--  end
+--end

@@ -603,6 +603,7 @@ L["STRING_OPTIONS_COMBAT_ALPHA_4"] = "While Not in a Group"
 L["STRING_OPTIONS_COMBAT_ALPHA_5"] = "While Not Inside Instance"
 L["STRING_OPTIONS_COMBAT_ALPHA_6"] = "While Inside Instance"
 L["STRING_OPTIONS_COMBAT_ALPHA_7"] = "Raid Debug"
+L["STRING_OPTIONS_COMBAT_ALPHA_8"] = "In Battleground"
 L["STRING_OPTIONS_COMBAT_ALPHA_DESC"] = [=[Select how combat affects the window transparency.
 
 |cFFFFFF00No Changes|r: Doesn't modify the alpha.
@@ -1367,7 +1368,7 @@ L["STRING_OPTIONS_WP_GROUP"] = "Category"
 L["STRING_OPTIONS_WP_GROUP_DESC"] = "Select the image group."
 L["STRING_OPTIONS_WP_GROUP2"] = "Wallpaper"
 L["STRING_OPTIONS_WP_GROUP2_DESC"] = "The image which will be used as wallpaper."
-L["STRING_OPTIONSMENU_AUTOMATIC"] = "Window: Automatization"
+L["STRING_OPTIONSMENU_AUTOMATIC"] = "Window: Automation"
 L["STRING_OPTIONSMENU_AUTOMATIC_TITLE"] = "Window Automatization Settings"
 L["STRING_OPTIONSMENU_AUTOMATIC_TITLE_DESC"] = "These settings controls the automatic behaviors the window has, such as auto hide and auto switch."
 L["STRING_OPTIONSMENU_COMBAT"] = "PvE PvP"
@@ -1566,8 +1567,8 @@ L["STRING_TOTAL"] = "Total"
 L["STRING_TRANSLATE_LANGUAGE"] = "Help Translate Details!"
 L["STRING_TUTORIAL_FULLY_DELETE_WINDOW"] = [=[You closed a window and you may reopen it at any time.
 To fully delete a window, go to Options -> Window: General -> Delete.]=]
-L["STRING_TUTORIAL_OVERALL1"] = [=[adjust overall settings on options panel > PvE/PvP
-overall data updates when you leave combat, use 'Dynamic Overall Damage' from 'Custom' to update on real time.]=]
+L["STRING_TUTORIAL_OVERALL1"] = [=[Overall data only updates when the combat is done, if you want regular updates right click the title bar and select 'Dynamic Overall Data'.
+]=]
 L["STRING_UNKNOW"] = "Unknown"
 L["STRING_UNKNOWSPELL"] = "Unknow Spell"
 L["STRING_UNLOCK"] = [=[Ungroup windows

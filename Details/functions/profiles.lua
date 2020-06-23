@@ -1134,7 +1134,7 @@ local default_profile = {
 			border_color = {0, 0, 0, 1},
 			border_size = 14,
 			
-			tooltip_max_abilities = 8,
+			tooltip_max_abilities = 7,
 			tooltip_max_targets = 2,
 			tooltip_max_pets = 2,
 			
@@ -1393,6 +1393,11 @@ local default_global_data = {
 	
 	--> raid information - can be accessed by plugins and third party mods
 		raid_data = {},
+
+	--> store all npcids blacklisted by the user
+		npcid_ignored = {},
+	--> store all spellids blacklisted by the user
+		spellid_ignored = {},
 }
 
 _detalhes.default_global_data = default_global_data

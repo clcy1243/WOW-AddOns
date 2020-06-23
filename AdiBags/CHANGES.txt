@@ -1,12 +1,12 @@
-tag e6bc76afdc3ae4d74c418918b35dec6e2d71a26c v1.9.18
+tag c10e73449eba1a0265ff88d89ca09b715ed5e07c v1.9.19
 Author:	Talyrius <contact@talyrius.net>
-Date:	Mon Nov 25 16:06:20 2019 -0800
+Date:	Sun Jun 14 05:41:23 2020 -0700
 
-Tagging as v1.9.18.
-
-commit 1a01b34f9c5fd4a21b3291e85c1e2b8308a5bc43
+commit 83c298df3ce8eacc500331cbf14cb6c5e63aab42
 Author: Talyrius <contact@talyrius.net>
-Date:   Mon Nov 25 15:43:39 2019 -0800
+Date:   Sun Jun 14 05:28:30 2020 -0700
 
-    Updated for Patch 8.2.5.
+    Fixed sorting of Bank and Reagent Bank.
+    
+    Fixes #414. SortBankBags() and SortReagentBankBags() can no longer be called in succession.
 

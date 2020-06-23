@@ -5,13 +5,20 @@ local ThreatPlates = Addon.ThreatPlates
 -- Imported functions and constants
 ---------------------------------------------------------------------------------------------------
 
+-- Lua APIs
+local ceil, string_format = ceil, string.format
+
 -- WoW APIs
-local CreateFrame = CreateFrame
 local GetSpellTexture = GetSpellTexture
 local GetNamePlateForUnit = C_NamePlate.GetNamePlateForUnit
 
 -- ThreatPlates APIs
 local TidyPlatesThreat = TidyPlatesThreat
+
+local _G =_G
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: CreateFrame
 
 local ART_PATH = "Interface\\AddOns\\TidyPlates_ThreatPlates\\Artwork\\"
 local EMPTY_TEXTURE = ART_PATH .. "Empty"
@@ -40,6 +47,7 @@ local function OnUpdateCastBar(self, elapsed)
     local value, max_value = self.Value, self.MaxValue
     if value < max_value then
       self:SetValue(value)
+      self.casttime:SetText(string_format("%.1f", max_value - value))
       self.Spark:SetPoint("CENTER", self, "LEFT", (value / max_value) * self:GetWidth(), 0)
       return
     end
@@ -51,10 +59,12 @@ local function OnUpdateCastBar(self, elapsed)
     local value = self.Value
     if value > 0 then
       self:SetValue(value)
+      self.casttime:SetText(string_format("%.1f", value))
       self.Spark:SetPoint("CENTER", self, "LEFT", (value / self.MaxValue) * self:GetWidth(), 0)
       return
     end
   elseif (self.FlashTime > 0) then
+    self.casttime:SetText("")
     self.FlashTime = self.FlashTime - elapsed
     return
   end
@@ -119,15 +129,15 @@ local function SetEliteBorder(self, texture)
 end
 
 function Addon:CreateHealthbar(parent)
-	local frame = CreateFrame("StatusBar", nil, parent)
+	local frame = _G.CreateFrame("StatusBar", nil, parent)
   --frame:Hide()
 
   frame:SetFrameLevel(parent:GetFrameLevel() + 5)
 
-  frame.Border = CreateFrame("Frame", nil, frame)
+  frame.Border = _G.CreateFrame("Frame", nil, frame)
   frame.Background = frame:CreateTexture(nil, "BACKGROUND")
-  frame.EliteBorder = CreateFrame("Frame", nil, frame)
-  frame.ThreatBorder = CreateFrame("Frame", nil, frame)
+  frame.EliteBorder = _G.CreateFrame("Frame", nil, frame)
+  frame.ThreatBorder = _G.CreateFrame("Frame", nil, frame)
 
   frame.Border:SetFrameLevel(frame:GetFrameLevel())
   frame.EliteBorder:SetFrameLevel(frame:GetFrameLevel() + 1)
@@ -210,15 +220,15 @@ local function SetStatusBarBackdropCastbar(self, backdrop_texture, edge_texture,
 end
 
 function Addon:CreateCastbar(parent)
-  local frame = CreateFrame("StatusBar", nil, parent)
+  local frame = _G.CreateFrame("StatusBar", nil, parent)
   frame:Hide()
 
-  frame:SetFrameLevel(parent:GetFrameLevel() + 4)
+  frame:SetFrameLevel(parent:GetFrameLevel() + 3)
 
-  frame.Border = CreateFrame("Frame", nil, frame)
+  frame.Border = _G.CreateFrame("Frame", nil, frame)
   frame.Background = frame:CreateTexture(nil, "BACKGROUND")
-  frame.InterruptBorder = CreateFrame("Frame", nil, frame)
-  frame.Overlay = CreateFrame("Frame", nil, frame)
+  frame.InterruptBorder = _G.CreateFrame("Frame", nil, frame)
+  frame.Overlay = _G.CreateFrame("Frame", nil, frame)
 
   frame.Border:SetFrameLevel(frame:GetFrameLevel())
   -- frame.InterruptBorder:SetFrameLevel(frame:GetFrameLevel())
@@ -248,6 +258,12 @@ function Addon:CreateCastbar(parent)
   spark:SetTexture(ART_PATH .. "Spark")
   spark:SetBlendMode("ADD")
   frame.Spark = spark
+
+  -- Remaining cast time
+  frame.casttime = frame.Overlay:CreateFontString(nil, "OVERLAY")
+  frame.casttime:SetFont("Fonts\\FRIZQT__.TTF", 11)
+  frame.casttime:SetAllPoints(frame)
+  frame.casttime:SetJustifyH("RIGHT")
 
 --  frame.Flash = frame:CreateAnimationGroup()
 --  local anim = frame.Flash:CreateAnimation("Alpha")
@@ -305,19 +321,23 @@ function Addon:ConfigCastbar()
 
         castbar:SetScript("OnUpdate", function(self, elapsed)
           if ShowOnUnit(plate.TPFrame.unit) then
+            local db = TidyPlatesThreat.db.profile.settings
+
             self:SetMinMaxValues(0, 100)
             self:SetValue(50)
             visual.spellicon:SetTexture(GetSpellTexture(252616))
             visual.spelltext:SetText("Cosmic Beacon")
+            self.casttime:SetText(3.5)
 
             self.Border:SetShown(plate.TPFrame.style.castborder.show)
             self:SetFormat(plate.TPFrame.style.castnostop.show)
-            self.InterruptShield:SetShown(TidyPlatesThreat.db.profile.settings.castnostop.ShowInterruptShield)
+            self.InterruptShield:SetShown(db.castnostop.ShowInterruptShield)
 
             self.Spark:SetSize(3, self:GetHeight() + 1)
             self.Spark:SetPoint("CENTER", self, "LEFT", 0.5 * self:GetWidth(), 0)
 
             visual.spelltext:SetShown(plate.TPFrame.style.spelltext.show)
+            visual.castbar.casttime:SetShown(db.castbar.ShowCastTime)
             visual.spellicon:SetShown(plate.TPFrame.style.spellicon.show)
             self:Show()
           else
@@ -328,6 +348,7 @@ function Addon:ConfigCastbar()
             self.InterruptShield:Hide()
             self.Spark:Hide()
             visual.spelltext:Hide()
+            visual.castbar.casttime:Hide()
             visual.spellicon:Hide()
           end
         end)
@@ -359,6 +380,8 @@ function Addon:ConfigCastbar()
     castbar:Hide()
     EnabledConfigMode = false
 
-    Addon:ForceUpdateOnNameplate(ConfigModePlate)
+    if ConfigModePlate and ConfigModePlate.TPFrame.Active then
+      Addon:ForceUpdateOnNameplate(ConfigModePlate)
+    end
   end
 end

@@ -1,11 +1,12 @@
 # <DBM> Dungeons (BC)
 
-## [r14](https://github.com/DeadlyBossMods/DBM-Dungeons/tree/r14) (2020-02-23)
-[Full Changelog](https://github.com/DeadlyBossMods/DBM-Dungeons/compare/r13...r14)
+## [r17](https://github.com/DeadlyBossMods/DBM-Dungeons/tree/r17) (2020-06-11)
+[Full Changelog](https://github.com/DeadlyBossMods/DBM-Dungeons/compare/r16...r17)
 
-- Remove unused spellId from king dread  
-- Missed one  
-- Pretty much 59 files of whitespace cleanup  
-- Update Luacheck  
-- Tweak a couple warnings to not be filtered  
-- Restore IKiss easter egg that plays trinkets speach when you open his boss mod panel  
+- Set min expansion on wod dungeon mods, so it can be used to ID stat differences where it has the same format as modern dungeons, but just a different name  
+- Update LuaCheck to find broken stuff  
+- Fix voice pack Lua error on GrimrailEnforcers  
+- I don't know what's worse on this keyboard. The spacebar for the shift  
+- Fixed another voice pack lua error on Terongor  
+- Sync editorconfig from DeadlyBossMods  
+- Fixed classic dungeons showing that they have a heroic mode  

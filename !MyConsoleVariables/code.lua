@@ -222,11 +222,22 @@ local function defaultcvar()
     SetCVar("floatingCombatTextAuras", 0)
 end
 
-local frame = CreateFrame("FRAME", "defaultcvar")
-    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-        local function eventHandler(self, event, ...)
-            local a = 1
-            -- defaultcvar()
+-- local frame = CreateFrame("FRAME", "defaultcvar")
+--     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+--         local function eventHandler(self, event, ...)
+--             defaultcvar()
+-- end
+-- frame:SetScript("OnEvent", eventHandler)
+
+local function fuckyou(self)
+    if GetCVar("portal") == "CN" then
+        ConsoleExec("portal TW")
+    end
+    SetCVar("profanityFilter", 0)
+    self:UnregisterEvent("ADDON_LOADED")
 end
 
-frame:SetScript("OnEvent", eventHandler)
+
+local godie = CreateFrame("FRAME", nil)
+    godie:RegisterEvent("ADDON_LOADED")
+    godie:SetScript("OnEvent", fuckyou)

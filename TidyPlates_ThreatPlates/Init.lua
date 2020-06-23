@@ -10,18 +10,20 @@ local ThreatPlates = Addon.ThreatPlates
 -- Imported functions and constants
 ---------------------------------------------------------------------------------------------------
 
+-- Lua APIs
+local string = string
+
 local UnitPlayerControlled = UnitPlayerControlled
 
 ---------------------------------------------------------------------------------------------------
 -- Libraries
 ---------------------------------------------------------------------------------------------------
 local LibStub = LibStub
-
-local LibStub = LibStub
 ThreatPlates.L = LibStub("AceLocale-3.0"):GetLocale("TidyPlatesThreat")
 ThreatPlates.Media = LibStub("LibSharedMedia-3.0")
 Addon.LibCustomGlow = LibStub("LibCustomGlow-1.0")
 Addon.LibAceConfigDialog = LibStub("AceConfigDialog-3.0")
+Addon.LibAceConfigRegistry = LibStub("AceConfigRegistry-3.0")
 
 ---------------------------------------------------------------------------------------------------
 -- Define AceAddon TidyPlatesThreat
@@ -31,6 +33,15 @@ TidyPlatesThreat = LibStub("AceAddon-3.0"):NewAddon("TidyPlatesThreat", "AceCons
 TidyPlatesThreatDBM = true
 
 Addon.Animations = {}
+Addon.Cache = {
+	TriggerWildcardTests = {},
+	CustomPlateTriggers = {
+		Name = {},
+		NameWildcard = {},
+		Aura = {},
+		Cast = {}
+	}
+}
 
 --------------------------------------------------------------------------------------------------
 -- General Functions
@@ -131,11 +142,23 @@ end
 Addon.MergeIntoTable = function(target, source)
   for k,v in pairs(source) do
     if type(v) == "table" then
+			target[k] = target[k] or {}
       Addon.MergeIntoTable(target[k], v)
     else
       target[k] = v
     end
   end
+end
+
+Addon.MergeDefaultsIntoTable = function(target, defaults)
+	for k,v in pairs(defaults) do
+		if type(v) == "table" then
+			target[k] = target[k] or {}
+			Addon.MergeDefaultsIntoTable(target[k], v)
+		else
+			target[k] = target[k] or v
+		end
+	end
 end
 
 Addon.ConcatTables = function(base_table, table_to_concat)
@@ -146,6 +169,33 @@ Addon.ConcatTables = function(base_table, table_to_concat)
 	end
 
 	return concat_result
+end
+
+Addon.CheckTableStructure = function(reference_structure, table_to_check)
+	if table_to_check == nil then
+		return false
+	end
+
+	for k,v in pairs(reference_structure) do
+		if table_to_check[k] == nil or type(table_to_check[k]) ~= type(v) then
+			return false
+		elseif type(v) == "table" then
+			if not Addon.CheckTableStructure(v, table_to_check[k]) then
+				return false
+			end
+		end
+	end
+
+	return true
+end
+
+Addon.Split = function(split_string)
+	local result = {}
+	for entry in string.gmatch(split_string, "[^;]+") do
+		result[#result + 1] = entry:gsub("^%s*(.-)%s*$", "%1")
+	end
+
+	return result
 end
 
 --------------------------------------------------------------------------------------------------
@@ -274,6 +324,13 @@ local function DEBUG_AURA_LIST(data)
 		end
 	end
 	ThreatPlates.DEBUG("Aura List = [ " .. res .. " ]")
+end
+
+Addon.DebugPrintCaches = function()
+	print ("Wildcard Unit Test Cache:")
+	for k, v in pairs(Addon.Cache.TriggerWildcardTests) do
+		print ("  " .. k .. ":", v)
+	end
 end
 
 ---------------------------------------------------------------------------------------------------

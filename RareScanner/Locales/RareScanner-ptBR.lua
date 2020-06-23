@@ -424,8 +424,9 @@ if AL then
 	AL["ZONES_CONTINENT_LIST"] = {
 		[9999] = "Salões de Ordem"; --Class Halls
 		[9998] = "Ilha de Negraluna"; --Darkmoon Island
-		[9997] = "Dungeons/Scenarios"; --Dungeons/Scenarios
-		[9996] = "Raids"; --Raids
+		[9997] = "Masmorras/Cenários"; --Dungeons/Scenarios
+		[9996] = "Raides"; --Raids
 		[9995] = "Desconhecido"; --Unknown
+		[9994] = "Expedition islands"; --Expedition islands
 	}
 end

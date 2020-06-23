@@ -1,26 +1,22 @@
-# [2.16.6](https://github.com/WeakAuras/WeakAuras2/tree/2.16.6) (2020-02-14)
+# [2.17.8](https://github.com/WeakAuras/WeakAuras2/tree/2.17.8) (2020-06-16)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.16.5...2.16.6)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.17.7...2.17.8)
 
 ## Highlights
 
- - Actually enable templates for classic
-- Bug fixes 
+ - bug fixes 
 
 ## Commits
 
-InfusOnWoW (4):
+InfusOnWoW (1):
 
-- BuffTrigger2: Fix ghost states
-- Fix Masque integration with clones and zoom/keep aspect ratio
-- Adjust conditions on moving/deleting/duplicating conditions
-- Fix multiple display of encounter ids
+- Revert even more spell checker changes
 
-emptyrivers (1):
+Stanzilla (1):
 
-- add 'reset entry' button to arrays in user mode
+- Update README.md
 
 mrbuds (1):
 
-- classic: WeakAurasTemplates was not moved to correct folder
+- Add missing CLEU subevent prefix, fixes #2224
 
