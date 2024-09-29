@@ -1,6 +1,5 @@
-
 --------------------------------------------------------------------------------
--- Module declaration
+-- Module Declaration
 --
 
 local mod, CL = BigWigs:NewBoss("Ruins of Ahn'Qiraj Trash", 509)
@@ -9,20 +8,24 @@ mod.displayName = CL.trash
 mod:RegisterEnableMob(15355) -- Anubisath Guardian
 
 --------------------------------------------------------------------------------
+-- Locals
+--
+
+local guardiansAlive = 8
+
+--------------------------------------------------------------------------------
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
 	L.guardian = "Anubisath Guardian"
 
-	L.guard = 17430 -- Summon Anubisath Swarmguard
-	L.guard_icon = 36034 -- ability_hunter_pet_wasp / Firefly
+	L["22997_desc"] = 26556 -- 22997 has no description, so using an alternative
 
-	L.warrior = 17431 -- Summon Anubisath Warrior
-	L.warrior_icon = 12294 -- ability_warrior_savageblow / Mortal Strike
+	L["17430_icon"] = "spell_nature_insectswarm" -- Summon Anubisath Swarmguard
+	L["17431_icon"] = "ability_warrior_savageblow" -- Summon Anubisath Warrior
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -30,96 +33,127 @@ L = mod:GetLocale()
 
 function mod:GetOptions()
 	return {
-		{26556, "PROXIMITY", "SAY"}, -- Plague. Use this id as it has a description unlike 22997
-		8269, -- Frenzy
-		8732, -- Thunderclap
+		{22997, "SAY", "ME_ONLY_EMPHASIZE"}, -- Plague
 		24340, -- Meteor
-		{25698, "FLASH"}, -- Explode
-		"guard",
-		"warrior",
-	}, {
-		[26556] = L.guardian,
+		14297, -- Shadow Storm
+		8732, -- Thunderclap
+		8269, -- Frenzy / Enrage (different name on classic era)
+		{25698, "EMPHASIZE", "COUNTDOWN"}, -- Explode
+		17430, -- Summon Anubisath Swarmguard
+		17431, -- Summon Anubisath Warrior
+		"stages",
+	},{
+		[22997] = L.guardian,
+	},{
+		[25698] = CL.explosion, -- Explode (Explosion)
 	}
 end
 
 function mod:OnBossEnable()
+	guardiansAlive = 8
 	self:RegisterMessage("BigWigs_OnBossEngage", "Disable")
 
-	self:Log("SPELL_AURA_APPLIED", "Plague", 22997)
-	self:Log("SPELL_AURA_REFRESH", "Plague", 22997)
+	self:Log("SPELL_AURA_APPLIED", "PlagueApplied", 22997)
+	self:Log("SPELL_AURA_REFRESH", "PlagueApplied", 22997)
 	self:Log("SPELL_AURA_REMOVED", "PlagueRemoved", 22997)
-	self:Log("SPELL_AURA_APPLIED", "Frenzy", 8269)
-	self:Log("SPELL_AURA_APPLIED", "Explode", 25698)
-
-	self:Log("SPELL_DAMAGE", "Thunderclap", 8732)
-	self:Log("SPELL_MISSED", "Thunderclap", 8732)
 
 	self:Log("SPELL_DAMAGE", "Meteor", 24340)
 	self:Log("SPELL_MISSED", "Meteor", 24340)
 
-	-- XXX shadowstorm (aoe shadow bolt) is missing?
+	-- Shadow Storm has no (miss) event?
+	self:Log("SPELL_DAMAGE", "ShadowStorm", 14297)
+	self:Log("SPELL_MISSED", "ShadowStorm", 14297)
+
+	self:Log("SPELL_DAMAGE", "Thunderclap", 8732)
+	self:Log("SPELL_MISSED", "Thunderclap", 8732)
+
+	self:Log("SPELL_AURA_APPLIED", "FrenzyEnrage", 8269)
+	self:Log("SPELL_AURA_APPLIED", "ExplodeApplied", 25698)
+	self:Log("SPELL_AURA_REMOVED", "ExplodeRemoved", 25698)
 
 	self:Log("SPELL_SUMMON", "SummonAnubisathSwarmguard", 17430)
 	self:Log("SPELL_SUMMON", "SummonAnubisathWarrior", 17431)
+
+	self:Death("GuardianKilled", 15355)
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function mod:Plague(args)
-	self:TargetMessage(26556, args.destName, "yellow")
+function mod:PlagueApplied(args)
+	self:TargetMessage(args.spellId, "yellow", args.destName)
+	self:TargetBar(args.spellId, 40, args.destName)
 	if self:Me(args.destGUID) then
-		self:Say(26556)
-		self:TargetBar(26556, 40, args.destName)
-		self:OpenProximity(26556, 5)
+		self:Say(args.spellId, nil, nil, "Plague")
+		self:PlaySound(args.spellId, "warning", nil, args.destName)
 	end
 end
 
 function mod:PlagueRemoved(args)
+	self:StopBar(args.spellName, args.destName)
 	if self:Me(args.destGUID) then
-		self:CloseProximity(26556)
-		self:StopBar(args.spellName, args.destName)
-	end
-end
-
-function mod:Frenzy(args)
-	self:Message(args.spellId, "red", "Long")
-end
-
-function mod:Explode(args)
-	self:Message(args.spellId, "orange", "Alert", CL.casting:format(args.spellName))
-	self:Bar(args.spellId, 6) -- Duration is 7s but it expires after 6s
-	self:Flash(args.spellId)
-end
-
-do
-	local prev = 0
-	function mod:Thunderclap(args)
-		local t = GetTime()
-		if t-prev > 12 then
-			prev = t
-			self:Message(args.spellId, "cyan")
-		end
+		self:PersonalMessage(args.spellId, "removed")
 	end
 end
 
 do
 	local prev = 0
 	function mod:Meteor(args)
-		local t = GetTime()
-		if t-prev > 12 then
-			prev = t
-			self:Message(args.spellId, "cyan")
+		if args.time-prev > 12 then
+			prev = args.time
+			self:Message(args.spellId, "red")
+			self:PlaySound(args.spellId, "info")
 		end
 	end
 end
 
+do
+	local prev = 0
+	function mod:ShadowStorm(args)
+		if args.time-prev > 12 then
+			prev = args.time
+			self:Message(args.spellId, "red")
+			self:PlaySound(args.spellId, "alarm")
+		end
+	end
+end
+
+do
+	local prev = 0
+	function mod:Thunderclap(args)
+		if args.time-prev > 12 then
+			prev = args.time
+			self:Message(args.spellId, "orange")
+			self:PlaySound(args.spellId, "alert")
+		end
+	end
+end
+
+function mod:FrenzyEnrage(args)
+	self:Message(args.spellId, "red")
+	self:PlaySound(args.spellId, "long")
+end
+
+function mod:ExplodeApplied(args)
+	self:Message(args.spellId, "orange", CL.explosion)
+	self:Bar(args.spellId, 6, CL.explosion) -- Duration is 7s but it expires after 6s
+	self:PlaySound(args.spellId, "long")
+end
+
+function mod:ExplodeRemoved()
+	self:StopBar(CL.explosion)
+end
+
 function mod:SummonAnubisathSwarmguard(args)
-	self:Message("guard", "green", nil, args.spellName, L.guard_icon)
+	self:Message(args.spellId, "green", args.spellName, L["17430_icon"])
 end
 
 function mod:SummonAnubisathWarrior(args)
-	self:Message("warrior", "green", nil, args.spellName, L.warrior_icon)
+	self:Message(args.spellId, "green", args.spellName, L["17431_icon"])
 end
 
+function mod:GuardianKilled()
+	guardiansAlive = guardiansAlive - 1
+	self:Message("stages", "cyan", CL.mob_remaining:format(L.guardian, guardiansAlive), false)
+end

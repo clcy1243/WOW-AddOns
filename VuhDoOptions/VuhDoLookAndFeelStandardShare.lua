@@ -23,6 +23,8 @@ end
 
 
 --
+local tName;
+local tIsOnline;
 function VUHDO_initBuddyNameModel()
 	table.wipe(VUHDO_BUDDY_NAME_MODEL);
 
@@ -39,13 +41,13 @@ function VUHDO_initBuddyNameModel()
 	end
 
 	-- Friends
-	local tNumFriends =	GetNumFriends();
-	local tIsOnline;
-	local tName;
+	local tNumFriends = C_FriendList.GetNumFriends();
+	local tFriendInfo;
 	for tCnt = 1, tNumFriends do
-		tName, _, _, _, tIsOnline = GetFriendInfo(tCnt);
-		if (tIsOnline) then
-			VUHDO_addBuddyNameToComboModel(tName);
+		tFriendInfo = C_FriendList.GetFriendInfoByIndex(tCnt);
+
+		if (tFriendInfo.connected) then
+			VUHDO_addBuddyNameToComboModel(tFriendInfo.name);
 		end
 	end
 

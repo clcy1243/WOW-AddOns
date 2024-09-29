@@ -1,10 +1,9 @@
-local mod	= DBM:NewMod(2116, "DBM-Party-BfA", 7, 1001)
+local mod	= DBM:NewMod(2116, "DBM-Party-BfA", 7, 1012)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200602212246")
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(129232)
 mod:SetEncounterID(2108)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -27,7 +26,6 @@ local warnSummonBooma				= mod:NewSpellAnnounce(276212, 2)
 local specWarnGatlingGun			= mod:NewSpecialWarningDodge(260280, nil, nil, nil, 3, 8)
 local specWarnHomingMissile			= mod:NewSpecialWarningMoveAway(260811, nil, nil, nil, 1, 2)
 local yellHomingMissile				= mod:NewYell(260811)
-local specWarnHomingMissileNear		= mod:NewSpecialWarningClose(260811, nil, nil, nil, 1, 2)
 --Stage Two: Drill
 local specWarnDrillSmash			= mod:NewSpecialWarningMoveTo(271456, nil, nil, nil, 1, 2)
 local yellDrillSmash				= mod:NewYell(271456)
@@ -38,15 +36,17 @@ local yellHeartseeker				= mod:NewYell(262515)
 
 --Stage One: Big Guns
 local timerGatlingGunCD				= mod:NewCDTimer(20.1, 260280, nil, nil, nil, 3)
-local timerHomingMissileCD			= mod:NewCDTimer(22, 260811, nil, nil, nil, 3)
+local timerHomingMissileCD			= mod:NewCDTimer(21, 260811, nil, nil, nil, 3)
 --Stage Two: Drill
 local timerDrillSmashCD				= mod:NewCDTimer(8.4, 271456, nil, nil, nil, 3)--8.4--9.9
+
+local rocket = DBM:GetSpellName(166493)
 
 function mod:DrillTarget(targetname)
 	if not targetname then return end
 	if self:AntiSpam(4, targetname) then--Antispam to lock out redundant later warning from firing if this one succeeds
 		if targetname == UnitName("player") then
-			specWarnDrillSmash:Show()
+			specWarnDrillSmash:Show(rocket)
 			specWarnDrillSmash:Play("targetyou")
 			yellDrillSmash:Yell()
 		else
@@ -65,7 +65,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if spellId == 260189 then--Configuration: Drill
 		timerGatlingGunCD:Stop()
 		timerHomingMissileCD:Stop()
-		timerDrillSmashCD:Start(22.4)
+		timerDrillSmashCD:Start(17.3)
 	elseif spellId == 260190 then--Configuration: Combat
 		timerDrillSmashCD:Stop()
 		timerHomingMissileCD:Start(7)
@@ -84,9 +84,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnHomingMissile:Show()
 			specWarnHomingMissile:Play("runout")
 			yellHomingMissile:Yell()
-		elseif self:CheckNearby(20, args.destName) then
-			specWarnHomingMissileNear:Show(args.destName)
-			specWarnHomingMissileNear:Play("watchstep")
 		else
 			warnHomingMissile:Show(args.destName)
 		end

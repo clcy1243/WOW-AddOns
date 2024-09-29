@@ -65,14 +65,14 @@ function mod:GetOptions()
 		233104, -- Torment
 		248671, -- Unbridled Torment (Berserk)
 		{233426, "TANK"}, -- Scythe Sweep
-		{233431, "SAY"}, -- Calcified Quills
-		233441, -- Bone Saw
+		{233431, "CASTBAR", "SAY"}, -- Calcified Quills
+		{233441, "CASTBAR"}, -- Bone Saw
 		239401, -- Pangs of Guilt
 		{233983, "FLASH", "SAY", "PROXIMITY"}, -- Echoing Anguish
 		anguishMarker,
 		233895, -- Suffocating Dark
 		234015, -- Tormenting Burst
-		235230, -- Fel Squall
+		{235230, "CASTBAR"}, -- Fel Squall
 		248713, -- Soul Corruption
 		{"fixate", "FLASH"},
 		"custom_on_fixate_plates",
@@ -123,8 +123,8 @@ function mod:OnEngage()
 	nextAltPowerWarning = 20
 	jailCount = 0
 	jailTimer = nil
-	wipe(jailList)
-	wipe(fixateList)
+	jailList = {}
+	fixateList = {}
 
 	-- Jail Infobox
 	self:OpenInfo(236283, L.infobox_title_prisoners:format(jailCount))
@@ -162,13 +162,13 @@ do
 	local prev = 0
 	function mod:CheckForFixate(_, unit, guid)
 		local mobId = self:MobId(guid)
-		if mobId == 121138 and not fixateList[guid] and self:Me(UnitGUID(unit.."target")) then -- Tormented Fragment
+		if mobId == 121138 and not fixateList[guid] and self:Me(self:UnitGUID(unit.."target")) then -- Tormented Fragment
 			fixateList[guid] = true
 			local t = GetTime()
 			if t-prev > 1 then
 				prev = t
 				self:Flash("fixate", 41951)
-				self:Message("fixate", "blue", "Long", CL.you:format(self:SpellName(41951)), 41951) -- 41951 = "Fixate"
+				self:MessageOld("fixate", "blue", "long", CL.you:format(self:SpellName(41951)), 41951) -- 41951 = "Fixate"
 			end
 			if self:GetOption("custom_on_fixate_plates") then
 				self:AddPlateIcon(41951, guid)
@@ -204,7 +204,7 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 233895 then -- Suffocating Dark
-		self:Message(spellId, "yellow", "Info")
+		self:MessageOld(spellId, "yellow", "info")
 		suffocatingDarkCounter = suffocatingDarkCounter + 1
 		self:CDBar(spellId, suffocatingDarkCounter == 2 and 42 or 25)
 	end
@@ -216,10 +216,10 @@ do
 		if pType == "ALTERNATE" then
 			local power = UnitPower(unit, 10) -- Enum.PowerType.Alternate = 10
 			if power < lastPower or power >= nextAltPowerWarning then
-				self:StackMessage(233104, self:UnitName(unit), power, "blue")
+				self:StackMessageOld(233104, self:UnitName(unit), power, "blue")
 				local t = GetTime()
 				if (power >= 80 or power < lastPower) and t-prev > 1.5 then
-					self:PlaySound(233104, "Info")
+					self:PlaySound(233104, "info")
 					prev = t
 				end
 				nextAltPowerWarning = tonumber(string.format("%d", power/20))*20+20 -- every 20 power
@@ -239,7 +239,7 @@ do
 
 	function mod:BelacsPrisoner(args)
 		if self:Me(args.destGUID)then
-			self:TargetMessage(args.spellId, args.destName, "blue", "Alert")
+			self:TargetMessageOld(args.spellId, args.destName, "blue", "alert")
 		end
 
 		-- Add person to InfoBox
@@ -266,16 +266,16 @@ function mod:BelacsPrisonerRemoved(args)
 end
 
 function mod:ScytheSweep(args)
-	self:Message(args.spellId, "yellow", self:Tank() and "Alert")
+	self:MessageOld(args.spellId, "yellow", self:Tank() and "alert")
 	sweepCounter = sweepCounter + 1
 	self:CDBar(args.spellId, sweepCounter > 4 and sweepCounter % 2 == 0 and 35 or 24)
 end
 
 do
 	local function printTarget(self, name, guid)
-		self:TargetMessage(233431, name, "orange", "Alert", nil, nil, true)
+		self:TargetMessageOld(233431, name, "orange", "alert", nil, nil, true)
 		if self:Me(guid) then
-			self:Say(233431)
+			self:Say(233431, nil, nil, "Calcified Quills")
 		end
 	end
 	function mod:CalcifiedQuills(args)
@@ -286,7 +286,7 @@ do
 end
 
 function mod:BoneSaw(args)
-	self:Message(args.spellId, "red", "Warning")
+	self:MessageOld(args.spellId, "red", "warning")
 	self:CastBar(args.spellId, 16)
 	if self:Easy() then
 		self:Bar(args.spellId, 60.5)
@@ -296,12 +296,12 @@ function mod:BoneSaw(args)
 end
 
 function mod:PangsofGuilt(args) -- Interuptable
-	self:Message(args.spellId, "red", self:Interrupter(args.sourceGUID) and "Alarm", CL.casting:format(CL.count:format(args.spellName, pangsofGuiltCounter)))
+	self:MessageOld(args.spellId, "red", self:Interrupter(args.sourceGUID) and "alarm", CL.casting:format(CL.count:format(args.spellName, pangsofGuiltCounter)))
 	pangsofGuiltCounter = (pangsofGuiltCounter % 3) + 1
 end
 
 function mod:EchoingAnguish(args)
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	self:OpenProximity(args.spellId, 8) -- Open proximity a bit before
 	self:CDBar(args.spellId, 22)
 end
@@ -312,20 +312,20 @@ do
 		proxList[#proxList+1] = args.destName
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Echoing Anguish")
 		end
 
 		self:OpenProximity(args.spellId, 8, proxList) -- Don't stand near others if they have the debuff
 
 		if self:GetOption(anguishMarker) then
-			SetRaidTarget(args.destName, #proxList)
+			self:CustomIcon(false, args.destName, #proxList)
 		end
 	end
 
 	function mod:EchoingAnguishRemoved(args)
-		tDeleteItem(proxList, args.destName)
+		self:DeleteFromTable(proxList, args.destName)
 		if self:GetOption(anguishMarker) then
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
 		if #proxList == 0 then -- If there are no debuffs left, close proximity
 			self:CloseProximity(args.spellId)
@@ -337,12 +337,12 @@ do
 end
 
 function mod:TormentingBurst(args)
-	self:Message(args.spellId, "yellow", self:Healer() and "Long")
+	self:MessageOld(args.spellId, "yellow", self:Healer() and "long")
 	self:CDBar(args.spellId, 17.1)
 end
 
 function mod:FelSquall(args)
-	self:Message(args.spellId, "red", "Warning")
+	self:MessageOld(args.spellId, "red", "warning")
 	self:CastBar(args.spellId, 16)
 	self:Bar(args.spellId, 60.5)
 end
@@ -353,7 +353,7 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 3 then
 			prev = t
-			self:Message(233895, "blue", "Alert", CL.underyou:format(args.spellName))
+			self:MessageOld(233895, "blue", "alert", CL.underyou:format(args.spellName))
 		end
 	end
 end
@@ -362,7 +362,7 @@ function mod:SoulCorruption(args)
 	if self:Me(args.destGUID) then
 		local amount = args.amount or 1
 		if amount % 5 == 0 then
-			self:StackMessage(args.spellId, args.destName, amount, "red", "Warning") -- check sound amount
+			self:StackMessageOld(args.spellId, args.destName, amount, "red", "warning") -- check sound amount
 		end
 	end
 end

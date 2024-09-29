@@ -1,79 +1,71 @@
-local L = BigWigs:NewBossLocale("Battleguard Sartura", "ptBR")
+local L = BigWigs:NewBossLocale("Viscidus", "ptBR")
 if not L then return end
 if L then
-	--L.engage_trigger = "sacred grounds" -- You will be judged for defiling these sacred grounds!  The laws of the Ancients will not be challenged!  Trespassers will be annihilated!\r\n
-end
+	L.freeze = "Estados de congelamento"
+	L.freeze_desc = "Aviso para os diferentes estados de congelamento."
 
-L = BigWigs:NewBossLocale("Viscidus", "ptBR")
-if L then
-	--L.freeze = "Freezing States"
-	--L.freeze_desc = "Warn for the different frozen states."
-	--L.freeze_trigger1 = "%s begins to slow!"
-	--L.freeze_trigger2 = "%s is freezing up!"
-	--L.freeze_trigger3 = "%s is frozen solid!"
-	--L.freeze_trigger4 = "%s begins to crack!"
-	--L.freeze_trigger5 = "%s looks ready to shatter!"
-	--L.freeze_warn1 = "First freeze phase!"
-	--L.freeze_warn2 = "Second freeze phase!"
-	--L.freeze_warn3 = "Viscidus is frozen!"
-	--L.freeze_warn4 = "Cracking up - keep going!"
-	--L.freeze_warn5 = "Cracking up - almost there!"
-	--L.freeze_warn_melee = "%d melee attacks - %d more to go"
-	--L.freeze_warn_frost = "%d frost attacks - %d more to go"
+	L.freeze_trigger1 = "%s começa a ficar lento!"
+	L.freeze_trigger2 = "%s está congelando!"
+	L.freeze_trigger3 = "%s está totalmente congelado!"
+	L.freeze_trigger4 = "%s começa a rachar!"
+	L.freeze_trigger5 = "%s parece estar a ponto de se estilhaçar!"
+
+	L.freeze_warn1 = "Primeira fase de congelamento!"
+	L.freeze_warn2 = "Segunda fase de congelamento!"
+	L.freeze_warn3 = "Viscidus está congelado!"
+	L.freeze_warn4 = "Rachando - continue!"
+	L.freeze_warn5 = "Rachando - quase lá!"
+	L.freeze_warn_melee = "%d ataques corpo a corpo - mais %d para ir"
+	L.freeze_warn_frost = "%d ataques de gelo - mais %d para ir"
 end
 
 L = BigWigs:NewBossLocale("Ouro", "ptBR")
 if L then
-	--L.engage_message = "Ouro engaged! Possible Submerge in 90sec!"
-	--L.possible_submerge_bar = "Possible submerge"
+	L.engage_message = "Ouro engajado! Submersão possível em 90 segundos!"
+	L.possible_submerge_bar = "Submersão possível"
 
-	--L.emergeannounce = "Ouro has emerged!"
-	--L.emergewarn = "15 sec to possible submerge!"
-	--L.emergewarn2 = "15 sec to Ouro sumberge!"
-	--L.emergebartext = "Ouro submerge"
+	L.emerge_message = "Ouro emergiu"
+	L.emerge_bar = "Emersão"
 
-	--L.submergeannounce = "Ouro has submerged!"
-	--L.submergewarn = "5 seconds until Ouro Emerges!"
-	--L.submergebartext = "Ouro Emerge"
+	L.submerge_message = "Ouro submergiu"
+	L.submerge_bar = "Submersão"
 
-	--L.scarab = "Scarab Despawn"
-	--L.scarab_desc = "Warn for Scarab Despawn."
-	--L.scarabdespawn = "Scarabs despawn in 10 Seconds"
-	--L.scarabbar = "Scarabs despawn"
-end
-
-L = BigWigs:NewBossLocale("Ahn'Qiraj Trash", "ptBR")
-if L then
-	L.defender = "Defensor Anubisath"
-	L.crawler = "Rastejante de Colmeia Vekniss"
+	L.scarab = "Desaparecimento de escaravelho"
+	L.scarab_desc = "Aviso para desaparecimento de escaravelho."
+	L.scarab_bar = "Escaravelhos desaparecem"
 end
 
 L = BigWigs:NewBossLocale("C'Thun", "ptBR")
 if L then
-	--L.tentacle_desc = "Warn for Tentacles"
+	L.claw_tentacle = "Tentáculo de Garra"
+	L.claw_tentacle_desc = "Cronômetros para o tentáculo de garra."
 
-	--L.giant = "Giant Eye Alert"
-	--L.giant_desc = "Warn for Giant Eyes"
+	L.giant_claw_tentacle = "Tentáculo de Garra Gigante"
+	L.giant_claw_tentacle_desc = "Cronômetros para o tentáculo de garra gigante."
 
-	--L.weakened = "Weakened Alert"
-	--L.weakened_desc = "Warn for Weakened State"
-	--L.weakenedtrigger = "%s is weakened!"
+	L.eye_tentacles = "Tentóculo"
+	L.eye_tentacles_desc = "Cronômetros para os 8 tentóculos."
 
-	--L.weakened_msg = "C'Thun is weakened for 45 sec"
-	--L.invulnerable2 = "Party ends in 5 seconds"
-	--L.invulnerable1 = "Party over - C'Thun invulnerable"
+	L.giant_eye_tentacle = "Tentóculo Gigante"
+	L.giant_eye_tentacle_desc = "Cronômetros para o tentóculo gigante."
 
-	--L.giant3 = "Giant Eye - 10 sec"
-	--L.giant2 = "Giant Eye - 5 sec"
-	--L.giant1 = "Giant Eye - Poke it!"
+	L.weakened_desc = "Aviso para estado enfraquecido."
 
-	--L.startwarn = "C'Thun engaged! - 45 sec until Dark Glare and Eyes"
-
-	--L.tentacleParty = "Tentacle party!"
-	--L.barWeakened = "C'Thun is weakened!"
-	--L.barGiant = "Giant Eye!"
-
-	--L.groupwarning = "Dark Glare on group %s (%s)"
-	--L.phase2starting = "The Eye is dead! Body incoming!"
+	L.dark_glare_message = "%s: %s (Grupo %s)" -- Dark Glare: PLAYER_NAME (Group 1)
+	--L.stomach = "Stomach"
+	--L.tentacle = "Tentacle (%d)"
 end
 
+L = BigWigs:NewBossLocale("Ahn'Qiraj Trash", "ptBR")
+if L then
+	L.sentinel = "Sentinela Anubisath" -- NPC 15264
+	L.brainwasher = "Lavamentes Qiraji" -- NPC 15247
+	L.defender = "Defensor Anubisath" -- NPC 15277
+	L.crawler = "Rastejante de Colmeia Vekniss" -- NPC 15240
+
+	L.target_buffs = "Avisos de bônus do alvo"
+	L.target_buffs_desc = "Quando o seu alvo é um Sentinela Anubisath, mostra um aviso sobre qual bônus ele possui."
+	L.target_buffs_message = "Bônus do alvo: %s"
+	L.detect_magic_missing_message = "Detectar Magia está ausente do seu alvo"
+	L.detect_magic_warning = "Um mago deve lançar \124cff71d5ff\124Hspell:2855:0\124h[Detectar Magia]\124h\124r no seu alvo para que os avisos de bônus funcionem."
+end

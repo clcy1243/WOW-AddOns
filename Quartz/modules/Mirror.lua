@@ -30,7 +30,7 @@ local TimeFmt = Quartz3.Util.TimeFormat
 local media = LibStub("LibSharedMedia-3.0")
 local lsmlist = AceGUIWidgetLSMlists
 
-local WoWClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+local MIRRORTIMER_NUMTIMERS = MIRRORTIMER_NUMTIMERS or 3
 
 ----------------------------
 -- Upvalues
@@ -42,6 +42,7 @@ local UnitHealth = UnitHealth
 local pairs, unpack, next, wipe, error = pairs, unpack, next, wipe, error
 local table_sort = table.sort
 
+local WoWClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
 
 local gametimebase, gametimetostart
 local lfgshowbase, readycheckshowbase, readycheckshowduration
@@ -55,29 +56,29 @@ local defaults = {
 	profile = {
 		mirroricons = true,
 		mirroriconside = "left",
-		
+
 		mirroranchor = "player",--L["Free"], L["Target"], L["Focus"]
-		
+
 		mirrorx = 500,
 		mirrory = 700,
 		mirrorgrowdirection = "up", --L["Down"]
-		
+
 		mirrorposition = "topleft",
-		
+
 		mirrorgap = 1,
 		mirrorspacing = 1,
 		mirroroffset = 3,
-		
+
 		mirrornametext = true,
 		mirrortimetext = true,
-		
+
 		mirrortexture = "LiteStep",
 		mirrorwidth = 120,
 		mirrorheight = 12,
 		mirrorfont = "Friz Quadrata TT",
 		mirrorfontsize = 9,
 		mirroralpha = 1,
-		
+
 		mirrortextcolor = {1, 1, 1},
 		BREATH = {0, 0.5, 1},
 		EXHAUSTION = {1.00, 0.9, 0},
@@ -110,9 +111,9 @@ local icons = {
 	BREATH = "Interface\\Icons\\Spell_Shadow_DemonBreath",
 	EXHAUSTION = "Interface\\Icons\\Ability_Suffocate",
 	FEIGNDEATH = "Interface\\Icons\\Ability_Rogue_FeignDeath",
-	CAMP = "Interface\\Icons\\INV_Misc_GroupLooking",
+	CAMP = WoWClassic and "" or "Interface\\Icons\\INV_Misc_GroupLooking",
 	DEATH = "Interface\\Icons\\Ability_Vanish",
-	QUIT = "Interface\\Icons\\INV_Misc_GroupLooking",
+	QUIT = WoWClassic and "" or "Interface\\Icons\\INV_Misc_GroupLooking",
 	DUEL_OUTOFBOUNDS = "Interface\\Icons\\Ability_Rogue_Sprint",
 	INSTANCE_BOOT = "Interface\\Icons\\INV_Misc_Rune_01",
 	CONFIRM_SUMMON = "Interface\\Icons\\Spell_Shadow_Twilight",
@@ -204,7 +205,7 @@ local mirrorbars = setmetatable({}, {
 		bar:SetBackdropColor(0,0,0)
 		bar.Text = bar:CreateFontString(nil, "OVERLAY")
 		bar.TimeText = bar:CreateFontString(nil, "OVERLAY")
-		bar.Icon = bar:CreateTexture(nil, "DIALOG")
+		bar.Icon = bar:CreateTexture(nil, "ARTWORK")
 		if k == 1 then
 			bar:SetMovable(true)
 			bar:RegisterForDrag("LeftButton")
@@ -218,7 +219,7 @@ local mirrorbars = setmetatable({}, {
 function Mirror:OnInitialize()
 	self.db = Quartz3.db:RegisterNamespace(MODNAME, defaults)
 	db = self.db.profile
-	
+
 	self:SetEnabledState(Quartz3:GetModuleEnabled(MODNAME))
 	Quartz3:RegisterModuleOptions(MODNAME, getOptions, L["Mirror"])
 
@@ -232,11 +233,9 @@ function Mirror:OnEnable()
 	self:RegisterEvent("PLAYER_ALIVE", "UpdateBars")
 	self:RegisterMessage("Quartz3Mirror_UpdateCustom", "UpdateBars")
 	self:RegisterEvent("CHAT_MSG_BG_SYSTEM_NEUTRAL")
-	if not WoWClassic then
-		self:RegisterEvent("LFG_PROPOSAL_SHOW")
-		self:RegisterEvent("LFG_PROPOSAL_FAILED", "LFG_PROPOSAL_End")
-		self:RegisterEvent("LFG_PROPOSAL_SUCCEEDED", "LFG_PROPOSAL_End")
-	end
+	self:RegisterEvent("LFG_PROPOSAL_SHOW")
+	self:RegisterEvent("LFG_PROPOSAL_FAILED", "LFG_PROPOSAL_End")
+	self:RegisterEvent("LFG_PROPOSAL_SUCCEEDED", "LFG_PROPOSAL_End")
 	self:RegisterEvent("READY_CHECK")
 	self:RegisterEvent("READY_CHECK_FINISHED")
 	self:SecureHook("StaticPopup_Show", "UpdateBars")
@@ -270,11 +269,19 @@ function Mirror:OnDisable()
 		v:SetScript("OnUpdate", nil)
 	end
 
-	for i = 1, 3 do
-		_G["MirrorTimer"..i]:RegisterEvent("MIRROR_TIMER_PAUSE")
-		_G["MirrorTimer"..i]:RegisterEvent("MIRROR_TIMER_STOP")
+	if MirrorTimerContainer then
+		MirrorTimerContainer:Show()
+		MirrorTimerContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
+		MirrorTimerContainer:RegisterEvent("MIRROR_TIMER_START")
+		MirrorTimerContainer:RegisterEvent("MIRROR_TIMER_STOP")
+		MirrorTimerContainer:RegisterEvent("MIRROR_TIMER_PAUSE")
+	else
+		for i = 1, 3 do
+			_G["MirrorTimer"..i]:RegisterEvent("MIRROR_TIMER_PAUSE")
+			_G["MirrorTimer"..i]:RegisterEvent("MIRROR_TIMER_STOP")
+		end
+		UIParent:RegisterEvent("MIRROR_TIMER_START")
 	end
-	UIParent:RegisterEvent("MIRROR_TIMER_START")
 
 	media.UnregisterCallback(self, "LibSharedMedia_SetGlobal")
 	media.UnregisterCallback(self, "LibSharedMedia_Registered")
@@ -291,11 +298,11 @@ do
 		wipe(tbl)
 		tblCache[tbl] = true
 	end
-	
+
 	local function sort(a,b)
 		return a.name < b.name
 	end
-	
+
 	local tmp = {}
 	local reztimermax = 0
 	local function update()
@@ -304,7 +311,7 @@ do
 		for k in pairs(tmp) do
 			tmp[k] = del(tmp[k])
 		end
-		
+
 		if db.showpvp then
 			if gametimebase then
 				local endTime = gametimebase + gametimetostart
@@ -367,7 +374,7 @@ do
 				end
 			end
 		end
-		
+
 		if db.showstatic then
 			local recoverydelay = GetCorpseRecoveryDelay()
 			if recoverydelay > 0 and UnitHealth("player") < 2 then
@@ -387,20 +394,20 @@ do
 			else
 				reztimermax = 0
 			end
-			
+
 			for i = 1, 4 do
 				local popup = _G["StaticPopup"..i]
 				local which = popup.which
 				local timeleft = popup.timeleft
 				local name = popups[which]
-				
+
 				--special case for a timered rez
 				if which == "RESURRECT_NO_SICKNESS" then
 					if timeleft > 60 then
 						name = nil
 					end
 				end
-				
+
 				if popup:IsVisible() and name and timeleft and timeleft > 0 then
 					local t = new()
 					tmp[#tmp+1] = t
@@ -418,7 +425,7 @@ do
 				end
 			end
 		end
-		
+
 		local external = Mirror.ExternalTimers
 		for name, v in pairs(external) do
 			local endTime = v.endTime
@@ -441,7 +448,7 @@ do
 				external[name] = del(v)
 			end
 		end
-		
+
 		table_sort(tmp, sort)
 		local maxindex = 0
 		for k=1,#tmp do
@@ -481,7 +488,7 @@ do
 			mirrorbars[i]:SetScript("OnUpdate", nil)
 		end
 	end
-	
+
 	function Mirror:UpdateBars()
 		if not self.updateMirrorBar then
 			self.updateMirrorBar = self:ScheduleTimer(update, 0) -- API funcs dont return helpful crap until after the event.
@@ -520,24 +527,24 @@ function Mirror:READY_CHECK_FINISHED(event, msg)
 	self:UpdateBars()
 end
 do
-	local function apply(i, bar, db, direction)
+	local function apply(i, bar, direction)
 		local position, showicons, iconside, gap, spacing, offset
-		local qpdb = Player.db.profile 
-		
+		local qpdb = Player.db.profile
+
 		position = db.mirrorposition
 		showicons = db.mirroricons
 		iconside = db.mirroriconside
 		gap = db.mirrorgap
 		spacing = db.mirrorspacing
 		offset = db.mirroroffset
-		
+
 		bar:ClearAllPoints()
 		bar:SetStatusBarTexture(media:Fetch("statusbar", db.mirrortexture))
 		bar:SetWidth(db.mirrorwidth)
 		bar:SetHeight(db.mirrorheight)
 		bar:SetScale(qpdb.scale)
 		bar:SetAlpha(db.mirroralpha)
-		
+
 		if db.mirroranchor == "free" then
 			if i == 1 then
 				bar:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", db.mirrorx, db.mirrory)
@@ -564,7 +571,7 @@ do
 				else -- L["Player"]
 					anchorframe = Player.Bar
 				end
-				
+
 				if position == "top" then
 					direction = 1
 					bar:SetPoint("BOTTOM", anchorframe, "TOP", 0, gap)
@@ -628,7 +635,7 @@ do
 				end
 			end
 		end
-		
+
 		local timetext = bar.TimeText
 		if db.mirrortimetext then
 			timetext:Show()
@@ -645,12 +652,12 @@ do
 		timetext:SetTextColor(unpack(db.mirrortextcolor))
 		timetext:SetNonSpaceWrap(false)
 		timetext:SetHeight(db.mirrorheight)
-		
+
 		local temptext = timetext:GetText()
 		timetext:SetText("10.0")
 		local normaltimewidth = timetext:GetStringWidth()
 		timetext:SetText(temptext)
-		
+
 		local text = bar.Text
 		if db.mirrornametext then
 			text:Show()
@@ -671,7 +678,7 @@ do
 		text:SetTextColor(unpack(db.mirrortextcolor))
 		text:SetNonSpaceWrap(false)
 		text:SetHeight(db.mirrorheight)
-		
+
 		local icon = bar.Icon
 		if showicons then
 			icon:Show()
@@ -687,7 +694,7 @@ do
 		else
 			icon:Hide()
 		end
-		
+
 		return direction
 	end
 
@@ -702,20 +709,32 @@ do
 				mirrorbars[1]:SetScript("OnDragStop", nil)
 			end
 			for i, v in pairs(mirrorbars) do
-				direction = apply(i, v, db, direction)
+				direction = apply(i, v, direction)
 			end
 			if db.hideblizzmirrors then
-				for i = 1, 3 do
-					_G["MirrorTimer"..i]:UnregisterAllEvents()
-					_G["MirrorTimer"..i]:Hide()
+				if MirrorTimerContainer then
+					MirrorTimerContainer:UnregisterAllEvents()
+				else
+					for i = 1, 3 do
+						_G["MirrorTimer"..i]:UnregisterAllEvents()
+						_G["MirrorTimer"..i]:Hide()
+					end
+					UIParent:UnregisterEvent("MIRROR_TIMER_START")
 				end
-				UIParent:UnregisterEvent("MIRROR_TIMER_START")
 			else
-				for i = 1, 3 do
-					_G["MirrorTimer"..i]:RegisterEvent("MIRROR_TIMER_PAUSE")
-					_G["MirrorTimer"..i]:RegisterEvent("MIRROR_TIMER_STOP")
+				if MirrorTimerContainer then
+					MirrorTimerContainer:Show()
+					MirrorTimerContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
+					MirrorTimerContainer:RegisterEvent("MIRROR_TIMER_START")
+					MirrorTimerContainer:RegisterEvent("MIRROR_TIMER_STOP")
+					MirrorTimerContainer:RegisterEvent("MIRROR_TIMER_PAUSE")
+				else
+					for i = 1, 3 do
+						_G["MirrorTimer"..i]:RegisterEvent("MIRROR_TIMER_PAUSE")
+						_G["MirrorTimer"..i]:RegisterEvent("MIRROR_TIMER_STOP")
+					end
+					UIParent:RegisterEvent("MIRROR_TIMER_START")
 				end
-				UIParent:RegisterEvent("MIRROR_TIMER_START")
 			end
 			db.RESURRECT_NO_TIMER = db.RESURRECT_NO_SICKNESS
 			self:UpdateBars()
@@ -727,11 +746,11 @@ do
 	local function getmirrorhidden()
 		return not db.showmirror
 	end
-	
+
 	local function getstatichidden()
 		return not db.showstatic
 	end
-	
+
 	local function getpvphidden()
 		return not db.showpvp
 	end
@@ -743,25 +762,25 @@ do
 	local function getfreeoptionshidden()
 		return db.mirroranchor ~= "free"
 	end
-	
+
 	local function getnotfreeoptionshidden()
 		return db.mirroranchor == "free"
 	end
-	
+
 	local function dragstart()
 		mirrorbars[1]:StartMoving()
 	end
-	
+
 	local function dragstop()
 		db.mirrorx = mirrorbars[1]:GetLeft()
 		db.mirrory = mirrorbars[1]:GetBottom()
 		mirrorbars[1]:StopMovingOrSizing()
 	end
-	
+
 	local function nothing()
 		mirrorbars[1]:SetAlpha(db.mirroralpha)
 	end
-	
+
 	local positions = {
 		["bottom"] = L["Bottom"],
 		["top"] = L["Top"],
@@ -774,7 +793,7 @@ do
 		["rightup"] = L["Right (grow up)"],
 		["rightdown"] = L["Right (grow down)"],
 	}
-	
+
 	local function setOpt(info, value)
 		db[info[#info]] = value
 		Mirror:ApplySettings()

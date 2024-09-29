@@ -5,6 +5,8 @@
 local mod, CL = BigWigs:NewBoss("Valithria Dreamwalker", 631, 1634)
 if not mod then return end
 mod:RegisterEnableMob(36789, 37868, 36791, 37934, 37886, 37950, 37985)
+-- mod:SetEncounterID(1098)
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {69325, {71086, "FLASH"}, "suppresser", {"blazing", "ICON"}, "portal", "berserk"}
 mod.optionHeaders = {
 	[69325] = "normal",
@@ -56,9 +58,9 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_REMOVED", "LayWasteRemoved", 69325)
 	self:Log("SPELL_CAST_START", "Win", 71189)
 
-	self:Yell("Portal", L["portal_trigger"])
+	self:BossYell("Portal", L["portal_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 end
 
 do
@@ -107,7 +109,7 @@ end
 --
 
 function mod:LayWaste(args)
-	self:Message(69325, "yellow")
+	self:MessageOld(69325, "yellow")
 	self:Bar(69325, 12)
 end
 
@@ -117,7 +119,7 @@ end
 
 function mod:Portal()
 	-- 46 sec cd until initial positioning, +14 sec until 'real' spawn.
-	self:Message("portal", "red", nil, L["portalcd_message"]:format(portalCount), false)
+	self:MessageOld("portal", "red", nil, L["portalcd_message"]:format(portalCount), false)
 	self:Bar("portal", 14, L["portal_bar"], 72482)
 	self:DelayedMessage("portal", 14, "red", L["portal_message"])
 	portalCount = portalCount + 1
@@ -130,7 +132,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 and self:Me(args.destGUID) and UnitPowerType("player") == 0 then
 			prev = t
-			self:Message(71086, "blue", "Alarm", CL["you"]:format(args.spellName))
+			self:MessageOld(71086, "blue", "alarm", CL["you"]:format(args.spellName))
 			self:Flash(71086)
 		end
 	end

@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(111, "DBM-Party-Cataclysm", 7, 67)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod.statTypes = "normal,heroic,timewalker"
+
+mod:SetRevision("20210922153837")
 mod:SetCreatureID(43214)
 mod:SetEncounterID(1059)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -44,12 +45,16 @@ function mod:OnCombatStart(delay)
 --	timerFissureCD:Start(-delay)
 	timerAirphase:Start(12.5-delay)
 	self:ScheduleMethod(12.5-delay, "airphase")
-	if not self:IsTrivial(90) then
+	if not self:IsTrivial() then
 		self:RegisterShortTermEvents(
 			"SPELL_DAMAGE 80800 80801",
 			"SPELL_MISSED 80800 80801"
 		)
 	end
+end
+
+function mod:OnCombatEnd()
+	self:UnregisterShortTermEvents()
 end
 
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)

@@ -85,7 +85,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Parasite", 108649)
 	self:Log("SPELL_AURA_REMOVED", "ParasiteRemoved", 108649)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:Log("SPELL_CAST_SUCCESS", "Win", 110063) -- Astral Recall
 	self:Death("TentacleKilled", 56471)
 end
@@ -104,7 +104,7 @@ end
 --
 
 function mod:Impale(args)
-	self:Message("impale", "orange", "Alarm", args.spellId)
+	self:MessageOld("impale", "orange", "alarm", args.spellId)
 	self:Bar("impale", 35, args.spellId)
 end
 
@@ -116,25 +116,25 @@ end
 -- XXX BROKEN CHECKS FIXME
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, unit, _, spellId)
 	if spellId == self:SpellName(105863) then -- hemorrhage
-		self:Message("hemorrhage", "orange", "Alarm", spellId, L["hemorrhage_icon"])
+		self:MessageOld("hemorrhage", "orange", "alarm", spellId, L["hemorrhage_icon"])
 	elseif spellId == self:SpellName(106775) then -- fragment
-		self:Message("fragment", "orange", "Alarm", L["fragment"], L["fragment_icon"])
+		self:MessageOld("fragment", "orange", "alarm", L["fragment"], L["fragment_icon"])
 		self:Bar("fragment", 90, L["fragment"], L["fragment_icon"])
 	elseif spellId == 105551 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-		self:Message("smalltentacles", "orange", "Alarm", ("%d%% - %s"):format(hp > 50 and 70 or 40, self:SpellName(L.smalltentacles)), L.smalltentacles_icon)
+		local hp = self:GetHealth(unit)
+		self:MessageOld("smalltentacles", "orange", "alarm", ("%d%% - %s"):format(hp > 50 and 70 or 40, self:SpellName(L.smalltentacles)), L.smalltentacles_icon)
 	elseif spellId == 106765 then
-		self:Message("terror", "red", nil, L["terror"], L["terror_icon"])
+		self:MessageOld("terror", "red", nil, L["terror"], L["terror_icon"])
 		self:Bar("terror", 90, L["terror"], L["terror_icon"])
 	end
 end
 
 function mod:LastPhase(args)
-	self:Message("last_phase", "yellow", nil, -4046, args.spellId) -- Stage 2: The Last Stand
+	self:MessageOld("last_phase", "yellow", nil, -4046, args.spellId) -- Stage 2: The Last Stand
 	self:Bar("fragment", 10.5, L["fragment"], L["fragment_icon"])
 	self:Bar("terror", 35.5, L["terror"], L["terror_icon"])
 	if self:Heroic() then
-		self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "BlobsWarn", "boss1")
+		self:RegisterUnitEvent("UNIT_HEALTH", "BlobsWarn", "boss1")
 	end
 end
 
@@ -152,7 +152,7 @@ function mod:AssaultAspects()
 		end
 		self:Bar(106523, 175) -- Cataclysm
 		self:Bar("bigtentacle", 11.2, L["bigtentacle"], L["bigtentacle_icon"])
-		self:DelayedMessage("bigtentacle", 11.2, "orange", L["bigtentacle"], L["bigtentacle_icon"], "Alert")
+		self:DelayedMessage("bigtentacle", 11.2, "orange", L["bigtentacle"], L["bigtentacle_icon"], "alert")
 	else
 		self:Bar("impale", 27.5, 106400) -- Impale
 		self:Bar(105651, 55.5) -- Elementium Bolt
@@ -164,18 +164,18 @@ function mod:AssaultAspects()
 		end
 		self:Bar(106523, 190) -- Cataclysm
 		self:Bar("bigtentacle", 16.7, L["bigtentacle"], L["bigtentacle_icon"])
-		self:DelayedMessage("bigtentacle", 16.7, "orange", L["bigtentacle"], L["bigtentacle_icon"], "Alert")
+		self:DelayedMessage("bigtentacle", 16.7, "orange", L["bigtentacle"], L["bigtentacle_icon"], "alert")
 	end
 end
 
 function mod:ElementiumBolt(args)
 	self:Flash(args.spellId)
-	self:Message(args.spellId, "red", "Long")
+	self:MessageOld(args.spellId, "red", "long")
 	self:Bar(args.spellId, self:UnitBuff("player", self:SpellName(110628)) and 18 or 8, L["bolt_explode"])
 end
 
 function mod:Cataclysm(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:StopBar(args.spellName)
 	self:Bar(args.spellId, 60, CL["cast"]:format(args.spellName))
 end
@@ -187,7 +187,7 @@ end
 function mod:Shrapnel(args)
 	if self:Me(args.destGUID) then
 		local you = CL["you"]:format(args.spellName)
-		self:Message(args.spellId, "red", "Long", you)
+		self:MessageOld(args.spellId, "red", "long", you)
 		self:Flash(args.spellId)
 		self:Bar(args.spellId, 7, you)
 	end
@@ -195,13 +195,13 @@ end
 
 function mod:Parasite(args)
 	paraCount = paraCount + 1
-	self:TargetMessage(-4347, args.destName, "orange", nil, L["parasite"], args.spellId)
+	self:TargetMessageOld(-4347, args.destName, "orange", nil, L["parasite"], args.spellId)
 	self:TargetBar(-4347, 10, args.destName, L["parasite"], args.spellId)
 	self:PrimaryIcon(-4347, args.destName)
 	if self:Me(args.destGUID) then
 		self:Flash(-4347)
 		self:OpenProximity(-4347, 10)
-		self:Say(-4347, L["parasite"])
+		self:Say(-4347, L["parasite"], nil, "Parasite")
 	end
 	if paraCount < 2 then
 		self:Bar(-4347, 60, L["parasite"], 108649)
@@ -215,18 +215,18 @@ function mod:ParasiteRemoved(args)
 	end
 end
 
-function mod:BlobsWarn(event, unitId)
-	local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+function mod:BlobsWarn(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp > 14.9 and hp < 16 and curPercent == 20 then
-		self:Message(-4351, "green", "Info", L["blobs_soon"]:format(15), "ability_deathwing_bloodcorruption_earth")
+		self:MessageOld(-4351, "green", "info", L["blobs_soon"]:format(15), "ability_deathwing_bloodcorruption_earth")
 		curPercent = 15
 	elseif hp > 9.9 and hp < 11 and curPercent == 15 then
-		self:Message(-4351, "green", "Info", L["blobs_soon"]:format(10), "ability_deathwing_bloodcorruption_earth")
+		self:MessageOld(-4351, "green", "info", L["blobs_soon"]:format(10), "ability_deathwing_bloodcorruption_earth")
 		curPercent = 10
 	elseif hp > 4.9 and hp < 6 and curPercent == 10 then
-		self:Message(-4351, "green", "Info", L["blobs_soon"]:format(5), "ability_deathwing_bloodcorruption_earth")
+		self:MessageOld(-4351, "green", "info", L["blobs_soon"]:format(5), "ability_deathwing_bloodcorruption_earth")
 		curPercent = 5
-		self:UnregisterUnitEvent(event, unitId)
+		self:UnregisterUnitEvent(event, unit)
 	end
 end
 

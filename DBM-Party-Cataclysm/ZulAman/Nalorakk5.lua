@@ -1,10 +1,11 @@
-﻿local mod	= DBM:NewMod(187, "DBM-Party-Cataclysm", 10, 77)
+local mod	= DBM:NewMod(187, "DBM-Party-Cataclysm", 10, 77)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod.statTypes = "heroic,timewalker"
+
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(23576)
 mod:SetEncounterID(1190)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -12,7 +13,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 42398 42402",
 	"CHAT_MSG_MONSTER_YELL"
 )
-mod.onlyHeroic = true
 
 local warnBear			= mod:NewAnnounce("WarnBear", 4, 39414)
 local warnBearSoon		= mod:NewAnnounce("WarnBearSoon", 3, 39414)
@@ -29,7 +29,7 @@ local berserkTimer		= mod:NewBerserkTimer(600)
 
 mod:AddBoolOption("InfoFrame")
 
-local surgeDebuff = DBM:GetSpellInfo(42402)
+local surgeDebuff = DBM:GetSpellName(42402)
 
 function mod:OnCombatStart(delay)
 	timerSurgeCD:Start(-delay)

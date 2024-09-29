@@ -1,15 +1,13 @@
-﻿local mod	= DBM:NewMod("d1995", "DBM-Challenges", 2)--1993 Stormwind 1995 Org
+local mod	= DBM:NewMod("d1995", "DBM-Challenges", 2)--1993 Stormwind 1995 Org
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145548")
-mod:SetZone()
-mod.onlyNormal = true
+mod:SetRevision("20240426185002")
 
 mod:RegisterCombat("scenario", 2212)--2212, 2213 (org, stormwind)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 297822 297746 304976 297574 304251 306726 299110 307863 300351 300388 304101 304282 306001 306199 303589 305875 306828 306617 300388 296537 305378 298630 298033 305236 304169 298502 297315",
-	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055",
+	"SPELL_AURA_APPLIED 311390 315385 316481 311641 299055 304165",
 	"SPELL_AURA_APPLIED_DOSE 311390",
 	"SPELL_AURA_REMOVED 298033",
 	"SPELL_CAST_SUCCESS 297237 305378",
@@ -105,21 +103,27 @@ mod:AddNamePlateOption("NPAuraOnHorrifyingShout", 305378)
 local playerName = UnitName("player")
 mod.vb.GnshalCleared = false
 mod.vb.VezokkCleared = false
-local CVAR1, CVAR2, CVAR3 = nil, nil, nil
 local warnedGUIDs = {}
 
 --If you have potions when run ends, the debuffs throw you in combat for about 6 seconds after run has ended
-local function DelayedNameplateFix()
+local function DelayedNameplateFix(self, once)
 	--Check if we changed users nameplate options and restore them
-	if CVAR1 or CVAR2 or CVAR3 then
+	if self.Options.CVAR1 or self.Options.CVAR2 or self.Options.CVAR3 then
 		if InCombatLockdown() then
+			if once then return end
 			--In combat, delay nameplate fix
-			DBM:Schedule(2, DelayedNameplateFix)
+			DBM:Schedule(2, DelayedNameplateFix, self)
 		else
-			SetCVar("nameplateShowFriends", CVAR1)
-			SetCVar("nameplateShowFriendlyNPCs", CVAR2)
-			SetCVar("nameplateShowOnlyNames", CVAR3)
-			CVAR1, CVAR2, CVAR3 = nil, nil, nil
+			if self.Options.CVAR1 then
+				SetCVar("nameplateShowFriends", self.Options.CVAR1)
+			end
+			if self.Options.CVAR2 then
+				SetCVar("nameplateShowFriendlyNPCs", self.Options.CVAR2)
+			end
+			if self.Options.CVAR3 then
+				SetCVar("nameplateShowOnlyNames", self.Options.CVAR3)
+			end
+			self.Options.CVAR1, self.Options.CVAR2, self.Options.CVAR3 = nil, nil, nil
 		end
 	end
 end
@@ -150,15 +154,19 @@ end
 function mod:OnCombatStart(delay)
 	self.vb.GnshalCleared = false
 	self.vb.VezokkCleared = false
-	CVAR1, CVAR2, CVAR3 = nil, nil, nil
 	table.wipe(warnedGUIDs)
+	DelayedNameplateFix(self, true)--Repair settings from previous session if they didn't get repaired in last session
 	if self.Options.SpecWarn306545dodge4 then
 		--This warning requires friendly nameplates, because it's only way to detect it.
-		CVAR1, CVAR2, CVAR3 = tonumber(GetCVar("nameplateShowFriends") or 0), tonumber(GetCVar("nameplateShowFriendlyNPCs") or 0), tonumber(GetCVar("nameplateShowOnlyNames") or 0)
+		self.Options.CVAR1, self.Options.CVAR2, self.Options.CVAR3 = tonumber(GetCVar("nameplateShowFriends") or 0), tonumber(GetCVar("nameplateShowFriendlyNPCs") or 0), tonumber(GetCVar("nameplateShowOnlyNames") or 0)
 		--Check if they were disabled, if disabled, force enable them
-		if (CVAR1 == 0) or (CVAR2 == 0) or (CVAR3 == 0) then
+		if self.Options.CVAR1 == 0 then
 			SetCVar("nameplateShowFriends", 1)
+		end
+		if self.Options.CVAR2 == 0 then
 			SetCVar("nameplateShowFriendlyNPCs", 1)
+		end
+		if self.Options.CVAR3 == 0 then
 			SetCVar("nameplateShowOnlyNames", 1)
 		end
 		--Making this option rely on another option is kind of required because this won't work without nameplateShowFriendlyNPCs
@@ -170,7 +178,7 @@ function mod:OnCombatStart(delay)
 		DBM:FireEvent("BossMod_EnableHostileNameplates")
 	end
 	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(307831))
+		DBM.InfoFrame:SetHeader(DBM:GetSpellName(307831))
 		DBM.InfoFrame:Show(5, "playerpower", 1, ALTERNATE_POWER_INDEX, nil, nil, 2)--Sorting lowest to highest
 	end
 end
@@ -181,20 +189,10 @@ function mod:OnCombatEnd()
 		DBM.InfoFrame:Hide()
 	end
 	if self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHaunting2 or self.Options.NPAuraOnHorrifyingShout then
-		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHorrifyingShout, CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
+		DBM.Nameplate:Hide(true, nil, nil, nil, true, self.Options.NPAuraOnAbyss or self.Options.NPAuraOnHorrifyingShout, self.Options.CVAR1)--isGUID, unit, spellId, texture, force, isHostile, isFriendly
 	end
 	--Check if we changed users nameplate options and restore them
-	if CVAR1 or CVAR2 or CVAR3 then
-		if InCombatLockdown() then
-			--In combat, delay nameplate fix
-			DBM:Schedule(6, DelayedNameplateFix)
-		else
-			SetCVar("nameplateShowFriends", CVAR1)
-			SetCVar("nameplateShowFriendlyNPCs", CVAR2)
-			SetCVar("nameplateShowOnlyNames", CVAR3)
-			CVAR1, CVAR2, CVAR3 = nil, nil, nil
-		end
-	end
+	DelayedNameplateFix(self)
 end
 
 function mod:SPELL_CAST_START(args)
@@ -218,7 +216,7 @@ function mod:SPELL_CAST_START(args)
 		warnCriesoftheVoid:Show()
 		--timerCriesoftheVoidCD:Start()
 	elseif spellId == 297574 then
-		specWarnHopelessness:Show(DBM_CORE_L.ORB)
+		specWarnHopelessness:Show(DBM_COMMON_L.ORB)
 		specWarnHopelessness:Play("orbrun")--Technically not quite accurate but closest match to "find orb"
 	elseif spellId == 304251 and self:AntiSpam(3.5, 1) then--1-4 boars, 3.5 second throttle
 		warnVoidQuills:Show()
@@ -230,13 +228,6 @@ function mod:SPELL_CAST_START(args)
 		timerDefiledGroundCD:Start()
 		if GetNumGroupMembers() > 1 then
 			self:BossTargetScanner(args.sourceGUID, "DefiledGroundTarget", 0.1, 7)
-		end
-	elseif spellId == 299055 then
-		if args:IsPlayer() then
-			specWarnDarkForce:Show()
-			specWarnDarkForce:Play("targetyou")
-		else
-			warnDarkForce:Show(args.destName)
 		end
 	elseif spellId == 299110 and self:AntiSpam(2, 2) then
 		specWarnOrbofAnnihilation:Show()
@@ -367,9 +358,16 @@ function mod:SPELL_AURA_APPLIED(args)
 			if GetNumGroupMembers() > 1 then
 				yellDesperateRetching:Yell()
 			end
-		elseif self:CheckDispelFilter() then
+		elseif self:CheckDispelFilter("disease") then
 			specWarnDesperateRetchingD:Show(args.destName)
 			specWarnDesperateRetchingD:Play("helpdispel")
+		end
+	elseif spellId == 299055 then
+		if args:IsPlayer() then
+			specWarnDarkForce:Show()
+			specWarnDarkForce:Play("targetyou")
+		else
+			warnDarkForce:Show(args.destName)
 		end
 	end
 end

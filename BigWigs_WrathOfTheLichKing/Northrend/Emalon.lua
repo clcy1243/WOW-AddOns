@@ -5,6 +5,8 @@
 local mod, CL = BigWigs:NewBoss("Emalon the Storm Watcher", 624, 1598)
 if not mod then return end
 mod:RegisterEnableMob(33993)
+-- mod:SetEncounterID(1127)
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {64216, 64218, "custom_on_overcharge_mark", "proximity", "berserk"}
 
 --------------------------------------------------------------------------------
@@ -47,13 +49,13 @@ end
 --
 
 function mod:Nova(args)
-	self:Message(64216, "yellow")
+	self:MessageOld(64216, "yellow")
 	self:Bar(64216, 5, CL["cast"]:format(args.spellName))
 	self:CDBar(64216, 25)
 end
 
 function mod:Overcharge(args)
-	self:Message(args.spellId, "green", nil, L["overcharge_message"])
+	self:MessageOld(args.spellId, "green", nil, L["overcharge_message"])
 	self:Bar(args.spellId, 20, L["overcharge_bar"])
 	self:CDBar(args.spellId, 45)
 end
@@ -63,7 +65,7 @@ do
 	local function scanTarget(self, destGUID)
 		local unitId = self:GetUnitIdByGUID(destGUID)
 		if not unitId then return end
-		SetRaidTarget(unitId, 8)
+		self:CustomIcon(false, unitId, 8)
 		self:CancelTimer(timer)
 		timer = nil
 	end

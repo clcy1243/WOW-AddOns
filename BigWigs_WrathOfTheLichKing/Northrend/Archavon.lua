@@ -5,6 +5,8 @@
 local mod, CL = BigWigs:NewBoss("Archavon the Stone Watcher", 624, 1597)
 if not mod then return end
 mod:RegisterEnableMob(31125)
+-- mod:SetEncounterID(1126)
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {58663, "charge", {58678, "MESSAGE", "ICON"}, {58965, "FLASH"}, "berserk"}
 
 --------------------------------------------------------------------------------
@@ -48,14 +50,14 @@ end
 --
 
 function mod:Stomp(args)
-	self:Message(58663, "green", nil, L["stomp_message"])
+	self:MessageOld(58663, "green", nil, L["stomp_message"])
 	self:CDBar(58663, 47)
 	self:DelayedMessage(58663, 42, "yellow", L["stomp_warning"])
 end
 
 function mod:Cloud(args)
 	if self:Me(args.destGUID) then
-		self:Message(58965, "blue", "Alarm", CL["you"]:format(args.spellName))
+		self:MessageOld(58965, "blue", "alarm", CL["you"]:format(args.spellName))
 		self:Flash(58965)
 	end
 end
@@ -68,8 +70,8 @@ do
 		if not bossId then return end
 		local target = mod:UnitName(bossId .. "target")
 		if target then
-			mod:TargetMessage(58965, target, "red", nil, spellId)
-			mod:PrimaryIcon(58965, target)
+			mod:TargetMessageOld(58678, target, "red", nil, spellId)
+			mod:PrimaryIcon(58678, target)
 		end
 	end
 	function mod:Shards(args)
@@ -81,7 +83,7 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, _, unit, _, _, player)
 	if unit == self.displayName then
-		self:TargetMessage("charge", player, "yellow", nil, L["charge"], 11578)
+		self:TargetMessageOld("charge", player, "yellow", nil, L["charge"], 11578)
 	end
 end
 

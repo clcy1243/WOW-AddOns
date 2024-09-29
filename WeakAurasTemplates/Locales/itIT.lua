@@ -1,21 +1,27 @@
-if not WeakAuras.IsCorrectVersion() then return end
+if not WeakAuras.IsLibsOK() then return end
 
-if not(GetLocale() == "itIT") then
+if (GAME_LOCALE or GetLocale()) ~= "itIT" then
   return
 end
 
 local L = WeakAuras.L
 
 -- WeakAuras/Templates
-	L["Abilities"] = "Abilità"
+	L["(Dwarf)"] = "(Nano)"
+	L["(Dwarf/Human)"] = "(Nano/Umano)"
+	L["(Human)"] = "(Umano)"
+	L["(Night Elf)"] = "(Elfo della Notte)"
 	--[[Translation missing --]]
-	L["Ability Charges"] = "Ability Charges"
+	L["(Troll)"] = "(Troll)"
+	L["(Undead)"] = "(Non Morto)"
+	L["Abilities"] = "Abilità"
 	L["Add Triggers"] = "Aggiungi Inneschi"
 	L["Always Active"] = "Sempre Attivo"
 	L["Always Show"] = "Mostra Sempre"
 	L["Always show the aura, highlight it if debuffed."] = "Mostra sempre l'aura, evidenziata se c'è il debuff."
 	L["Always show the aura, turns grey if on cooldown."] = "Mostra sempre l'aura, diventa grigia se in ricarica."
 	L["Always show the aura, turns grey if the debuff not active."] = "Mostra sempre l'aura, diventa grigia se il debuff non è attivo."
+	L["Always shows highlights if enchant missing."] = "Mostra sempre gli highlights se manca l'incantesimo."
 	L["Always shows the aura, grey if buff not active."] = "Mostra sempre l'aura, grigia se il buff non è attivo."
 	L["Always shows the aura, highlight it if buffed."] = "Mostra sempre l'aura, evidenziata se c'è il buff."
 	L["Always shows the aura, highlight when active, turns blue on insufficient resources."] = "Mostra sempre l'aura, evidenziata quando attiva, diventa blu se la risorsa è insufficiente."
@@ -29,6 +35,7 @@ local L = WeakAuras.L
 	L["Always shows the aura, turns grey if the ability is not usable."] = "Mostra sempre l'aura, diventa grigia se l'abilità non è utilizzabile."
 	L["Always shows the aura, turns red when out of range, blue on insufficient resources."] = "Mostra sempre l'aura, diventa rossa quando fuori portata, blu se la risorsa è insufficiente."
 	L["Always shows the aura, turns red when out of range."] = "Mostra sempre l'aura,, diventa rossa quando fuori portata."
+	L["Always shows the aura."] = "Mostra sempre l'aura."
 	L["Back"] = "Indietro"
 	L["Basic Show On Cooldown"] = "Semplice Mostra in Ricarica"
 	--[[Translation missing --]]
@@ -38,34 +45,28 @@ local L = WeakAuras.L
 	L["Buffs"] = "Buffs"
 	L["Cancel"] = "Cancella"
 	L["Cast"] = "Lancia"
-	--[[Translation missing --]]
-	L["Charge and Buff Tracking"] = "Charge and Buff Tracking"
-	--[[Translation missing --]]
-	L["Charge and Debuff Tracking"] = "Charge and Debuff Tracking"
-	--[[Translation missing --]]
-	L["Charge and Duration Tracking"] = "Charge and Duration Tracking"
-	--[[Translation missing --]]
-	L["Charge Tracking"] = "Charge Tracking"
+	L["Charge and Buff Tracking"] = "Monitoraggio di cariche e potenziamenti"
+	L["Charge and Debuff Tracking"] = "Monitoraggio di cariche e penalità "
+	L["Charge and Duration Tracking"] = "Monitoraggio della carica e della durata"
+	L["Charge Tracking"] = "Monitoraggio della carica"
 	--[[Translation missing --]]
 	L["cooldown"] = "cooldown"
+	L["Cooldown Tracking"] = "Monitoraggio del Cooldown "
 	--[[Translation missing --]]
-	L["Cooldown"] = "Cooldown"
-	--[[Translation missing --]]
-	L["Cooldown Tracking"] = "Cooldown Tracking"
-	--[[Translation missing --]]
-	L["Create Auras"] = "Create Auras"
+	L["Cooldowns"] = "Cooldowns"
+	L["Create Auras"] = "Crea aure"
 	--[[Translation missing --]]
 	L["debuff"] = "debuff"
 	--[[Translation missing --]]
 	L["Debuffs"] = "Debuffs"
 	--[[Translation missing --]]
-	L["Enchants"] = "Enchants"
+	L["dps buff"] = "dps buff"
 	--[[Translation missing --]]
 	L["General"] = "General"
 	--[[Translation missing --]]
-	L["General Azerite Traits"] = "General Azerite Traits"
-	--[[Translation missing --]]
 	L["Health"] = "Health"
+	--[[Translation missing --]]
+	L["Highlight while action is queued."] = "Highlight while action is queued."
 	--[[Translation missing --]]
 	L["Highlight while active, red when out of range."] = "Highlight while active, red when out of range."
 	--[[Translation missing --]]
@@ -85,17 +86,17 @@ local L = WeakAuras.L
 	--[[Translation missing --]]
 	L["Keeps existing triggers intact"] = "Keeps existing triggers intact"
 	--[[Translation missing --]]
+	L["Master Channeler Rune"] = "Master Channeler Rune"
+	--[[Translation missing --]]
 	L["Next"] = "Next"
-	--[[Translation missing --]]
-	L["On Procc Trinkets (Aura)"] = "On Procc Trinkets (Aura)"
-	--[[Translation missing --]]
-	L["On Use Trinkets (Aura)"] = "On Use Trinkets (Aura)"
-	--[[Translation missing --]]
-	L["On Use Trinkets (CD)"] = "On Use Trinkets (CD)"
 	--[[Translation missing --]]
 	L["Only show the aura if the target has the debuff."] = "Only show the aura if the target has the debuff."
 	--[[Translation missing --]]
 	L["Only show the aura when the item is on cooldown."] = "Only show the aura when the item is on cooldown."
+	--[[Translation missing --]]
+	L["Only shows if the weapon is enchanted."] = "Only shows if the weapon is enchanted."
+	--[[Translation missing --]]
+	L["Only shows if the weapon is not enchanted."] = "Only shows if the weapon is not enchanted."
 	--[[Translation missing --]]
 	L["Only shows the aura if the target has the buff."] = "Only shows the aura if the target has the buff."
 	--[[Translation missing --]]
@@ -103,17 +104,13 @@ local L = WeakAuras.L
 	--[[Translation missing --]]
 	L["Only shows the aura when the ability is ready to use."] = "Only shows the aura when the ability is ready to use."
 	--[[Translation missing --]]
+	L["Other cooldown"] = "Other cooldown"
+	--[[Translation missing --]]
 	L["Pet alive"] = "Pet alive"
 	--[[Translation missing --]]
 	L["Pet Behavior"] = "Pet Behavior"
 	--[[Translation missing --]]
-	L["PvP Azerite Traits"] = "PvP Azerite Traits"
-	--[[Translation missing --]]
-	L["PvP Talents"] = "PvP Talents"
-	--[[Translation missing --]]
-	L["PVP Trinkets (Aura)"] = "PVP Trinkets (Aura)"
-	--[[Translation missing --]]
-	L["PVP Trinkets (CD)"] = "PVP Trinkets (CD)"
+	L["regen buff"] = "regen buff"
 	--[[Translation missing --]]
 	L["Replace all existing triggers"] = "Replace all existing triggers"
 	--[[Translation missing --]]
@@ -123,9 +120,13 @@ local L = WeakAuras.L
 	--[[Translation missing --]]
 	L["Resources and Shapeshift Form"] = "Resources and Shapeshift Form"
 	--[[Translation missing --]]
+	L["Rogue cooldown"] = "Rogue cooldown"
+	--[[Translation missing --]]
 	L["Runes"] = "Runes"
 	--[[Translation missing --]]
 	L["Shapeshift Form"] = "Shapeshift Form"
+	--[[Translation missing --]]
+	L["Show Always, Glow on Missing"] = "Show Always, Glow on Missing"
 	--[[Translation missing --]]
 	L["Show Charges and Check Usable"] = "Show Charges and Check Usable"
 	--[[Translation missing --]]
@@ -134,6 +135,8 @@ local L = WeakAuras.L
 	L["Show Charges with Range Tracking"] = "Show Charges with Range Tracking"
 	--[[Translation missing --]]
 	L["Show Charges with Usable Check"] = "Show Charges with Usable Check"
+	--[[Translation missing --]]
+	L["Show Cooldown and Action Queued"] = "Show Cooldown and Action Queued"
 	--[[Translation missing --]]
 	L["Show Cooldown and Buff"] = "Show Cooldown and Buff"
 	--[[Translation missing --]]
@@ -167,23 +170,21 @@ local L = WeakAuras.L
 	--[[Translation missing --]]
 	L["Show Cooldown and Totem Information"] = "Show Cooldown and Totem Information"
 	--[[Translation missing --]]
+	L["Show if Enchant Missing"] = "Show if Enchant Missing"
+	--[[Translation missing --]]
 	L["Show on Ready"] = "Show on Ready"
 	--[[Translation missing --]]
 	L["Show Only if Buffed"] = "Show Only if Buffed"
 	--[[Translation missing --]]
 	L["Show Only if Debuffed"] = "Show Only if Debuffed"
 	--[[Translation missing --]]
+	L["Show Only if Enchanted"] = "Show Only if Enchanted"
+	--[[Translation missing --]]
 	L["Show Only if on Cooldown"] = "Show Only if on Cooldown"
 	--[[Translation missing --]]
 	L["Show Totem and Charge Information"] = "Show Totem and Charge Information"
 	--[[Translation missing --]]
-	L["slow debuff"] = "slow debuff"
-	--[[Translation missing --]]
-	L["Specific Azerite Traits"] = "Specific Azerite Traits"
-	--[[Translation missing --]]
 	L["Stance"] = "Stance"
-	--[[Translation missing --]]
-	L["stun debuff"] = "stun debuff"
 	--[[Translation missing --]]
 	L["Track the charge and proc, highlight while proc is active, turns red when out of range, blue on insufficient resources."] = "Track the charge and proc, highlight while proc is active, turns red when out of range, blue on insufficient resources."
 	--[[Translation missing --]]
@@ -196,4 +197,6 @@ local L = WeakAuras.L
 	L["Unknown Item"] = "Unknown Item"
 	--[[Translation missing --]]
 	L["Unknown Spell"] = "Unknown Spell"
+	--[[Translation missing --]]
+	L["Warrior cooldown"] = "Warrior cooldown"
 

@@ -1,12 +1,12 @@
 local mod = DBM:NewMod(603, "DBM-Party-WotLK", 16, 276)
 local L = mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
---mod:SetEncounterID(843, 844, 1990)
+mod:SetRevision("20230311193122")
+--mod:SetEncounterID(1990)--TODO, why was this unreliable?
 
 mod:RegisterEvents(
 	"SPELL_AURA_REMOVED 69708",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+	"UNIT_SPELLCAST_SUCCEEDED boss1"--Might fail in classic, hard to say.
 )
 
 local WarnWave		= mod:NewAnnounce("WarnWave", 2)
@@ -15,9 +15,18 @@ local timerEscape	= mod:NewAchievementTimer(360, 4526, "achievementEscape")
 
 mod.vb.waveCount = 0
 
-local ragingGoul = DBM:EJ_GetSectionInfo(7276)
-local witchDoctor = DBM:EJ_GetSectionInfo(7278)
-local abomination = DBM:EJ_GetSectionInfo(7282)
+local ragingGoul
+local witchDoctor
+local abomination
+if mod:IsClassic() then
+	ragingGoul = L.Ghoul
+	witchDoctor = L.Doctor
+	abomination = L.Abom
+else
+	ragingGoul = DBM:EJ_GetSectionInfo(7276)
+	witchDoctor = DBM:EJ_GetSectionInfo(7278)
+	abomination = DBM:EJ_GetSectionInfo(7282)
+end
 
 local addWaves = {
 	[1] = { "6 "..ragingGoul, "1 "..witchDoctor },

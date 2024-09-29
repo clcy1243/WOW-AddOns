@@ -18,7 +18,7 @@ local _isBankOpen = false
 --
 local function scanBag(bagId, matchItem, usedItems)
 
-	local numSlots = GetContainerNumSlots(bagId)
+	local numSlots = C_Container.GetContainerNumSlots(bagId)
     local loc = ItemLocation.CreateEmpty()
     
     if not usedItems[bagId] then
@@ -31,18 +31,18 @@ local function scanBag(bagId, matchItem, usedItems)
 
     for slotId = 1, numSlots do
         if not usedItems[bagId][slotId] then
-            local _, itemCount, _, _, _, _, itemLink = GetContainerItemInfo(bagId, slotId)
+            local itemLink = C_Container.GetContainerItemLink(bagId, slotId)
             if itemLink ~= nil then
                 local itemData = Amr.Serializer.ParseItemLink(itemLink)
                 if itemData ~= nil then
                     -- see if this is an azerite item and read azerite power ids
-                    loc:SetBagAndSlot(bagId, slotId)
+                    --[[loc:SetBagAndSlot(bagId, slotId)
                     if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
                         local powers = Amr.ReadAzeritePowers(loc)
                         if powers then
                             itemData.azerite = powers
                         end
-                    end
+                    end]]
                     
                     -- see if it matches
                     local diffs = Amr.CountItemDifferences(matchItem, itemData)
@@ -51,11 +51,11 @@ local function scanBag(bagId, matchItem, usedItems)
                         itemData.bagId = bagId
                         itemData.slotId = slotId
                         return itemData
-                    elseif diffs < 10000 then                        
+                    elseif diffs < 100000 then                        
                         if itemData.azerite and #itemData.azerite > 0 then
-                            threshold = 100
+                            threshold = 1000
                         else
-                            threshold = 10000
+                            threshold = 100000
                         end
                         if diffs < threshold and diffs < bestMatchDiffs then
                             -- closest match we could find
@@ -85,12 +85,10 @@ end
 --
 local function findMatchingBagItem(item, usedItems)
 
-    local matchItem = scanBag(BACKPACK_CONTAINER, item, usedItems) -- backpack
-    if not matchItem then
-        for bagId = 1, NUM_BAG_SLOTS do
-            matchItem = scanBag(bagId, item, usedItems)
-            if matchItem then break end
-        end
+    local matchItem
+    for bagId = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        matchItem = scanBag(bagId, item, usedItems)
+        if matchItem then break end
     end
     
     return matchItem
@@ -100,7 +98,7 @@ end
 --
 -- item actions
 --
-local _deSpellName = GetSpellInfo(13262);
+local _deSpellName = C_Spell.GetSpellName(13262);
 local _deMacro = "/stopmacro [combat][btn:2]\n/stopcasting\n/cast %s\n/use %s %s";
 
 local function onItemPreClick(widget)
@@ -125,7 +123,7 @@ local function onItemClick(widget)
     
     local item = widget:GetUserData("itemData")
     if not item then return end
-
+    
     local action = nil
     if _isScrapOpen then
         action = "scrap"
@@ -140,9 +138,9 @@ local function onItemClick(widget)
     local matchItem = findMatchingBagItem(item, {})
     if matchItem then
         if action == "scrap" then
-            UseContainerItem(matchItem.bagId, matchItem.slotId)
+            C_Container.UseContainerItem(matchItem.bagId, matchItem.slotId)
         elseif action == "sell" then
-            UseContainerItem(matchItem.bagId, matchItem.slotId)
+            C_Container.UseContainerItem(matchItem.bagId, matchItem.slotId)
         end
 
         -- note for disenchant, the macro has handled the action, this will simply remove the item from the list
@@ -184,7 +182,7 @@ finishBankWithdraw = function()
     if _isBankOpen and _bankUsedBagSlots then
         for bagId,v in pairs(_bankUsedBagSlots) do
             for slotId,v in pairs(v) do
-                local _, _, _, _, _, _, itemLink = GetContainerItemInfo(bagId, slotId)
+                local itemLink = C_Container.GetContainerItemLink(bagId, slotId)
                 if not itemLink then
                     done = false
                     break
@@ -221,7 +219,7 @@ doBankWithdraw = function()
 
     local bagList = {}
 	table.insert(bagList, BANK_CONTAINER)
-	for bagId = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+	for bagId = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
 		table.insert(bagList, bagId)
 	end
 
@@ -251,7 +249,7 @@ doBankWithdraw = function()
             -- move it to the player's bags if there is space
             local bagId, slotId = Amr.FindFirstEmptyBagSlot(_bankUsedBagSlots)
             if bagId then
-                UseContainerItem(matchItem.bagId, matchItem.slotId)
+                C_Container.UseContainerItem(matchItem.bagId, matchItem.slotId)
             else
                 -- no more empty bag slots
                 break
@@ -411,6 +409,8 @@ local function findMatchingNonBagItem(matchItem, usedItems)
             if itemLink then
                 local itemData = Amr.ParseItemLink(itemLink)
                 if itemData then
+
+                    --[[
                     -- see if this is an azerite item and read azerite power ids
                     loc:SetEquipmentSlot(slotId)
                     if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
@@ -418,7 +418,7 @@ local function findMatchingNonBagItem(matchItem, usedItems)
                         if powers then
                             itemData.azerite = powers
                         end
-                    end
+                    end]]
 
                     -- see if it matches
                     if Amr.CountItemDifferences(matchItem, itemData) == 0 then
@@ -452,11 +452,11 @@ local function findMatchingNonBagItem(matchItem, usedItems)
                         itemData.bagId = bagId
                         itemData.slotId = i
                         return itemData
-                    elseif diffs < 10000 then                        
+                    elseif diffs < 100000 then                        
                         if itemData.azerite and #itemData.azerite > 0 then
-                            threshold = 100
+                            threshold = 1000
                         else
-                            threshold = 10000
+                            threshold = 100000
                         end
                         if diffs < threshold and diffs < bestMatchDiffs then
                             -- closest match we could find
@@ -517,7 +517,8 @@ local function renderItem(item, itemLink, scroll)
     lblItem:SetFont(Amr.CreateFont("Regular", 13, Amr.Colors.White))		
     lblItem:SetHoverBackgroundColor(Amr.Colors.Black, 0.3)
     lblItem:SetTextPadding(0, 0, 0, 5)
-    lblItem:SetCallback("PreClick", onItemPreClick)
+    lblItem:SetPreClick(onItemPreClick)
+    --lblItem:SetCallback("OnPreClick", onItemPreClick)
     lblItem:SetCallback("OnClick", onItemClick)
     lblItem:SetUserData("itemData", item)
 
@@ -652,6 +653,7 @@ function Amr:RefreshJunkUi()
     end
 end
 
+--[[
 Amr:AddEventHandler("SCRAPPING_MACHINE_SHOW", function() 
 	_isScrapOpen = true
 	if Amr.db.profile.options.junkVendor and Amr.db.char.JunkData and Amr.db.char.JunkData.Junk and #Amr.db.char.JunkData.Junk > 0 then
@@ -669,6 +671,7 @@ Amr:AddEventHandler("SCRAPPING_MACHINE_CLOSE", function()
         Amr:SetJunkUiState()
 	end
 end)
+]]
 
 Amr:AddEventHandler("MERCHANT_SHOW", function() 
 	_isMerchantOpen = true

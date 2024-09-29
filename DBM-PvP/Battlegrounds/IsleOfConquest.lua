@@ -1,22 +1,41 @@
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-	return
-end
-local mod	= DBM:NewMod("z628", "DBM-PvP")
+local mod	= DBM:NewMod("z628", "DBM-PvP") -- Added in Wrath
 
-mod:SetRevision("20200524113830")
+mod:SetRevision("20240505221847")
 mod:SetZone(DBM_DISABLE_ZONE_DETECTION)
-mod:RegisterEvents("ZONE_CHANGED_NEW_AREA")
+mod:RegisterEvents(
+	"LOADING_SCREEN_DISABLED",
+	"ZONE_CHANGED_NEW_AREA",
+	"PLAYER_ENTERING_WORLD"
+)
 
 do
-	function mod:OnInitialize()
-		if DBM:GetCurrentArea() == 628 then
-			DBM:GetModByName("PvPGeneral"):SubscribeAssault(169, 5)
+	local bgzone = false
+
+	local function Init(self)
+		local zoneID = DBM:GetCurrentArea()
+		if not bgzone and zoneID == 628 then
+			bgzone = true
+			local generalMod = DBM:GetModByName("PvPGeneral")
+			generalMod:SubscribeAssault(169, 5)
+			if not self.tracker then
+				self.tracker = generalMod:NewHealthTracker()
+				self.tracker:TrackHealth(34924, "AllianceBoss", BLUE_FONT_COLOR)
+				self.tracker:TrackHealth(34922, "HordeBoss", RED_FONT_COLOR)
+			end
 			-- TODO: Add gate health
-			-- TODO: Add boss health
+		elseif bgzone and zoneID ~= 628 then
+			bgzone = false
+			if self.tracker then
+				self.tracker:Cancel()
+				self.tracker = nil
+			end
 		end
 	end
 
-	function mod:ZONE_CHANGED_NEW_AREA()
-		self:ScheduleMethod(1, "OnInitialize")
+	function mod:LOADING_SCREEN_DISABLED()
+		self:Schedule(1, Init, self)
 	end
+	mod.ZONE_CHANGED_NEW_AREA	= mod.LOADING_SCREEN_DISABLED
+	mod.PLAYER_ENTERING_WORLD	= mod.LOADING_SCREEN_DISABLED
+	mod.OnInitialize			= mod.LOADING_SCREEN_DISABLED
 end

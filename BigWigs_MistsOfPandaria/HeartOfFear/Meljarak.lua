@@ -89,15 +89,15 @@ end
 
 function mod:OnEngage(diff)
 	self:Bar(121896, 36) -- Whirling Blade
-	self:CDBar(122406, 60) -- Rain of Blades
-	self:CDBar(122409, 19) -- Korthik Strike
+	self:Bar(122406, 60) -- Rain of Blades
+	self:Bar(122409, 19) -- Korthik Strike
 	self:Berserk(self:LFR() and 600 or 480)
-	wipe(korthikStrikeWarned)
+	korthikStrikeWarned = {}
 	primaryAmberIcon, secondaryAmberIcon, phase = nil, nil, 0
 	firstKorthikStrikeDone = nil
 
 	self:RegisterEvent("UNIT_AURA")
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "PhaseChange", "boss1", "boss2", "boss3", "boss4")
+	self:RegisterUnitEvent("UNIT_HEALTH", "PhaseChange", "boss1", "boss2", "boss3", "boss4")
 end
 
 --------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 	self:CheckBossStatus()
 	for i = 1, 5 do
 		-- Random spawn, check for unit
-		local guid = UnitGUID(("boss%d"):format(i))
+		local guid = self:UnitGUID(("boss%d"):format(i))
 		if guid and self:MobId(guid) == 62451 then -- The Sra'thik
 			if phase == 2 then
 				self:CloseProximity(131830)
@@ -121,7 +121,7 @@ end
 
 function mod:WhirlingBladeDamage(args)
 	if not self:LFR() and self:Me(args.destGUID) then
-		self:Message(121896, "blue", "Info", CL["you"]:format(args.spellName))
+		self:MessageOld(121896, "blue", "info", CL["you"]:format(args.spellName))
 		self:Flash(121896) -- we flash on cast too, but some more can't hurt
 	end
 end
@@ -132,13 +132,13 @@ do
 		korthikStrikeWarned[player] = nil
 	end
 	function mod:UNIT_AURA(_, unitId)
-		if self:UnitDebuff(unitId, korthikStrike) then
+		if self:UnitDebuff(unitId, korthikStrike, 123963) then -- difficulty 3
 			local player = self:UnitName(unitId)
 			if not korthikStrikeWarned[player] then
 				korthikStrikeWarned[player] = true
 				self:ScheduleTimer(allowKorthikStrike, 10, player)
-				self:TargetMessage(122409, player, "orange", "Alarm")
-				self:CDBar(122409, firstKorthikStrikeDone and 50 or 30) -- 2nd one ~30, then cooldown 50 sec
+				self:TargetMessageOld(122409, player, "orange", "alarm")
+				self:Bar(122409, firstKorthikStrikeDone and 50 or 30) -- 2nd one ~30, then cooldown 50 sec
 				firstKorthikStrikeDone = true
 			end
 		end
@@ -147,19 +147,19 @@ end
 
 function mod:ResidueRemoved(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "green", nil, CL["over"]:format(args.spellName))
+		self:MessageOld(args.spellId, "green", nil, CL["over"]:format(args.spellName))
 	end
 end
 
 do
 	local prisonList, scheduled = mod:NewTargetList(), nil
 	local function warnPrison(spellId)
-		mod:TargetMessage(spellId, prisonList, "red", "Info")
+		mod:TargetMessageOld(spellId, prisonList, "red", "info")
 		scheduled = nil
 	end
 	function mod:AmberPrison(args)
 		if self:Me(args.destGUID) then
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Amber Prison")
 		end
 		prisonList[#prisonList + 1] = args.destName
 		if not scheduled then
@@ -188,8 +188,8 @@ function mod:AmberPrisonRemoved(args)
 end
 
 function mod:RainOfBlades(args)
-	self:Message(args.spellId, "red", "Alert")
-	self:CDBar(args.spellId, phase == 2 and 48 or 60)
+	self:MessageOld(args.spellId, "red", "alert")
+	self:Bar(args.spellId, phase == 2 and 48 or 60)
 end
 
 do
@@ -199,22 +199,22 @@ do
 		if t-prev > 2 then
 			prev = t
 			if self:Dispeller("magic", true, args.spellId) then
-				self:Message(args.spellId, "yellow", "Alert")
+				self:MessageOld(args.spellId, "yellow", "alert")
 			end
 		end
 	end
 end
 
 function mod:Mending(args)
-	if UnitGUID("focus") == args.sourceGUID then
-		self:Message("mending", "blue", "Alert", L["mending_warning"], args.spellId)
+	if self:UnitGUID("focus") == args.sourceGUID then
+		self:MessageOld("mending", "blue", "alert", L["mending_warning"], args.spellId)
 		self:Bar("mending", 37, L["mending_bar"], args.spellId)
 	end
 end
 
 function mod:WhirlingBlade(args)
-	self:Message(args.spellId, "orange", "Alarm")
-	self:CDBar(args.spellId, phase == 2 and 30 or 45)
+	self:MessageOld(args.spellId, "orange", "alarm")
+	self:Bar(args.spellId, phase == 2 and 30 or 45)
 	if not self:LFR() then
 		self:Flash(args.spellId)
 	end
@@ -223,22 +223,22 @@ end
 function mod:WindBomb(args)
 	if self:Me(args.sourceGUID) then
 		self:Flash(131830)
-		self:Say(131830)
+		self:Say(131830, nil, nil, "Wind Bomb")
 	end
-	self:TargetMessage(131830, args.sourceName, "orange", "Alarm")
+	self:TargetMessageOld(131830, args.sourceName, "orange", "alarm")
 end
 
 function mod:Recklessness(args)
-	self:Message("recklessness", "yellow", nil, CL["count"]:format(args.spellName, args.amount or 1), args.spellId)
+	self:MessageOld("recklessness", "yellow", nil, CL["count"]:format(args.spellName, args.amount or 1), args.spellId)
 end
 
 function mod:RecklessnessHeroic(args)
-	self:Message("recklessness", "yellow", nil, args.spellName, args.spellId)
+	self:MessageOld("recklessness", "yellow", nil, args.spellName, args.spellId)
 	self:Bar("recklessness", 30, args.spellName, args.spellId)
 end
 
 function mod:RecklessnessHeroicRemoved(args)
-	self:Message("recklessness", "yellow", "Info", CL["over"]:format(args.spellName), args.spellId)
+	self:MessageOld("recklessness", "yellow", "info", CL["over"]:format(args.spellName), args.spellId)
 end
 
 do
@@ -248,7 +248,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 then
 			prev = t
-			self:Message(args.spellId, "blue", "Info", CL["underyou"]:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "info", CL["underyou"]:format(args.spellName))
 			self:Flash(args.spellId)
 		end
 	end
@@ -256,9 +256,9 @@ end
 
 function mod:Resin(args)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Corrosive Resin")
 		self:Flash(args.spellId)
-		self:Message(args.spellId, "blue", "Info", CL["you"]:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "info", CL["you"]:format(args.spellName))
 	end
 end
 
@@ -271,25 +271,25 @@ end
 function mod:ImpalingSpearRemoved(args)
 	if self:Me(args.sourceGUID) then
 		self:StopBar(args.spellName)
-		self:Message(args.spellId, "blue", "Info", L["spear_removed"])
+		self:MessageOld(args.spellId, "blue", "info", L["spear_removed"])
 		self:Flash(args.spellId)
 	end
 end
 
-function mod:PhaseChange(event, unitId)
-	if self:MobId(UnitGUID(unitId)) == 62397 then
-		local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+function mod:PhaseChange(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 62397 then
+		local hp = self:GetHealth(unit)
 		if hp < 79 and phase == 0 then -- phase starts at 75
-			self:Message("stages", "green", nil, CL["soon"]:format(CL["phase"]:format(2)), 131830)
+			self:MessageOld("stages", "green", nil, CL["soon"]:format(CL["phase"]:format(2)), 131830)
 			phase = 1
 		elseif hp < 75.1 and phase ~= 2 then
 			phase = 2
-			self:Message("stages", "green", "Info", "75% - "..CL["phase"]:format(2), 131830)
-			self:CDBar(121896, 30) -- Whirling Blade (reset cd)
+			self:MessageOld("stages", "green", "info", "75% - "..CL["phase"]:format(2), 131830)
+			self:Bar(121896, 30) -- Whirling Blade (reset cd)
 			self:StopBar(122406) -- Rain of Blades, first after p2 seems random
 			self:UnregisterUnitEvent(event, "boss1", "boss2", "boss3", "boss4")
 			for i = 1, 5 do
-				local guid = UnitGUID(("boss%d"):format(i))
+				local guid = self:UnitGUID(("boss%d"):format(i))
 				if guid and self:MobId(guid) == 62451 then -- The Sra'thik
 					return
 				end

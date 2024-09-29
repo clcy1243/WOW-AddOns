@@ -1,16 +1,15 @@
 local mod	= DBM:NewMod(1905, "DBM-Party-Legion", 12, 900)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20240106080507")
 mod:SetCreatureID(117193)
 mod:SetEncounterID(2055)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 235751",
-	"SPELL_CAST_SUCCESS 236527 236639",
+	"SPELL_CAST_SUCCESS 236527 236639 236524",
 	"SPELL_AURA_APPLIED 238598",
 	"SPELL_PERIODIC_DAMAGE 240065",
 	"SPELL_PERIODIC_MISSED 240065",
@@ -21,7 +20,7 @@ mod:RegisterEventsInCombat(
 --TODO, Fulminating and succulant lashers after first. Mythic pull logs I have too short
 local warnSpores					= mod:NewSpellAnnounce(236524, 2)
 
-local specWarnTimberSmash			= mod:NewSpecialWarningDefensive(235751, "Tank", nil, nil, 1, 2)
+local specWarnTimberSmash			= mod:NewSpecialWarningDefensive(235751, nil, nil, nil, 1, 2)
 local specWarnChokingVine			= mod:NewSpecialWarningRun(238598, nil, nil, nil, 4, 2)
 local specWarnSucculentSecretion	= mod:NewSpecialWarningMove(240065, nil, nil, nil, 1, 2)
 local specWarnFulminatingLashers	= mod:NewSpecialWarningSwitch(236527, "-Healer", nil, nil, 1, 2)
@@ -29,7 +28,7 @@ local specWarnSucculentLashers		= mod:NewSpecialWarningSwitch(236639, "-Healer",
 local specWarnFixate				= mod:NewSpecialWarningRun(238674, nil, nil, nil, 4, 2)
 local yellFixate					= mod:NewYell(238674)
 
-local timerTimberSmashCD			= mod:NewCDTimer(21.7, 235751, nil, "Tank", nil, 5, nil, DBM_CORE_L.TANK_ICON, nil, 2, 4)
+local timerTimberSmashCD			= mod:NewCDTimer(21.7, 235751, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON, nil, 2, 4)
 local timerChokingVinesCD			= mod:NewCDTimer(30, 238598, nil, nil, nil, 3)
 local timerFulminatingLashersCD		= mod:NewCDTimer(30, 236527, nil, nil, nil, 1)
 local timerSucculentLashersCD		= mod:NewCDTimer(16.5, 236639, nil, nil, nil, 1)
@@ -48,8 +47,10 @@ end
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 235751 then
-		specWarnTimberSmash:Show()
-		specWarnTimberSmash:Play("carefly")
+		if self:IsTanking("player", "boss1", nil, true) then
+			specWarnTimberSmash:Show()
+			specWarnTimberSmash:Play("carefly")
+		end
 		timerTimberSmashCD:Start()
 	end
 end
@@ -95,8 +96,7 @@ function mod:RAID_BOSS_WHISPER(msg)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 236650 then--Choking Vines
 		timerChokingVinesCD:Start()
 	end

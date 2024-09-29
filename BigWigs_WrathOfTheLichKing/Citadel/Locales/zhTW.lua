@@ -1,4 +1,43 @@
-local L = BigWigs:NewBossLocale("Blood Prince Council", "zhTW")
+local L = BigWigs:NewBossLocale("Lord Marrowgar", "zhTW")
+if not L then return end
+if L then
+	--L.bone_spike = "Bone Spike" -- NPC ID 36619
+end
+
+L = BigWigs:NewBossLocale("Lady Deathwhisper", "zhTW")
+if L then
+	L.touch = "無脅之觸"
+	L.deformed_fanatic = "畸形的狂熱者" -- NPC ID 38135
+	--L.empowered_adherent = "Empowered Adherent" -- NPC ID 38136
+end
+
+L = BigWigs:NewBossLocale("Icecrown Gunship Battle", "zhTW")
+if L then
+	L.adds_trigger_alliance = "劫奪者，士官們，攻擊!"
+	L.adds_trigger_horde = "海員們，士官們，攻擊!"
+
+	L.mage = "法師"
+	L.mage_desc = "當法師出現冰凍砲艇火砲時發出警報。"
+	-- Alliance: We're taking hull damage, get a battle-mage out here to shut down those cannons!
+	-- Horde: We're taking hull damage, get a sorcerer out here to shut down those cannons!
+	--L.mage_yell_trigger = "taking hull damage"
+
+	L.warmup_trigger_alliance = "發動引擎"
+	L.warmup_trigger_horde = "起來吧，部落的子女"
+
+	L.disable_trigger_alliance = "向前衝"
+	L.disable_trigger_horde = "向巫妖王前進"
+end
+
+L = BigWigs:NewBossLocale("Deathbringer Saurfang", "zhTW")
+if L then
+	--L.blood_beast = "Blood Beast" --  NPC ID 38508
+
+	L.warmup_alliance = "那我們走吧!快點……"
+	L.warmup_horde = "柯爾克隆，前進!勇士們，要當心，天譴軍團已經……"
+end
+
+L = BigWigs:NewBossLocale("Blood Prince Council", "zhTW")
 if L then
 	L.switch_message = "生命轉換：>%s<！"
 	L.switch_bar = "<下一生命轉換>"
@@ -33,18 +72,6 @@ if L then
 	L.phase2_bar = "<空中階段>"
 end
 
-L = BigWigs:NewBossLocale("Deathbringer Saurfang", "zhTW")
-if L then
-	L.adds = "血獸"
-	L.adds_desc = "當召喚血獸時發出警報和顯示計時條。"
-	L.adds_warning = "5秒後，血獸！"
-	L.adds_message = "召喚血獸！"
-
-	L.engage_trigger = "以巫妖王之力!"
-	L.warmup_alliance = "那我們走吧!快點……"
-	L.warmup_horde = "柯爾克隆，前進!勇士們，要當心，天譴軍團已經……"
-end
-
 L = BigWigs:NewBossLocale("Festergut", "zhTW")
 if L then
 	L.engage_trigger = "玩耍時間?"
@@ -52,55 +79,6 @@ if L then
 	L.inhale_bar = "<下一吸入荒疫：%d>"
 	L.blight_warning = "約5秒後，刺鼻荒疫！"
 	L.ball_message = "即將 綠色黏液之球！"
-end
-
-L = BigWigs:NewBossLocale("Icecrown Gunship Battle", "zhTW")
-if L then
-	L.adds = "傳送門"
-	L.adds_desc = "傳送門警報。"
-	L.adds_trigger_alliance = "劫奪者，士官們，攻擊!"
-	L.adds_trigger_horde = "海員們，士官們，攻擊!"
-	L.adds_message = "傳送門！"
-	L.adds_bar = "<下一傳送門>"
-
-	L.mage = "法師"
-	L.mage_desc = "當法師出現冰凍砲艇火砲時發出警報。"
-	L.mage_message = "法師 出現！"
-	L.mage_bar = "<下一法師>"
-
-	L.warmup_trigger_alliance = "發動引擎"
-	L.warmup_trigger_horde = "起來吧，部落的子女"
-
-	L.disable_trigger_alliance = "向前衝"
-	L.disable_trigger_horde = "向巫妖王前進"
-end
-
-L = BigWigs:NewBossLocale("Lady Deathwhisper", "zhTW")
-if L then
-	L.engage_trigger = "這騷動是怎麼回事?"
-	L.phase2_message = "第二階段 - 失去法力屏障！"
-
-	L.dnd_message = ">你< 死亡凋零！"
-
-	L.adds = "增援"
-	L.adds_desc = "當召喚增援時顯示計時條。"
-	L.adds_bar = "<下一增援>"
-	L.adds_warning = "5秒後，新的增援！"
-
-	L.touch_message = "無脅之觸%2$dx：>%1$s<！"
-	L.touch_bar = "<下一無脅之觸>"
-
-	L.deformed_fanatic = "畸形的狂熱者！"
-
-	L.spirit_message = "召喚靈魂！"
-	L.spirit_bar = "<下一召喚靈魂>"
-end
-
-L = BigWigs:NewBossLocale("Lord Marrowgar", "zhTW")
-if L then
-	L.engage_trigger = "天譴軍團會化身為死亡與毀滅，席捲整個世界。"
-
-	L.bonestorm_warning = "5秒後，骸骨風暴！"
 end
 
 L = BigWigs:NewBossLocale("Professor Putricide", "zhTW")
@@ -123,10 +101,6 @@ if L then
 
 	L.gasbomb_bar = "<多個窒息毒氣彈>"
 	L.gasbomb_message = "窒息毒氣彈！"
-end
-
-L = BigWigs:NewBossLocale("Putricide Dogs", "zhTW")
-if L then
 end
 
 L = BigWigs:NewBossLocale("Rotface", "zhTW")
@@ -211,3 +185,9 @@ if L then
 	L.blazing_warning = "即將 熾熱骷髏！"
 end
 
+L = BigWigs:NewBossLocale("Icecrown Citadel Trash", "zhTW")
+if L then
+	L.deathbound_ward = "縛亡守衛"
+	--L.deathspeaker_high_priest = "Deathspeaker High Priest" -- NPC ID 36829
+	L.putricide_dogs = "小寶 & 大臭"
+end

@@ -26,25 +26,14 @@ local Player = Quartz3:GetModule("Player")
 ----------------------------
 -- Upvalues
 local CreateFrame, UIParent = CreateFrame, UIParent
-local UnitCastingInfo, UnitChannelInfo, UnitName, IsSpellInRange = UnitCastingInfo, UnitChannelInfo, UnitName, IsSpellInRange
+local UnitCastingInfo, UnitChannelInfo, UnitName = UnitCastingInfo, UnitChannelInfo, UnitName
 local unpack = unpack
 
-local WoWClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
-if WoWClassic then
-	UnitCastingInfo = function(unit)
-		if unit ~= "player" then return end
-		return CastingInfo()
-	end
-
-	UnitChannelInfo = function(unit)
-		if unit ~= "player" then return end
-		return ChannelInfo()
-	end
-end
+local IsSpellInRange = IsSpellInRange or C_Spell.IsSpellInRange
 
 local f, OnUpdate, db, getOptions, spell, target, modified, r, g, b, castBar
 
-local defaults ={ 
+local defaults ={
 	profile = {
 		rangecolor = {1, 1, 1},
 	}
@@ -75,7 +64,7 @@ end
 function Range:OnInitialize()
 	self.db = Quartz3.db:RegisterNamespace(MODNAME, defaults)
 	db = self.db.profile
-	
+
 	self:SetEnabledState(Quartz3:GetModuleEnabled(MODNAME))
 	Quartz3:RegisterModuleOptions(MODNAME, getOptions, L["Range"])
 

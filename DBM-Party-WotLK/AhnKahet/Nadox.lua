@@ -1,10 +1,13 @@
 local mod	= DBM:NewMod(580, "DBM-Party-WotLK", 1, 271)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+if not mod:IsClassic() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
+
+mod:SetRevision("20230311193122")
 mod:SetCreatureID(29309)
-mod:SetEncounterID(212, 259, 1969)
-mod:SetZone()
+mod:SetEncounterID(1969)
 
 mod:RegisterCombat("combat")
 
@@ -13,7 +16,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED 56130 59467"
 )
 
-local warningPlague	= mod:NewTargetAnnounce(56130, 2, nil, "Healer")
+local warningPlague	= mod:NewTargetNoFilterAnnounce(56130, 2, nil, "Healer")
 
 local timerPlague	= mod:NewTargetTimer(30, 56130, nil, "Healer", nil, 3)
 

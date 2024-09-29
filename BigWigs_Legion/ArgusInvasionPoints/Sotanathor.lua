@@ -28,9 +28,9 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "ClovenSoul", 247444)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "ClovenSoul", 247444)
 	self:Log("SPELL_CAST_SUCCESS", "Cavitation", 247416)
-	self:Log("SPELL_CAST_SUCCESS", "SeedofDestruction", 247437)
-	self:Log("SPELL_AURA_APPLIED", "SeedofDestructionApplied", 247437)
-	self:Log("SPELL_AURA_REMOVED", "SeedofDestructionRemoved", 247437)
+	self:Log("SPELL_CAST_SUCCESS", "SeedOfDestruction", 247437)
+	self:Log("SPELL_AURA_APPLIED", "SeedOfDestructionApplied", 247437)
+	self:Log("SPELL_AURA_REMOVED", "SeedOfDestructionRemoved", 247437)
 
 	self:Death("Win", 124555)
 end
@@ -44,44 +44,44 @@ end
 --
 
 function mod:Silence(args)
-	self:Message(args.spellId, "yellow", "Long", CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "yellow", "long", CL.casting:format(args.spellName))
 	self:CDBar(args.spellId, 25)
 end
 
 function mod:SoulCleave(args)
-	self:Message(args.spellId, "red", "Alarm")
+	self:MessageOld(args.spellId, "red", "alarm")
 	self:CDBar(args.spellId, 25)
 end
 
 function mod:ClovenSoul(args)
 	local amount = args.amount or 1
-	self:StackMessage(247410, args.destName, amount, "cyan", amount > 1 and "Warning" or "Info", args.spellId)
+	self:StackMessageOld(247410, args.destName, amount, "cyan", amount > 1 and "warning" or "info", args.spellId)
 end
 
 function mod:Cavitation(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 	self:CDBar(args.spellId, 25)
 end
 
-function mod:SeedofDestruction(args)
+function mod:SeedOfDestruction(args)
 	self:CDBar(args.spellId, 18)
 end
 
 do
 	local playerList = mod:NewTargetList()
-	function mod:SeedofDestructionApplied(args)
+	function mod:SeedOfDestructionApplied(args)
 		playerList[#playerList+1] = args.destName
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Seed of Destruction")
 			self:SayCountdown(args.spellId, 4)
 		end
 		if #playerList == 1 then
-			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "orange", "Warning", nil, nil, true)
+			self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, playerList, "orange", "warning", nil, nil, true)
 		end
 	end
 
-	function mod:SeedofDestructionRemoved(args)
+	function mod:SeedOfDestructionRemoved(args)
 		if self:Me(args.destGUID) then
 			self:CancelSayCountdown(args.spellId)
 		end

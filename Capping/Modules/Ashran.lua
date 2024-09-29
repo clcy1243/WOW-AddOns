@@ -1,40 +1,39 @@
 
-local mod, L
+local mod, L, cap
 do
 	local _, core = ...
-	mod, L = core:NewMod()
+	mod, L, cap = core:NewMod()
 end
 
-local hasPrinted = false
 do
-	local UnitGUID, GetCurrencyInfo, GetNumGossipOptions, strsplit = UnitGUID, GetCurrencyInfo, GetNumGossipOptions, strsplit
-	local tonumber, SelectGossipOption = tonumber, SelectGossipOption
+	local GetCurrencyInfo = C_CurrencyInfo.GetCurrencyInfo
 	function mod:GOSSIP_SHOW()
-		local target = UnitGUID("npc")
-		if target then
-			local _, _, _, _, _, id = strsplit("-", target)
-			local mobId = tonumber(id)
-			if mobId == 81870 or mobId == 83830 then -- Anenga (Alliance) / Kalgan (Horde)
-				local _, num = GetCurrencyInfo(944) -- Artifact Fragment
-				if num > 0 and GetNumGossipOptions() == 3 then -- Have the currency and boss isn't already summoned
-					SelectGossipOption(1)
-					if not hasPrinted then
-						hasPrinted = true
-						print(L.handIn)
-					end
-				end
+		if not cap.db.profile.autoTurnIn then return end
+		local alliance = self:GetGossipID(43063)
+		local horde = self:GetGossipID(52320)
+		if alliance or horde then
+			local tbl = GetCurrencyInfo(944) -- Artifact Fragment
+			if tbl and tbl.quantity > 0 and self:GetGossipNumOptions() == 3 then -- Have the currency and boss isn't already summoned
+				self:SelectGossipID(alliance and 43063 or 52320)
+				print(L.handIn)
 			end
 		end
 	end
 end
 
 function mod:EnterZone()
-	hasPrinted = false
 	self:RegisterEvent("GOSSIP_SHOW")
+	self:SetupHealthCheck("88178", L.hordeGuardian, "Horde Guardian", 236440, "colorAlliance") -- Jeron Emberfall -- Interface/Icons/achievement_character_bloodelf_male
+	self:SetupHealthCheck("88224", L.allianceGuardian, "Alliance Guardian", 236447, "colorHorde") -- Rylai Crestfall -- Interface/Icons/Achievement_character_human_female
+	self:SetupHealthCheck("82877", L.hordeBoss, "Horde Boss", 236456, "colorAlliance") -- Interface/Icons/Achievement_character_troll_male
+	self:SetupHealthCheck("82876", L.allianceBoss, "Alliance Boss", 236447, "colorHorde") -- Interface/Icons/Achievement_character_human_female
+	self:SetupHealthCheck("82201", L.kronus, "Kronus", 1006111, "colorAlliance") -- Interface/Icons/achievement_boss_highmaul_earthenfury
+	self:SetupHealthCheck("81859", L.fangraal, "Fangraal", 874857, "colorHorde") -- Interface/Icons/inv_pet_ancientprotector
 end
 
 function mod:ExitZone()
 	self:UnregisterEvent("GOSSIP_SHOW")
+	self:StopHealthCheck()
 end
 
 mod:RegisterZone(1191)

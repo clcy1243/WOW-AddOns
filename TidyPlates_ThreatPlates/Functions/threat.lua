@@ -9,10 +9,8 @@ local string, strsplit = string, strsplit
 -- WoW APIs
 local UnitThreatSituation = UnitThreatSituation
 local InCombatLockdown, IsInInstance = InCombatLockdown, IsInInstance
-local UnitReaction  = UnitReaction
 
 -- ThreatPlates APIs
-local TidyPlatesThreat = TidyPlatesThreat
 
 local _G =_G
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
@@ -44,10 +42,9 @@ local OFFTANK_PETS = {
   ["61146"] = true,  -- Monk's Black Ox Statue
   ["103822"] = true, -- Druid's Force of Nature Treants
   ["95072"] = true,  -- Shaman's Earth Elemental
+  ["61056"] = true,  -- Primal Earth Elemental
 }
 
--- Black Ox Statue of monks is: Creature with id 61146
--- Treants of druids is: Creature with id 103822
 function Addon.IsOffTankCreature(unitid)
   local guid = _G.UnitGUID(unitid)
 
@@ -66,7 +63,7 @@ function Addon.IsOffTankCreature(unitid)
 end
 
 function Addon:OnThreatTable(unit)
-  --  local _, threatStatus = UnitDetailedThreatSituation("player", unit.unitid)
+  --  local _, threatStatus = Addon.UnitDetailedThreatSituationWrapper("player", unit.unitid)
   --  return threatStatus ~= nil
 
   -- nil means player is not on unit's threat table - more acurate, but slower reaction time than the above solution
@@ -86,7 +83,7 @@ end
 local function GetUnitClassification(unit)
   if _G.UnitIsTapDenied(unit.unitid) then
     return "Tapped"
-  elseif UnitReaction(unit.unitid, "player") == 4 then
+  elseif unit.reaction == "NEUTRAL" then
     return "Neutral"
   end
 
@@ -94,9 +91,9 @@ local function GetUnitClassification(unit)
 end
 
 function Addon:ShowThreatFeedback(unit)
-  local db = TidyPlatesThreat.db.profile.threat
+  local db = Addon.db.profile.threat
 
-  if not InCombatLockdown() or unit.type == "PLAYER" or UnitReaction(unit.unitid, "player") > 4 or not db.ON then
+  if not InCombatLockdown() or unit.type == "PLAYER" or unit.reaction == "FRIENDLY" or not db.ON then
     return false
   end
 

@@ -1,9 +1,18 @@
 local mod	= DBM:NewMod(553, "DBM-Party-BC", 12, 255)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+if mod:IsRetail() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
+
+mod:SetRevision("20231014053250")
 mod:SetCreatureID(17880)
 mod:SetEncounterID(1921)
+
+if not mod:IsRetail() then
+	mod:SetModelID(19066)
+	mod:SetModelOffset(0, 50, 0)
+end
 
 mod:RegisterCombat("combat")
 
@@ -16,8 +25,8 @@ mod:RegisterEventsInCombat(
 local specWarnSpellReflect	= mod:NewSpecialWarningReflect(38592, "SpellCaster", nil, 2, 1, 2)
 local specWarnHasten		= mod:NewSpecialWarningDispel(31458, "MagicDispeller", nil, nil, 1, 2)
 
-local timerSpellReflect		= mod:NewBuffActiveTimer(6, 38592, nil, "SpellCaster", 2, 5, nil, DBM_CORE_L.DAMAGE_ICON)
-local timerHasten			= mod:NewTargetTimer(10, 31458, nil, "MagicDispeller|Healer|Tank", 2, 5, nil, DBM_CORE_L.TANK_ICON)
+local timerSpellReflect		= mod:NewBuffActiveTimer(6, 38592, nil, "SpellCaster", 2, 5, nil, DBM_COMMON_L.DAMAGE_ICON)
+local timerHasten			= mod:NewTargetTimer(10, 31458, nil, "MagicDispeller|Healer|Tank", 2, 5, nil, DBM_COMMON_L.TANK_ICON)
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 31458 and not args:IsDestTypePlayer() then     --Hasten

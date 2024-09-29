@@ -8,6 +8,8 @@ local module = {}
 local moduleName = "Controls"
 MSBTOptions[moduleName] = module
 
+local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
+
 
 -------------------------------------------------------------------------------
 -- Private variables.
@@ -1054,7 +1056,7 @@ local function CreateSlider(parent)
 	slider:SetHeight(30)
 
 	-- Create slider.
-	local sliderFrame = CreateFrame("Slider", nil, slider)
+	local sliderFrame = CreateFrame("Slider", nil, slider, BackdropTemplateMixin and "BackdropTemplate")
 	sliderFrame:SetOrientation("HORIZONTAL")
 	sliderFrame:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal")
 	sliderFrame:SetPoint("LEFT")
@@ -1400,7 +1402,7 @@ end
 -- Creates the listbox frame that dropdowns use.
 -- ****************************************************************************
 local function Dropdown_CreateListboxFrame(parent)
-	dropdownListboxFrame = CreateFrame("Frame", nil, parent)
+	dropdownListboxFrame = CreateFrame("Frame", nil, parent, BackdropTemplateMixin and "BackdropTemplate")
 	dropdownListboxFrame:EnableMouse(true)
 	dropdownListboxFrame:SetToplevel(true)
 	dropdownListboxFrame:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -1769,7 +1771,9 @@ local function Colorswatch_ColorPickerOnChange(this)
 	if (not colorswatch) then return end
 
 	Colorswatch_SetColor(colorswatch, ColorPickerFrame:GetColorRGB())
-	if (colorswatch.colorChangedHandler) then colorswatch:colorChangedHandler() end
+	if colorswatch.colorChangedHandler then
+		colorswatch:colorChangedHandler()
+	end
 end
 
 
@@ -1781,7 +1785,9 @@ local function Colorswatch_ColorPickerOnCancel(previousValues)
 	if (not colorswatch) then return end
 
 	Colorswatch_SetColor(colorswatch, previousValues.r, previousValues.g, previousValues.b)
-	if (colorswatch.colorChangedHandler) then colorswatch:colorChangedHandler() end
+	if colorswatch.colorChangedHandler then
+		colorswatch:colorChangedHandler()
+	end
 end
 
 
@@ -1794,15 +1800,25 @@ local function Colorswatch_OnClick(this)
 	local tempB = this.b or 1
 
 	ColorPickerFrame.associatedColorSwatch = this
-	ColorPickerFrame.hasOpacity = false
-	ColorPickerFrame.opacity = 1
-	ColorPickerFrame.previousValues = {r = tempR, g = tempG, b = tempB}
-	ColorPickerFrame.func = Colorswatch_ColorPickerOnChange
-	ColorPickerFrame.cancelFunc = Colorswatch_ColorPickerOnCancel
-	ColorPickerFrame:SetColorRGB(tempR, tempG, tempB)
-	ColorPickerFrame:ClearAllPoints()
-	ColorPickerFrame:SetPoint("CENTER", this, "CENTER")
-	ColorPickerFrame:Show()
+	if IsClassic then
+		ColorPickerFrame.hasOpacity = false
+		ColorPickerFrame.opacity = 1
+		ColorPickerFrame.previousValues = {r = tempR, g = tempG, b = tempB}
+		ColorPickerFrame.func = Colorswatch_ColorPickerOnChange
+		ColorPickerFrame.cancelFunc = Colorswatch_ColorPickerOnCancel
+		ColorPickerFrame:SetColorRGB(tempR, tempG, tempB)
+		ColorPickerFrame:ClearAllPoints()
+		ColorPickerFrame:SetPoint("CENTER", this, "CENTER")
+		ColorPickerFrame:Show()
+	else
+		local info = {r = tempR, g = tempG, b = tempB}
+		info.hasOpacity = false
+		info.opacity = 1
+		info.previousValues = {r = tempR, g = tempG, b = tempB}
+		info.swatchFunc = Colorswatch_ColorPickerOnChange
+		info.cancelFunc = Colorswatch_ColorPickerOnCancel
+		ColorPickerFrame:SetupColorPickerAndShow(info)
+	end
 end
 
 

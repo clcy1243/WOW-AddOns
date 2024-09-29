@@ -21,6 +21,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Quartz3")
 local media = LibStub("LibSharedMedia-3.0")
 local db
 
+local WoW10 = select(4, GetBuildInfo()) >= 100000
+
 ----------------------------
 -- Upvalues
 -- GLOBALS: LibStub, QuartzDB
@@ -134,7 +136,7 @@ end
 
 function Quartz3:ShowUnlockDialog()
 	if not self.unlock_dialog then
-		local f = CreateFrame("Frame", "Quartz3UnlockDialog", UIParent)
+		local f = CreateFrame("Frame", "Quartz3UnlockDialog", UIParent, "BackdropTemplate")
 		f:SetFrameStrata("DIALOG")
 		f:SetToplevel(true)
 		f:EnableMouse(true)
@@ -156,8 +158,8 @@ function Quartz3:ShowUnlockDialog()
 		f:SetScript('OnHide', function() PlaySound(SOUNDKIT and SOUNDKIT.GS_TITLE_OPTION_EXIT or 'gsTitleOptionExit') end)
 
 		f:RegisterForDrag('LeftButton')
-		f:SetScript('OnDragStart', function(f) f:StartMoving() end)
-		f:SetScript('OnDragStop', function(f) f:StopMovingOrSizing() end)
+		f:SetScript('OnDragStart', function(frame) frame:StartMoving() end)
+		f:SetScript('OnDragStop', function(frame) frame:StopMovingOrSizing() end)
 
 		local header = f:CreateTexture(nil, "ARTWORK")
 		header:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
@@ -177,10 +179,11 @@ function Quartz3:ShowUnlockDialog()
 		desc:SetPoint("BOTTOMRIGHT", -18, 48)
 		desc:SetText(L["Bars unlocked. Move them now and click Lock when you are done."])
 
-		local lockBars = CreateFrame("CheckButton", "Quartz3UnlockDialogLock", f, "OptionsButtonTemplate")
-		getglobal(lockBars:GetName() .. "Text"):SetText(L["Lock"])
+		local lockBars = CreateFrame("CheckButton", "Quartz3UnlockDialogLock", f, WoW10 and "UIPanelButtonTemplate" or "OptionsButtonTemplate")
+		lockBars:SetWidth(150)
+		_G[lockBars:GetName() .. "Text"]:SetText(L["Lock"])
 
-		lockBars:SetScript("OnClick", function(self)
+		lockBars:SetScript("OnClick", function(frame)
 			Quartz3:Lock()
 			LibStub("AceConfigRegistry-3.0"):NotifyChange("Quartz3")
 		end)

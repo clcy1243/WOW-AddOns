@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(2172, "DBM-Party-BfA", 3, 1041)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200602212246")
+mod:SetRevision("20231117105343")
 mod:SetCreatureID(136160)
 mod:SetEncounterID(2143)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -23,7 +22,6 @@ local warnQuakingLeap				= mod:NewTargetAnnounce(268932, 2)
 
 local specWarnQuakingLeap			= mod:NewSpecialWarningYou(268932, nil, nil, nil, 1, 2)
 local yellQuakingLeap				= mod:NewYell(268932)
-local specWarnQuakingLeapNear		= mod:NewSpecialWarningClose(268932, nil, nil, nil, 1, 2)
 local specWarnBladeCombo			= mod:NewSpecialWarningDefensive(268586, nil, nil, nil, 1, 2)
 local specWarnImpalingSpear			= mod:NewSpecialWarningDodge(268796, nil, nil, nil, 2, 2)
 ----ADDS
@@ -34,7 +32,7 @@ local specWarnDeadlyRoar			= mod:NewSpecialWarningSpell(269369, nil, nil, nil, 2
 
 local timerGaleSlashCD				= mod:NewCDTimer(13, 268403, nil, nil, nil, 3)
 local timerQuakingLeapCD			= mod:NewCDTimer(19.3, 268932, nil, nil, nil, 3)
-local timerBladeComboCD				= mod:NewCDTimer(14.5, 268586, nil, nil, nil, 5, nil, DBM_CORE_L.TANK_ICON)
+local timerBladeComboCD				= mod:NewCDTimer(14.5, 268586, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 --Adds
 local timerHuntingLeapCD			= mod:NewCDTimer(12.8, 269231, nil, nil, nil, 3)
 local timerDeathlyRoarCD			= mod:NewCDTimer(13.6, 269369, nil, nil, nil, 2)
@@ -74,9 +72,6 @@ function mod:LeapTarget(targetname)
 		specWarnQuakingLeap:Show()
 		specWarnQuakingLeap:Play("targetyou")
 		yellQuakingLeap:Yell()
-	elseif self:CheckNearby(10, targetname) then
-		specWarnQuakingLeapNear:Show(targetname)
-		specWarnQuakingLeapNear:Play("runaway")
 	else
 		warnQuakingLeap:Show(targetname)
 	end

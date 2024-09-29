@@ -4,6 +4,7 @@
 --
 
 local mod, CL = BigWigs:NewBoss("Gara'jal the Spiritbinder", 1008, 682)
+if not mod then return end
 mod:RegisterEnableMob(60143, 60385) -- Gara'jal, Zandalari War Wyvern
 
 local totemCounter, shadowCounter = 1, 1
@@ -76,7 +77,7 @@ function mod:OnEngage(diff)
 	if self:Heroic() then
 		self:Bar(-6698, 6.7, L["shadowy_message"]:format(shadowCounter), 117222)
 	end
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "FrenzyCheck", "boss1")
+	self:RegisterUnitEvent("UNIT_HEALTH", "FrenzyCheck", "boss1")
 end
 
 --------------------------------------------------------------------------------
@@ -99,15 +100,18 @@ do
 		["Frenzy"] = 0,
 		["Banish"] = 0,
 	}
+	local function wipe()
+		voodooList = {}
+	end
 	function mod:BigWigs_BossComm(_, msg, guid)
 		if msg == "DollsApplied" and not voodooList[guid] then
 			voodooList[guid] = true
 			for unit in self:IterateGroup() do
-				if guid == UnitGUID(unit) then
+				if guid == self:UnitGUID(unit) then
 					voodooDollList[#voodooDollList+1] = self:UnitName(unit)
 					if #voodooDollList == 1 then
-						self:ScheduleTimer("TargetMessage", 0.3, 122151, voodooDollList, "red")
-						self:ScheduleTimer(wipe, 0.3, voodooList)
+						self:ScheduleTimer("TargetMessageOld", 0.3, 122151, voodooDollList, "red")
+						self:ScheduleTimer(wipe, 0.3)
 					end
 					break
 				end
@@ -117,22 +121,22 @@ do
 			if t-times[msg] > 5 then
 				times[msg] = t
 				if msg == "Totem" then
-					self:Message(116174, "yellow", nil, L["totem_message"]:format(totemCounter))
+					self:MessageOld(116174, "yellow", nil, L["totem_message"]:format(totemCounter))
 					totemCounter = totemCounter + 1
 					self:Bar(116174, totemTime, L["totem_message"]:format(totemCounter))
 				elseif msg == "Shadowy" then
 					shadowCounter = shadowCounter + 1
 					self:Bar(-6698, 8.3, L["shadowy_message"]:format(shadowCounter), 117222)
 				elseif msg == "Frenzy" then
-					self:Message(-5759, "green", "Long", CL["other"]:format(CL["phase"]:format(2), self:SpellName(-5759)))
+					self:MessageOld(-5759, "green", "long", CL["other"]:format(CL["phase"]:format(2), self:SpellName(-5759)))
 					if not self:LFR() then
 						self:StopBar(L["totem_message"]:format(totemCounter))
 						self:StopBar(L["banish_message"])
 					end
-					self:UnregisterUnitEvent("UNIT_HEALTH_FREQUENT", "boss1")
+					self:UnregisterUnitEvent("UNIT_HEALTH", "boss1")
 				elseif msg == "Banish" then
 					self:Bar(116272, self:Heroic() and 70 or 65, L["banish_message"])
-					self:Message(116272, "orange", self:Tank() and "Alarm" or nil, L["banish_message"])
+					self:MessageOld(116272, "orange", self:Tank() and "alarm" or nil, L["banish_message"])
 				end
 			end
 		end
@@ -178,11 +182,11 @@ function mod:SoulSeverRemoved(args)
 	end
 end
 
-function mod:FrenzyCheck(event, unitId)
-	local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+function mod:FrenzyCheck(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp < 25 then -- phase starts at 20
-		self:Message(-5759, "green", "Info", CL["soon"]:format(self:SpellName(-5759)))
-		self:UnregisterUnitEvent(event, unitId)
+		self:MessageOld(-5759, "green", "info", CL["soon"]:format(self:SpellName(-5759)))
+		self:UnregisterUnitEvent(event, unit)
 	end
 end
 

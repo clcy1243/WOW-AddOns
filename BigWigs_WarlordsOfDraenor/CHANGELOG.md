@@ -1,9 +1,7 @@
 # BigWigs [Warlords of Draenor]
 
-## [v8.0.3](https://github.com/BigWigsMods/BigWigs_WarlordsOfDraenor/tree/v8.0.3) (2018-07-30)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_WarlordsOfDraenor/compare/v8.0.2...v8.0.3)
+## [v10.2.2](https://github.com/BigWigsMods/BigWigs_WarlordsOfDraenor/tree/v10.2.2) (2024-05-08)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_WarlordsOfDraenor/compare/v10.2.1...v10.2.2) [Previous Releases](https://github.com/BigWigsMods/BigWigs_WarlordsOfDraenor/releases)
 
 - Cleanups  
-- Add website to toc  
-- cleanups  
-- Highmaul/Margok: Update UnitDebuff usage, closes #9  
+- bump toc  

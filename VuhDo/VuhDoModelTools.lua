@@ -3,7 +3,6 @@ VUHDO_PANEL_DYN_MODELS = {};
 
 
 local tinsert = tinsert;
-local tremove = tremove;
 local twipe = table.wipe;
 local ceil = ceil;
 local pairs = pairs;
@@ -69,7 +68,6 @@ end
 
 
 --
-local tIsShowModel;
 local tIsOmitEmpty;
 local tMaxRows, tNumModels, tRepeatModels;
 function VUHDO_initDynamicPanelModels()
@@ -142,6 +140,10 @@ function VUHDO_isUnitInModel(aUnit, aModelId)
 	tModelType = VUHDO_getModelType(aModelId);
 
 	if 2 == tModelType then -- VUHDO_ID_TYPE_GROUP
+		if aModelId == VUHDO_ID_GROUP_OWN and aUnit == "player" then
+			return true;
+		end
+
 		return aModelId == VUHDO_RAID[aUnit]["group"];
 	elseif 1 == tModelType then -- VUHDO_ID_TYPE_CLASS
 		return aModelId == VUHDO_RAID[aUnit]["classId"];

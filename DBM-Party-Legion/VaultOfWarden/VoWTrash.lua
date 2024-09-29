@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod("VoWTrash", "DBM-Party-Legion", 10)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod:SetRevision("20240808043723")
 --mod:SetModelID(47785)
-mod:SetZone()
 
 mod.isTrashMod = true
+mod.isTrashModBossFightAllowed = true
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 196799 193069 196799 196249",
@@ -13,7 +13,7 @@ mod:RegisterEvents(
 )
 
 local warnTorment				= mod:NewTargetAnnounce(202615, 3)
-local warnNightmares			= mod:NewTargetAnnounce(202615, 4)
+local warnNightmares			= mod:NewTargetAnnounce(193069, 4)
 
 local specWarnUnleashedFury		= mod:NewSpecialWarningSpell(196799, nil, nil, nil, 2, 2)
 local specWarnNightmares		= mod:NewSpecialWarningInterrupt(193069, "HasInterrupt", nil, nil, 1, 2)

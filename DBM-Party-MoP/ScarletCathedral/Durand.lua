@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(674, "DBM-Party-MoP", 9, 316)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod:SetRevision("20240605152247")
 mod:SetCreatureID(60040, 99999)--3977 is High Inquisitor Whitemane and 60040 is Commander Durand, we don't really need to add her ID, because we don't ever engage her, and he true death is at same time as her.
 mod:SetEncounterID(1425)
+mod:SetZone(1004)
 
 mod:RegisterCombat("combat")
 
@@ -18,32 +19,35 @@ local warnFlashofSteel			= mod:NewSpellAnnounce(115627, 3)
 local warnDashingStrike			= mod:NewSpellAnnounce(115676, 3)
 local warnDeepSleep				= mod:NewSpellAnnounce(9256, 2)
 
-local specWarnMassRes			= mod:NewSpecialWarningInterrupt(113134, true)
-local specWarnHeal				= mod:NewSpecialWarningInterrupt(12039, true)
-local specWarnMC				= mod:NewSpecialWarningInterrupt(130857, true)
+local specWarnMassRes			= mod:NewSpecialWarningInterrupt(113134, "HasInterrupt", nil, nil, 1, 2)
+local specWarnHeal				= mod:NewSpecialWarningInterrupt(12039, "HasInterrupt", nil, nil, 1, 2)
+local specWarnMC				= mod:NewSpecialWarningInterrupt(130857, "HasInterrupt", nil, nil, 1, 2)
 
-local timerFlashofSteel			= mod:NewCDTimer(26, 115627)--not confirmed.
-local timerDashingStrike		= mod:NewCDTimer(26, 115676)--not confirmed.
-local timerMassResCD			= mod:NewCDTimer(21, 113134, nil, nil, nil, 4)--21-24sec variation. Earlier if phase transitions
+local timerFlashofSteel			= mod:NewCDTimer(26, 115627, nil, nil, nil, 3)--not confirmed.
+local timerDashingStrike		= mod:NewCDTimer(26, 115676, nil, nil, nil, 3)--not confirmed.
+local timerMassResCD			= mod:NewCDTimer(21, 113134, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--21-24sec variation. Earlier if phase transitions
 local timerDeepSleep			= mod:NewBuffFadesTimer(10, 9256, nil, nil, nil, 6)
 local timerMCCD					= mod:NewCDTimer(19, 130857, nil, nil, nil, 3)
 
-local phase = 1
-
 function mod:OnCombatStart(delay)
-	phase = 1
+	self:SetStage(1)
 	timerFlashofSteel:Start(9-delay)
 	timerDashingStrike:Start(24-delay)
 end
 
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 113134 then
-		specWarnMassRes:Show(args.sourceName)
+		if self:CheckInterruptFilter(args.sourceGUID, false, true) then
+			specWarnMassRes:Show(args.sourceName)
+			specWarnMassRes:Play("kickcast")
+		end
 		timerMassResCD:Start()
-	elseif args.spellId == 12039 then
+	elseif args.spellId == 12039 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnHeal:Show(args.sourceName)
-	elseif args.spellId == 130857 then
+		specWarnHeal:Play("kickcast")
+	elseif args.spellId == 130857 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 		specWarnMC:Show(args.sourceName)
+		specWarnMC:Play("kickcast")
 	end
 end
 
@@ -52,10 +56,10 @@ end
 --3/28 16:22:43.810  SPELL_CAST_SUCCESS,0xF1300F8900000065,"High Inquisitor Whitemane",0xa48,0x0,0x0000000000000000,nil,0x80000000,0x80000000,9256,"Deep Sleep",0x20
 function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 9256 then--Phase 3
-		phase = 3
+		self:SetStage(3)
 		warnDeepSleep:Show()
 		timerDeepSleep:Start()
-		timerMassResCD:Start(18)--Limited Sample size
+		timerMassResCD:Start(9.7)
 		if self:IsDifficulty("challenge5") then
 			timerMCCD:Start(19)--Pretty much immediately after first mas res, unless mass res isn't interrupted then it'll delay MC
 		end
@@ -74,12 +78,12 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 end
 
 function mod:UNIT_DIED(args)
-	if self:GetCIDFromGUID(args.destGUID) == 60040 then
-		if phase == 3 then--Fight is over on 2nd death
+	if self:GetCIDFromGUID(args.destGUID) == 60040 then--Commander Durand
+		if self:GetStage(3) then--Fight is over on 2nd death == 3 then--Fight is over on 2nd death
 			DBM:EndCombat(self)
 		else--it's first death, he's down and whiteman is taking over
-			phase = 2
-			timerMassResCD:Start(13)
+			self:SetStage(2)
+			timerMassResCD:Start(8.9)
 			if self:IsDifficulty("challenge5") then
 				timerMCCD:Start(14)
 			end

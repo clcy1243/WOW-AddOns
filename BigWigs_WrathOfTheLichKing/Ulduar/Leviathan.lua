@@ -5,8 +5,8 @@
 local mod = BigWigs:NewBoss("Flame Leviathan", 603, 1637)
 if not mod then return end
 mod:RegisterEnableMob(33113)
-mod.engageId = 1132
---mod.respawnTime = resets, doesn't respawn
+mod:SetEncounterID(mod:Classic() and 744 or 1132)
+-- mod:SetRespawnTime(0) -- resets, doesn't respawn
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -45,7 +45,7 @@ function mod:BluePyrite(args)
 end
 
 function mod:FlameVents(args)
-	self:Message(args.spellId, "orange")
+	self:MessageOld(args.spellId, "orange")
 	self:Bar(args.spellId, 10) -- Buff duration
 end
 
@@ -55,7 +55,7 @@ end
 
 function mod:SystemsShutdown(args)
 	if self:MobId(args.destGUID) == 33113 then -- Flame Leviathan
-		self:Message(args.spellId, "green", "Long")
+		self:MessageOld(args.spellId, "green", "long")
 		self:Bar(args.spellId, 20)
 	end
 end
@@ -63,15 +63,15 @@ end
 function mod:Pursued(args)
 	if bit.band(args.destFlags, 0x1) ~= 0 then -- Can't rely on GUID when we're in a vehicle. COMBATLOG_OBJECT_AFFILIATION_MINE = 0x1
 		local me = self:UnitName("player")
-		self:TargetMessage(args.spellId, me, "blue", "Alarm")
+		self:TargetMessageOld(args.spellId, me, "blue", "alarm")
 		self:Flash(args.spellId)
 		self:TargetBar(args.spellId, 30, me)
 	else
 		for unit in self:IterateGroup() do
-			local guid = UnitGUID(unit.."pet")
+			local guid = self:UnitGUID(unit.."pet")
 			if guid == args.destGUID then
 				local name = self:UnitName(unit)
-				self:TargetMessage(args.spellId, name, "blue", "Alarm")
+				self:TargetMessageOld(args.spellId, name, "blue", "alarm")
 				self:TargetBar(args.spellId, 30, name)
 				break
 			end

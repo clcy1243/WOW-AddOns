@@ -89,8 +89,8 @@ function mod:OnEngage()
 	accCount = 0
 	self:Berserk(600)
 	self:OpenProximity("proximity", 10) -- Too close to another group. Tactic dependant - needed for mythic
-	self:CDBar(-7963, self:LFR() and 18 or 14) -- Deafening Screech
-	self:CDBar(143766, 12, 143426, 143766) -- Fearsome Roar with correct icon
+	self:Bar(-7963, self:LFR() and 18 or 14) -- Deafening Screech
+	self:Bar(143766, 12, 143426, 143766) -- Fearsome Roar with correct icon
 end
 
 --------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ end
 function mod:YetCharge(args)
 	self:Bar(args.spellId, 15)
 	if not yetiChargeTimer then
-		yetiChargeTimer = self:ScheduleTimer("Message", 15, args.spellId, "red", "Warning", CL.soon:format(args.spellName))
+		yetiChargeTimer = self:ScheduleTimer("MessageOld", 15, args.spellId, "red", "warning", CL.soon:format(args.spellName))
 	end
 end
 
@@ -118,23 +118,23 @@ end
 
 function mod:BloodFrenzy(args)
 	-- this may feel like double message, but knowing exact stack count on phase change can help plan the rest of the fight
-	self:Message(-7981, "yellow", nil, CL.count:format(args.spellName, args.amount))
+	self:MessageOld(-7981, "yellow", nil, CL.count:format(args.spellName, args.amount))
 end
 
 function mod:Enrage(args)
 	if self:Tank() or self:Dispeller("enrage", true, args.spellId) then
-		self:TargetMessage(args.spellId, args.destName, "orange", "Alert")
+		self:TargetMessageOld(args.spellId, args.destName, "orange", "alert")
 	end
 end
 
 function mod:SkeletonKeyRemoved(args)
-	self:Message(args.spellId, "green", "Alert", L.cage_opened)
+	self:MessageOld(args.spellId, "green", "alert", L.cage_opened)
 	self:StopBar(args.spellId, args.destName)
 	self:Bar(-7981, 13, CL.over:format(self:SpellName(-7981))) -- Blood Frenzy
 end
 
 function mod:SkeletonKey(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Warning")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "warning")
 	self:TargetBar(args.spellId, 60, args.destName)
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
@@ -147,18 +147,18 @@ do
 			-- XXX maybe add scheduled message once we know exact timer (videos)
 			-- timer still need verification and still looking for a better event to start bars (don't seem to be any)
 			if mythicAdd == "bats" then
-				mod:CDBar("adds", 12, mod:SpellName(-8584), 24733) -- bat icon
+				mod:Bar("adds", 12, mod:SpellName(-8584), 24733) -- bat icon
 			elseif mythicAdd == "yeti" then
-				mod:CDBar("adds", 10, mod:SpellName(-8582), 26010) -- yeti icon
+				mod:Bar("adds", 10, mod:SpellName(-8582), 26010) -- yeti icon
 				mythicAdd = nil
 			end
 		end
 	end
 	function mod:BloodFrenzyOver(args)
 		self:OpenProximity("proximity", 10)
-		self:Message(-7981, "cyan", "Long", CL.over:format(args.spellName))
-		self:CDBar(-7963, self:LFR() and 18 or 14) -- Deafening Screech
-		self:CDBar(143766, 12, 17086, "ability_hunter_pet_devilsaur") -- Breath. 143766 isn't exactly a combined option but it's one of the breaths.
+		self:MessageOld(-7981, "cyan", "long", CL.over:format(args.spellName))
+		self:Bar(-7963, self:LFR() and 18 or 14) -- Deafening Screech
+		self:Bar(143766, 12, 17086, "ability_hunter_pet_devilsaur") -- Breath. 143766 isn't exactly a combined option but it's one of the breaths.
 		if self:Mythic() then
 			self:ScheduleTimer(checkPrisonerKilled, 10)
 		end
@@ -169,22 +169,22 @@ function mod:FixateRemoved(args)
 	self:PrimaryIcon(-7980)
 	self:StopBar(-7980, args.destName)
 	if self:Me(args.destGUID) then
-		self:Message(-7980, "green", nil, CL.over:format(args.spellName))
+		self:MessageOld(-7980, "green", nil, CL.over:format(args.spellName))
 	end
 end
 
 function mod:FixateApplied(args)
 	if self:Me(args.destGUID) then
-		self:Say(-7980)
+		self:Say(-7980, nil, nil, "Fixate")
 		self:Flash(-7980)
 	end
-	self:TargetMessage(-7980, args.destName, "orange", "Alarm")
+	self:TargetMessageOld(-7980, args.destName, "orange", "alarm")
 	self:TargetBar(-7980, 12, args.destName)
 	self:PrimaryIcon(-7980, args.destName)
 end
 
 function mod:BloodFrenzyPhase()
-	self:Message(-7963, "yellow", nil, CL.count:format(self:SpellName(143411), accCount))
+	self:MessageOld(-7963, "yellow", nil, CL.count:format(self:SpellName(143411), accCount))
 	accCount = 0
 	self:StopBar(143428) -- Tail Lash
 	self:StopBar(143426) -- Fearsome Roar
@@ -193,7 +193,7 @@ function mod:BloodFrenzyPhase()
 	self:StopBar(143767) -- Scorching Breath
 	self:StopBar(-7963) -- Deafening Screech
 	self:CloseProximity("proximity")
-	self:Message(-7981, "cyan", "Long")
+	self:MessageOld(-7981, "cyan", "long")
 end
 
 -- stage 1
@@ -205,7 +205,7 @@ do
 			local t = GetTime()
 			if t-prev > 2 then
 				prev = t
-				self:Message(args.spellId, "blue", "Info", CL.underyou:format(args.spellName))
+				self:MessageOld(args.spellId, "blue", "info", CL.underyou:format(args.spellName))
 			end
 		end
 	end
@@ -215,7 +215,7 @@ do
 	local frozenSolid, scheduled = mod:NewTargetList(), nil
 	local function warnFrozenSolid(spellId)
 		scheduled = nil
-		mod:TargetMessage(spellId, frozenSolid, "yellow")
+		mod:TargetMessageOld(spellId, frozenSolid, "yellow")
 	end
 	function mod:FrozenSolid(args)
 		frozenSolid[#frozenSolid+1] = args.destName
@@ -226,7 +226,7 @@ do
 end
 
 function mod:TailLash(args)
-	self:CDBar(args.spellId, 10) -- don't think this needs a message
+	self:Bar(args.spellId, 10) -- don't think this needs a message
 end
 
 do
@@ -237,21 +237,21 @@ do
 			self:Bar(-7963, accTimes[accCount])
 		end
 		if accCount < 6 or accCount % 3 == 0 then
-			self:Message(-7963, "yellow", nil, CL.count:format(args.spellName, accCount))
+			self:MessageOld(-7963, "yellow", nil, CL.count:format(args.spellName, accCount))
 		end
 	end
 end
 
 function mod:TankDebuffCasts(_, _, _, spellId)
 	if spellId == 143426 then -- Fearsome Roar
-		self:CDBar(143766, 11, spellId, 143766) -- Blizzard gave Fearsome Roar the wrong icon
+		self:Bar(143766, 11, spellId, 143766) -- Blizzard gave Fearsome Roar the wrong icon
 	elseif spellId == 143780 or spellId == 143773 or spellId == 143767 then -- Acid Breath, Freezing Breath, Scorching Breath
-		self:CDBar(spellId, 11) -- 11-15s
+		self:Bar(spellId, 11) -- 11-15s
 	end
 end
 
 function mod:TankDebuff(args)
-	self:StackMessage(args.spellId, args.destName, args.amount, "yellow", not self:Me(args.destGUID) and "Warning")
+	self:StackMessageOld(args.spellId, args.destName, args.amount, "yellow", not self:Me(args.destGUID) and "warning")
 end
 
 function mod:YetiDeath(args)

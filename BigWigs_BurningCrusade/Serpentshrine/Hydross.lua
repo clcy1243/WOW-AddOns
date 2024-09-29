@@ -5,6 +5,13 @@
 local mod = BigWigs:NewBoss("Hydross the Unstable", 548, 1567)
 if not mod then return end
 mod:RegisterEnableMob(21216)
+if mod:Classic() then
+	mod:SetEncounterID(623)
+end
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local inTomb = mod:NewTargetList()
 local curPerc = 10
@@ -55,7 +62,7 @@ function mod:OnBossEnable()
 	stance = 1
 	allowed = nil
 
-	self:Yell("Engage", L["start_trigger"])
+	self:BossYell("Engage", L["start_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 
 	self:Death("Win", 21216)
@@ -77,7 +84,7 @@ end
 do
 	local scheduled = nil
 	local function tombWarn(spellId)
-		mod:TargetMessage(spellId, inTomb, "yellow")
+		mod:TargetMessageOld(spellId, inTomb, "yellow")
 		scheduled = nil
 	end
 	function mod:Tomb(args)
@@ -90,7 +97,7 @@ do
 end
 
 function mod:Sludge(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 	self:TargetBar(args.spellId, 24, args.destName)
 	self:PrimaryIcon(args.spellId, args.destName)
 end
@@ -100,7 +107,7 @@ function mod:Mark(args)
 	self:StopBar((debuffBar):format(curPerc, cleanName))
 
 	local spellId = args.spellId
-	self:Message("mark", "red", "Alert", L["debuff_warn"]:format(curPerc), spellId)
+	self:MessageOld("mark", "red", "alert", L["debuff_warn"]:format(curPerc), spellId)
 	if spellId == 38215 or spellId == 38219 then
 		curPerc = 25
 	elseif spellId == 38216 or spellId == 38220 then
@@ -127,7 +134,7 @@ do
 				stance = 2
 				self:StopBar((debuffBar):format(curPerc, cleanName))
 				curPerc = 10
-				self:Message("stance", "red", nil, L["poison_stance"], 38219)
+				self:MessageOld("stance", "red", nil, L["poison_stance"], 38219)
 				self:Bar("mark", 15, (debuffBar):format(curPerc, poisonName), 38219)
 				self:CloseProximity(38235)
 			else
@@ -135,7 +142,7 @@ do
 				self:StopBar((debuffBar):format(curPerc, poisonName))
 				curPerc = 10
 				self:PrimaryIcon(38246)
-				self:Message("stance", "red", nil, L["water_stance"], 38215)
+				self:MessageOld("stance", "red", nil, L["water_stance"], 38215)
 				self:Bar("mark", 15, (debuffBar):format(curPerc, cleanName), 38215)
 				self:OpenProximity(38235, 10)
 			end

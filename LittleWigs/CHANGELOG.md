@@ -1,10 +1,8 @@
 # LittleWigs
 
-## [v8.3.11](https://github.com/BigWigsMods/LittleWigs/tree/v8.3.11) (2020-03-08)
-[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v8.3.10...v8.3.11)
+## [v11.0.36](https://github.com/BigWigsMods/LittleWigs/tree/v11.0.36) (2024-09-29)
+[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v11.0.35...v11.0.36) [Previous Releases](https://github.com/BigWigsMods/LittleWigs/releases)
 
-- Update ruRU (#519)  
-- Update ruRU (#518)  
-- Update ruRU (#516)  
-- Update ruRU (#514)  
-- BfA/WaycrestManor/Heartsbane: Improve timers (#517)  
+- WarWithin/TheDawnbreaker/Trash: Abyssal Blast  
+- Delves/ZekvirsLair/Zekvir2: Web Terror death update  
+- Delves/ZekvirsLair/Zekvir: Spell update, timer update  

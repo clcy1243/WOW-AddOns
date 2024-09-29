@@ -1,4 +1,5 @@
 local L = BigWigs:NewBossLocale("Anub'arak", "koKR")
+if not L then return end
 if L then
 	L.engage_message = "전투 시작"
 	L.engage_trigger = "여기가 네 무덤이 되리라!"
@@ -13,8 +14,6 @@ if L then
 	L.nerubian_burrower = "땅무지 추가"
 
 	L.shadow_soon = "약 5초 후 어둠의 일격!"
-
-	L.chase = "추격"
 end
 
 L = BigWigs:NewBossLocale("The Beasts of Northrend", "koKR")
@@ -26,10 +25,13 @@ if L then
 	L.icehowl_trigger = "다음은, 소개하는 순간 공기마저 얼어붙게 하는 얼음울음일세! 죽이지 않으면 죽을 걸세, 용사들이여!"
 	L.boss_incoming = "곧 %s 등장"
 
+	L.gormok = "꿰뚫는 자 고르목"
+	L.jormungars = "산성아귀와 공포비늘"
+	L.icehowl = "얼음울음"
+
 	-- Gormok
 	L.snobold = "스노볼트"
 	L.snobold_desc = "스노볼트가 누구의 머리위에 있는지를 알립니다."
-	L.snobold_message = "스노볼트 추가"
 
 	-- Jormungars
 	L.submerge = "잠수"

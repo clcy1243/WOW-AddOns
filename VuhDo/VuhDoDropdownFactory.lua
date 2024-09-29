@@ -5,7 +5,8 @@ local VUHDO_MENU_UNIT = nil;
 
 --
 function VUHDO_playerTargetDropdownOnLoad()
-	UIDropDownMenu_Initialize(VuhDoPlayerTargetDropDown, VUHDO_playerTargetDropDown_Initialize, "MENU", 1);
+	UIDropDownMenu_SetInitializeFunction(VuhDoPlayerTargetDropDown, VUHDO_playerTargetDropDown_Initialize);
+	UIDropDownMenu_SetDisplayMode(VuhDoPlayerTargetDropDown, "MENU");
 end
 
 
@@ -243,7 +244,8 @@ end
 
 --
 function VUHDO_minimapDropdownOnLoad()
-	UIDropDownMenu_Initialize(VuhDoMinimapDropDown, VUHDO_miniMapDropDown_Initialize, "MENU", 1);
+	UIDropDownMenu_SetInitializeFunction(VuhDoMinimapDropDown, VUHDO_miniMapDropDown_Initialize);
+	UIDropDownMenu_SetDisplayMode(VuhDoMinimapDropDown, "MENU");
 end
 
 
@@ -390,7 +392,7 @@ function VUHDO_miniMapDropDown_Initialize(aFrame, aLevel)
 	VUHDO_createMinimapToggle(VUHDO_I18N_LOCK_PANELS, "LOCK", VUHDO_CONFIG["LOCK_PANELS"]);
 	VUHDO_createMinimapToggle(VUHDO_I18N_SHOW_PANELS, "SHOW", VUHDO_CONFIG["SHOW_PANELS"]);
 	VUHDO_createMinimapToggle(VUHDO_I18N_SHOW_BUFF_WATCH, "BUFF", VUHDO_BUFF_SETTINGS["CONFIG"]["SHOW"]);
-	VUHDO_createMinimapToggle(VUHDO_I18N_MM_BUTTON, "MINIMAP", VUHDO_CONFIG["SHOW_MINIMAP"]);
+	VUHDO_createMinimapToggle(VUHDO_I18N_MM_BUTTON, "MINIMAP", not VUHDO_MM_SETTINGS["hide"]);
 
 	VUHDO_createEmptyLine();
 

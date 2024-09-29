@@ -13,6 +13,9 @@ Simulationcraft.RoleTable = {
   [103] = 'attack',
   [104] = 'tank',
   [105] = 'attack',
+  -- Evoker
+  [1467] = 'spell',
+  [1468] = 'attack',
   -- Hunter
   [253] = 'attack',
   [254] = 'attack',
@@ -57,7 +60,8 @@ Simulationcraft.RegionString = {
   [2] = 'kr',
   [3] = 'eu',
   [4] = 'tw',
-  [5] = 'cn'
+  [5] = 'cn',
+  [72] = 'tr'
 }
 
 -- non-localized profession names from ids
@@ -93,6 +97,10 @@ Simulationcraft.SpecNames = {
   [103] = 'Feral',
   [104] = 'Guardian',
   [105] = 'Restoration',
+-- Evoker
+  [1473] = 'Augmentation',
+  [1467] = 'Devastation',
+  [1468] = 'Preservation',
 -- Hunter 
   [253] = 'Beast Mastery',
   [254] = 'Marksmanship',
@@ -279,4 +287,63 @@ Simulationcraft.azeriteEssenceSlotsMajor = {
 Simulationcraft.azeriteEssenceSlotsMinor = {
   1,
   2
+}
+
+Simulationcraft.covenants = {
+  [1] = 'kyrian',
+  [2] = 'venthyr',
+  [3] = 'night_fae',
+  [4] = 'necrolord',
+}
+
+-- Upgrade currencies and item
+
+Simulationcraft.upgradeCurrencies = {
+  [1191] = 'Valor',
+  [1792] = 'Honor',
+  [2122] = 'Storm Sigil',
+  [2245] = 'Flightstones',
+  [2806] = 'Whelpling\'s Awakened Crest',
+  [2807] = 'Drake\'s Awakened Crest',
+  [2809] = 'Wyrm\'s Awakened Crest',
+  [2812] = 'Aspect\'s Awakened Crest',
+  [2914] = 'Weathered Harbinger Crest',
+  [2915] = 'Carved Harbinger Crest',
+  [2916] = 'Runed Harbinger Crest',
+  [2917] = 'Gilded Harbinger Crest',
+  [3008] = 'Valorstones',
+}
+
+Simulationcraft.upgradeItems = {
+  [190453] = 'Spark of Ingenuity',
+  [197921] = 'Primal Infusion',
+  [198046] = 'Concentrated Primal Infusion',
+  [198048] = 'Titan Training Matrix I',
+  [198056] = 'Titan Training Matrix II',
+  [198058] = 'Titan Training Matrix III',
+  [198059] = 'Titan Training Matrix IV',
+  [204440] = 'Spark of Shadowflame',
+  [204673] = 'Titan Training Matrix V',
+  [204681] = 'Enchanted Whelpling\'s Shadowflame Crest',
+  [204682] = 'Enchanted Wyrm\'s Shadowflame Crest',
+  [204697] = 'Enchanted Aspect\'s Shadowflame Crest',
+  [206366] = 'Cracked Trophy of Strife',
+  [206959] = 'Spark of Dreams',
+  [206960] = 'Enchanted Wyrm\'s Dreaming Crest',
+  [206961] = 'Enchanted Aspect\'s Dreaming Crest',
+  [206977] = 'Enchanted Whelpling\'s Dreaming Crest',
+  [210221] = 'Forged Combatant\'s Heraldry',
+  [210232] = 'Forged Aspirant\'s Heraldry',
+  [210233] = 'Forged Gladiator\'s Heraldry',
+  [211296] = 'Spark of Omens',
+  [211494] = 'Spark of Beginnings',
+  [211516] = 'Spark of Awakening',
+  [211518] = 'Enchanted Wyrm\'s Awakened Crest',
+  [211519] = 'Enchanted Aspect\'s Awakened Crest',
+  [211520] = 'Enchanted Whelpling\'s Awakened Crest',
+  [224069] = 'Enchanted Weathered Harbinger Crest',
+  [224072] = 'Enchanted Runed Harbinger Crest',
+  [224073] = 'Enchanted Gilded Harbinger Crest',
+  [228338] = 'Soul Sigil I',
+  [228339] = 'Soul Sigil II',
 }

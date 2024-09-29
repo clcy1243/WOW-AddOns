@@ -88,7 +88,7 @@ function mod:OnEngage()
 		self:Berserk(600)
 	end
 	nextPower, joltCounter, siphonAnimaCounter = 1, 1, 1
-	wipe(matterSwapTargets)
+	matterSwapTargets = {}
 	local _, class = UnitClass("player")
 	caster = self:Healer() or (UnitPowerType("player") == 0 and class ~= "PALADIN")
 end
@@ -102,7 +102,7 @@ end
 --
 
 function mod:FullPower(args)
-	self:Message(args.spellId, "red", "Long")
+	self:MessageOld(args.spellId, "red", "long")
 	self:Flash(args.spellId)
 end
 
@@ -118,19 +118,19 @@ function mod:InterruptingJolt(args)
 	end
 
 	self:StopBar(CL["count"]:format(args.spellName, joltCounter))
-	self:Message(138763, caster and "blue" or "yellow", caster and "Long", CL["count"]:format(args.spellName, joltCounter))
+	self:MessageOld(138763, caster and "blue" or "yellow", caster and "long", CL["count"]:format(args.spellName, joltCounter))
 	joltCounter = joltCounter + 1
 	self:Bar(138763, 22, CL["count"]:format(args.spellName, joltCounter))
 end
 
 function mod:EmpowerGolem(args)
-	self:Message(138780, "yellow")
+	self:MessageOld(138780, "yellow")
 	self:Bar(138780, 15.5)
 end
 
 function mod:AnimaFontApplied(args)
 	-- cooldown seems to be 20-30ish
-	self:TargetMessage(args.spellId, args.destName, "orange", "Alarm")
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "alarm")
 	self:TargetBar(args.spellId, 30, args.destName)
 end
 
@@ -145,27 +145,27 @@ function mod:AnimaFontRemoved(args)
 end
 
 function mod:AnimaRing(args)
-	self:Message(args.spellId, "red", "Alert")
-	self:CDBar(args.spellId, 22)
+	self:MessageOld(args.spellId, "red", "alert")
+	self:Bar(args.spellId, 22)
 end
 
 do
 	local function warnPower(spellId)
 		local power = UnitPower("boss1")
 		if power > 20 and nextPower == 1 then
-			mod:Message(spellId, "cyan", "Info", L["siphon_power_soon"]:format(power, mod:SpellName(136954))) -- Anima Ring (25)
+			mod:MessageOld(spellId, "cyan", "info", L["siphon_power_soon"]:format(power, mod:SpellName(136954))) -- Anima Ring (25)
 			nextPower = nextPower + 1
 		elseif power > 45 and nextPower == 2 then
-			mod:Message(spellId, "cyan", "Info", L["siphon_power_soon"]:format(power, mod:SpellName(138691))) -- Anima Font (50)
+			mod:MessageOld(spellId, "cyan", "info", L["siphon_power_soon"]:format(power, mod:SpellName(138691))) -- Anima Font (50)
 			nextPower = nextPower + 1
 		elseif power > 70 and nextPower == 3 then
-			mod:Message(spellId, "cyan", "Info", L["siphon_power_soon"]:format(power, mod:SpellName(138763))) -- Interrupting Jolt (75)
+			mod:MessageOld(spellId, "cyan", "info", L["siphon_power_soon"]:format(power, mod:SpellName(138763))) -- Interrupting Jolt (75)
 			nextPower = nextPower + 1
 		elseif power > 95 and nextPower == 4 then
-			mod:Message(spellId, "cyan", "Warning", L["siphon_power_soon"]:format(power, mod:SpellName(138729))) -- Full Power (100)
+			mod:MessageOld(spellId, "cyan", "warning", L["siphon_power_soon"]:format(power, mod:SpellName(138729))) -- Full Power (100)
 			nextPower = nextPower + 1
 		else
-			mod:Message(spellId, "cyan", nil, L["siphon_power"]:format(power))
+			mod:MessageOld(spellId, "cyan", nil, L["siphon_power"]:format(power))
 		end
 	end
 	function mod:SiphonAnima(args)
@@ -181,7 +181,7 @@ end
 
 function mod:BossEngage()
 	self:CheckBossStatus()
-	if self:MobId(UnitGUID("boss1")) == 69427 then
+	if self:MobId(self:UnitGUID("boss1")) == 69427 then
 		if self:Heroic() then
 			self:Bar(138644, 120, CL["count"]:format(self:SpellName(138644), 1)) -- Siphon Anima
 		else
@@ -200,15 +200,15 @@ end
 do
 	local scheduled = {}
 	local function warnSlam(destName, spellName)
-		local _, amount = mod:UnitDebuff(destName, spellName)
+		local _, amount = mod:UnitDebuff(destName, spellName, 138569) -- difficulty 7
 		if amount then
-			mod:StackMessage(-7770, destName, amount, "orange", not mod:LFR() and amount > 3 and "Info", L["slam_message"])
+			mod:StackMessageOld(-7770, destName, amount, "orange", not mod:LFR() and amount > 3 and "info", L["slam_message"])
 		end
 		scheduled[destName] = nil
 	end
 	function mod:ExplosiveSlam(args)
 		local golem = self:GetUnitIdByGUID(args.sourceGUID)
-		if (golem and UnitGUID(golem.."target") == args.destGUID) or (args.destName and self:Tank(args.destName)) then -- don't care about non-tanks gaining stacks
+		if (golem and self:UnitGUID(golem.."target") == args.destGUID) or (args.destName and self:Tank(args.destName)) then -- don't care about non-tanks gaining stacks
 			if not scheduled[args.destName] then
 				scheduled[args.destName] = self:ScheduleTimer(warnSlam, 1, args.destName, args.spellName)
 			end
@@ -241,7 +241,7 @@ do
 		if furthest and furthest ~= last then
 			mod:SecondaryIcon("matterswap", furthest)
 			if UnitIsUnit(furthest, "player") then
-				mod:Message("matterswap", "blue", "Info", L["matterswap_message"], L.matterswap_icon)
+				mod:MessageOld("matterswap", "blue", "info", L["matterswap_message"], L.matterswap_icon)
 			end
 			last = furthest
 		end
@@ -249,11 +249,11 @@ do
 
 	function mod:MatterSwapApplied(args)
 		if self:Me(args.destGUID) then
-			self:Message(args.spellId, "blue", "Info", CL["you"]:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "info", CL["you"]:format(args.spellName))
 			self:TargetBar(args.spellId, 12, args.destName)
 			self:Flash(args.spellId)
 		elseif self:Dispeller("magic", nil, 138609) then
-			self:TargetMessage(args.spellId, args.destName, "red", "Alarm", nil, nil, true)
+			self:TargetMessageOld(args.spellId, args.destName, "red", "alarm", nil, nil, true)
 			self:TargetBar(args.spellId, 12, args.destName)
 		end
 
@@ -261,10 +261,10 @@ do
 		self:PrimaryIcon(args.spellId, matterSwapTargets[1])
 
 		last = nil
-		if not timer and not self:LFR() and self.db.profile.matterswap > 0 then -- pretty wasteful to do the scanning if the option isn't on
+		--if not timer and not self:LFR() and self.db.profile.matterswap > 0 then -- pretty wasteful to do the scanning if the option isn't on
 			-- XXX no range checking now
 			--timer = self:ScheduleRepeatingTimer(warnSwapTarget, 0.5)
-		end
+		--end
 	end
 
 	function mod:MatterSwapRemoved(args)
@@ -290,7 +290,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 then
 			prev = t
-			self:Message(args.spellId, "blue", "Info", CL["underyou"]:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "info", CL["underyou"]:format(args.spellName))
 			self:Flash(args.spellId)
 		end
 	end
@@ -298,10 +298,10 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_WHISPER(_, msg, sender)
 	if sender == self:SpellName(138485) then -- Crimson Wake
-		self:Say(138485)
+		self:Say(138485, nil, nil, "Crimson Wake")
 		self:Bar(138485, 30, CL["you"]:format(sender))
 		self:DelayedMessage(138485, 30, "green", CL["over"]:format(sender))
-		self:Message(138485, "orange", "Alarm", CL["you"]:format(sender))
+		self:MessageOld(138485, "orange", "alarm", CL["you"]:format(sender))
 		self:Flash(138485)
 	end
 end

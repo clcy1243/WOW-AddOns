@@ -4,18 +4,14 @@
 --  This is an updated version of the original 'Clique' addon
 --  designed to work better with multi-button mice, and those players
 --  who want to be able to bind keyboard combinations to enable
---  hover-casting on unit frames.  It's a bit of a paradigm shift from
---  the original addon, but should make a much simpler and more
---  powerful addon.
+--  hover-casting on unit frames.
 --
 --    * Any keyboard combination can be set as a binding.
 --    * Any mouse combination can be set as a binding.
 --    * The only types that are allowed are spells and macros.
 --
---  The concept of 'click-sets' has been simplified and extended
---  so that the user can specify their own binding-sets, allowing
---  for different bindings for different sets of frames. By default
---  the following binding-sets are available:
+--  Clique uses the concept of "bind sets", with the following
+--  binding-sets available:
 --
 --    * default - These bindings are active on all frames, unless
 --      overridden by another binding in a more specific binding-set.
@@ -37,13 +33,15 @@
 --  default bindings, and will warn you of the situation.
 -------------------------------------------------------------------]]--
 
-local addonName, addon = ...
+local addonName = select(1, ...)
+
+---@class addon
+local addon = select(2, ...)
 local L = addon.L
 
-function addon:Initialize()
-    -- Are we running on release rather than classic?
-    self.compatRelease = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local twipe = table.wipe
 
+function addon:Initialize()
     -- Create an AceDB, but it needs to be cleared first
     self.db = LibStub("AceDB-3.0"):New("CliqueDB3", self.defaults)
     self.db.RegisterCallback(self, "OnNewProfile", "OnNewProfile")
@@ -74,7 +72,6 @@ function addon:Initialize()
         end
     ]]
     oacScript = oacScript:gsub("{{debug}}", self.settings.debugUnitIssue and "true" or "false")
-
     self.header:SetAttribute("_onattributechanged", oacScript)
     RegisterAttributeDriver(self.header, "hasunit", "[@mouseover, exists] true; false")
 
@@ -86,6 +83,10 @@ function addon:Initialize()
 
     -- Create a secure action button that can be used for 'hovercast' and 'global'
     self.globutton = CreateFrame("Button", addonName .. "SABButton", UIParent, "SecureActionButtonTemplate, SecureHandlerBaseTemplate")
+    self:UpdateGlobalButtonClicks()
+
+    -- Create a named frame that can be used as a side-car for unnamed frames
+    self.namedbutton = CreateFrame("Button", addonName .. "NamedSidecar", UIParent, "SecureUnitButtonTemplate")
 
     -- Create a table within the addon header to store the frames
     -- that are registered for click-casting
@@ -177,6 +178,7 @@ function addon:Initialize()
     local set, clr = self:GetBindingAttributes()
     self.header:SetAttribute("setup_onenter", set)
     self.header:SetAttribute("setup_onleave", clr)
+    self.header:SetFrameRef("cliqueNamedButton", self.namedbutton)
 
     -- Get the override binding attributes for the global click frame
     self.globutton.setup, self.globutton.remove = self:GetClickAttributes(true)
@@ -189,21 +191,27 @@ function addon:Initialize()
         if v == nil or v == false then
             self:UnregisterFrame(k)
         else
-            self:RegisterFrame(k, v)
+            self:RegisterFrame(k)
         end
     end})
 
     -- Iterate over the frames that were set before we arrived
     if oldClickCastFrames then
         for frame, options in pairs(oldClickCastFrames) do
-            self:RegisterFrame(frame, options)
+            self:RegisterFrame(frame)
         end
     end
-    self:EnableBlizzardFrames()
+
+    self:IntegrateBlizzardFrames()
+
+    -- Register the named frame
+    self:RegisterFrame(self.namedbutton)
 
     -- Register for combat events to ensure we can swap between the two states
     self:RegisterEvent("PLAYER_REGEN_DISABLED", "EnteringCombat")
     self:RegisterEvent("PLAYER_REGEN_ENABLED", "LeavingCombat")
+
+
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "PlayerEnteringWorld")
 
     -- Register for Clique-based messages for settings updates, etc.
@@ -213,10 +221,10 @@ function addon:Initialize()
     -- Handle combat watching so we can change ooc based on party combat status
     addon:UpdateCombatWatch()
 
-    -- Handle talent specs for release
-    if self.compatRelease then
+    -- Support mutliple talent specs on release (does not work for WoTLK at the moment)
+    if addon:ProjectIsRetail() or addon:ProjectIsWrath() or addon:ProjectIsCataclysm() then
         self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", "TalentGroupChanged")
-        self:TalentGroupChanged()
+        addon:TalentGroupChanged()
     end
 
     self:FireMessage("BLACKLIST_CHANGED")
@@ -238,8 +246,29 @@ function addon:RegisterFrame(button)
         return
     end
 
-    self.ccframes[button] = true
+    -- Never allow forbidden frames, we can't do anything with those!
+    local forbidden = button.IsForbidden and button:IsForbidden()
+    if forbidden then
+        return
+    end
 
+    -- Make sure we're protected and don't look like a nameplate
+    local protected = button.IsProtected and button:IsProtected()
+    local nameplateish = button.IsAnchoringRestricted and button:IsAnchoringRestricted()
+    if not protected or nameplateish then
+        -- addon:Printf(L["Skipping frame registration for "] .. tostring(button:GetName()))
+        -- addon:Printf(L["  - protected: %s"], tostring(protected))
+        -- addon:Printf(L["  - nameplateish: %s"], tostring(nameplateish))
+        -- addon:Printf(L["  - forbidden: %s"], tostring(forbidden))
+        return
+    end
+
+    -- Make sure we don't re-register button
+    if self.ccframes[button] then
+        return
+    end
+
+    self.ccframes[button] = true
     self:UpdateRegisteredClicks(button)
 
     -- Wrap the OnEnter/OnLeave scripts in order to handle keybindings
@@ -272,16 +301,39 @@ function addon:UnregisterFrame(button)
     addon.header:UnwrapScript(button, "OnLeave")
 end
 
-function addon:Enable()
-    -- Make the options window a pushable panel window
-    UIPanelWindows["CliqueConfig"] = {
-        area = "left",
-        pushable = 1,
-        whileDead = 1,
-    }
+function addon:ADDON_LOADED(event, addonName)
+    if addonName == "Blizzard_PlayerSpells" then
+        -- Place the spellbook tab
+        self:ShowSpellBookButton()
+    end
+end
 
-    -- Set the tooltip for the spellbook tab
-    CliqueSpellTab.tooltip = L["Clique binding configuration"]
+function addon:FixMyBindingsV1()
+    -- Reverse iterate over all bindings and fix broken ones
+    local bindings = addon.db.profile.bindings or {}
+    for idx=#bindings, 1, -1 do
+        local bind = bindings[idx]
+
+        if bind.type == nil or bind.type == "" then
+            table.remove(bindings, idx)
+            addon:Printf("Removed broken binding with action type '%s' from index %s", tostring(bind.type), tostring(idx))
+        end
+    end
+end
+
+function addon:Enable()
+    if SpellBookFrame then
+        -- We're on a legacy spellbook
+        self:ShowSpellBookButton()
+    elseif PlayerSpellsFrame then
+        -- Spellbook already loaded
+        self:ShowSpellBookButton()
+    else
+        -- Wait for spellbook to be loaded
+        addon:RegisterEvent("ADDON_LOADED")
+    end
+
+    addon:FixMyBindingsV1()
 end
 
 -- A new profile is being created in the db, called 'profile'
@@ -303,6 +355,13 @@ function addon:OnNewProfile(event, db, profile)
         },
     })
     self.bindings = db.profile.bindings
+end
+
+function addon:ImportBindings(importBindings)
+    self.db.profile.bindings = importBindings
+    self.bindings = self.db.profile.bindings
+    addon:Printf(L["Importing new bindings into current profile"])
+    self:FireMessage("BINDINGS_CHANGED")
 end
 
 function addon:OnProfileChanged(event, db, newProfile)
@@ -359,20 +418,21 @@ local function shouldApply(global, entry)
     end
 end
 
-local function correctSpec(entry)
-    if not addon.compatRelease then
+function addon:EntryIsCorrectSpec(entry)
+    -- Classic era doesn't have talents, simplify here
+    if not addon:GameVersionHasTalentSpecs() then
         return true
     end
 
     -- Check to ensure we're on the right spec for this binding
-    local currentSpec = GetSpecialization()
+    local currentSpec = addon:GetActiveTalentSpec()
     if currentSpec and entry.sets["spec" .. tostring(currentSpec)] then
         return true
     end
 
     -- Need to check the other spec sets to ensure this shouldn't be
     -- deactivated
-    for i = 1, GetNumSpecializations() do
+    for i = 1, addon:GetNumTalentSpecs() do
         if entry.sets["spec" .. tostring(i)] then
             return false
         end
@@ -430,7 +490,7 @@ function addon:GetClickAttributes(global)
         -- non-global bindings are only applied on non-global frames. handle
         -- this logic here.
 
-        if shouldApply(global, entry) and correctSpec(entry) and entry.key then
+        if shouldApply(global, entry) and self:EntryIsCorrectSpec(entry) and entry.key then
             -- Check to see if this is a 'friend' or an 'enemy' binding, and
             -- check if it would mask an 'ooc' binding with the same key. If
             -- so, we need to add code that prevents this from happening, by
@@ -513,9 +573,10 @@ function addon:GetClickAttributes(global)
                 bits[#bits + 1] = ATTR(indent, prefix, "type", suffix, entry.type)
                 rembits[#rembits + 1] = REMATTR(prefix, "type", suffix)
             elseif entry.type == "menu" then
-                set_text = ATTR(indent, prefix, "type", suffix, "togglemenu")
+                local set_text = ATTR(indent, prefix, "type", suffix, "togglemenu")
                 bits[#bits + 1] = string.gsub(set_text, '"togglemenu"', 'button:GetAttribute("*type2") == "menu" and "menu" or "togglemenu"')
                 rembits[#rembits + 1] = REMATTR(prefix, "type", suffix)
+
             elseif entry.type == "spell" and self.settings.stopcastingfix then
                 -- Implement the 'stop casting' fix
                 local macrotext
@@ -524,7 +585,7 @@ function addon:GetClickAttributes(global)
                     -- Do not include @mouseover
                     macrotext = string.format("/click %s\n/cast %s", self.stopbutton.name, spellText)
                 else
-                    macrotext = string.format("/click %s\n/cast [@mouseover] %s", self.stopbutton.name, entry.spell)
+                    macrotext = string.format("/click %s\n/cast [@mouseover] %s", self.stopbutton.name, spellText)
                 end
                 bits[#bits + 1] = ATTR(indent, prefix, "type", suffix, "macro")
                 bits[#bits + 1] = ATTR(indent, prefix, "macrotext", suffix, macrotext)
@@ -536,19 +597,27 @@ function addon:GetClickAttributes(global)
                 bits[#bits + 1] = ATTR(indent, prefix, "spell", suffix, spellText)
                 rembits[#rembits + 1] = REMATTR(prefix, "type", suffix)
                 rembits[#rembits + 1] = REMATTR(prefix, "spell", suffix)
+            -- Macros aren't available on The War Within and above
             elseif entry.type == "macro" and self.settings.stopcastingfix then
                 local macrotext = string.format("/click %s\n%s", self.stopbutton.name, entry.macrotext)
                 bits[#bits + 1] = ATTR(indent, prefix, "type", suffix, entry.type)
                 bits[#bits + 1] = ATTR(indent, prefix, "macrotext", suffix, macrotext)
                 rembits[#rembits + 1] = REMATTR(prefix, "type", suffix)
                 rembits[#rembits + 1] = REMATTR(prefix, "macrotext", suffix)
-            elseif entry.type == "macro" then
+            -- Macros aren't available on The War Within and above
+            elseif entry.type == "macro" and entry.macrotext then
+                -- Macros aren't available on 11.x: The War Within
                 bits[#bits + 1] = ATTR(indent, prefix, "type", suffix, entry.type)
                 bits[#bits + 1] = ATTR(indent, prefix, "macrotext", suffix, entry.macrotext)
                 rembits[#rembits + 1] = REMATTR(prefix, "type", suffix)
                 rembits[#rembits + 1] = REMATTR(prefix, "macrotext", suffix)
+            elseif entry.type == "macro" and entry.macro then
+                bits[#bits + 1] = ATTR(indent, prefix, "type", suffix, entry.type)
+                bits[#bits + 1] = ATTR(indent, prefix, "macro", suffix, entry.macro)
+                rembits[#rembits + 1] = REMATTR(prefix, "type", suffix)
+                rembits[#rembits + 1] = REMATTR(prefix, "macro", suffix)
             else
-                error(string.format("Invalid action type: '%s'", entry.type))
+                error(string.format("Invalid action type: '%s'", tostring(entry.type)))
             end
 
             -- Finish the conditional statements started above
@@ -575,7 +644,7 @@ function addon:GetClickAttributes(global)
     return table.concat(bits, "\n"), table.concat(rembits, "\n")
 end
 
-local B_SET = [[self:SetBindingClick(true, %q, self, %q);]]
+local B_SET = [[self:SetBindingClick(true, %q, clickableButton, %q);]]
 local B_CLR = [[self:ClearBinding(%q);]]
 
 -- This function takes a single argument, indicating whether the attributes
@@ -591,19 +660,32 @@ function addon:GetBindingAttributes(global)
     -- TODO: In the future, this should be done via OnHide or other ways as well
 
     if global then
-        set = {}
+        set = {
+            "local clickableButton = self",
+        }
         clr = {}
     else
         set = {
             "local button = self",
             "local name = button:GetName()",
-            "if danglingButton then control:RunFor(danglingButton, control:GetAttribute('setup_onleave')) end",
+            -- "print('onenter: ' .. tostring(name and name or button))",
             "if blacklist[name] then return end",
+            "if danglingButton then ",
+            --"  local dangleName = danglingButton:GetName()",
+            --"  print('clearing dangles for: ' .. tostring(dangleName and dangleName or danglingButton))",
+            "  control:RunFor(danglingButton, control:GetAttribute('setup_onleave'))",
+            "end",
+            "local cliqueNamedButton = control:GetFrameRef('cliqueNamedButton')",
+            "if not name then ",
+            "  cliqueNamedButton:SetAttribute('unit', button:GetAttribute('unit'))",
+            "end",
+            "local clickableButton = name and self or cliqueNamedButton:GetName()",
             "danglingButton = button",
         }
         clr = {
             "local button = self",
             "local name = button:GetName()",
+            -- "print('onleave: ' .. tostring(name and name or button))",
             "if blacklist[name] then return end",
             "danglingButton = nil",
         }
@@ -618,7 +700,7 @@ function addon:GetBindingAttributes(global)
 
     for idx, entry in ipairs(self.bindings) do
 		if entry.key then
-			if shouldApply(global, entry) and correctSpec(entry) then
+			if shouldApply(global, entry) and self:EntryIsCorrectSpec(entry) then
 				if global then
 					-- Allow for the re-binding of clicks and keys, except for
 					-- unmodified left/right-click
@@ -793,11 +875,61 @@ function addon:ApplyAttributes()
     self.globutton:Execute(self.globutton.setbinds)
 end
 
+function addon:GameVersionHasTalentSpecs()
+    if addon:ProjectIsRetail() then
+        return true
+    elseif addon:ProjectIsWrath() or addon:ProjectIsCataclysm() then
+        return true
+    end
+
+    return false
+end
+
+-- Returns the active talent spec, encapsulating the differences between
+-- Retail and Wrath.
+function addon:GetActiveTalentSpec()
+    if addon:ProjectIsRetail() then
+        return GetSpecialization()
+    elseif addon:ProjectIsWrath() or addon:ProjectIsCataclysm() then
+        return GetActiveTalentGroup()
+    end
+
+    error(string.format("Clique:GetActiveTalentspec called for %s", tostring(_G["WOW_PROJECT_ID"])))
+end
+
+-- Returns an acceptable string for the given talent spec, covering the
+-- differences between Retail and Wrath
+function addon:GetTalentSpecName(idx)
+    if addon:ProjectIsRetail() then
+        local _, specName = GetSpecializationInfo(idx)
+        return specName
+    elseif addon:ProjectIsWrath() or addon:ProjectIsCataclysm() then
+        if idx == 1 then
+            return L["Primary"]
+        elseif idx == 2 then
+            return L["Secondary"]
+        end
+    end
+
+    error(string.format("Clique:GetTalentSpecName called for %s", tostring(_G["WOW_PROJECT_ID"])))
+end
+
+function addon:GetNumTalentSpecs()
+    if addon:ProjectIsRetail() then
+        return GetNumSpecializations()
+    elseif addon:ProjectIsWrath() or addon:ProjectIsCataclysm() then
+        return 2
+    else
+        return 0
+    end
+end
+
+-- Handle automatic profile changes based on spec
 function addon:TalentGroupChanged()
     local currentProfile = self.db:GetCurrentProfile()
     local newProfile
 
-    local currentSpec = GetSpecialization()
+    local currentSpec = self:GetActiveTalentSpec()
 	if self.settings.specswap and currentSpec then
         local settingsKey = string.format("spec%d_profileKey", currentSpec)
         if self.settings[settingsKey] then
@@ -805,6 +937,7 @@ function addon:TalentGroupChanged()
         end
 
         if newProfile ~= currentProfile and type(newProfile) == "string" then
+            self:Printf(L["Switching to profile: '%s'"]:format(newProfile))
             self.db:SetProfile(newProfile)
         end
     end
@@ -855,6 +988,7 @@ function addon:EnteringCombat()
         -- Apply attributes, indicating we need the 'combat' set
         self.header:SetAttribute("inCombat", true)
         self.globutton:SetAttribute("inCombat", true)
+        self.namedbutton:SetAttribute("inCombat", true)
         addon:ApplyAttributes()
     end
 end
@@ -864,19 +998,19 @@ function addon:LeavingCombat()
     for idx, button in ipairs(self.regqueue) do
         self:RegisterFrame(button)
     end
-    if next(self.regqueue) then table.wipe(self.regqueue) end
+    if next(self.regqueue) then twipe(self.regqueue) end
 
     -- Process any frames in the unregistration queue
     for idx, button in ipairs(self.unregqueue) do
         self:UnregisterFrame(button)
     end
-    if next(self.regqueue) then table.wipe(self.regqueue) end
+    if next(self.regqueue) then twipe(self.regqueue) end
 
     -- Process any frames in the clickregister queue
     for idx, button in ipairs(self.regclickqueue) do
         self:UpdateRegisteredClicks(button)
     end
-    if next(self.regclickqueue) then table.wipe(self.regclickqueue) end
+    if next(self.regclickqueue) then twipe(self.regclickqueue) end
 
     -- Only apply attributes if we have an 'ooc' binding set
     if self.has_ooc then
@@ -890,6 +1024,7 @@ function addon:LeavingCombat()
         -- Apply attributes, indicating we want the 'ooc' set
         self.header:SetAttribute("inCombat", false)
         self.globutton:SetAttribute("inCombat", false)
+        self.namedbutton:SetAttribute("inCombat", false)
         self:ApplyAttributes()
     end
 end
@@ -909,6 +1044,7 @@ function addon:CheckPartyCombat(event, unit)
                 self.combattrigger = UnitGUID(unit)
                 self.header:SetAttribute("inCombat", true)
                 self.globutton:SetAttribute("inCombat", true)
+                self.namedbutton:SetAttribute("inCombat", true)
                 addon:ApplyAttributes()
             elseif self.partyincombat then
                 -- The unit is out of combat, so try to clear our flag
@@ -916,6 +1052,7 @@ function addon:CheckPartyCombat(event, unit)
                     self.partyincombat = false
                     self.header:SetAttribute("inCombat", false)
                     self.globutton:SetAttribute("inCombat", false)
+                    self.namedbutton:SetAttribute("inCombat", false)
                     addon:ApplyAttributes()
                 end
             end
@@ -933,6 +1070,15 @@ function addon:IsFrameBlacklisted(frame)
     end
 
     return self.settings.blacklist[name]
+end
+
+function addon:UpdateGlobalButtonClicks()
+    if self:ProjectIsRetail() then
+        self.globutton:RegisterForClicks("AnyUp", "AnyDown")
+    else
+        local direction = self.settings.downclick and "AnyDown" or "AnyUp"
+        self.globutton:RegisterForClicks(direction)
+    end
 end
 
 -- Update both registered clicks, and ensure that mousewheel events are enabled
@@ -961,10 +1107,13 @@ function addon:UpdateRegisteredClicks(button)
 
     for name, button in pairs(self.hccframes) do
        if not self:IsFrameBlacklisted(button) then
-           button:RegisterForClicks(direction)
+            button:RegisterForClicks(direction)
            button:EnableMouseWheel(true)
        end
     end
+
+    -- Update the global button in case settings have changed
+    addon:UpdateGlobalButtonClicks()
 end
 
 -- Handler function for message indicating that a change as occurred
@@ -998,7 +1147,6 @@ function addon:BINDINGS_CHANGED()
     self:UpdateAttributes()
 
     -- Update the bindings list, if open
-    CliqueConfig:UpdateList()
 
     -- Update the actual attributes on all frames
     self:ApplyAttributes()
@@ -1028,11 +1176,65 @@ function addon:BLACKLIST_CHANGED()
 
     -- Update the registered clicks, to catch any unblacklisted frames
     self:UpdateRegisteredClicks()
+
     -- Update the options panel
-    self:UpdateOptionsPanel()
+    if self.UpdateOptionsPanel then
+        self:UpdateOptionsPanel()
+    end
 
     -- Update the actual attributes on all frames
     self:ApplyAttributes()
+end
+
+function addon:ShowSpellBookButton()
+    if not addon.spellbookTab then
+        addon.spellbookTab = CreateFrame("Button", "CliqueSpellbookTabButton", UIParent)
+        addon.spellbookTab.bg = addon.spellbookTab:CreateTexture(nil, "BACKGROUND")
+
+        local tab = addon.spellbookTab
+        tab:ClearAllPoints()
+        tab:SetWidth(32)
+        tab:SetHeight(32)
+        tab:SetNormalTexture("Interface\\AddOns\\Clique\\images\\icon_square_64")
+        tab:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+
+        tab.bg:ClearAllPoints()
+        tab.bg:SetPoint("TOPLEFT", -3, 11)
+        tab.bg:SetTexture("Interface\\SpellBook\\SpellBook-SkillLineTab")
+
+        -- Handle clicks on the tab button
+        tab:SetScript("OnClick", function()
+            addon:ShowBindingConfig()
+
+            -- Hide the spellbook if its open
+            -- but don't try if we're in combat
+            if InCombatLockdown() then
+                return
+            end
+
+            if SpellBookFrame then
+                HideUIPanel(SpellBookFrame)
+            elseif PlayerSpellsFrame then
+                HideUIPanel(PlayerSpellsFrame)
+            end
+        end)
+    end
+
+    if SpellBookFrame then
+        -- We're on a legacy client with the old spellbook frame, place it!
+
+        local tab = addon.spellbookTab
+        tab:SetParent(SpellBookFrame)
+        local num = GetNumSpellTabs()
+        local lastTab = _G["SpellBookSkillLineTab" .. tostring(num)]
+        if lastTab then
+            tab:SetPoint("TOPLEFT", lastTab, "BOTTOMLEFT", 0, -17)
+        end
+    elseif PlayerSpellsFrame then
+        local tab = addon.spellbookTab
+        tab:SetParent(PlayerSpellsFrame)
+        tab:SetPoint("LEFT", PlayerSpellsFrame, "TOPRIGHT", 0, -125)
+    end
 end
 
 local contains = function(arr, value)
@@ -1049,21 +1251,17 @@ SlashCmdList["CLIQUE"] = function(msg, editbox)
     local profile = (msg or ""):match("^profile (.+)$")
     if profile then
         if InCombatLockdown() then
-            addon:Printf("Cannot change profiles while in combat lockdown")
+            addon:Printf(L["Cannot change profiles while in combat lockdown"])
         else
             local availableProfiles = addon.db:GetProfiles({})
             if contains(availableProfiles, profile) then
-                addon:Printf("Switching to profile '%s'", profile)
+                addon:Printf(L["Switching to profile '%s'"], profile)
                 addon.db:SetProfile(profile)
             else
-                addon:Printf("Cannot find profile '%s'", profile)
+                addon:Printf(L["Cannot find profile '%s'"], profile)
             end
         end
     else
-        if SpellBookFrame:IsVisible() then
-            CliqueConfig:ShowWithSpellBook()
-        else
-            ShowUIPanel(CliqueConfig)
-        end
+        addon:ShowBindingConfig()
     end
 end

@@ -5,8 +5,8 @@
 local mod, CL = BigWigs:NewBoss("The Iron Council", 603, 1641)
 if not mod then return end
 mod:RegisterEnableMob(32867, 32927, 32857) -- Steelbreaker, Runemaster Molgeim, Stormcaller Brundir
-mod.engageId = 1140
-mod.respawnTime = 30
+mod:SetEncounterID(mod:Classic() and 748 or 1140)
+mod:SetRespawnTime(30)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -22,6 +22,10 @@ local tendrilscanner = nil
 
 local L = mod:NewLocale("enUS", true)
 if L then
+	L.stormcaller_brundir = "Stormcaller Brundir"
+	L.steelbreaker = "Steelbreaker"
+	L.runemaster_molgeim = "Runemaster Molgeim"
+
 	L.summoning_message = "Elementals Incoming!"
 
 	L.chased_other = "%s is being chased!"
@@ -47,9 +51,9 @@ function mod:GetOptions()
 		"berserk",
 		"stages",
 	}, {
-		[61869] = -17310, --Stormcaller Brundir
-		[61903] = -17321, --Steelbreaker
-		[62274] = -17315, --Runemaster Molgeim
+		[61869] = L.stormcaller_brundir,
+		[61903] = L.steelbreaker,
+		[62274] = L.runemaster_molgeim,
 		berserk = "general",
 	}
 end
@@ -84,7 +88,7 @@ end
 --
 
 function mod:FusionPunch(args)
-	self:Message(61903, "orange")
+	self:MessageOld(61903, "orange")
 end
 
 function mod:OverwhelmingPower(args)
@@ -92,7 +96,7 @@ function mod:OverwhelmingPower(args)
 		self:OpenProximity(64637, 15)
 		self:Flash(64637)
 	end
-	self:TargetMessage(64637, args.destName, "blue", "Alert")
+	self:TargetMessageOld(64637, args.destName, "blue", "alert")
 	self:TargetBar(64637, 35, args.destName)
 	self:PrimaryIcon(64637, args.destName)
 end
@@ -106,13 +110,13 @@ end
 
 function mod:ShieldOfRunes(args)
 	if self:MobId(args.destGUID) == 32927 then
-		self:Message(62274, "yellow")
+		self:MessageOld(62274, "yellow")
 		self:Bar(62274, 30)
 	end
 end
 
 function mod:RuneOfPower(args)
-	self:Message(61974, "green")
+	self:MessageOld(61974, "green")
 	self:Bar(61974, 30)
 end
 
@@ -122,36 +126,36 @@ end
 
 function mod:RuneOfDeath(args)
 	if self:Me(args.destGUID) then
-		self:Message(62269, "blue", "Alarm", CL.you:format(self:SpellName(62269)))
+		self:MessageOld(62269, "blue", "alarm", CL.you:format(self:SpellName(62269)))
 		self:Flash(62269)
 	end
 end
 
 function mod:RuneOfSummoning(args)
-	self:Message(args.spellId, "yellow", nil, L.summoning_message)
+	self:MessageOld(args.spellId, "yellow", nil, L.summoning_message)
 end
 
 function mod:Overload(args)
-	self:Message(61869, "yellow", "Long", CL.custom_sec:format(args.spellName, 6))
+	self:MessageOld(61869, "yellow", "long", CL.custom_sec:format(args.spellName, 6))
 	self:Bar(61869, 6)
 end
 
 function mod:LightningWhirl(args)
-	self:Message(63483, "yellow")
+	self:MessageOld(63483, "yellow")
 end
 
 do
 	local function targetCheck()
 		local bossId = mod:GetUnitIdByGUID(32857)
 		if not bossId then return end
-		local target = UnitName(bossId .. "target")
+		local target = mod:UnitName(bossId .. "target")
 		if target ~= previous then
 			if target then
 				if UnitIsUnit(target, "player") then
-					mod:Message(61887, "blue", "Alarm", L.chased_you)
+					mod:MessageOld(61887, "blue", "alarm", L.chased_you)
 					mod:Flash(61887)
 				else
-					mod:Message(61887, "yellow", nil, L.chased_other:format(target))
+					mod:MessageOld(61887, "yellow", nil, L.chased_other:format(target))
 				end
 				mod:PrimaryIcon(61887, target)
 				previous = target
@@ -165,7 +169,7 @@ do
 	function mod:LightningTendrils(args)
 		local t = GetTime()
 		if not last or (t > last + 2) then
-			self:Message(61887, "yellow")
+			self:MessageOld(61887, "yellow")
 			self:Bar(61887, 25)
 			if not tendrilscanner then
 				tendrilscanner = self:ScheduleRepeatingTimer(targetCheck, 0.2)
@@ -183,7 +187,7 @@ end
 function mod:Deaths(args)
 	deaths = deaths + 1
 	if deaths < 3 then
-		self:Message("stages", "green", nil, CL.mob_killed:format(args.destName, deaths, 3), false)
+		self:MessageOld("stages", "green", nil, CL.mob_killed:format(args.destName, deaths, 3), false)
 	end
 end
 

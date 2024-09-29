@@ -1,20 +1,23 @@
 local mod	= DBM:NewMod(638, "DBM-Party-WotLK", 10, 285)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+if not mod:IsClassic() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
+
+mod:SetRevision("20230311193122")
 mod:SetCreatureID(23953)
-mod:SetEncounterID(571, 572, 2026)
-mod:SetZone()
+mod:SetEncounterID(2026)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_AURA_APPLIED",
-	"SPELL_AURA_REMOVED"
+	"SPELL_AURA_APPLIED 48400",
+	"SPELL_AURA_REMOVED 48400"
 )
 
-local warningTomb	= mod:NewTargetAnnounce(48400, 4)
-local timerTomb		= mod:NewTargetTimer(10, 48400)
+local warningTomb	= mod:NewTargetNoFilterAnnounce(48400, 4)
+local timerTomb		= mod:NewTargetTimer(10, 48400, nil, nil, nil, 3)
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 48400 then

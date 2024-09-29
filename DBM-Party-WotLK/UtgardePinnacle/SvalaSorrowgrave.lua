@@ -1,11 +1,16 @@
 local mod	= DBM:NewMod(641, "DBM-Party-WotLK", 11, 286)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+if not mod:IsClassic() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
+
+mod:SetRevision("20230311193122")
 mod:SetCreatureID(26668)
-mod:SetEncounterID(577, 578, 2030)
-mod:DisableESCombatDetection()
-mod:SetZone()
+mod:SetEncounterID(2030)
+mod:DisableESCombatDetection()--TODO, why is it disabled?
+mod:SetHotfixNoticeRev(20220119000000)
+mod:SetMinSyncRevision(20220119000000)
 
 mod:RegisterCombat("combat")
 
@@ -20,7 +25,7 @@ mod:RegisterEventsInCombat(
 
 local warningSacrifice	= mod:NewTargetNoFilterAnnounce(48267, 4)
 
-local timerSacrifice	= mod:NewBuffActiveTimer(25, 48276, nil, nil, nil, 5, nil, DBM_CORE_L.DAMAGE_ICON)
+local timerSacrifice	= mod:NewBuffActiveTimer(25, 48276, nil, nil, nil, 5, nil, DBM_COMMON_L.DAMAGE_ICON)
 local timerRoleplay		= mod:NewTimer(67, "timerRoleplay", "237538")--roleplay for boss is active
 
 function mod:SPELL_AURA_APPLIED(args)

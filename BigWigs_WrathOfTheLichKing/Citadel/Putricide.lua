@@ -5,7 +5,9 @@
 local mod, CL = BigWigs:NewBoss("Professor Putricide", 631, 1631)
 if not mod then return end
 mod:RegisterEnableMob(36678, 37562, 37697) -- Putricide, Gas Cloud (Red Ooze), Volatile Ooze (Green Ooze)
-mod.toggleOptions = {{70447, "ICON"}, {70672, "FLASH"}, 70351, 71255, {72295, "SAY", "FLASH"}, 72451, {70911, "ICON", "FLASH"}, "phase", "berserk"}
+-- mod:SetEncounterID(1102)
+-- mod:SetRespawnTime(30)
+mod.toggleOptions = {{70447, "ICON"}, {70672, "FLASH"}, 70351, 71255, {72295, "SAY", "FLASH"}, 72451, {70911, "FLASH"}, "phase", "berserk"}
 mod.optionHeaders = {
 	[70447] = CL.phase:format(1),
 	[71255] = CL.phase:format(2),
@@ -13,6 +15,7 @@ mod.optionHeaders = {
 	[70911] = "heroic",
 	phase = "general",
 }
+mod:SetStage(1)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -65,17 +68,18 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "UnboundPlague", 70911)
 	self:Log("SPELL_CAST_START", "VolatileExperiment", 72840)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:Death("RedOozeDeath", 37562)
 	self:Death("Win", 36678)
 end
 
 function mod:OnEngage()
+	self:SetStage(1)
 	self:Berserk(600)
 	p2, first = nil, nil
 	self:Bar(70351, 25, L["experiment_bar"])
 
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
+	self:RegisterEvent("UNIT_HEALTH")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 end
 
@@ -91,21 +95,23 @@ do
 		mod:Bar(71255, 14, L["gasbomb_bar"])
 		mod:Bar(72295, 6, L["ball_bar"])
 		if not first then
-			mod:Message("phase", "green", nil, CL.phase:format(2), false)
+			mod:MessageOld("phase", "green", nil, CL.phase:format(2), false)
 			mod:Bar(70351, 25, L["experiment_bar"])
 			first = true
 			p2 = true
+			mod:SetStage(2)
 		else
-			mod:Message("phase", "green", nil, CL.phase:format(3), false)
+			mod:MessageOld("phase", "green", nil, CL.phase:format(3), false)
 			first = nil
-			mod:UnregisterUnitEvent("UNIT_HEALTH_FREQUENT", "target", "focus")
+			mod:UnregisterEvent("UNIT_HEALTH")
+			mod:SetStage(3)
 		end
 	end
 
 	-- Heroic mode phase change
 	function mod:VolatileExperiment()
 		stopOldStuff()
-		self:Message("phase", "red", nil, L["experiment_heroic_message"], "achievement_boss_profputricide")
+		self:MessageOld("phase", "red", nil, L["experiment_heroic_message"], "achievement_boss_profputricide")
 		if not first then
 			self:Bar("phase", 45, L["phase_bar"], "achievement_boss_profputricide")
 			self:ScheduleTimer(newPhase, 45)
@@ -136,19 +142,19 @@ do
 end
 
 function mod:Plague(args)
-	self:StackMessage(72451, args.destName, args.amount, "orange", "Info")
+	self:StackMessageOld(72451, args.destName, args.amount, "orange", "info")
 	self:Bar(72451, 10)
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 36678 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 36678 then
+		local hp = self:GetHealth(unit)
 		if hp < 84 and not p2 then
-			self:Message("phase", "green", nil, L["phase_warning"]:format(2), false)
+			self:MessageOld("phase", "green", nil, L["phase_warning"]:format(2), false)
 			p2 = true
 		elseif hp < 38 then
-			self:Message("phase", "green", nil, L["phase_warning"]:format(3), false)
-			self:UnregisterUnitEvent(event, "target", "focus")
+			self:MessageOld("phase", "green", nil, L["phase_warning"]:format(3), false)
+			self:UnregisterEvent(event)
 		end
 	end
 end
@@ -162,7 +168,7 @@ do
 		self:StopBar(L["blight_message"], oldBlightBar)
 		oldBlightBar = args.destName
 		self:TargetBar(70672, 20, oldBlightBar, L["blight_message"])
-		self:TargetMessage(70672, args.destName, "blue", nil, L["blight_message"], args.spellId)
+		self:TargetMessageOld(70672, args.destName, "blue", nil, L["blight_message"], args.spellId)
 	end
 	function mod:RedOozeDeath()
 		self:StopBar(L["blight_message"], oldBlightBar)
@@ -170,17 +176,17 @@ do
 end
 
 function mod:StunnedByGreenOoze(args)
-	self:TargetMessage(70447, args.destName, "blue", nil, L["violation_message"])
+	self:TargetMessageOld(70447, args.destName, "blue", nil, L["violation_message"])
 	self:PrimaryIcon(70447, args.destName)
 end
 
 function mod:Experiment(args)
-	self:Message(70351, "yellow", "Alert", L["experiment_message"])
+	self:MessageOld(70351, "yellow", "alert", L["experiment_message"])
 	self:Bar(70351, 38, L["experiment_bar"])
 end
 
 function mod:GasBomb(args)
-	self:Message(71255, "orange", nil, L["gasbomb_message"])
+	self:MessageOld(71255, "orange", nil, L["gasbomb_message"])
 	self:Bar(71255, 35, L["gasbomb_bar"])
 end
 
@@ -196,7 +202,7 @@ do
 				mod:Flash(72295)
 				mod:Say(72295, L["ball_say"], true)
 			end
-			mod:TargetMessage(72295, mod:UnitName(bossTarget), "yellow")
+			mod:TargetMessageOld(72295, mod:UnitName(bossTarget), "yellow")
 		end
 	end
 	function mod:BouncingGooBall(args)
@@ -210,15 +216,15 @@ end
 do
 	local oldPlagueBar = ""
 	function mod:UnboundPlague(args)
-		local _, _, _, expirationTime = self:UnitDebuff(args.destName, args.spellName)
-		if expirationTime then
-			self:StopBar(70911, oldPlagueBar)
-			oldPlagueBar = args.destName
-			self:TargetBar(70911, expirationTime - GetTime(), args.destName)
-		end
-		self:TargetMessage(70911, args.destName, "blue", "Alert")
-		self:SecondaryIcon(70911, args.destName)
+		--local _, _, _, expirationTime = self:UnitDebuff(args.destName, args.spellName, 70911)
+		--if expirationTime then
+		--	self:StopBar(70911, oldPlagueBar)
+		--	oldPlagueBar = args.destName
+		--	self:TargetBar(70911, expirationTime - GetTime(), args.destName)
+		--end
+		--self:SecondaryIcon(70911, args.destName)
 		if self:Me(args.destGUID) then
+			self:TargetMessageOld(70911, args.destName, "blue", "alert")
 			self:Flash(70911)
 		end
 	end

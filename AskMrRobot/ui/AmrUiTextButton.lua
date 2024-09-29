@@ -26,6 +26,13 @@ Scripts
 	frame.obj:Fire("OnClick", ...)
 end]]
 
+-- since 10.0, can't seem to get pre-click to work at all if cvar ActionButtonUseKeyDown is set to 0, so hack around it with mouse down for now...
+local function buttonMouseDown(frame)
+	if frame.obj.preClick then
+		frame.obj.preClick(frame.obj)
+	end
+end
+
 local function buttonPreClick(frame, ...)
 	frame.obj:Fire("PreClick", ...)
 end
@@ -203,6 +210,12 @@ local methods = {
 			self.frame:SetAttribute("type", nil)
 			self.frame:SetAttribute("macrotext", nil)
 		end
+	end,
+
+	-- not sure why ace won't let me do mouse down the same way as everything else... so whatever just hack around it with this method 
+	-- for setting a pre-click event for now, don't have time to figure it out
+	["SetPreClick"] = function(self, func)
+		self.frame.obj.preClick = func
 	end
 }
 
@@ -212,6 +225,7 @@ Constructor
 local function Constructor()
 	local name = "AmrUiTextButton" .. AceGUI:GetNextWidgetNum(Type)
 	local frame = CreateFrame("Button", name, UIParent, "SecureActionButtonTemplate")
+	frame:RegisterForClicks("AnyUp", "AnyDown")
 	frame:Hide()
 	
 	local txt = frame:CreateFontString()
@@ -224,7 +238,8 @@ local function Constructor()
 	frame:SetScript("OnEnter", buttonOnEnter)
 	frame:SetScript("OnLeave", buttonOnLeave)
 	--frame:SetScript("OnClick", buttonOnClick)
-	frame:SetScript("PreClick", buttonPreClick)
+	frame:SetScript("OnMouseDown", buttonMouseDown) -- hacking around inconsistent pre-click since 10.0
+	--frame:SetScript("PreClick", buttonPreClick)
 	frame:SetScript("PostClick", buttonPostClick)
 	
 	local bg = frame:CreateTexture()

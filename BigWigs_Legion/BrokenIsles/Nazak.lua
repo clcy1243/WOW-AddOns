@@ -59,34 +59,34 @@ end
 
 function mod:MarkWebWrap(event, unit, guid)
 	if wraps[guid] then
-		SetRaidTarget(unit, wraps[guid])
+		self:CustomIcon(false, unit, wraps[guid])
 		wraps[guid] = nil
 	end
 end
 
 function mod:CorrodingSpray(args)
-	self:Message(args.spellId, "orange", "Info", CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "orange", "info", CL.casting:format(args.spellName))
 	self:CDBar(args.spellId, 23)
 end
 
 function mod:FoundationalCollapse(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 	self:CDBar(args.spellId, 57)
 end
 
 function mod:AbsorbLeystones(args)
-	self:Message(args.spellId, "red", "Long", CL.incoming:format(args.spellName))
+	self:MessageOld(args.spellId, "red", "long", CL.incoming:format(args.spellName))
 	self:Bar(args.spellId, 8)
 end
 
 function mod:WebWrap(args)
 	if self:GetOption(wrapMarker) then
-		wipe(wraps)
+		wraps = {}
 		wrapCount = 8
 	end
 	self:RegisterUnitEvent("UNIT_AURA", nil, "player")
 	self:ScheduleTimer("UnregisterUnitEvent", 5, "UNIT_AURA", "player")
-	self:Message(args.spellId, "green", "Warning")
+	self:MessageOld(args.spellId, "green", "warning")
 end
 
 function mod:WebWrapSummon(args)
@@ -101,7 +101,7 @@ do
 	function mod:UNIT_AURA(event, unit)
 		if self:UnitDebuff(unit, spellName) then
 			self:UnregisterUnitEvent(event, unit)
-			self:Say(219861)
+			self:Say(219861, nil, nil, "Web Wrap")
 		end
 	end
 end

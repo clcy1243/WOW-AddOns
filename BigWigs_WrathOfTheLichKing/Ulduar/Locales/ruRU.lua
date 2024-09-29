@@ -1,4 +1,3 @@
-
 local L = BigWigs:NewBossLocale("Auriaya", "ruRU")
 if not L then return end
 if L then
@@ -48,6 +47,10 @@ end
 
 L = BigWigs:NewBossLocale("The Iron Council", "ruRU")
 if L then
+	L.stormcaller_brundir = "Буревестник Брундир"
+	L.steelbreaker = "Сталелом"
+	L.runemaster_molgeim = "Мастер рун Молгейм"
+
 	L.summoning_message = "Руна призыва - приход Элементалей!"
 
 	L.chased_other = "Преследует |3-3(%s)!"
@@ -141,7 +144,7 @@ if L then
 	L.vapor = "Саронитовые пары"
 	L.vapor_desc = "Сообщать о появлении саронитовых паров."
 	L.vapor_message = "Саронитовые пары (%d)!"
-	L.vapor_bar = "Пары %d/6"
+	L.vapor_bar = "Пары"
 	L.vapor_trigger = "Поблизости начинают возникать саронитовые испарения!"
 
 	L.vaporstack = "Стаки испарения"
@@ -155,7 +158,6 @@ end
 
 L = BigWigs:NewBossLocale("XT-002 Deconstructor", "ruRU")
 if L then
-	L.gravitybomb_other = "Бомба"
 	L.lightbomb_other = "Взрыв"
 end
 

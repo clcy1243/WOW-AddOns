@@ -1,6 +1,6 @@
 # Transcriptor
 
-## [v8.3.1](https://github.com/BigWigsMods/Transcriptor/tree/v8.3.1) (2020-01-28)
-[Full Changelog](https://github.com/BigWigsMods/Transcriptor/compare/v8.3.0...v8.3.1)
+## [v11.0.6](https://github.com/BigWigsMods/Transcriptor/tree/v11.0.6) (2024-09-26)
+[Full Changelog](https://github.com/BigWigsMods/Transcriptor/compare/v11.0.5...v11.0.6) [Previous Releases](https://github.com/BigWigsMods/Transcriptor/releases)
 
-- Blacklist update  
+- Modules/PlayerSpellBlocklist: Add more spells  

@@ -1,10 +1,9 @@
-local mod	= DBM:NewMod(2155, "DBM-Party-BfA", 4, 1001)
+local mod	= DBM:NewMod(2155, "DBM-Party-BfA", 4, 1036)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200602212246")
+mod:SetRevision("20240417180519")
 mod:SetCreatureID(134060)
 mod:SetEncounterID(2132)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -19,17 +18,17 @@ mod:RegisterEvents(
 )
 
 local specWarnVoidBolt				= mod:NewSpecialWarningInterruptCount(268347, "HasInterrupt", nil, nil, 1, 2)
-local specWarnMindRend				= mod:NewSpecialWarningDispel(268896, "Healer", nil, nil, 1, 2)
+local specWarnMindRend				= mod:NewSpecialWarningDispel(268896, "RemoveMagic", nil, 2, 1, 2)
 local specWarnWakentheVoid			= mod:NewSpecialWarningDodge(269097, nil, nil, nil, 2, 2)
 local specWarnAncientMindbender		= mod:NewSpecialWarningSwitch(269131, nil, nil, nil, 1, 2)
 local specWarnAncientMindbenderYou	= mod:NewSpecialWarningMoveTo(269131, nil, nil, nil, 1, 2)
 local yellAncientMindbender			= mod:NewYell(269131)
 
 local timerRP						= mod:NewRPTimer(68)
-local timerVoidBoltCD				= mod:NewCDTimer(7.3, 268347, nil, "HasInterrupt", nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
-local timerMindRendCD				= mod:NewCDTimer(10.5, 268896, nil, nil, nil, 3, nil, DBM_CORE_L.HEALER_ICON..DBM_CORE_L.MAGIC_ICON)
+local timerVoidBoltCD				= mod:NewCDTimer(7.3, 268347, nil, "HasInterrupt", nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
+local timerMindRendCD				= mod:NewCDTimer(10.5, 268896, nil, nil, nil, 3, nil, DBM_COMMON_L.HEALER_ICON..DBM_COMMON_L.MAGIC_ICON)
 --local timerWakentheVoidCD			= mod:NewCDTimer(52.3, 269097, nil, nil, nil, 3)--IFFY, could be health based
-local timerAncientMindbenderCD		= mod:NewCDTimer(42.5, 269131, nil, nil, nil, 3, nil, DBM_CORE_L.DAMAGE_ICON)--Health based?
+local timerAncientMindbenderCD		= mod:NewCDTimer(42.5, 269131, nil, nil, nil, 3, nil, DBM_COMMON_L.DAMAGE_ICON)--Health based?
 
 mod.vb.interruptCount = 0
 
@@ -37,17 +36,17 @@ function mod:OnCombatStart(delay)
 	self.vb.interruptCount = 0
 	timerMindRendCD:Start(16-delay)
 	--timerWakentheVoidCD:Start(13.1-delay)
-	timerAncientMindbenderCD:Start(19.6-delay)--SUCCESS
+	timerAncientMindbenderCD:Start(18.3-delay)--SUCCESS
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
-	if spellId == 268896 and self:CheckDispelFilter() then
+	if spellId == 268896 and self:CheckDispelFilter("magic") then
 		specWarnMindRend:Show(args.destName)
 		specWarnMindRend:Play("helpdispel")
 	elseif spellId == 269131 then
 		if args:IsPlayer() then
-			specWarnAncientMindbenderYou:Show(DBM_CORE_L.ORB)
+			specWarnAncientMindbenderYou:Show(DBM_COMMON_L.ORB)
 			specWarnAncientMindbenderYou:Play("takedamage")
 			yellAncientMindbender:Yell()
 		else

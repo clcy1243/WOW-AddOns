@@ -96,7 +96,7 @@ local function renderImportWindow(container, fromOverwolf)
 		_panelCover:AddChild(coverMsg)
 		coverMsg:SetWidth(500)
 		coverMsg:SetFont(Amr.CreateFont("Regular", 16, Amr.Colors.TextTan))
-		coverMsg:SetJustifyH("MIDDLE")
+		coverMsg:SetJustifyH("CENTER")
 		coverMsg:SetJustifyV("MIDDLE")
 		coverMsg:SetText(L.ImportOverwolfWait)
 		coverMsg:SetPoint("CENTER", _panelCover.frame, "CENTER", 0, 20)
@@ -134,7 +134,7 @@ local function parseItemList(parts, startPos, endToken, hasSlot)
     local prevUpgradeId = 0
     local prevBonusId = 0
     local prevLevel = 0
-    local prevAzeriteId = 0
+    --local prevAzeriteId = 0
     local digits = {
         ["-"] = true,
         ["0"] = true,
@@ -155,13 +155,15 @@ local function parseItemList(parts, startPos, endToken, hasSlot)
         elseif itemString ~= "" and itemString ~= "_" then
             local tokens = {}
             local bonusIds = {}
-            local azerite = {}
+            --local azerite = {}
             local hasBonuses = false
-            local hasAzerites = false
+            --local hasAzerites = false
             local token = ""
             local prop = "i"
             local tokenComplete = false
-            for j = 1, string.len(itemString) do
+            local guid = nil
+
+            for j = 1, string.len(itemString) do                
                 local c = string.sub(itemString, j, j)
                 if digits[c] == nil then
                     tokenComplete = true
@@ -189,17 +191,17 @@ local function parseItemList(parts, startPos, endToken, hasSlot)
                     elseif prop == "e" then
                         val = val + prevEnchantId
                         prevEnchantId = val
-                    elseif prop == "a" then
-                        val = val + prevAzeriteId
-                        prevAzeriteId = val
+                    --elseif prop == "a" then
+                    --    val = val + prevAzeriteId
+                    --    prevAzeriteId = val
                     end
                     
                     if prop == "b" then
                         table.insert(bonusIds, val)
                         hasBonuses = true
-                    elseif prop == "a" then
-                        table.insert(azerite, val)
-                        hasAzerites = true
+                    --elseif prop == "a" then
+                    --    table.insert(azerite, val)
+                    --    hasAzerites = true
                     else
                         tokens[prop] = val
                     end
@@ -209,6 +211,12 @@ local function parseItemList(parts, startPos, endToken, hasSlot)
                     
                     -- we have moved on to the next token
                     prop = c
+                end
+
+                if prop == "!" then
+                    -- guid is always at the end, if present
+                    guid = strsub(itemString, j + 1)
+                    break
                 end
             end
             
@@ -223,7 +231,10 @@ local function parseItemList(parts, startPos, endToken, hasSlot)
             obj.id = tokens["i"]
             obj.suffixId = tokens["f"] or 0
             obj.upgradeId = tokens["u"] or 0
-			obj.level = tokens["v"] or 0
+            obj.level = tokens["v"] or 0
+            obj.stat1 = tokens["j"] or 0
+            obj.stat2 = tokens["k"] or 0
+            obj.craftQuality = tokens["l"] or 0
             obj.enchantId = tokens["e"] or 0
 			obj.inventoryId = tokens["t"] or 0
             
@@ -237,15 +248,20 @@ local function parseItemList(parts, startPos, endToken, hasSlot)
                 obj.bonusIds = bonusIds
             end
             
-            if hasAzerites then
-                obj.azerite = azerite
+            if guid then
+                obj.guid = guid
             end
+
+            --if hasAzerites then
+            --    obj.azerite = azerite
+            --end
         end
     end
 
     return importData
 end
 
+--[[
 local function parseEssenceList(essenceString)
     local ret = {}
 
@@ -257,6 +273,21 @@ local function parseEssenceList(essenceString)
 
     return ret
 end
+]]
+
+--[[
+local function parseSoulbinds(soulbindString)
+    local ret = {}
+
+    local parts = { strsplit(",", soulbindString) }
+    for i = 1, #parts do
+        local node = { strsplit(".", parts[i]) }
+        table.insert(ret, { tonumber(node[1]), tonumber(node[2]), tonumber(node[3]) })
+    end
+
+    return ret
+end
+]]
 
 --
 -- Import a character, returning nil on success, otherwise an error message, import result stored in the db.
@@ -334,16 +365,20 @@ function Amr:ImportCharacter(data, isTest, isChild)
         end
         
         -- require race match
+        --[[
         local race = tonumber(parts[6])
         if race ~= Amr.RaceIds[currentPlayerData.Race] then
             return L.ImportErrorRace
         end
-        
+        ]]
+
         -- require faction match
+        --[[
         local faction = tonumber(parts[7])
         if faction ~= Amr.FactionIds[currentPlayerData.Faction] then
             return L.ImportErrorFaction
         end
+        ]]
         
         -- require level match
         local level = tonumber(parts[8])
@@ -353,16 +388,39 @@ function Amr:ImportCharacter(data, isTest, isChild)
     end
     
     -- if we make it this far, the data is valid, so read item information
-	local specSlot = tonumber(parts[11])
+	local specSlot = tonumber(parts[10])
     
-    local essences = parseEssenceList(parts[15])
+    local talents = {}
+    local talentStr = parts[13]
+    for talTier = 1, #talentStr do
+        local talCol = tonumber(talentStr:sub(talTier, talTier))
+        table.insert(talents, talCol)
+    end
 
-    local importData = parseItemList(parts, 17, "n/a", true)
+    local heroTreeEntryId = tonumber(parts[14])
+
+    --local soulbindId = tonumber(parts[14])
+    --local soulbindNodes = parseSoulbinds(parts[15])
+    --local essences = parseEssenceList(parts[15])
+
+    local importData = parseItemList(parts, 16, "n/a", true)
     
     -- extra information contains setup id, display label, then extra enchant info        
     parts = { strsplit("@", data1[3]) }
 
     local setupId = parts[2]
+    
+    local setupTalentConfigId = nil
+
+    local idParts = { strsplit("#", setupId) }
+    setupId = idParts[1]
+    if #idParts > 1 then
+        setupTalentConfigId = idParts[2]
+        if setupTalentConfigId == "_" then
+            setupTalentConfigId = nil
+        end
+    end
+    
     local setupName = parts[3]
     local enchantInfo = {}
 
@@ -412,7 +470,12 @@ function Amr:ImportCharacter(data, isTest, isChild)
             Id = setupId,
             Label = setupName,
             Gear = importData,
-            Essences = essences
+            Talents = talents,
+            HeroTreeEntryId = heroTreeEntryId,
+            TalentConfigId = setupTalentConfigId
+            --SoulbindId = soulbindId,
+            --SoulbindNodes = soulbindNodes
+            --Essences = essences
         }
 
         if not result.IsBib then

@@ -9,7 +9,6 @@ local ThreatPlates = Addon.ThreatPlates
 local UnitIsConnected = UnitIsConnected
 
 -- ThreatPlates APIs
-local TidyPlatesThreat = TidyPlatesThreat
 local GetColorByHealthDeficit = ThreatPlates.GetColorByHealthDeficit
 local GetColorByReaction = ThreatPlates.GetColorByReaction
 local IsFriend
@@ -20,7 +19,7 @@ function Addon:SetNameColor(unit)
 
   local unique_setting = unit.CustomPlateSettings
 
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
   local db_mode = db.settings.name
   if style == "NameOnly" or style == "NameOnly-Unique" then
     db_mode = db.HeadlineView
@@ -59,10 +58,10 @@ function Addon:SetNameColor(unit)
   elseif mode == "CUSTOM" then
     if unit_reaction == "FRIENDLY" then
       color = db_mode.FriendlyTextColor
-      return color.r, color.g, color.b
+      return color.r, color.g, color.b, color.a
     else
       color = db_mode.EnemyTextColor
-      return color.r, color.g, color.b
+      return color.r, color.g, color.b, color.a
     end
   elseif mode == "HEALTH" then
     local color =  GetColorByHealthDeficit(unit)

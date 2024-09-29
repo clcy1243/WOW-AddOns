@@ -30,7 +30,7 @@ local L
 L = DBM:GetModLocalization("NecroticWakeTrash")
 
 L:SetGeneralLocalization({
-	name =	"죽음의 각성 일반몹"
+	name =	"죽음의 상흔 일반몹"
 })
 
 -----------------------
@@ -52,7 +52,7 @@ L:SetGeneralLocalization({
 --L= DBM:GetModLocalization(2423)
 
 -----------------------
--- Stradama Margrave --
+-- Margrave Stradama --
 -----------------------
 --L= DBM:GetModLocalization(2404)
 
@@ -81,7 +81,27 @@ L:SetGeneralLocalization({
 -----------------------
 -- Tred'ova --
 -----------------------
---L= DBM:GetModLocalization(2405)
+L= DBM:GetModLocalization(2405)
+
+L:SetWarningLocalization({
+	warnInfestor			= "%s에게 기생 감염충",
+	specWarnParasiticInfesterKick	= "기생 감염충 - 차단!"
+})
+
+L:SetTimerLocalization{
+	timerParasiticInfesterCD	= "~감염충"
+}
+
+L:SetOptionLocalization({
+	warnInfestor			= "기생 감염충 대상 알림",
+	specWarnParasiticInfesterKick	= "기생 감염충을 차단해야 할 때 특수 경고 보기",
+	timerParasiticInfesterCD	= "기생 감염충 타이머 바 보기",
+	yellParasiticInfester		= "기생 감염충 대상일 때 말풍선으로 알리기"
+})
+
+L:SetMiscLocalization({
+	Infester			= "감염충"
+})
 
 ---------
 --Trash--
@@ -89,7 +109,7 @@ L:SetGeneralLocalization({
 L = DBM:GetModLocalization("TirnaScitheTrash")
 
 L:SetGeneralLocalization({
-	name =	"티르나 사이드 일반몹"--Or MOTS Trash?
+	name =	"티르너 사이드의 안개 일반몹"
 })
 
 -----------------------
@@ -130,7 +150,11 @@ L:SetGeneralLocalization({
 -----------------------
 -- Kin-Tara --
 -----------------------
---L= DBM:GetModLocalization(2399)
+L= DBM:GetModLocalization(2399)
+
+L:SetMiscLocalization({
+	Flight	= "죽음의 날갯짓을 맞이해라!"
+})
 
 -----------------------
 -- Ventunax --
@@ -145,7 +169,12 @@ L:SetGeneralLocalization({
 -----------------------
 -- Devos, Paragon of Doubt --
 -----------------------
---L= DBM:GetModLocalization(2412)
+L= DBM:GetModLocalization(2412)
+
+L:SetMiscLocalization({
+	RunThrough	= "이 창이 네 심장을 꿰뚫을 것이다!",
+	Flight2		= "하늘을 두려워 하라!"
+})
 
 ---------
 --Trash--
@@ -255,4 +284,65 @@ L = DBM:GetModLocalization("SanguineDepthsTrash")
 
 L:SetGeneralLocalization({
 	name =	"핏빛 심연 일반몹"
+})
+
+-----------------------
+-- <<<Tazavesh, the Veiled Market (1194J/2441M)>>> --
+-----------------------
+-----------------------
+-- Zo'phex the Sentinel --
+-----------------------
+--L= DBM:GetModLocalization(2437)
+
+-----------------------
+-- The Menagerie --
+-----------------------
+L= DBM:GetModLocalization(2454)
+
+L:SetMiscLocalization({
+	AchilliteRPTrigger	= "날뛰는 야수 때문에 두려우신가요? 여기 해결책이 있습니다!",
+	VenzaRPTrigger		= "지금이 기회다! 저 도끼는 내 거야!"
+})
+
+-----------------------
+-- Mailroom Mayhem --
+-----------------------
+--L= DBM:GetModLocalization(2436)
+
+-----------------------
+-- Au'myza's Oasis --
+-----------------------
+--L= DBM:GetModLocalization(2452)
+
+-----------------------
+-- So'azmi --
+-----------------------
+L= DBM:GetModLocalization(2451)
+
+L:SetMiscLocalization({
+	RPTrigger	= "방해해서 참 미안하게 됐습니다, 소레아. 불편할 때 찾아온 거면 좋겠는데 말이죠."
+})
+
+-----------------------
+-- Hylbrande --
+-----------------------
+--L= DBM:GetModLocalization(2448)
+
+-----------------------
+-- Timecap'n Hooktail --
+-----------------------
+--L= DBM:GetModLocalization(2449)
+
+-----------------------
+-- So'leah --
+-----------------------
+--L= DBM:GetModLocalization(2455)
+
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("TazaveshTrash")
+
+L:SetGeneralLocalization({
+	name =	"타자베쉬 일반몹"
 })

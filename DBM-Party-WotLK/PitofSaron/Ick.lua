@@ -1,15 +1,19 @@
 local mod	= DBM:NewMod(609, "DBM-Party-WotLK", 15, 278)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+if not mod:IsClassic() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
+
+mod:SetRevision("20240428124541")
 mod:SetCreatureID(36476)
-mod:SetEncounterID(835, 836, 2001)
+mod:SetEncounterID(2001)
 mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 68987 68989",
+	"SPELL_CAST_START 68987 68989 69012",
 	"SPELL_AURA_APPLIED 69029",
 	"SPELL_AURA_REMOVED 69029",
 	"SPELL_PERIODIC_DAMAGE 69024",
@@ -26,13 +30,14 @@ local specWarnPursuit			= mod:NewSpecialWarningRun(68987, nil, nil, 2, 4, 2)
 local specWarnPoisonNova		= mod:NewSpecialWarningRun(68989, "Melee", nil, 2, 4, 2)
 
 local timerSpecialCD			= mod:NewCDSpecialTimer(20)--Every 20-22 seconds. In rare cases he skips a special though and goes 40 seconds. unsure of cause
-local timerPursuitCast			= mod:NewCastTimer(5, 68987)
-local timerPursuitConfusion		= mod:NewBuffActiveTimer(12, 69029)
+local timerPursuitCast			= mod:NewCastTimer(5, 68987, nil, nil, nil, 3)
+local timerPursuitConfusion		= mod:NewBuffActiveTimer(12, 69029, nil, nil, nil, 5)
 local timerPoisonNova			= mod:NewCastTimer(5, 68989, nil, "Melee", 2, 2)
 
-mod:AddSetIconOption("SetIconOnPursuitTarget", 68987, true, false, {8})
+mod:AddSetIconOption("SetIconOnPursuitTarget", 68987, true, 0, {8})
+--mod:GroupSpells(68987, 69029)
 
-local pursuit = DBM:GetSpellInfo(68987)
+local pursuit = DBM:GetSpellName(68987)
 local pursuitTable = {}
 
 function mod:OnCombatStart(delay)
@@ -80,7 +85,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:UNIT_AURA_UNFILTERED(uId)
 	local isPursuitDebuff = DBM:UnitDebuff(uId, pursuit)
-	local name = DBM:GetUnitFullName(uId)
+	local name = DBM:GetUnitFullName(uId) or "UNKNOWN"
 	if not isPursuitDebuff and pursuitTable[name] then
 		pursuitTable[name] = nil
 		if self.Options.SetIconOnPursuitTarget then

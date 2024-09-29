@@ -4,13 +4,9 @@
 
 local mod, CL = BigWigs:NewBoss("Anub'arak", 649, 1623)
 if not mod then return end
-mod.toggleOptions = {66012, "burrow", {67574, "ICON", "FLASH"}, {66013, "FLASH"}, 66118, 66134, "berserk"}
 mod:RegisterEnableMob(34564, 34607, 34605)
-mod.optionHeaders = {
-	[66012] = "normal",
-	[66134] = "heroic",
-	berserk = "general",
-}
+-- mod:SetEncounterID(1085)
+-- mod:SetRespawnTime(30)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -21,12 +17,13 @@ local handle_NextStrike = nil
 
 local isBurrowed = nil
 local phase2 = nil
+local coldTargets = {}
 
 --------------------------------------------------------------------------------
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:NewLocale()
 if L then
 	L.engage_message = "Anub'arak engaged, burrow in 80sec!"
 	L.engage_trigger = "This place will serve as your tomb!"
@@ -41,14 +38,32 @@ if L then
 	L.nerubian_burrower = "More adds"
 
 	L.shadow_soon = "Shadow Strike in ~5sec!"
-
-	L.chase = "Pursue"
 end
 L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
 --
+
+local coldMarker = mod:AddMarkerOption(false, "player", 1, 66013, 1, 2, 3, 4, 5) -- Penetrating Cold
+function mod:GetOptions()
+	return {
+		66012, -- Freezing Slash
+		"burrow",
+		{67574, "ICON", "FLASH"}, -- Pursued by Anub'arak
+		{66013, "FLASH"}, -- Penetrating Cold
+		coldMarker,
+		66118, -- Leeching Swarm
+		66134, -- Shadow Strike
+		"berserk",
+	}, {
+		[66012] = "normal",
+		[66134] = "heroic",
+		["berserk"] = "general",
+	}, {
+		[67574] = CL.fixate, -- Pursued by Anub'arak (Fixate)
+	}
+end
 
 -- Shadow Strike!
 -- 1. On engage, start a 30.5 second shadow strike timer if heroic.
@@ -72,32 +87,35 @@ end
 
 function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Swarm", 66118)
-	self:Log("SPELL_CAST_SUCCESS", "ColdCooldown", 66013)
-	self:Log("SPELL_AURA_APPLIED", "ColdDebuff", 66013)
-	self:Log("SPELL_AURA_APPLIED", "Pursue", 67574)
+	self:Log("SPELL_CAST_SUCCESS", "PenetratingCold", 66013)
+	self:Log("SPELL_AURA_APPLIED", "PenetratingColdApplied", 66013)
+	self:Log("SPELL_AURA_REFRESH", "PenetratingColdApplied", 66013) -- Boss can apply new ones before old ones expire
+	self:Log("SPELL_AURA_APPLIED", "PursuedByAnubarak", 67574)
+	self:Log("SPELL_AURA_REFRESH", "PursuedByAnubarak", 67574)
 
-	self:Log("SPELL_CAST_START", scheduleStrike, 66134)
+	self:Log("SPELL_CAST_START", "ShadowStrike", 66134)
 	self:Log("SPELL_CAST_SUCCESS", "FreezeCooldown", 66012)
 	self:Log("SPELL_MISSED", "FreezeCooldown", 66012)
 
 	self:Emote("Burrow", L["burrow_trigger"])
 	self:Emote("Surface", L["unburrow_trigger"])
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 	self:Death("Win", 34564)
 end
 
 local function scheduleWave()
 	if isBurrowed then return end
-	mod:Message("burrow", "orange", nil, L["nerubian_message"], 66333)
+	mod:MessageOld("burrow", "orange", nil, L["nerubian_message"], 66333)
 	mod:Bar("burrow", 45, L["nerubian_burrower"], 66333)
 	handle_NextWave = mod:ScheduleTimer(scheduleWave, 45)
 end
 
 function mod:OnEngage()
+	coldTargets = {}
 	isBurrowed = nil
-	self:Message("burrow", "yellow", nil, L["engage_message"], 65919)
+	self:MessageOld("burrow", "yellow", nil, L["engage_message"], 65919)
 	self:Bar("burrow", 80, L["burrow"], 65919)
 	self:DelayedMessage("burrow", 65, "yellow", L["burrow_soon"])
 
@@ -112,6 +130,17 @@ function mod:OnEngage()
 	phase2 = nil
 end
 
+function mod:OnBossDisable()
+	if self:GetOption(coldMarker) then
+		-- rolling application, the next set moves them.
+		-- so clean up left over marks
+		for i = 1, #coldTargets do
+			self:CustomIcon(false, coldTargets[i])
+		end
+	end
+	coldTargets = {}
+end
+
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
@@ -120,39 +149,25 @@ function mod:FreezeCooldown(args)
 	self:CDBar(args.spellId, 20)
 end
 
-do
-	local coldTargets, scheduled = mod:NewTargetList(), nil
-	local function coldWarn(spellId)
-		mod:TargetMessage(spellId, coldTargets, "orange")
-		scheduled = nil
-	end
-	function mod:ColdDebuff(args)
-		if not phase2 then return end
-		coldTargets[#coldTargets + 1] = args.destName
-		if self:Me(args.destGUID) then
-			self:Flash(args.spellId)
-		end
-		if not scheduled then
-			scheduled = self:ScheduleTimer(coldWarn, 0.2, args.spellId)
-		end
-	end
+function mod:PenetratingCold(args)
+	if not phase2 then return end
+	coldTargets = {}
+	self:CDBar(args.spellId, 15)
 end
 
-function mod:ColdDebuff(args)
-	if self:Me(args.destGUID) and phase2 then
-		self:Message(args.spellId, "blue")
+function mod:PenetratingColdApplied(args)
+	if not phase2 then return end
+	local count = #coldTargets + 1
+	coldTargets[count] = args.destName
+	if self:Me(args.destGUID) then
+		self:PersonalMessage(args.spellId)
 		self:Flash(args.spellId)
 	end
-end
-
-function mod:ColdCooldown(args)
-	if phase2 then
-		self:CDBar(args.spellId, 15)
-	end
+	self:CustomIcon(coldMarker, args.destName, count)
 end
 
 function mod:Swarm(args)
-	self:Message(args.spellId, "red", "Long")
+	self:MessageOld(args.spellId, "red", "long")
 	phase2 = true
 	self:StopBar(L["burrow"])
 	self:CancelDelayedMessage(L["burrow_soon"])
@@ -162,8 +177,8 @@ function mod:Swarm(args)
 	end
 end
 
-function mod:Pursue(args)
-	self:TargetMessage(args.spellId, args.destName, "blue", "Alert", L["chase"])
+function mod:PursuedByAnubarak(args)
+	self:TargetMessageOld(args.spellId, args.destName, "blue", "alert", CL.fixate)
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
 	end
@@ -194,3 +209,6 @@ function mod:Surface()
 	end
 end
 
+function mod:ShadowStrike()
+	scheduleStrike()
+end

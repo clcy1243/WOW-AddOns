@@ -1,34 +1,41 @@
 --------------------------------------------------------------------------------
--- Module declaration
+-- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Grobbulus", 533, 1611)
+local mod, CL = BigWigs:NewBoss("Grobbulus", 533, 1611)
 if not mod then return end
 mod:RegisterEnableMob(15931)
-mod.toggleOptions = {{28169, "ICON", "FLASH"}, 28240, "berserk"}
+mod:SetEncounterID(1111)
 
 --------------------------------------------------------------------------------
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
-	L.bomb_message = "Injection"
-	L.bomb_message_other = "%s is Injected!"
+	L.injection = "Injection"
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
 --
 
-function mod:OnBossEnable()
-	self:Log("SPELL_AURA_APPLIED", "Inject", 28169)
-	self:Log("SPELL_CAST_SUCCESS", "Cloud", 28240)
-	self:Death("Win", 15931)
+function mod:GetOptions()
+	return {
+		{28169, "ICON", "SAY", "ME_ONLY_EMPHASIZE"}, -- Mutating Injection
+		28240, -- Poison Cloud
+		"adds",
+		"berserk",
+	},nil,{
+		[28169] = L.injection, -- Mutating Injection (Injection)
+	}
+end
 
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-	self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
+function mod:OnBossEnable()
+	self:Log("SPELL_AURA_APPLIED", "MutatingInjectionApplied", 28169)
+	self:Log("SPELL_AURA_REMOVED", "MutatingInjectionRemoved", 28169)
+	self:Log("SPELL_CAST_SUCCESS", "PoisonCloud", 28240)
+	self:Log("SPELL_CAST_SUCCESS", "SlimeSpray", 28157, 54364) -- 10 player, 25 player
 end
 
 function mod:OnEngage()
@@ -39,17 +46,38 @@ end
 -- Event Handlers
 --
 
-function mod:Inject(args)
-	self:TargetMessage(args.spellId, args.destName, "blue", "Alert", L["bomb_message"])
-	if self:Me(args.destGUID) then
-		self:Flash(args.spellId)
+do
+	local prevTarget, prevApply = nil, 0
+	function mod:MutatingInjectionApplied(args)
+		prevTarget, prevApply = args.destGUID, args.time
+		self:TargetMessage(args.spellId, "red", args.destName, L.injection)
+		self:TargetBar(args.spellId, 10, args.destName, L.injection)
+		self:PrimaryIcon(args.spellId, args.destName)
+		if self:Me(args.destGUID) then
+			self:Say(args.spellId, L.injection, nil, "Injection")
+			self:PlaySound(args.spellId, "warning", nil, args.destName)
+		end
 	end
-	self:Bar(args.spellId, 10, L["bomb_message_other"]:format(args.destName))
-	self:PrimaryIcon(args.spellId, args.destName)
+
+	function mod:MutatingInjectionRemoved(args)
+		self:StopBar(L.injection, args.destName)
+		-- Next one is sometimes applied just before previous one expires
+		if args.destGUID == prevTarget and args.time - prevApply < 9 then
+			self:PrimaryIcon(args.spellId)
+		end
+		if self:Me(args.destGUID) then
+			self:PersonalMessage(args.spellId, "removed", L.injection)
+		end
+	end
 end
 
-function mod:Cloud(args)
+function mod:PoisonCloud(args)
 	self:Message(args.spellId, "yellow")
-	self:Bar(args.spellId, 15)
+	self:CDBar(args.spellId, 14.6) -- 14.6-16.2
+	self:PlaySound(args.spellId, "info")
 end
 
+function mod:SlimeSpray() -- Adds
+	self:Message("adds", "orange", CL.adds, false)
+	self:PlaySound("adds", "long")
+end

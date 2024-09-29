@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(291, "DBM-Party-Cataclysm", 13, 185)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "heroic,timewalker"
+
+mod:SetRevision("20240511084803")
 mod:SetCreatureID(54853)
 mod:SetEncounterID(1273)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 mod:RegisterKill("yell", L.Kill)
@@ -13,16 +14,15 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 103241",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
-mod.onlyHeroic = true
 
 local warnAdds			= mod:NewAnnounce("WarnAdds", 3)
 
-local specWarnServant	= mod:NewSpecialWarningSpell(102334, nil, nil, nil, 2)
+local specWarnServant	= mod:NewSpecialWarningSpell(102334, nil, nil, nil, 2, 2)
 local specWarnObedience	= mod:NewSpecialWarningInterrupt(103241, nil, nil, nil, 1, 2)
 
 local timerServantCD	= mod:NewCDTimer(26, 102334, nil, nil, nil, 3)--Still don't have good logs, and encounter bugs a lot so i can't get any reliable timers except for first casts on engage.
-local timerObedienceCD	= mod:NewCDTimer(37, 103241, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
-local timerAdds			= mod:NewTimer(36, "TimerAdds", nil, nil, nil, 1, nil, DBM_CORE_L.DAMAGE_ICON)
+local timerObedienceCD	= mod:NewCDTimer(37, 103241, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
+local timerAdds			= mod:NewTimer(36, "TimerAdds", nil, nil, nil, 1, DBM_COMMON_L.DAMAGE_ICON)
 
 mod.vb.addsCount = 0
 

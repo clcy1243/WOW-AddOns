@@ -43,6 +43,15 @@ L= DBM:GetModLocalization(108)
 -----------------------------
 L= DBM:GetModLocalization(109)
 
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("BlackrockCavernsTrash")
+
+L:SetGeneralLocalization({
+	name =	"Blackrock Caverns Trash"
+})
+
 ---------------------
 --  The Deadmines  --
 ---------------------
@@ -61,7 +70,7 @@ L= DBM:GetModLocalization(90)
 L= DBM:GetModLocalization(91)
 
 L:SetOptionLocalization{
-	HarvestIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(88495)
+	HarvestIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(88495)
 }
 
 ----------------------
@@ -312,6 +321,15 @@ L= DBM:GetModLocalization(112)
 ------------------------
 L= DBM:GetModLocalization(113)
 
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("StonecoreTrash")
+
+L:SetGeneralLocalization({
+	name =	"Stonecore Trash"
+})
+
 ---------------------------
 --  The Vortex Pinnacle  --
 ---------------------------
@@ -328,14 +346,19 @@ L:SetMiscLocalization{
 --------------
 L= DBM:GetModLocalization(115)
 
-L:SetOptionLocalization({
-	BreathIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(88308)
-})
-
 -----------
 -- Asaad --
 -----------
 L= DBM:GetModLocalization(116)
+
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("VortexPinnacleTrash")
+
+L:SetGeneralLocalization({
+	name =	"Vortex Pinnacle Trash"
+})
 
 ---------------------------
 --  The Throne of Tides  --
@@ -366,6 +389,19 @@ L:SetTimerLocalization{
 L:SetOptionLocalization{
 	TimerPhase		= "Show timer for Phase 2"
 }
+
+L:SetMiscLocalization{
+	RolePlay		= "The beast has returned! It must not pollute my waters!"
+}
+
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("ThroneofTidesTrash")
+
+L:SetGeneralLocalization({
+	name =	"Throne of Tides Trash"
+})
 
 ----------------
 --  Zul'Aman  --
@@ -417,7 +453,7 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(188)
 
 L:SetOptionLocalization{
-	FlameIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(43140)
+	FlameIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(43140)
 }
 
 L:SetMiscLocalization{
@@ -475,8 +511,8 @@ L:SetTimerLocalization{
 L:SetOptionLocalization{
 	timerNextForm	= "Show timer for form changes.",
 	InfoFrame		= "Show info frame for players affected by $spell:42402",
-	ThrowIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(43093),
-	ClawRageIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(43150)
+	ThrowIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(43093),
+	ClawRageIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(43150)
 }
 
 L:SetMiscLocalization{
@@ -562,7 +598,7 @@ L:SetWarningLocalization{
 
 L:SetOptionLocalization{
 	WarnBarrierDown	= "Announce when Hakkar's Chains barrier down",
-	BodySlamIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(97198)
+	BodySlamIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(97198)
 }
 
 L:SetMiscLocalization{
@@ -665,14 +701,6 @@ L:SetMiscLocalization{
 --------------
 L= DBM:GetModLocalization(322)
 
-L:SetTimerLocalization{
-	TimerCombatStart	= "Combat starts"
-}
-
-L:SetOptionLocalization{
-	TimerCombatStart	= "Show timer for start of combat"
-}
-
 L:SetMiscLocalization{
 	Event		= "Show yourself!",
 	Pull		= "Twilight forces begin to appear around the canyons edges."
@@ -692,61 +720,6 @@ L:SetMiscLocalization{
 ---------------------------
 L= DBM:GetModLocalization(341)
 
-L:SetTimerLocalization{
-	TimerCombatStart	= "Combat starts"
-}
-
-L:SetOptionLocalization{
-	TimerCombatStart	= "Show timer for start of combat"
-}
-
 L:SetMiscLocalization{
 	Event		= "And now, Shaman, you will give the Dragon Soul to ME."
-}
-
---------------------
---  World Bosses  --
--------------------------
--- Akma'hat --
--------------------------
-L = DBM:GetModLocalization("Akmahat")
-
-L:SetGeneralLocalization{
-	name = "Akma'hat"
-}
-
------------
--- Garr --
-----------
-L = DBM:GetModLocalization("Garr")
-
-L:SetGeneralLocalization{
-	name = "Garr"
-}
-
-----------------
--- Julak-Doom --
-----------------
-L = DBM:GetModLocalization("JulakDoom")
-
-L:SetGeneralLocalization{
-	name = "Julak-Doom"
-}
-
------------
--- Mobus --
------------
-L = DBM:GetModLocalization("Mobus")
-
-L:SetGeneralLocalization{
-	name = "Mobus"
-}
-
------------
--- Xariona --
------------
-L = DBM:GetModLocalization("Xariona")
-
-L:SetGeneralLocalization{
-	name = "Xariona"
 }

@@ -133,16 +133,16 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 1.5 then
 			prev = t
-			self:Message(args.spellId, "blue", "Alert", CL.underyou:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alert", CL.underyou:format(args.spellName))
 		end
 	end
 end
 
 function mod:Enrage(args) -- Enrage / Held to Task
 	if self:Dispeller("enrage", true) then
-		self:TargetMessage(args.spellId, args.destName, "orange", "Warning", nil, nil, true)
+		self:TargetMessageOld(args.spellId, args.destName, "orange", "warning", nil, nil, true)
 	else
-		self:TargetMessage(args.spellId, args.destName, "yellow")
+		self:TargetMessageOld(args.spellId, args.destName, "yellow")
 	end
 end
 
@@ -157,7 +157,7 @@ do
 		end
 
 		local wound = self:SpellName(16405) -- Wound
-		scheduledPrints[args.destGUID] = self:ScheduleTimer("StackMessage", 0.2, args.spellId, args.destName, args.amount, "orange", "Warning", wound, nil, true)
+		scheduledPrints[args.destGUID] = self:ScheduleTimer("StackMessageOld", 0.2, args.spellId, args.destName, args.amount, "orange", "warning", wound, nil, true)
 		self:TargetBar(args.spellId, 60, args.destName, wound)
 	end
 
@@ -165,7 +165,7 @@ do
 		scheduledPrints[args.destGUID] = nil
 		local wound = self:SpellName(16405) -- Wound
 		self:StopBar(wound, args.destName)
-		self:Message(args.spellId, "green", nil, CL.other:format(CL.removed:format(wound), self:ColorName(args.destName)))
+		self:MessageOld(args.spellId, "green", nil, CL.other:format(CL.removed:format(wound), self:ColorName(args.destName)))
 	end
 end
 
@@ -174,7 +174,7 @@ end
 function mod:OverheadSmash(args)
 	if self:Tank(args.destName) then
 		self:TargetBar(args.spellId, 10, args.destName)
-		self:TargetMessage(args.spellId, args.destName, "orange", "Warning", nil, nil, true)
+		self:TargetMessageOld(args.spellId, args.destName, "orange", "warning", nil, nil, true)
 	end
 end
 
@@ -187,16 +187,16 @@ end
 --[[ Slagshop Brute ]]--
 
 function mod:LumberingStrength(args)
-	local icon = CombatLog_String_GetIcon(args.destRaidFlags)
+	local icon = self:GetIconTexture(self:GetIcon(args.destRaidFlags)) or ""
 	local warn = false
 	local npcUnit = self:GetUnitIdByGUID(args.destGUID)
 	if npcUnit then
 		for unit in self:IterateGroup() do
-			if UnitDetailedThreatSituation(unit, npcUnit) then
+			if self:Tanking(npcUnit, unit) then
 				warn = true
 				-- NPC gains the buff and chases the tank. We try to warn which tank is being chased.
-				self:TargetMessage(args.spellId, self:UnitName(unit), "red", "Warning", icon .. args.spellName)
-				if self:Me(UnitGUID(unit)) then
+				self:TargetMessageOld(args.spellId, self:UnitName(unit), "red", "warning", icon .. args.spellName)
+				if self:Me(self:UnitGUID(unit)) then
 					self:Flash(args.spellId)
 				end
 				break
@@ -205,7 +205,7 @@ function mod:LumberingStrength(args)
 	end
 	self:Bar(args.spellId, 8, icon .. args.spellName)
 	if not warn then
-		self:Message(args.spellId, "red", nil, icon .. args.spellName)
+		self:MessageOld(args.spellId, "red", nil, icon .. args.spellName)
 	end
 end
 
@@ -215,14 +215,14 @@ function mod:InsatiableHunger(args)
 	self:TargetBar(args.spellId, 8, args.destName)
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
-		self:TargetMessage(args.spellId, args.destName, "blue", "Alarm")
+		self:TargetMessageOld(args.spellId, args.destName, "blue", "alarm")
 	end
 end
 
 function mod:InsatiableHungerRemoved(args)
 	self:StopBar(args.spellName, args.destName)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "green", nil, CL.over:format(args.spellName))
+		self:MessageOld(args.spellId, "green", nil, CL.over:format(args.spellName))
 	end
 end
 
@@ -230,14 +230,14 @@ end
 
 function mod:FurnaceFlameFun(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "green", nil, L[("furnace_msg%d"):format(random(1,3))])
+		self:MessageOld(args.spellId, "green", nil, L[("furnace_msg%d"):format(random(1,3))])
 	end
 end
 
 --[[ Iron Earthbinder ]]--
 
 function mod:InfernoTotem(args)
-	self:Message(args.spellId, "orange", "Warning")
+	self:MessageOld(args.spellId, "orange", "warning")
 	self:Flash(args.spellId)
 end
 
@@ -255,27 +255,27 @@ function mod:LivingBlaze(args)
 		self:OpenProximity(args.spellId, 6)
 		self:Flash(args.spellId)
 		self:TargetBar(args.spellId, 10, args.destName)
-		self:TargetMessage(args.spellId, args.destName, "blue", "Alarm")
+		self:TargetMessageOld(args.spellId, args.destName, "blue", "alarm")
 	end
 end
 
 function mod:LivingBlazeRemoved(args)
 	self:StopBar(args.spellName, args.destName)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "green", nil, CL.over:format(args.spellName))
+		self:MessageOld(args.spellId, "green", nil, CL.over:format(args.spellName))
 		self:CloseProximity(args.spellId)
 	end
 end
 
 function mod:Burning(args)
 	if args.amount % 3 == 0 then
-		self:StackMessage(args.spellId, args.destName, args.amount, "orange")
+		self:StackMessageOld(args.spellId, args.destName, args.amount, "orange")
 	end
 end
 
 function mod:BurningRemoved(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "green", "Warning", CL.over:format(args.spellName))
+		self:MessageOld(args.spellId, "green", "warning", CL.over:format(args.spellName))
 	end
 end
 

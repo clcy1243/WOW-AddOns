@@ -7,7 +7,7 @@ BigWigs:AddColors("High Warlord Naj'entus", {
 BigWigs:AddColors("Supremus", {
 	[40126] = "yellow",
 	[40265] = "blue",
-	[41951] = {"blue","red"},
+	["fixate"] = {"blue","red"},
 	["stages"] = "cyan",
 })
 
@@ -67,8 +67,10 @@ BigWigs:AddColors("Illidan Stormrage", {
 	[40018] = {"blue","yellow"},
 	[40506] = {"green","red"},
 	[40585] = {"blue","red"},
+	[40611] = "blue",
 	[40683] = "orange",
 	[40695] = {"green","red"},
+	[40841] = "blue",
 	[40932] = {"blue","red"},
 	[41032] = {"blue","red"},
 	[41117] = "red",

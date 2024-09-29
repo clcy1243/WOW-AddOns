@@ -11,6 +11,7 @@ mod:RegisterEnableMob(
 	60709, 61423, -- Qiang the Merciless
 	60710, 61427 -- Subetai the Swift
 )
+mod:SetEncounterID(1436)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -56,7 +57,7 @@ function mod:GetOptions()
 		{118303, "SAY", "ICON"}, {117697, "FLASH"}, -- Zian
 		118047, 118122, 118094, {118162, "FLASH"}, -- Subetai
 		"cowardice", 117708, {117837, "DISPEL"}, -- Meng
-		"bosses", "proximity", "casting_shields", "berserk",
+		"bosses", "casting_shields", "berserk",
 	}, {
 		[117921] = -5841,
 		[118303] = -5852,
@@ -93,22 +94,20 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Delirious", 117837)
 
 	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1", "boss2", "boss3", "boss4")
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "EngageCheck")
-
-	self:Death("Win", 60701, 60708, 60709, 60710)
 end
 
 function mod:OnEngage()
 	self:Berserk(600)
-	wipe(bossActivated)
+	bossActivated = {}
 	if self:Heroic() then
 		self:Bar(117961, 40) -- Impervious Shield
-		self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "BossSwap", "boss1", "boss2", "boss3", "boss4")
+		self:RegisterUnitEvent("UNIT_HEALTH", "BossSwap", "boss1", "boss2", "boss3", "boss4")
 		bossWarned = 0
 	end
 	self:Bar(119521, 10) -- Annihilate
 	self:Bar(117910, 25) -- Flanking Orders
-	self:Message("bosses", "green", nil, qiang, 117920) -- Massive Attack icon
+	self:MessageOld("bosses", "green", nil, qiang, 117920) -- Massive Attack icon
+	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "BossCheck")
 end
 
 --------------------------------------------------------------------------------
@@ -119,7 +118,7 @@ local function isBossActiveById(bossId, bossIdTwo)
 	for i=1, 5 do
 		local unitId = ("boss%d"):format(i)
 		if UnitExists(unitId) then
-			local id = mod:MobId(UnitGUID(unitId))
+			local id = mod:MobId(mod:UnitGUID(unitId))
 			if id == bossId or id == bossIdTwo then
 				return true
 			end
@@ -138,40 +137,40 @@ do
 	function mod:CowardiceRemoved(args)
 		self:UnregisterUnitEvent("UNIT_POWER_FREQUENT", "boss1", "boss2", "boss3", "boss4")
 		prevPower = 0
-		self:Message("cowardice", "green", nil, CL["over"]:format(spellReflect), L.cowardice_icon)
+		self:MessageOld("cowardice", "green", nil, CL["over"]:format(spellReflect), L.cowardice_icon)
 	end
 	function mod:SpellReflectWarn(_, unitId)
-		local id = self:MobId(UnitGUID(unitId))
+		local id = self:MobId(self:UnitGUID(unitId))
 		if id == 60708 or id == 61429 then
 			local power = UnitPower(unitId)
 			if power > 74 and prevPower == 0 then
 				prevPower = 75
-				self:Message("cowardice", "yellow", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
+				self:MessageOld("cowardice", "yellow", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
 			elseif power > 84 and prevPower == 75 then
 				prevPower = 85
-				self:Message("cowardice", "orange", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
+				self:MessageOld("cowardice", "orange", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
 			elseif power > 89 and prevPower == 85 then
 				prevPower = 90
-				self:Message("cowardice", "blue", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
+				self:MessageOld("cowardice", "blue", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
 			elseif power > 92 and prevPower == 90 then
 				prevPower = 93
-				self:Message("cowardice", "blue", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
+				self:MessageOld("cowardice", "blue", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
 			elseif power > 96 and prevPower == 93 then
 				prevPower = 97
-				self:Message("cowardice", "blue", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
+				self:MessageOld("cowardice", "blue", nil, ("%s (%d%%)"):format(spellReflect, power), L.cowardice_icon)
 			end
 		end
 	end
 end
 
 function mod:MaddeningShout(args)
-	self:Message(args.spellId, "orange", "Alarm")
-	self:CDBar(args.spellId, isBossActiveById(60708, 61429) and 46.7 or 76)
+	self:MessageOld(args.spellId, "orange", "alarm")
+	self:Bar(args.spellId, isBossActiveById(60708, 61429) and 46.7 or 76)
 end
 
 function mod:Delirious(args)
 	if self:Dispeller("enrage", true, args.spellId) then
-		self:Message(args.spellId, "orange", "Alert")
+		self:MessageOld(args.spellId, "orange", "alert")
 		self:Bar(args.spellId, 20)
 	end
 end
@@ -180,7 +179,7 @@ end
 do
 	local pinnedTargets, scheduled = mod:NewTargetList(), nil
 	local function warnPinned(spellName)
-		mod:TargetMessage(118122, pinnedTargets, "red", "Alarm", spellName)
+		mod:TargetMessageOld(118122, pinnedTargets, "red", "alarm", spellName)
 		scheduled = nil
 	end
 	function mod:PinnedDown(args)
@@ -192,21 +191,21 @@ do
 end
 
 function mod:Pillage(args)
-	self:Message(args.spellId, "orange", "Alarm")
+	self:MessageOld(args.spellId, "orange", "alarm")
 	if isBossActiveById(60710, 61427) then
-		self:CDBar(args.spellId, 40)
+		self:Bar(args.spellId, 40)
 	else
 		self:Bar(args.spellId, 75.5)
 	end
 end
 
 function mod:Volley(args)
-	self:Message(args.spellId, "orange")
+	self:MessageOld(args.spellId, "orange")
 	self:Bar(args.spellId, 41)
 end
 
 function mod:SleightofHand(args)
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	self:Bar(args.spellId, 42)
 	self:Flash(args.spellId)
 end
@@ -215,13 +214,13 @@ end
 function mod:Fixate(args)
 	self:PrimaryIcon(args.spellId, args.destName)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Info")
-		self:Say(args.spellId, args.spellName)
+		self:MessageOld(args.spellId, "blue", "info")
+		self:Say(args.spellId, args.spellName, nil, "Fixate")
 	end
 end
 
 function mod:ShieldofDarkness(args)
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	self:Bar(args.spellId, 42)
 	self:Bar("casting_shields", 2, CL["cast"]:format(args.spellName), args.spellId)
 	self:Flash(args.spellId)
@@ -229,7 +228,7 @@ end
 
 -- Qiang
 function mod:FlankingOrders(args)
-	self:Message(args.spellId, "yellow", "Long")
+	self:MessageOld(args.spellId, "yellow", "long")
 	if isBossActiveById(60709, 61423) then
 		self:Bar(args.spellId, self:Heroic() and 45.7 or 41)
 	else
@@ -238,7 +237,7 @@ function mod:FlankingOrders(args)
 end
 
 function mod:Annihilate(args)
-	self:Message(119521, "orange", "Alarm")
+	self:MessageOld(119521, "orange", "alarm")
 	self:Bar(119521, self:Difficulty() == 6 and 32 or 39)
 	self:Bar(117921, 8) -- Massive Attack
 end
@@ -248,47 +247,44 @@ function mod:MassiveAttack(args)
 end
 
 function mod:ImperviousShield(args)
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	self:Bar(args.spellId, self:Difficulty() == 5 and 62 or 42)
 	self:Bar("casting_shields", 2, CL["cast"]:format(args.spellName), args.spellId)
 	self:Flash(args.spellId)
 end
 
 function mod:ShieldRemoved(args)
-	self:Message(args.spellId, "green", "Info", L["shield_removed"]:format(args.spellName))
+	self:MessageOld(args.spellId, "green", "info", L["shield_removed"]:format(args.spellName))
 end
 
-function mod:EngageCheck()
-	self:CheckBossStatus()
+function mod:BossCheck()
 	for i=1, 5 do
 		local unitId = ("boss%d"):format(i)
 		if UnitExists(unitId) then
-			local id = self:MobId(UnitGUID(unitId))
+			local id = self:MobId(self:UnitGUID(unitId))
 			-- this is needed because of heroic
 			if (id == 60701 or id == 61421) and not bossActivated[60701] then -- Zian
 				bossActivated[60701] = true
 				if self:Heroic() then
 					self:Bar(117697, 40) -- Shield of Darkness
 				end
-				self:OpenProximity("proximity", 8)
-				self:Message("bosses", "green", nil, zian, 117628) -- Shadow Blast icon
+				self:MessageOld("bosses", "green", nil, zian, 117628) -- Shadow Blast icon
 			elseif (id == 60710 or id == 61427) and not bossActivated[60710] then -- Subetai
 				bossActivated[60710] = true
 				if self:Heroic() then
 					self:Bar(118162, 15) -- Sleight of Hand
 				end
-				self:OpenProximity("proximity", 8)
 				self:Bar(118094, 5) -- Volley
 				self:Bar(118047, 26) -- Pillage
 				self:Bar(118122, self:Heroic() and 40 or 15) -- Rain of Arrows
-				self:Message("bosses", "green", nil, subetai, 118122) -- Rain of Arrows icon
+				self:MessageOld("bosses", "green", nil, subetai, 118122) -- Rain of Arrows icon
 			elseif (id == 60708 or id == 61429) and not bossActivated[60708] then -- Meng
 				bossActivated[60708] = true
-				self:CDBar(117708, self:Heroic() and 40 or 21) -- Maddening Shout
+				self:Bar(117708, self:Heroic() and 40 or 21) -- Maddening Shout
 				if self:Heroic() then
 					self:Bar(117837, 20) -- Delirious
 				end
-				self:Message("bosses", "green", nil, meng, 117833) -- Crazy Thought icon
+				self:MessageOld("bosses", "green", nil, meng, 117833) -- Crazy Thought icon
 			end
 		end
 	end
@@ -296,7 +292,7 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, unitId, _, spellId)
 	if spellId == 118205 then -- Inactive Visual
-		local id = self:MobId(UnitGUID(unitId))
+		local id = self:MobId(self:UnitGUID(unitId))
 		if (id == 60709 or id == 61423) then -- Qiang
 			self:StopBar(119521) -- Annihilate
 			self:StopBar(117961) -- Impervious Shield
@@ -304,43 +300,37 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, unitId, _, spellId)
 			self:Bar(117910, 30) -- Flanking Orders
 		elseif (id == 60701 or id == 61421) then -- Zian
 			self:StopBar(117697) -- Shield of Darkness
-			if not isBossActiveById(60710, 61427) then -- don't close if Subetai is active
-				self:CloseProximity()
-			end
 		elseif (id == 60710 or id == 61427) then -- Subetai
 			self:StopBar(118162) -- Sleight of Hand
 			self:StopBar(118094) -- Volley
 			self:StopBar(118122) -- Rain of Arrows
 			self:StopBar(118047) -- Pillage
 			self:Bar(118047, 30) -- Pillage
-			if not isBossActiveById(60701, 61421) then -- don't close if Zian is active
-				self:CloseProximity()
-			end
 		elseif (id == 60708 or id == 61429) then -- Meng
 			self:StopBar(117837)
-			self:CDBar(117708, 30) -- Maddening Shout
+			self:Bar(117708, 30) -- Maddening Shout
 		end
 	elseif spellId == 118121 then -- Rain of Arrows for Pinned Down
 		if self:Heroic() then
 			self:Bar(118122, 41) -- Rain of Arrows
 		else
-			self:CDBar(118122, 51) -- Rain of Arrows
+			self:Bar(118122, 51) -- Rain of Arrows
 		end
 	end
 end
 
-function mod:BossSwap(event, unitId)
-	local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+function mod:BossSwap(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp < 38 then -- next boss at 30% (Qiang -> Subetai -> Zian -> Meng)
-		local id = self:MobId(UnitGUID(unitId))
+		local id = self:MobId(self:UnitGUID(unit))
 		if bossWarned == 0 and (id == 60709 or id == 61423) then -- Qiang
-			self:Message("bosses", "green", "Info", CL["soon"]:format(subetai), false)
+			self:MessageOld("bosses", "green", "info", CL["soon"]:format(subetai), false)
 			bossWarned = 1
 		elseif bossWarned == 1 and (id == 60710 or id == 61427) then -- Subetai
-			self:Message("bosses", "green", "Info", CL["soon"]:format(zian), false)
+			self:MessageOld("bosses", "green", "info", CL["soon"]:format(zian), false)
 			bossWarned = 2
 		elseif bossWarned == 2 and (id == 60701 or id == 61421) then -- Zian
-			self:Message("bosses", "green", "Info", CL["soon"]:format(meng), false)
+			self:MessageOld("bosses", "green", "info", CL["soon"]:format(meng), false)
 			bossWarned = 3
 			self:UnregisterUnitEvent(event, "boss1", "boss2", "boss3", "boss4")
 		end

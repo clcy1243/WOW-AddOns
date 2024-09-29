@@ -6,8 +6,8 @@
 local mod, CL = BigWigs:NewBoss("Illidan Stormrage", 564, 1590)
 if not mod then return end
 mod:RegisterEnableMob(22917, 23089, 22997) -- Illidan Stormrage, Akama, Flame of Azzinoth
-mod.engageId = 609
-mod.respawnTime = 10
+mod:SetEncounterID(609)
+mod:SetRespawnTime(10)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -21,6 +21,7 @@ local inDemonPhase = false
 local isCaged = false
 local timer1, timer2 = nil, nil
 local fixateList = {}
+local castCollector = {}
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -94,13 +95,20 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "ShadowPrison", 40647)
 	self:Log("SPELL_AURA_REMOVED", "ShadowPrisonRemoved", 40647)
 	self:Log("SPELL_CAST_SUCCESS", "Frenzy", 40683)
-	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1")
-	self:RegisterUnitEvent("UNIT_AURA", nil, "boss1")
+	if self:Classic() then
+		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+		self:RegisterEvent("UNIT_AURA")
+	else
+		self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1")
+		self:RegisterUnitEvent("UNIT_AURA", nil, "boss1")
+	end
 
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 
-	self:Log("SPELL_DAMAGE", "Damage", 40841, 40611, 40018, 40030) -- Flame Crash, Blaze, Eye Blast, Demon Fire (Eye Blast)
-	self:Log("SPELL_MISSED", "Damage", 40841, 40611, 40018, 40030) -- Flame Crash, Blaze, Eye Blast, Demon Fire (Eye Blast)
+	self:Log("SPELL_DAMAGE", "DemonFireDamage", 40030) -- Demon Fire (Eye Blast)
+	self:Log("SPELL_MISSED", "DemonFireDamage", 40030) -- Demon Fire (Eye Blast)
+	self:Log("SPELL_DAMAGE", "Damage", 40841, 40611, 40018) -- Flame Crash, Blaze, Eye Blast
+	self:Log("SPELL_MISSED", "Damage", 40841, 40611, 40018) -- Flame Crash, Blaze, Eye Blast
 end
 
 function mod:OnEngage()
@@ -110,8 +118,9 @@ function mod:OnEngage()
 	barrageCount = 0
 	inDemonPhase = false
 	isCaged = false
-	wipe(playerList)
-	wipe(fixateList)
+	playerList = self:NewTargetList()
+	fixateList = {}
+	castCollector = {}
 
 	self:Berserk(1500)
 	self:RegisterTargetEvents("CheckForFixate")
@@ -123,33 +132,33 @@ end
 
 function mod:CheckForFixate(_, unit, guid)
 	local mobId = self:MobId(guid)
-	if mobId == 23498 and not fixateList[guid] and self:Me(UnitGUID(unit.."target")) then -- Parasitic Shadowfiend
+	if mobId == 23498 and not fixateList[guid] and self:Me(self:UnitGUID(unit.."target")) then -- Parasitic Shadowfiend
 		fixateList[guid] = true
-		self:Say(41917, 41951) -- 41951 = "Fixate"
-		self:Message(41917, "blue", "Long", CL.you:format(self:SpellName(41951)), 41951)
+		self:Say(41917, CL.fixate, nil, "Fixate")
+		self:MessageOld(41917, "blue", "long", CL.you:format(self:SpellName(41951)), 41951)
 	end
 end
 
 --[[ Stage One: You Are Not Prepared ]]--
 function mod:Shear(args)
-	self:TargetMessage(args.spellId, args.destName, "red", "Alert")
+	self:TargetMessageOld(args.spellId, args.destName, "red", "alert")
 	self:TargetBar(args.spellId, 7, args.destName)
 end
 
 function mod:ParasiticShadowfiend(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Long")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "long")
 	self:PrimaryIcon(args.spellId, args.destName)
 	self:TargetBar(args.spellId, 10, args.destName, 36469, args.spellId) -- 36469 = "Parasite"
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId, 36469) -- 36469 = "Parasite"
+		self:Say(args.spellId, CL.parasite, nil, "Parasite")
 	end
 end
 
 function mod:ParasiticShadowfiendFailure(args) -- The parasite reached someone new before it was killed
-	self:TargetMessage(41917, args.destName, "yellow")
+	self:TargetMessageOld(41917, args.destName, "yellow")
 	self:TargetBar(41917, 10, args.destName, 36469, 41917) -- 36469 = "Parasite"
 	if self:Me(args.destGUID) then
-		self:Say(41917, 36469) -- 36469 = "Parasite"
+		self:Say(41917, CL.parasite, nil, "Parasite")
 	end
 end
 
@@ -163,11 +172,11 @@ function mod:ThrowGlaive() -- Stage 2
 
 	self:PrimaryIcon(41917) -- Parasitic Shadowfiend
 	self:CDBar(40585, 95) -- Dark Barrage
-	self:Message("stages", "cyan", nil, CL.stage:format(2), false)
+	self:MessageOld("stages", "cyan", nil, CL.stage:format(2), false)
 end
 
 function mod:DarkBarrage(args)
-	self:TargetMessage(args.spellId, args.destName, "red", "Alert")
+	self:TargetMessageOld(args.spellId, args.destName, "red", "alert")
 	self:PrimaryIcon(args.spellId, args.destName)
 	barrageCount = barrageCount + 1
 	self:CDBar(args.spellId, 50) -- Varies between 50 and 70 depending on Eye Blast
@@ -180,7 +189,7 @@ function mod:DarkBarrageRemoved(args)
 end
 
 function mod:UncagedWrath(args)
-	self:Message(args.spellId, "orange", "Warning")
+	self:MessageOld(args.spellId, "orange", "warning")
 end
 
 do
@@ -188,7 +197,7 @@ do
 	function mod:EyeBlast(args)
 		local t = GetTime()
 		if t-prev > 2 then
-			self:Message(args.spellId, "yellow", "Info", args.spellName, 224284) -- XXX temp until it has an icon
+			self:MessageOld(args.spellId, "yellow", "info", args.spellName, "spell_fire_felflamebolt") -- doesn't have an icon
 		end
 		prev = t -- Continually spams every 1s during the cast
 	end
@@ -199,7 +208,7 @@ function mod:FlameDeath() -- Stage 3
 	flamesDead = flamesDead + 1
 	if flamesDead == 2 then
 		self:StopBar(40585) -- Dark Barrage
-		self:Message("stages", "cyan", "Alarm", CL.stage:format(3), false)
+		self:MessageOld("stages", "cyan", "alarm", CL.stage:format(3), false)
 		self:Bar(40506, 75) -- Demon Form
 		self:OpenProximity(40932, 5) -- Agonizing Flames
 	end
@@ -208,31 +217,31 @@ end
 function mod:AgonizingFlames(args)
 	playerList[#playerList+1] = args.destName
 	if #playerList == 1 then
-		self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "red", "Alert")
+		self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, playerList, "red", "alert")
 	end
 end
 
 function mod:FlameBurst(args)
 	burstCount = burstCount + 1
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	if burstCount < 3 then -- He'll only do three times before transforming again
 		self:Bar(args.spellId, 20)
 	end
 end
 
 function mod:SummonShadowDemons(args)
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 end
 
 --[[ Stage Four: The Long Hunt ]]--
 function mod:ShadowPrison(args) -- Pre Stage 4 Intermission
-	self:Message("stages", "cyan", nil, CL.intermission, false)
+	self:MessageOld("stages", "cyan", nil, CL.intermission, false)
 	self:Bar("stages", 30, CL.intermission, args.spellId)
 end
 
 function mod:ShadowPrisonRemoved(args) -- Stage 4
 	if self:MobId(args.destGUID) == 23089 then -- When debuff drops from Akama (downstairs)
-		self:Message("stages", "cyan", nil, CL.stage:format(4), false)
+		self:MessageOld("stages", "cyan", nil, CL.stage:format(4), false)
 
 		self:Bar(40683, 45) -- Frenzy
 		self:Bar(40506, 60) -- Demon Form
@@ -240,62 +249,79 @@ function mod:ShadowPrisonRemoved(args) -- Stage 4
 end
 
 function mod:Frenzy(args)
-	self:Message(args.spellId, "orange", "Long")
+	self:MessageOld(args.spellId, "orange", "long")
 	--self:Bar(args.spellId, ??) -- Frenzy
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
-	if spellId == 40693 then -- Cage Trap
-		self:Message(40695, "red", "Info", CL.spawned:format(self:SpellName(spellId)), 199341) -- 199341: ability_hunter_traplauncher / icon 461122
+function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, castGUID, spellId)
+	if spellId == 40693 and not castCollector[castGUID] then -- Cage Trap
+		castCollector[castGUID] = true
+		self:MessageOld(40695, "red", "info", CL.spawned:format(self:SpellName(spellId)), 199341) -- 199341: ability_hunter_traplauncher / icon 461122
 	end
 end
 
 function mod:UNIT_AURA(_, unit)
-	if self:UnitBuff(unit, self:SpellName(40506)) then -- Demon Form
-		if not inDemonPhase then
-			inDemonPhase = true
-			burstCount = 0
-			self:Bar(41117, 25) -- Summon Shadow Demons
-			self:Bar(41126, 15) -- Flame Burst
-			self:Message(40506, "red", "Alarm") -- Demon Form
-			local demonFormOver = CL.over:format(self:SpellName(40506))
-			self:Bar(40506, 60, demonFormOver)
-			timer1 = self:ScheduleTimer("Message", 60, 40506, "green", nil, demonFormOver) -- Demon Form
-			timer2 = self:ScheduleTimer("Bar", 60, 40506, 60) -- Demon Form
+	if self:MobId(self:UnitGUID(unit)) == 22917 then
+		if self:UnitBuff(unit, self:SpellName(40506), 40506) then -- Demon Form
+			if not inDemonPhase then
+				inDemonPhase = true
+				burstCount = 0
+				self:Bar(41117, 25) -- Summon Shadow Demons
+				self:Bar(41126, 15) -- Flame Burst
+				self:MessageOld(40506, "red", "alarm") -- Demon Form
+				local demonFormOver = CL.over:format(self:SpellName(40506))
+				self:Bar(40506, 60, demonFormOver)
+				timer1 = self:ScheduleTimer("MessageOld", 60, 40506, "green", nil, demonFormOver) -- Demon Form
+				timer2 = self:ScheduleTimer("Bar", 60, 40506, 60) -- Demon Form
+			end
+		elseif inDemonPhase then
+			inDemonPhase = false
+			self:CancelTimer(timer1)
+			self:CancelTimer(timer2)
+			timer1, timer2 = nil, nil
+			self:StopBar(CL.over:format(self:SpellName(40506))) -- Demon Form
+			self:StopBar(41117) -- Summon Shadow Demons
+			self:StopBar(41126) -- Flame Burst
 		end
-	elseif inDemonPhase then
-		inDemonPhase = false
-		self:CancelTimer(timer1)
-		self:CancelTimer(timer2)
-		timer1, timer2 = nil, nil
-		self:StopBar(CL.over:format(self:SpellName(40506))) -- Demon Form
-		self:StopBar(41117) -- Summon Shadow Demons
-		self:StopBar(41126) -- Flame Burst
-	end
 
-	if self:UnitDebuff(unit, self:SpellName(40695)) then -- Caged
-		if not isCaged then
-			isCaged = true
-			self:Message(40695, "green", "Warning")
-			self:Bar(40695, 15)
+		if self:UnitDebuff(unit, self:SpellName(40695), 40695) then -- Caged
+			if not isCaged then
+				isCaged = true
+				self:MessageOld(40695, "green", "warning")
+				self:Bar(40695, 15)
+			end
+		elseif isCaged then
+			isCaged = false
 		end
-	elseif isCaged then
-		isCaged = false
 	end
 end
 
 function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 	if msg == L.warmup_trigger then
-		self:Bar("warmup", 41.5, CL.active, "achievement_boss_illidan")
+		if self:Classic() then
+			self:Bar("warmup", 36, CL.active, "inv_weapon_glave_01")
+		else
+			self:Bar("warmup", 41.5, CL.active, "achievement_boss_illidan")
+		end
+	end
+end
+
+do
+	local prev = 0
+	function mod:DemonFireDamage(args) -- Demon Fire (Eye Blast)
+		if self:Me(args.destGUID) and args.time-prev > 1.5 then
+			prev = args.time
+			self:MessageOld(40018, "blue", "alert", CL.underyou:format(self:SpellName(40018)))
+		end
 	end
 end
 
 do
 	local prev = 0
 	function mod:Damage(args)
-		if self:Me(args.destGUID) and GetTime()-prev > 1.5 then
-			prev = GetTime()
-			self:Message(args.spellId == 40030 and 40018 or args.spellId, "blue", "Alert", CL.underyou:format(args.spellId == 40030 and self:SpellName(40018) or args.spellName))
+		if self:Me(args.destGUID) and args.time-prev > 1.5 then
+			prev = args.time
+			self:MessageOld(args.spellId, "blue", "alert", CL.underyou:format(args.spellName))
 		end
 	end
 end

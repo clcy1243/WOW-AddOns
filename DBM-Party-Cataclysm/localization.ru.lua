@@ -1,5 +1,4 @@
-﻿if GetLocale() ~= "ruRU" then return end
-
+if GetLocale() ~= "ruRU" then return end
 local L
 
 -------------------------
@@ -19,7 +18,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	WarnAdd		= "Сообщать когда на помощнике истекает эффект $spell:75608"
+	WarnAdd		= "Сообщать, когда на помощнике истекает эффект $spell:75608"
 })
 
 -----------------------
@@ -28,7 +27,7 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(107)
 
 L:SetTimerLocalization({
-	TimerSuperheated 	= "Перегретая броня (%d)"	-- not work with $spell:75846 :)
+	TimerSuperheated 	= "Перегретая броня (%d)"
 })
 
 L:SetOptionLocalization({
@@ -45,8 +44,13 @@ L= DBM:GetModLocalization(108)
 -----------------------------
 L= DBM:GetModLocalization(109)
 
-L:SetOptionLocalization({
-	SetIconOnBoss	= "Пометить босса иконкой после $spell:76200 "
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("BlackrockCavernsTrash")
+
+L:SetGeneralLocalization({
+	name =	"Трэш мобы Пещеры Черной горы"
 })
 
 ---------------------
@@ -67,7 +71,7 @@ L= DBM:GetModLocalization(90)
 L= DBM:GetModLocalization(91)
 
 L:SetOptionLocalization{
-	HarvestIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(88495)
+	HarvestIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(88495)
 }
 
 ----------------------
@@ -150,7 +154,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	WarnSplitSoon	= "Показывать предупреждение о надвигающемся разделении"
+	WarnSplitSoon	= "Предварительное предупреждение о разделении"
 })
 
 -------------
@@ -204,11 +208,11 @@ L= DBM:GetModLocalization(119)
 L= DBM:GetModLocalization(122)
 
 L:SetWarningLocalization{
-	specWarnPhase2Soon	= "2-ая фаза через 5 сек"
+	specWarnPhase2Soon	= "2-я фаза через 5 сек"
 }
 
 L:SetOptionLocalization{
-	specWarnPhase2Soon	= "Показывать особое предупреждение перед началом 2-ой фазы (5 сек)"
+	specWarnPhase2Soon	= "Спецпредупреждение перед началом 2-й фазы (5 сек)"
 }
 
 -----------------------
@@ -246,8 +250,8 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(99)
 
 L:SetWarningLocalization{
-	specWarnCoagulant	= "Зеленая смесь - двигайтесь!",	-- Green light
-	specWarnRedMix		= "Красная смесь - не двигайтесь!"		-- Red light
+	specWarnCoagulant	= "Зеленая смесь - двигайтесь!",
+	specWarnRedMix		= "Красная смесь - не двигайтесь!"
 }
 
 L:SetOptionLocalization{
@@ -301,11 +305,11 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	WarnAirphase				= "Показывать предупреждения когда Камнешкур взлетает",
-	WarnGroundphase				= "Показывать предупреждения когда Камнешкур приземляется",
-	TimerAirphase				= "Показывать таймер следующей воздушной фаза",
-	TimerGroundphase			= "Показывать таймер следующей наземной фаза",
-	specWarnCrystalStorm		= "Показывать особое предупреждение для $spell:92265"
+	WarnAirphase				= "Предупреждать, когда Камнешкур взлетает",
+	WarnGroundphase				= "Предупреждать, когда Камнешкур приземляется",
+	TimerAirphase				= "Показывать таймер для следующей воздушной фазы",
+	TimerGroundphase			= "Показывать таймер для следующей наземной фазы",
+	specWarnCrystalStorm		= "Спецпредупреждение для $spell:92265"
 })
 
 -----------
@@ -317,6 +321,15 @@ L= DBM:GetModLocalization(112)
 -- High Priestess Azil --
 ------------------------
 L= DBM:GetModLocalization(113)
+
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("StonecoreTrash")
+
+L:SetGeneralLocalization({
+	name =	"Трэш мобы Каменные Недра"
+})
 
 ---------------------------
 --  The Vortex Pinnacle  --
@@ -334,14 +347,19 @@ L:SetMiscLocalization{
 --------------
 L= DBM:GetModLocalization(115)
 
-L:SetOptionLocalization({
-	BreathIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(88308)
-})
-
 -----------
 -- Asaad --
 -----------
 L= DBM:GetModLocalization(116)
+
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("VortexPinnacleTrash")
+
+L:SetGeneralLocalization({
+	name =	"Трэш мобы Вершина Смерча"
+})
 
 ---------------------------
 --  The Throne of Tides  --
@@ -365,6 +383,23 @@ L= DBM:GetModLocalization(103)
 ------------
 L= DBM:GetModLocalization(104)
 
+L:SetTimerLocalization{
+	TimerPhase		= "2-я фаза"
+}
+
+L:SetOptionLocalization{
+	TimerPhase		= "Показывать таймер для 2-й фазы"
+}
+
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("ThroneofTidesTrash")
+
+L:SetGeneralLocalization({
+	name =	"Трэш мобы Трон Приливов"
+})
+
 ----------------
 --  Zul'Aman  --
 ----------------
@@ -384,7 +419,7 @@ L= DBM:GetModLocalization(187)
 L:SetWarningLocalization{
 	WarnBear		= "Облик медведя",
 	WarnBearSoon	= "Облик медведя через 5 секунд",
-	WarnNormal		= "Обычныый облик",
+	WarnNormal		= "Обычный облик",
 	WarnNormalSoon	= "Обычный облик через 5 секунд"
 }
 
@@ -415,7 +450,7 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(188)
 
 L:SetOptionLocalization{
-	FlameIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(43140)
+	FlameIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(43140)
 }
 
 L:SetMiscLocalization{
@@ -472,9 +507,9 @@ L:SetTimerLocalization{
 
 L:SetOptionLocalization{
 	timerNextForm	= "Отсчет времени до следующей смены формы",
-	InfoFrame		= "Показывать игроков без $spell:42402",
-	ThrowIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(97639),
-	ClawRageIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(97672)
+	InfoFrame		= "Показывать игроков, пораженных $spell:42402",
+	ThrowIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(43093),
+	ClawRageIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(43150)
 }
 
 L:SetMiscLocalization{
@@ -495,12 +530,12 @@ L= DBM:GetModLocalization(176)
 
 L:SetWarningLocalization{
 	WarnRevive		= "Осталось духов: %d",
-	SpecWarnOhgan	= "Оган возродился! Убейте его!" -- check this, i'm not good at English
+	SpecWarnOhgan	= "Оган возродился! Убейте его!"
 }
 
 L:SetOptionLocalization{
 	WarnRevive		= "Показывать количество оставшихся духов",
-	SpecWarnOhgan	= "Предупреждение, когда Оган возрождается" -- check this, i'm not good at English
+	SpecWarnOhgan	= "Предупреждение, когда Оган возрождается"
 }
 
 ----------------------
@@ -541,9 +576,8 @@ L:SetWarningLocalization{
 }
 
 L:SetOptionLocalization{
-	SpecWarnToxic	= "Спец-предупреждение, когда на вас нет $spell:96328",
-	InfoFrame		= "Показывать игроков без $spell:96328",
-	SetIconOnGaze	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(96342)
+	SpecWarnToxic	= "Спецпредупреждение, когда на Вас нет $spell:96328",
+	InfoFrame		= "Показывать игроков без $spell:96328"
 }
 
 L:SetMiscLocalization{
@@ -561,7 +595,7 @@ L:SetWarningLocalization{
 
 L:SetOptionLocalization{
 	WarnBarrierDown	= "Предупреждение, кода спадает барьер над цепями Хаккара",
-	BodySlamIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(97198)
+	BodySlamIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(97198)
 }
 
 L:SetMiscLocalization{
@@ -604,7 +638,7 @@ L= DBM:GetModLocalization(283)
 L= DBM:GetModLocalization(289)
 
 L:SetMiscLocalization{
-	Kill		= "Что… вы наделали... Аман'Тул... Я…видел…"
+	Kill		= "Что... вы наделали... Аман'тул... Я...видел..."
 }
 
 ------------------------
@@ -615,7 +649,7 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(290)
 
 L:SetMiscLocalization{
-	Pull		= "Кто закрыл порталы? Ах вы, пронырливые создания!"
+	Pull		= "Ни один смертный не сможет противостоять мне!"
 }
 
 -------------
@@ -665,6 +699,7 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(322)
 
 L:SetMiscLocalization{
+	Event		= "Покажи себя!",
 	Pull		= "На обрывах каньона появляются войска Сумрака."
 }
 
@@ -674,7 +709,7 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(342)
 
 L:SetMiscLocalization{
-	Pull		= "…ну а теперь перейдем к тебе и стайке твоих неуклюжих друзей. Я уж думала, вы сюда никогда не доберетесь!"
+	Pull		= "...ну а теперь перейдем к тебе и стайке твоих неуклюжих друзей. Я уж думала, вы сюда никогда не доберетесь!"
 }
 
 ---------------------------
@@ -682,53 +717,6 @@ L:SetMiscLocalization{
 ---------------------------
 L= DBM:GetModLocalization(341)
 
---------------------
---  World Bosses  --
--------------------------
--- Akma'hat --
--------------------------
-L = DBM:GetModLocalization("Akmahat")
-
-L:SetGeneralLocalization{
-	name = "Акма'хат"
-}
-
------------
--- Garr --
-----------
-L = DBM:GetModLocalization("Garr")
-
-L:SetGeneralLocalization{
-	name = "Гарр"
-}
-
-----------------
--- Julak-Doom --
-----------------
-L = DBM:GetModLocalization("JulakDoom")
-
-L:SetGeneralLocalization{
-	name = "Джулак-Рок"
-}
-
-L:SetOptionLocalization{
-	SetIconOnMC	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(93621)
-}
-
------------
--- Mobus --
------------
-L = DBM:GetModLocalization("Mobus")
-
-L:SetGeneralLocalization{
-	name = "Мобус"
-}
-
------------
--- Xariona --
------------
-L = DBM:GetModLocalization("Xariona")
-
-L:SetGeneralLocalization{
-	name = "Зариона"
+L:SetMiscLocalization{
+	Event		= "А теперь, шаман, ты отдашь Душу Дракона МНЕ."
 }

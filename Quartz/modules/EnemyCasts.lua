@@ -19,8 +19,6 @@
 local Quartz3 = LibStub("AceAddon-3.0"):GetAddon("Quartz3")
 local L = LibStub("AceLocale-3.0"):GetLocale("Quartz3")
 
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then return end
-
 local MODNAME = "EnemyCasts"
 local Enemy = Quartz3:NewModule(MODNAME, "AceEvent-3.0")
 
@@ -90,7 +88,7 @@ local castbars = setmetatable({}, {
 		bar:SetBackdropColor(0,0,0)
 		bar.Text = bar:CreateFontString(nil, "OVERLAY")
 		bar.TimeText = bar:CreateFontString(nil, "OVERLAY")
-		bar.Icon = bar:CreateTexture(nil, "DIALOG")
+		bar.Icon = bar:CreateTexture(nil, "ARTWORK")
 		if k == 1 then
 			bar:SetMovable(true)
 			bar:RegisterForDrag("LeftButton")
@@ -110,7 +108,7 @@ do
 		if entry then tblCache[entry] = nil else entry = {} end
 		return entry
 	end
-	
+
 	function del(t)
 		wipe(t)
 		tblCache[t] = true
@@ -163,8 +161,8 @@ end
 function Enemy:CLEUHandler()
 	if db.instanceonly and not IsInInstance() then return end
 	local timestamp, event, hideCaster, sGUID, sName, sFlags, sRaidFlags, dGUID, dName, dFlags, dRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
-	if 
-		bit_band(sFlags, COMBATLOG_OBJECT_REACTION_FRIENDLY) == COMBATLOG_OBJECT_REACTION_FRIENDLY or 
+	if
+		bit_band(sFlags, COMBATLOG_OBJECT_REACTION_FRIENDLY) == COMBATLOG_OBJECT_REACTION_FRIENDLY or
 		bit_band(sFlags, COMBATLOG_OBJECT_CONTROL_NPC) == 0
 	then
 		return
@@ -173,12 +171,21 @@ function Enemy:CLEUHandler()
 		if not casts[sGUID] then
 			casts[sGUID] = new()
 		end
-		local _, _, texture, castTime = GetSpellInfo(spellId)
+		local texture, castTime, _
+		if C_Spell and C_Spell.GetSpellInfo then
+			local info = C_Spell.GetSpellInfo(spellId)
+			if info then
+				texture = info.iconID
+				castTime = info.castTime
+			end
+		else
+			texture, castTime = select(3, GetSpellInfo(spellId))
+		end
 		casts[sGUID].name = sName
 		casts[sGUID].spellName = spellName
 		casts[sGUID].spellId = spellId
 		casts[sGUID].texture = texture
-		casts[sGUID].duration = castTime / 1000 * (1 + (GetCombatRatingBonus(CR_HASTE_SPELL) / 100))
+		casts[sGUID].duration = castTime / 1000 * (1 + (CR_HASTE_SPELL and (GetCombatRatingBonus(CR_HASTE_SPELL) / 100) or 0))
 		casts[sGUID].startTime = GetTime()
 		casts[sGUID].endTime = casts[sGUID].startTime + casts[sGUID].duration
 
@@ -194,7 +201,7 @@ do
 	local function onUpdate(bar)
 		local currentTime = GetTime()
 		local endTime = bar.endTime
-		
+
 		if currentTime > endTime then
 			Enemy:UpdateBars()
 		else
@@ -228,7 +235,7 @@ do
 			bar:Show()
 			bar:SetScript("OnUpdate", onUpdate)
 		end
-		
+
 		for i = #tmp+1, #castbars do
 			castbars[i]:Hide()
 		end
@@ -237,17 +244,17 @@ do
 end
 
 do
-	local function apply(i, bar, db, direction)
+	local function apply(i, bar, direction)
 		local position, showicons, iconside, gap, spacing, offset
-		local qpdb = Player.db.profile 
-		
+		local qpdb = Player.db.profile
+
 		position = db.position
 		showicons = db.icons
 		iconside = db.iconside
 		gap = db.gap
 		spacing = db.spacing
 		offset = db.offset
-		
+
 		bar:ClearAllPoints()
 		bar:SetStatusBarTexture(media:Fetch("statusbar", db.texture))
 		bar:SetStatusBarColor(unpack(db.barcolor))
@@ -255,7 +262,7 @@ do
 		bar:SetHeight(db.height)
 		bar:SetScale(qpdb.scale)
 		bar:SetAlpha(db.alpha)
-		
+
 		if db.anchor == "free" then
 			if i == 1 then
 				bar:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", db.x, db.y)
@@ -282,7 +289,7 @@ do
 				else -- L["Player"]
 					anchorframe = Player.Bar
 				end
-				
+
 				if position == "top" then
 					direction = 1
 					bar:SetPoint("BOTTOM", anchorframe, "TOP", 0, gap)
@@ -346,7 +353,7 @@ do
 				end
 			end
 		end
-		
+
 		local timetext = bar.TimeText
 		if db.timetext then
 			timetext:Show()
@@ -363,12 +370,12 @@ do
 		timetext:SetTextColor(unpack(db.textcolor))
 		timetext:SetNonSpaceWrap(false)
 		timetext:SetHeight(db.height)
-		
+
 		local temptext = timetext:GetText()
 		timetext:SetText("10.0")
 		local normaltimewidth = timetext:GetStringWidth()
 		timetext:SetText(temptext)
-		
+
 		local text = bar.Text
 		if db.nametext then
 			text:Show()
@@ -389,7 +396,7 @@ do
 		text:SetTextColor(unpack(db.textcolor))
 		text:SetNonSpaceWrap(false)
 		text:SetHeight(db.height)
-		
+
 		local icon = bar.Icon
 		if showicons then
 			icon:Show()
@@ -405,7 +412,7 @@ do
 		else
 			icon:Hide()
 		end
-		
+
 		return direction
 	end
 
@@ -420,7 +427,7 @@ do
 				castbars[1]:SetScript("OnDragStop", nil)
 			end
 			for i, v in pairs(castbars) do
-				direction = apply(i, v, db, direction)
+				direction = apply(i, v, direction)
 			end
 		end
 	end

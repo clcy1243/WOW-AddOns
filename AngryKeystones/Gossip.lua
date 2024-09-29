@@ -2,9 +2,15 @@ local ADDON, Addon = ...
 local Mod = Addon:NewModule('Gossip')
 
 local npcBlacklist = {
-	[107435] = true, [112697] = true, [112699] = true, [107486] = true, -- Suspicous Noble
+	[107435] = true, [112697] = true, [112699] = true, -- Suspicous Noble
 	[101462] = true, -- Reaves
+	[166663] = true, -- Kyrian Steward
 }
+local npcWhitelist = {
+	[197300] = true, -- Azure Vault, Book of Translocation
+}
+
+local cosRumorNPC = 107486
 
 local function GossipNPCID()
 	local guid = UnitGUID("npc")
@@ -39,27 +45,45 @@ local function IsInActiveChallengeMode()
 	return false
 end
 
+function Mod:CoSRumor()
+	local clue = C_GossipInfo.GetText()
+	local shortClue = Addon.Locale:Rumor(clue)
+	if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+		SendChatMessage(shortClue or clue, "INSTANCE_CHAT")
+	elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
+		SendChatMessage(shortClue or clue, "PARTY")
+	else
+		SendChatMessage(shortClue or clue, "SAY")
+	end
+end
+
 function Mod:GOSSIP_SHOW()
 	local npcId = GossipNPCID()
+	local options = C_GossipInfo.GetOptions()
+	local numOptions = #options
+
+	if Addon.Config.cosRumors and Addon.Locale:HasRumors() and npcId == cosRumorNPC and numOptions == 0 then
+		self:CoSRumor()
+		C_GossipInfo.CloseGossip()
+	end
+
+	if numOptions ~= 1 then return end -- only automate one gossip option
+
 	if Addon.Config.autoGossip and IsInActiveChallengeMode() and not npcBlacklist[npcId] then
-		local options = {GetGossipOptions()}
-		for i = 1, GetNumGossipOptions() do
-			if options[i*2] == "gossip" then
-				local popupWasShown = IsStaticPopupShown()
-				SelectGossipOption(i)
-				local popupIsShown = IsStaticPopupShown()
-				if popupIsShown then
-					if not popupWasShown then
-						StaticPopup1Button1:Click()
-						CloseGossip()
-					end
-				else
-					CloseGossip()
+		if npcWhitelist[npcId] or options[1].icon == 132053 or options[1].icon == 1019848 then -- the gossip icon, prevents auto-opening repair options etc
+			local popupWasShown = IsStaticPopupShown()
+			C_GossipInfo.SelectOption(options[1].gossipOptionID)
+			local popupIsShown = IsStaticPopupShown()
+			if popupIsShown then
+				if not popupWasShown then
+					StaticPopup1Button1:Click()
+					C_GossipInfo.CloseGossip()
 				end
-				break
+			else
+				C_GossipInfo.CloseGossip()
 			end
 		end
-	end
+	end	
 end
 
 local function PlayCurrent()
@@ -78,6 +102,8 @@ function Mod:Blizzard_TalkingHeadUI()
 end
 
 function Mod:Startup()
+	if not AngryKeystones_Data then AngryKeystones_Data = {} end
+
 	self:RegisterEvent("GOSSIP_SHOW")
 
 	self:RegisterAddOnLoaded("Blizzard_TalkingHeadUI")

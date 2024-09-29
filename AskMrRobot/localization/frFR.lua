@@ -17,33 +17,36 @@ L.SpecsShort = {
     [7] = "Feral", -- DruidFeral
     [8] = "Bear", -- DruidGuardian
     [9] = "Resto", -- DruidRestoration
-    [10] = "BM", -- HunterBeastMastery
-    [11] = "Marks", -- HunterMarksmanship
-    [12] = "Survival", -- HunterSurvival
-    [13] = "Arcane", -- MageArcane
-    [14] = "Fire", -- MageFire
-    [15] = "Frost", -- MageFrost
-    [16] = "Brew", -- MonkBrewmaster
-    [17] = "Mist", -- MonkMistweaver
-    [18] = "Wind", -- MonkWindwalker
-    [19] = "Holy", -- PaladinHoly
-    [20] = "Prot", -- PaladinProtection
-    [21] = "Ret", -- PaladinRetribution
-    [22] = "Disc", -- PriestDiscipline
-    [23] = "Holy", -- PriestHoly
-    [24] = "Shadow", -- PriestShadow
-    [25] = "Assn", -- RogueAssassination
-    [26] = "Outlaw", -- RogueOutlaw
-    [27] = "Sub", -- RogueSubtlety
-    [28] = "Elem", -- ShamanElemental
-    [29] = "Enh", -- ShamanEnhancement
-    [30] = "Resto", -- ShamanRestoration
-    [31] = "Aff", -- WarlockAffliction
-    [32] = "Demo", -- WarlockDemonology
-    [33] = "Destro", -- WarlockDestruction
-    [34] = "Arms", -- WarriorArms
-    [35] = "Fury", -- WarriorFury
-    [36] = "Prot", -- WarriorProtection
+    [10] = "Devastate", -- EvokerDevastation
+    [11] = "Preserve", -- EvokerPreservation
+    [12] = "Augment", -- EvokerAugmentation
+    [13] = "BM", -- HunterBeastMastery
+    [14] = "Marks", -- HunterMarksmanship
+    [15] = "Survival", -- HunterSurvival
+    [16] = "Arcane", -- MageArcane
+    [17] = "Fire", -- MageFire
+    [18] = "Frost", -- MageFrost
+    [19] = "Brew", -- MonkBrewmaster
+    [20] = "Mist", -- MonkMistweaver
+    [21] = "Wind", -- MonkWindwalker
+    [22] = "Holy", -- PaladinHoly
+    [23] = "Prot", -- PaladinProtection
+    [24] = "Ret", -- PaladinRetribution
+    [25] = "Disc", -- PriestDiscipline
+    [26] = "Holy", -- PriestHoly
+    [27] = "Shadow", -- PriestShadow
+    [28] = "Assn", -- RogueAssassination
+    [29] = "Outlaw", -- RogueOutlaw
+    [30] = "Sub", -- RogueSubtlety
+    [31] = "Elem", -- ShamanElemental
+    [32] = "Enh", -- ShamanEnhancement
+    [33] = "Resto", -- ShamanRestoration
+    [34] = "Aff", -- WarlockAffliction
+    [35] = "Demo", -- WarlockDemonology
+    [36] = "Destro", -- WarlockDestruction
+    [37] = "Arms", -- WarriorArms
+    [38] = "Fury", -- WarriorFury
+    [39] = "Prot", -- WarriorProtection
 }
 
 -- stat strings for e.g. displaying gem/enchant abbreviations, make as short as possible without being confusing/ambiguous
@@ -75,7 +78,14 @@ L.InstanceNames = {
     [2070] = "Dazar'alor",
     [2096] = "Crucible of Storms",
     [2164] = "The Eternal Palace",
-    [2217] = "Ny'alotha"
+    [2217] = "Ny'alotha",    
+    [2296] = "Castle Nathria",
+    [2450] = "Sanctum of Domination",
+    [2481] = "Sepulcher of the First Ones",
+    [2522] = "Vault of the Incarnates",
+    [2569] = "Aberrus, the Shadowed Crucible",
+    [2549] = "Amirdrassil, the Dream's Hope",
+    [2657] = "Nerub-ar Palace"
 }
 
 L.DifficultyNames = {
@@ -191,6 +201,8 @@ L.GearTipCommands =
 [[/amr equip [1-4]
 pas d'argument = cycle]]
 -- note to translators: the slash commands are literal and should stay as english
+
+L.GearTalentError1 = "Unable to load your AMR setup talents at this time."
 
 
 --[[----------------------------------------------------------------------
@@ -308,6 +320,12 @@ L.OptionsJunkVendorDesc = "Whenever you open the scrapper or a vendor, automatic
 
 L.OptionsShopAhName = "Voir la shopping list automatiquement à l'hôtel des ventes"
 L.OptionsShopAhDesc = "Quand tu ouvres l'hôtel des ventes, la fenêtre de la shopping list s'ouvre automatiquement. Tu peux cliquer sur un item dans la shopping list pour le chercher automatiquement dans l'hôtel des ventes."
+
+L.OptionsDisableEmName = "Disable creating Equipment Manager sets"
+L.OptionsDisableEmDesc = "A Blizzard Equipment Manager set is created whenever you equip an AMR gear set, useful for marking items in your optimized sets. Check to disable this behavior if desired."
+
+L.OptionsDisableTalName = "Do not change talents when changing gear sets"
+L.OptionsDisableTalDesc = "A setup sent to the addon contains the selected talents and gear for that setup. Check this if you don't want the addon to automatically choose those talents when swapping gear."
 
 -- TODO
 L.OptionsUiScaleName = "Ask Mr. Robot UI scale"

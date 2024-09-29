@@ -4,27 +4,23 @@ if L then
 	L.storm_duration = "閃電風暴持續時間"
 	L.storm_duration_desc = "為閃電風暴的持續時間顯示單獨的計時條。"
 	L.storm_short = "閃電風暴"
-
-	L.in_water = ">你<在水中！"
 end
 
 L = BigWigs:NewBossLocale("Horridon", "zhTW")
 if L then
-	L.focus_only = "|cffff0000只警報專注目標。|r "
-
 	L.charge_trigger = "用力拍動尾巴!"
 	L.door_trigger = "的門蜂擁而出!"
 	--L.orb_trigger = "charge" -- PLAYERNAME forces Horridon to charge the Farraki door!
 
-	L.chain_lightning_desc = L.focus_only .. "{-7124}"
+	L.chain_lightning_desc = "|cffff0000只警報專注目標。|r {-7124}"
 	L.chain_lightning_message = "你的專注目標正在施展閃電鏈！"
 	L.chain_lightning_bar = "專注目標：閃電鏈"
 
-	L.fireball_desc = L.focus_only .. "{-7122}"
+	L.fireball_desc = "|cffff0000只警報專注目標。|r {-7122}"
 	L.fireball_message = "你的專注目標正在施展火球術！"
 	L.fireball_bar = "專注目標：火球術"
 
-	L.venom_bolt_volley_desc = L.focus_only .. "{-7112}"
+	L.venom_bolt_volley_desc = "|cffff0000只警報專注目標。|r {-7112}"
 	L.venom_bolt_volley_message = "你的專注目標正在施展毒箭之雨！"
 	L.venom_bolt_volley_bar = "專注目標：毒箭之雨"
 
@@ -147,14 +143,7 @@ L = BigWigs:NewBossLocale("Iron Qon", "zhTW")
 if L then
 	L.molten_energy = "熔岩之力"
 
-	L.overload_casting = "正在施放 熔岩超載"
-	L.overload_casting_desc = "當正在施放熔岩超載時發出警報。"
-
 	L.arcing_lightning_cleared = "弧光閃電"
-
-	L.custom_off_spear_target = "投擲長矛目標"
-	L.custom_off_spear_target_desc = "嘗試警報投擲長矛目標。將提高CPU使用率，有時會顯示錯誤的目標，預設關閉。\n|cFFADFF2F提示：設置為坦克角色會有助於提高警報準確性。|r"
-	L.possible_spear_target = "預測長矛目標"
 end
 
 L = BigWigs:NewBossLocale("Twin Consorts", "zhTW")

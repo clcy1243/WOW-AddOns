@@ -1,4 +1,4 @@
-Get [VuhDo release v3.112](https://www.curseforge.com/wow/addons/vuhdo/download/2898609) now with support for patch 8.3.0 Visions of N'Zoth!
+Get [VuhDo release v3.175](https://www.curseforge.com/wow/addons/vuhdo/download/5704709) now with support for The War Within pre-patch 11.0.2!
 
 To get started read the updated [guide over at Icy-Veins](https://www.icy-veins.com/forums/topic/11805-vuhdo-a-comprehensive-guide/).
 
@@ -33,7 +33,7 @@ What VuhDo can do:
 - Shields
 
 2. Casting
-- You can heal, decurse, target, assist or focus raid memers with just one click
+- You can heal, decurse, target, assist or focus raid members with just one click
 - You can bind any usable item and any macro to mouse clicks
 - You can assign up to 40 mouse click combinations to cast on raid members
 - You can assign up to 16 keys to cast when mouse over

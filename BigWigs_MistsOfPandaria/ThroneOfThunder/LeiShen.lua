@@ -24,7 +24,7 @@ local whipCounter = 1
 local function isConduitAlive(mobId)
 	for i=1, 5 do
 		local boss = ("boss%d"):format(i)
-		if mobId == mod:MobId(UnitGUID(boss)) then
+		if mobId == mod:MobId(mod:UnitGUID(boss)) then
 			return boss
 		end
 	end
@@ -68,7 +68,7 @@ function mod:GetOptions()
 		{136478, "TANK"}, {136543, "PROXIMITY"}, {136850, "FLASH"},
 		{136914, "TANK"}, 136889,
 		{135695, "PROXIMITY"}, {"shock_self", "SAY", "FLASH", "EMPHASIZE", "COUNTDOWN"}, {135991, "PROXIMITY"}, 136295, {"overcharged_self", "SAY"}, 136366,
-		"stages", {"aoe_grip", "SAY"}, "stuns", "berserk", "proximity",
+		"stages", "berserk", "proximity",
 	}, {
 		["custom_off_diffused_marker"] = L.custom_off_diffused_marker,
 		[139011] = "heroic",
@@ -109,7 +109,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Overcharged", 136295)
 	self:Log("SPELL_CAST_SUCCESS", "DiffusionChain", 135991)
 	self:Log("SPELL_DAMAGE", "DiffusionChainDamage", 135991) -- add spawn
-	self:Log("SPELL_MISS", "DiffusionChainDamage", 135991) -- add spawn
+	self:Log("SPELL_MISSED", "DiffusionChainDamage", 135991) -- add spawn
 	self:Log("SPELL_AURA_REMOVED", "DiffusionChainRemoved", 135681)
 	self:Log("SPELL_AURA_APPLIED", "DiffusionChainApplied", 135681)
 	self:Log("SPELL_AURA_REMOVED", "StaticShockRemoved", 135695)
@@ -126,12 +126,12 @@ function mod:OnEngage()
 	ballLightningTimer = nil
 	phase = 1
 	tooCloseForOvercharged = nil
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
-	self:CDBar(134912, 40) -- Decapitate
-	self:CDBar(135095, 25) -- Thunderstruck
-	wipe(adds)
-	wipe(marksUsed)
-	wipe(activeProximityAbilities)
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
+	self:Bar(134912, 40) -- Decapitate
+	self:Bar(135095, 25) -- Thunderstruck
+	adds = {}
+	marksUsed = {}
+	activeProximityAbilities = {}
 	thunderstruckCounter = 1
 	whipCounter = 1
 
@@ -177,7 +177,7 @@ do
 	end
 
 	function mod:UPDATE_MOUSEOVER_UNIT()
-		local GUID = UnitGUID("mouseover")
+		local GUID = self:UnitGUID("mouseover")
 		if not GUID then return end
 		local mobId = self:MobId(GUID)
 		if mobId == 69014 or mobId == 69012 or mobId == 69013 then
@@ -185,7 +185,7 @@ do
 				adds[GUID] = "marked"
 				local mark = getMark()
 				if mark then
-					SetRaidTarget("mouseover", mark)
+					self:CustomIcon(false, "mouseover", mark)
 					marksUsed[mark] = GUID
 				end
 			end
@@ -199,7 +199,7 @@ do
 				local mark = getMark()
 				if unitId and mark then
 					adds[GUID] = "marked"
-					SetRaidTarget(unitId, mark)
+					self:CustomIcon(false, unitId, mark)
 					marksUsed[mark] = GUID
 				end
 			end
@@ -249,7 +249,7 @@ end
 do
 	local helmOfCommandList, scheduled = mod:NewTargetList(), nil
 	local function warnHelmOfCommand(spellId)
-		mod:TargetMessage(spellId, helmOfCommandList, "orange", "Alert")
+		mod:TargetMessageOld(spellId, helmOfCommandList, "orange", "alert")
 		scheduled = nil
 	end
 	function mod:HelmOfCommand(args)
@@ -271,7 +271,7 @@ end
 
 function mod:ElectricalShock(args)
 	if args.amount % 5 == 0 then -- don't be too spammy, should be taunting when your debuff wears off (somewhere between 10 and 15)
-		self:StackMessage(args.spellId, args.destName, args.amount, "red", "Warning", L["shock"])
+		self:StackMessageOld(args.spellId, args.destName, args.amount, "red", "warning", L["shock"])
 	end
 end
 
@@ -281,17 +281,17 @@ end
 
 do
 	local function whipSoon(spellId, spellName)
-		mod:Message(spellId, "red", "Warning", CL["soon"]:format(CL["count"]:format(spellName, whipCounter)))
+		mod:MessageOld(spellId, "red", "warning", CL["soon"]:format(CL["count"]:format(spellName, whipCounter)))
 		mod:Flash(spellId)
 	end
 	function mod:LightningWhip(args)
 		if phase == 3 then
-			self:Message(args.spellId, "orange", "Alert", CL["count"]:format(args.spellName, whipCounter))
+			self:MessageOld(args.spellId, "orange", "alert", CL["count"]:format(args.spellName, whipCounter))
 			whipCounter = whipCounter + 1
 			self:Bar(args.spellId, 30.3, CL["count"]:format(args.spellName, whipCounter))
 			self:ScheduleTimer(whipSoon, 27, args.spellId, args.spellName)
 		else
-			self:Message(args.spellId, "orange", "Alert")
+			self:MessageOld(args.spellId, "orange", "alert")
 			self:Bar(args.spellId, 45.1)
 		end
 	end
@@ -304,7 +304,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 then
 			prev = t
-			self:Message(136850, "blue", "Info", CL["underyou"]:format(args.spellName))
+			self:MessageOld(136850, "blue", "info", CL["underyou"]:format(args.spellName))
 			self:Flash(136850)
 		end
 	end
@@ -313,7 +313,7 @@ end
 do
 	local prev = 0
 	local function warnBallsSoon(spellId)
-		mod:Message(spellId, "yellow", nil, CL["soon"]:format(mod:SpellName(136620)))
+		mod:MessageOld(spellId, "yellow", nil, CL["soon"]:format(mod:SpellName(136620)))
 		activeProximityAbilities[3] = true
 		updateProximity()
 		ballLightningTimer = nil
@@ -329,14 +329,14 @@ do
 			end
 			ballLightningTimer = self:ScheduleTimer(warnBallsSoon, 41, args.spellId)-- reopen it when new balls are about to come
 			self:Bar(args.spellId, 46, 136620)
-			self:Message(args.spellId, "yellow", nil, 136620)
+			self:MessageOld(args.spellId, "yellow", nil, 136620)
 		end
 	end
 end
 
 function mod:FusionSlash(args)
-	self:CDBar(args.spellId, 42)
-	self:Message(args.spellId, "red", "Warning")
+	self:Bar(args.spellId, 42)
+	self:MessageOld(args.spellId, "red", "warning")
 end
 
 ----------------------------------------
@@ -344,7 +344,7 @@ end
 --
 
 local function warnDiffusionChainSoon(intermission)
-	mod:Message(135991, "red", intermission or not mod:Tank() and "Warning", CL["soon"]:format(mod:SpellName(135991)))
+	mod:MessageOld(135991, "red", intermission or not mod:Tank() and "warning", CL["soon"]:format(mod:SpellName(135991)))
 	activeProximityAbilities[2] = true
 	updateProximity()
 end
@@ -355,44 +355,44 @@ function mod:IntermissionEnd(msg)
 	self:StopBar(135695) -- Static Shock
 	self:StopBar(136366) -- Bouncing Bolt
 	self:StopBar(135991) -- Diffusion Chain
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1") -- just to be efficient
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1") -- just to be efficient
 
 	-- stage 2
 	activeProximityAbilities[2] = true
 	updateProximity()
 	if phase == 2 then
-		self:CDBar(136478, 46) -- Fusion Slash
+		self:Bar(136478, 46) -- Fusion Slash
 		self:Bar(136850, 29) -- Lightning Whip
 		if self:Heroic() then -- XXX these are probably not time based either and need to add abilities for all conduits
 			if msg:find("135681") then -- Diffusion Adds
-				self:CDBar(135991, 14)
+				self:Bar(135991, 14)
 			elseif msg:find("135682") then -- Overcharged
-				self:CDBar(136295, 14)
+				self:Bar(136295, 14)
 			elseif msg:find("135683") then -- Bouncing Bolt
-				self:CDBar(136366, 14)
+				self:Bar(136366, 14)
 			elseif msg:find("135680") then -- Static Shock
-				self:CDBar(135695, 14)
+				self:Bar(135695, 14)
 			end
 		end
 	elseif phase == 3 then -- XXX should start bars for already disabled conduits too
-		self:CDBar(135095, 36, CL["count"]:format(self:SpellName(135095), thunderstruckCounter)) -- Thunderstruck
+		self:Bar(135095, 36, CL["count"]:format(self:SpellName(135095), thunderstruckCounter)) -- Thunderstruck
 		self:Bar(136850, 22, CL["count"]:format(self:SpellName(136850), whipCounter)) -- Lightning Whip
-		self:CDBar(136889, 20) -- Violent Gale Winds
+		self:Bar(136889, 20) -- Violent Gale Winds
 		if self:Heroic() then
 			if msg:find("135681") then -- Diffusion Adds
-				self:CDBar(135991, 28)
+				self:Bar(135991, 28)
 			elseif msg:find("135682") then -- Overcharged
-				self:CDBar(136295, 28)
+				self:Bar(136295, 28)
 			elseif msg:find("135683") then -- Bouncing Bolt
-				self:CDBar(136366, 30)
+				self:Bar(136366, 30)
 			elseif msg:find("135680") then -- Static Shock
-				self:CDBar(135695, 28)
+				self:Bar(135695, 28)
 			end
 		end
 	end
 	self:Bar(136543, (phase == 2) and 14 or 41, 136620) -- Ball Lightning
 
-	self:Message("stages", "cyan", "Info", CL["phase"]:format(phase), false)
+	self:MessageOld("stages", "cyan", "info", CL["phase"]:format(phase), false)
 end
 
 function mod:IntermissionStart(args)
@@ -411,23 +411,23 @@ function mod:IntermissionStart(args)
 	self:StopBar(136850) -- Lightning Whip
 	self:StopBar(136620) -- Ball Lightning
 	self:StopBar(136478) -- Furious Slash
-	self:UnregisterUnitEvent("UNIT_HEALTH_FREQUENT", "boss1") -- just to be efficient
+	self:UnregisterUnitEvent("UNIT_HEALTH", "boss1") -- just to be efficient
 	activeProximityAbilities[4] = nil
 	local diff = self:Difficulty()
 	if diff == 3 or diff == 5 or diff == 7 then -- 10 mans and assume LFR too
-		if isConduitAlive(68398) then self:CDBar(135695, 18) end -- Static Shock
-		if isConduitAlive(68697) then self:CDBar(136295, 7) end -- Overcharged
-		if isConduitAlive(68698) then self:CDBar(136366, 8.5) end -- Bouncing Bolt
+		if isConduitAlive(68398) then self:Bar(135695, 18) end -- Static Shock
+		if isConduitAlive(68697) then self:Bar(136295, 7) end -- Overcharged
+		if isConduitAlive(68698) then self:Bar(136366, 8.5) end -- Bouncing Bolt
 		if isConduitAlive(68696) then
-			self:CDBar(135991, 7)
+			self:Bar(135991, 7)
 			self:ScheduleTimer(warnDiffusionChainSoon, 2, true)
 		end
 	else -- 25 man
-		if isConduitAlive(68398) then self:CDBar(135695, 19) end -- Static Shock
-		if isConduitAlive(68697) then self:CDBar(136295, 7) end -- Overcharged
-		if isConduitAlive(68698) then self:CDBar(136366, 14) end -- Bouncing Bolt
+		if isConduitAlive(68398) then self:Bar(135695, 19) end -- Static Shock
+		if isConduitAlive(68697) then self:Bar(136295, 7) end -- Overcharged
+		if isConduitAlive(68698) then self:Bar(136366, 14) end -- Bouncing Bolt
 		if isConduitAlive(68696) then
-			self:CDBar(135991, 6)
+			self:Bar(135991, 6)
 			self:ScheduleTimer(warnDiffusionChainSoon, 1, true)
 		end
 	end
@@ -435,18 +435,18 @@ function mod:IntermissionStart(args)
 		self:Bar(139011, 14) -- Helm of Command
 	end
 	self:Bar("stages", 47, CL.intermission, args.spellId)
-	self:Message("stages", "cyan", "Info", CL.intermission, false)
+	self:MessageOld("stages", "cyan", "info", CL.intermission, false)
 	self:DelayedMessage("stages", 40, "green", L["last_inermission_ability"])
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unitId)
-	local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+function mod:UNIT_HEALTH(event, unit)
+	local hp = self:GetHealth(unit)
 	if phase == 1 and hp < 68 then
-		self:Message("stages", "cyan", "Info", CL["soon"]:format(CL.intermission), false)
+		self:MessageOld("stages", "cyan", "info", CL["soon"]:format(CL.intermission), false)
 		phase = 2
 	elseif phase == 2 and hp < 33 then
-		self:Message("stages", "cyan", "Info", CL["soon"]:format(CL.intermission), false)
-		self:UnregisterUnitEvent(event, unitId)
+		self:MessageOld("stages", "cyan", "info", CL["soon"]:format(CL.intermission), false)
+		self:UnregisterUnitEvent(event, unit)
 		phase = 3
 	end
 end
@@ -462,7 +462,7 @@ do
 		local t = GetTime()
 		if t-prev > 1 then
 			prev = t
-			self:Message(135150, "blue", "Info", CL["underyou"]:format(args.spellName))
+			self:MessageOld(135150, "blue", "info", CL["underyou"]:format(args.spellName))
 			self:Flash(135150)
 		end
 	end
@@ -470,18 +470,18 @@ end
 
 function mod:Thunderstruck(args)
 	if phase == 3 then
-		self:Message(args.spellId, "yellow", "Alert", CL["count"]:format(args.spellName, thunderstruckCounter))
+		self:MessageOld(args.spellId, "yellow", "alert", CL["count"]:format(args.spellName, thunderstruckCounter))
 		thunderstruckCounter = thunderstruckCounter + 1
 		self:Bar(args.spellId, 30, CL["count"]:format(args.spellName, thunderstruckCounter))
 	else
-		self:CDBar(args.spellId, 46)
-		self:Message(args.spellId, "yellow", "Alert")
+		self:Bar(args.spellId, 46)
+		self:MessageOld(args.spellId, "yellow", "alert")
 	end
 end
 
 function mod:Decapitate(args)
-	self:CDBar(args.spellId, 50)
-	self:TargetMessage(args.spellId, args.destName, "blue", "Warning", nil, nil, true)
+	self:Bar(args.spellId, 50)
+	self:TargetMessageOld(args.spellId, args.destName, "blue", "warning", nil, nil, true)
 	if self:Tank() then
 		self:Flash(args.spellId)
 	end
@@ -500,16 +500,16 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, unit, _, spellId)
 			if phase == 1 or not self:Heroic() then stopConduitAbilityBars() end
 			self:Bar(136366, 40)
 		end
-		self:Message(136366, "red", "Long")
+		self:MessageOld(136366, "red", "long")
 	elseif spellId == 136869 then -- Violent Gale Winds
-		self:Message(136889, "red", "Long")
+		self:MessageOld(136889, "red", "long")
 		self:Bar(136889, 30)
 	elseif spellId == 135143 then -- Crashung Thunder
-		self:Message(135150, "yellow")
+		self:MessageOld(135150, "yellow")
 		self:Bar(135150, 30)
 	elseif spellId == 139006 or spellId == 139007 or spellId == 139008 or spellId == 139009 then -- active quadrant
 		if self:Heroic() and phase == 3 then
-			self:Message("stages", "yellow", nil, spellName, 136913) -- probably shouldn't be linked to stages, but dunno anything better -- overwhelming power icon
+			self:MessageOld("stages", "yellow", nil, self:SpellName(spellId), 136913) -- probably shouldn't be linked to stages, but dunno anything better -- overwhelming power icon
 		end
 	end
 end
@@ -524,12 +524,12 @@ do
 			mod:Bar(spellId, 40)
 		end
 
-		mod:TargetMessage(spellId, overchargedList, "orange", "Alarm", nil, nil, true)
+		mod:TargetMessageOld(spellId, overchargedList, "orange", "alarm", nil, nil, true)
 		if not overchargedOnMe then
 			mod:Bar(spellId, 6, L["overcharge_bar"])
 		end
 		if not tooCloseForOvercharged then
-			mod:Message(spellId, "green", nil, L["safe_from_stun"], false)
+			mod:MessageOld(spellId, "green", nil, L["safe_from_stun"], false)
 		end
 		tooCloseForOvercharged = nil
 		overchargedOnMe = nil
@@ -537,7 +537,7 @@ do
 	end
 	function mod:Overcharged(args)
 		if self:Me(args.destGUID) then
-			self:Say("overcharged_self", args.spellId)
+			self:Say("overcharged_self", args.spellId, nil, "Overcharged")
 			self:TargetBar("overcharged_self", 6, args.destName, args.spellId)
 			overchargedOnMe = true
 		end
@@ -565,9 +565,9 @@ do
 	local function warnDiffusionAdds()
 		local intermission = not UnitExists("boss1") -- poor mans intermission check
 		if #diffusionList > 0 then
-			mod:TargetMessage(135991, diffusionList, "red", intermission and "Warning", L["diffusion_add"], nil, true)
+			mod:TargetMessageOld(135991, diffusionList, "red", intermission and "warning", L["diffusion_add"], nil, true)
 		else -- no one in range
-			mod:Message(135991, "red", intermission and "Warning")
+			mod:MessageOld(135991, "red", intermission and "warning")
 		end
 		if intermission then
 			mod:Bar(135991, 25)
@@ -581,7 +581,7 @@ do
 		updateProximity()
 	end
 	function mod:DiffusionChain(args)
-		wipe(diffusionList)
+		diffusionList = mod:NewTargetList()
 		self:ScheduleTimer(warnDiffusionAdds, 0.2)
 		if self.db.profile.custom_off_diffused_marker and not markerTimer then
 			markerTimer = self:ScheduleRepeatingTimer("MarkCheck", 0.2)
@@ -638,13 +638,13 @@ do
 			if phase == 1 or not mod:Heroic() then stopConduitAbilityBars() end
 			mod:Bar(135695, 40)
 		end
-		mod:TargetMessage(spellId, coloredNames, "green", "Info", nil, nil, true) -- green because everyone should be friendly and hug the person with it
+		mod:TargetMessageOld(spellId, coloredNames, "green", "info", nil, nil, true) -- green because everyone should be friendly and hug the person with it
 		if not staticShockOnMe and not mod:Heroic() then
 			mod:Bar(spellId, 8, L["static_shock_bar"])
 		end
 		scheduled = nil
 		staticShockOnMe = nil
-		wipe(staticShockList)
+		staticShockList = {}
 	end
 	local timeLeft, timer = 8, nil
 	local function staticShockSayCountdown()
@@ -661,7 +661,7 @@ do
 			timeLeft = 8
 			staticShockOnMe = true
 			self:Flash("shock_self", args.spellId)
-			self:Say("shock_self", args.spellId)
+			self:Say("shock_self", args.spellId, nil, "Static Shock")
 			self:TargetBar("shock_self", 8, args.destName, args.spellId)
 			if not self:LFR() then -- Don't spam in LFR
 				timer = self:ScheduleRepeatingTimer(staticShockSayCountdown, 1)

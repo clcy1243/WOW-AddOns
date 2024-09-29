@@ -1,4 +1,3 @@
-﻿
 -- @EXACT = true: Translation has to be the exact(!) match in the clients language,
 --                beacause it carries technical semantics
 -- @EXACT = false: Translation can be done freely, because text is only descriptive
@@ -57,6 +56,7 @@ VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566opt|r[ions] - 
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566res|r[et] - Reset Panel Positions";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566lock|r - Toggle Panel Lock";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566mm, map, minimap|r - Toggle Minimap Icon";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566compart|r[ment] - Toggle AddOn Compartment Icon";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566show, hide, toggle|r - Turn Panels on/off";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566load|r - [Profile],[Key Layout]";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n[broad]|cffffe566cast, mt|r[s] - Broadcast maintanks";
@@ -243,6 +243,7 @@ VUHDO_I18N_BOUQUET_STATUS_THREAT = "Statusbar: Threat %";
 VUHDO_I18N_BOUQUET_NEW_ITEM_NAME = "-- enter (de)buff here --";
 VUHDO_I18N_DEF_BOUQUET_TANK_COOLDOWNS = "Tank Cooldowns";
 VUHDO_I18N_DEF_BOUQUET_PW_S_WEAKENED_SOUL = "PW:S & Weakened Soul";
+VUHDO_I18N_DEF_BOUQUET_MONK_STAGGER = "Monk Stagger";
 VUHDO_I18N_DEF_BOUQUET_BORDER_MULTI_AGGRO = "Border: Multi + Aggro";
 VUHDO_I18N_DEF_BOUQUET_BORDER_MULTI = "Border: Multi";
 VUHDO_I18N_DEF_BOUQUET_BORDER_SIMPLE = "Border: Simple";
@@ -346,7 +347,8 @@ VUHDO_I18N_SPELL_LAYOUT_NOT_EXIST = "Spell layout \"%s\" doesn't exist.";
 --VUHDO_I18N_ADDON_WARNING = "WARNING: Addon |cffffffff\"%s\"|r is enabled along with VuhDo, which may be problematic. Reason: %s";
 --VUHDO_I18N_MAY_CAUSE_LAGS = "May cause severe lags.";
 
-VUHDO_I18N_DISABLE_BY_VERSION = "!!! VUHDO IS DISABLED !!! This version is for client versions %d and above only !!!"
+VUHDO_I18N_DISABLE_BY_MIN_VERSION = "!!! VUHDO IS DISABLED !!! This version (%s) is for client versions %d and above only !!!"
+VUHDO_I18N_DISABLE_BY_MAX_VERSION = "!!! VUHDO IS DISABLED !!! This version (%s) is for client versions %d and below only !!!"
 
 VUHDO_I18N_BOUQUET_STATUS_ALTERNATE_POWERS = "Statusbar: Altern. Power %"
 VUHDO_I18N_BOUQUET_ALTERNATE_POWERS_ABOVE = "Flag: Altern.Power > %";
@@ -363,8 +365,10 @@ VUHDO_I18N_DEF_BOUQUET_TARGET_HEALTH = "Health (generic, target)";
 
 VUHDO_I18N_TAPPED_COLOR = "Flag: Tapped";
 VUHDO_I18N_ENEMY_STATE_COLOR = "Color: Friend/Foe";
-VUHDO_I18N_BOUQUET_STATUS_ALWAYS_FULL = "Statusbar: always full";
-VUHDO_I18N_BOUQUET_STATUS_FULL_IF_ACTIVE = "Statusbar: full if active";
+VUHDO_I18N_FRIEND_STATUS = "Flag: Friend";
+VUHDO_I18N_FOE_STATUS = "Flag: Foe";
+VUHDO_I18N_BOUQUET_STATUS_ALWAYS_FULL = "Statusbar: Always Full";
+VUHDO_I18N_BOUQUET_STATUS_FULL_IF_ACTIVE = "Statusbar: Full if active";
 VUHDO_I18N_AOE_ADVICE = "Icon: AOE Advice";
 VUHDO_I18N_DEF_AOE_ADVICE = "AOE Advice";
 
@@ -402,7 +406,7 @@ VUHDO_I18N_BOUQUET_STATUS_CLASS_COLOR_IF_ACTIVE = "Flag: Class Color if active";
 
 VUHDO_I18N_LETHAL_POISONS = "Lethal Poisons";
 VUHDO_I18N_NON_LETHAL_POISONS = "Non-lethal Poisons";
-VUHDO_I18N_DEF_COUNTER_SHIELD_ABSORB = "Counter: All Shield Absorb #k"
+VUHDO_I18N_DEF_COUNTER_SHIELD_ABSORB = "Counter: All Shield Absorb #k";
 VUHDO_I18N_BUFFC_WEAPON_ENCHANT_OFF = "Weapon Enchant (offhand)";
 
 VUHDO_I18N_DEF_PVP_FLAGS="PvP Flag Carriers";
@@ -486,3 +490,63 @@ VUHDO_I18N_PLAY_SOUND_FILE_ERR = "Could not play sound \"%s\": %s";
 VUHDO_I18N_PLAY_SOUND_FILE_DEBUFF_ERR = "Could not play sound \"%s\" for standard debuff. Adjust your settings under 'VuhDo Options > Debuffs > Standard > Debuff Sound'.";
 VUHDO_I18N_PLAY_SOUND_FILE_CUSTOM_DEBUFF_ERR = "Could not play sound \"%s\" for custom debuff \"%s\". Adjust your settings under 'VuhDo Options > Debuffs > Custom'.";
 
+-- 3.122
+VUHDO_I18N_BOUQUET_STATUS_POWER_TANK_ONLY = "Statusbar: Power % (Tank Only)";
+VUHDO_I18N_DEF_BOUQUET_BAR_MANA_TANK_ONLY = "Manabars: Power (Tank Only)";
+
+-- 3.131
+VUHDO_I18N_DEF_COUNTER_HEAL_ABSORB = "Counter: All Heal Absorb #k";
+VUHDO_I18N_DEF_STATUS_HEAL_ABSORB = "Statusbar: Heal Absorb";
+
+-- 3.135
+VUHDO_I18N_TRINKET_1 = "Trinket 1";
+VUHDO_I18N_TRINKET_2 = "Trinket 2";
+
+-- 3.139
+VUHDO_I18N_EVOKERS = "Evokers";
+
+-- 3.143
+VUHDO_I18N_BUFFC_EARTH_SHIELD = "Earth Shield (Self)";
+
+-- 3.150
+VUHDO_I18N_ADDON_COMPARTMENT_ICON = "AddOn Compartment Icon is now ";
+
+-- 3.152
+VUHDO_I18N_SPELL_TRACE_SINGLE = "Icon: Spell Trace (Single)";
+
+-- 3.154
+VUHDO_I18N_SPELL_TRACE_INCOMING = "Icon: Spell Trace (Incoming)";
+VUHDO_I18N_SPELL_TRACE_HEAL = "Icon: Spell Trace (Heal)";
+
+-- 3.157
+VUHDO_I18N_TEXT_PROVIDER_OVERHEAL = "Overheal: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_OVERHEAL_PLUS = "Overheal: +<#n>k";
+VUHDO_I18N_TEXT_PROVIDER_INCOMING_HEAL = "Incoming Heal: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_SHIELD_ABSORB = "Shield absorb total: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_HEAL_ABSORB = "Heal absorb total: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_THREAT = "Threat: <#n>%";
+VUHDO_I18N_TEXT_PROVIDER_CHI = "Chi: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_HOLY_POWER = "Holy Power: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_COMBO_POINTS = "Combo Points: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_SOUL_SHARDS = "Soul Shards: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_RUNES = "Runes: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_ARCANE_CHARGES = "Arcane Charges: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_PERCENT = "Mana: <#n>%";
+VUHDO_I18N_TEXT_PROVIDER_MANA_PERCENT_TENTH = "Mana: <#n/10%>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_UNIT_OF = "Mana: <#n>/<#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_KILO_OF = "Mana: <#nk>/<#nk>";
+VUHDO_I18N_TEXT_PROVIDER_MANA = "Mana: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_KILO = "Mana: <#nk>";
+VUHDO_I18N_BOUQUET_STATUS_HEALTH_IF_ACTIVE = "Statusbar: Health % if active";
+
+VUHDO_I18N_DEF_COUNTER_ACTIVE_AURAS = "Counter: Active Bouquet Auras #k";
+
+VUHDO_I18N_BOUQUET_EVOKER_REVERSION = "Evoker Reversion (non-echo)";
+VUHDO_I18N_BOUQUET_EVOKER_REVERSION_ECHO = "Evoker Reversion (echo)";
+VUHDO_I18N_BOUQUET_EVOKER_DREAM_BREATH = "Evoker Dream Breath (non-echo)";
+VUHDO_I18N_BOUQUET_EVOKER_DREAM_BREATH_ECHO = "Evoker Dream Breath (echo)";
+VUHDO_I18N_BOUQUET_EVOKER_ALL_ECHO = "Evoker All HoT Echoes";
+
+VUHDO_I18N_TRAIL_OF_LIGHT_NEXT = "Flag: Trail of Light (Next)";
+VUHDO_I18N_DEF_TRAIL_OF_LIGHT_NEXT = "Trail of Light (Next)";
+VUHDO_I18N_BOUQUET_DEBUFF_BLEED = "Flag: Debuff Bleed";

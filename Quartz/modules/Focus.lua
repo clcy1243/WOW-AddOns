@@ -19,7 +19,8 @@
 local Quartz3 = LibStub("AceAddon-3.0"):GetAddon("Quartz3")
 local L = LibStub("AceLocale-3.0"):GetLocale("Quartz3")
 
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then return end
+-- Focus is not available on all clients
+if not FocusFrameSpellBar then return end
 
 local MODNAME = "Focus"
 local Focus = Quartz3:NewModule(MODNAME, "AceEvent-3.0")
@@ -27,6 +28,8 @@ local Focus = Quartz3:NewModule(MODNAME, "AceEvent-3.0")
 ----------------------------
 -- Upvalues
 local UnitIsEnemy, UnitIsFriend, UnitIsUnit = UnitIsEnemy, UnitIsFriend, UnitIsUnit
+
+local WoWRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
 
 local db, getOptions
 
@@ -38,7 +41,7 @@ local defaults = {
 		h = 18,
 		w = 200,
 		texture = "LiteStep",
-		
+
 		showfriendly = true,
 		showhostile = true,
 		showtarget = true,
@@ -90,10 +93,10 @@ end
 function Focus:OnInitialize()
 	self.db = Quartz3.db:RegisterNamespace(MODNAME, defaults)
 	db = self.db.profile
-	
+
 	self:SetEnabledState(Quartz3:GetModuleEnabled(MODNAME))
 	Quartz3:RegisterModuleOptions(MODNAME, getOptions, L["Focus"])
-	
+
 	self.Bar = Quartz3.CastBarTemplate:new(self, "focus", MODNAME, L["Focus"], db)
 end
 
@@ -113,7 +116,7 @@ function Focus:OnDisable()
 end
 
 function Focus:PreShowCondition(bar, unit)
-	if (not db.showfriendly and UnitIsFriend("player", unit)) or 
+	if (not db.showfriendly and UnitIsFriend("player", unit)) or
 	   (not db.showhostile and UnitIsEnemy("player", unit)) or
 	   (not db.showtarget and UnitIsUnit("target", unit)) then
 		return true
@@ -122,7 +125,7 @@ end
 
 function Focus:ApplySettings()
 	db = self.db.profile
-	
+
 	-- obey the hideblizz setting no matter if disabled or not
 	if db.hideblizz then
 		FocusFrameSpellBar.RegisterEvent = function() end
@@ -134,13 +137,19 @@ function Focus:ApplySettings()
 		FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_START", "focus")
 		FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "focus")
 		FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "focus")
-		FocusFrameSpellBar:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-		FocusFrameSpellBar:RegisterEvent("UNIT_SPELLCAST_DELAYED")
-		FocusFrameSpellBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-		FocusFrameSpellBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-		FocusFrameSpellBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-		FocusFrameSpellBar:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
-		FocusFrameSpellBar:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
+		FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "focus")
+		FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", "focus")
+		FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "focus")
+		FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "focus")
+		FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "focus")
+		if WoWRetail then
+			FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", "focus")
+			FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", "focus")
+			FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", "focus")
+			FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "focus")
+			FocusFrameSpellBar:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "focus")
+		end
+
 		FocusFrameSpellBar:RegisterEvent("PLAYER_ENTERING_WORLD")
 		FocusFrameSpellBar:RegisterEvent("PLAYER_FOCUS_CHANGED")
 		FocusFrameSpellBar:RegisterEvent("CVAR_UPDATE")

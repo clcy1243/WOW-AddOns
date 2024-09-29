@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("StratWaves", "DBM-Party-WotLK", 3)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+mod:SetRevision("20240412191704")
 
 mod:RegisterEvents(
 	"UPDATE_UI_WIDGET",
@@ -15,21 +15,18 @@ local warningWaveNow	= mod:NewAnnounce("WarningWaveNow", 3)
 local timerWaveIn		= mod:NewTimer(20, "TimerWaveIn", 57687, nil, nil, 1)
 local timerRoleplay		= mod:NewTimer(162, "TimerRoleplay")
 
-local meathook = EJ_GetEncounterInfo(611)
-local salramm = EJ_GetEncounterInfo(612)
-
 --TODO, fix waves
 local wavesNormal = {
 	{2, L.Devouring},
 	{2, L.Devouring},
 	{2, L.Devouring},
 	{2, L.Devouring},
-	{meathook},
+	{DBM_COMMON_L.BOSS},
 	{2, L.Devouring},
 	{2, L.Devouring},
 	{2, L.Devouring},
 	{2, L.Devouring},
-	{salramm},
+	{DBM_COMMON_L.BOSS},
 }
 
 local wavesHeroic = {
@@ -37,12 +34,12 @@ local wavesHeroic = {
 	{1, L.Devouring, 1, L.Enraged, 1, L.Necro},
 	{1, L.Devouring, 1, L.Enraged, 1, L.Necro, 1, L.Fiend},
 	{1, L.Necro, 4, L.Acolyte, 1, L.Fiend},
-	{meathook},
+	{DBM_COMMON_L.BOSS},
 	{1, L.Devouring, 1, L.Necro, 1, L.Fiend, 1, L.Stalker},
 	{1, L.Devouring, 2, L.Enraged, 1, L.Abom},
 	{1, L.Devouring, 1, L.Enraged, 1, L.Necro, 1, L.Abom},
 	{1, L.Devouring, 1, L.Necro, 1, L.Fiend, 1, L.Abom},
-	{salramm},
+	{DBM_COMMON_L.BOSS},
 }
 
 local lastWave	= 0
@@ -69,21 +66,22 @@ end
 
 function mod:UPDATE_UI_WIDGET(table)
 	local id = table.widgetID
-	if id ~= 541 then return end
+	if id ~= 541 and id ~= 3870 then return end
 	local widgetInfo = C_UIWidgetManager.GetIconAndTextWidgetVisualizationInfo(id)
-	local text = widgetInfo.text
-	if not text then return end
-	local wave = text:match("(%d+).+10")
-	if not wave then
-		wave = 0
-	end
-	wave = tonumber(wave)
-	if wave < lastWave then
-		lastWave = 0
-	end
-	if wave > lastWave then
-		warningWaveNow:Show(wave, getWaveString(self, wave))
-		lastWave = wave
+	if widgetInfo and widgetInfo.text then
+		local text = widgetInfo.text
+		local wave = text:match("(%d+).+10")
+		if not wave then
+			wave = 0
+		end
+		wave = tonumber(wave) or 0
+		if wave < lastWave then
+			lastWave = 0
+		end
+		if wave > lastWave then
+			warningWaveNow:Show(wave, getWaveString(self, wave))
+			lastWave = wave
+		end
 	end
 end
 

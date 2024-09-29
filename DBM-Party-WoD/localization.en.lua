@@ -87,6 +87,10 @@ L:SetWarningLocalization({
 -----------------------
 L= DBM:GetModLocalization(1133)
 
+L:SetMiscLocalization({
+	Rakun	= "Rakun"
+})
+
 -------------
 --  GRD Trash  --
 -------------
@@ -120,7 +124,7 @@ L= DBM:GetModLocalization(1237)
 L= DBM:GetModLocalization(1238)
 
 -----------------------
--- <<<Overgrown Outpost>>> --
+-- <<<EverBloom>>> --
 -----------------------
 -----------------------
 -- Witherbark --
@@ -151,6 +155,19 @@ L:SetMiscLocalization({
 -----------------------
 L= DBM:GetModLocalization(1210)
 
+L:SetMiscLocalization({
+	YalnuRP	= "The portal is lost! We must stop this beast before it can escape!"
+})
+
+-----------------------
+-- Trash --
+-----------------------
+L = DBM:GetModLocalization("EverBloomTrash")
+
+L:SetGeneralLocalization({
+	name =	"EverBloom Trash"
+})
+
 -----------------------
 -- <<<Shadowmoon Buriel Grounds>>> --
 -----------------------
@@ -173,6 +190,15 @@ L= DBM:GetModLocalization(1140)
 -- Ner'zhul --
 -----------------------
 L= DBM:GetModLocalization(1160)
+
+-------------
+--  SMBG Trash  --
+-------------
+L = DBM:GetModLocalization("SMBGTrash")
+
+L:SetGeneralLocalization({
+	name =	"SMBG Trash"
+})
 
 -----------------------
 -- <<<Skyreach>>> --

@@ -9,16 +9,15 @@ L.flagRespawns = "旗帜即将刷新"
 
 L.takenTheFlagTrigger = "^(.+)夺走了旗帜！"
 L.hasTakenTheTrigger = "夺取了"
-L.upgradeToTrigger = "升级到"
 L.droppedTrigger = "丢掉了"
 L.capturedTheTrigger = "夺取"
 
 L.hordeGate = "部落大门"
 L.allianceGate = "联盟大门"
 L.gatePosition = "%s（%s）"
-L.west = "西"
-L.front = "前"
-L.east = "东"
+L.west = "机场"
+L.front = "工坊"
+L.east = "码头"
 L.hordeBoss = "部落将军"
 L.allianceBoss = "联盟将军"
 L.galvangar = "加尔范上尉"
@@ -26,6 +25,8 @@ L.balinda = "巴琳达"
 L.ivus = "伊弗斯"
 L.lokholar = "洛克霍拉"
 L.handIn = "|cFF33FF99Capping|r: 自动交任务物品。"
+L.anchorTooltip = "|cffeda55f右击|r打开选项"
+L.anchorTooltipNote = "打开选项并锁定来隐藏移动锚点。"
 
 --- Alliance IoC Workshop yells:
 -- 侏儒技师喊道：我就要完成了！挡住那帮部落的家伙。他们可不是在工程学校进行战斗教学！
@@ -56,3 +57,15 @@ L.mainEntrance = "堡垒塔楼之门（最后一面墙）"
 L.westTower = "影目塔楼（西塔）"
 L.southTower = "冬缘塔楼（南塔）"
 L.eastTower = "火光塔楼（东塔）"
+
+-- Ashran
+L.hordeGuardian = "部落守卫"
+L.allianceGuardian = "联盟守卫"
+L.kronus = "克鲁努斯"
+L.fangraal = "范加尔"
+
+-- Arena
+L.arenaStartTrigger = "竞技场战斗开始了！"
+L.arenaStart60s = "竞技场战斗将在一分钟后开始！"
+L.arenaStart30s = "竞技场战斗将在三十秒后开始！"
+L.arenaStart15s = "竞技场战斗将在十五秒后开始！"

@@ -1,11 +1,11 @@
-local mod	= DBM:NewMod(1756, "DBM-BrokenIsles", nil, 822)
+local mod	= DBM:NewMod(1756, "DBM-BrokenIsles", 1, 822)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200110163156")
+mod:SetRevision("20240422191412")
 mod:SetCreatureID(106981, 106982, 106984)--Captain Hring, Reaver Jdorn, Soultrapper Mevra
 mod:SetEncounterID(1879)
 mod:SetReCombatTime(20)
-mod:SetZone()
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 mod:RegisterCombat("combat")
 
@@ -30,7 +30,7 @@ local warnMaraudingMists			= mod:NewCastAnnounce(213665, 3)
 local specWarnCursedCrew			= mod:NewSpecialWarningSwitch(213522, "-Healer", nil, nil, 1, 2)
 --Reaver Jdorn
 local specWarnScuttle				= mod:NewSpecialWarningYou(213584, nil, nil, nil, 1, 2)
-local specWarnExpelSoul				= mod:NewSpecialWarningMoveAway(213625, 1, nil, nil, 1, 2)
+local specWarnExpelSoul				= mod:NewSpecialWarningMoveAway(213625, nil, nil, nil, 1, 2)
 local specWarnMaraudingMists		= mod:NewSpecialWarningRun(213665, "Melee", nil, nil, 4, 2)
 --Soultrapper Mevra
 local specWarnSoulRend				= mod:NewSpecialWarningDodge(213606, nil, nil, nil, 2, 2)

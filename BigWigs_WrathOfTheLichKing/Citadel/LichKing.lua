@@ -5,7 +5,9 @@
 local mod, CL = BigWigs:NewBoss("The Lich King", 631, 1636)
 if not mod then return end
 mod:RegisterEnableMob(36597, 38995) -- The Lich King, Highlord Tirion Fordring
-mod.toggleOptions = {72143, 70541, {70337, "ICON", "FLASH"}, 70372, {72762, "SAY", "ICON", "FLASH"}, 69409, 69037, "custom_on_valkyr_marker", {68980, "ICON", "FLASH"}, 70498, {68981, "FLASH"}, 69200, {72262, "FLASH"}, 72350, {73529, "SAY", "FLASH", "ICON"}, "warmup", "berserk"}
+-- mod:SetEncounterID(1106)
+-- mod:SetRespawnTime(30)
+mod.toggleOptions = {72143, 70541, {70337, "ICON", "FLASH"}, 70372, {72762, "SAY", "ICON", "FLASH"}, 69409, 69037, "custom_on_valkyr_marker", {68980, "ICON", "FLASH"}, 70498, 68981, 69200, 72262, 72350, {73529, "SAY", "FLASH", "ICON"}, "warmup", "berserk"}
 mod.optionHeaders = {
 	[72143] = CL.phase:format(1),
 	[72762] = CL.phase:format(2),
@@ -14,6 +16,7 @@ mod.optionHeaders = {
 	[73529] = "heroic",
 	warmup = "general",
 }
+mod:SetStage(1)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -93,8 +96,8 @@ function mod:OnBossEnable()
 	self:Death("Win", 36597)
 
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-	self:Yell("Warmup", L["warmup_trigger"])
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Warmup", L["warmup_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 end
 
 function mod:Warmup()
@@ -102,9 +105,10 @@ function mod:Warmup()
 end
 
 function mod:OnEngage()
-	wipe(frenzied)
-	wipe(plagueTicks)
-	wipe(valkyrs)
+	self:SetStage(1)
+	frenzied = {}
+	plagueTicks = {}
+	valkyrs = {}
 
 	self:Berserk(900)
 	self:Bar(70337, 31) -- Necrotic Plague
@@ -140,7 +144,7 @@ function mod:PlagueTick(args)
 		local damageLeft = (3 - plagueTicks[args.destGUID]) * args.extraSpellId
 		local hp = UnitHealth(unitId)
 		if hp > damageLeft then
-			self:Message(70372, "yellow", nil, L["frenzy_survive_message"]:format(args.destName), 72143)
+			self:MessageOld(70372, "yellow", nil, L["frenzy_survive_message"]:format(args.destName), 72143)
 		end
 	else
 		local hp, max = UnitHealth(unitId), UnitHealthMax(unitId)
@@ -151,7 +155,7 @@ function mod:PlagueTick(args)
 		local percentHp = (nextTickHP / max) * 100
 		-- This sucker will frenzy in 5 seconds
 		if percentHp < 21 then
-			self:Message(70372, "red", "Info", L["frenzy_soon_message"], 72143)
+			self:MessageOld(70372, "red", "info", L["frenzy_soon_message"], 72143)
 			self:Bar(70372, 5, L["frenzy_bar"]:format(args.destName), 72143)
 		end
 	end
@@ -159,11 +163,11 @@ end
 
 function mod:Frenzy(args)
 	frenzied[args.destGUID] = true
-	self:Message(70372, "red", "Long", L["frenzy_message"], 72143)
+	self:MessageOld(70372, "red", "long", L["frenzy_message"], 72143)
 end
 
 function mod:Horror(args)
-	self:Message(70372, "yellow", nil, L["horror_message"])
+	self:MessageOld(70372, "yellow", nil, L["horror_message"])
 	self:CDBar(70372, 60, L["horror_bar"])
 end
 
@@ -176,17 +180,17 @@ function mod:FuryofFrostmourne()
 end
 
 function mod:Infest(args)
-	self:Message(70541, "orange")
+	self:MessageOld(70541, "orange")
 	self:CDBar(70541, 22)
 end
 
 function mod:VileSpirits(args)
-	self:Message(70498, "orange")
+	self:MessageOld(70498, "orange")
 	self:CDBar(70498, 30.5)
 end
 
 function mod:SoulReaper(args)
-	self:TargetMessage(69409, args.destName, "blue", "Alert")
+	self:TargetMessageOld(69409, args.destName, "blue", "alert")
 	self:CDBar(69409, 30)
 end
 
@@ -194,22 +198,21 @@ function mod:NecroticPlague(args)
 	if self:Me(args.destGUID) then
 		self:Flash(70337)
 	end
-	self:TargetMessage(70337, args.destName, "blue", "Alert")
+	self:TargetMessageOld(70337, args.destName, "blue", "alert")
 	self:Bar(70337, 30)
 	self:SecondaryIcon(70337, args.destName)
 end
 
 do
-	local plague = GetSpellInfo(70337)
 	local function scanRaid()
 		for unit in mod:IterateGroup() do
-			local debuffed, _, _, expire = mod:UnitDebuff(unit, plague)
+			local debuffed, _, _, expire = mod:UnitDebuff(unit, mod:SpellName(70337), 70337, 70338) -- Necrotic Plague, both were on 25N
 			if debuffed and (expire - GetTime()) > 13 then
 				if UnitIsUnit(unit, "player") then
 					mod:Flash(70337)
 				end
 				local player = mod:UnitName(unit)
-				mod:TargetMessage(70337, player, "blue", "Alert")
+				mod:TargetMessageOld(70337, player, "blue", "alert")
 				mod:SecondaryIcon(70337, player)
 			end
 		end
@@ -221,15 +224,15 @@ end
 
 function mod:Enrage(args)
 	if self:Dispeller("enrage", true) then
-		self:Message(72143, "yellow", "Alert")
+		self:MessageOld(72143, "yellow", "alert")
 		self:CDBar(72143, 21)
 	else
-		self:Message(72143, "yellow")
+		self:MessageOld(72143, "yellow")
 	end
 end
 
 function mod:RagingSpirit(args)
-	self:TargetMessage(69200, args.destName, "blue", "Alert")
+	self:TargetMessageOld(69200, args.destName, "blue", "alert")
 	self:Bar(69200, 23) -- Raging Spirit
 end
 
@@ -240,7 +243,7 @@ do
 		if t-prev > 2 then
 			prev = t
 			if self:Me(args.destGUID) then
-				self:Message(72762, "blue", "Info", CL["you"]:format(args.spellName))
+				self:MessageOld(72762, "blue", "info", CL["you"]:format(args.spellName))
 				self:Flash(72762)
 			end
 		end
@@ -252,9 +255,9 @@ do
 	local count = 8
 	function mod:UNIT_TARGET(_, firedUnit)
 		local unit = firedUnit and firedUnit.."target" or "mouseover"
-		local guid = UnitGUID(unit)
+		local guid = self:UnitGUID(unit)
 		if valkyrs[guid] then
-			SetRaidTarget(unit, valkyrs[guid])
+			self:CustomIcon(false, unit, valkyrs[guid])
 			valkyrs[guid] = nil
 		end
 		if not next(valkyrs) then
@@ -271,7 +274,7 @@ do
 				hugged[#hugged + 1] = mod:UnitName(unit)
 			end
 		end
-		mod:TargetMessage(69037, hugged, "orange", nil, L["valkyrhug_message"], 71844)
+		mod:TargetMessageOld(69037, hugged, "orange", nil, L["valkyrhug_message"], 71844)
 	end
 
 	function mod:Valkyr(args)
@@ -281,7 +284,7 @@ do
 		local t = GetTime()
 		if t-prev > 4 then
 			prev = t
-			self:Message(69037, "yellow", nil, L["valkyr_message"], 71844)
+			self:MessageOld(69037, "yellow", nil, L["valkyr_message"], 71844)
 			self:Bar(69037, 46, L["valkyr_bar"], 71844)
 			self:ScheduleTimer(ValkyrHugCheck, 6.1)
 			if self.db.profile.custom_on_valkyr_marker then
@@ -303,7 +306,7 @@ function mod:HarvestSoul(args)
 		if self:Me(args.destGUID) then
 			self:Flash(68980)
 		end
-		self:TargetMessage(68980, args.destName, "yellow")
+		self:TargetMessageOld(68980, args.destName, "yellow")
 		self:Bar(68980, 75)
 		self:SecondaryIcon(68980, args.destName)
 	end
@@ -315,6 +318,7 @@ end
 
 function mod:RemorselessWinter(args)
 	phase = phase + 1
+	self:SetStage(phase) -- Phase 2, and 4 is transition phases
 	self:StopBar(L["valkyr_bar"])
 	self:StopBar(L["horror_bar"])
 	self:StopBar(70337) -- Necrotic Plague
@@ -323,19 +327,20 @@ function mod:RemorselessWinter(args)
 	self:StopBar(69409) -- Soul Reaper
 	self:StopBar(73529) -- Shadow Trap
 
-	self:Message(68981, "orange", "Long", CL["cast"]:format(args.spellName))
+	self:MessageOld(68981, "orange", "long", CL["cast"]:format(args.spellName))
 	self:Bar(72262, 62) -- Quake
 	self:Bar(69200, 15) -- Raging Spirit
 end
 
 function mod:Quake(args)
 	phase = phase + 1
+	self:SetStage(phase)
 	self:StopBar(69200) -- Raging Spirit
-	self:Message(72262, "orange", "Long", CL["cast"]:format(args.spellName))
+	self:MessageOld(72262, "orange", "long", CL["cast"]:format(args.spellName))
 	self:Bar(72762, 37) -- Defile
-	self:CDBar(70541, 13) -- Infest
 	self:CDBar(69409, 39) -- Soul Reaper
 	if phase == 3 then
+		self:CDBar(70541, 13) -- Infest
 		self:Bar(69037, 24, L["valkyr_bar"], 71844)
 	elseif phase == 5 then
 		self:CDBar(70498, 21) -- Vile Spirits
@@ -352,10 +357,10 @@ do
 		if UnitExists(bossTarget) then
 			if UnitIsUnit(bossTarget, "player") then
 				mod:Flash(72762)
-				mod:Say(72762)
+				mod:Say(72762, nil, nil, "Defile")
 			end
 			local target = mod:UnitName(bossTarget)
-			mod:TargetMessage(72762, target, "red", "Alert")
+			mod:TargetMessageOld(72762, target, "red", "alert")
 			mod:PrimaryIcon(72762, target)
 		end
 		handle = nil
@@ -377,10 +382,10 @@ do
 		if UnitExists(bossTarget) then
 			if UnitIsUnit(bossTarget, "player") then
 				mod:Flash(73529)
-				mod:Say(73529)
+				mod:Say(73529, nil, nil, "Shadow Trap")
 			end
 			local target = mod:UnitName(bossTarget)
-			mod:TargetMessage(73529, target, "yellow")
+			mod:TargetMessageOld(73529, target, "yellow")
 			mod:PrimaryIcon(73529, target)
 		end
 	end

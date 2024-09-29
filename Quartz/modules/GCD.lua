@@ -25,7 +25,7 @@ local Player = Quartz3:GetModule("Player")
 
 ----------------------------
 -- Upvalues
-local CreateFrame, GetTime, UIParent, GetSpellCooldown = CreateFrame, GetTime, UIParent, GetSpellCooldown
+local CreateFrame, GetTime, UIParent = CreateFrame, GetTime, UIParent
 local unpack = unpack
 
 local gcdbar, gcdbar_width, gcdspark
@@ -40,9 +40,9 @@ local defaults = {
 		gcdheight = 4,
 		gcdposition = "bottom",
 		gcdgap = -4,
-		
+
 		deplete = false,
-		
+
 		x = 500,
 		y = 300,
 	}
@@ -74,7 +74,7 @@ end
 function GCD:OnInitialize()
 	self.db = Quartz3.db:RegisterNamespace(MODNAME, defaults)
 	db = self.db.profile
-	
+
 	self:SetEnabledState(Quartz3:GetModuleEnabled(MODNAME))
 	Quartz3:RegisterModuleOptions(MODNAME, getOptions, L["GCD"])
 end
@@ -84,15 +84,15 @@ function GCD:OnEnable()
 	self:RegisterEvent("UNIT_SPELLCAST_START","CheckGCD")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED","CheckGCD")
 	if not gcdbar then
-		gcdbar = CreateFrame("Frame", "Quartz3GCDBar", UIParent)
+		gcdbar = CreateFrame("Frame", "Quartz3GCDBar", UIParent, "BackdropTemplate")
 		gcdbar:SetFrameStrata("HIGH")
 		gcdbar:SetScript("OnShow", OnShow)
 		gcdbar:SetScript("OnHide", OnHide)
 		gcdbar:SetMovable(true)
 		gcdbar:RegisterForDrag("LeftButton")
 		gcdbar:SetClampedToScreen(true)
-		
-		gcdspark = gcdbar:CreateTexture(nil, "DIALOG")
+
+		gcdspark = gcdbar:CreateTexture(nil, "ARTWORK")
 		gcdbar:Hide()
 	end
 	self:ApplySettings()
@@ -104,7 +104,15 @@ end
 
 function GCD:CheckGCD(event, unit, guid, spell)
 	if unit == "player" then
-		local start, dur = GetSpellCooldown(spell)
+		local start, dur
+		if C_Spell and C_Spell.GetSpellCooldown then
+			local cooldown = C_Spell.GetSpellCooldown(spell)
+			if cooldown then
+				start, dur = cooldown.startTime, cooldown.duration
+			end
+		else
+			start, dur = GetSpellCooldown(spell)
+		end
 		if dur and dur > 0 and dur <= 1.5 then
 			starttime = start
 			duration = dur
@@ -131,7 +139,7 @@ function GCD:ApplySettings()
 		else -- L["Free"]
 			gcdbar:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", db.x, db.y)
 		end
-		
+
 		gcdspark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
 		gcdspark:SetVertexColor(unpack(db.sparkcolor))
 		gcdspark:SetBlendMode("ADD")
@@ -152,11 +160,11 @@ do
 		db.y = gcdbar:GetBottom()
 		gcdbar:StopMovingOrSizing()
 	end
-	
+
 	local function hiddennofree()
 		return db.gcdposition ~= "free"
 	end
-	
+
 	local function setOpt(info, value)
 		db[info[#info]] = value
 		GCD:ApplySettings()

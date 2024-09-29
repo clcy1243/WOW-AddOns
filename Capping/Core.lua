@@ -4,7 +4,7 @@ local addonName, mod = ...
 local frame = CreateFrame("Frame", "CappingFrame", UIParent)
 local L = mod.L
 
-local format, type = format, type
+local format, type = string.format, type
 local db, core
 local zoneIds = {}
 
@@ -18,6 +18,7 @@ local media = LibStub("LibSharedMedia-3.0")
 -- API
 do
 	local API = {}
+	local public = {}
 	do
 		local BarOnClick
 		do
@@ -63,9 +64,8 @@ do
 					return a.remaining < b.remaining
 				end
 			end
-			local tmp = {}
 			RearrangeBars = function()
-				wipe(tmp)
+				local tmp = {}
 				for bar in next, activeBars do
 					tmp[#tmp + 1] = bar
 				end
@@ -146,6 +146,7 @@ do
 			RearrangeBars()
 			return bar
 		end
+		public.StartBar = API.StartBar
 
 		function API:StopBar(text)
 			local dirty = nil
@@ -157,6 +158,8 @@ do
 			end
 			if dirty then RearrangeBars() end
 		end
+		public.StopBar = API.StopBar
+		CappingAPI = public
 
 		candy.RegisterCallback(API, "LibCandyBar_Stop", function(_, bar)
 			if activeBars[bar] then
@@ -249,6 +252,7 @@ do
 		local collection, reset, blocked, started = {}, {}, {}, false
 		local count1, count2, count3 = #unitTable1, #unitTable2, #unitTable3
 		local UnitGUID, strsplit = UnitGUID, strsplit
+		local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
 		local SendAddonMessage = C_ChatInfo.SendAddonMessage
 		local curMod = nil
 
@@ -260,9 +264,12 @@ do
 					if guid then
 						local _, _, _, _, _, strid = strsplit("-", guid)
 						if strid and collection[strid] and not blocked[strid] then
-							blocked[strid] = true
-							local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-							SendAddonMessage("Capping", format("%s:%.1f", strid, hp), "INSTANCE_CHAT")
+							local maxHP = UnitHealthMax(unit)
+							if maxHP > 0 then
+								blocked[strid] = true
+								local hp = UnitHealth(unit) / maxHP * 100
+								SendAddonMessage("Capping", format("%s:%.1f", strid, hp), "INSTANCE_CHAT")
+							end
 						end
 					end
 				end
@@ -276,9 +283,12 @@ do
 					if guid then
 						local _, _, _, _, _, strid = strsplit("-", guid)
 						if strid and collection[strid] and not blocked[strid] then
-							blocked[strid] = true
-							local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-							SendAddonMessage("Capping", format("%s:%.1f", strid, hp), "INSTANCE_CHAT")
+							local maxHP = UnitHealthMax(unit)
+							if maxHP > 0 then
+								blocked[strid] = true
+								local hp = UnitHealth(unit) / maxHP * 100
+								SendAddonMessage("Capping", format("%s:%.1f", strid, hp), "INSTANCE_CHAT")
+							end
 						end
 					end
 				end
@@ -309,9 +319,12 @@ do
 					if guid then
 						local _, _, _, _, _, strid = strsplit("-", guid)
 						if strid and collection[strid] and not blocked[strid] then
-							blocked[strid] = true
-							local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-							SendAddonMessage("Capping", format("%s:%.1f", strid, hp), "INSTANCE_CHAT")
+							local maxHP = UnitHealthMax(unit)
+							if maxHP > 0 then
+								blocked[strid] = true
+								local hp = UnitHealth(unit) / maxHP * 100
+								SendAddonMessage("Capping", format("%s:%.1f", strid, hp), "INSTANCE_CHAT")
+							end
 						end
 					end
 				end
@@ -322,7 +335,7 @@ do
 			if prefix == "Capping" and channel == "INSTANCE_CHAT" then
 				local strid, strhp = strsplit(":", msg)
 				local hp = tonumber(strhp)
-				if strid and hp and collection[strid] and hp <= 100 and hp >= 0 then
+				if strid and hp and collection[strid] and hp <= 100 and hp >= 0 and (hp < 0) ~= (hp >= 0) then -- Check hp is 0-100 and isn't NaN
 					if collection[strid].candyBarBar then
 						if hp < 100 then
 							reset[strid] = 0
@@ -335,11 +348,11 @@ do
 						bar:Pause()
 						bar.candyBarBar:SetValue(hp)
 						bar.candyBarDuration:SetFormattedText("%.1f%%", hp)
-						bar:Set("capping:customchat", function(bar)
+						bar:Set("capping:customchat", function(candyBar)
 							if tbl[1] ~= tbl[2] then
-								return tbl[2] .."/".. tbl[1] .." - ".. bar.candyBarDuration:GetText()
+								return tbl[2] .."/".. tbl[1] .." - ".. candyBar.candyBarDuration:GetText()
 							else
-								return tbl[1] .." - ".. bar.candyBarDuration:GetText()
+								return tbl[1] .." - ".. candyBar.candyBarDuration:GetText()
 							end
 						end)
 						bar:Set("capping:hpdata", tbl)
@@ -409,7 +422,7 @@ do
 		end
 
 		local GetDoubleStatusBarWidgetVisualizationInfo = C_UIWidgetManager.GetDoubleStatusBarWidgetVisualizationInfo
-		local ceil, floor = ceil, floor
+		local ceil, floor = math.ceil, math.floor
 		local function ScorePredictor(widgetInfo)
 			if widgetInfo and (widgetInfo.widgetID == 1671 or widgetInfo.widgetID == 2074) then -- The 1671 widget is used for all BGs with score predictors, but DG uses 2074
 				local dataTbl = GetDoubleStatusBarWidgetVisualizationInfo(widgetInfo.widgetID)
@@ -472,6 +485,7 @@ do
 	end
 
 	do
+		local GetPOITextureCoords = C_Minimap.GetPOITextureCoords
 		-- Easy world map icon checker
 		--local start = function(self) self:StartMoving() end
 		--local stop = function(self) self:StopMovingOrSizing() end
@@ -557,7 +571,6 @@ do
 			[219] = "colorHorde",
 		}
 		local atlasColors = nil
-		local GetPOITextureCoords = GetPOITextureCoords
 		local capTime = 0
 		local curMapID = 0
 		local curMod = nil
@@ -570,6 +583,7 @@ do
 		local GetAreaPOIForMap = C_AreaPoiInfo.GetAreaPOIForMap
 		local GetAreaPOIInfo = C_AreaPoiInfo.GetAreaPOIInfo
 		local GetAtlasInfo = C_Texture.GetAtlasInfo
+		local GetSpellName = C_Spell and C_Spell.GetSpellName or GetSpellInfo
 
 		local function UpdatePOI()
 			local pois = GetAreaPOIForMap(curMapID)
@@ -583,12 +597,12 @@ do
 							local bar = curMod:StartBar(name, capTime, GetIconData(icon), iconDataConflict[icon])
 							bar:Set("capping:poiid", areaPoiID)
 							if icon == 137 or icon == 139 then -- Workshop in IoC
-								curMod:StopBar((GetSpellInfo(56661))) -- Build Siege Engine
+								curMod:StopBar((GetSpellName(56661))) -- Build Siege Engine
 							end
 						else
 							curMod:StopBar(name)
 							if icon == 136 or icon == 138 then -- Workshop in IoC
-								curMod:StartBar(GetSpellInfo(56661), 181, 252187, icon == 136 and "colorAlliance" or "colorHorde") -- Build Siege Engine, 252187 = ability_vehicle_siegeengineram
+								curMod:StartBar(GetSpellName(56661), 181, 252187, icon == 136 and "colorAlliance" or "colorHorde") -- Build Siege Engine, 252187 = ability_vehicle_siegeengineram
 							elseif icon == 2 or icon == 3 or icon == 151 or icon == 153 or icon == 18 or icon == 20 then
 								-- Horde mine, Alliance mine, Alliance Refinery, Horde Refinery, Alliance Quarry, Horde Quarry
 								local _, _, _, id = UnitPosition("player")
@@ -621,12 +635,12 @@ do
 							)
 							bar:Set("capping:poiid", areaPoiID)
 							--if atlasName == WORKSHOPHORDE or atlasName == WORKSHOPALLIANCE then -- Workshop in IoC
-							--	curMod:StopBar((GetSpellInfo(56661))) -- Build Siege Engine
+							--	curMod:StopBar((GetSpellName(56661))) -- Build Siege Engine
 							--end
 						else
 							curMod:StopBar(name)
 							--if icon == 136 or icon == 138 then -- Workshop in IoC
-							--	curMod:StartBar(GetSpellInfo(56661), 181, 252187, icon == 136 and "colorAlliance" or "colorHorde") -- Build Siege Engine, 252187 = ability_vehicle_siegeengineram
+							--	curMod:StartBar(GetSpellName(56661), 181, 252187, icon == 136 and "colorAlliance" or "colorHorde") -- Build Siege Engine, 252187 = ability_vehicle_siegeengineram
 							--elseif icon == 2 or icon == 3 or icon == 151 or icon == 153 or icon == 18 or icon == 20 then
 							--	-- Horde mine, Alliance mine, Alliance Refinery, Horde Refinery, Alliance Quarry, Horde Quarry
 							--	local _, _, _, id = UnitPosition("player")
@@ -702,6 +716,44 @@ do
 		end
 	end
 
+	do
+		local GetOptions = C_GossipInfo.GetOptions
+		local SelectOption = C_GossipInfo.SelectOption
+		function API:GetGossipNumOptions()
+			local gossipOptions = GetOptions()
+			return #gossipOptions
+		end
+		function API:GetGossipID(id)
+			local gossipOptions = GetOptions()
+			for i = 1, #gossipOptions do
+				local gossipTable = gossipOptions[i]
+				if gossipTable.gossipOptionID == id then
+					return true
+				end
+			end
+		end
+		function API:SelectGossipID(id)
+			SelectOption(id)
+		end
+	end
+
+	do
+		local GetAvailableQuests = C_GossipInfo.GetAvailableQuests
+		local SelectAvailableQuest = C_GossipInfo.SelectAvailableQuest
+		function API:GetGossipAvailableQuestID(id)
+			local gossipOptions = GetAvailableQuests()
+			for i = 1, #gossipOptions do
+				local gossipTable = gossipOptions[i]
+				if gossipTable.questID == id then
+					return true
+				end
+			end
+		end
+		function API:SelectGossipAvailableQuestID(id)
+			SelectAvailableQuest(id)
+		end
+	end
+
 	function mod:NewMod()
 		local t = {}
 		for k,v in next, API do
@@ -747,14 +799,21 @@ function core:ADDON_LOADED(addon)
 				barOnShift = "SAY",
 				barOnControl = "INSTANCE_CHAT",
 				barOnAlt = "NONE",
+				autoTurnIn = true,
 			},
 		}
 		db = LibStub("AceDB-3.0"):New("CappingSettings", defaults, true)
-		CappingFrame.db = db
+		frame.db = db
+		do
+			local rl = function() ReloadUI() end
+			db.RegisterCallback(self, "OnProfileChanged", rl)
+			db.RegisterCallback(self, "OnProfileCopied", rl)
+			db.RegisterCallback(self, "OnProfileReset", rl)
+		end
 
 		frame:ClearAllPoints()
 		frame:SetPoint(db.profile.position[1], UIParent, db.profile.position[2], db.profile.position[3], db.profile.position[4])
-		local bg = frame:CreateTexture(nil, "PARENT")
+		local bg = frame:CreateTexture()
 		bg:SetAllPoints(frame)
 		bg:SetColorTexture(0, 1, 0, 0.3)
 		frame.bg = bg
@@ -776,16 +835,30 @@ function core:ADDON_LOADED(addon)
 		C_CVar.SetCVar("showArenaEnemyPets", "1")
 
 		self:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-		self:Timer(15, function()
-			local x = GetLocale()
-			if x ~= "enUS" and x ~= "enGB" and x ~= "zhCN" and x ~= "ruRU" then -- XXX temp
-				print("|cFF33FF99Capping|r is missing locale for", x, "and needs your help! Please visit the project page on GitHub for more info.")
-			end
-		end)
 	end
 end
 core:RegisterEvent("ADDON_LOADED")
+
+do
+	local loc = GetLocale()
+	local needsLocale = {
+		esMX = "Spanish MX",
+		itIT = "Italian",
+		koKR = "Korean",
+		zhTW = "zhTW",
+	}
+	if needsLocale[loc] then
+		function core:LOADING_SCREEN_DISABLED()
+			self:UnregisterEvent("LOADING_SCREEN_DISABLED")
+			self:Timer(0, function() -- Timers aren't fully functional until 1 frame after loading is done
+				self:Timer(15, function()
+					print("|cFF33FF99Capping|r is missing locale for", needsLocale[loc], "and needs your help! Please visit the project page on GitHub for more info.")
+				end)
+			end)
+		end
+		core:RegisterEvent("LOADING_SCREEN_DISABLED")
+	end
+end
 
 do
 	local prevZone = 0
@@ -794,14 +867,14 @@ do
 		local _, _, _, _, _, _, _, id = GetInstanceInfo()
 		if zoneIds[id] then
 			prevZone = id
+			self:RegisterEvent("PLAYER_LEAVING_WORLD")
 			zoneIds[id]:EnterZone(id)
-		else
-			if zoneIds[prevZone] then
-				self:StopAllBars()
-				zoneIds[prevZone]:ExitZone()
-			end
-			prevZone = id
 		end
+	end
+	function core:PLAYER_LEAVING_WORLD()
+		self:UnregisterEvent("PLAYER_LEAVING_WORLD")
+		self:StopAllBars()
+		zoneIds[prevZone]:ExitZone()
 	end
 end
 
@@ -823,6 +896,15 @@ do
 	frame:RegisterForDrag("LeftButton")
 	frame:SetClampedToScreen(true)
 	frame:Show()
+	local tooltip = CreateFrame("GameTooltip", "CappingTooltip", UIParent, "GameTooltipTemplate")
+	frame:SetScript("OnEnter", function(f)
+		tooltip:ClearLines()
+		tooltip:SetOwner(f, db.profile.growUp and "ANCHOR_TOP" or "ANCHOR_BOTTOM")
+		tooltip:AddLine(L.anchorTooltip, 0.2, 1, 0.2, 1)
+		tooltip:AddLine(L.anchorTooltipNote, 1, 1, 1, 1)
+		tooltip:Show()
+	end)
+	frame:SetScript("OnLeave", function() tooltip:Hide() end)
 	frame:SetScript("OnDragStart", function(f) f:StartMoving() end)
 	frame:SetScript("OnDragStop", function(f)
 		f:StopMovingOrSizing()
@@ -833,8 +915,8 @@ do
 		db.profile.position[4] = d
 	end)
 	local function openOpts()
-		EnableAddOn("Capping_Options") -- Make sure it wasn't left disabled for whatever reason
-		LoadAddOn("Capping_Options")
+		C_AddOns.EnableAddOn("Capping_Options") -- Make sure it wasn't left disabled for whatever reason
+		C_AddOns.LoadAddOn("Capping_Options")
 		LibStub("AceConfigDialog-3.0"):Open(addonName)
 	end
 	SlashCmdList.Capping = openOpts

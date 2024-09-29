@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(968, "DBM-Party-WoD", 7, 476)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20240428124541")
 mod:SetCreatureID(76266)
 mod:SetEncounterID(1701)
-mod:SetZone()
 mod:SetUsedIcons(1)
 
 mod:RegisterCombat("combat")
@@ -24,15 +25,15 @@ local warnShielding			= mod:NewTargetNoFilterAnnounce(154055, 2)
 
 local specWarnCastDownSoon	= mod:NewSpecialWarningSoon(153954, nil, nil, nil, 1, 2)--Everyone, becaus it can grab healer too, which affects healer/tank
 local specWarnCastDown		= mod:NewSpecialWarningSwitch(153954, "Dps", nil, nil, 3, 2)--Only dps, because it's their job to stop it.
-local specWarnLensFlareCast	= mod:NewSpecialWarningSpell(154032, nil, nil, nil, 2, 2)--If there is any way to find actual target, like maybe target scanning, this will be changed.
-local specWarnLensFlare		= mod:NewSpecialWarningMove(154043, nil, nil, nil, 1, 8)
+local specWarnLensFlareCast	= mod:NewSpecialWarningSpell(154043, nil, nil, nil, 2, 2)--If there is any way to find actual target, like maybe target scanning, this will be changed.
+local specWarnLensFlare		= mod:NewSpecialWarningGTFO(154043, nil, nil, nil, 1, 8)
 local specWarnAdd			= mod:NewSpecialWarning("specWarnAdd", "Dps", nil, nil, 1, 2)
 local specWarnShielding		= mod:NewSpecialWarningInterrupt(154055, "HasInterrupt", nil, 2, 1, 2)
 
-local timerLenseFlareCD		= mod:NewCDTimer(38, 154032, nil, nil, nil, 3)
-local timerCastDownCD		= mod:NewCDTimer(28, 153954, nil, nil, nil, 1, nil, DBM_CORE_L.DAMAGE_ICON)
+local timerLenseFlareCD		= mod:NewCDTimer(38, 154043, nil, nil, nil, 3)
+local timerCastDownCD		= mod:NewCDTimer(28, 153954, nil, nil, nil, 1, nil, DBM_COMMON_L.DAMAGE_ICON)
 
-mod:AddSetIconOption("SetIconOnCastDown", 153954, true, false, {1})
+mod:AddSetIconOption("SetIconOnCastDown", 153954, true, 0, {1})
 
 mod.vb.lastGrab = nil
 local skyTrashMod = DBM:GetModByName("SkyreachTrash")
@@ -48,8 +49,8 @@ end
 
 function mod:OnCombatStart(delay)
 	self.vb.lastGrab = nil
-	timerLenseFlareCD:Start(-delay)
 	timerCastDownCD:Start(15-delay)
+	timerLenseFlareCD:Start(27.3-delay)
 	if skyTrashMod.Options.RangeFrame and skyTrashMod.vb.debuffCount ~= 0 then--In case of bug where range frame gets stuck open from trash pulls before this boss.
 		skyTrashMod.vb.debuffCount = 0--Fix variable
 		DBM.RangeCheck:Hide()--Close range frame.
@@ -69,9 +70,9 @@ function mod:SPELL_CAST_START(args)
 	end
 end
 
-function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, _, _, _, overkill)
+function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spellName)
 	if spellId == 154043 and destGUID == UnitGUID("player") and self:AntiSpam(2) then
-		specWarnLensFlare:Show()
+		specWarnLensFlare:Show(spellName)
 		specWarnLensFlare:Play("watchfeet")
 	end
 end

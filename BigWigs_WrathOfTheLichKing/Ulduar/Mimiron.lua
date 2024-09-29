@@ -4,17 +4,21 @@
 
 local mod = BigWigs:NewBoss("Mimiron", 603, 1647)
 if not mod then return end
--- Leviathan Mk II(33432), VX-001(33651), Aerial Command Unit(33670),
-mod:RegisterEnableMob(33350, 33432, 33651, 33670)
-mod.engageId = 1138
-mod.respawnTime = 31
+mod:RegisterEnableMob(
+	33350, -- Mimiron
+	33432, -- Leviathan Mk II
+	33651, -- VX-001
+	33670  -- Aerial Command Unit
+)
+mod:SetEncounterID(mod:Classic() and 754 or 1138)
+mod:SetRespawnTime(31)
+mod:SetStage(1)
 
 --------------------------------------------------------------------------------
 -- Locals
 --
 
-local ishardmode = nil
-local phase = nil
+local ishardmode = false
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -73,13 +77,13 @@ function mod:GetOptions()
 		"berserk" ,
 	}, {
 		[64529] = "normal",
-		[64623] = -17610, -- Hard Mode
+		[64623] = "hard", -- Hard Mode
 		phase = "general",
 	}
 end
 
 function mod:VerifyEnable(unit)
-	return (UnitIsEnemy(unit, "player") and UnitHealth(unit) > 100) and true or false
+	return (UnitIsEnemy(unit, "player") and self:GetHealth(unit) > 1) and true or false
 end
 
 function mod:OnBossEnable()
@@ -95,10 +99,9 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage()
-	ishardmode = nil
-	phase = 1
-	self:Message("phase", "yellow", nil, L["engage_warning"], false)
-	self:Bar("phase", 7, L["phase_bar"]:format(phase), "INV_Gizmo_01")
+	self:SetStage(1)
+	self:MessageOld("phase", "yellow", nil, L["engage_warning"], false)
+	self:Bar("phase", 7, L["phase_bar"]:format(1), "INV_Gizmo_01")
 
 	self:Bar(63631, 30, L["shock_next"])
 	self:Bar(64529, 20, L["plasma_bar"])
@@ -110,69 +113,70 @@ end
 --
 
 function mod:BombBot(args)
-	self:Message(args.spellId, "red", "Alert", L["bomb_message"])
+	self:MessageOld(args.spellId, "red", "alert", L["bomb_message"])
 end
 
 function mod:FlameSuppressant(args)
-	self:Message(args.spellId, "red", nil, L["suppressant_warning"])
+	self:MessageOld(args.spellId, "red", nil, L["suppressant_warning"])
 	self:Bar(args.spellId, 3)
 end
 
 function mod:FrostBomb(args)
-	self:Message(args.spellId, "red")
+	self:MessageOld(args.spellId, "red")
 	self:Bar(args.spellId, 2)
 	self:Bar(args.spellId, 30, L["fbomb_bar"])
 end
 
 function mod:PlasmaBlast(args)
-	self:Message(args.spellId, "red", nil, L["plasma_warning"])
+	self:MessageOld(args.spellId, "red", nil, L["plasma_warning"])
 	self:Bar(args.spellId, 3, L["plasma_warning"])
 	self:Bar(args.spellId, 30, L["plasma_bar"])
 end
 
 function mod:ShockBlast(args)
-	self:Message(args.spellId, "red")
+	self:MessageOld(args.spellId, "red")
 	self:Bar(args.spellId, 3.5)
 	self:Bar(args.spellId, 34, L["shock_next"])
 end
 
 function mod:SpinningUp(args)
-	self:Message(63274, "blue", "Long", L["laser_soon"], args.spellId)
+	self:MessageOld(63274, "blue", "long", L["laser_soon"], args.spellId)
 	self:Flash(63274)
-	self:ScheduleTimer("Message", 4, 63274, "red", nil, L["laser_bar"])
+	self:ScheduleTimer("MessageOld", 4, 63274, "red", nil, L["laser_bar"])
 	self:ScheduleTimer("Bar", 4, 63274, 60, L["laser_bar"])
 end
 
 function mod:MagneticCore(args)
-	self:Message(args.spellId, "red", nil, L["magnetic_message"])
+	self:MessageOld(args.spellId, "red", nil, L["magnetic_message"])
 	self:Bar(args.spellId, 15)
 end
 
 function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 	if msg:find(L["hardmode_trigger"]) then
 		ishardmode = true
-		self:Berserk(600, true)
+		self:Berserk(612, true)
 		self:OpenProximity("proximity", 5)
 	elseif msg:find(L["engage_trigger"]) then
+		ishardmode = false
 		self:Berserk(900, true)
 	elseif msg:find(L["phase2_trigger"]) then
-		phase = 2
+		self:SetStage(2)
 		self:StopBar(L["plasma_bar"])
 		self:StopBar(L["shock_next"])
-		self:Message("phase", "yellow", nil, L["phase2_warning"], false)
-		self:Bar("phase", 40, L["phase_bar"]:format(phase), "INV_Gizmo_01")
+		self:MessageOld("phase", "yellow", nil, L["phase2_warning"], false)
+		self:Bar("phase", 40, L["phase_bar"]:format(2), "INV_Gizmo_01")
 		if ishardmode then
 			self:Bar(64623, 45, L["fbomb_bar"])
 		end
 		self:CloseProximity()
 	elseif msg:find(L["phase3_trigger"]) then
-		phase = 3
-		self:Message("phase", "yellow", nil, L["phase3_warning"], false)
-		self:Bar("phase", 25, L["phase_bar"]:format(phase), "INV_Gizmo_01")
+		self:SetStage(3)
+		self:MessageOld("phase", "yellow", nil, L["phase3_warning"], false)
+		self:Bar("phase", 25, L["phase_bar"]:format(3), "INV_Gizmo_01")
 	elseif msg:find(L["phase4_trigger"]) then
-		phase = 4
-		self:Message("phase", "yellow", nil, L["phase4_warning"], false)
-		self:Bar("phase", 25, L["phase_bar"]:format(phase), "INV_Gizmo_01")
+		self:SetStage(4)
+		self:MessageOld("phase", "yellow", nil, L["phase4_warning"], false)
+		self:Bar("phase", 25, L["phase_bar"]:format(4), "INV_Gizmo_01")
 		if ishardmode then
 			self:Bar(64623, 30, L["fbomb_bar"])
 		end
@@ -185,7 +189,7 @@ do
 	--CHAT_MSG_LOOT:Varian receives loot: |cffffffff|Hitem:46029::::::::110:253::::::|h[Magnetic Core]|h|r.::::Varian::0:0::0:247:nil:0:false:false:false:false:
 	function mod:CHAT_MSG_LOOT(event, msg, _, _, _, playerName)
 		if msg:find("Hitem:46029", nil, true) then
-			self:TargetMessage(64444, playerName, "green", "Info")
+			self:TargetMessageOld(64444, playerName, "green", "info")
 		end
 	end
 end

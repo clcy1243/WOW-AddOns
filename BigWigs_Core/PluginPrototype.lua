@@ -5,6 +5,7 @@
 
 local plugin = {}
 local core
+
 do
 	local _, tbl =...
 	core = tbl.core
@@ -29,8 +30,6 @@ function plugin:Enable()
 		if type(self.OnPluginEnable) == "function" then
 			self:OnPluginEnable()
 		end
-
-		self:SendMessage("BigWigs_OnPluginEnable", self)
 	end
 end
 
@@ -49,7 +48,7 @@ function plugin:Disable()
 end
 
 do
-	local UnitName = UnitName
+	local UnitName = BigWigsLoader.UnitName
 	--- Get the full name of a unit.
 	-- @string unit unit token or name
 	-- @bool[opt] trimServer append * instead of the server name
@@ -66,6 +65,19 @@ do
 end
 
 do
+	local UnitGUID = BigWigsLoader.UnitGUID
+	--- Get the Globally Unique Identifier of a unit.
+	-- @string unit unit token or name
+	-- @return guid guid of the unit
+	function plugin:UnitGUID(unit)
+		local guid = UnitGUID(unit)
+		if guid then
+			return guid
+		end
+	end
+end
+
+do
 	local raidList = {
 		"raid1", "raid2", "raid3", "raid4", "raid5", "raid6", "raid7", "raid8", "raid9", "raid10",
 		"raid11", "raid12", "raid13", "raid14", "raid15", "raid16", "raid17", "raid18", "raid19", "raid20",
@@ -73,17 +85,25 @@ do
 		"raid31", "raid32", "raid33", "raid34", "raid35", "raid36", "raid37", "raid38", "raid39", "raid40"
 	}
 	local partyList = {"player", "party1", "party2", "party3", "party4"}
-	local GetNumGroupMembers, IsInRaid = GetNumGroupMembers, IsInRaid
+	local GetNumGroupMembers, IsInRaid, UnitPosition = GetNumGroupMembers, IsInRaid, UnitPosition
 	--- Iterate over your group.
 	-- Automatically uses "party" or "raid" tokens depending on your group type.
+	-- @bool[opt] noInstanceFilter If true then all group units are returned even if they are not in your instance
 	-- @return iterator
-	function plugin:IterateGroup()
+	function plugin:IterateGroup(noInstanceFilter)
+		local _, _, _, instanceId = UnitPosition("player")
 		local num = GetNumGroupMembers() or 0
 		local i = 0
 		local size = num > 0 and num+1 or 2
 		local function iter(t)
 			i = i + 1
 			if i < size then
+				if not noInstanceFilter then
+					local _, _, _, tarInstanceId = UnitPosition(t[i])
+					if instanceId ~= tarInstanceId then
+						return iter(t)
+					end
+				end
 				return t[i]
 			end
 		end
@@ -100,6 +120,27 @@ do
 	-- @return indexed table of party unit tokens
 	function plugin:GetPartyList()
 		return partyList
+	end
+end
+
+do
+	local PlaySoundFile = BigWigsLoader.PlaySoundFile
+	--- Play a sound file.
+	-- @param sound Either a FileID (number), or the path to a sound file (string)
+	-- @string[opt] channel the channel the sound should play on, defaults to "Master"
+	function plugin:PlaySoundFile(sound, channel)
+		PlaySoundFile(sound, channel or "Master")
+	end
+end
+
+do
+	local Timer = BigWigsLoader.CTimerAfter
+	--- Trigger a function after a specific delay
+	-- @param func callback function to trigger after the delay
+	-- @number delay how long to wait until triggering the function
+	function plugin:SimpleTimer(func, delay)
+		if delay < 0 then return end -- XXX This is a stopgap for BigWigs_StartCountdown going negative if started around 3
+		Timer(delay, func)
 	end
 end
 
@@ -143,7 +184,7 @@ end
 
 do
 	local SendAddonMessage, IsInGroup = BigWigsLoader.SendAddonMessage, IsInGroup
-	local pName = UnitName("player")
+	local pName = BigWigsLoader.UnitName("player")
 	--- Send an addon sync to other players.
 	-- @param msg the sync message/prefix
 	-- @param[opt] extra other optional value you want to send
@@ -156,7 +197,11 @@ do
 				if extra then
 					msg = msg .."^".. extra
 				end
-				SendAddonMessage("BigWigs", msg, IsInGroup(2) and "INSTANCE_CHAT" or "RAID")
+				local _, result = SendAddonMessage("BigWigs", msg, IsInGroup(2) and "INSTANCE_CHAT" or "RAID")
+				if type(result) == "number" and result ~= 0 then
+					local errorMsg = format("Failed to send plugin comm %q. Error code: %d", msg, result)
+					core:Error(errorMsg)
+				end
 			end
 		end
 	end

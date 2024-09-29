@@ -188,5 +188,8 @@ L["phase_3_end_trigger"] = "别以为你们已经赢了，你们这些瞎子，�
 
 	L.custom_off_minion_marker = "亚煞极的爪牙标记"
 	L.custom_off_minion_marker_desc = "帮助分离亚煞极的爪牙，使用 {rt1}{rt2}{rt3}{rt4}{rt5}{rt6}{rt7}{rt8} 标记，需要权限。"
+
+	L.warmup_yell_chat_trigger1 = "现在还不迟，加尔鲁什" -- "现在还不迟，加尔鲁什。卸下酋长的包袱吧。我们可以就此结束这场流血冲突。"
+	L.warmup_yell_chat_trigger2 = "你心中还有荣誉和战场的荣耀吗" -- "哈！你心中还有荣誉和战场的荣耀吗？你这个与人类媾和，允许术士在我们眼皮底下施行黑暗魔法的家伙。你这个懦夫。"
 end
 

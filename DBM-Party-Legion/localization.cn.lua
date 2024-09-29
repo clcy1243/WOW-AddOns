@@ -1,7 +1,7 @@
 -- Mini Dragon(projecteurs@gmail.com)
 -- 夏一可
 -- Blizzard Entertainment
--- Last update: 2018/04/04
+-- Last update: 20230502
 
 if GetLocale() ~= "zhCN" then return end
 local L
@@ -136,7 +136,8 @@ L= DBM:GetModLocalization(1487)
 L= DBM:GetModLocalization(1488)
 
 L:SetMiscLocalization({
-	SkovaldRP		= 	"不！我也证明了自己，奥丁。我是神王斯科瓦尔德！这些凡人休想抢走我的圣盾！"
+	SkovaldRP		= 	"不！我也证明了自己，奥丁。我是神王斯科瓦尔德！这些凡人休想抢走我的圣盾！",
+	SkovaldRPTwo	= 	"如果这些所谓的“勇士”不肯放弃圣盾……那就让他们去死吧！"
 })
 
 -----------------------
@@ -144,8 +145,17 @@ L:SetMiscLocalization({
 -----------------------
 L= DBM:GetModLocalization(1489)
 
+L:SetOptionLocalization({
+	RuneBehavior		= "设置符文烙印的模组行为",
+	Icon				= "通过语音提示符文的颜色",
+	Entrance			= "通过语音提示位置，入口是南边，王座是北边",
+	Minimap				= "通过语音提示位置，王座是南边，入口是北边",
+	Generic				= "只提示你被标记，不提供位置信息" --默认
+})
+
 L:SetMiscLocalization({
-	tempestModeMessage		=	"非明光风暴序列: %s. 8秒后再检查."
+	tempestModeMessage		=	"非明光风暴序列: %s. 8秒后再检查.",
+	OdynRP					=	"真了不起！没想到还有人能对抗瓦拉加尔的力量……而他们就站在我面前。"
 })
 
 -----------------------
@@ -248,6 +258,10 @@ L= DBM:GetModLocalization(1719)
 -----------------------
 L= DBM:GetModLocalization(1720)
 
+L:SetMiscLocalization({
+	MelRP		= "这么快就走了吗，大魔导师？"
+})
+
 -----------------------
 --Court of Stars Trash
 -----------------------
@@ -257,76 +271,54 @@ L:SetGeneralLocalization({
 	name =	"群星庭院小怪"
 })
 
+L:SetWarningLocalization({
+	warnAvailableItems	= "%s"
+})
+
 L:SetOptionLocalization({
-	SpyHelper	= "帮忙识别密探"
+	warnAvailableItems	= "根据小组在区域内通告可用交互",
+	SpyHelper			= "在对话时帮忙识别密探，并在信息窗显示（同步DBM/BW用户）",
+	SpyHelperClose2		= "0.3秒后自动关闭对话窗（给与其他插件扫描延迟）",
+	SendToChat2			= "自动在聊天中显示提示（需要上面那个功能开启）"
 })
 
 L:SetMiscLocalization({ --神坑
-	Gloves1		= "有传言说那个密探总是带着手套。",
-	Gloves2		= "我听说密探都会小心隐藏自己的双手。",
-	Gloves3		= "我听说那个密探总是带着手套。",
-	Gloves4		= "有人说那个密探带着手套，以掩盖手上明显的疤痕。",
-	NoGloves1	= "有传言说那个密探从来不戴手套。",
-	NoGloves2	= "你知道吗……我在后头的房间里发现了一双多余的手套。那个密探现在可能就赤着双手在这附近转悠呢。",
-	NoGloves3	= "我听说那个密探不喜欢戴手套。",
-	NoGloves4	= "我听说那个密探会尽量不戴手套，以防在快速行动时受到阻碍。",
-	Cape1		= "有人提到那个密探之前是穿着斗篷来的。",
-	Cape2		= "我听说那个密探喜欢穿斗篷。",
-	NoCape1		= "我听说那个密探讨厌斗篷，所以没有穿。",
-	NoCape2		= "我听说那个密探在来这里之前，把斗篷忘在王宫里了。",
-	LightVest1	= "那个间谍肯定更喜欢浅色的上衣。",
-	LightVest2	= "我听说那个密探穿着一件浅色上衣来参加今晚的聚会。",
-	LightVest3	= "大家都在说那个密探今晚没有穿深色的上衣。",
-	DarkVest1	= "那个间谍肯定更喜欢深色的服装。",
-	DarkVest2	= "我听说那个密探今晚所穿的外衣是浓密的暗深色。",
-	DarkVest3	= "那个密探喜欢深色的上衣……就像夜空一样深沉。",
-	DarkVest4	= "传说那个密探会避免穿浅色的服装，以便更好地混入人群。",
-	Female1		= "他们说那个密探已经来了，而且她是个大美人。",
-	Female2		= "我听说有个女人一直打听贵族区的情况……",
-	Female3		= "有人说我们的新客人不是男性。",
-	Female4		= "他们说那个密探已经来了，而且她是个大美人。",
-	Male1		= "我在别处听说那个密探不是女性。",
-	Male2		= "我听说那个密探已经来了，而且他很英俊。",
-	Male3		= "有个客人说她看见他和大魔导师一起走进了庄园。",
-	Male4		= "有个乐师说，他一直在打听这一带的消息。",
-	ShortSleeve1= "我听说密探喜欢穿短袖服装，以免妨碍双臂的活动。",
-	ShortSleeve2= "有人告诉我那个密探讨厌长袖的衣服。",
-	ShortSleeve3= "我的一个朋友说，她看到了密探穿的衣服，是一件短袖上衣。",
-	ShortSleeve4= "我听说那个密探喜欢清凉的空气，所以今晚没有穿长袖衣服。",
-	LongSleeve1 = "我听说那个密探今天穿着长袖外套。",
-	LongSleeve2 = "有人说，那个密探今晚穿了一件长袖的衣服。",
-	LongSleeve3 = "上半夜的时候，我正巧瞥见那个密探穿着长袖衣服。",
-	LongSleeve4 = "我的一个朋友说那个密探穿着长袖衣服。",
-	Potions1	= "我听说那个密探随身带着药水，这是为什么呢？",
-	Potions2	= "可别说是我告诉你的……那个密探伪装成了炼金师，腰带上挂着药水。",
-	Potions3	= "我敢肯定，那个密探的腰带上挂着药水。",
-	Potions4	= "我听说那个密探买了一些药水……以防万一。",
-	NoPotions1	= "我听说那个密探根本没带任何药水。",
-	NoPotions2	= "有个乐师告诉我，她看到那个密探扔掉了身上的最后一瓶药水，已经没有药水了。",
-	Book1		= "我听说那个密探的腰带上，总是挂着一本写满机密的书。",
-	Book2		= "据说那个密探喜欢读书，而且总是随身携带至少一本书。",
-	Pouch1		= "我听说那个密探总是带着一个魔法袋。",
-	Pouch2		= "一个朋友说，那个密探喜欢黄金，所以在腰包里装满了金币。",
-	Pouch3		= "我听说那个密探的腰包里装满了摆阔用的金币。",
-	Pouch4		= "我听说那个密探的腰包上绣着精美的丝线。",
 	Found		= "喂喂，别急着下结论", --给s大大疯狂打电话
-	--
-	Gloves		= "手套",
-	NoGloves	= "没手套",
-	Cape		= "斗篷",
-	Nocape		= "没斗篷",
-	LightVest	= "浅色上衣",
-	DarkVest	= "深色上衣",
-	Female		= "女性",
-	Male		= "男性",
-	ShortSleeve = "短袖",
-	LongSleeve	= "长袖",
-	Potions		= "腰上药水",
-	NoPotions	= "没有药水",
-	Book		= "带书",
-	Pouch		= "挂腰包"
-})
+	--Add translations, but keep english termss for cross language groups since these post to chat
+	--Format "localized / english"
+	Gloves		= "手套 / gloves",
+	NoGloves	= "没手套 / no gloves",
+	Cape		= "斗篷 / cape",
+	Nocape		= "没斗篷 / no cape",
+	LightVest	= "浅色上衣 / light vest",
+	DarkVest	= "深色上衣 / dark vest",
+	Female		= "女性 / female",
+	Male		= "男性 / male",
+	ShortSleeve = "短袖 / short sleeve",
+	LongSleeve	= "长袖 / long sleeve",
+	Potions		= "腰上药水 / potions",
+	NoPotions	= "没有药水 / no potions",
+	Book		= "带书 / book",
+	Pouch		= "挂腰包 / pouch",
 
+	SpyFoundP 					= "我找到间谍了",
+	SpyFound 					= "间谍已经被%s找到了",
+	SpyGoingAway				= "暴雪貌似不让我们用这个功能了",
+	--Profession				stuff
+	Nightshade					= "夜影小食",
+	UmbralBloom					= "深黯之花",
+	InfernalTome				= "地狱火宝典",
+	MagicalLantern				= "魔法灯笼",
+	StarlightRoseBrew			= "星光玫瑰茶",
+	WaterloggedScroll			= "浸水的卷轴",
+	DiscardedJunk				= "丢弃的垃圾",
+	BazaarGoods					= "集市货物",
+	WoundedNightborneCivilian	= "受伤的夜之子平民",
+	LifesizedNightborneStatue	= "夜之子等身雕像",
+	--
+	Available					= "%s|cffffffff%s|r 可用",
+	UsableBy					= "被%s使用"
+})
 -----------------------
 -- <<<The Maw of Souls>>> --
 -----------------------
@@ -516,6 +508,15 @@ L= DBM:GetModLocalization(1818)
 -- Viz'aduum the Watcher --
 -----------------------
 L= DBM:GetModLocalization(1838)
+
+-----------------------
+--Nightbane
+-----------------------
+L = DBM:GetModLocalization("Nightbane")
+
+L:SetGeneralLocalization({
+	name =	"夜之魇"
+})
 
 -----------------------
 --Return To Karazhan Trash

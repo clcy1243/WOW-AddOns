@@ -2,15 +2,16 @@ local L = BigWigs:NewBossLocale("Razorgore the Untamed", "ruRU")
 if not L then return end
 if L then
 	L.start_trigger = "Злоумышленники проломились"
-	L.start_message = "Бритвосмерт в бещенстве! Помощники появятся через 45 секунд!"
-	L.start_soon = "Помощники через 5 секунд!"
-	L.start_mob = "Появляются помощники!"
 
 	L.eggs = "Считать яйца"
 	L.eggs_desc = "Пересчитывать уничтоженные яйца."
-	L.eggs_message = "%d/30 яиц уничтожено!"
+	L.eggs_message = "%d/30 яиц уничтожено"
+end
 
-	L.phase2_message = "Все яйца уничтоже, Бритвосметр повержен!"
+L = BigWigs:NewBossLocale("Vaelastrasz the Corrupt", "ruRU")
+if L then
+	--L.warmup_trigger = "Too late, friends!"
+	--L.tank_bomb = "Tank Bomb"
 end
 
 L = BigWigs:NewBossLocale("Chromaggus", "ruRU")
@@ -20,25 +21,24 @@ if L then
 
 	--L.debuffs_message = "3/5 debuffs, carefull!"
 	--L.debuffs_warning = "4/5 debuffs, %s on 5th!"
+	L.bronze = "Бронзовое"
+
+	L.vulnerability = "Изменение уязвимости"
+	L.vulnerability_desc = "Сообщать когда уязвимость изменяется."
+	L.vulnerability_message = "Уязвимость: %s"
+	L.detect_magic_missing = "Распознавание магии is missing from Chromaggus"
+	L.detect_magic_warning = "A Mage must cast \124cff71d5ff\124Hspell:2855:0\124h[Распознавание магии]\124h\124r on Chromaggus for vulnerability warnings to work."
 end
 
-L = BigWigs:NewBossLocale("Nefarian ", "ruRU")
+L = BigWigs:NewBossLocale("Nefarian Classic", "ruRU")
 if L then
-	L.landing_soon_trigger = "Отличная работа мои миньёны!"
-	L.landing_trigger = "СЖЕЧЬ! Вы обречены!"
-	L.zerg_trigger = "Невозможно!"
+	--L.engage_yell_trigger = "Let the games begin"
+	L.stage3_yell_trigger = "Невозможно!"
 
-	L.triggershamans = "Шаманы! Покажитесь мне!"
-	L.triggerwarlock = "Варлоки, вы должны играть!"
-	L.triggerhunter = "Охотники и ваше раздражение"
-	L.triggermage = "Маги так же%?"
-	L.triggerdeathknight = "Рыцари смерти! Сюда!"
-	--L.triggermonk = "Monks"
-
-	L.landing_soon_warning = "Нефариан приземлится через 10 секунд!"
-	L.landing_warning = "Нефариан ПРИЗЕМЛЯЕТСЯ!"
-	L.zerg_warning = "НАЧИНАЕТСЯ ЗЕРГ!"
-	L.classcall_warning = "Начинается классовый вызов!"
+	L.shaman_class_call_yell_trigger = "Шаманы! Покажитесь мне!"
+	L.deathknight_class_call_yell_trigger = "Рыцари смерти! Сюда!"
+	--L.monk_class_call_yell_trigger = "Monks"
+	L.hunter_class_call_yell_trigger = "Охотники и ваше раздражение"
 
 	L.warnshaman = "Шаманы - ставьте тотемы!"
 	L.warndruid = "Друиды - пробудите в себе зверя!"
@@ -49,15 +49,24 @@ if L then
 	L.warnrogue = "Разбойники - точите свои клинки!"
 	L.warnpaladin = "Паладины - улучшайте защиту!"
 	L.warnmage = "Маги - используйте превращение!"
+	--L.warndeathknight = "Death Knights - Death Grip"
 	--L.warnmonk = "Monks - Stuck Rolling"
 	--L.warndemonhunter = "Demon Hunters - Blinded"
-
-	L.classcall_bar = "Классовый вызов"
 
 	L.classcall = "Классовый вызов"
 	L.classcall_desc = "Предупреждать о классовом вызове."
 
-	L.otherwarn = "Приземление и зерг"
-	L.otherwarn_desc = "Предупреждать об опасности приземления и зерга."
+	--L.add = "Drakonid deaths"
+	--L.add_desc = "Announce the number of adds killed in stage 1 before Nefarian lands."
 end
 
+L = BigWigs:NewBossLocale("Blackwing Lair Trash", "ruRU")
+if L then
+	L.wyrmguard_overseer = "Змеестраж Когтя Смерти / Надзиратель Когтя Смерти" -- NPC 12460 / 12461
+
+	--L.target_vulnerability = "Target Vulnerability Warnings"
+	--L.target_vulnerability_desc = "When your target is a Death Talon Wyrmguard or a Death Talon Overseer, show a warning for what vulnerability it has."
+	--L.target_vulnerability_message = "Target Vulnerability: %s"
+	L.detect_magic_missing_message = "Распознавание магии is missing from your target"
+	L.detect_magic_warning = "A Mage must cast \124cff71d5ff\124Hspell:2855:0\124h[Распознавание магии]\124h\124r on your target for vulnerability warnings to work."
+end

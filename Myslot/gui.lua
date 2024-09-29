@@ -2,9 +2,10 @@ local _, MySlot = ...
 
 local L = MySlot.L
 local RegEvent = MySlot.regevent
+local MAX_PROFILES_COUNT = 50
 
 
-local f = CreateFrame("Frame", nil, UIParent)
+local f = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 f:SetWidth(650)
 f:SetHeight(600)
 f:SetBackdrop({
@@ -24,9 +25,16 @@ f:SetMovable(true)
 f:RegisterForDrag("LeftButton")
 f:SetScript("OnDragStart", f.StartMoving)
 f:SetScript("OnDragStop", f.StopMovingOrSizing)
+f:SetScript("OnKeyDown", function (_, key)
+    if key == "ESCAPE" then
+        f:Hide()
+    end
+end)
 f:Hide()
 
 MySlot.MainFrame = f
+
+local menuFrame = CreateFrame("Frame", nil, UIParent, "UIDropDownMenuTemplate")
 
 -- title
 do
@@ -37,7 +45,7 @@ do
     t:SetPoint("TOP", f, 0, 12)
     f.texture = t
 end
-    
+
 do
     local t = f:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     t:SetText(L["Myslot"])
@@ -56,75 +64,318 @@ do
     b:SetScript("OnClick", function() f:Hide() end)
 end
 
-local forceImportCheckbox
-do
-    local b = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate")
-    b.text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    b.text:SetPoint("LEFT", b, "RIGHT", 0, 1)
-    b:SetPoint("BOTTOMLEFT", 340, 13)
-    b.text:SetText(L["Force Import"])
-    b:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOP");
-        GameTooltip:SetText(L["Skip CRC32, version and any other validation before importing. May cause unknown behavior"], nil, nil, nil, nil, true);
-        GameTooltip:Show();
-    end)
-    b:SetScript("OnLeave", GameTooltip_Hide)
-    forceImportCheckbox = b
+local function CreateSettingMenu(opt)
+
+    local tableref = function (name)
+        if name == "action" then
+            return opt.ignoreActionBars
+        end
+
+        -- if name == "binding" then
+        --     return opt.ignoreBindings
+        -- end
+
+        if name == "macro" then
+            return opt.ignoreMacros
+        end
+    end
+
+    local childchecked = function (self)
+        return tableref(self.arg1)[self.arg2]
+    end
+
+    local childclicked = function (self)
+        local t = tableref(self.arg1)
+        t[self.arg2] = not t[self.arg2]
+        UIDropDownMenu_RefreshAll(menuFrame)
+    end
+
+    local parentchecked = function (self)
+        local t = tableref(self.arg1)
+        for _, v in pairs(t) do
+            if v then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    local parentclicked  = function (self)
+        local checkedany = parentchecked(self)
+        local t = tableref(self.arg1)
+
+        for i in pairs(t) do
+            t[i] = not checkedany
+        end
+
+        UIDropDownMenu_RefreshAll(menuFrame)
+    end
+
+    opt.ignoreActionBars = opt.ignoreActionBars or {
+        [1] = false,
+        [2] = false,
+        [3] = false,
+        [4] = false,
+        [5] = false,
+        [6] = false,
+        [7] = false,
+        [8] = false,
+        [9] = false,
+        [10] = false,
+        [11] = false,
+        [12] = false,
+        [13] = false,
+        [14] = false,
+        [15] = false,
+    }
+
+    opt.ignoreBinding = false
+    -- opt.ignoreBindings = opt.ignoreBindings or {}
+
+    opt.ignoreMacros = opt.ignoreMacros or {
+        ["ACCOUNT"] = false,
+        ["CHARACTOR"] = false,
+    }
+
+    opt.ignorePetActionBar = false
+
+    -- https://warcraft.wiki.gg/wiki/Action_slot
+    local actionbarlist = {
+        {
+            text = L["Main Action Bar Page"] .. " 1",
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = 1,
+            checked = childchecked,
+            func = childclicked,
+        },
+        {
+            text = L["Main Action Bar Page"] .. " 2",
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = 2,
+            checked = childchecked,
+            func = childclicked,
+        },
+        {
+            text = OPTION_SHOW_ACTION_BAR:format(2), -- MultiBarBottomLeft
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = BOTTOMLEFT_ACTIONBAR_PAGE,
+            checked = childchecked,
+            func = childclicked,
+        },
+        {
+            text = OPTION_SHOW_ACTION_BAR:format(3), -- MultiBarBottomRight
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = BOTTOMRIGHT_ACTIONBAR_PAGE,
+            checked = childchecked,
+            func = childclicked,
+        },
+        {
+            text = OPTION_SHOW_ACTION_BAR:format(4), -- MultiBarRight
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = RIGHT_ACTIONBAR_PAGE,
+            checked = childchecked,
+            func = childclicked,
+        },
+        {
+            text = OPTION_SHOW_ACTION_BAR:format(5), -- MultiBarLeft
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = LEFT_ACTIONBAR_PAGE,
+            checked = childchecked,
+            func = childclicked,
+        },
+    }
+
+    if MULTIBAR_5_ACTIONBAR_PAGE then
+
+        table.insert(actionbarlist, {
+            text = OPTION_SHOW_ACTION_BAR:format(6),
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = MULTIBAR_5_ACTIONBAR_PAGE,
+            checked = childchecked,
+            func = childclicked,
+        })
+    end
+
+    if MULTIBAR_6_ACTIONBAR_PAGE then
+        table.insert(actionbarlist, {
+            text = OPTION_SHOW_ACTION_BAR:format(7),
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = MULTIBAR_6_ACTIONBAR_PAGE,
+            checked = childchecked,
+            func = childclicked,
+        })
+    end
+
+    if  MULTIBAR_7_ACTIONBAR_PAGE then
+        table.insert(actionbarlist, {
+            text = OPTION_SHOW_ACTION_BAR:format(8),
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = MULTIBAR_7_ACTIONBAR_PAGE,
+            checked = childchecked,
+            func = childclicked,
+        })
+    end
+
+    -- 10.0
+    if select(4, GetBuildInfo()) > 100000 then
+        table.insert(actionbarlist, {
+            text = L["Skyriding Bar"],
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = 11,
+            checked = childchecked,
+            func = childclicked,
+        })        
+    end
+
+    for i = 1, 4 do
+
+        -- local _, _, _, spell = GetShapeshiftFormInfo(i)
+        -- TODO better name
+
+        -- if spell then
+        table.insert(actionbarlist, {
+            text = L["Stance Action Bar"] .. " " .. i,
+            isNotRadio = true,
+            keepShownOnClick = true,
+            arg1 = "action",
+            arg2 = 6 + i,
+            checked = childchecked,
+            func = childclicked,
+        })
+        -- end
+    end
+
+    return {
+        {
+            text = ACTIONBARS_LABEL,
+            hasArrow = true,
+            notCheckable = false,
+            isNotRadio = true,
+            keepShownOnClick = true,
+            menuList = actionbarlist,
+            func = parentclicked,
+            checked = parentchecked,
+            arg1 = "action",
+        }, -- 1
+        {
+            text = L["Key Binding"],
+            notCheckable = false,
+            isNotRadio = true,
+            keepShownOnClick = true,
+            func = function ()
+                opt.ignoreBinding = not opt.ignoreBinding
+            end,
+            checked = function ()
+                return opt.ignoreBinding
+            end,
+        }, -- 2
+        {
+            text = MACRO,
+            hasArrow = true,
+            notCheckable = false,
+            isNotRadio = true,
+            keepShownOnClick = true,
+            func = parentclicked,
+            checked = parentchecked,
+            arg1 = "macro",
+            menuList = {
+                {
+                    text = GENERAL_MACROS,
+                    isNotRadio = true,
+                    keepShownOnClick = true,
+                    arg1 = "macro",
+                    arg2 = "ACCOUNT",
+                    checked = childchecked,
+                    func = childclicked,
+                },
+                {
+                    text = CHARACTER_SPECIFIC_MACROS:format(""),
+                    isNotRadio = true,
+                    keepShownOnClick = true,
+                    arg1 = "macro",
+                    arg2 = "CHARACTOR",
+                    checked = childchecked,
+                    func = childclicked,
+                },
+            }
+        }, -- 3
+        {
+            text = PET .. " " .. ACTIONBARS_LABEL,
+            notCheckable = false,
+            isNotRadio = true,
+            keepShownOnClick = true,
+            func = function ()
+                opt.ignorePetActionBar = not opt.ignorePetActionBar
+            end,
+            checked = function ()
+                return opt.ignorePetActionBar
+            end,
+        }, -- 4
+    }
 end
 
-local ignoreActionCheckbox
-local ignoreBindingCheckbox
-local ignoreMacroCheckbox
+local function DrawMenu(root, menuData)
+    for _, m in ipairs(menuData) do
+        if m.isTitle then
+            root:CreateTitle(m.text)
+        else
+            local c = root:CreateCheckbox(m.text, m.checked, function ()
 
-do
-    do
-        local b = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate")
-        b.text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        b.text:SetPoint("LEFT", b, "RIGHT", 0, 1)
-        b:SetPoint("BOTTOMLEFT", 38, 95)
-        b.text:SetText(L["Ignore Import/Export Action"])
-        -- b:SetScript("OnEnter", function(self)
-        --     GameTooltip:SetOwner(self, "ANCHOR_TOP");
-        --     GameTooltip:SetText(L[""], nil, nil, nil, nil, true);
-        --     GameTooltip:Show();
-        -- end)
-        -- b:SetScript("OnLeave", GameTooltip_Hide)
-        ignoreActionCheckbox = b
+            end, {
+                arg1 = m.arg1,
+                arg2 = m.arg2,
+            })
+            c:SetResponder(function(data, menuInputData, menu)
+                m.func({
+                    arg1 = m.arg1,
+                    arg2 = m.arg2,
+                })
+                -- Your handler here...
+                return MenuResponse.Refresh;
+            end)
+
+            if m.menuList then
+                DrawMenu(c, m.menuList)
+            end
+        end
     end
 
-    do
-        local b = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate")
-        b.text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        b.text:SetPoint("LEFT", b, "RIGHT", 0, 1)
-        b:SetPoint("BOTTOMLEFT", 38, 70)
-        b.text:SetText(L["Ignore Import/Export Key Binding"])
-        -- b:SetScript("OnEnter", function(self)
-        --     GameTooltip:SetOwner(self, "ANCHOR_TOP");
-        --     GameTooltip:SetText(L[""], nil, nil, nil, nil, true);
-        --     GameTooltip:Show();
-        -- end)
-        -- b:SetScript("OnLeave", GameTooltip_Hide)
-        ignoreBindingCheckbox = b
-    end
+end
 
-    do
-        local b = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate")
-        b.text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        b.text:SetPoint("LEFT", b, "RIGHT", 0, 1)
-        b:SetPoint("BOTTOMLEFT", 38, 45)
-        b.text:SetText(L["Ignore Import/Export Macro"])
-        -- b:SetScript("OnEnter", function(self)
-        --     GameTooltip:SetOwner(self, "ANCHOR_TOP");
-        --     GameTooltip:SetText(L[""], nil, nil, nil, nil, true);
-        --     GameTooltip:Show();
-        -- end)
-        -- b:SetScript("OnLeave", GameTooltip_Hide)
-        ignoreMacroCheckbox = b
-    end
+local EasyMenu = _G.EasyMenu or function (settings)
+    MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
+        DrawMenu(rootDescription, settings)
+    end)
 end
 
 -- import
 do
+
+    local actionOpt = {}
+    local clearOpt  = {}
+    local forceImport = false
+
     local b = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
     b:SetWidth(125)
     b:SetHeight(25)
@@ -132,7 +383,7 @@ do
     b:SetText(L["Import"])
     b:SetScript("OnClick", function()
         local msg = MySlot:Import(exportEditbox:GetText(), {
-            force = forceImportCheckbox:GetChecked(),
+            force = forceImport,
         })
 
         if not msg then
@@ -141,56 +392,143 @@ do
 
         StaticPopupDialogs["MYSLOT_MSGBOX"].OnAccept = function()
             StaticPopup_Hide("MYSLOT_MSGBOX")
+
+            MySlot:Clear("MACRO", clearOpt.ignoreMacros)
+            MySlot:Clear("ACTION", clearOpt.ignoreActionBars)
+            if clearOpt.ignoreBinding then
+                MySlot:Clear("BINDING")
+            end
+
             MySlot:RecoverData(msg, {
-                ignoreAction = ignoreActionCheckbox:GetChecked(),
-                ignoreBinding = ignoreBindingCheckbox:GetChecked(),
-                ignoreMacro = ignoreMacroCheckbox:GetChecked(),
+                actionOpt = actionOpt,
+                clearOpt = clearOpt,
             })
         end
         StaticPopup_Show("MYSLOT_MSGBOX")
+    end)
+
+    local ba = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+    ba:SetWidth(25)
+    ba:SetHeight(25)
+    ba:SetPoint("LEFT", b, "RIGHT", 0, 0)
+    ba:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    do
+        local icon = ba:CreateTexture(nil, 'ARTWORK')
+        icon:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
+        icon:SetPoint('CENTER', 1, 0)
+        icon:SetSize(16, 16)
+    end
+
+    local settings = {
+        {
+            isTitle = true,
+            text = "|cffff0000" .. L["IGNORE"] .. "|r" .. L[" during Import"],
+            notCheckable = true,
+        }
+    }
+
+    tAppendAll(settings, CreateSettingMenu(actionOpt))
+
+    tAppendAll(settings, {
+        {
+            isTitle = true,
+            text = "|cffff0000" .. L["CLEAR"] .. "|r" .. L[" before Import"],
+            notCheckable = true,
+        }
+    })
+    tAppendAll(settings, CreateSettingMenu(clearOpt))
+
+    table.remove(settings) -- remove pet action bar clearOpt, will support it later
+
+    tAppendAll(settings, {
+        {
+            isTitle = true,
+            text = OTHER,
+            notCheckable = true,
+        },
+        {
+            text = L["Force Import"],
+            isNotRadio = true,
+            keepShownOnClick = true,
+            checked = function()
+                return forceImport
+            end,
+            func = function()
+                forceImport = not forceImport
+            end
+        }
+    })
+
+    ba:SetScript("OnClick", function(self, button)
+        EasyMenu(settings, menuFrame, "cursor", 0 , 0, "MENU");
     end)
 end
 
 local infolabel
 
+
 -- export
 do
+    local actionOpt = {}
+
     local b = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
     b:SetWidth(125)
     b:SetHeight(25)
     b:SetPoint("BOTTOMLEFT", 40, 15)
     b:SetText(L["Export"])
     b:SetScript("OnClick", function()
-        local s = MySlot:Export({
-            ignoreAction = ignoreActionCheckbox:GetChecked(),
-            ignoreBinding = ignoreBindingCheckbox:GetChecked(),
-            ignoreMacro = ignoreMacroCheckbox:GetChecked(),
-        })
+        local s = MySlot:Export(actionOpt)
         exportEditbox:SetText(s)
         infolabel.ShowUnsaved()
+    end)
+
+    local ba = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+    ba:SetWidth(25)
+    ba:SetHeight(25)
+    ba:SetPoint("LEFT", b, "RIGHT", 0, 0)
+    ba:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    do
+        local icon = ba:CreateTexture(nil, 'ARTWORK')
+        icon:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
+        icon:SetPoint('CENTER', 1, 0)
+        icon:SetSize(16, 16)
+    end
+
+    local settings = {
+        {
+            isTitle = true,
+            text = "|cffff0000" .. L["IGNORE"] .. "|r" .. L[" during Export"],
+            notCheckable = true,
+        }
+    }
+
+    tAppendAll(settings, CreateSettingMenu(actionOpt))
+
+    ba:SetScript("OnClick", function(self, button)
+        EasyMenu(settings, menuFrame, "cursor", 0 , 0, "MENU");
     end)
 end
 
 RegEvent("ADDON_LOADED", function()
     do
-        local t = CreateFrame("Frame", nil, f)
+        local t = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
         t:SetWidth(600)
-        t:SetHeight(400)
+        t:SetHeight(455)
         t:SetPoint("TOPLEFT", f, 25, -75)
-        t:SetBackdrop({ 
+        t:SetBackdrop({
             bgFile = "Interface/Tooltips/UI-Tooltip-Background",
             edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
             tile = true,
             tileEdge = true,
             tileSize = 16,
             edgeSize = 16,
-            insets = { left = -2, right = -2, top = -2, bottom = -2 },    
+            insets = { left = -2, right = -2, top = -2, bottom = -2 },
         })
         t:SetBackdropColor(0, 0, 0, 0)
-    
+
         local s = CreateFrame("ScrollFrame", nil, t, "UIPanelScrollFrameTemplate")
         s:SetWidth(560)
-        s:SetHeight(375)
+        s:SetHeight(440)
         s:SetPoint("TOPLEFT", 10, -10)
 
 
@@ -204,8 +542,9 @@ RegEvent("ADDON_LOADED", function()
         edit:SetMultiLine(true)
         edit:SetFontObject(GameTooltipText)
         edit:SetScript("OnEscapePressed", edit.ClearFocus)
-        edit:SetScript("OnTextSet", edit.HighlightText)
-        edit:SetScript("OnMouseUp", edit.HighlightText)
+        edit:SetScript("OnMouseUp", function()
+            edit:HighlightText(0, -1)
+        end)
 
         -- edit:SetScript("OnTextChanged", function()
         --     infolabel:SetText(L["Unsaved"])
@@ -223,7 +562,7 @@ RegEvent("ADDON_LOADED", function()
         end)
 
         exportEditbox = edit
-    end    
+    end
 
 
     do
@@ -237,7 +576,7 @@ RegEvent("ADDON_LOADED", function()
             tt.ShowUnsaved = function()
                 tt:SetText(YELLOW_FONT_COLOR:WrapTextInColorCode(L["Unsaved"]))
             end
-            
+
             infolabel = tt
         end
 
@@ -261,6 +600,10 @@ RegEvent("ADDON_LOADED", function()
         end
 
         local create = function(name)
+            while #exports > MAX_PROFILES_COUNT do
+                table.remove(exports, 1)
+            end
+
             local txt = {
                 name = name
             }
@@ -271,6 +614,8 @@ RegEvent("ADDON_LOADED", function()
             info.value = #exports
             info.func = onclick
             UIDropDownMenu_AddButton(info)
+
+            return true
         end
 
         local save = function(force)
@@ -281,7 +626,9 @@ RegEvent("ADDON_LOADED", function()
             end
             if (not c) or (not exports[c]) then
                 local n = date()
-                create(n)
+                if not create(n) then
+                    return
+                end
                 UIDropDownMenu_SetSelectedValue(t, #exports)
                 UIDropDownMenu_SetText(t, n)
                 c = #exports
@@ -328,8 +675,9 @@ RegEvent("ADDON_LOADED", function()
                 return
             end
 
-            create(self.editBox:GetText())
-            onclick({value = #exports})
+            if create(self.editBox:GetText()) then
+                onclick({value = #exports})
+            end
         end
 
         do
@@ -366,7 +714,7 @@ RegEvent("ADDON_LOADED", function()
                     StaticPopupDialogs["MYSLOT_CONFIRM_DELETE"].OnAccept = function()
                         StaticPopup_Hide("MYSLOT_CONFIRM_DELETE")
                         table.remove(exports, c)
-                        
+
                         if #exports == 0 then
                             UIDropDownMenu_SetSelectedValue(t, nil)
                             UIDropDownMenu_SetText(t, "")
@@ -379,7 +727,7 @@ RegEvent("ADDON_LOADED", function()
                 end
             end)
         end
-       
+
         do
             local b = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
             b:SetWidth(70)
@@ -400,13 +748,89 @@ RegEvent("ADDON_LOADED", function()
 
 end)
 
+RegEvent("ADDON_LOADED", function()
+    local ldb = LibStub("LibDataBroker-1.1")
+    local icon = LibStub("LibDBIcon-1.0")
+
+    MyslotSettings = MyslotSettings or {}
+    MyslotSettings.minimap = MyslotSettings.minimap or { hide = false }
+    local config = MyslotSettings.minimap
+
+    icon:Register("Myslot", ldb:NewDataObject("Myslot", {
+            icon = "Interface\\MacroFrame\\MacroFrame-Icon",
+            OnClick = function()
+                f:SetShown(not f:IsShown())
+            end,
+            OnTooltipShow = function(tooltip)
+                tooltip:AddLine(L["Myslot"])
+            end,
+        }), config)
+
+
+    local lib = LibStub:NewLibrary("Myslot-5.0", 1)
+
+    if lib then
+        lib.MainFrame = MySlot.MainFrame
+    end
+
+end)
+
 SlashCmdList["MYSLOT"] = function(msg, editbox)
     local cmd, what = msg:match("^(%S*)%s*(%S*)%s*$")
 
-    if cmd == "clear" then
-        -- MySlot:Clear(what)
-        InterfaceOptionsFrame_OpenToCategory(L["Myslot"])
-        InterfaceOptionsFrame_OpenToCategory(L["Myslot"])
+    if cmd == "load" then
+
+        if not MyslotExports then
+            MyslotExports = {}
+        end
+        if not MyslotExports["exports"] then
+            MyslotExports["exports"] = {}
+        end
+        local exports = MyslotExports["exports"]
+        local profileString = ""
+
+        for i, profile in ipairs(exports) do
+
+            if profile.name == what then
+                MySlot:Print(L["Profile to load found : " .. profile.name])
+                profileString = profile.value
+            end
+        end
+
+        if profileString == "" then
+            MySlot:Print(L["No profile found with name " .. what])
+        else
+            local msg = MySlot:Import(profileString, { force = false })
+
+            if not msg then
+                return
+            end
+
+            local opt = {}
+            CreateSettingMenu(opt)
+
+            MySlot:RecoverData(msg, {
+                actionOpt = opt,
+                clearOpt = opt,
+            })
+        end
+
+    elseif cmd == "clear" then
+        Settings.OpenToCategory(MySlot.settingcategory.ID)
+    elseif cmd == "trim" then
+        if not MyslotExports then
+            MyslotExports = {}
+        end
+        if not MyslotExports["exports"] then
+            MyslotExports["exports"] = {}
+        end
+        local exports = MyslotExports["exports"]
+        local n = tonumber(what) or MAX_PROFILES_COUNT
+        n = math.max(n, 0)
+        while #exports > n do
+            table.remove(exports, 1)
+        end
+        C_UI.Reload()
     else
         f:Show()
     end

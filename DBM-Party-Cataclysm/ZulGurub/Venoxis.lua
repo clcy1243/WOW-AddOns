@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(175, "DBM-Party-Cataclysm", 11, 76)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "heroic,timewalker"
+
+mod:SetRevision("20240831045658")
 mod:SetCreatureID(52155)
 mod:SetEncounterID(1178)
-mod:SetZone()
 mod:SetUsedIcons(7, 8)
 
 mod:RegisterCombat("combat")
@@ -17,7 +18,6 @@ mod:RegisterEvents(
 	"SPELL_AURA_APPLIED 96477 96509 96512 96466",
 	"SPELL_AURA_REMOVED 96466 96477"
 )
-mod.onlyHeroic = true
 
 local warnWordHethiss		= mod:NewSpellAnnounce(96560, 2)
 local warnBreathHethiss		= mod:NewSpellAnnounce(96509, 3)
@@ -30,11 +30,11 @@ local specWarnBloodvenom	= mod:NewSpecialWarningSpell(96842, nil, nil, nil, 2, 2
 local specWarnPoolAcridTears= mod:NewSpecialWarningMove(96521, nil, nil, nil, 1, 2)
 local specWarnEffusion		= mod:NewSpecialWarningMove(96680, nil, nil, nil, 1, 2)
 
-local timerWhisperHethiss	= mod:NewTargetTimer(8, 96466, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
+local timerWhisperHethiss	= mod:NewTargetTimer(8, 96466, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 local timerBreathHethiss	= mod:NewNextTimer(12, 96509, nil, nil, nil, 3)
 local timerToxicLinkCD		= mod:NewNextTimer(14, 96477, nil, nil, nil, 3)--13-15 second variations, 14 will be a good medium
 
-mod:AddSetIconOption("SetIconOnToxicLink", 96477, true, false, {7, 8})
+mod:AddSetIconOption("SetIconOnToxicLink", 96477, true, 0, {7, 8})
 
 mod.vb.toxicLinkIcon = 8
 local toxicLinkTargets = {}
@@ -49,12 +49,16 @@ function mod:OnCombatStart(delay)
 	timerToxicLinkCD:Start(12-delay)
 	self.vb.toxicLinkIcon = 8
 	table.wipe(toxicLinkTargets)
-	if not self:IsTrivial(90) then--Only warning that uses these events is remorseless winter and that warning is completely useless spam for level 90s.
+	if not self:IsTrivial() then--Only warning that uses these events is remorseless winter and that warning is completely useless spam for level 90s.
 		self:RegisterShortTermEvents(
 			"SPELL_DAMAGE 96685 96521",
 			"SPELL_MISSED 96685 96521"
 		)
 	end
+end
+
+function mod:OnCombatEnd()
+	self:UnregisterShortTermEvents()
 end
 
 function mod:SPELL_AURA_APPLIED(args)
@@ -65,7 +69,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if args:IsPlayer() then
 			specWarnToxicLink:Show()
-			specWarnToxicLink:Play("gather")
+			specWarnToxicLink:Play("targetyou")
 		end
 		if self.Options.SetIconOnToxicLink then
 			self:SetIcon(args.destName, self.vb.toxicLinkIcon, 10)

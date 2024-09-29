@@ -71,24 +71,24 @@ end
 --[[ Gelatinized Decay ]]--
 function mod:WaveofDecay(args)
 	if not self:LFR() then
-		self:Message(args.spellId, "orange", self:Interrupter(args.sourceGUID) and "Info", CL.casting:format(args.spellName))
+		self:MessageOld(args.spellId, "orange", self:Interrupter(args.sourceGUID) and "info", CL.casting:format(args.spellName))
 	end
 end
 
 function mod:UnstableDecay(args)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Unstable Decay")
 		self:TargetBar(args.spellId, 9, args.destName)
-		self:TargetMessage(args.spellId, args.destName, "blue", "Warning")
+		self:TargetMessageOld(args.spellId, args.destName, "blue", "warning")
 	end
 end
 
 --[[ Taintheart Befouler ]]--
 function mod:Befoulment(args)
-	self:TargetMessage(args.spellId, args.destName, "green", "Alert", nil, nil, true)
+	self:TargetMessageOld(args.spellId, args.destName, "green", "alert", nil, nil, true)
 	self:TargetBar(args.spellId, 15, args.destName)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Befoulment")
 	end
 end
 
@@ -97,7 +97,7 @@ do
 	local guids = {}
 	local nextIcon = 8
 	function mod:CorruptedTotem(args)
-		self:Message("totem", "red", "Long", args.spellName, L.totem_icon)
+		self:MessageOld("totem", "red", "long", args.spellName, L.totem_icon)
 		if self:GetOption(totemMarker) then
 			if not next(guids) then
 				nextIcon = 8
@@ -115,7 +115,7 @@ do
 		if icon and icon > 0 then
 			local mobId = self:MobId(guid)
 			if mobId == 112474 then -- Corrupted Totem
-				SetRaidTarget(unit, icon)
+				self:CustomIcon(false, unit, icon)
 				guids[guid] = 0
 			end
 		end

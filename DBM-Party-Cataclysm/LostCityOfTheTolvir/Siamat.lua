@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(122, "DBM-Party-Cataclysm", 5, 69)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+mod.statTypes = "normal,heroic,timewalker"
+
+mod:SetRevision("20240629024545")
 mod:SetCreatureID(44819)
 mod:SetEncounterID(1055)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -29,7 +30,7 @@ local timerThunderCrash		= mod:NewCastTimer(3, 84522, nil, nil, nil, 3)
 local timerWailingWinds		= mod:NewBuffActiveTimer(6, 83066, nil, nil, nil, 3)
 local timerAbsorbStorms		= mod:NewCDTimer(33, 83151, nil, false, 2)
 local timerGatheredStorms	= mod:NewBuffActiveTimer(25, 84982, nil, false, 2)
-local timerPhase2Start		= mod:NewPhaseTimer(5)
+local timerPhase2Start		= mod:NewStageTimer(5)
 
 mod.vb.servantSpawn = 0
 mod.vb.thirdServant = 0

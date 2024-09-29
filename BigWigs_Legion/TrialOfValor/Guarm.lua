@@ -46,9 +46,9 @@ function mod:GetOptions()
 		{228248, "SAY", "FLASH"}, -- Frost Lick
 		{228253, "SAY", "FLASH"}, -- Shadow Lick
 		{228228, "SAY", "FLASH"}, -- Flame Lick
-		{228187, "FLASH"}, -- Guardian's Breath
+		{228187, "CASTBAR", "FLASH"}, -- Guardian's Breath
 		227514, -- Flashing Fangs
-		227816, -- Headlong Charge
+		{227816, "CASTBAR"}, -- Headlong Charge
 		227883, -- Roaring Leap
 
 		--[[ Mythic ]]--
@@ -91,7 +91,7 @@ function mod:OnEngage()
 	leapCounter = 0
 	foamCount = 1
 	phaseStartTime = GetTime()
-	wipe(foamTargets)
+	foamTargets = {}
 	self:Berserk(self:Mythic() and 244 or self:Normal() and 360 or self:LFR() and 420 or 300)
 	self:Bar(227514, 6) -- Flashing Fangs
 	self:Bar(228187, 14.5) -- Guardian's Breath
@@ -106,7 +106,7 @@ end
 function mod:OnBossDisable()
 	if self:GetOption(foamMarker) then
 		for i = 1, #foamTargets do
-			SetRaidTarget(foamTargets[i], 0)
+			self:CustomIcon(false, foamTargets[i])
 			foamTargets[i] = nil
 		end
 	end
@@ -120,7 +120,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 228187 then -- Guardian's Breath (starts casting)
 		breathCounter = breathCounter + 1
 		self:Bar(spellId, (breathCounter % 2 == 0 and 51) or 20.7, CL.count:format(self:SpellName(spellId), breathCounter+1))
-		self:Message(spellId, "yellow", "Warning")
+		self:MessageOld(spellId, "yellow", "warning")
 		self:CastBar(spellId, 5)
 		self:Flash(spellId)
 	end
@@ -131,11 +131,11 @@ do
 	function mod:FrostLick(args)
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Frost Lick")
 		end
 		list[#list+1] = args.destName
 		if #list == 1 then
-			self:ScheduleTimer("TargetMessage", 0.4, args.spellId, list, "orange", "Alarm", nil, nil, self:Dispeller("magic"))
+			self:ScheduleTimer("TargetMessageOld", 0.4, args.spellId, list, "orange", "alarm", nil, nil, self:Dispeller("magic"))
 		end
 	end
 end
@@ -145,11 +145,11 @@ do
 	function mod:ShadowLick(args)
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Shadow Lick")
 		end
 		list[#list+1] = args.destName
 		if #list == 1 then
-			self:ScheduleTimer("TargetMessage", 0.4, args.spellId, list, "orange", "Alarm")
+			self:ScheduleTimer("TargetMessageOld", 0.4, args.spellId, list, "orange", "alarm")
 		end
 	end
 end
@@ -159,23 +159,23 @@ do
 	function mod:FlameLick(args)
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Flame Lick")
 		end
 		list[#list+1] = args.destName
 		if #list == 1 then
-			self:ScheduleTimer("TargetMessage", 0.4, args.spellId, list, "orange", "Alarm")
+			self:ScheduleTimer("TargetMessageOld", 0.4, args.spellId, list, "orange", "alarm")
 		end
 	end
 end
 
 function mod:FlashingFangs(args)
 	fangCounter = fangCounter + 1
-	self:Message(args.spellId, "yellow", nil, CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "yellow", nil, CL.casting:format(args.spellName))
 	self:CDBar(args.spellId, fangCounter == 1 and 23 or fangCounter % 2 == 0 and 52 or 20)
 end
 
 function mod:HeadlongCharge(args)
-	self:Message(args.spellId, "red", "Long")
+	self:MessageOld(args.spellId, "red", "long")
 	self:Bar(args.spellId, 75.2)
 	self:CastBar(args.spellId, 7)
 	self:Bar(228187, 30, CL.count:format(self:SpellName(228187), breathCounter+1)) -- Correct Guardian's Breath timer
@@ -186,7 +186,7 @@ end
 
 function mod:RoaringLeap(args)
 	leapCounter = leapCounter + 1
-	self:Message(args.spellId, "orange", "Info")
+	self:MessageOld(args.spellId, "orange", "info")
 	if leapCounter % 2 == 0 then
 		self:CDBar(227514, 11.2) -- Adjust Flashing Fangs timer
 		self:Bar(args.spellId, 53.2)
@@ -206,7 +206,7 @@ do
 		if self:GetOption(foamMarker) then
 			local c = #foamTargets+1
 			foamTargets[c] = destName
-			SetRaidTarget(destName, c)
+			self:CustomIcon(false, destName, c)
 			if c == 1 then
 				self:ScheduleTimer("OnBossDisable", 10)
 			end
@@ -216,8 +216,8 @@ do
 	function mod:BrineyFoam(args)
 		markFoam(self, args.destName)
 		if self:Me(args.destGUID) then
-			self:Message(args.spellId, "cyan", "Alarm", CL.you:format(args.spellName))
-			self:Say(args.spellId, ("{rt6} %s {rt6}"):format(args.spellName))
+			self:MessageOld(args.spellId, "cyan", "alarm", CL.you:format(args.spellName))
+			self:Say(args.spellId, ("{rt6} %s {rt6}"):format(args.spellName), nil, ("{rt6} %s {rt6}"):format("Briney Volatile Foam"))
 			self:Flash(args.spellId)
 		end
 	end
@@ -225,8 +225,8 @@ do
 	function mod:FlamingFoam(args)
 		markFoam(self, args.destName)
 		if self:Me(args.destGUID) then
-			self:Message(args.spellId, "red", "Alert", CL.you:format(args.spellName))
-			self:Say(args.spellId, ("{rt7} %s {rt7}"):format(args.spellName))
+			self:MessageOld(args.spellId, "red", "alert", CL.you:format(args.spellName))
+			self:Say(args.spellId, ("{rt7} %s {rt7}"):format(args.spellName), nil, ("{rt7} %s {rt7}"):format("Flaming Volatile Foam"))
 			self:Flash(args.spellId)
 		end
 	end
@@ -234,8 +234,8 @@ do
 	function mod:ShadowyFoam(args)
 		markFoam(self, args.destName)
 		if self:Me(args.destGUID) then
-			self:Message(args.spellId, "yellow", "Warning", CL.you:format(args.spellName)) -- purple message would be appropriate
-			self:Say(args.spellId, ("{rt3} %s {rt3}"):format(args.spellName))
+			self:MessageOld(args.spellId, "yellow", "warning", CL.you:format(args.spellName)) -- purple message would be appropriate
+			self:Say(args.spellId, ("{rt3} %s {rt3}"):format(args.spellName), nil, ("{rt3} %s {rt3}"):format("Shadowy Volatile Foam"))
 			self:Flash(args.spellId)
 		end
 	end

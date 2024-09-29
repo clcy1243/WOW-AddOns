@@ -6,18 +6,12 @@ local select = select;
 local strfind = strfind;
 local twipe = table.wipe;
 local pairs = pairs;
-local sIsSuspended = false;
-local tEmptyColor = { };
 local sPlayerArray = { };
-local VUHDO_MY_AND_OTHERS_HOTS = { };
-local VUHDO_MY_HOTS = { };
-local VUHDO_OTHER_HOTS = { };
 local VUHDO_BOUQUETS = { };
 local VUHDO_RAID = { };
 local VUHDO_CONFIG = { };
 local VUHDO_BOUQUET_BUFFS_SPECIAL = { };
 local VUHDO_CUSTOM_ICONS;
-local VUHDO_CUSTOM_INFO;
 
 local VUHDO_CUSTOM_BOUQUETS = {
 	VUHDO_I18N_DEF_BOUQUET_TARGET_HEALTH,
@@ -29,15 +23,11 @@ local VUHDO_CUSTOM_BOUQUETS = {
 
 
 function VUHDO_bouquetsInitLocalOverrides()
-	VUHDO_MY_AND_OTHERS_HOTS = _G["VUHDO_MY_AND_OTHERS_HOTS"];
-	VUHDO_MY_HOTS = _G["VUHDO_MY_HOTS"];
-	VUHDO_OTHER_HOTS = _G["VUHDO_OTHER_HOTS"];
 	VUHDO_BOUQUETS = _G["VUHDO_BOUQUETS"];
 	VUHDO_RAID = _G["VUHDO_RAID"];
 	VUHDO_CONFIG = _G["VUHDO_CONFIG"];
 	VUHDO_CUSTOM_ICONS = _G["VUHDO_CUSTOM_ICONS"];
 	VUHDO_BOUQUET_BUFFS_SPECIAL = _G["VUHDO_BOUQUET_BUFFS_SPECIAL"];
-	VUHDO_CUSTOM_INFO = _G["VUHDO_CUSTOM_INFO"];
 	sPlayerArray["player"] = VUHDO_RAID["player"];
 end
 
@@ -69,7 +59,7 @@ end
 
 
 --
-local tHasChanged, tCnt, tLastTime, tArg;
+local tHasChanged, tLastTime;
 local function VUHDO_hasBouquetChanged(aUnit, aBouquetName, anArg1, anArg2, anArg3, anArg4, anArg5, anArg6, anArg7, anArg8, anArg9, anArg10)
 	tLastTime = VUHDO_LAST_EVALUATED_BOUQUETS[aBouquetName][aUnit];
 	if not tLastTime then
@@ -94,20 +84,23 @@ end
 
 
 --
-local tColor, tMode;
+local tColor;
+local tFactor;
 local tModi, tInvModi;
-local tR1, tG1, tB1;
-local tR2, tG2, tB2;
-local tTR1, tTG1, tTB1, tO1;
-local tTR2, tTG2, tTB2, tO2;
+local tR1, tG1, tB1, tO1;
+local tR2, tG2, tB2, tO2;
 local tGood, tFair, tLow;
 local tDestColor = { ["useBackground"] = true, ["useOpacity"] = true };
 local tRadio;
 local function VUHDO_getBouquetStatusBarColor(anEntry, anInfo, aValue, aMaxValue)
 	tRadio = anEntry["custom"]["radio"];
-	if 1 == tRadio then -- solid
 
-		return anEntry["color"];
+	if 1 == tRadio then -- solid
+		tColor = anEntry["color"];
+
+		tDestColor["R"], tDestColor["G"], tDestColor["B"], tDestColor["O"] = tColor["R"], tColor["G"], tColor["B"], tColor["O"];
+
+		return tDestColor;
 	elseif 2 == tRadio then -- class color
 
 		tColor = VUHDO_USER_CLASS_COLORS[anInfo["classId"]] or anEntry["color"];
@@ -136,18 +129,13 @@ local function VUHDO_getBouquetStatusBarColor(anEntry, anInfo, aValue, aMaxValue
 		 		tB2 * tInvModi + tB1 * tModi, tO2 * tInvModi + tO1 * tModi;
 		return tDestColor;
 	else
-		return anEntry["color"];
+		tColor = anEntry["color"];
+
+		tDestColor["R"], tDestColor["G"], tDestColor["B"], tDestColor["O"] = tColor["R"], tColor["G"], tColor["B"], tColor["O"];
+
+		return tDestColor;
 	end
 end
-
-
-
--- For Buffs/Debuffs vertex color is white
-local tDefaultBouquetColor = {
-	["R"] = 1, ["G"] = 1, ["B"] = 1, ["O"] = 1,
-	["TR"] = 1, ["TG"] = 1, ["TB"] = 1, ["TO"] = 1,
-	["useText"] = true, ["useBackground"] = true, ["useOpacity"] = true,
-};
 
 
 
@@ -188,6 +176,16 @@ end
 
 
 --
+local txActiveAuras;
+function VUHDO_getCurrentBouquetActiveAuras()
+
+	return txActiveAuras;
+
+end
+
+
+
+--
 local tBouquet;
 local tInfos;
 local tName;
@@ -197,13 +195,14 @@ local tIcon;
 local tTimer;
 local tCounter;
 local tDuration;
-local tBuffInfo;
-local tColor;
+local tSourceType;
+local tUnitHot;
+local tUnitHotInfo;
+local tNow;
 local tTimer2
 local tClipL, tClipR, tClipT, tClipB;
-local tType;
 local tAnzInfos;
-local tColor, tIcon;
+local tColor;
 local sEmpty = { };
 local txIcon;
 local txDuration;
@@ -211,7 +210,6 @@ local txName;
 local txLevel;
 local txTimer2;
 local txClipL, txClipR, txClipT, txClipB;
-local tDestColor = { };
 local tFactor;
 local tInfo, tUnit;
 local tEmptyInfo = { };
@@ -229,6 +227,7 @@ local function VUHDO_evaluateBouquet(aUnit, aBouquetName, anInfo)
 	txActive = false;
 	txIcon, tIsTxColorInit, txName = nil, false, nil;
 	txCounter, txTimer, txDuration, txTimer2, txLevel = 0, 0, 0, 0, 0;
+	txActiveAuras = 0;
 
 	tBouquet = VUHDO_BOUQUETS["STORED"][aBouquetName];
 	tAnzInfos = #tBouquet;
@@ -262,20 +261,55 @@ local function VUHDO_evaluateBouquet(aUnit, aBouquetName, anInfo)
 		else -- Buff/Debuff
 			tName = tInfos["name"];
 
-			tBuffInfo = ((tInfos["mine"] and tInfos["others"] and VUHDO_MY_AND_OTHERS_HOTS
-					or tInfos["mine"] and VUHDO_MY_HOTS
-					or tInfos["others"] and VUHDO_OTHER_HOTS
-					or sEmpty)[tUnit]	or sEmpty)[tName];
+			tIsActive = false;
+			tSourceType = 0;
 
-			tIsActive = tBuffInfo ~= nil;
-			if tIsActive then
-				tIcon, tTimer, tCounter, tDuration = tBuffInfo[3], tBuffInfo[tInfos["alive"] and 5 or 1], tBuffInfo[2], tBuffInfo[4];
-
-				if tTimer then tTimer = floor(tTimer * 10) * 0.1;	end
-				tColor = tInfos["color"];
-				if tInfos["icon"] ~= 1 then tIcon = VUHDO_CUSTOM_ICONS[tInfos["icon"]][2];
-				else tColor["isDefault"] = true; end
+			if tInfos["mine"] and tInfos["others"] then
+				tSourceType = VUHDO_UNIT_HOT_TYPE_BOTH;
+			elseif tInfos["mine"] then
+				tSourceType = VUHDO_UNIT_HOT_TYPE_MINE;
+			elseif tInfos["others"] then
+				tSourceType = VUHDO_UNIT_HOT_TYPE_OTHERS;
 			end
+
+			if tSourceType > 0 then
+				tUnitHot, _ = VUHDO_getUnitHot(tUnit, tName, tSourceType);
+
+				if tUnitHot and tUnitHot["auraInstanceId"] then
+					-- tUnitHotInfo: aura icon, expiration, stacks, duration, isMine, name, spell ID
+					tUnitHotInfo = VUHDO_getUnitHotInfo(aUnit, tUnitHot["auraInstanceId"]);
+
+					if tUnitHotInfo then
+						tIsActive = true;
+
+						txActiveAuras = txActiveAuras + 1;
+
+						tNow = GetTime();
+
+						if tInfos["alive"] then
+							tTimer = tNow - tUnitHotInfo[2] + (tUnitHotInfo[4] or 0);
+						else
+							tTimer = tUnitHotInfo[2] - tNow;
+						end
+
+						tIcon, tCounter, tDuration = tUnitHotInfo[1], tUnitHotInfo[3], tUnitHotInfo[4];
+
+						if tTimer then
+							tTimer = floor(tTimer * 10) * 0.1;
+						end
+
+						tColor = tInfos["color"];
+
+						if tInfos["icon"] ~= 1 then
+							tIcon = VUHDO_CUSTOM_ICONS[tInfos["icon"]][2];
+							tColor["isDefault"] = false;
+						else
+							tColor["isDefault"] = true;
+						end
+					end
+				end
+			end
+
 			tTimer2, tClipL, tClipR, tClipT, tClipB = nil, nil, nil, nil, nil;
 		end
 
@@ -383,9 +417,12 @@ end
 
 --
 local function VUHDO_registerForBouquet(aBouquetName, anOwnerName, aFunction)
-	if VUHDO_strempty(aBouquetName) then return;
+
+	if VUHDO_strempty(aBouquetName) or VUHDO_strempty(anOwnerName) then
+		return;
 	elseif not VUHDO_BOUQUETS["STORED"][aBouquetName] then
 		VUHDO_Msg(format(VUHDO_I18N_ERR_NO_BOUQUET, anOwnerName, aBouquetName), 1, 0.4, 0.4);
+
 		return;
 	end
 
@@ -401,6 +438,24 @@ local function VUHDO_registerForBouquet(aBouquetName, anOwnerName, aFunction)
 	if VUHDO_hasCyclic(aBouquetName) then
 		VUHDO_CYCLIC_BOUQUETS[aBouquetName] = true;
 	end
+
+end
+
+
+
+--
+function VUHDO_registerForBouquetUnique(aBouquetName, anOwnerName, aFunction, anAlreadyRegistered)
+
+	if not anAlreadyRegistered then
+		return;
+	end
+
+	if not VUHDO_strempty(aBouquetName) and not VUHDO_strempty(anOwnerName) and not anAlreadyRegistered[aBouquetName .. anOwnerName] then
+		VUHDO_registerForBouquet(aBouquetName, anOwnerName, aFunction);
+
+		anAlreadyRegistered[aBouquetName .. anOwnerName] = true;
+	end
+
 end
 
 
@@ -408,8 +463,8 @@ end
 --
 local tHotSlots;
 local tAlreadyRegistered = { };
-local tBouquetName;
 function VUHDO_registerAllBouquets(aDoCompress)
+
 	twipe(VUHDO_REGISTERED_BOUQUETS);
 	twipe(VUHDO_CYCLIC_BOUQUETS);
 
@@ -425,37 +480,105 @@ function VUHDO_registerAllBouquets(aDoCompress)
 		end
 	end
 
-	-- Bar (=Outer) Border
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["BAR_BORDER"], "Outer Border", VUHDO_barBorderBouquetCallback);
-	-- Cluster (=Inner) Border
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["CLUSTER_BORDER"], "Inner Border", VUHDO_clusterBorderBouquetCallback);
-	-- Swiftmend Indicator
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["SWIFTMEND_INDICATOR"], "Special Dot", VUHDO_swiftmendIndicatorBouquetCallback);
-	-- Aggro Line
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["AGGRO_BAR"], "Aggro Bar", VUHDO_aggroBarBouquetCallback);
-	-- Mouseover Highlighter
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["MOUSEOVER_HIGHLIGHT"], "Mouseover Highlight", VUHDO_highlighterBouquetCallback);
-	-- Threat Marks
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["THREAT_MARK"], "Threat Indicators", VUHDO_threatIndicatorsBouquetCallback);
-	-- Threat Bar
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["THREAT_BAR"], "Threat Bar", VUHDO_threatBarBouquetCallback);
-	-- Mana Bar
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["MANA_BAR"], "Mana Bar", VUHDO_manaBarBouquetCallback);
-	-- Background Bar
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["BACKGROUND_BAR"], "Background Bar", VUHDO_backgroundBarBouquetCallback);
-	-- Health Bar
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["HEALTH_BAR"], "Health Bar", VUHDO_healthBarBouquetCallback);
-	-- Side bar left
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["SIDE_LEFT"], "Side Bar Left", VUHDO_sideBarLeftBouquetCallback);
-	-- Side bar right
-	VUHDO_registerForBouquet(VUHDO_INDICATOR_CONFIG["BOUQUETS"]["SIDE_RIGHT"], "Side Bar Right", VUHDO_sideBarRightBouquetCallback);
-	-- Per panel Health Bars
 	twipe(tAlreadyRegistered);
-	for tCnt = 1, VUHDO_MAX_PANELS do
-		tBouquetName = VUHDO_INDICATOR_CONFIG["BOUQUETS"]["HEALTH_BAR_PANEL"][tCnt];
-		if VUHDO_PANEL_MODELS[tCnt] and tBouquetName ~= ""	and not tAlreadyRegistered[tBouquetName] then
-			VUHDO_registerForBouquet(tBouquetName, "Health Bar " .. tCnt, VUHDO_healthBarBouquetCallbackCustom);
-			tAlreadyRegistered[tBouquetName] = true;
+
+	for tPanelNum = 1, 10 do -- VUHDO_MAX_PANELS
+		if VUHDO_PANEL_MODELS[tPanelNum] then
+			-- Bar (=Outer) Border
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["BAR_BORDER"],
+				"Outer Border",
+				VUHDO_barBorderBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Cluster (=Inner) Border
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["CLUSTER_BORDER"],
+				"Inner Border",
+				VUHDO_clusterBorderBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Swiftmend Indicator
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["SWIFTMEND_INDICATOR"],
+				"Special Dot",
+				VUHDO_swiftmendIndicatorBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Aggro Line
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["AGGRO_BAR"],
+				"Aggro Bar",
+				VUHDO_aggroBarBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Mouseover Highlighter
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["MOUSEOVER_HIGHLIGHT"],
+				"Mouseover Highlight",
+				VUHDO_highlighterBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Threat Marks
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["THREAT_MARK"],
+				"Threat Indicators",
+				VUHDO_threatIndicatorsBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Threat Bar
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["THREAT_BAR"],
+				"Threat Bar",
+				VUHDO_threatBarBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Mana Bar
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["MANA_BAR"],
+				"Mana Bar",
+				VUHDO_manaBarBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Background Bar
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["BACKGROUND_BAR"],
+				"Background Bar",
+				VUHDO_backgroundBarBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Health Bar
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["HEALTH_BAR"],
+				"Health Bar",
+				VUHDO_healthBarBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Side bar left
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["SIDE_LEFT"],
+				"Side Bar Left",
+				VUHDO_sideBarLeftBouquetCallback,
+				tAlreadyRegistered
+			);
+
+			-- Side bar right
+			VUHDO_registerForBouquetUnique(
+				VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["SIDE_RIGHT"],
+				"Side Bar Right",
+				VUHDO_sideBarRightBouquetCallback,
+				tAlreadyRegistered
+			);
 		end
 	end
 
@@ -464,8 +587,10 @@ function VUHDO_registerAllBouquets(aDoCompress)
 	end
 
 	twipe(VUHDO_LAST_EVALUATED_BOUQUETS);
+
 	VUHDO_updateGlobalToggles();
 	VUHDO_initAllEventBouquets();
+
 end
 
 
@@ -507,9 +632,11 @@ local function VUHDO_updateEventBouquet(aUnit, aBouquetName)
 		tHasChanged, tImpact, tTimer2, tClipL, tClipR, tClipT, tClipB
 		= VUHDO_evaluateBouquet(aUnit, aBouquetName, nil);
 
-	if not tHasChanged then return; end
+	if not tHasChanged then
+		return;
+	end
 
-	if tIsActive then
+	if tHasChanged or tIsActive then
 		for _, tDelegate in pairs(VUHDO_REGISTERED_BOUQUETS[aBouquetName]) do
 			tDelegate(aUnit, tIsActive, tIcon, tTimer, tCounter, tDuration, tColor, tBuffName, aBouquetName,
 				tImpact, tTimer2, tClipL, tClipR, tClipT, tClipB);
@@ -550,7 +677,7 @@ end
 
 
 --
-local function VUHDO_isAnyBouquetInterstedIn(anUpdateMode)
+local function VUHDO_isAnyBouquetInterestedIn(anUpdateMode)
 	for tName, _ in pairs(VUHDO_REGISTERED_BOUQUETS) do
 		if VUHDO_isBouquetInterestedInEvent(tName, anUpdateMode) then return true; end
 	end
@@ -574,7 +701,7 @@ function VUHDO_updateBouquetsForEvent(aUnit, anEventType)
 			elseif aUnit then -- focus / n/a
 				for _, tDelegate in pairs(VUHDO_REGISTERED_BOUQUETS[tName]) do
 					if VUHDO_isBouquetInterestedInEvent(tName, VUHDO_UPDATE_DC) then
-						tDelegate(aUnit, true, nil, 100, 0, 100, VUHDO_PANEL_SETUP["BAR_COLORS"]["OFFLINE"], nil, nil, 0);
+						tDelegate(aUnit, true, nil, 100, 0, 100, VUHDO_PANEL_SETUP["BAR_COLORS"]["OFFLINE"], nil, tName, 0);
 					end
 				end
 			end
@@ -633,7 +760,7 @@ function VUHDO_updateAllCyclicBouquets(anIsPlayerOnly)
 	for tBouquetName, _ in pairs(VUHDO_CYCLIC_BOUQUETS) do
 		tAllListeners = VUHDO_REGISTERED_BOUQUETS[tBouquetName];
 
-		for tUnit, tInfo in pairs(tDestArray) do
+		for tUnit, _ in pairs(tDestArray) do
 			tIsActive, tIcon, tTimer, tCounter, tDuration, tColor, tBuffName, tHasChanged,
 				tImpact, tTimer2, tClipL, tClipR, tClipT, tClipB = VUHDO_evaluateBouquet(tUnit, tBouquetName, nil);
 
@@ -657,7 +784,6 @@ function VUHDO_bouqetsChanged()
 	twipe(VUHDO_EVENT_BOUQUETS);
 	VUHDO_initFromSpellbook();
 	VUHDO_registerAllBouquets(false);
-	VUHDO_resetHotBuffCache();
 end
 
 
@@ -674,9 +800,9 @@ end
 
 
 --
-function VUHDO_isAnyoneInterstedIn(anUpdateMode)
+function VUHDO_isAnyoneInterestedIn(anUpdateMode)
 
-	if (VUHDO_isAnyBouquetInterstedIn(anUpdateMode) or VUHDO_isAnyTextIndicatorInterestedIn(anUpdateMode)) then
+	if (VUHDO_isAnyBouquetInterestedIn(anUpdateMode) or VUHDO_isAnyTextIndicatorInterestedIn(anUpdateMode)) then
 		return true;
 	else
 		if 5 == anUpdateMode then -- VUHDO_UPDATE_RANGE
@@ -697,4 +823,16 @@ function VUHDO_isAnyoneInterstedIn(anUpdateMode)
 
 		return false;
 	end
+end
+
+function VUHDO_getRegisteredBouquets()
+
+	return VUHDO_REGISTERED_BOUQUETS;
+
+end
+
+function VUHDO_getActiveBouquets()
+
+	return VUHDO_ACTIVE_BOUQUETS;
+
 end

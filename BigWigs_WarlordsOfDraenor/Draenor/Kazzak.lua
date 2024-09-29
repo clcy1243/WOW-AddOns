@@ -45,7 +45,7 @@ function mod:OnBossEnable()
 	if not GetLocale():find("^en") and L.engage_yell:find("^You face") then
 		self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
 	else
-		self:Yell("Engage", L.engage_yell)
+		self:BossYell("Engage", L.engage_yell)
 	end
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 	self:RegisterEvent("RAID_BOSS_EMOTE")
@@ -67,7 +67,7 @@ end
 
 function mod:FelBreath(args)
 	if self:Tank(args.destName) then
-		self:TargetMessage(args.spellId, args.destName, "orange", self:Tank() and "Alert")
+		self:TargetMessageOld(args.spellId, args.destName, "orange", self:Tank() and "alert")
 		if self:Me(args.destGUID) then
 			self:TargetBar(args.spellId, 30, args.destName)
 		end
@@ -93,14 +93,14 @@ do
 	function mod:SupremeDoom(args)
 		list[#list+1] = args.destName
 		if #list == 1 then
-			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, list, "yellow", "Info", nil, nil, self:Healer())
+			self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, list, "yellow", "info", nil, nil, self:Healer())
 		end
 	end
 end
 
 function mod:MarkOfKazzak(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(args.spellId, args.destName, "blue", "Alarm")
+		self:TargetMessageOld(args.spellId, args.destName, "blue", "alarm")
 		self:TargetBar(args.spellId, 15, args.destName)
 		self:Say(args.spellId)
 		self:OpenProximity(args.spellId, 8)
@@ -116,7 +116,7 @@ end
 
 function mod:RAID_BOSS_EMOTE(_, msg)
 	if msg:find("187702", nil, true) then -- hidden cast, has unit event
-		self:Message(187702, "red", "Long")
+		self:MessageOld(187702, "red", "long")
 	end
 end
 

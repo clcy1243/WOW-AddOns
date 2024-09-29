@@ -34,7 +34,7 @@ L = mod:GetLocale()
 --
 
 function mod:GetOptions()
-	return { 136338, {136339, "FLASH"}, {136340, "PROXIMITY", "SAY"}, "ability" }
+	return { 136338, {136339, "FLASH"}, {136340, "PROXIMITY"}, "ability" }
 end
 
 function mod:OnBossEnable()
@@ -51,9 +51,9 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage()
-	self:CDBar("ability", 10, L["ability"], L.ability_icon)
+	self:Bar("ability", 10, L["ability"], L.ability_icon)
 	openedForMe = nil
-	wipe(stormcloudTargets)
+	stormcloudTargets = {}
 end
 
 --------------------------------------------------------------------------------
@@ -61,15 +61,15 @@ end
 --
 
 function mod:ArcNova(args)
-	self:Message(args.spellId, "red", "Alarm")
+	self:MessageOld(args.spellId, "red", "alarm")
 	self:Bar(args.spellId, 3, CL["cast"]:format(args.spellName))
-	self:CDBar("ability", 10, L["ability"], L.ability_icon)
+	self:Bar("ability", 10, L["ability"], L.ability_icon)
 end
 
 function mod:LightningTether(args)
-	self:CDBar("ability", 10, L["ability"], L.ability_icon)
+	self:Bar("ability", 10, L["ability"], L.ability_icon)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Alert", CL["you"]:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alert", CL["you"]:format(args.spellName))
 		self:Bar(args.spellId, 15, CL["you"]:format(args.spellName))
 		self:Flash(args.spellId)
 	end
@@ -78,9 +78,9 @@ end
 do
 	local scheduled = nil
 	local function warnStormcloud(spellId)
-		mod:CDBar("ability", 10, L["ability"], L.ability_icon)
+		mod:Bar("ability", 10, L["ability"], L.ability_icon)
 		if not openedForMe then
-			mod:Message(spellId, "yellow")
+			mod:MessageOld(spellId, "yellow")
 			if #stormcloudTargets > 0 then
 				mod:OpenProximity(spellId, 10, stormcloudTargets)
 			end
@@ -93,8 +93,7 @@ do
 			stormcloudTargets[#stormcloudTargets+1] = args.destName
 		end
 		if self:Me(args.destGUID) then
-			self:Message(args.spellId, "blue", "Alert", CL["you"]:format(args.spellName))
-			self:Say(args.spellId)
+			self:MessageOld(args.spellId, "blue", "alert", CL["you"]:format(args.spellName))
 			self:OpenProximity(args.spellId, 10)
 			openedForMe = true
 		end
@@ -126,11 +125,10 @@ do
 	function mod:StormcloudDamage(args)
 		if self:Me(args.destGUID) then
 			local t = GetTime()
-			if t-prev > 2 and not self:UnitDebuff("player", args.spellName) then
-				self:Message(136340, "blue", "Info", CL["underyou"]:format(args.spellName))
+			if t-prev > 2 and not openedForMe then
+				self:MessageOld(136340, "blue", "info", CL["underyou"]:format(args.spellName))
 				prev = t
 			end
 		end
 	end
 end
-

@@ -185,9 +185,9 @@ VUHDO_I18N_TT.K060 = "Check this to have only debuffs shown which are removable 
 VUHDO_I18N_TT.K062 = "Overheal will lighten up the health bar if selected.";
 VUHDO_I18N_TT.K063 = "Check to also show incoming heal done by yourself. This is felt to be misleading by some players.";
 VUHDO_I18N_TT.K065 = "Select the refresh rate for checking if players are in range. Info: Low values may reduce system performance.";
-VUHDO_I18N_TT.K066 = "Check this to do check the range of a \"typical\" spell. Also select this if you dont have any beneficial spells.";
+VUHDO_I18N_TT.K066 = "Check this to use the range of a \"typical\" spell. Also select this if you dont have any relevant spells.";
 VUHDO_I18N_TT.K067 = "Enter spell name whose range will be taken for range checking.";
-VUHDO_I18N_TT.K068 = "Select this to have the spell range checked due to the range of the spell to the right.";
+VUHDO_I18N_TT.K068 = "Select this to have the spell range checked due to the range of the spell below.";
 VUHDO_I18N_TT.K070 = "Select a percentage of bar height for HoT icon size";
 VUHDO_I18N_TT.K071 = "Select to show HoT icon on the RIGHT side INSIDE of the health bar";
 VUHDO_I18N_TT.K072 = "Select to show HoT icon on the LEFT side INSIDE of the health bar";
@@ -644,6 +644,21 @@ VUHDO_I18N_TT.K578 = "Select a color for the icon glow.";
 VUHDO_I18N_TT.K579 = "Select a color for the bar glow.";
 VUHDO_I18N_TT.K580 = "Select a modifier key to use with the right mouse button to blacklist debuff icons."
 VUHDO_I18N_TT.K581 = "Check to show player nickname on bars.";
+VUHDO_I18N_TT.K582 = "Select the unit to target.";
+VUHDO_I18N_TT.K583 = "Check to make all HoT icons fade out when the HoT is expiring.";
+VUHDO_I18N_TT.K584 = "Check to make all HoT icons flash when the HoT is expiring.";
+VUHDO_I18N_TT.K585 = "Select a color for Evokers";
+VUHDO_I18N_TT.K586 = "Enable to show text only with no icon.";
+VUHDO_I18N_TT.K587 = "Show incoming spell casts only. Spells must be tracked by spell ID not name.";
+VUHDO_I18N_TT.K588 = "Show incoming spell casts from friendly units.";
+VUHDO_I18N_TT.K589 = "Show incoming spell casts from enemy units.";
+VUHDO_I18N_TT.K590 = "Show all incoming spell casts.";
+VUHDO_I18N_TT.K591 = "Filter to show only incoming spell casts from boss/NPC units.";
+VUHDO_I18N_TT.K592 = "Check this to show private aura icons on the health bar.";
+VUHDO_I18N_TT.K593 = "Select a size for your private aura icons.";
+VUHDO_I18N_TT.K594 = "Check to sort pet units last.";
+VUHDO_I18N_TT.K595 = "Show effective HP (health including shields) of player.";
+VUHDO_I18N_TT.K596 = "Click to change color to indicate players afflicted by bleed debuffs.";
 
 VUHDO_I18N_DEFAULT_PROFILE = "Default Profile";
 VUHDO_I18N_DEFAULT_LAYOUT = "Default Layout";
@@ -1061,8 +1076,8 @@ VUHDO_I18N_CLEAR_BINDING = "Clear Binding";
 VUHDO_I18N_MACRO_EDITOR = "VuhDo Macro Editor";
 VUHDO_I18N_ACCEPT = "Accept";
 VUHDO_I18N_DISCARD = "Discard";
-VUHDO_I18N_LKA_HINT_1 = "Use the following templates in your macro: |c00000000vuhdo|r => unit itself, |c00000000vdname|r => unit's name" justifyH="LEFT" inherits="VuDoButtonFontDark";
-VUHDO_I18N_LKA_HINT_2 = "|c00000000vdtarget, vdtargettarget|r => unit's target/ToT, |c00000000vdpet|r => unit's pet, example: /cast [@vuhdo] Flash Heal" justifyH="LEFT" inherits="VuDoButtonFontDark";
+VUHDO_I18N_LKA_HINT_1 = "Use the following templates in your macro: |c00000000vuhdo|r => unit itself, |c00000000vdname|r => unit's name";
+VUHDO_I18N_LKA_HINT_2 = "|c00000000vdtarget, vdtargettarget|r => unit's target/ToT, |c00000000vdpet|r => unit's pet, example: /cast [@vuhdo] Flash Heal";
 VUHDO_I18N_LKA_CUSTOM_MACRO_DISCARDED = "Custom macro text was discarded.";
 VUHDO_I18N_NAME_CHANGE_DISCARDED = "Name change of item was discarded.";
 VUHDO_I18N_LKA_TYPE_CHANGED = "Type changed from VuhDo CUSTOM MACRO\nto a Spell or WoW client macro.\nDiscard custom macro text?";
@@ -1156,3 +1171,46 @@ VUHDO_I18N_BLACKLIST_KEY_MODIFIES = "Ignore List Modifier Key";
 
 VUHDO_I18N_NICKNAME = "Details!\nNickname"
 
+VUHDO_I18N_DEBUFF_SHOW_ONLY_FOR_FRIENDLY_TEXT = "Show only\nfor friendly";
+VUHDO_I18N_DEBUFF_SHOW_ONLY_FOR_FRIENDLY_TOOLTIP = "Shows debuffs only for friendly units";
+
+VUHDO_I18N_SHOW_OVERSHIELD = "Show\nOvershield";
+VUHDO_I18N_OVERSHIELD_BAR = "Overshield Bar";
+
+VUHDO_I18N_SHOW_HEAL_ABSORB = "Show\nHeal Absorb";
+VUHDO_I18N_HEAL_ABSORB_BAR = "Heal Absorb Bar";
+
+VUHDO_I18N_PLAYER = "Player unit";
+VUHDO_I18N_TARGET = "Target unit"
+VUHDO_I18N_TARGET_TARGET = "Target's target unit"
+VUHDO_I18N_FOCUS = "Focus unit";
+VUHDO_I18N_MOUSEOVER = "Mouseover unit";
+VUHDO_I18N_MOUSEOVER_TARGET = "Mouseover's target unit";
+VUHDO_I18N_MOUSEOVER_TARGET_TARGET = "Mouseover's target's target unit";
+VUHDO_I18N_TARGET_HARM = "Target unit (hostile only)";
+VUHDO_I18N_TARGET_TARGET_HARM = "Target's target unit (hostile only)";
+VUHDO_I18N_FOCUS_HARM = "Focus unit (hostile only)";
+VUHDO_I18N_MOUSEOVER_HARM = "Mouseover unit (hostile only)";
+VUHDO_I18N_MOUSEOVER_TARGET_HARM = "Mouseover's target unit (hostile only)";
+VUHDO_I18N_MOUSEOVER_TARGET_TARGET_HARM = "Mouseover's target's target unit (hostile only)";
+
+VUHDO_I18N_CLOCK = "Clock";
+
+VUHDO_I18N_TEXT_ONLY = "Text only";
+
+VUHDO_I18N_SHOW_FRIENDLY = "Show\nFriendly";
+VUHDO_I18N_SHOW_ENEMY = "Show\nEnemy";
+VUHDO_I18N_SHOW_ALL = "Show All";
+VUHDO_I18N_BOSS_ONLY = "Boss Only";
+
+VUHDO_I18N_X = "X";
+VUHDO_I18N_Y = "Y";
+
+VUHDO_I18N_PRIVATE_AURAS = "Private Auras";
+
+VUHDO_I18N_PETS_LAST = "Pets last";
+
+VUHDO_I18N_SHOW_EFFECTIVE = "Show\nEffective";
+VUHDO_I18N_DEBUFF_IGNORE_IMPORTED = "Debuff ignore list successfully imported.";
+
+VUHDO_I18N_BLEED = "Bleed";

@@ -5,7 +5,7 @@
 GTFO Spell List - Warlords of Draenor
 ]]--
 
-if (not GTFO.ClassicMode) then
+if (GTFO.RetailMode) then
 
 -- ***********
 -- * Draenor *
@@ -22,6 +22,10 @@ GTFO.SpellID["164177"] = {
 	sound = 1;
 };
 
+GTFO.SpellID["165677"] = {
+  --desc = "Void Slice (Taskmaster Gurran)";
+  sound = 1;
+};
 
 GTFO.SpellID["166031"] = {
 	--desc = "Crush (Ogron Warcrusher)";
@@ -458,9 +462,19 @@ GTFO.SpellID["166570"] = {
 -- Barbed Arrow Barrage (Fleshrender Nok'gar)
 -- Shredding Swipes (Fleshrender Nok'gar) - Fail?
 
+GTFO.SpellID["172636"] = {
+	--desc = "Slippery Grease (Grom'kar Technician)";
+	sound = 2;
+};
+
 GTFO.SpellID["164632"] = {
 	--desc = "Burning Arrows (Fleshrender Nok'gar)";
 	sound = 1;
+};
+
+GTFO.SpellID["167233"] = {
+	--desc = "Bladestorm (Grom'kar Battlemaster)";
+	soundChallenge = 1;
 };
 
 GTFO.SpellID["168540"] = {
@@ -559,11 +573,12 @@ GTFO.SpellID["152800"] = {
 
 GTFO.SpellID["153692"] = {
 	--desc = "Necrotic Pitch (Bonemaw)";
-	sound = 1;
+	sound = 2;
 };
 
 GTFO.SpellID["154469"] = {
 	--desc = "Ritual of Bones (Ner'zhul)";
+	applicationOnly = true;
 	sound = 1;
 };
 
@@ -643,6 +658,11 @@ GTFO.SpellID["166726"] = {
 
 GTFO.SpellID["169223"] = {
 	--desc = "Toxic Gas (Xeri'tac)";
+	sound = 1;
+};
+
+GTFO.SpellID["427513"] = {
+	--desc = "Noxious Discharge (Dulhu, M+)";
 	sound = 1;
 };
 

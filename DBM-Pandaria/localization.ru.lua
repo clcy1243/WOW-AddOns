@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "ruRU" then
+if GetLocale() ~= "ruRU" then
 	return
 end
 local L
@@ -7,10 +7,6 @@ local L
 -- Sha of Anger --
 -----------------------
 L = DBM:GetModLocalization(691)
-
-L:SetOptionLocalization({
-	RangeFrame	= "Показывать динамическое окно проверки дистанции, основанное<br/>на статусе игроков с дебаффом $spell:119622"
-})
 
 L:SetMiscLocalization({
 	Pull	= "Да… да! Дайте волю своей ярости! Попробуйте меня убить!"
@@ -49,7 +45,7 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization(857)
 
 L:SetOptionLocalization({
-	BeaconArrow	= "Показывать стрелку DBM когда на ком-то $spell:144473"
+	BeaconArrow	= "Показывать стрелку DBM, когда на ком-то $spell:144473"
 })
 
 L:SetMiscLocalization({
@@ -97,4 +93,13 @@ L = DBM:GetModLocalization(861)
 
 L:SetMiscLocalization({
 	Pull	= "Вы займете мое место на вечной жаровне."
+})
+
+-----------------
+--  Zandalari  --
+-----------------
+L = DBM:GetModLocalization("Zandalari")
+
+L:SetGeneralLocalization({
+	name	= "Зандалары"
 })

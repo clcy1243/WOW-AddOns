@@ -1,25 +1,27 @@
-
 --------------------------------------------------------------------------------
--- Module declaration
+-- Module Declaration
 --
 
 local mod, CL = BigWigs:NewBoss("The Prophet Skeram", 531, 1543)
 if not mod then return end
 mod:RegisterEnableMob(15263)
+mod:SetEncounterID(709)
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local splitPhase = 1
-local lastMC = nil
+local summonImagePercent = 75
 
 --------------------------------------------------------------------------------
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
-	L.images = 747 -- Summon Images
-	L.images_icon = 127876 -- spell_warlock_demonsoul / Summon Images
+	L["747_icon"] = "spell_shadow_impphaseshift"
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -30,49 +32,52 @@ function mod:GetOptions()
 		{785, "ICON"}, -- True Fulfillment
 		20449, -- Teleport
 		26192, -- Arcane Explosion
-		"images",
+		747, -- Summon Images
+	},nil,{
+		[785] = CL.mind_control, -- True Fulfillment (Mind Control)
 	}
 end
 
 function mod:OnBossEnable()
-	self:Log("SPELL_AURA_APPLIED", "TrueFulfillment", 785)
+	self:Log("SPELL_AURA_APPLIED", "TrueFulfillmentApplied", 785)
 	self:Log("SPELL_AURA_REMOVED", "TrueFulfillmentRemoved", 785)
 	self:Log("SPELL_CAST_SUCCESS", "Teleport", 20449, 4801, 8195)
 	self:Log("SPELL_CAST_START", "ArcaneExplosion", 26192)
 	self:Log("SPELL_CAST_SUCCESS", "SummonImages", 747)
-
-	self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
-
-	self:Death("Win", 15263)
 end
 
 function mod:OnEngage()
 	splitPhase = 1
-	self:StartWipeCheck()
+	summonImagePercent = 75
+	self:RegisterEvent("UNIT_HEALTH")
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function mod:TrueFulfillment(args) -- Mind control
-	self:TargetMessage(args.spellId, args.destName, "yellow")
-	self:TargetBar(args.spellId, 20, args.destName)
-	self:PrimaryIcon(args.spellId, args.destName)
-	lastMC = args.destGUID
-end
-
-function mod:TrueFulfillmentRemoved(args)
-	if args.destGUID == lastMC then
-		lastMC = nil
-		self:PrimaryIcon(args.spellId)
+do
+	local prevMindControl = nil
+	function mod:TrueFulfillmentApplied(args) -- Mind control
+		prevMindControl = args.destGUID
+		self:TargetMessage(args.spellId, "yellow", args.destName, CL.mind_control)
+		self:TargetBar(args.spellId, 20, args.destName, CL.mind_control_short)
+		self:PrimaryIcon(args.spellId, args.destName)
+		self:PlaySound(args.spellId, "alert", nil, args.destName)
+	end
+	function mod:TrueFulfillmentRemoved(args)
+		self:StopBar(CL.mind_control_short, args.destName)
+		if args.destGUID == prevMindControl then
+			prevMindControl = nil
+			self:PrimaryIcon(args.spellId)
+		end
 	end
 end
 
 function mod:Teleport(args)
 	if self:MobId(args.sourceGUID) == 15263 then -- Filter out his images
 		self:Message(20449, "red")
+		self:PlaySound(20449, "alert")
 	end
 end
 
@@ -80,20 +85,21 @@ function mod:ArcaneExplosion(args)
 	self:Message(args.spellId, "orange")
 end
 
-function mod:SummonImages()
-	self:Message("images", "red", "Long", L.images, L.images_icon)
+function mod:SummonImages(args)
+	self:Message(args.spellId, "cyan", CL.percent:format(summonImagePercent, args.spellName), L["747_icon"])
+	summonImagePercent = summonImagePercent - 25
+	self:PlaySound(args.spellId, "info")
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 15263 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 15263 then
+		local hp = self:GetHealth(unit)
 		if (hp < 82 and splitPhase == 1) or (hp < 57 and splitPhase == 2) or (hp < 32 and splitPhase == 3) then
 			splitPhase = splitPhase + 1
-			self:Message("images", "green", nil, CL.soon:format(self:SpellName(L.images)), false)
 			if splitPhase > 3 then
-				self:UnregisterUnitEvent(event, "target", "focus")
+				self:UnregisterEvent(event)
 			end
+			self:Message(747, "cyan", CL.soon:format(self:SpellName(747)), false) -- Summon Images
 		end
 	end
 end
-

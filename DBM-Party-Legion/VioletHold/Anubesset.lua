@@ -1,14 +1,13 @@
 local mod	= DBM:NewMod(1696, "DBM-Party-Legion", 9, 777)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "normal,heroic,mythic"
+
+mod:SetRevision("20240106080507")
 mod:SetCreatureID(102246)
 mod:SetEncounterID(1852)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
-
-mod.imaspecialsnowflake = true
 
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 202480",
@@ -23,15 +22,15 @@ local warnImpale					= mod:NewTargetAnnounce(202341, 4)
 local warnSwarm						= mod:NewSpellAnnounce(201863, 2)
 local warnFixate					= mod:NewTargetAnnounce(202480, 3)
 
-local specWarnMandibleStrike		= mod:NewSpecialWarningDefensive(202217, "Tank", nil, nil, 1, 2)
+local specWarnMandibleStrike		= mod:NewSpecialWarningDefensive(202217, nil, nil, nil, 1, 2)
 local specWarnImpale				= mod:NewSpecialWarningMoveAway(202341, nil, nil, nil, 1, 2)
 local yellImpale					= mod:NewYell(202341)
 local specWarnOozeGTFO				= mod:NewSpecialWarningMove(202485, nil, nil, nil, 1, 2)
 
-local timerMandibleStrikeCD			= mod:NewCDTimer(22.8, 202217, nil, "Tank", nil, 5, nil, DBM_CORE_L.TANK_ICON)--22-30
+local timerMandibleStrikeCD			= mod:NewCDTimer(22.8, 202217, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON)--22-30
 local timerImpaleCD					= mod:NewCDTimer(22.8, 202341, nil, nil, nil, 3)
 local timerSwarmCD					= mod:NewCDTimer(22.8, 201863, nil, nil, nil, 1)
-local timerFixateCD					= mod:NewCDTimer(15.5, 202480, nil, nil, nil, 3, nil, DBM_CORE_L.HEROIC_ICON)
+local timerFixateCD					= mod:NewCDTimer(15.5, 202480, nil, nil, nil, 3, nil, DBM_COMMON_L.HEROIC_ICON)
 
 local bugsSeen = {}
 
@@ -59,8 +58,10 @@ end
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 202217 then
-		specWarnMandibleStrike:Show()
-		specWarnMandibleStrike:Play("defensive")
+		if self:IsTanking("player", "boss1", nil, true) then
+			specWarnMandibleStrike:Show()
+			specWarnMandibleStrike:Play("defensive")
+		end
 		timerMandibleStrikeCD:Start()
 	elseif spellId == 202341 then
 		self:BossUnitTargetScanner("boss1", "ImpaleTarget", 3.4)

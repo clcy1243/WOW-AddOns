@@ -27,8 +27,7 @@ local function quartiles(t)
 		if v then
 			temp[#temp+1] = v
 		elseif t[i]:find("/", nil, true) then
-			local _,v = split("/", t[i])
-			v = tonumber(v)
+			v = tonumber(trim(t[i]):match("^%d+.*/(.-)$")) -- just use the last value
 			if v then
 				temp[#temp+1] = v
 			end
@@ -172,7 +171,6 @@ plugin.defaultDB = {
 
 local GetOptions
 do
-	local function cmp(a, b) return a:match("%-(.*)") < b:match("%-(.*)") end
 	local sorted = {}
 	local timerEvents = {"SPELL_CAST_START", "SPELL_CAST_SUCCESS", "SPELL_AURA_APPLIED"}
 
@@ -194,71 +192,73 @@ do
 			if log.TIMERS[event] then
 				desc = ("%s\n%s\n"):format(desc, event)
 
-				local spells = CopyTable(log.TIMERS[event])
-				if spells[1] then
-					-- un-funkify this shit (convert the new indexed table format back into a keyed table)
-					for i = 1, #spells do
-						local k, v = split("=", spells[i], 2)
-						local spellName, spellId, npc = k:match("(.+)-(%d+)-(npc:%d+)") -- Armageddon-240910-npc:117269
-						k = ("%s-%s-%s"):format(spellId, spellName, npc)                -- 240910-Armageddon-npc:117269
-						spells[k] = v
-						spells[i] = nil
-					end
-				end
+				for k, v in next, log.TIMERS[event] do sorted[k] = v end
+				sort(sorted, function(a, b) return a:match("^(.+)-%d+") < b:match("^(.+)-%d+") end) -- sort by spell name
 
-				wipe(sorted)
-				for spell in next, spells do sorted[#sorted + 1] = spell end
-				sort(sorted, cmp)
 				for _, spell in ipairs(sorted) do
-					local spellId, spellName = split("-", spell, 2)
-					local npc = spellName:match("-(npc:.+)")
-					if npc then
-						spellName = spellName:gsub("%-npc:.+$", "")
-						npc = (" %s"):format(npc)
-					end
-					local values = {split(",", spells[spell])}
-					local _, pull = split(":", tremove(values, 1))
-					if #values == 0 then
-						desc = ("%s|cfffed000%s (%d)%s|r | Count: |cff20ff20%d|r | From pull: |cff20ff20%.01f|r\n"):format(desc, spellName, spellId, npc or "", 1, pull)
+					local info, times = split("=", spell, 2)
+					local spellName, spellId, npc = info:match("^(.+)-(%d+)-(npc:%d+)")
+					if npc == "npc:1" then
+						npc = ""
 					else
-						-- use the lower and upper quartiles to find outliers
-						local q1, q3, low, high, count = quartiles(values)
-						if low == high then
-							desc = ("%s|cfffed000%s (%d)%s|r | Count: |cff20ff20%d|r | From pull: |cff20ff20%.01f|r | CD: |cff20ff20%.01f|r\n"):format(desc, spellName, spellId, npc or "", count + 1, pull, low)
-						else
-							local iqr = q3 - q1
-							local lower = q1 - (1.5 * iqr)
-							local upper = q3 + (1.5 * iqr)
-							local count, total = 0, 0
-							for i = 1, #values do
-								local v = tonumber(values[i])
-								if not v then -- handle "stage" times
-									if values[i+1] then
-										local fromStage,fromLast = trim(values[i+1]):match("^(.+)/(.+)$")
-										if fromLast then
-											values[i] = ("|cffffff9a%s (+%s)|r"):format(values[i], fromStage)
-											values[i+1] = fromLast
+						npc = " "..npc
+					end
+					local values = {split(",", (times:gsub("%b[]","")))}
+					local _, pull = split(":", tremove(values, 1))
+					local sincePull, sincePreviousEvent = pull:match("^(.+)/(.+/.+)")
+					-- use the lower and upper quartiles to find outliers
+					local q1, q3, low, high, count = quartiles(values)
+					if count == 0 then
+						desc = ("%s|cfffed000%s (%d)%s|r | Count: |cff20ff20%d|r | From pull: |cff20ff20%s|r\n"):format(desc, spellName, spellId, npc, count + 1, sincePull or pull)
+						if sincePull then
+							desc = ("%s    |cffffff9a(%s)|r\n"):format(desc, sincePreviousEvent:gsub("/", "+", 1))
+						end
+					elseif low == high then
+						desc = ("%s|cfffed000%s (%d)%s|r | Count: |cff20ff20%d|r | From pull: |cff20ff20%s|r | CD: |cff20ff20%.01f|r\n"):format(desc, spellName, spellId, npc, count + 1, sincePull or pull, low)
+					else
+						if sincePull then
+							pull = tonumber(sincePull)
+							tinsert(values, 1, sincePreviousEvent)
+						end
+						local iqr = q3 - q1
+						local lower = q1 - (1.5 * iqr)
+						local upper = q3 + (1.5 * iqr)
+						count = 0
+						local total = 0
+						local list = {}
+						for i = 1, #values do
+							local v = tonumber(values[i])
+							if not v then -- handle special events
+								local stageValues = { split("/", values[i]) }
+								if #stageValues > 1 then
+									local fromStage, fromLast = trim(stageValues[1]), trim(stageValues[#stageValues])
+									if not tonumber(fromStage) then -- special event name
+										if fromStage == "TooManyStages" then -- actually a set of ending values
+											v = tonumber(fromLast)
+										elseif #stageValues == 2 then -- special event values (sanity check)
+											list[#list + 1] = ("|cffffff9a(%s+%s)|r"):format(fromStage, fromLast)
 										end
-									else
-										values[i] = ("|cffffff9a%s|r"):format(values[i])
+									else -- ending values, just use the time since last value
+										v = tonumber(fromLast)
 									end
-								else
-									if lower <= v and v <= upper then
-										count = count + 1
-										total = total + v
-									else
-										v = ("|cffff7f3f%s|r"):format(v) -- outlier
-									end
-									values[i] = v
-								end
-								if i % 24 == 0 then -- simple wrapping
-									values[i] = ("\n    %s"):format(values[i])
 								end
 							end
-							desc = ("%s|cfffed000%s (%d)|r | Count: |cff20ff20%d|r | Avg: |cff20ff20%.01f|r | Min: |cff20ff20%.01f|r | Max: |cff20ff20%.01f|r | From pull: |cff20ff20%.01f|r\n    %s\n"):format(desc, spellName, spellId, count + 1, total / count, low, high, pull, concat(values, ", "))
+							if v then
+								if lower <= v and v <= upper then
+									count = count + 1
+									total = total + v
+								else
+									v = ("|cffff7f3f%s|r"):format(v) -- outlier
+								end
+								local num = #list + 1
+								list[num] = num % 24 == 0 and ("\n    %s"):format(v) or v -- simple wrapping
+							end
 						end
+						local avg = total / count
+						desc = ("%s|cfffed000%s (%d)%s|r | Count: |cff20ff20%d|r | Avg: |cff20ff20%.01f|r | Min: |cff20ff20%.01f|r | Max: |cff20ff20%.01f|r | From pull: |cff20ff20%.01f|r\n    %s\n"):format(desc, spellName, spellId, npc, count + 1, avg, low, high, pull, concat(list, ", "))
 					end
 				end
+				wipe(sorted)
 			end
 		end
 
@@ -284,50 +284,11 @@ do
 			Transcriptor:ClearAll()
 		end
 		GameTooltip:Hide()
-		collectgarbage()
+		--collectgarbage()
 	end
 	local function disabled(info)
 		return InCombatLockdown()
 	end
-
-	local eventCategories = {
-		PLAYER_REGEN_DISABLED = "COMBAT",
-		PLAYER_REGEN_ENABLED = "COMBAT",
-		ENCOUNTER_START = "COMBAT",
-		ENCOUNTER_END = "COMBAT",
-		BOSS_KILL = "COMBAT",
-		CHAT_MSG_MONSTER_EMOTE = "MONSTER",
-		CHAT_MSG_MONSTER_SAY = "MONSTER",
-		CHAT_MSG_MONSTER_WHISPER = "MONSTER",
-		CHAT_MSG_MONSTER_YELL = "MONSTER",
-		CHAT_MSG_RAID_BOSS_EMOTE = "MONSTER",
-		CHAT_MSG_RAID_BOSS_WHISPER = "MONSTER",
-		RAID_BOSS_EMOTE = "MONSTER",
-		RAID_BOSS_WHISPER = "MONSTER",
-		UNIT_SPELLCAST_START = "UNIT_SPELLCAST",
-		UNIT_SPELLCAST_STOP = "UNIT_SPELLCAST",
-		UNIT_SPELLCAST_SUCCEEDED = "UNIT_SPELLCAST",
-		UNIT_SPELLCAST_INTERRUPTED = "UNIT_SPELLCAST",
-		UNIT_SPELLCAST_CHANNEL_START = "UNIT_SPELLCAST",
-		UNIT_SPELLCAST_CHANNEL_STOP = "UNIT_SPELLCAST",
-		ZONE_CHANGED = "ZONE_CHANGED",
-		ZONE_CHANGED_INDOORS = "ZONE_CHANGED",
-		ZONE_CHANGED_NEW_AREA = "ZONE_CHANGED",
-		SCENARIO_UPDATE = "SCENARIO",
-		SCENARIO_CRITERIA_UPDATE = "SCENARIO",
-		PLAY_MOVIE = "MOVIE",
-		CINEMATIC_START = "MOVIE",
-		START_TIMER = "PVP",
-		CHAT_MSG_BG_SYSTEM_HORDE = "PVP",
-		CHAT_MSG_BG_SYSTEM_ALLIANCE = "PVP",
-		CHAT_MSG_BG_SYSTEM_NEUTRAL = "PVP",
-		ARENA_OPPONENT_UPDATE = "PVP",
-		BigWigs_Message = "BigWigs",
-		BigWigs_StartBar = "BigWigs",
-		DBM_Announce = "DBM",
-		DBM_TimerStart = "DBM",
-		DBM_TimerStop = "DBM",
-	}
 
 	function GetOptions()
 		local logs = Transcriptor:GetAll()
@@ -433,7 +394,7 @@ do
 							type = "execute",
 							name = RESET,
 							func = function()
-								wipe(TranscriptIgnore)
+								TranscriptIgnore = {}
 							end,
 							width = "full",
 							order = 0,
@@ -445,7 +406,8 @@ do
 
 		local ignoredEvents = options.args.ignoredEvents.args
 		for _, event in next, Transcriptor.events do
-			local cat = eventCategories[event] or "GENERAL"
+			local cat = Transcriptor.EventCategories[event] or "GENERAL"
+			if cat == "NONE" then cat = "GENERAL" end
 			if not ignoredEvents[cat] then
 				ignoredEvents[cat] = {
 					type = "group", inline = true,
@@ -516,7 +478,7 @@ end
 function plugin:BigWigs_ProfileUpdate()
 	self:Disable()
 	self:Enable()
-	self:Refresh()
+	Refresh()
 end
 
 function plugin:OnPluginEnable()
@@ -579,20 +541,20 @@ function plugin:BigWigs_StopPull()
 	end
 end
 
-function plugin:BigWigs_OnBossEngage(_, module, diff)
-	if not module.engageId then
+function plugin:BigWigs_OnBossEngage(_, module)
+	if not module:GetEncounterID() then
 		self:Start()
 	end
 end
 
 function plugin:BigWigs_OnBossWin(_, module)
-	if not module.engageId then
-		self:ScheduleTimer("Stop", 5) -- catch the end events
+	if not module:GetEncounterID() then
+		self:ScheduleTimer("Stop", 12) -- catch the end events
 	end
 end
 
 function plugin:BigWigs_OnBossWipe(_, module)
-	if not module.engageId then
+	if not module:GetEncounterID() then
 		self:Stop()
 	end
 end
@@ -603,12 +565,12 @@ function plugin:ENCOUNTER_START(_, id, name, diff, size)
 end
 
 function plugin:ENCOUNTER_END(_, id, name, diff, size, status)
-	self:ScheduleTimer("Stop", 5) -- catch the end events
+	self:ScheduleTimer("Stop", status == 0 and 5 or 12) -- catch the end events
 end
 
 function plugin:Start()
-	local _, instanceType = GetInstanceInfo()
-	if instanceType ~= "raid" and self.db.profile.raid then return end
+	local _, instanceType, diff = GetInstanceInfo()
+	if (instanceType ~= "raid" and diff ~= 198 and diff ~= 215) and self.db.profile.raid then return end -- diff check for SoD raids
 
 	if timer then
 		self:CancelTimer(timer)

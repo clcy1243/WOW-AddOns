@@ -34,7 +34,7 @@ local methods = {
 		-- restore default values
 		self:SetDisabled(false)
 		self:SetFont(Amr.CreateFont("Regular", 14, Amr.Colors.Text))
-		self:SetText()
+		self:SetText("")
 		self:SetChecked(false)
 		self.frame:ClearAllPoints()
 	end,
@@ -43,8 +43,12 @@ local methods = {
 	--	print(self.name .. " released")
 	--end,
 
+	["GetText"] = function(self)
+		return self.label:GetText()
+	end,
+
 	["SetText"] = function(self, text)
-		self.label:SetText(text)
+		self.label:SetText(text or "")
 		self.frame:SetWidth(16 + 6 + self.label:GetStringWidth())
 	end,
 	
@@ -54,7 +58,7 @@ local methods = {
 	
 	["SetChecked"] = function(self, checked)
 		self.isChecked = not not checked
-		if checked then
+		if self.isChecked then
 			self.texNormal:Hide()
 			self.texCheck:Show()
 		else

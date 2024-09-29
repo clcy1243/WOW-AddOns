@@ -3,14 +3,15 @@
 -- http://www.wowace.com/projects/quartz/localization/ ;¶
 
 local debug = false
---[===[@debug@
+--[==[@debug@
 debug = true
---@end-debug@]===]
+--@end-debug@]==]
 
 local L = LibStub("AceLocale-3.0"):NewLocale("Quartz3", "enUS", true, debug)
 
 L["%dms"] = true
 L["%s Color"] = true
+L["%s on %s"] = true
 L["<Time in seconds>"] = true
 L["1 minute"] = true
 L["15 seconds"] = true
@@ -23,8 +24,10 @@ L["Adjust the Y position of the name text"] = true
 L["Adjust the Y position of the time text"] = true
 L["Alpha"] = true
 L["Anchor Frame"] = true
+L["Anchor point"] = true
 L["AOE Rez"] = true
 L["Background"] = true
+L["BACKGROUND"] = true
 L["Background Alpha"] = true
 L["Bar Color"] = true
 L["Bar Height"] = true
@@ -49,6 +52,7 @@ L["Buff Time Text"] = true
 L["Cast Bar Color"] = true
 L["Cast End Side"] = true
 L["Cast Start Side"] = true
+L["Cast Time Count Up"] = true
 L["Cast Time Precision"] = true
 L["Casting"] = true
 L["Center"] = true
@@ -64,10 +68,12 @@ L["Complete"] = true
 L["Configure the color of the cast bar."] = true
 L["Congratulations! You've just upgraded Quartz from the old Ace2-based version to the new Ace3 version!"] = true
 L["Copy Settings From"] = true
+L["Count up from zero instead of down from the cast duration"] = true
 L["Curse Color"] = true
 L["Debuff Color"] = true
 L["Debuffs by Type"] = true
 L["Deplete"] = true
+L["DIALOG"] = true
 L["Disable and hide the default UI's casting bar"] = true
 L["Disable Blizzard Cast Bar"] = true
 L["Disable the text that displays the spell name"] = true
@@ -121,7 +127,9 @@ L["Hide Spell Cast Icon"] = true
 L["Hide Spell Name"] = true
 L["Hide the icon for spells with no icon"] = true
 L["Hide Time Text"] = true
+L["HIGH"] = true
 L["Horizontal"] = true
+L["How to display target name of spellcasts after spell name"] = true
 L["Icon"] = true
 L["Icon Alpha"] = true
 L["Icon Gap"] = true
@@ -139,9 +147,11 @@ L["Left (grow up)"] = true
 L["Length of the new timer, in seconds"] = true
 L["Lock"] = true
 L["Logout"] = true
+L["LOW"] = true
 L["Magic Color"] = true
 L["Make a new timer using the above settings.  NOTE: it may be easier for you to simply use the command line to make timers, /qt"] = true
 L["Make Timer"] = true
+L["MEDIUM"] = true
 L["Mirror"] = true
 L["Mirror Bar Height"] = true
 L["Mirror Bar Width"] = true
@@ -195,6 +205,7 @@ L["Set the alpha of the GCD bar"] = true
 L["Set the alpha of the latency bar"] = true
 L["Set the alpha of the no interrupt casting bar border"] = true
 L["Set the alpha of the swing timer bar"] = true
+L["Set the bar in front of or behind other UI elements."] = true
 L["Set the bar Texture"] = true
 L["Set the border style"] = true
 L["Set the border style for no interrupt casting bars"] = true
@@ -282,16 +293,20 @@ L["Sort the buffs and debuffs by time remaining.  If unchecked, they will be sor
 L["Space between the cast bar and the icon."] = true
 L["Spacing"] = true
 L["Spark Color"] = true
+L["Spell -> Target"] = true
 L["Spell Name"] = true
 L["Spell Name Font Size"] = true
 L["Spell Name Position"] = true
 L["Spell Name X Offset"] = true
 L["Spell Name Y Offset"] = true
+L["Spell on Target"] = true
 L["Spell Text"] = true
 L["Stop Timer"] = true
+L["Strata"] = true
 L["Summon"] = true
 L["Swing"] = true
 L["Target"] = true
+L["Target Name Style"] = true
 L["Text Alignment"] = true
 L["Text Color"] = true
 L["Text Position"] = true

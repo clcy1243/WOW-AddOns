@@ -18,11 +18,12 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	SpecWarnIntensity	= DBM_CORE_L.AUTO_SPEC_WARN_OPTIONS.stack:format(6, 113315)
+	SpecWarnIntensity2	= DBM_CORE_L.AUTO_SPEC_WARN_OPTIONS.switch:format(113315)
 })
 
 L:SetMiscLocalization({
-	Event1	= "Ah, it is not yet over. From what I see, we face the trial of the yaungol. Let me shed some light..."
+	Event1	= "Ah, it is not yet over. From what I see, we face the trial of the yaungol. Let me shed some light...",
+	Event2	= "Oh, my. If I am not mistaken, it appears that the tale of Zao Sunseeker has come to life before us."
 })
 
 -----------------------
@@ -34,6 +35,15 @@ L= DBM:GetModLocalization(658)
 -- Sha of Doubt --
 -----------------------
 L= DBM:GetModLocalization(335)
+
+-------------
+--  Temple of the Jade Serpent Trash  --
+-------------
+L = DBM:GetModLocalization("JadeTempleTrash")
+
+L:SetGeneralLocalization({
+	name =	"Jade Temple Trash"
+})
 
 -----------------------
 -- <<<Stormstout Brewery>>> --
@@ -125,7 +135,7 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(655)
 
 L:SetOptionLocalization({
-	IconOnSabotage	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(107268)
+	IconOnSabotage	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(107268)
 })
 
 -------------
@@ -157,9 +167,6 @@ L= DBM:GetModLocalization(708)
 
 L:SetMiscLocalization({
 	Pull		= "Useless, all of you! Even the guards you give me in tribute can't keep these lesser beings from my palace.",
-	Kuai		= "Clan Gurthan will show our King and the rest of you power-hungry imposters why we are the rightful ones at his side!",
-	Ming		= "Clan Harthak will show all why they are the truest of Mogu!",
-	Haiyan		= "Clan Kargesh will demonstrate why only the strong deserve to stand at our King's side!",
 	Defeat		= "Who allowed these outsiders inside our halls? Only Clan Harthak or Clan Kargesh would stoop to such treachery!"
 })
 

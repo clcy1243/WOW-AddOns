@@ -1,6 +1,6 @@
 -- AskMrRobot-Serializer will serialize and communicate character data between users.
 
-local MAJOR, MINOR = "AskMrRobot-Serializer", 86
+local MAJOR, MINOR = "AskMrRobot-Serializer", 146
 local Amr, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not Amr then return end -- already loaded by something else
@@ -22,7 +22,8 @@ Amr.RegionNames = {
 	[2] = "KR",
 	[3] = "EU",
 	[4] = "TW",
-	[5] = "CN"
+	[5] = "CN",
+	[72] = "US" -- beta testing
 }
 
 -- map of the skillLine returned by profession API to the AMR profession name
@@ -57,33 +58,36 @@ Amr.SpecIds = {
     [103] = 7, -- DruidFeral
     [104] = 8, -- DruidGuardian
     [105] = 9, -- DruidRestoration
-    [253] = 10, -- HunterBeastMastery
-    [254] = 11, -- HunterMarksmanship
-    [255] = 12, -- HunterSurvival
-    [62] = 13, -- MageArcane
-    [63] = 14, -- MageFire
-    [64] = 15, -- MageFrost
-    [268] = 16, -- MonkBrewmaster
-    [270] = 17, -- MonkMistweaver
-    [269] = 18, -- MonkWindwalker
-    [65] = 19, -- PaladinHoly
-    [66] = 20, -- PaladinProtection
-    [70] = 21, -- PaladinRetribution
-    [256] = 22, -- PriestDiscipline
-    [257] = 23, -- PriestHoly
-    [258] = 24, -- PriestShadow
-    [259] = 25, -- RogueAssassination
-    [260] = 26, -- RogueOutlaw
-    [261] = 27, -- RogueSubtlety
-    [262] = 28, -- ShamanElemental
-    [263] = 29, -- ShamanEnhancement
-    [264] = 30, -- ShamanRestoration
-    [265] = 31, -- WarlockAffliction
-    [266] = 32, -- WarlockDemonology
-    [267] = 33, -- WarlockDestruction
-    [71] = 34, -- WarriorArms
-    [72] = 35, -- WarriorFury
-    [73] = 36 -- WarriorProtection
+	[1467] = 10, -- EvokerDevastation
+	[1468] = 11, -- EvokerPreservation
+	[1473] = 12, -- EvokerAugmentation
+    [253] = 13, -- HunterBeastMastery
+    [254] = 14, -- HunterMarksmanship
+    [255] = 15, -- HunterSurvival
+    [62] = 16, -- MageArcane
+    [63] = 17, -- MageFire
+    [64] = 18, -- MageFrost
+    [268] = 19, -- MonkBrewmaster
+    [270] = 20, -- MonkMistweaver
+    [269] = 21, -- MonkWindwalker
+    [65] = 22, -- PaladinHoly
+    [66] = 23, -- PaladinProtection
+    [70] = 24, -- PaladinRetribution
+    [256] = 25, -- PriestDiscipline
+    [257] = 26, -- PriestHoly
+    [258] = 27, -- PriestShadow
+    [259] = 28, -- RogueAssassination
+    [260] = 29, -- RogueOutlaw
+    [261] = 30, -- RogueSubtlety
+    [262] = 31, -- ShamanElemental
+    [263] = 32, -- ShamanEnhancement
+    [264] = 33, -- ShamanRestoration
+    [265] = 34, -- WarlockAffliction
+    [266] = 35, -- WarlockDemonology
+    [267] = 36, -- WarlockDestruction
+    [71] = 37, -- WarriorArms
+    [72] = 38, -- WarriorFury
+    [73] = 39 -- WarriorProtection
 }
 
 Amr.ClassIds = {
@@ -100,6 +104,7 @@ Amr.ClassIds = {
     ["SHAMAN"] = 10,
     ["WARLOCK"] = 11,
     ["WARRIOR"] = 12,
+	["EVOKER"] = 13,
 }
 
 Amr.ProfessionIds = {
@@ -146,7 +151,9 @@ Amr.RaceIds = {
 	["ZandalariTroll"] = 20,
 	["KulTiran"] = 21,
 	["Vulpera"] = 22,
-	["Mechagnome"] = 23
+	["Mechagnome"] = 23,
+	["Dracthyr"] = 24,
+	["Earthen"] = 25
 }
 
 Amr.FactionIds = {
@@ -156,26 +163,42 @@ Amr.FactionIds = {
 }
 
 Amr.InstanceIds = {
-	Uldir = 1861,
-	Dazar = 2070,
-	Storms = 2096,
-	Palace = 2164,
-	Nyalotha = 2217
+	Nerubar = 2657
 }
 
 -- instances that AskMrRobot currently supports logging for
-Amr.SupportedInstanceIds = {
-	[1861] = true,
-	[2070] = true,
-	[2096] = true,
-	[2164] = true,
-	[2217] = true
+Amr.SupportedInstanceIds = {	
+	[2657] = true
 }
 
 
 ----------------------------------------------------------------------------------------
 -- Public Utility Methods
 ----------------------------------------------------------------------------------------
+
+-- helper to iterate over a table in order by its keys
+local function spairs(t, order)
+    -- collect the keys
+    local keys = {}
+    for k in pairs(t) do keys[#keys+1] = k end
+
+    -- if order function given, sort by it by passing the table and keys a, b,
+    -- otherwise just sort the keys 
+    if order then
+        table.sort(keys, function(a,b) return order(t, a, b) end)
+    else
+        table.sort(keys)
+    end
+
+    -- return the iterator function
+    local i = 0
+    return function()
+        i = i + 1
+        if keys[i] then
+            return keys[i], t[keys[i]]
+        end
+    end
+end
 
 local function readBonusIdList(parts, first, last)
 	local ret = {}	
@@ -186,15 +209,17 @@ local function readBonusIdList(parts, first, last)
 	return ret
 end
 
---                 1      2    3      4      5      6    7   8   9   10   11       12         
---                 itemId:ench:gem1  :gem2  :gem3  :gem4:suf:uid:lvl:spec:flags   :instdiffid:numbonusIDs:bonusIDs1...n     :varies:?:relic bonus ids
---|cffe6cc80|Hitem:128866:    :152046:147100:152025:    :   :   :110:66  :16777472:9         :4          :736:1494:1490:1495:709   :1:3:3610:1472:3528:3:3562:1483:3528:3:3610:1477:3336|h[Truthguard]|h|r
---
+--                 1      2    3      4      5      6    7   8   9   10   11       12         13                                  14     15 16   17 18
+--                 itemId:ench:gem1  :gem2  :gem3  :gem4:suf:uid:lvl:spec:flags   :instdiffid:numbonusIDs:bonusIDs1...n          :varies:? :relic bonus ids
+--|cffe6cc80|Hitem:128866:    :152046:147100:152025:    :   :   :110:66  :16777472:9         :4          :736:1494:1490:1495     :709   :1 :3:3610:1472:3528:3:3562:1483:3528:3:3610:1477:3336|h[Truthguard]|h|r
+--|cff1eff00|Hitem:175722:    :      :      :      :    :   :   :57 :102 :        :11        :1          :6707                   :2     :28:1340:9 :54:::|h[name]|h|r
+
+--|cff1eff00|Hitem:173242:6208:      :      :      :    :   :   :60 :577 :        :63        :5          :7041:6716:6649:66501487:      :  :    :  :guid:[name]
 -- get an object with all of the parts of the item link format that we care about
 function Amr.ParseItemLink(itemLink)
     if not itemLink then return nil end
     
-    local str = string.match(itemLink, "|Hitem:([\-%d:]+)|")
+    local str = string.match(itemLink, "|Hitem:([\-%d:]+)")
     if not str then return nil end
     
     local parts = { strsplit(":", str) }
@@ -208,9 +233,10 @@ function Amr.ParseItemLink(itemLink)
     -- part 8 is some unique ID... we never really used it
     -- part 9 is current player level
 	-- part 10 is player spec
-	local upgradeIdType = tonumber(parts[11]) or 0 -- part 11 indicates what kind of upgrade ID is just after the bonus IDs
+	-- unsure what 11 is now  --local upgradeIdType = tonumber(parts[11]) or 0 -- part 11 indicates what kind of upgrade ID is just after the bonus IDs
     -- part 12 is instance difficulty id
-    
+	
+	-- 13 is num bonus IDs, followed by bonus IDs
     local numBonuses = tonumber(parts[13]) or 0
 	local offset = numBonuses
     if numBonuses > 0 then
@@ -219,39 +245,53 @@ function Amr.ParseItemLink(itemLink)
 	
 	item.upgradeId = 0
 	item.level = 0
-	
-	-- the next part after bonus IDs depends on the upgrade id type
-	if upgradeIdType == 4 then
-		item.upgradeId = tonumber(parts[14 + offset]) or 0
-	elseif upgradeIdType == 512 then
-		item.level = tonumber(parts[14 + offset]) or 0
-	elseif #parts > 16 + offset then
-		-- check for relic info
-		item.relicBonusIds = { nil, nil, nil }
-		numBonuses = tonumber(parts[16 + offset])
-		if numBonuses then
-			if numBonuses > 0 then
-				item.relicBonusIds[1] = readBonusIdList(parts, 17 + offset, 16 + offset + numBonuses)
+	item.stat1 = 0
+	item.stat2 = 0
+	item.craftQuality = 0
+
+	-- part 14 + offset, seems to be the number of prop-value "pairs" that will follow,
+	-- for now we just parse the properties that we care about
+	local numProps = tonumber(parts[14 + offset]) or 0
+	if numProps > 0 then
+		for i = 15 + offset, 14 + offset + numProps * 2, 2 do
+			local prop = tonumber(parts[i]) or 0
+			local propVal = tonumber(parts[i + 1]) or 0
+			if prop == 9 then
+				item.level = propVal
+			elseif prop == 29 then
+				item.stat1 = propVal
+			elseif prop == 30 then
+				item.stat2 = propVal
+			elseif prop == 38 then
+				item.craftQuality = propVal
 			end
-					
+		end
+	end
+	offset = offset + numProps * 2
+
+	-- following this are bonus IDs for gems
+	if #parts > 15 + offset then
+		item.relicBonusIds = { nil, nil, nil }
+
+		numBonuses = tonumber(parts[15 + offset]) or 0		
+		if numBonuses > 0 then
+			item.relicBonusIds[1] = readBonusIdList(parts, 16 + offset, 15 + offset + numBonuses)
+		end
+
+		offset = offset + numBonuses
+		if #parts > 16 + offset then
+			numBonuses = tonumber(parts[16 + offset]) or 0		
+			if numBonuses > 0 then
+				item.relicBonusIds[2] = readBonusIdList(parts, 17 + offset, 16 + offset + numBonuses)
+			end
+
 			offset = offset + numBonuses
 			if #parts > 17 + offset then
-				numBonuses = tonumber(parts[17 + offset])
-				if numBonuses then
-					if numBonuses > 0 then
-						item.relicBonusIds[2] = readBonusIdList(parts, 18 + offset, 17 + offset + numBonuses)
-					end
-
-					offset= offset + numBonuses
-					if #parts > 18 + offset then
-						numBonuses = tonumber(parts[18 + offset])
-						if numBonuses then
-							if numBonuses > 0 then
-								item.relicBonusIds[3] = readBonusIdList(parts, 19 + offset, 18 + offset + numBonuses)
-							end	
-						end
-					end
+				numBonuses = tonumber(parts[17 + offset]) or 0		
+				if numBonuses > 0 then
+					item.relicBonusIds[3] = readBonusIdList(parts, 18 + offset, 17 + offset + numBonuses)
 				end
+				offset = offset + numBonuses
 			end
 		end
 	end
@@ -277,8 +317,17 @@ function Amr.GetItemUniqueId(item, noUpgrade, noAzeriteEmpoweredBonusId)
     if not noUpgrade and item.upgradeId ~= 0 then
         ret = ret .. "u" .. item.upgradeId
     end
-	if item.level ~= 0 then
+	if item.level and item.level ~= 0 then
 		ret = ret .. "v" .. item.level
+	end
+	if item.stat1 and item.stat1 ~= 0 then
+		ret = ret .. "j" .. item.stat1
+	end
+	if item.stat2 and item.stat2 ~= 0 then
+		ret = ret .. "k" .. item.stat2
+	end
+	if item.craftQuality and item.craftQuality ~= 0 then
+		ret = ret .. "l" .. item.craftQuality
 	end
     return ret
 end
@@ -387,6 +436,7 @@ local function dump(o)
 	end
 end
 
+--[[
 -- read azerite powers on the item in loc and put it on itemData
 function Amr.ReadAzeritePowers(loc)
 	local ret = {}
@@ -409,17 +459,32 @@ function Amr.ReadAzeritePowers(loc)
 		return nil
 	end
 end
+]]
 
 -- get currently equipped items, store with currently active spec
 local function readEquippedItems(ret)
 	local equippedItems = {};
 	local loc = ItemLocation.CreateEmpty()
+	local item
 	for slotNum = 1, #Amr.SlotIds do
 		local slotId = Amr.SlotIds[slotNum]
 		local itemLink = GetInventoryItemLink("player", slotId)
 		if itemLink then
-			local itemData = Amr.ParseItemLink(itemLink)
+			local itemData = Amr.ParseItemLink(itemLink)			
+
 			if itemData then
+				item = Item:CreateFromEquipmentSlot(slotId)
+
+				-- seems to be of the form Item-1147-0-4000000XXXXXXXXX, so we take just the last 9 digits
+				itemData.guid = item:GetItemGUID()
+				if itemData.guid and strlen(itemData.guid) > 9 then
+					itemData.guid = strsub(itemData.guid, -9)
+				end
+
+				-- an equipped item is always soulbound
+				itemData.soulbound = true
+
+				--[[
 				-- see if this is an azerite item and read azerite power ids
 				loc:SetEquipmentSlot(slotId)
 				if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
@@ -428,6 +493,7 @@ local function readEquippedItems(ret)
 						itemData.azerite = powers
 					end
 				end
+				]]
 
 				equippedItems[slotId] = itemData
 			end
@@ -438,6 +504,7 @@ local function readEquippedItems(ret)
 	ret.Equipped[GetSpecialization()] = equippedItems
 end
 
+--[[
 local function readHeartOfAzerothLevel(ret)
 	local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem();	
 	if azeriteItemLocation then 
@@ -447,6 +514,7 @@ local function readHeartOfAzerothLevel(ret)
 		ret.HeartOfAzerothLevel = 0
 	end	
 end
+]]
 
 -- Get just the player's currently equipped gear
 function Amr:GetEquipped()
@@ -477,7 +545,7 @@ function Amr:GetPlayerData()
 	ret.Guild = GetGuildInfo("player")
     ret.ActiveSpec = GetSpecialization()
     ret.Level = UnitLevel("player");
-	readHeartOfAzerothLevel(ret)
+	--readHeartOfAzerothLevel(ret)
 	
     local _, clsEn = UnitClass("player")
     ret.Class = clsEn;
@@ -496,12 +564,13 @@ function Amr:GetPlayerData()
 	readProfessionInfo(firstAid, ret)
 	
 	ret.Specs = {}
-    ret.Talents = {}
+	ret.SavedTalentConfigs = {}
+    ret.LastTalentConfig = {}
 	readSpecs(ret)
 
 	-- these get updated later, since need to cache info for inactive specs
-	ret.UnlockedEssences = {}
-	ret.Essences = {}
+	--ret.UnlockedEssences = {}
+	--ret.Essences = {}
 	
 	ret.Equipped = {}	
 	readEquippedItems(ret)
@@ -551,8 +620,9 @@ local function appendItemsToExport(fields, itemObjects)
     local prevUpgradeId = 0
     local prevBonusId = 0
 	local prevLevel = 0
-	local prevAzeriteId = 0
+	--local prevAzeriteId = 0
 	local prevRelicBonusId = 0
+
     for i, itemData in ipairs(itemObjects) do
         local itemParts = {}
         
@@ -565,7 +635,7 @@ local function appendItemsToExport(fields, itemObjects)
             table.insert(itemParts, "u" .. (itemData.upgradeId - prevUpgradeId))
             prevUpgradeId = itemData.upgradeId
         end
-		if itemData.level ~= 0 then
+		if itemData.level and itemData.level ~= 0 then
 			table.insert(itemParts, "v" .. (itemData.level - prevLevel))
 			prevLevel = itemData.level
 		end
@@ -576,13 +646,29 @@ local function appendItemsToExport(fields, itemObjects)
             end
 		end
 		
+		if itemData.stat1 and itemData.stat1 ~= 0 then
+			table.insert(itemParts, "j" .. itemData.stat1)
+		end
+		if itemData.stat2 and itemData.stat2 ~= 0 then
+			table.insert(itemParts, "k" .. itemData.stat2)
+		end
+		if itemData.craftQuality and itemData.craftQuality ~= 0 then
+			table.insert(itemParts, "l" .. itemData.craftQuality)
+		end
+
+		if itemData.warbound or itemData.soulbound then
+			table.insert(itemParts, "d" .. (itemData.warbound and 5 or 1))
+		end
+
+		--[[
 		if itemData.azerite then
 			for aIndex, aValue in ipairs(itemData.azerite) do
                 table.insert(itemParts, "a" .. (aValue - prevAzeriteId))
                 prevAzeriteId = aValue
             end
 		end
-		
+		]]
+
 		if itemData.gemIds[1] ~= 0 then 
 			table.insert(itemParts, "x" .. (itemData.gemIds[1] - prevGemId))
 			prevGemId = itemData.gemIds[1]
@@ -620,6 +706,10 @@ local function appendItemsToExport(fields, itemObjects)
                 table.insert(itemParts, "r" .. (bValue - prevRelicBonusId))
                 prevRelicBonusId = bValue
             end
+		end		
+
+		if itemData.guid then
+			table.insert(itemParts, "!" .. itemData.guid)
 		end
 		
         table.insert(fields, table.concat(itemParts, ""))
@@ -671,8 +761,7 @@ function Amr:SerializePlayerData(data, complete)
     table.insert(fields, raceval)
     
 	table.insert(fields, data.Level)
-	table.insert(fields, data.HeartOfAzerothLevel)
-    
+
     local profs = {}
     local noprofs = true
     if data.Professions then
@@ -695,10 +784,17 @@ function Amr:SerializePlayerData(data, complete)
     table.insert(fields, data.ActiveSpec)
     for spec = 1, 4 do
         if data.Specs[spec] and (complete or spec == data.ActiveSpec) then
+			local specTals = nil
+			if data.LastTalentConfig[spec] then
+				specTals = data.LastTalentConfig[spec].tals
+			end
             table.insert(fields, ".s" .. spec) -- indicates the start of a spec block
 			table.insert(fields, data.Specs[spec])
-			table.insert(fields, data.Talents[spec] or "")
-			
+			table.insert(fields, specTals or "")
+			--table.insert(fields, data.ActiveSoulbinds and data.ActiveSoulbinds[spec] or "0")
+			--table.insert(fields, data.CovenantRenownLevel or "0") -- will be same for each spec, but easier to just add it here
+
+			--[[
 			local essences = {}
 			if data.Essences and data.Essences[spec] then
 				for i, ess in ipairs(data.Essences[spec]) do
@@ -706,6 +802,7 @@ function Amr:SerializePlayerData(data, complete)
 				end
 			end
 			table.insert(fields, table.concat(essences, "_"))
+			]]
         end
     end
     
@@ -726,6 +823,52 @@ function Amr:SerializePlayerData(data, complete)
         end
 	end
 
+	-- export all saved talent configs too
+	if data.SavedTalentConfigs then
+		table.insert(fields, ".tal")
+		for specId, configs in spairs(data.SavedTalentConfigs) do
+			for i, config in ipairs(configs) do
+				local configName = config.name
+				if not configName then
+					configName = ""
+				else
+					configName = configName:gsub(";", "")
+					configName = configName:gsub("~", "")
+				end
+
+				local configStr = {
+					specId,
+					config.id,
+					configName,
+					config.tals
+				}				
+				table.insert(fields, table.concat(configStr, "~"))
+			end
+		end
+	end
+	
+	--[[
+	-- export soulbind tree info
+	if data.Soulbinds then
+		table.insert(fields, ".sol")
+		for soulbindId, soulbindData in pairs(data.Soulbinds) do
+			table.insert(fields, string.format("u.%s.%s", soulbindId, soulbindData.UnlockedTier))
+			for tier, node in pairs(soulbindData.Nodes) do
+				table.insert(fields, table.concat(node, "."))
+			end
+		end
+	end
+
+	-- export unlocked conduits
+	if data.UnlockedConduits then
+		table.insert(fields, ".con")
+		for i, conduit in ipairs(data.UnlockedConduits) do
+			table.insert(fields, table.concat(conduit, "."))
+		end
+	end
+	]]
+
+	--[[
 	-- export unlocked essences
 	if data.UnlockedEssences then
 		table.insert(fields, ".ess")
@@ -733,8 +876,9 @@ function Amr:SerializePlayerData(data, complete)
 			table.insert(fields, table.concat(ess, "_"))
 		end
 	end
-    
-    -- if doing a complete export, include bank/bag items too
+	]]
+	
+    -- if doing a complete export, include bank/bag items and some other extras
 	if complete then
 		    
         local itemObjects = {}
@@ -754,66 +898,27 @@ function Amr:SerializePlayerData(data, complete)
 		end
 		
         table.insert(fields, ".inv")
-        appendItemsToExport(fields, itemObjects)
-    end
+		appendItemsToExport(fields, itemObjects)
+		
+		if data.GreatVaultItems then
+			itemObjects = {}
+			for i, itemData in ipairs(data.GreatVaultItems) do
+				if itemData then
+					table.insert(itemObjects, itemData)
+				end
+			end
+			table.insert(fields, ".gv")
+			appendItemsToExport(fields, itemObjects)
+		end
 
+		if data.HighestItemLevels then
+			table.insert(fields, ".hlv")
+			for slotId, lvls in spairs(data.HighestItemLevels) do
+				table.insert(fields, slotId .. "|" .. "|" .. lvls[1] .. "|" .. lvls[2])
+			end
+		end
+    end
+	
     return "$" .. table.concat(fields, ";") .. "$"
 
 end
-
---[[
--- Shortcut for the common use case: serialize the player's currently active setup with no extras.
-function Amr:SerializePlayer()
-	local data = self:GetPlayerData()
-	return self:SerializePlayerData(data)
-end
-]]
-
---[[
-----------------------------------------------------------------------------------------------------------------------
--- Character Snapshots
--- This feature snapshots a player's gear/talents/artifact when entering combat.  It is enabled by default.  Consumers
--- of this library can create a setting to enable/disable it as desired per a user setting.
---
--- You should register for the AMR_SNAPSHOT_STATE_CHANGED message (sent via AceEvent-3.0 messaging) to ensure that
--- your addon settings stay in sync with any other addon that may also be trying to control the enabled state.
---
--- Note that if a user has the main AMR addon installed, it will always enable snapshotting, and override any attempt
--- to disable it by immediately re-enabling it and thus re-triggering AMR_SNAPSHOT_STATE_CHANGED.
-----------------------------------------------------------------------------------------------------------------------
-Amr._snapshotEnabled = true
-
--- Enable snapshotting of character data when entering combat.  Sends this player's character data to anyone logging with the AskMrRobot addon.
-function Amr:EnableSnapshots()
-	self._snapshotEnabled = true
-	self:SendMessage("AMR_SNAPSHOT_STATE_CHANGED", self._snapshotEnabled)
-end
-
--- Disable snapshotting of character data when entering combat.
-function Amr:DisableSnapshots()
-	self._snapshotEnabled = false
-	self:SendMessage("AMR_SNAPSHOT_STATE_CHANGED", self._snapshotEnabled)
-end
-
-function Amr:IsSnapshotEnabled()
-	return self._snapshotEnabled
-end
-
-
-function Amr:PLAYER_REGEN_DISABLED()
---function Amr:GARRISON_MISSION_NPC_OPENED()
-
-	-- send data about this character when a player enters combat in a supported zone
-	if self._snapshotEnabled and Amr.IsSupportedInstance() then
-		local t = time()
-		local player = self:GetPlayerData()
-		local msg = self:SerializePlayerData(player)
-		msg = string.format("%s\r%s\n%s\n%s\n%s\n%s", MINOR, t, player.Region, player.Realm, player.Name, msg)
-		
-		self:SendCommMessage(Amr.ChatPrefix, msg, "RAID")
-	end
-end
-
-Amr:RegisterEvent("PLAYER_REGEN_DISABLED")
---Amr:RegisterEvent("GARRISON_MISSION_NPC_OPENED") -- for debugging, fire this event when open mission table
-]]

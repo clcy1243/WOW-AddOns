@@ -1,12 +1,11 @@
 local mod	= DBM:NewMod("Omen", "DBM-WorldEvents", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200528135243")
+mod:SetRevision("20240216003824")
 mod:SetCreatureID(15467)
 mod:SetModelID(15879)
 mod:SetReCombatTime(10)
 mod:SetZone(1)--Kalimdor
-mod:DisableWBEngageSync()
 
 mod:RegisterCombat("combat")
 

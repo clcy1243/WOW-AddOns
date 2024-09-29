@@ -1,9 +1,10 @@
 local mod	= DBM:NewMod(177, "DBM-Party-Cataclysm", 11, 76, 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+mod.statTypes = "heroic,timewalker"
+
+mod:SetRevision("20240110075649")
 mod:SetCreatureID(52258)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -11,7 +12,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS",
 	"CHAT_MSG_MONSTER_EMOTE"
 )
-mod.onlyHeroic = true
 
 local warnPursuit				= mod:NewTargetNoFilterAnnounce(96306, 4)
 local warnRupture				= mod:NewTargetNoFilterAnnounce(96619, 3)
@@ -32,17 +32,11 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if args:IsPlayer() then
 			specWarnRupture:Show()
 			specWarnRupture:Play("targetyou")
+		elseif self:IsClassic() and self:CheckNearby(10, args.destName) then
+			specWarnRuptureNear:Show(args.destName)
+			specWarnRuptureNear:Play("runaway")
 		else
-			local uId = DBM:GetRaidUnitId(args.destName)
-			if uId then
-				local inRange = CheckInteractDistance(uId, 2)
-				if inRange then
-					specWarnRuptureNear:Show(args.destName)
-					specWarnRuptureNear:Play("runaway")
-				else
-					warnRupture:Show(args.destName)
-				end
-			end
+			warnRupture:Show(args.destName)
 		end
 	end
 end

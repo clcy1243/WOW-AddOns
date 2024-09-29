@@ -131,13 +131,27 @@ L= DBM:GetModLocalization(1487)
 -----------------------
 L= DBM:GetModLocalization(1488)
 
+L:SetMiscLocalization({
+	SkovaldRP		= "我是神御之王斯寇瓦德",
+	SkovaldRPTwo	= "我就只好從他們的屍體上搶了！"
+})
+
 -----------------------
 -- Odyn --
 -----------------------
 L= DBM:GetModLocalization(1489)
 
+L:SetOptionLocalization({
+	RuneBehavior		= "設置符文標記的模組行為。",
+	Icon				= "根據符合的符文顏色圖示分配提供語音警報（例如使用光柱）",
+	Entrance			= "根據基本方向發出語音警報，像是入口在南方，王座在北。",
+	Minimap				= "根據基於小地圖的基本方向提供語音警報，該王座位於南邊，入口在北邊",
+	Generic				= "給出通用的語音警報，只是說您被鎖定目標。 沒有方位指示"--Default
+})
+
 L:SetMiscLocalization({
-	tempestModeMessage		=	"不是耀眼風暴循環: %s。8秒後重新檢查。"
+	tempestModeMessage		="不是耀眼風暴循環: %s。8秒後重新檢查。",
+	OdynRP					= "了不起！"
 })
 
 -----------------------
@@ -240,6 +254,10 @@ L= DBM:GetModLocalization(1719)
 -----------------------
 L= DBM:GetModLocalization(1720)
 
+L:SetMiscLocalization({
+	MelRP		= "大博學者，你一定要先離開嗎？"
+})
+
 -----------------------
 --Court of Stars Trash
 -----------------------
@@ -250,73 +268,49 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	SpyHelper	= "幫忙辨識間諜"
+	warnAvailableItems	= "通告基於小隊的區域中的可用互動",
+	SpyHelper			= "當與 長舌造謠者 NPC互動時，通過自動掃描對話來幫助識別間諜，並顯示在資訊框架上 (也與其他 DBM/BW 的使用者同步)",
+	SpyHelperClose2		= "在 0.3 秒後自動關閉對話視窗 (延遲允許其他mod或WA有時間掃描對話)",
+	SendToChat2			= "同時也發送提示到聊天 (需要上述選項啟用)"
 })
 
 L:SetMiscLocalization({
-	Gloves1			= "有傳聞說那個間諜一直戴著手套。",
-	Gloves2			= "聽說那個間諜習慣把手藏起來。",
-	Gloves3			= "我聽說那個間諜總是戴著手套。",
-	Gloves4			= "有人說那位間諜總是穿著手套，因為手上有明顯的疤痕。",
-	NoGloves1		= "有人說那個間諜從來不戴手套。",
-	NoGloves2		= "你知道嗎…我剛在後房發現多的手套。那個間諜現在一定光著手。",
-	NoGloves3		= "我聽到的是那個間諜根本不喜歡戴手套。",
-	NoGloves4		= "聽說那名間諜盡量不戴手套，因為總有需要動作靈活的時候。",
-	Cape1			= "剛剛有人說，間諜稍早進來時還穿著斗篷。",
-	Cape2			= "聽說這個間諜很喜歡穿斗篷。",
-	NoCape1			= "我剛聽說這個間諜討厭斗篷，所以絕對不穿斗篷。",
-	NoCape2			= "我聽說間諜過來這裡之前把斗篷忘在皇宮了。",
-	LightVest1		= "那位間諜特別喜歡淺顏色的外衣。",
-	LightVest2		= "我剛聽說那個間諜今晚會穿著淺色的外衣。",
-	LightVest3		= "人家說那個間諜今晚絕對不會穿深色外衣。",
-	DarkVest1		= "間諜絕對比較喜歡深色衣服。",
-	DarkVest2		= "聽說今晚那個間諜的外衣顏色很深。",
-	DarkVest3		= "間諜喜歡顏色比較深的外衣…就像夜晚一樣。",
-	DarkVest4		= "有個說法是那位間諜為了混入人群，特別避免淺色的衣著。",
-	Female1			= "他們說間諜混進來了，而且她非常美貌。",
-	Female2			= "聽說有個女人一直在打探這個地區的事情…",
-	Female3			= "有人說間諜是女的。",
-	Female4			= "有人看到她和艾莉珊德一起走進來。",
-	Male1			= "我剛聽人家說間諜是男的。",
-	Male2			= "我聽說間諜混進來了，而且長得很帥。",
-	Male3			= "剛剛有人說看到他和大博學者一起走進去。",
-	Male4			= "有個樂手說他一直在問關於這個地區的問題。",
-	ShortSleeve1	= "我剛聽說那個間諜今晚穿短袖，這樣動作比較靈活。",
-	ShortSleeve2	= "有人說那個間諜討厭長袖衣服。",
-	ShortSleeve3	= "我朋友剛剛告訴我，她看到了，間諜沒穿長袖。",
-	ShortSleeve4	= "聽說那個間諜喜歡今晚涼爽的天氣，所以不穿長袖。",
-	LongSleeve1		= "聽說今晚那個間諜穿了長袖衣服。",
-	LongSleeve2		= "剛剛有人說，間諜今晚為了能遮住手臂，才穿長袖的。",
-	LongSleeve3		= "我剛剛碰巧看到那個間諜今晚穿著長袖衣服。",
-	LongSleeve4		= "我朋友跟我說，那位間諜穿著長袖。",
-	Potions1		= "聽說那個間諜帶了藥水…以防萬一。",
-	Potions2		= "別說是我講的…那個間諜現在偽裝成鍊金師了，腰帶上繫著藥水瓶。",
-	Potions3		= "聽說有間諜帶了藥水過來耶，不知道為什麼？",
-	Potions4		= "我非常肯定那個間諜在腰帶上繫了藥水。",
-	NoPotions1		= "我聽說那個間諜什麼藥水都沒帶。",
-	NoPotions2		= "有個樂手告訴我，她看到間諜把最後一瓶藥水丟了，所以現在身上應該沒有藥水。",
-	Book1			= "我聽說那個間諜在腰帶上掛著一本書，裡頭寫滿了各種秘密。",
-	Book2			= "聽說那個間諜是喜歡讀書的人，不管到哪裡都會帶著一本書。",
-	Pouch1			= "我聽說那位間諜總是帶著一個魔法小包。",
-	Pouch2			= "我朋友說間諜喜歡黃金，所以腰帶上的隨身包裝滿黃金。",
-	Pouch3			= "聽說間諜喜歡炫富，腰上的錢包裝滿金幣。",
-	Pouch4			= "我聽說那名間諜的腰帶上有個口袋，口袋的刺繡非常精緻。",
 	Found			= "喂喂，",
+	--Add translationss, but keep english termss for cross language groups since these post to chat
+	--Format "localized / english"
+	CluesFound	= "找到的線索: %d/5",
+	Gloves		= "手套 / gloves",
+	NoGloves	= "沒有手套 / no gloves",
+	Cape		= "斗篷 / cape",
+	Nocape		= "沒有斗蓬 / no cape",
+	LightVest	= "淺色上衣 / light vest",
+	DarkVest	= "深色上衣 / dark vest",
+	Female		= "女性 / female",
+	Male		= "男性 / male",
+	ShortSleeve = "短袖 / short sleeve",
+	LongSleeve	= "長袖 / long sleeve",
+	Potions		= "藥水瓶 / potions",
+	NoPotions	= "無藥水瓶 / no potions",
+	Book		= "書本 / book",
+	Pouch		= "腰袋 / pouch",
+
+	SpyFoundP 	= "我找到間諜了",
+	SpyFound 	= "間諜已經被 %s 找到",
+	SpyGoingAway				= "間諜助手可能會在升級10.0.7後被NERF而一起消失。 如同暴雪的意圖，習慣於使用惡魔獵人或語音協調。",
+	--Profession				 stuff
+	Nightshade					= "夜影餐",
+	UmbralBloom					= "暗影之花",
+	InfernalTome				= "煉獄秘典",
+	MagicalLantern				= "魔法燈籠",
+	StarlightRoseBrew			= "星輝玫瑰酒",
+	WaterloggedScroll			= "浸水的卷軸",
+	DiscardedJunk				= "拋棄的雜物",
+	BazaarGoods					= "市集商品",
+	WoundedNightborneCivilian	= "受傷的夜裔平民",
+	LifesizedNightborneStatue	= "等身大小的夜裔雕像",
 	--
-	Gloves		= "手套",
-	NoGloves	= "沒有手套",
-	Cape		= "斗篷",
-	Nocape		= "沒有斗蓬",
-	LightVest	= "淺色上衣",
-	DarkVest	= "深色上衣",
-	Female		= "女性",
-	Male		= "男性",
-	ShortSleeve = "短袖",
-	LongSleeve	= "長袖",
-	Potions		= "藥水瓶",
-	NoPotions	= "無藥水瓶",
-	Book		= "書本",
-	Pouch		= "腰袋"
+	Available					= "%s|cffffffff%s|r 可用",
+	UsableBy					= "%s 可以使用"
 })
 
 -----------------------

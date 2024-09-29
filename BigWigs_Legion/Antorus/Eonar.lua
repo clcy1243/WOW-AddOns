@@ -149,13 +149,6 @@ if L then
 	L.warp_in_desc = "Shows timers and messages for each wave, along with any special adds in the wave."
 	L.warp_in_icon = "inv_artifact_dimensionalrift"
 
-	L.lifeforce_casts = "%s (%d/%d)"
-
-	L.lane_text = "%s: %s" -- example: Top: Purifier
-	L.top_lane = "Top"
-	L.mid_lane = "Mid"
-	L.bot_lane = "Bot"
-
 	L.purifier = "Purifier" -- Fel-Powered Purifier
 	L.destructor = "Destructor" -- Fel-Infused Destructor
 	L.obfuscator = "Obfuscator" -- Fel-Charged Obfuscator
@@ -174,8 +167,8 @@ function mod:GetOptions()
 		250048, -- Life Force
 		248861, -- Spear of Doom
 		{248332, "SAY", "SAY_COUNTDOWN", "FLASH"}, -- Rain of Fel
-		249121, -- Final Doom
-		249934, -- Purge
+		{249121, "CASTBAR"}, -- Final Doom
+		{249934, "CASTBAR"}, -- Purge
 		{250693, "SAY", "SAY_COUNTDOWN", "FLASH"}, -- Arcane Buildup
 		{250691, "SAY", "SAY_COUNTDOWN", "FLASH"}, -- Burning Embers
 		250140, -- Foul Steps
@@ -235,7 +228,7 @@ function mod:OnEngage()
 	end
 
 	self:RegisterUnitEvent("UNIT_POWER_FREQUENT", nil, "boss2")
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss2")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss2")
 	self:OpenInfo("infobox", self.displayName)
 	self:SetInfo("infobox", 1, self:SpellName(7850)) -- Health
 	self:SetInfo("infobox", 2, "100%")
@@ -260,13 +253,13 @@ function mod:StartWaveTimer(lane, count)
 
 	local laneText, icon = nil, nil
 	if lane == "top" then
-		laneText = L.top_lane
+		laneText = CL.top
 		icon = "misc_arrowlup"
 	elseif lane == "mid" then
-		laneText = L.mid_lane
+		laneText = CL.middle
 		icon = "misc_arrowright"
 	elseif lane == "bot" then
-		laneText = L.bot_lane
+		laneText = CL.bottom
 		icon = "misc_arrowdown"
 	elseif lane == "air" then
 		laneText = L.bats
@@ -274,14 +267,14 @@ function mod:StartWaveTimer(lane, count)
 	end
 
 	local addTypeText = L[addType]
-	local barText = addTypeText and L.lane_text:format(laneText, addTypeText) or laneText
+	local barText = addTypeText and CL.other:format(laneText, addTypeText) or laneText
 
 	self:Bar("warp_in", length, barText, icon)
-	self:DelayedMessage("warp_in", length, "yellow", barText, icon, "Alert")
+	self:DelayedMessage("warp_in", length, "yellow", barText, icon, "alert")
 	self:ScheduleTimer("StartWaveTimer", length, lane, count+1)
 end
 
-function mod:UNIT_HEALTH_FREQUENT(_, unit)
+function mod:UNIT_HEALTH(_, unit)
 	local hp = UnitHealth(unit)
 	local max = UnitHealthMax(unit)
 	local percent = hp/max
@@ -293,14 +286,14 @@ function mod:UNIT_POWER_FREQUENT(_, unit)
 	local power = UnitPower(unit, 10) -- Enum.PowerType.Alternate = 10
 	if power >= 80 and shouldAnnounceEnergy then
 		shouldAnnounceEnergy = nil
-		self:Message(250048, "cyan", "Info", CL.soon:format(L.lifeforce_casts:format(self:SpellName(250048), lifeForceCounter, lifeForceNeeded))) -- Life Force (n/4) soon!
+		self:MessageOld(250048, "cyan", "info", CL.soon:format(CL.count_amount:format(self:SpellName(250048), lifeForceCounter, lifeForceNeeded))) -- Life Force (n/4) soon!
 	end
 	self:SetInfo("infobox", 4, ("%.0f"):format(power))
 	self:SetInfoBar("infobox", 3, power/100, .7, .7, 0, 0.3) -- yellow
 end
 
 function mod:LifeForce(args)
-	self:Message(args.spellId, "green", "Long", CL.casting:format(L.lifeforce_casts:format(args.spellName, lifeForceCounter, lifeForceNeeded)))
+	self:MessageOld(args.spellId, "green", "long", CL.casting:format(CL.count_amount:format(args.spellName, lifeForceCounter, lifeForceNeeded)))
 	lifeForceCounter = lifeForceCounter + 1
 end
 
@@ -310,7 +303,7 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg)
 	if msg:find("248861") then -- Spear of Doom
-		self:Message(248861, "red", "Warning")
+		self:MessageOld(248861, "red", "warning")
 		spearCounter = spearCounter + 1
 		self:CDBar(248861, timers[248861][spearCounter])
 	end
@@ -321,12 +314,12 @@ do
 	function mod:RainofFel(args)
 		playerList[#playerList+1] = args.destName
 		if self:Me(args.destGUID) then
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Rain of Fel")
 			self:Flash(args.spellId)
 			self:SayCountdown(args.spellId, 5)
-			self:PlaySound(args.spellId, "Alarm")
+			self:PlaySound(args.spellId, "alarm")
 		end
-		self:TargetsMessage(args.spellId, "red", playerList, 6)
+		self:TargetsMessageOld(args.spellId, "red", playerList, 6)
 		if #playerList == 1 then
 			local t = GetTime()
 			if t-prev > 5 then -- prevent a wrong bar if Rain of Fel gets delayed late
@@ -345,7 +338,7 @@ do
 end
 
 function mod:FinalDoom(args)
-	self:Message(args.spellId, "red", "Warning", CL.count:format(args.spellName, finalDoomCounter))
+	self:MessageOld(args.spellId, "red", "warning", CL.count:format(args.spellName, finalDoomCounter))
 	self:CastBar(args.spellId, 50, CL.count:format(args.spellName, finalDoomCounter))
 	finalDoomCounter = finalDoomCounter + 1
 	self:Bar(args.spellId, timers[args.spellId][finalDoomCounter], CL.count:format(args.spellName, finalDoomCounter))
@@ -353,18 +346,18 @@ end
 
 function mod:Purge(args)
 	self:StopBar(CL.cast:format(CL.count:format(self:SpellName(249121), finalDoomCounter-1)))
-	self:Message(249121, "green", "Info", CL.interrupted:format(self:SpellName(249121))) -- Final Doom
+	self:MessageOld(249121, "green", "info", CL.interrupted:format(self:SpellName(249121))) -- Final Doom
 	self:CastBar(args.spellId, 30)
 end
 
 function mod:ArcaneBuildup(args)
 	if self:Me(args.destGUID) then
-		self:PlaySound(args.spellId, "Alarm")
+		self:PlaySound(args.spellId, "alarm")
 		self:PersonalMessage(args.spellId)
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Arcane Buildup")
 		self:Flash(args.spellId)
 		self:SayCountdown(args.spellId, 5)
-		self:CastBar(args.spellId, 5, CL.you:format(args.spellName))
+		self:TargetBar(args.spellId, 5, args.destName)
 		self:ScheduleTimer("Bar", 5, args.spellId, 20, CL.you:format(args.spellName))
 	end
 end
@@ -377,12 +370,12 @@ end
 
 function mod:BurningEmbers(args)
 	if self:Me(args.destGUID) then
-		self:PlaySound(args.spellId, "Alarm")
+		self:PlaySound(args.spellId, "alarm")
 		self:PersonalMessage(args.spellId)
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Burning Embers")
 		self:Flash(args.spellId)
 		self:SayCountdown(args.spellId, 5)
-		self:CastBar(args.spellId, 5, CL.you:format(args.spellName))
+		self:TargetBar(args.spellId, 5, args.destName)
 		self:ScheduleTimer("Bar", 5, args.spellId, 25, CL.you:format(args.spellName))
 	end
 end
@@ -396,6 +389,6 @@ end
 function mod:FoulSteps(args)
 	local amount = args.amount or 1
 	if self:Me(args.destGUID) and amount % 3 == 0 then
-		self:StackMessage(args.spellId, args.destName, amount, "blue", amount > 5 and "Alarm")
+		self:StackMessageOld(args.spellId, args.destName, amount, "blue", amount > 5 and "alarm")
 	end
 end

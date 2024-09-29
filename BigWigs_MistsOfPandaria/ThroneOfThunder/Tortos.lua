@@ -89,7 +89,7 @@ function mod:OnEngage()
 	self:Bar("bats", 46, 136686) -- Summon Bats
 	self:Bar(133939, 46) -- Furious Stone Breath
 	self:Bar(136294, 21) -- Call of Tortos
-	self:CDBar(134920, 28, CL["count"]:format(self:SpellName(134920), 1)) -- Quake Stomp
+	self:Bar(134920, 28, CL["count"]:format(self:SpellName(134920), 1)) -- Quake Stomp
 	if self:Heroic() then
 		crystalTimer = self:ScheduleRepeatingTimer("CrystalShell", 3, self:SpellName(137633))
 	end
@@ -97,8 +97,8 @@ function mod:OnEngage()
 	if self.db.profile.custom_off_turtlemarker then
 		self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 	end
-	wipe(markableMobs)
-	wipe(marksUsed)
+	markableMobs = {}
+	marksUsed = {}
 	markTimer = nil
 end
 
@@ -120,17 +120,17 @@ function mod:BreathUpdate(unit)
 end
 
 function mod:CrystalShell(spellName)
-	if self:UnitDebuff("player", spellName) or not UnitAffectingCombat("player") then
+	if self:UnitDebuff("player", spellName, 137633) or not UnitAffectingCombat("player") then -- diff 5
 		mod:CancelTimer(crystalTimer)
 		crystalTimer = nil
 	else
-		mod:Message(137633, "blue", "Info", L["no_crystal_shell"])
+		mod:MessageOld(137633, "blue", "info", L["no_crystal_shell"])
 	end
 end
 
 function mod:CrystalShellRemoved(args)
 	if not self:Me(args.destGUID) or not self.isEngaged then return end
-	self:Message(args.spellId, "blue", "Alarm", CL["removed"]:format(args.spellName))
+	self:MessageOld(args.spellId, "blue", "alarm", CL["removed"]:format(args.spellName))
 	if not self:Tank() then
 		self:Flash(args.spellId)
 		crystalTimer = self:ScheduleRepeatingTimer("CrystalShell", 3, args.spellName)
@@ -138,45 +138,43 @@ function mod:CrystalShellRemoved(args)
 end
 
 function mod:SnappingBite(args)
-	if self:Me(UnitGUID("boss1target")) then
-		self:Message(args.spellId, "yellow", self:Heroic() and "Warning")
+	if self:Me(self:UnitGUID("boss1target")) then
+		self:MessageOld(args.spellId, "yellow", self:Heroic() and "warning")
 	end
-	self:CDBar(args.spellId, 7)
+	self:Bar(args.spellId, 7)
 end
 
 function mod:SummonBats(_, _, _, spellId)
 	if spellId == 136685 then -- Summon Bats
-		self:Message("bats", "orange", self:Tank() and not UnitIsUnit("boss1target", "player") and "Warning", 136686)
+		self:MessageOld("bats", "orange", self:Tank() and not UnitIsUnit("boss1target", "player") and "warning", 136686)
 		self:Bar("bats", 46, 136686)
 	end
 end
 
 function mod:QuakeStomp(args)
 	quakeCounter = quakeCounter + 1
-	self:Message(args.spellId, "red", "Alert", CL["count"]:format(args.spellName, quakeCounter))
-	self:CDBar(args.spellId, 47, CL["count"]:format(args.spellName, quakeCounter+1))
+	self:MessageOld(args.spellId, "red", "alert", CL["count"]:format(args.spellName, quakeCounter))
+	self:Bar(args.spellId, 47, CL["count"]:format(args.spellName, quakeCounter+1))
 end
 
 function mod:FuriousStoneBreath(args)
-	self:Message(args.spellId, "red", "Long")
-	self:CDBar(args.spellId, 46) -- 45.8-48.2
+	self:MessageOld(args.spellId, "red", "long")
+	self:Bar(args.spellId, 46) -- 45.8-48.2
 	self:RegisterUnitEvent("UNIT_POWER_FREQUENT", "BreathUpdate", "boss1") -- First is generally fine, register after
 end
 
 function mod:GrowingFury(args)
-	self:Message(args.spellId, "red", "Alarm")
+	self:MessageOld(args.spellId, "red", "alarm")
 end
 
 do
-	local kicked, coloredName = {}, mod:NewTargetList()
+	local kicked = {}
 	function mod:KickShell(args)
 		if kicked[args.destGUID] then return end -- prevent multiple people kicking the same turtle from messing up the count
 		kicked[args.destGUID] = true
 
 		kickable = kickable - 1
-		coloredName[1] = args.sourceName
-		self:Message("kick", "yellow", nil, L["kicked_message"]:format(coloredName[1], kickable), args.spellId)
-		wipe(coloredName)
+		self:MessageOld("kick", "yellow", nil, L["kicked_message"]:format(self:ColorName(args.sourceName), kickable), args.spellId)
 	end
 
 	function mod:ShellBlockRemoved(args)
@@ -187,7 +185,7 @@ end
 do
 	local scheduled = nil
 	local function announceKickable()
-		mod:Message("kick", "yellow", nil, L["kick_message"]:format(kickable), 1766)
+		mod:MessageOld("kick", "yellow", nil, L["kick_message"]:format(kickable), 1766)
 		scheduled = nil
 	end
 	function mod:ShellBlock(args)
@@ -210,11 +208,11 @@ do
 	local concussion = mod:SpellName(136431)
 	local prev = 0
 	function mod:ShellConcussionCheck(_, unit)
-		local _, _, _, expires = self:UnitDebuff(unit, concussion)
+		local _, _, _, expires = self:UnitDebuff(unit, concussion, 136431) -- diff 5
 		if expires and expires ~= prev then
 			local t = GetTime()
 			if prev < t then -- buff fell off
-				self:Message(-7134, "green", "Info")
+				self:MessageOld(-7134, "green", "info")
 			end
 			local duration = expires-t
 			self:Bar(-7134, duration)
@@ -224,7 +222,7 @@ do
 end
 
 function mod:CallOfTortos(args)
-	self:Message(args.spellId, "orange")
+	self:MessageOld(args.spellId, "orange")
 	self:Bar(args.spellId, 60)
 end
 
@@ -234,7 +232,7 @@ do
 	local function setMark(unit, guid)
 		for mark=8, 1, -1 do
 			if not marksUsed[mark] then
-				SetRaidTarget(unit, mark)
+				mod:CustomIcon(false, unit, mark)
 				markableMobs[guid] = "marked"
 				marksUsed[mark] = guid
 				return
@@ -261,7 +259,7 @@ do
 	end
 
 	function mod:UPDATE_MOUSEOVER_UNIT()
-		local guid = UnitGUID("mouseover")
+		local guid = self:UnitGUID("mouseover")
 		if guid and markableMobs[guid] == true then
 			setMark("mouseover", guid)
 		end

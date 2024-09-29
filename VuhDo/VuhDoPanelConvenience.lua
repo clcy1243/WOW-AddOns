@@ -14,6 +14,7 @@ local VUHDO_HEALTH_BAR_TEXT = { };
 local VUHDO_ACTION_PANELS = { };
 
 local VUHDO_BAR_ICON_FRAMES = { };
+local VUHDO_BAR_ICON_FRAME_BACKGROUNDS = { };
 local VUHDO_BAR_ICONS = { };
 local VUHDO_BAR_ICON_TIMERS = { };
 local VUHDO_BAR_ICON_COUNTERS = { };
@@ -27,15 +28,16 @@ local VUHDO_STUB_COMPONENT = {
 	["GetName"] = function() return "VuhDoDummyStub" end,
 	["GetAttribute"] = function() return nil end,
 	["SetAttribute"] = function() end,
-  -- General
-  ["SetAllPoints"] = function() end,
-  ["SetAlpha"] = function(self, anAlpha) end,
-  ["GetAlpha"] = function() return 1 end,
-  ["Hide"] = function() end,
-  ["IsVisible"] = function() return false end,
+	-- General
+	["SetAllPoints"] = function() end,
+	["SetAlpha"] = function(self, anAlpha) end,
+	["GetAlpha"] = function() return 1 end,
+	["Hide"] = function() end,
+	["IsVisible"] = function() return false end,
 	-- Clock
-  ["SetReverse"] = function() end,
-  ["SetCooldown"] = function() end
+	["SetReverse"] = function() end,
+	["SetCooldown"] = function() end,
+	["GetCooldownDuration"] = function() return 0 end
 };
 
 
@@ -66,6 +68,15 @@ end
 
 
 --
+function VUHDO_getBarIconFrameBackground(aButton, anIconNumber)
+
+	return VUHDO_BAR_ICON_FRAME_BACKGROUNDS[aButton][anIconNumber];
+
+end
+
+
+
+--
 function VUHDO_getBarIcon(aButton, anIconNumber)
 	return VUHDO_BAR_ICONS[aButton][anIconNumber];
 end
@@ -91,10 +102,32 @@ end
 
 --
 function VUHDO_getOrCreateCuDeButton(aButton, anIconNumber)
+
 	if not VUHDO_BAR_ICON_BUTTONS[aButton][anIconNumber] then
 		local tParentName = aButton:GetName() .. "BgBarIcBarHlBar";
 		local tFrameName = tParentName .. "Ic" .. anIconNumber;
-		VUHDO_BAR_ICON_FRAMES[aButton][anIconNumber] = CreateFrame("Button", tFrameName, _G[tParentName], "VuhDoDebuffIconTemplate");
+
+		local tBarIconFrame = CreateFrame("Button", tFrameName, _G[tParentName], "VuhDoDebuffIconTemplate");
+		local tBarIconFrameBackground = CreateFrame("Frame", tFrameName .. "Background", tBarIconFrame, "BackdropTemplate");
+
+		tBarIconFrameBackground:SetParent(tBarIconFrame);
+
+		tBarIconFrameBackground:ClearAllPoints();
+		tBarIconFrameBackground:SetPoint("TOPLEFT", tBarIconFrame, -1, 1);
+		tBarIconFrameBackground:SetPoint("BOTTOMRIGHT", tBarIconFrame, 1, -1);
+
+		tBarIconFrameBackground:SetFrameLevel(tBarIconFrame:GetFrameLevel() == 0 and 1 or tBarIconFrame:GetFrameLevel() - 1);
+
+		tBarIconFrameBackground:SetBackdrop(
+			{
+				edgeFile = "Interface\\Buttons\\WHITE8X8",
+				edgeSize = 4,
+			}
+		);
+
+		VUHDO_BAR_ICON_FRAMES[aButton][anIconNumber] = tBarIconFrame;
+		VUHDO_BAR_ICON_FRAME_BACKGROUNDS[aButton][anIconNumber] = tBarIconFrameBackground;
+
 		VUHDO_BAR_ICON_BUTTONS[aButton][anIconNumber] = _G[tFrameName.. "B"];
 		VUHDO_BAR_ICONS[aButton][anIconNumber] = _G[tFrameName .. "BI"];
 		VUHDO_BAR_ICON_TIMERS[aButton][anIconNumber] = _G[tFrameName .. "BT"];
@@ -104,6 +137,7 @@ function VUHDO_getOrCreateCuDeButton(aButton, anIconNumber)
 	end
 
 	return VUHDO_BAR_ICON_BUTTONS[aButton][anIconNumber];
+
 end
 
 
@@ -456,6 +490,24 @@ end
 
 
 --
+function VUHDO_getOvershieldBarTexture(aHealthBar)
+
+	return _G[aHealthBar:GetName() .. "OvsBar"];
+
+end
+
+
+
+--
+function VUHDO_getHealAbsorbBarTexture(aHealthBar)
+
+	return _G[aHealthBar:GetName() .. "HeAbBar"];
+
+end
+
+
+
+--
 local VUHDO_STATUSBAR_LEFT_TO_RIGHT = 1;
 local VUHDO_STATUSBAR_RIGHT_TO_LEFT = 2;
 local VUHDO_STATUSBAR_BOTTOM_TO_TOP = 3;
@@ -472,13 +524,21 @@ function VUHDO_refactorStatusbar(tBar)
 
 
 	tBar["SetStatusBarColor"] = function(self, r, g, b, a)
-		self["texture"]:SetVertexColor(r, g, b, a);
+		if r and g and b and a then
+			self["texture"]:SetVertexColor(r, g, b, a);
+		elseif r and g and b then
+			self["texture"]:SetVertexColor(r, g, b);
+		end
 	end
 
 
 
 	tBar["SetVuhDoColor"] = function(self, aColor)
-		self["texture"]:SetVertexColor(aColor["R"], aColor["G"], aColor["B"], aColor["O"]);
+		if aColor and aColor["R"] and aColor["G"] and aColor["B"] and aColor["O"] then
+			self["texture"]:SetVertexColor(aColor["R"], aColor["G"], aColor["B"], aColor["O"]);
+		elseif aColor and aColor["R"] and aColor["G"] and aColor["B"] then
+			self["texture"]:SetVertexColor(aColor["R"], aColor["G"], aColor["B"]);
+		end
 	end
 
 
@@ -680,6 +740,7 @@ local function VUHDO_fastCacheInitButton(aPanelNum, aButtonNum)
 	VUHDO_BUTTON_CACHE[tTotButton] = aPanelNum;
 
 	VUHDO_BAR_ICON_FRAMES[tButton] = { };
+	VUHDO_BAR_ICON_FRAME_BACKGROUNDS[tButton] = { };
 	VUHDO_BAR_ICON_BUTTONS[tButton] = { };
 	VUHDO_BAR_ICONS[tButton] = { };
 	VUHDO_BAR_ICON_TIMERS[tButton] = { };
@@ -714,4 +775,13 @@ end
 --
 function VUHDO_getPanelButtons(aPanelNum)
 	return VUHDO_BUTTONS_PER_PANEL[aPanelNum];
+end
+
+
+
+--
+function VUHDO_getBarPrivateAura(aButton, anIconNumber)
+
+	return _G[format("%sBgBarIcBarHlBarPa%d", aButton:GetName(), anIconNumber)];
+
 end

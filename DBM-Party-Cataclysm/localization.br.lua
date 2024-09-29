@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "ptBR" then return end
+if GetLocale() ~= "ptBR" then return end
 
 local L
 
@@ -67,7 +67,7 @@ L= DBM:GetModLocalization(90)
 L= DBM:GetModLocalization(91)
 
 L:SetOptionLocalization{
-	HarvestIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(88495)
+	HarvestIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(88495)
 }
 
 ----------------------
@@ -334,10 +334,6 @@ L:SetMiscLocalization{
 --------------
 L= DBM:GetModLocalization(115)
 
-L:SetOptionLocalization({
-	BreathIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(88308)
-})
-
 -----------
 -- Asaad --
 -----------
@@ -415,7 +411,7 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(188)
 
 L:SetOptionLocalization{
-	FlameIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(43140)
+	FlameIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(43140)
 }
 
 L:SetMiscLocalization{
@@ -473,8 +469,8 @@ L:SetTimerLocalization{
 L:SetOptionLocalization{
 	timerNextForm	= "Exibir cronógrafo para mudança de forma.",
 	InfoFrame		= "Exibir quadro de aviso para jogadores afetados por $spell:42402",
-	ThrowIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(97639),
-	ClawRageIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(97672)
+	ThrowIcon		= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(97639),
+	ClawRageIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(97672)
 }
 
 L:SetMiscLocalization{
@@ -489,7 +485,7 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(175)
 
 L:SetOptionLocalization{
-	SetIconOnToxicLink	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(96477)
+	SetIconOnToxicLink	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(96477)
 }
 
 ------------------------
@@ -547,7 +543,7 @@ L:SetWarningLocalization{
 L:SetOptionLocalization{
 	SpecWarnToxic	= "Exibir aviso especial quando você não tiver $spell:96328",
 	InfoFrame		= "Exibir quadro de avisos para jogadores sem $spell:96328",
-	SetIconOnGaze	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(96342)
+	SetIconOnGaze	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(96342)
 }
 
 L:SetMiscLocalization{
@@ -565,7 +561,7 @@ L:SetWarningLocalization{
 
 L:SetOptionLocalization{
 	WarnBarrierDown	= "Anunciar destruição de Barreiras Quebradiças",
-	BodySlamIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(97198)
+	BodySlamIcon	= DBM_CORE_L.AUTO_ICONS_OPTION_TARGETS:format(97198)
 }
 
 L:SetMiscLocalization{
@@ -668,14 +664,6 @@ L:SetMiscLocalization{
 --------------
 L= DBM:GetModLocalization(322)
 
-L:SetTimerLocalization{
-	TimerCombatStart	= "Combate inicia"
-}
-
-L:SetOptionLocalization{
-	TimerCombatStart	= "Exibir cronógrafo para início do combate"
-}
-
 L:SetMiscLocalization{
 	Event		= "Apareça!",
 	Pull		= "Forças do Crepúsculo começam a aparecer nas beiradas do cânion."
@@ -695,65 +683,6 @@ L:SetMiscLocalization{
 ---------------------------
 L= DBM:GetModLocalization(341)
 
-L:SetTimerLocalization{
-	TimerCombatStart	= "Combate inicia"
-}
-
-L:SetOptionLocalization{
-	TimerCombatStart	= "Exibir cronógrafo para início do combate"
-}
-
 L:SetMiscLocalization{
 	Event		= "E agora, Xamã, entregue a Alma Dragônica para MIM."
-}
-
---------------------
---  World Bosses  --
--------------------------
--- Akma'hat --
--------------------------
-L = DBM:GetModLocalization("Akmahat")
-
-L:SetGeneralLocalization{
-	name = "Akma'hat"
-}
-
------------
--- Garr --
-----------
-L = DBM:GetModLocalization("Garr")
-
-L:SetGeneralLocalization{
-	name = "Garr (Cata)"
-}
-
-----------------
--- Julak-Doom --
-----------------
-L = DBM:GetModLocalization("JulakDoom")
-
-L:SetGeneralLocalization{
-	name = "Julak-Doom"
-}
-
-L:SetOptionLocalization{
-	SetIconOnMC	= DBM_CORE_L.AUTO_ICONS_OPTION_TEXT:format(93621)
-}
-
------------
--- Mobus --
------------
-L = DBM:GetModLocalization("Mobus")
-
-L:SetGeneralLocalization{
-	name = "Mobus"
-}
-
------------
--- Xariona --
------------
-L = DBM:GetModLocalization("Xariona")
-
-L:SetGeneralLocalization{
-	name = "Xariona"
 }

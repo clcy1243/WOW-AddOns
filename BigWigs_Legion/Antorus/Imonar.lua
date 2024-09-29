@@ -45,7 +45,7 @@ function mod:GetOptions()
 
 		--[[ Stage Two: Contract to Kill ]]--
 		{247687, "TANK"}, -- Sever
-		248254, -- Charged Blasts
+		{248254, "CASTBAR"}, -- Charged Blasts
 		247923, -- Shrapnel Blast
 
 		--[[ Stage Three: The Perfect Weapon ]]--
@@ -54,14 +54,14 @@ function mod:GetOptions()
 		248070, -- Empowered Shrapnel Blast
 
 		--[[ Intermission: On Deadly Ground ]]--
-		253302, -- Conflagration
+		--253302, -- Conflagration
 
 	},{
 		["stages"] = "general",
 		[247367] = -16577, -- Stage One: Attack Force
 		[247687] = -16206, -- Stage Two: Contract to Kill
 		[250255] = -16208, -- Stage Three: The Perfect Weapon
-		[253302] = -16205, -- Intermission: On Deadly Ground
+		--[253302] = -16205, -- Intermission: On Deadly Ground
 	}
 end
 
@@ -101,7 +101,7 @@ end
 function mod:OnEngage()
 	timers = self:Mythic() and timersMythic or timersOther
 	stage = 1
-	wipe(canisterProxList)
+	canisterProxList = {}
 
 	self:CDBar(247367, self:Mythic() and 4.8 or 4.5) -- Shock Lance
 	self:CDBar(254244, self:Mythic() and 7.2 or 7.3) -- Sleep Canister
@@ -112,17 +112,17 @@ function mod:OnEngage()
 		self:CDBar(247376, 12.2) -- Pulse Grenade
 	end
 	nextIntermissionWarning = self:Mythic() and 83 or 69
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp < nextIntermissionWarning then
-		self:Message("stages", "green", nil, CL.soon:format(CL.intermission), false)
+		self:MessageOld("stages", "green", nil, CL.soon:format(CL.intermission), false)
 		nextIntermissionWarning = nextIntermissionWarning - (self:Mythic() and 20 or 33)
 		if nextIntermissionWarning < 20 then
 			self:UnregisterUnitEvent(event, unit)
@@ -143,16 +143,16 @@ do
 				for i = 1, 2 do
 					if not canisterMarks[i] then
 						canisterMarks[i] = self:UnitName(name)
-						SetRaidTarget(name, i)
+						self:CustomIcon(false, name, i)
 						break
 					end
 				end
 			end
 
 			if self:Easy() or (isOnMe and name == self:UnitName("player")) then -- Not warning for others when on you
-				self:TargetsMessage(254244, "red", playerList, 1)
+				self:TargetsMessageOld(254244, "red", playerList, 1)
 			elseif not isOnMe then
-				self:TargetsMessage(254244, "red", playerList, 2)
+				self:TargetsMessageOld(254244, "red", playerList, 2)
 			end
 		end
 		self:OpenProximity(254244, 10, canisterProxList)
@@ -161,9 +161,9 @@ do
 	function mod:RAID_BOSS_WHISPER(_, msg)
 		if msg:find("254244", nil, true) then -- Sleep Canister
 			isOnMe = true
-			self:PlaySound(254244, "Alarm")
+			self:PlaySound(254244, "alarm")
 			self:Flash(254244)
-			self:Say(254244)
+			self:Say(254244, nil, nil, "Sleep Canister")
 			addPlayerToList(self, self:UnitName("player"))
 			self:Sync("SleepCanister")
 		end
@@ -177,7 +177,7 @@ do
 
 	function mod:SleepCanister(args)
 		isOnMe = false
-		wipe(playerList)
+		playerList = self:NewTargetList()
 		canisterMarks = {false, false}
 		self:Bar(args.spellId, self:Mythic() and 12.1 or 10.9)
 	end
@@ -185,12 +185,12 @@ do
 	function mod:SleepCanisterApplied(args)
 		addPlayerToList(self, args.destName)
 		if self:Healer() and #canisterProxList > 0 then
-			self:PlaySound(254244, "Alert")
+			self:PlaySound(254244, "alert")
 		end
 	end
 
 	function mod:SleepCanisterRemoved(args)
-		tDeleteItem(canisterProxList, args.destName)
+		self:DeleteFromTable(canisterProxList, args.destName)
 		if #canisterProxList == 0 then
 			self:CloseProximity(254244)
 		else
@@ -201,7 +201,7 @@ do
 			for i = 1, 2 do
 				if canisterMarks[i] == self:UnitName(args.destName) then
 					canisterMarks[i] = false
-					SetRaidTarget(args.destName, 0)
+					self:CustomIcon(false, args.destName)
 					break
 				end
 			end
@@ -211,7 +211,7 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 248995 or spellId == 248194 then -- Jetpacks (Intermission 1), Jetpacks (Intermission 2)
-		self:Message("stages", "green", "Long", CL.intermission, false)
+		self:MessageOld("stages", "green", "long", CL.intermission, false)
 		-- Stage 1 timers
 		self:StopBar(247367) -- Shock Lance
 		self:StopBar(254244) -- Sleep Canister
@@ -229,7 +229,7 @@ end
 
 function mod:IntermissionOver()
 	stage = stage + 1
-	self:Message("stages", "green", "Long", CL.stage:format(stage), false)
+	self:MessageOld("stages", "green", "long", CL.stage:format(stage), false)
 	if stage == 2 then
 		self:CDBar(247687, 7.7) -- Sever
 		self:CDBar(248254, 10.6) -- Charged Blast
@@ -262,7 +262,7 @@ end
 --[[ Stage One: Attack Force ]]--
 function mod:ShockLance(args)
 	local amount = args.amount or 1
-	self:StackMessage(args.spellId, args.destName, amount, "purple", amount > 6 and "Warning" or amount > 4 and "Alarm") -- Swap on 5, increase warning at 7
+	self:StackMessageOld(args.spellId, args.destName, amount, "purple", amount > 6 and "warning" or amount > 4 and "alarm") -- Swap on 5, increase warning at 7
 end
 
 function mod:ShockLanceSuccess(args)
@@ -270,14 +270,14 @@ function mod:ShockLanceSuccess(args)
 end
 
 function mod:PulseGrenade(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 	self:Bar(args.spellId, 17.0)
 end
 
 --[[ Stage Two: Contract to Kill ]]--
 function mod:Sever(args)
 	local amount = args.amount or 1
-	self:StackMessage(args.spellId, args.destName, amount, "purple", amount > 3 and "Warning" or amount > 1 and "Alarm") -- Swap on 2
+	self:StackMessageOld(args.spellId, args.destName, amount, "purple", amount > 3 and "warning" or amount > 1 and "alarm") -- Swap on 2
 end
 
 function mod:SeverSuccess(args)
@@ -285,20 +285,20 @@ function mod:SeverSuccess(args)
 end
 
 function mod:ChargedBlasts(args)
-	self:Message(args.spellId, "orange", "Warning", CL.incoming:format(args.spellName))
+	self:MessageOld(args.spellId, "orange", "warning", CL.incoming:format(args.spellName))
 	self:CastBar(args.spellId, 8.6)
 	self:Bar(args.spellId, self:Mythic() and (stage == 2 and 14.5 or 18.2) or 18.2)
 end
 
 function mod:ShrapnelBlast(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 	self:Bar(args.spellId, self:Mythic() and (stage == 2 and 17 or 14.6) or 13.4)
 end
 
 --[[ Stage Three: The Perfect Weapon ]]--
 function mod:EmpoweredShockLance(args)
 	local amount = args.amount or 1
-	self:StackMessage(args.spellId, args.destName, amount, "purple", amount % 2 == 0 and "Alarm")
+	self:StackMessageOld(args.spellId, args.destName, amount, "purple", amount % 2 == 0 and "alarm")
 end
 
 function mod:EmpoweredShockLanceSuccess(args)
@@ -306,13 +306,13 @@ function mod:EmpoweredShockLanceSuccess(args)
 end
 
 function mod:EmpoweredPulseGrenade(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 	self:Bar(args.spellId, stage == 5 and 13.3 or 26.7) -- Stage 5 mythic only
 
 end
 
 function mod:EmpoweredShrapnelBlast(args)
-	self:Message(args.spellId, "orange", "Warning")
+	self:MessageOld(args.spellId, "orange", "warning")
 	empoweredSchrapnelBlastCount = empoweredSchrapnelBlastCount + 1
 	self:CDBar(args.spellId, stage == 4 and 26.8 or timers[args.spellId][empoweredSchrapnelBlastCount] or 9.6)
 end

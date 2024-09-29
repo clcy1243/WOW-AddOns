@@ -6,6 +6,7 @@
 --------------------------------------------------------------------------]]--
 
 local addon = ...
+local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
 local version = GetAddOnMetadata("WowLua", "Version") or "SVN"
 WowLua = {
 	VERSION = "WowLua v" .. version .. " Interactive Interpreter",
@@ -20,7 +21,7 @@ WowLua_DB = {
 	},
 	currentPage = 1,
 	untitled = 2,
-    fontSize = 14,
+	fontSize = 14,
 }
 
 local DB = {}
@@ -28,15 +29,14 @@ local DB = {}
 local eframe = CreateFrame("Frame")
 eframe:RegisterEvent("ADDON_LOADED")
 eframe:SetScript("OnEvent", function(self, event, ...)
-    if event == "ADDON_LOADED" then
-        local arg1 = ...
-        if arg1 == addon then
-            if WowLua_DB.fontSize then
-                local file, height, flags = WowLuaMonoFont:GetFont()
-                WowLuaMonoFont:SetFont(file, WowLua_DB.fontSize, flags)
-            end
-        end
-    end
+	if event == "ADDON_LOADED" then
+		local arg1 = ...
+		if arg1 == addon then
+			if WowLua_DB.fontSize then
+				WowLua:UpdateFontSize(WowLua_DB.fontSize)
+			end
+		end
+	end
 end)
 
 function WowLua:CreateNewPage()
@@ -291,8 +291,8 @@ function WowLua:Button_OnClick(button)
 		WowLua:Button_Next(button)
 	elseif operation == "Run" then
 		WowLua:Button_Run(button)
-    elseif operation == "Config" then
-        WowLua:Button_Config(button)
+	elseif operation == "Config" then
+		WowLua:Button_Config(button)
 	elseif operation == "Close" then
 		WowLua:Button_Close(button)
 	end
@@ -366,14 +366,11 @@ function WowLua:Button_New(button)
 end
 
 function WowLua:Button_Open(button)
+	UIDropDownMenu_Initialize(WowLuaOpenDropDown, WowLua.OpenDropDownInitialize, "MENU")
 	ToggleDropDownMenu(1, nil, WowLuaOpenDropDown, button:GetName(), 0, 0)
 end
 
-function WowLua:OpenDropDownOnLoad(frame)
-	UIDropDownMenu_Initialize(frame, self.OpenDropDownInitialize)
-end
-
-local function dropDownFunc(button, page)
+local function openDropDownFunc(button, page)
 	WowLua:GoToPage(page)
 end
 
@@ -386,9 +383,58 @@ function WowLua.OpenDropDownInitialize()
 	for page, entry in ipairs(WowLua_DB.pages) do
 		UIDropDownMenu_AddButton{
 			text = entry.name,
-			func = dropDownFunc,
+			func = openDropDownFunc,
 			arg1 = page
 		}
+	end
+end
+
+function WowLua:Button_Config(button)
+	UIDropDownMenu_Initialize(WowLuaConfigDropDown, WowLua.ConfigDropDownInitialize, "MENU")
+	ToggleDropDownMenu(1, nil, WowLuaConfigDropDown, button:GetName(), 0, 0)
+end
+
+function WowLua:UpdateFontSize(fontSize)
+	if type(fontSize) ~= "number" then
+		error("Can't set font size to non-number: %s", tostring(fontSize))
+	end
+
+	local file, height, flags = WowLuaMonoFontSpaced:GetFont()
+	WowLuaFrameLineNumEditBox:SetFont(file, fontSize, flags)
+	WowLuaFrameEditBox:SetFont(file, fontSize, flags)
+	WowLuaFrameCommandPrompt:SetFont(file, fontSize, flags)
+	WowLuaFrameCommandEditBox:SetFont(file, fontSize, flags)
+	WowLuaFrameOutput:SetFont(file, fontSize, flags)
+
+	WowLua_DB.fontSize = fontSize
+end
+
+local function configDropDownFunc(button, fontSize)
+	WowLua:UpdateFontSize(fontSize)
+end
+
+function WowLua.ConfigDropDownInitialize(frame, level, menuList)
+	local info = UIDropDownMenu_CreateInfo()
+
+	if not level or level == 1 then
+		info.text = L.CONFIG_MENU_TITLE
+		info.isTitle = 1
+		UIDropDownMenu_AddButton(info)
+
+		info = UIDropDownMenu_CreateInfo()
+		info.text = L.CONFIG_FONTSIZE
+		info.hasArrow = true
+		info.menuList = "fontSize"
+		UIDropDownMenu_AddButton(info)
+	elseif level == 2 and menuList == "fontSize" then
+		for idx, fontSize in ipairs({5,6,7,8,9,10,11,12,13,14,15,16,18,20,22,24}) do
+			info = UIDropDownMenu_CreateInfo()
+			info.text = string.format("%d", fontSize) 
+			info.func = configDropDownFunc
+			info.arg1 = fontSize
+
+			UIDropDownMenu_AddButton(info, level)
+		end
 	end
 end
 
@@ -418,10 +464,10 @@ StaticPopupDialogs["WOWLUA_SAVE_AS"] = {
 		editBox:HighlightText()
 	end,
 	OnHide = function(self)
-        local activeWindow = ChatEdit_GetActiveWindow()
-        if activeWindow then
-            activeWindow:SetText("")
-        end
+		local activeWindow = ChatEdit_GetActiveWindow()
+		if activeWindow then
+			activeWindow:SetText("")
+		end
 	end,
 	EditBoxOnEnterPressed = function(self)
 		if _G[self:GetParent():GetName().."Button1"]:IsEnabled() == 1 then
@@ -556,8 +602,8 @@ function WowLua:GoToPage(page)
 
 	local entry = self:SelectPage(page)
 	if not entry then
-        return
-    end
+		return
+	end
 
 	WowLuaFrameEditBox:SetText(entry.content)
 	self:UpdateButtons()
@@ -641,10 +687,6 @@ function WowLua:Button_Run()
 			WowLuaFrameEditBox:SetCursorPosition(start - 1)
 		end
 	end
-end
-
-function WowLua:Button_Config()
-    InterfaceOptionsFrame_OpenToCategory("WowLua")
 end
 
 function WowLua:Button_Close()
@@ -773,16 +815,16 @@ function WowLua:OnVerticalScroll(scrollFrame)
 	local min, max = scrollbar:GetMinMaxValues();
 	local display = false;
 	if ( offset == 0 ) then
-	    getglobal(scrollbar:GetName().."ScrollUpButton"):Disable();
+		getglobal(scrollbar:GetName().."ScrollUpButton"):Disable();
 	else
-	    getglobal(scrollbar:GetName().."ScrollUpButton"):Enable();
-	    display = true;
+		getglobal(scrollbar:GetName().."ScrollUpButton"):Enable();
+		display = true;
 	end
 	if ((scrollbar:GetValue() - max) == 0) then
-	    getglobal(scrollbar:GetName().."ScrollDownButton"):Disable();
+		getglobal(scrollbar:GetName().."ScrollDownButton"):Disable();
 	else
-	    getglobal(scrollbar:GetName().."ScrollDownButton"):Enable();
-	    display = true;
+		getglobal(scrollbar:GetName().."ScrollDownButton"):Enable();
+		display = true;
 	end
 	if ( display ) then
 		scrollbar:Show();
@@ -935,28 +977,28 @@ SlashCmdList["WOWLUA"] = function(txt)
 end
 
 local function printf(fmt, ...)
-    print(fmt:format(...))
+	print(fmt:format(...))
 end
 
 SLASH_WOWLUARUN1 = "/luarun"
 SLASH_WOWLUARUN2 = "/wowluarun"
 SlashCmdList["WOWLUARUN"] = function(txt, editbox)
-    local entry, idx = WowLua:SelectPage(txt)
-    if not entry then
-        printf("|cFF33FF99WowLua|r: Unable to find a page named '%s'", txt)
-        return
-    else
-        printf("|cFF33FF99WowLua|r: Running page '%s'", txt)
-        local func, err = loadstring(entry.content, "WowLua")
-        if not func then
-            printf("|cFF33FF99WowLua|r: Error compiling page '%s': %s", txt, err)
-        else
-            -- Call the function
-            local succ, err = pcall(func)
+	local entry, idx = WowLua:SelectPage(txt)
+	if not entry then
+		printf("|cFF33FF99WowLua|r: Unable to find a page named '%s'", txt)
+		return
+	else
+		printf("|cFF33FF99WowLua|r: Running page '%s'", txt)
+		local func, err = loadstring(entry.content, "WowLua")
+		if not func then
+			printf("|cFF33FF99WowLua|r: Error compiling page '%s': %s", txt, err)
+		else
+			-- Call the function
+			local succ, err = pcall(func)
 
-            if not succ then
-                printf("|cFF33FF99WowLua|r: Error while running page '%s': %s", txt, err)
-            end
-        end
-    end
+			if not succ then
+				printf("|cFF33FF99WowLua|r: Error while running page '%s': %s", txt, err)
+			end
+		end
+	end
 end

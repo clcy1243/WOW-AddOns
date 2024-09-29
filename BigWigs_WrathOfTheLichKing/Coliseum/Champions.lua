@@ -9,7 +9,8 @@ mod:RegisterEnableMob(
 	-- Horde NPCs
 	34441, 34444, 34445, 34447, 34448, 34449, 34450, 34451, 34453, 34454, 34455, 34456, 34458, 34459
 )
---mod.engageId = 1086 -- Fires too early
+-- mod:SetEncounterID(1086) -- Fires too early
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {65960, 65801, 65877, 66010, 65947, {65816, "FLASH"}, 67514, 67777, 65983, 65980}
 
 --------------------------------------------------------------------------------
@@ -62,7 +63,7 @@ function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 end
 
 function mod:Hellfire(args)
-	self:Message(args.spellId, "orange")
+	self:MessageOld(args.spellId, "orange")
 	self:Bar(args.spellId, 15)
 end
 
@@ -76,7 +77,7 @@ do
 		if self:Me(args.destGUID) then
 			local t = GetTime()
 			if t-4 > last then
-				self:Message(65816, "blue", "Alarm", CL["you"]:format(self:SpellName(65816))) -- Hellfire
+				self:MessageOld(65816, "blue", "alarm", CL["you"]:format(self:SpellName(65816))) -- Hellfire
 				self:Flash(65816)
 				last = t
 			end
@@ -85,38 +86,38 @@ do
 end
 
 function mod:Wyvern(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 end
 
 function mod:Blind(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 end
 
 function mod:Polymorph(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 end
 
 function mod:DivineShield(args)
-	self:Message(args.spellId, "orange", nil, L["Shield on %s!"]:format(args.destName))
+	self:MessageOld(args.spellId, "orange", nil, L["Shield on %s!"]:format(args.destName))
 end
 
 function mod:Bladestorm(args)
-	self:Message(args.spellId, "red", nil, L["Bladestorming!"])
+	self:MessageOld(args.spellId, "red", nil, L["Bladestorming!"])
 end
 
 function mod:Cat(args)
-	self:Message(args.spellId, "orange", nil, L["Hunter pet up!"])
+	self:MessageOld(args.spellId, "orange", nil, L["Hunter pet up!"])
 end
 
 function mod:Felhunter(args)
-	self:Message(args.spellId, "orange", nil, L["Felhunter up!"])
+	self:MessageOld(args.spellId, "orange", nil, L["Felhunter up!"])
 end
 
 function mod:Heroism(args)
-	self:Message(args.spellId, "red", nil, L["Heroism on champions!"])
+	self:MessageOld(args.spellId, "red", nil, L["Heroism on champions!"])
 end
 
 function mod:Bloodlust(args)
-	self:Message(args.spellId, "red", nil, L["Bloodlust on champions!"])
+	self:MessageOld(args.spellId, "red", nil, L["Bloodlust on champions!"])
 end
 

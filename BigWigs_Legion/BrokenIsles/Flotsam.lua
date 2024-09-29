@@ -45,32 +45,32 @@ end
 do
 	local function printTarget(self, player, guid)
 		if self:Me(guid) then
-			self:Say(220295)
+			self:Say(220295, nil, nil, "Jetsam")
 		end
-		self:TargetMessage(220295, player, "green", "Alarm")
+		self:TargetMessageOld(220295, player, "green", "alarm")
 	end
 
 	local prev = nil
 	function mod:Jetsam(_, unit, castGUID, spellId)
 		if spellId == 220295 and castGUID ~= prev then -- Jetsam
 			prev = castGUID
-			self:GetUnitTarget(printTarget, 0.3, UnitGUID(unit))
+			self:GetUnitTarget(printTarget, 0.3, self:UnitGUID(unit))
 		end
 	end
 end
 
 function mod:Breaksam(args)
-	self:Message(args.spellId, "red", self:Melee() and "Alert")
+	self:MessageOld(args.spellId, "red", self:Melee() and "alert")
 end
 
 function mod:Getsam(args)
-	self:Message(args.spellId, "yellow", "Warning", CL.incoming:format(args.spellName))
+	self:MessageOld(args.spellId, "yellow", "warning", CL.incoming:format(args.spellName))
 	self:CDBar(args.spellId, 53)
 	self:Flash(args.spellId)
 end
 
 function mod:Yaksam(args)
-	self:Message(args.spellId, "orange", "Long", CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "orange", "long", CL.casting:format(args.spellName))
 	self:CDBar(args.spellId, 50)
 end
 

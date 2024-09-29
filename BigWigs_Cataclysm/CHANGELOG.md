@@ -1,7 +1,6 @@
 # BigWigs [Cataclysm]
 
-## [v8.0.3](https://github.com/BigWigsMods/BigWigs_Cataclysm/tree/v8.0.3) (2018-07-28)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Cataclysm/compare/v8.0.2...v8.0.3)
+## [v11.0.5](https://github.com/BigWigsMods/BigWigs_Cataclysm/tree/v11.0.5) (2024-09-25)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Cataclysm/compare/v11.0.4...v11.0.5) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Cataclysm/releases)
 
-- Firelands/Ragnaros: Fix Molten Seed and update UnitDebuff usage.  
-- Firelands/Alysrazor: Update UnitBuff usage.  
+- Bastion/DoubleDragon: do not remove blackout timer on dispel (#17)  

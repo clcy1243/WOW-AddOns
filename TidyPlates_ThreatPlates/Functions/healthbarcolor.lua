@@ -10,16 +10,18 @@ local floor = floor
 local abs = abs
 
 -- WoW APIs
-local UnitIsConnected, UnitReaction, UnitCanAttack = UnitIsConnected, UnitReaction, UnitCanAttack
+local UnitIsConnected, UnitCanAttack, UnitIsPVP = UnitIsConnected, UnitCanAttack, UnitIsPVP
 local UnitIsPlayer, UnitPlayerControlled = UnitIsPlayer, UnitPlayerControlled
 local UnitThreatSituation, UnitIsUnit, UnitExists, UnitGroupRolesAssigned = UnitThreatSituation, UnitIsUnit, UnitExists, UnitGroupRolesAssigned
 local IsInInstance = IsInInstance
+-- WoW Classic APIs:
+local GetPartyAssignment = GetPartyAssignment
 
 -- ThreatPlates APIs
-local TidyPlatesThreat = TidyPlatesThreat
 local IsOffTankCreature = Addon.IsOffTankCreature
 local TOTEMS = Addon.TOTEMS
-local RGB_P = ThreatPlates.RGB_P
+local IGNORED_STYLES = Addon.IGNORED_STYLES_WITH_NAMEMODE
+local RGB, RGB_P = ThreatPlates.RGB, ThreatPlates.RGB_P
 local IsFriend
 local IsGuildmate
 local ShowQuestUnit
@@ -29,10 +31,74 @@ local _G =_G
 -- List them here for Mikk's FindGlobals script
 -- GLOBALS: UnitAffectingCombat, UnitHealth, UnitHealthMax
 
-local reference = {
-  FRIENDLY = { NPC = "FriendlyNPC", PLAYER = "FriendlyPlayer", },
-  HOSTILE = {	NPC = "HostileNPC", PLAYER = "HostilePlayer", },
-  NEUTRAL = { NPC = "NeutralUnit", PLAYER = "NeutralUnit",	},
+---------------------------------------------------------------------------------------------------
+-- Wrapper functions for WoW Classic
+---------------------------------------------------------------------------------------------------
+
+-- Quest tooltips: not sure since when available
+if not Addon.IS_MAINLINE then -- 
+  -- UnitGroupRolesAssigned does still not seem to work in Classic
+  UnitGroupRolesAssigned = function(target_unit)
+    return (GetPartyAssignment("MAINTANK", target_unit) and "TANK") or "NONE"
+  end
+
+  -- Quest widget is not available in Classic
+  ShowQuestUnit = function(...) return false end
+end
+
+---------------------------------------------------------------------------------------------------
+--
+---------------------------------------------------------------------------------------------------
+
+local UNIT_COLOR_MAP = {
+  FRIENDLY = { 
+    NPC = "FriendlyNPC", 
+    PLAYER = { 
+      -- Unit PvP - Friendly Player
+      [true] = {
+        -- Player Character PvP
+        [true] = "FriendlyPlayerPvPOn", 
+        [false] = "FriendlyPlayerPvPOn",
+      },
+      [false] = {
+        -- Player Character PvP
+        [true] = "FriendlyPlayer",
+        [false] = "FriendlyPlayer",
+      },
+    },
+  },
+  HOSTILE = {	
+    NPC = "HostileNPC", 
+    PLAYER = {
+      -- Unit PvP Hostile Player
+      [true] = {
+        -- Player Character PvP
+        [true] = "HostilePlayer",
+        [false] = "HostilePlayerPvPOnSelfPvPOff",
+      },
+      [false] = {
+        -- Player Character PvP
+        [true] = "FriendlyPlayer",
+        [false] = "FriendlyPlayer",
+      },
+    },
+  },
+  NEUTRAL = { 
+    NPC = "NeutralUnit", 
+    PLAYER = {
+      -- Unit PvP
+      [true] = {
+        -- Player Character PvP
+        [true] = "NeutralUnit",
+        [false] = "NeutralUnit",
+      },
+      [false] = {
+        -- Player Character PvP
+        [true] = "NeutralUnit",
+        [false] = "NeutralUnit",
+      },
+    },
+  }
 }
 
 local CS = CreateFrame("ColorSelect")
@@ -55,13 +121,14 @@ function CS:GetSmudgeColorRGB(colorA, colorB, perc)
       if h3 > 360 then
         h3 = h3-360
       end
-        end
     end
-    local s3 = s1-(s1-s2)*perc
-    local v3 = v1-(v1-v2)*perc
-    self:SetColorHSV(h3, s3, v3)
-    local r,g,b = self:GetColorRGB()
-    return r,g,b
+  end
+
+  local s3 = s1-(s1-s2)*perc
+  local v3 = v1-(v1-v2)*perc
+  self:SetColorHSV(h3, s3, v3)
+  local r,g,b = self:GetColorRGB()
+  return r,g,b
 end
 
 local function GetThreatSituation(unit, style, enable_off_tank)
@@ -126,7 +193,7 @@ local function GetThreatSituation(unit, style, enable_off_tank)
 end
 
 function Addon:GetThreatColor(unit, style, use_threat_table)
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
 
   local color
 
@@ -152,7 +219,7 @@ end
 
 -- Threat System is OP, player is in combat, style is tank or dps
 local function GetColorByThreat(unit, style)
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
   local c
 
   if (db.threat.ON and db.threat.useHPColor and (style == "dps" or style == "tank")) then
@@ -163,7 +230,7 @@ local function GetColorByThreat(unit, style)
 end
 
 local function GetColorByHealthDeficit(unit)
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
 
   local pct = (_G.UnitHealth(unit.unitid) or 0) / (_G.UnitHealthMax(unit.unitid) or 1)
   local r, g, b = CS:GetSmudgeColorRGB(db.aHPbarColor, db.bHPbarColor, pct)
@@ -171,7 +238,7 @@ local function GetColorByHealthDeficit(unit)
 end
 
 local function GetColorByClass(unit)
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
 
   local c
   if unit.type == "PLAYER" then
@@ -193,71 +260,44 @@ local function GetColorByClass(unit)
 end
 
 local function GetColorByReaction(unit)
-  local db = TidyPlatesThreat.db.profile.ColorByReaction
+  local db = Addon.db.profile.ColorByReaction
 
-  if unit.type == "NPC" and not UnitCanAttack("player", unit.unitid) and UnitReaction("player", unit.unitid) == 3 then
-    -- 1/2 is same color (red), 4 is neutral (yellow),5-8 is same color (green)
-    return db.UnfriendlyFaction
-    --return FACTION_BAR_COLORS[3]
+  -- PvP coloring based on: https://wowpedia.fandom.com/wiki/PvP_flag
+  -- Coloring for pets is the same as for the player controlling the pet
+  local unit_type = (UnitPlayerControlled(unit.unitid) and "PLAYER") or unit.type
+  local color
+  -- * For players and their pets
+  if unit_type == "PLAYER" then
+    if db.IgnorePvPStatus or Addon.IsInPvPInstance then
+      color = (unit.reaction == "HOSTILE" and db.HostilePlayer) or db.FriendlyPlayer
+    else
+      local unit_is_pvp = UnitIsPVP(unit.unitid) or false
+      local player_is_pvp = UnitIsPVP("player") or false
+      color = db[UNIT_COLOR_MAP[unit.reaction][unit_type][unit_is_pvp][player_is_pvp]]
+    end
+  -- * From here: For NPCs (without pets)
+  elseif not UnitCanAttack("player", unit.unitid) and unit.blue < 0.1 and unit.green > 0.5 and unit.green < 0.6 and unit.red > 0.9 then
+    -- Handle non-attackable units with brown healtbars - currently, I know no better way to detect this.
+    color = db.UnfriendlyFaction
+  else
+    color = db[UNIT_COLOR_MAP[unit.reaction][unit_type]]
   end
 
-  return db[reference[unit.reaction][unit.type]]
+  return color
 end
-
---local function GetColorByReaction(unit)
---  local db = TidyPlatesThreat.db.profile
---  local db_color = db.ColorByReaction
---
---  local color
---  if not UnitIsConnected(unit.unitid) then
---    color =  db_color.DisconnectedUnit
---  elseif unit.isTapped then
---    color =  db_color.TappedUnit
---  elseif unit.reaction == "FRIENDLY" and unit.type == "PLAYER" then
---    IsFriend = IsFriend or ThreatPlates.IsFriend
---    IsGuildmate = IsGuildmate or ThreatPlates.IsGuildmate
---
---    local db_social = db.socialWidget
---    if db_social.ShowFriendColor and IsFriend(unit) then
---      color =  db_social.FriendColor
---    elseif db_social.ShowGuildmateColor and IsGuildmate(unit) then
---      color =  db_social.GuildmateColor
---    else
---      -- wrong: next elseif missing here color = db_color[reference[unit.reaction][unit.type]]
---    end
---  elseif unit.type == "NPC" and not UnitCanAttack("player", unit.unitid) and UnitReaction("player", unit.unitid) == 3 then
---    -- 1/2 is same color (red), 4 is neutral (yellow),5-8 is same color (green)
---    color = FACTION_BAR_COLORS[3]
---  else
---    color = db_color[reference[unit.reaction][unit.type]]
---  end
---
---  return color
---end
-
---local HEALTHBAR_COLOR_FUNCTIONS = {
---  --  NameOnly = nil,
---  --  empty = nil,
---  --  etotem = nil,
---  unique = UniqueHealthbarColor,
---  totem = TotemHealthbarColor,
---  normal = DefaultHealthbarColor,
---  tank = ThreatHealthbarColor,
---  dps = ThreatHealthbarColor,
---}
 
 function Addon:SetHealthbarColor(unit)
   local style = unit.style
 
+  if IGNORED_STYLES[style] then return end
+  
   local unique_setting = unit.CustomPlateSettings
-
-  if style == "NameOnly" or style == "NameOnly-Unique" or style == "empty" or style == "etotem" then return end
 
   ShowQuestUnit = ShowQuestUnit or ThreatPlates.ShowQuestUnit
   IsFriend = IsFriend or ThreatPlates.IsFriend
   IsGuildmate = IsGuildmate or ThreatPlates.IsGuildmate
 
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
   local db_color = db.ColorByReaction
 
   local c
@@ -358,4 +398,3 @@ ThreatPlates.GetColorByHealthDeficit = GetColorByHealthDeficit
 ThreatPlates.GetColorByClass = GetColorByClass
 ThreatPlates.GetColorByReaction = GetColorByReaction
 Addon.GetThreatSituation = GetThreatSituation
-

@@ -8,19 +8,21 @@ local ThreatPlates = Addon.ThreatPlates
 -- Lua APIs
 
 -- WoW APIs
-local UnitExists = UnitExists
 
 -- ThreatPlates APIs
-local TidyPlatesThreat = TidyPlatesThreat
 local GetThreatSituation = Addon.GetThreatSituation
 
+---------------------------------------------------------------------------------------------------
+-- Local variables
+---------------------------------------------------------------------------------------------------
+
 local function ScaleSituational(unit)
-	local db = TidyPlatesThreat.db.profile.nameplate
+	local db = Addon.db.profile.nameplate
 
 	-- Do checks for situational scale settings:
 	if unit.isMarked and db.toggle.MarkedS then
 		return db.scale.Marked
-	elseif unit.isMouseover and not unit.isTarget and db.toggle.MouseoverUnitScale then
+	elseif unit.isMouseover and not Addon.UnitIsTarget(unit.unitid) and db.toggle.MouseoverUnitScale then
 		return db.scale.MouseoverUnit
 	elseif unit.isCasting then
 		local unit_friendly = (unit.reaction == "FRIENDLY")
@@ -36,7 +38,7 @@ end
 
 local function ScaleGeneral(unit)
 	-- Target always has priority
-	if not unit.isTarget then
+	if not Addon.UnitIsTarget(unit.unitid) then
 		-- Do checks for situational scale settings:
 		local scale = ScaleSituational(unit)
 		if scale then
@@ -45,13 +47,14 @@ local function ScaleGeneral(unit)
 	end
 
 	-- Do checks for target settings:
-	local db = TidyPlatesThreat.db.profile.nameplate
+	local db = Addon.db.profile.nameplate
 
 	local target_scale
-	if UnitExists("target") then
-		if unit.isTarget and db.toggle.TargetS then
+	if Addon.TargetUnitExists() then
+		local unit_is_target = Addon.UnitIsTarget(unit.unitid)
+		if unit_is_target and db.toggle.TargetS then
 			target_scale = db.scale.Target
-		elseif not unit.isTarget and db.toggle.NonTargetS then
+		elseif not unit_is_target and db.toggle.NonTargetS then
 			target_scale = db.scale.NonTarget
 		end
 	elseif db.toggle.NoTargetS then
@@ -73,7 +76,7 @@ local function ScaleGeneral(unit)
 end
 
 local function ScaleThreat(unit, style)
-	local db = TidyPlatesThreat.db.profile.threat
+	local db = Addon.db.profile.threat
 
 	if not db.useScale then
 		return ScaleGeneral(unit)
@@ -119,7 +122,7 @@ local function ScaleUniqueNameOnly(unit)
 	local unique_setting = unit.CustomPlateSettings
 
 	if unique_setting.overrideScale then
-		local db = TidyPlatesThreat.db.profile.HeadlineView
+		local db = Addon.db.profile.HeadlineView
 		if db.useScaling then
 			return ScaleNormal(unit)
 		end
@@ -137,7 +140,7 @@ local function ScaleEmpty(unit)
 end
 
 local function ScaleNameOnly(unit)
-	local db = TidyPlatesThreat.db.profile.HeadlineView
+	local db = Addon.db.profile.HeadlineView
 
 	if db.useScaling then
 		return ScaleNormal(unit)

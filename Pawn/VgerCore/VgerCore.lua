@@ -1,9 +1,9 @@
 ﻿-- VgerCore  by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2020 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2024 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- 
--- Version 1.0.11 -- IsClassic
-local VgerCoreThisVersion = 1.11
+-- Version 1.0.19 -- IsWarWithin
+local VgerCoreThisVersion = 1.19
 -- 
 -- VgerCore contains functionality that is shared by Vger's mods.
 -- It can be used as a standalone add-on, or embedded within other mods.
@@ -18,8 +18,26 @@ if InitializeOrUpgrade then
 VgerCore = {}
 VgerCore.Version = VgerCoreThisVersion
 
--- Is this WoW Classic?
+-- What version is this?
+local BuildNumber = select(4, GetBuildInfo())
 VgerCore.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+VgerCore.IsBurningCrusade = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE) -- includes pre-patch
+VgerCore.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_WRATH_OF_THE_LICH_KING and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_WRATH_OF_THE_LICH_KING) or (WOW_PROJECT_WRATH_CLASSIC and WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) -- includes pre-patch
+VgerCore.IsCataclysm = (WOW_PROJECT_CATACLYSM_CLASSIC and WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC) -- includes pre-patch
+VgerCore.IsMainline = BuildNumber >= 90000
+VgerCore.IsWarWithin = VgerCore.IsMainline and BuildNumber >= 110000
+VgerCore.IsDragonflight = VgerCore.IsMainline and BuildNumber >= 100000
+VgerCore.IsShadowlands = VgerCore.IsMainline and BuildNumber >= 90000
+
+VgerCore.DeathKnightsExist = VgerCore.IsWrath or VgerCore.IsCataclysm or VgerCore.IsMainline
+VgerCore.MonksExist = VgerCore.IsMainline
+VgerCore.DemonHuntersExist = VgerCore.IsMainline
+VgerCore.EvokersExist = VgerCore.IsDragonflight
+VgerCore.SpecsExist = VgerCore.IsMainline
+VgerCore.RangedSlotExists = VgerCore.IsClassic or VgerCore.IsBurningCrusade or VgerCore.IsWrath or VgerCore.IsCataclysm
+VgerCore.ArtifactsExist = VgerCore.IsMainline
+VgerCore.EquipmentSetsExist = VgerCore.IsWrath or VgerCore.IsCataclysm or VgerCore.IsMainline
+VgerCore.ReforgingExists = VgerCore.IsCataclysm
 
 -- Common colors
 VgerCore.Color = {}
@@ -350,6 +368,18 @@ end
 -- prevents execution more than once in the same duration.
 function VgerCore.Delay(Duration, Func, arg1)
 	return VgerCore.ThrottleDelayCore(Duration, false, Func, arg1)
+end
+
+-- Returns the index of an item in a table, or nil if it's not in the table.
+-- (Keep in mind that this requires iteration!)
+function VgerCore.IndexOf(Table, Item)
+	if not Item then
+		VgerCore.Fail("Can't find the index of nothing.")
+	end
+	local ThisIndex, ThisItem
+	for ThisIndex, ThisItem in pairs(Table) do
+		if ThisItem == Item then return ThisIndex end
+	end
 end
 
 ------------------------------------------------------------

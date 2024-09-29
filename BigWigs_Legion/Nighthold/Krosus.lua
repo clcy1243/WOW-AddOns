@@ -88,7 +88,6 @@ function mod:GetOptions()
 		"smashingBridge",
 		205420, -- Burning Pitch
 		208203, -- Isolated Rage
-		"berserk",
 	}
 end
 
@@ -145,7 +144,7 @@ do
 			local t = GetTime()
 			if t-prev > 2.5 then
 				prev = t
-				self:Message(spellId, "red", "Alert")
+				self:MessageOld(spellId, "red", "alert")
 			end
 		end
 	end
@@ -154,18 +153,18 @@ end
 function mod:SearingBrand(args)
 	local amount = args.amount or 1
 	if amount % 2 == 1 or amount > 3 then -- 1, 3, 4, 5, 6, 7, 8, ... < this is hc, might need to change for others
-		self:StackMessage(args.spellId, args.destName, amount, "orange")
+		self:StackMessageOld(args.spellId, args.destName, amount, "orange")
 	end
 end
 
 function mod:SearingBrandRemoved(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "orange", "Warning", L.removedFromYou:format(args.spellName))
+		self:MessageOld(args.spellId, "orange", "warning", L.removedFromYou:format(args.spellName))
 	end
 end
 
 function mod:FelBeamCast(args)
-	self:Message(args.spellId, "yellow", "Info", args.spellName)
+	self:MessageOld(args.spellId, "yellow", "info", args.spellName)
 end
 
 do
@@ -188,11 +187,11 @@ do
 end
 
 function mod:OrbOfDescructionApplied(args)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Warning", CL.count:format(args.spellName, orbCount), nil, self:Ranged())
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "warning", CL.count:format(args.spellName, orbCount), nil, self:Ranged())
 	self:TargetBar(args.spellId, 5, args.destName, 230932, args.spellId) -- Orb
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Orb of Destruction")
 	end
 	orbCount = orbCount + 1
 	local t = timers[args.spellId][orbCount]
@@ -203,14 +202,14 @@ end
 
 function mod:SlamCast(args)
 	if slamCount % 3 == 0 then
-		self:Message("smashingBridge", "red", "Alert", CL.casting:format(CL.count:format(args.spellName, slamCount)) .. " - "..L.smashingBridge, L.smashingBridge_icon)
+		self:MessageOld("smashingBridge", "red", "alert", CL.casting:format(CL.count:format(args.spellName, slamCount)) .. " - "..L.smashingBridge, L.smashingBridge_icon)
 	else
-		self:Message(args.spellId, "red", "Alert", CL.casting:format(CL.count:format(args.spellName, slamCount)))
+		self:MessageOld(args.spellId, "red", "alert", CL.casting:format(CL.count:format(args.spellName, slamCount)))
 	end
 end
 
 function mod:SlamSuccess(args)
-	self:Message(args.spellId, "red", nil)
+	self:MessageOld(args.spellId, "red", nil)
 	if slamCount % 3 == 0 and slamCount < 10 then
 		self:Bar("smashingBridge", 90, CL.count:format(L.smashingBridge, slamCount/3 + 1), L.smashingBridge_icon)
 	end
@@ -221,7 +220,7 @@ function mod:SlamSuccess(args)
 end
 
 function mod:BurningPitchCast(args)
-	self:Message(args.spellId, "yellow", "Info")
+	self:MessageOld(args.spellId, "yellow", "info")
 	burningPitchCount = burningPitchCount + 1
 	local t = timers[args.spellId][burningPitchCount]
 	if t then

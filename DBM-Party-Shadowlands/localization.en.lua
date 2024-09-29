@@ -51,7 +51,7 @@ L:SetGeneralLocalization({
 --L= DBM:GetModLocalization(2423)
 
 -----------------------
--- Stradama Margrave --
+-- Margrave Stradama --
 -----------------------
 --L= DBM:GetModLocalization(2404)
 
@@ -80,7 +80,27 @@ L:SetGeneralLocalization({
 -----------------------
 -- Tred'ova --
 -----------------------
---L= DBM:GetModLocalization(2405)
+L= DBM:GetModLocalization(2405)
+
+L:SetWarningLocalization({
+	warnInfestor					= "Parasitic Infestor on %s",
+	specWarnParasiticInfesterKick	= "Parasitic Infester - Interrupt! (%s)"
+})
+
+L:SetTimerLocalization{
+	timerParasiticInfesterCD		= "Infester (%s)"
+}
+
+L:SetOptionLocalization({
+	warnInfestor					= "Announce Parasitic Infestor targets",
+	specWarnParasiticInfesterKick	= "Show special warning to interrupt Parasitic Infester (with count)",
+	timerParasiticInfesterCD		= "Show timer for Parasitic Infester (with count)",
+	yellParasiticInfester			= "Yell when you are affected by Parasitic Infester"
+})
+
+L:SetMiscLocalization({
+	Infester						= "Infester"
+})
 
 ---------
 --Trash--
@@ -129,7 +149,12 @@ L:SetGeneralLocalization({
 -----------------------
 -- Kin-Tara --
 -----------------------
---L= DBM:GetModLocalization(2399)
+L= DBM:GetModLocalization(2399)
+
+L:SetMiscLocalization({
+	Flight	= "Your doom takes flight!",
+	Flight2	= "Fear the skies!"
+})
 
 -----------------------
 -- Ventunax --
@@ -144,7 +169,11 @@ L:SetGeneralLocalization({
 -----------------------
 -- Devos, Paragon of Doubt --
 -----------------------
---L= DBM:GetModLocalization(2412)
+L= DBM:GetModLocalization(2412)
+
+L:SetMiscLocalization({
+	RunThrough	= "This spear shall pierce your heart!"
+})
 
 ---------
 --Trash--
@@ -206,7 +235,7 @@ L:SetGeneralLocalization({
 --L= DBM:GetModLocalization(2409)
 
 -----------------------
--- Dealer G'exa --
+-- Dealer Xy'exa --
 -----------------------
 --L= DBM:GetModLocalization(2398)
 
@@ -254,4 +283,65 @@ L = DBM:GetModLocalization("SanguineDepthsTrash")
 
 L:SetGeneralLocalization({
 	name =	"Sanguine Depths Trash"
+})
+
+-----------------------
+-- <<<Tazavesh, the Veiled Market (1194J/2441M)>>> --
+-----------------------
+-----------------------
+-- Zo'phex the Sentinel --
+-----------------------
+--L= DBM:GetModLocalization(2437)
+
+-----------------------
+-- The Menagerie --
+-----------------------
+L= DBM:GetModLocalization(2454)
+
+L:SetMiscLocalization({
+	AchilliteRPTrigger	= "Are rampaging beasts ruining your day? We have the solution!",
+	VenzaRPTrigger		= "Now's my chance! That axe is mine!"
+})
+
+-----------------------
+-- Mailroom Mayhem --
+-----------------------
+--L= DBM:GetModLocalization(2436)
+
+-----------------------
+-- Au'myza's Oasis --
+-----------------------
+--L= DBM:GetModLocalization(2452)
+
+-----------------------
+-- So'azmi --
+-----------------------
+L= DBM:GetModLocalization(2451)
+
+L:SetMiscLocalization({
+	RPTrigger	= "Excuse our intrusion, So'leah. I hope we caught you at an inconvenient time."
+})
+
+-----------------------
+-- Hylbrande --
+-----------------------
+--L= DBM:GetModLocalization(2448)
+
+-----------------------
+-- Timecap'n Hooktail --
+-----------------------
+--L= DBM:GetModLocalization(2449)
+
+-----------------------
+-- So'leah --
+-----------------------
+--L= DBM:GetModLocalization(2455)
+
+---------
+--Trash--
+---------
+L = DBM:GetModLocalization("TazaveshTrash")
+
+L:SetGeneralLocalization({
+	name =	"Tazavesh Trash"
 })

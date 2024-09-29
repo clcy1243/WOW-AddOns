@@ -3,13 +3,11 @@ local t = Addon.ThreatPlates
 
 local EMPTY_TEXTURE = t.Art .. "Empty"
 
-local function Create(self,name)
-	local db = self.db.profile.settings
+local function Create(name)
+	local db = Addon.db.profile.settings
 	local theme = {
 
 		frame = {
-			width = db.frame.width,
-			height = db.frame.height,
 			x = db.frame.x,
 			y = db.frame.y,
 			anchor = "CENTER",
@@ -25,6 +23,14 @@ local function Create(self,name)
 			anchor = "CENTER",
 			orientation = "HORIZONTAL",
 			show = false,
+		},
+
+		healthbarFriendly = {
+			width = 120,
+			height = 10,
+			x = 0,
+			y = 0,
+			anchor = "CENTER",
 		},
 
 		healthborder = {
@@ -88,7 +94,7 @@ local function Create(self,name)
 		},
 
 		name = {
-			typeface =						t.Media:Fetch('font', db.name.typeface),
+			typeface =						Addon.LibSharedMedia:Fetch('font', db.name.typeface),
 			size = db.name.size,
 			width = db.name.width,
 			height = db.name.height,
@@ -103,7 +109,7 @@ local function Create(self,name)
 		},
 
 		level = {
-			typeface =						t.Media:Fetch('font', db.level.typeface),
+			typeface =						Addon.LibSharedMedia:Fetch('font', db.level.typeface),
 			size = db.level.size,
 			width = db.level.width,
 			height = db.level.height,
@@ -118,7 +124,7 @@ local function Create(self,name)
 		},
 
 		customtext = {
-			typeface =						t.Media:Fetch('font', db.customtext.typeface),
+			typeface =						Addon.LibSharedMedia:Fetch('font', db.customtext.typeface),
 			size = db.customtext.size,
 			width = db.customtext.width,
 			height = db.customtext.height,
@@ -133,7 +139,7 @@ local function Create(self,name)
 		},
 
 		spelltext = {
-			typeface =						t.Media:Fetch('font', db.spelltext.typeface),
+			typeface =						Addon.LibSharedMedia:Fetch('font', db.spelltext.typeface),
 			size = db.spelltext.size,
 			width = db.spelltext.width,
 			height = db.spelltext.height,
@@ -204,7 +210,7 @@ end
 
 local themeList = {
 	"empty",
-	"etotem",
+	"etotem", -- Now, used for nameplates with certain widgets, but no healthbar and name
 }
 
 do

@@ -5,6 +5,9 @@
 local mod = BigWigs:NewBoss("High Astromancer Solarian", 550, 1575)
 if not mod then return end
 mod:RegisterEnableMob(18805)
+if mod:Classic() then
+	mod:SetEncounterID(732)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -48,20 +51,20 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
-	self:Log("SPELL_AURA_APPLIED", "Wrath", 42783)
-	self:Log("SPELL_AURA_REMOVED", "WrathRemove", 42783)
+	self:Log("SPELL_AURA_APPLIED", "Wrath", 42783, 33045)
+	self:Log("SPELL_AURA_REMOVED", "WrathRemove", 42783, 33045)
 
-	self:Yell("Engage", L["engage_trigger"])
-	self:Yell("Phase2", L["phase2_trigger"])
-	self:Yell("Split", L["split_trigger1"], L["split_trigger2"])
+	self:BossYell("Engage", L["engage_trigger"])
+	self:BossYell("Phase2", L["phase2_trigger"])
+	self:BossYell("Split", L["split_trigger1"], L["split_trigger2"])
 
 	self:Death("Win", 18805)
 end
 
 function mod:OnEngage()
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "target", "focus")
 
-	self:Message("phase", "green", nil, L["phase1_message"], false)
+	self:MessageOld("phase", "green", nil, L["phase1_message"], false)
 	self:Bar("phase", 50, L["split_bar"], "Spell_Shadow_SealOfKings")
 	self:DelayedMessage("phase", 43, "red", L["split_warning"])
 end
@@ -71,33 +74,33 @@ end
 --
 
 function mod:Wrath(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", nil, L["wrath_other"])
-	self:PrimaryIcon(args.spellId, args.destName)
-	self:TargetBar(args.spellId, 6, args.destName, L["wrath_other"])
+	self:TargetMessageOld(42783, args.destName, "yellow", nil, L["wrath_other"])
+	self:PrimaryIcon(42783, args.destName)
+	self:TargetBar(42783, args.spellId == 33045 and 8 or 6, args.destName, L["wrath_other"])
 	if self:Me(args.destGUID) then
-		self:OpenProximity(args.spellId, 10)
+		self:OpenProximity(42783, 10)
 	end
 end
 
 function mod:WrathRemove(args)
-	self:PrimaryIcon(args.spellId)
+	self:PrimaryIcon(42783)
 	if self:Me(args.destGUID) then
-		self:CloseProximity(args.spellId)
+		self:CloseProximity(42783)
 	end
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 18805 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 18805 then
+		local hp = self:GetHealth(unit)
 		if hp > 21 and hp < 25 then
-			self:Message("phase", "green", nil, L["phase2_warning"], false)
+			self:MessageOld("phase", "green", nil, L["phase2_warning"], false)
 			self:UnregisterUnitEvent(event, "target", "focus")
 		end
 	end
 end
 
 function mod:Phase2()
-	self:Message("phase", "red", nil, L["phase2_message"], false)
+	self:MessageOld("phase", "red", nil, L["phase2_message"], false)
 	self:CancelAllTimers()
 	self:StopBar(L["split_bar"])
 end
@@ -108,7 +111,7 @@ function mod:Split()
 	self:DelayedMessage("split", 83, "red", L["split_warning"])
 
 	-- Agents 6 seconds after the Split
-	self:Message("split", "red", nil, L["agent_warning"], false)
+	self:MessageOld("split", "red", nil, L["agent_warning"], false)
 	self:Bar("split", 6, L["agent_bar"], "Ability_Creature_Cursed_01")
 
 	-- Priests 22 seconds after the Split

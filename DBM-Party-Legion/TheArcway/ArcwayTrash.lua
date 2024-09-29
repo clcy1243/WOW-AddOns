@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod("ArcwayTrash", "DBM-Party-Legion", 6)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod:SetRevision("20240808043723")
 --mod:SetModelID(47785)
-mod:SetZone()
 
 mod.isTrashMod = true
+mod.isTrashModBossFightAllowed = true
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 211757 226206",

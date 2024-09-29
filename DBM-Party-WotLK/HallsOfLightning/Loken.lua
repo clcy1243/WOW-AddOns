@@ -1,10 +1,13 @@
 local mod	= DBM:NewMod(600, "DBM-Party-WotLK", 6, 275)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+if not mod:IsClassic() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
+
+mod:SetRevision("20230311193122")
 mod:SetCreatureID(28923)
-mod:SetEncounterID(561, 562, 1986)
-mod:SetZone()
+mod:SetEncounterID(1986)
 
 mod:RegisterCombat("combat")
 
@@ -14,7 +17,9 @@ mod:RegisterEventsInCombat(
 
 local warningNova	= mod:NewSpellAnnounce(52960, 3)
 
-local timerNovaCD	= mod:NewCDTimer(30, 52960, nil, nil, nil, 2)
+local specWarnNova	= mod:NewSpecialWarningRun(52960, false, nil, nil, 4, 2)
+
+--local timerNovaCD	= mod:NewCDTimer(30, 52960, nil, nil, nil, 2)
 local timerAchieve	= mod:NewAchievementTimer(120, 1867)
 
 function mod:OnCombatStart(delay)
@@ -25,7 +30,12 @@ end
 
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(52960, 59835) then
-		warningNova:Show()
-		timerNovaCD:Start()
+		if self.Options.SpecWarn52960run then
+			specWarnNova:Show()
+			specWarnNova:Play("justrun")
+		else
+			warningNova:Show()
+		end
+--		timerNovaCD:Start()
 	end
 end

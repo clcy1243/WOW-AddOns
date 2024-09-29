@@ -4,9 +4,15 @@
 
 local mod, CL = BigWigs:NewBoss("Razorscale", 603, 1639)
 if not mod then return end
-mod:RegisterEnableMob(33816, 33210, 33287, 33259, 33186) -- Expedition Defender, Expidition Commander, Expedition Engineer, Expedition Trapper, Razorscale
---mod.engageId = 1139 -- ENCOUNTER_END wasn't firing (for wipes)
---mod.respawnTime = 30
+mod:RegisterEnableMob(
+	33816, -- Expedition Defender
+	33210, -- Expedition Commander
+	33287, -- Expedition Engineer
+	33259, -- Expedition Trapper
+	33186  -- Razorscale
+)
+mod:SetEncounterID(mod:Classic() and 746 or 1139)
+mod:SetRespawnTime(30)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -50,6 +56,7 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
+	-- ENCOUNTER_END wasn't firing (for wipes)
 	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
 	self:Death("Win", 33186)
 
@@ -59,7 +66,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_DAMAGE", "DevouringFlameDamage", 64733)
 	self:Log("SPELL_MISSED", "DevouringFlameDamage", 64733)
 
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterEvent("UNIT_HEALTH")
 	self:Log("SPELL_CAST_SUCCESS", "WingBuffetCastEnd", 62666)
 	self:Log("SPELL_AURA_APPLIED", "Harpooned", 62794)
 	self:Log("SPELL_AURA_REMOVED", "HarpoonedOver", 62794)
@@ -73,7 +80,7 @@ end
 function mod:OnEngage()
 	count = 0
 	stage = 1
-	self:Berserk(900)
+	self:Berserk(self:Classic() and 360 or 900)
 	self:Bar("harpoon", 50, L.harpoon_nextbar:format(1), "INV_Spear_06")
 end
 
@@ -83,14 +90,14 @@ end
 
 function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 	if msg == L.ground_trigger then -- Grounded stage begins
-		self:Message("stages", "cyan", "Long", L.ground_message, false)
+		self:MessageOld("stages", "cyan", "long", L.ground_message, false)
 	end
 end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg)
 	if msg == L.harpoon_trigger then -- Next harpoon ready
 		count = count + 1
-		self:Message("harpoon", "yellow", "Info", L.harpoon_message:format(count), "INV_Spear_06")
+		self:MessageOld("harpoon", "yellow", "info", L.harpoon_message:format(count), "INV_Spear_06")
 		if count < 4 then
 			self:Bar("harpoon", 18, L.harpoon_nextbar:format(count+1), "INV_Spear_06")
 		end
@@ -104,17 +111,18 @@ do
 			local t = GetTime()
 			if t-prev > 2 then
 				prev = t
-				self:Message(args.spellId, "blue", "Alarm", CL.underyou:format(args.spellName))
+				self:MessageOld(args.spellId, "blue", "alarm", CL.underyou:format(args.spellName))
 			end
 		end
 	end
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) ~= 33186 then return end -- Razorscale
+	local hp = self:GetHealth(unit)
 	if hp > 51 and hp < 56 then
-		self:Message("stages", "green", nil, CL.soon:format(CL.stage:format(2)), false)
-		self:UnregisterUnitEvent(event, unit)
+		self:MessageOld("stages", "green", nil, CL.soon:format(CL.stage:format(2)), false)
+		self:UnregisterEvent(event)
 	end
 end
 
@@ -122,7 +130,7 @@ function mod:WingBuffetCastEnd() -- Air stage begins again
 	count = 0
 	if stage == 1 then
 		self:Bar("harpoon", 55, L.harpoon_nextbar:format(1), "INV_Spear_06")
-		self:Message("stages", "cyan", "Long", L.air_message, false)
+		self:MessageOld("stages", "cyan", "long", L.air_message, false)
 	end
 end
 
@@ -133,15 +141,15 @@ end
 
 function mod:HarpoonedOver(args)
 	self:StopBar(args.spellName)
-	local hp = UnitHealth("boss1") / UnitHealthMax("boss1") * 100
-	if hp < 50 then -- Stage 2 (Permanently grounded) begins
+	local boss = self:GetUnitIdByGUID(args.destGUID)
+	if boss and self:GetHealth(boss) < 50 then -- Stage 2 (Permanently grounded) begins
 		stage = 2
-		self:Message("stages", "yellow", nil, CL.stage:format(2), false)
+		self:MessageOld("stages", "yellow", nil, CL.stage:format(2), false)
 	end
 end
 
 function mod:FlameBreath(args)
-	self:Message(args.spellId, "yellow", "Warning")
+	self:MessageOld(args.spellId, "yellow", "warning")
 	if stage == 2 then
 		self:CDBar(args.spellId, 21)
 	end
@@ -150,6 +158,6 @@ end
 function mod:FuseArmor(args)
 	if self:Me(args.destGUID) or (self:Tank() and self:Tank(args.destName)) then
 		local amount = args.amount or 1
-		self:StackMessage(args.spellId, args.destName, amount, "orange", arms.amount > 1 and "Info")
+		self:StackMessageOld(args.spellId, args.destName, amount, "orange", amount > 1 and "info")
 	end
 end

@@ -1,28 +1,17 @@
-
 local L = BigWigs:NewBossLocale("Onyxia", "ruRU")
+if not L then return end
 if L then
-	L.phase = "Фазы"
-	L.phase_desc = "Сообщать о смене фаз."
-	L.phase1_message = "%s вступает в бой - фаза 1!"
-	L.phase2_message = "Фаза 2 - Ониксия взлетает!"
-	L.phase3_message = "Фаза 3 - Ониксия приземляется!"
-
 	L.phase1_trigger = "Вот это сюрприз."
 	L.phase2_trigger = "Эта бессмысленная возня вгоняет меня в тоску. Я сожгу вас всех!"
 	L.phase3_trigger = "Похоже, вам требуется преподать еще один урок, смертные!"
 
-	L.deepbreath_message = "Огненное дыхание!"
-
-	L.fear_message = "Страх через 1.5 сек!"
+	L.deep_breath = "Глубокий вдох"
 end
 
 L = BigWigs:NewBossLocale("Archavon the Stone Watcher", "ruRU")
 if L then
 	L.stomp_message = "Топот - близится Рывок!"
 	L.stomp_warning = "Топот через ~5сек!"
-	L.stomp_bar = "~Перезарядка топота"
-
-	L.cloud_message = "ВЫ в Удушающем облаке!"
 
 	L.charge = "Рывок"
 	L.charge_desc = "Предупреждать о Рывках."
@@ -30,11 +19,8 @@ end
 
 L = BigWigs:NewBossLocale("Emalon the Storm Watcher", "ruRU")
 if L then
-	L.nova_next = "~Перезарядка Вспышки молнии"
-
 	L.overcharge_message = "Служитель бури перегружен!"
 	L.overcharge_bar = "Взрыв Служителя бури"
-	L.overcharge_next = "~Следующая Перегрузка"
 
 	L.custom_on_overcharge_mark = "Overcharge marker"
 	L.custom_on_overcharge_mark_desc = "Place the {rt8} marker on the overcharged minion, requires promoted or leader."
@@ -42,8 +28,6 @@ end
 
 L = BigWigs:NewBossLocale("Koralon the Flame Watcher", "ruRU")
 if L then
-	L.cinder_message = "ВЫ в ОГНЕ!"
-
 	L.breath_bar = "Дыхание %d"
 	L.breath_message = "Скоро дыхание %d!"
 end
@@ -52,8 +36,6 @@ L = BigWigs:NewBossLocale("Toravon the Ice Watcher", "ruRU")
 if L then
 	L.whiteout_bar = "Пурга %d"
 	L.whiteout_message = "Скоро пурга %d!"
-
-	L.frostbite_message = "%2$dx Обморожение на %1$s"
 
 	L.freeze_message = "Заморозка"
 end
@@ -98,60 +80,19 @@ end
 
 L = BigWigs:NewBossLocale("Sartharion", "ruRU")
 if L then
-	--L.engage_trigger = "It is my charge to watch over these eggs. I will see you burn before any harm comes to them!"
-
-	L.tsunami = "Огненное цунами"
-	L.tsunami_desc = "Предупреждать о взбалтывании лавы и отображать полосу."
-	L.tsunami_warning = "Огненное цунами через ~5сек!"
-	L.tsunami_message = "Огненное цунами!"
-	L.tsunami_cooldown = "Перезарядка цунами"
+	L.engage_trigger = "Моя обязанность – оберегать эти яйца, и вы сгорите, прежде чем хоть пальцем тронете их!"
 	L.tsunami_trigger = "Лава вокруг |3-1(%s) начинает бурлить!"
-
-	L.breath_cooldown = "Перезарядка дыхания"
+	L.twilight_trigger_vesperon = "В Сумраке появляется ученик Весперона!"
+	L.twilight_trigger_shadron = "Ученик Шадрона появляется в Зоне сумерек!"
 
 	L.drakes = "Драконы"
 	L.drakes_desc = "Предупреждать когда драконы вступят в бой."
-	L.drakes_incomingsoon = "%s прилетит через ~5сек!"
 
-	L.twilight = "События в Зоне сумерек"
-	L.twilight_desc = "Сообщать что происходит с Сумеречным порталом."
-	L.twilight_trigger_tenebron = "Тенеброн начинает высиживать кладку в Зоне сумерек!"
-	L.twilight_trigger_vesperon = "В Сумраке появляется ученик Весперона!"
-	L.twilight_trigger_shadron = "Ученик Шадрона появляется в Зоне сумерек!"
-	L.twilight_message_tenebron = "Вылупление яиц"
-	L.twilight_message = "Появился Ученик |3-1(%s)!"
-
+	-- Adds
 	L.shadron = "Шадрон"
 	L.tenebron = "Тенеброн"
 	L.vesperon = "Весперон"
-end
-
-L = BigWigs:NewBossLocale("Toravon the Ice Watcher", "ruRU")
-if L then
-	L.whiteout_bar = "Пурга %d"
-	L.whiteout_message = "Скоро Пурга %d!"
-
-	L.frostbite_message = "%2$dx Обморожение у %1$s"
-
-	L.freeze_message = "Мерзлый грунт"
-
-	L.orb_bar = "Следующий шар"
-end
-
-L = BigWigs:NewBossLocale("Halion", "ruRU")
-if L then
-	L.engage_trigger = "Этот мир вот-вот соскользнет в бездну. Вам выпала честь узреть начало эры РАЗРУШЕНИЯ!"
-
-	L.phase_two_trigger = "В мире сумерек вы найдете лишь страдания! Входите, если посмеете!"
-
-	L.twilight_cutter_trigger = "Во вращающихся сферах пульсирует темная энергия!"
-	L.twilight_cutter_bar = "~Лезвие сумерок"
-	L.twilight_cutter_warning = "Скоро Лезвие сумерок"
-
-	L.fire_message = "Огненная бомба"
-	L.shadow_message = "Пожирающая бомба"
-
-	L.meteorstrike_bar = "Падение метеора"
-
-	L.breath_cooldown = "Следующее дыхание"
+	L.lava_blaze = "Пламя лавы" -- NPC 30643
+	L.acolyte_shadron = "Служитель Шадрона" -- NPC 31218
+	L.acolyte_vesperon = "Служитель Весперона" -- NPC 31219
 end

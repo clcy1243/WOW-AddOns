@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(185, "DBM-Party-Cataclysm", 11, 76)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190421035925")
+mod.statTypes = "heroic,timewalker"
+
+mod:SetRevision("20240428124541")
 mod:SetCreatureID(52148)
 mod:SetEncounterID(1182)
-mod:SetZone()
 mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
@@ -17,7 +18,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 97172 97158",
 	"SPELL_CAST_SUCCESS 97170"
 )
-mod.onlyHeroic = true
 
 local warnDeadzone				= mod:NewSpellAnnounce(97170, 3)
 local warnShadowsOfHakkar		= mod:NewCastAnnounce(97172, 4)
@@ -33,14 +33,13 @@ local timerDeadzone				= mod:NewNextTimer(21, 97170, nil, nil, nil, 3)
 local timerShadowsOfHakkar		= mod:NewBuffActiveTimer(10, 97172, nil, nil, nil, 2)
 local timerShadowsOfHakkarNext	= mod:NewNextTimer(21, 97172, nil, nil, nil, 2)
 
-mod:AddSetIconOption("BodySlamIcon", 97597, true, false, {8})
+mod:AddSetIconOption("BodySlamIcon", 97597, true, 0, {8})
 
-mod.vb.phase = 1
 mod.vb.barrier = 3
-local zoneName = DBM:GetSpellInfo(97170)
+local zoneName = DBM:GetSpellName(97170)
 
 function mod:OnCombatStart(delay)
-	self.vb.phase = 1
+	self:SetStage(1)
 	self.vb.barrier = 3
 end
 
@@ -77,8 +76,8 @@ mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_REMOVED
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 97172 then
 		warnShadowsOfHakkar:Show()
-	elseif args.spellId == 97158 and self.vb.phase < 2 then
-		self.vb.phase = 2
+	elseif args.spellId == 97158 and self:GetStage(2, 1) then
+		self:SetStage(2)
 		warnPhase2:Show()
 	end
 end

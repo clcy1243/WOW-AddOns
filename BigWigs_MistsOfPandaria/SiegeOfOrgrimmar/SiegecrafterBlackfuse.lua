@@ -93,7 +93,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Superheated", 143856)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "Superheated", 143856)
 	self:RegisterEvent("RAID_BOSS_WHISPER")
-	self:Yell("ShockwaveMissile", L.shockwave_missile_trigger)
+	self:BossYell("ShockwaveMissile", L.shockwave_missile_trigger)
 	self:Log("SPELL_AURA_APPLIED", "ShockwaveMissileOver", 143639)
 	self:Log("SPELL_AURA_APPLIED", "PatternRecognitionApplied", 144236)
 	self:Log("SPELL_AURA_REMOVED", "PatternRecognitionRemoved", 144236)
@@ -122,10 +122,10 @@ function mod:OnEngage()
 	self:Berserk(self:Mythic() and 540 or 600)
 	assemblyLineCounter = 1
 	self:Bar(-8199, 35, nil, "INV_MISC_ARMORKIT_27") -- Shredder Engage
-	self:CDBar(-8195, 9) -- Sawblade
+	self:Bar(-8195, 9) -- Sawblade
 	if self.db.profile.custom_off_mine_marker then
-		wipe(markableMobs)
-		wipe(marksUsed)
+		markableMobs = {}
+		marksUsed = {}
 		markTimer = nil
 	end
 end
@@ -140,7 +140,7 @@ do
 	local function setMark(unit, guid)
 		for mark = 1, 8 do
 			if not marksUsed[mark] then
-				SetRaidTarget(unit, mark)
+				mod:CustomIcon(false, unit, mark)
 				markableMobs[guid] = "marked"
 				marksUsed[mark] = guid
 				return
@@ -160,10 +160,10 @@ do
 	end
 
 	function mod:UPDATE_MOUSEOVER_UNIT()
-		local guid = UnitGUID("mouseover")
+		local guid = self:UnitGUID("mouseover")
 		if guid and markableMobs[guid] == true then
 			setMark("mouseover", guid)
-		elseif guid and UnitName("mouseover") == L.overcharged_crawler_mine and not markableMobs[guid] then -- overcharged crawler mine
+		elseif guid and self:UnitName("mouseover") == L.overcharged_crawler_mine and not markableMobs[guid] then -- overcharged crawler mine
 			markableMobs[guid] = true
 			setMark("mouseover", guid)
 		end
@@ -180,10 +180,10 @@ do
 
 	function mod:Overcharge(args)
 		local mobId = self:MobId(args.destGUID)
-		self:Message(-8408, "red", nil, CL.other:format(args.spellName, itemNames[mobId]), false)
+		self:MessageOld(-8408, "red", nil, CL.other:format(args.spellName, itemNames[mobId]), false)
 		if self.db.profile.custom_off_mine_marker and mobId == 71790 then -- mines
-			wipe(markableMobs)
-			wipe(marksUsed)
+			markableMobs = {}
+			marksUsed = {}
 			markTimer = nil
 			self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 			if not markTimer then
@@ -197,20 +197,19 @@ end
 
 do
 	-- this helps people trying to figure out tactics
-	local items = {}
 	local function beltItems(count)
+		local items = {}
 		for i=1, 5 do
-			local mobId = mod:MobId(UnitGUID("boss"..i))
+			local mobId = mod:MobId(mod:UnitGUID("boss"..i))
 			if mobId > 0 and mobId ~= 71504 then
 				items[#items+1] = itemNames[mobId]
 			end
 		end
-		mod:Message(-8202, "cyan", nil, L.assembly_line_items:format(count, table.concat(items, " - ")), false)
-		wipe(items)
+		mod:MessageOld(-8202, "cyan", nil, L.assembly_line_items:format(count, table.concat(items, " - ")), false)
 	end
 	function mod:AssemblyLine()
 		self:ScheduleTimer(beltItems, 13, assemblyLineCounter)
-		self:Message(-8202, "cyan", "Warning", L.assembly_line_message:format(assemblyLineCounter), "Inv_crate_03")
+		self:MessageOld(-8202, "cyan", "warning", L.assembly_line_message:format(assemblyLineCounter), "Inv_crate_03")
 		assemblyLineCounter = assemblyLineCounter + 1
 		self:Bar(-8202, 40, CL.count:format(self:SpellName(-8202), assemblyLineCounter), "Inv_crate_03")
 	end
@@ -222,7 +221,7 @@ do
 		local t = GetTime()
 		if t-prev > 5 then
 			prev = t
-			self:Message(-8212, "orange", nil, -8212, 77976) -- mine like icon
+			self:MessageOld(-8212, "orange", nil, -8212, "inv_misc_bomb_02") -- mine like icon
 		end
 	end
 end
@@ -233,42 +232,42 @@ do
 		local t = GetTime()
 		if t-prev > 15 then
 			prev = t
-			self:Message(args.spellId, "red", "Long")
+			self:MessageOld(args.spellId, "red", "long")
 		end
 	end
 end
 
 function mod:Superheated(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Info", CL.underyou:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "info", CL.underyou:format(args.spellName))
 	end
 end
 
 function mod:RAID_BOSS_WHISPER(_, msg, sender)
 	if msg:find("Ability_Siege_Engineer_Superheated", nil, true) then -- laser fixate
 		-- might wanna do syncing to get range message working
-		self:Message(-8208, "blue", "Info", L.laser_on_you, 144040)
+		self:MessageOld(-8208, "blue", "info", L.laser_on_you, 144040)
 		self:Flash(-8208)
-		self:Say(-8208, 143444) -- 143444 = "Laser"
+		self:Say(-8208, 143444, nil, "Laser") -- 143444 = "Laser"
 	elseif msg:find("Ability_Siege_Engineer_Detonate", nil, true) then -- mine fixate
-		self:Message(-8212, "blue", "Info", CL.you:format(sender))
-		self:Flash(-8212)
+		self:MessageOld(-8212, "blue", "info", CL.you:format(sender), "inv_misc_bomb_02")
+		self:Flash(-8212, "inv_misc_bomb_02")
 	elseif msg:find("143266", nil, true) then -- Sawblade
 		-- this is faster than target scanning, hence why we do it
-		sawbladeTarget = UnitGUID("player")
-		self:Message(-8195, "green", "Info", CL.you:format(self:SpellName(143266)))
+		sawbladeTarget = self:UnitGUID("player")
+		self:MessageOld(-8195, "green", "info", CL.you:format(self:SpellName(143266)))
 		self:PrimaryIcon(-8195, "player")
 		self:Flash(-8195)
-		self:Say(-8195)
+		self:Say(-8195, nil, nil, "Launch Sawblade")
 	end
 end
 
 function mod:ShockwaveMissile()
-	self:Message(143639, "orange")
+	self:MessageOld(143639, "orange")
 end
 
 function mod:ShockwaveMissileOver(args)
-	self:Message(args.spellId, "orange", nil, CL.over:format(args.spellName))
+	self:MessageOld(args.spellId, "orange", nil, CL.over:format(args.spellName))
 end
 
 function mod:PatternRecognitionApplied(args)
@@ -279,14 +278,14 @@ end
 
 function mod:PatternRecognitionRemoved(args)
 	if self:Me(args.destGUID) then
-		self:Message(-8207, "green", nil, CL.over:format(args.spellName))
+		self:MessageOld(-8207, "green", nil, CL.over:format(args.spellName))
 	end
 end
 
 -- Automated Shredders
 
 function mod:ShredderEngage()
-	self:Message(-8199, "yellow", self:Tank() and "Long", nil, "INV_MISC_ARMORKIT_27")
+	self:MessageOld(-8199, "yellow", self:Tank() and "long", nil, "INV_MISC_ARMORKIT_27")
 	self:Bar(-8199, 60, nil, "INV_MISC_ARMORKIT_27")
 	self:Bar(144208, 16) -- Death from Above
 	overloadCounter = 1
@@ -294,17 +293,17 @@ function mod:ShredderEngage()
 end
 
 function mod:DeathFromAboveApplied(args)
-	self:Message(144208, "yellow", "Alert")
+	self:MessageOld(144208, "yellow", "alert")
 end
 
 function mod:DeathFromAbove(args)
-	self:Message(args.spellId, "yellow", nil, CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "yellow", nil, CL.casting:format(args.spellName))
 	self:Bar(args.spellId, 41)
 end
 
 function mod:Overload(args)
 	local amount = args.amount or 1
-	self:Message(args.spellId, "orange", nil, CL.count:format(args.spellName, amount))
+	self:MessageOld(args.spellId, "orange", nil, CL.count:format(args.spellName, amount))
 	overloadCounter = amount + 1
 	self:Bar(args.spellId, 11, CL.count:format(args.spellName, overloadCounter))
 end
@@ -317,22 +316,22 @@ end
 -- Siegecrafter Blackfuse
 
 function mod:ElectrostaticCharge(args)
-	self:CDBar(args.spellId, 17)
+	self:Bar(args.spellId, 17)
 end
 
 function mod:ElectrostaticChargeApplied(args)
 	if UnitIsPlayer(args.destName) then -- Shows up for pets, etc.
-		self:StackMessage(args.spellId, args.destName, args.amount, "yellow", "Info")
+		self:StackMessageOld(args.spellId, args.destName, args.amount, "yellow", "info")
 	end
 end
 
 function mod:ProtectiveFrenzy(args)
-	self:Message(args.spellId, "yellow", "Long")
+	self:MessageOld(args.spellId, "yellow", "long")
 	for i=1, 5 do
 		local boss = "boss"..i
 		if UnitExists(boss) and UnitIsDead(boss) then
-			local mobId = self:MobId(UnitGUID(boss))
-			self:Message(-8202, "green", nil, CL.other:format(L.disabled, itemNames[mobId]), false)
+			local mobId = self:MobId(self:UnitGUID(boss))
+			self:MessageOld(-8202, "green", nil, CL.other:format(L.disabled, itemNames[mobId]), false)
 		end
 	end
 end
@@ -344,11 +343,11 @@ do
 		sawbladeTarget = guid
 		self:PrimaryIcon(-8195, target)
 		if not self:Me(guid) then -- we warn for ourself from the BOSS_WHISPER
-			self:TargetMessage(-8195, target, "green", "Info")
+			self:TargetMessageOld(-8195, target, "green", "info")
 		end
 	end
 	function mod:Sawblade(args)
-		self:CDBar(-8195, 11)
+		self:Bar(-8195, 11)
 		sawbladeTarget = nil
 		self:GetBossTarget(warnSawblade, 0.4, args.sourceGUID)
 	end
@@ -362,12 +361,12 @@ end
 
 function mod:Drillstorm(args)
 	if args.sourceGUID ~= args.destGUID then -- Not the NPC
-		self:TargetMessage(args.spellId, args.destName, "yellow", "Alarm")
+		self:TargetMessageOld(args.spellId, args.destName, "yellow", "alarm")
 		self:TargetBar(args.spellId, 15, args.destName)
 		self:PrimaryIcon(args.spellId, args.destName)
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Drillstorm")
 		end
 	end
 end

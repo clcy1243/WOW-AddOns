@@ -32,7 +32,7 @@ local VUHDO_DEFAULT_PROFILES = {
 				["animate"] = true,
 				["scale"] = 0.8,
 				["isIcon"] = true,
-				["selected"] = "",
+				["SELECTED"] = "",
 				["TIMER_TEXT"] = {
 					["X_ADJUST"] = 20,
 					["USE_MONO"] = false,
@@ -84,7 +84,8 @@ local VUHDO_DEFAULT_PROFILES = {
 				},
 				["point"] = "TOPRIGHT",
 				["timer"] = true,
-				["isName"] = false,
+				["isName"] = false, 
+				["isShowOnlyForFriendly"] = false, 
 				["xAdjust"] = -2,
 				["max_num"] = 3,
 				["blacklistModi"] = "ALT-CTRL-SHIFT",
@@ -94,7 +95,12 @@ local VUHDO_DEFAULT_PROFILES = {
 				["isOthers"] = false,
 				["duration"] = 2,
 				["showTrailOfLight"] = false,
-				["selected"] = "",
+				["SELECTED"] = "",
+				["isIncoming"] = false,
+				["showIncomingFriendly"] = false,
+				["showIncomingEnemy"] = false,
+				["showIncomingAll"] = false,
+				["showIncomingBossOnly"] = false,
 			},
 			["SHOW_TEXT_OVERHEAL"] = true,
 		},
@@ -136,6 +142,10 @@ local VUHDO_DEFAULT_PROFILES = {
 				},
 				["SWIFTMEND_INDICATOR"] = {
 					["SCALE"] = 1,
+					["isBarGlow"] = false,
+					["anchor"] = "TOPLEFT",
+					["xAdjust"] = 5.5,
+					["yAdjust"] = -14,
 				},
 				["SIDE_RIGHT"] = {
 					["turnAxis"] = false,
@@ -148,6 +158,8 @@ local VUHDO_DEFAULT_PROFILES = {
 				},
 				["HEALTH_BAR"] = {
 					["turnAxis"] = true,
+					["turnAxisOvershield"] = false,
+					["turnAxisHealAbsorb"] = false,
 					["vertical"] = true,
 					["invertGrowth"] = true,
 				},
@@ -212,6 +224,13 @@ local VUHDO_DEFAULT_PROFILES = {
 					["growth"] = "TOPLEFT",
 					["width"] = 56,
 				},
+				["PRIVATE_AURA"] = {
+					["show"] = true,
+					["scale"] = 0.8,
+					["point"] = "LEFT",
+					["xAdjust"] = 5,
+					["yAdjust"] = 0,
+				},
 				["RAID_ICON"] = {
 					["show"] = true,
 					["yAdjust"] = -20,
@@ -234,6 +253,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					},
 					["sort"] = 0,
 					["isReverse"] = false,
+					["isPetsLast"] = false,
 				},
 				["PANEL_COLOR"] = {
 					["BACK"] = {
@@ -323,6 +343,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					["hideIrrelevant"] = false,
 					["position"] = 4,
 					["showTotalHp"] = false,
+					["showEffectiveHp"] = false,
 					["mode"] = 3,
 					["verbose"] = false,
 				},
@@ -356,7 +377,7 @@ local VUHDO_DEFAULT_PROFILES = {
 			},
 			["HOTS"] = {
 				["SLOTS"] = {
-					[10] = "BOUQUET_" .. VUHDO_I18N_DEF_AOE_ADVICE,
+					["firstFlood"] = true,
 				},
 				["BARS"] = {
 					["radioValue"] = 1,
@@ -746,7 +767,12 @@ local VUHDO_DEFAULT_PROFILES = {
 				["isOthers"] = false,
 				["duration"] = 2,
 				["showTrailOfLight"] = false,
-				["selected"] = "",
+				["SELECTED"] = "",
+				["isIncoming"] = false,
+				["showIncomingFriendly"] = false,
+				["showIncomingEnemy"] = false,
+				["showIncomingAll"] = false,
+				["showIncomingBossOnly"] = false,
 			},
 		},
 		["LOCKED"] = false,
@@ -826,6 +852,10 @@ local VUHDO_DEFAULT_PROFILES = {
 				},
 				["SWIFTMEND_INDICATOR"] = {
 					["SCALE"] = 1,
+					["isBarGlow"] = false,
+					["anchor"] = "TOPLEFT",
+					["xAdjust"] = 5.5,
+					["yAdjust"] = -14,					
 				},
 				["SIDE_RIGHT"] = {
 					["turnAxis"] = false,
@@ -838,6 +868,8 @@ local VUHDO_DEFAULT_PROFILES = {
 				},
 				["HEALTH_BAR"] = {
 					["turnAxis"] = false,
+					["turnAxisOvershield"] = false,
+					["turnAxisHealAbsorb"] = false,
 					["vertical"] = false,
 					["invertGrowth"] = false,
 				},
@@ -902,6 +934,13 @@ local VUHDO_DEFAULT_PROFILES = {
 					["growth"] = "TOPLEFT",
 					["width"] = 84.99999950797955,
 				},
+				["PRIVATE_AURA"] = {
+					["show"] = true,
+					["scale"] = 0.8,
+					["point"] = "LEFT",
+					["xAdjust"] = 5,
+					["yAdjust"] = 0,
+				},
 				["RAID_ICON"] = {
 					["show"] = true,
 					["yAdjust"] = -20,
@@ -924,6 +963,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					},
 					["sort"] = 0,
 					["isReverse"] = false,
+					["isPetsLast"] = false,
 				},
 				["TOOLTIP"] = {
 					["BACKGROUND"] = {
@@ -1040,6 +1080,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					["hideIrrelevant"] = false,
 					["position"] = 3,
 					["showTotalHp"] = false,
+					["showEffectiveHp"] = false,
 					["mode"] = 1,
 					["verbose"] = false,
 				},
@@ -1071,6 +1112,13 @@ local VUHDO_DEFAULT_PROFILES = {
 					["growth"] = "TOPLEFT",
 					["width"] = 143.0000131439748,
 				},
+				["PRIVATE_AURA"] = {
+					["show"] = true,
+					["scale"] = 0.8,
+					["point"] = "LEFT",
+					["xAdjust"] = 5,
+					["yAdjust"] = 0,
+				},
 				["RAID_ICON"] = {
 					["show"] = true,
 					["yAdjust"] = -20,
@@ -1086,6 +1134,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					},
 					["sort"] = 0,
 					["isReverse"] = false,
+					["isPetsLast"] = false,
 				},
 				["TOOLTIP"] = {
 					["BACKGROUND"] = {
@@ -1202,6 +1251,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					["hideIrrelevant"] = false,
 					["position"] = 3,
 					["showTotalHp"] = false,
+					["showEffectiveHp"] = false,
 					["mode"] = 1,
 					["verbose"] = false,
 				},
@@ -1232,6 +1282,13 @@ local VUHDO_DEFAULT_PROFILES = {
 					["growth"] = "TOPLEFT",
 					["width"] = 84.99999051103423,
 				},
+				["PRIVATE_AURA"] = {
+					["show"] = true,
+					["scale"] = 0.8,
+					["point"] = "LEFT",
+					["xAdjust"] = 5,
+					["yAdjust"] = 0,
+				},
 				["RAID_ICON"] = {
 					["show"] = true,
 					["yAdjust"] = -20,
@@ -1247,6 +1304,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					},
 					["sort"] = 0,
 					["isReverse"] = false,
+					["isPetsLast"] = false,
 				},
 				["TOOLTIP"] = {
 					["BACKGROUND"] = {
@@ -1363,6 +1421,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					["hideIrrelevant"] = false,
 					["position"] = 3,
 					["showTotalHp"] = false,
+					["showEffectiveHp"] = false,
 					["mode"] = 1,
 					["verbose"] = false,
 				},
@@ -1393,6 +1452,13 @@ local VUHDO_DEFAULT_PROFILES = {
 					["growth"] = "TOPLEFT",
 					["width"] = 118.0000032332772,
 				},
+				["PRIVATE_AURA"] = {
+					["show"] = true,
+					["scale"] = 0.8,
+					["point"] = "LEFT",
+					["xAdjust"] = 5,
+					["yAdjust"] = 0,
+				},
 				["RAID_ICON"] = {
 					["show"] = true,
 					["yAdjust"] = -20,
@@ -1408,6 +1474,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					},
 					["sort"] = 0,
 					["isReverse"] = false,
+					["isPetsLast"] = false,
 				},
 				["TOOLTIP"] = {
 					["BACKGROUND"] = {
@@ -1524,6 +1591,7 @@ local VUHDO_DEFAULT_PROFILES = {
 					["hideIrrelevant"] = false,
 					["position"] = 3,
 					["showTotalHp"] = false,
+					["showEffectiveHp"] = false,
 					["mode"] = 1,
 					["verbose"] = false,
 				},
@@ -1557,7 +1625,7 @@ local VUHDO_DEFAULT_PROFILES = {
 			},
 			["HOTS"] = {
 				["SLOTS"] = {
-					[10] = "BOUQUET_" .. VUHDO_I18N_DEF_AOE_ADVICE,
+					["firstFlood"] = true,
 				},
 				["BARS"] = {
 					["radioValue"] = 1,
@@ -2192,6 +2260,7 @@ function VUHDO_createNewProfileName(aName, aUnitName)
 	local tIdx = 1;
 	local tProfile = { };
 	local tPrefix = aUnitName .. ": ";
+	local tNewName;
 
 	while tProfile do
 		tNewName = tPrefix .. aName;
@@ -2211,6 +2280,7 @@ function VUHDO_createNewLayoutName(aName, aUnitName)
 	local tIdx = 1;
 	local tLayout = { };
 	local tPrefix = aUnitName .. ": ";
+	local tNewName;
 
 	while tLayout do
 		tNewName = tPrefix .. aName;
@@ -2365,8 +2435,6 @@ local VUHDO_PROFILE_MODEL = {
 	["CONFIG"] = {
 		["-root-"] = VUHDO_PROFILE_MODEL_MATCH_ALL,
 
-		["RANGE_SPELL"] = VUHDO_PROFILE_MODEL_MATCH_NEVER,
-		["RANGE_PESSIMISTIC"] = VUHDO_PROFILE_MODEL_MATCH_NEVER,
 		["CURRENT_PROFILE"] = VUHDO_PROFILE_MODEL_MATCH_NEVER,
 		["IS_CLIQUE_COMPAT_MODE"] = VUHDO_PROFILE_MODEL_MATCH_NEVER, 
 		["IS_CLIQUE_PASSTHROUGH"] = VUHDO_PROFILE_MODEL_MATCH_NEVER,
@@ -2414,6 +2482,7 @@ local VUHDO_PROFILE_MODEL = {
 
 	["SPELL_CONFIG"] = {
 		["-root-"] = VUHDO_PROFILE_MODEL_MATCH_TOON,
+		["IS_TOOLTIP_INFO"] = VUHDO_PROFILE_MODEL_MATCH_ALL,
 	},
 
 	["BUFF_SETTINGS"] = {
@@ -2430,6 +2499,17 @@ local VUHDO_PROFILE_MODEL = {
 
 	["INDICATOR_CONFIG"] = {
 		["-root-"] = VUHDO_PROFILE_MODEL_MATCH_ALL,
+
+		[1] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[2] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[3] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[4] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[5] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[6] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[7] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[8] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[9] = VUHDO_PER_PANEL_PROFILE_MODEL,
+		[10] = VUHDO_PER_PANEL_PROFILE_MODEL,
 	},
 };
 
@@ -2535,8 +2615,8 @@ function VUHDO_loadProfileNoInit(aName)
 	end
 
 	-- @TODO: Warum werden die nicht direkt geladen (ipairs-Problem?)
-	if tProfile["CONFIG"]["CUSTOM_DEBUFF"] and tProfile["CONFIG"]["CUSTOM_DEBUFF"]["STORED"] and VUHDO_CONFIG["CUSTOM_DEBUFF"] then
-		VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED"] = VUHDO_deepCopyTable(tProfile["CONFIG"]["CUSTOM_DEBUFF"]["STORED"]);
+	if tProfile["CONFIG"]["CUSTOM_DEBUFF"] and VUHDO_CONFIG["CUSTOM_DEBUFF"] then
+		VUHDO_CONFIG["CUSTOM_DEBUFF"] = VUHDO_deepCopyTable(tProfile["CONFIG"]["CUSTOM_DEBUFF"]);
 	end
 
 	if tProfile["CONFIG"]["SPELL_TRACE"] and VUHDO_CONFIG["SPELL_TRACE"] then
@@ -2567,10 +2647,16 @@ function VUHDO_loadProfile(aName)
 
 	if (VUHDO_initCustomDebuffComboModel ~= nil) then
 		VUHDO_initCustomDebuffComboModel();
+
+		VuhDoNewOptionsDebuffsCustomStorePanelEditBox:SetText("");
+		VUHDO_customDebuffUpdateEditBox(VuhDoNewOptionsDebuffsCustomStorePanelEditBox);
 	end
 
 	if (VUHDO_initSpellTraceComboModel ~= nil) then
 		VUHDO_initSpellTraceComboModel();
+
+		VuhDoNewOptionsGeneralSpellTraceStorePanelEditBox:SetText("");
+		VUHDO_spellTraceUpdateEditBox(VuhDoNewOptionsGeneralSpellTraceStorePanelEditBox);
 	end
 
 	collectgarbage('collect');

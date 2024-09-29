@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(1226, "DBM-Party-WoD", 8, 559)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod:SetRevision("20220506210851")
 mod:SetCreatureID(76413)
 mod:SetEncounterID(1761)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 mod.disableHealthCombat = true
@@ -20,7 +19,7 @@ mod:RegisterEventsInCombat(
 
 local warnPowerConduitLeft			= mod:NewAddsLeftAnnounce(166168, 2)
 
-local specWarnPowerConduit			= mod:NewSpecialWarningSpell(166168, nil, nil, nil, 2)
+local specWarnPowerConduit			= mod:NewSpecialWarningSpell(166168, nil, nil, nil, 2, 2)
 local specWarnPowerConduitEnded		= mod:NewSpecialWarningEnd(166168)
 local specWarnShrapnelNova			= mod:NewSpecialWarningRun(154448, "-Tank")
 

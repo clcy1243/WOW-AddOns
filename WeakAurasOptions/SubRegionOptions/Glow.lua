@@ -1,43 +1,21 @@
-if not WeakAuras.IsCorrectVersion() then return end
+if not WeakAuras.IsLibsOK() then return end
+---@type string
+local AddonName = ...
+---@class OptionsPrivate
+local OptionsPrivate = select(2, ...)
 
-local SharedMedia = LibStub("LibSharedMedia-3.0");
 local L = WeakAuras.L;
-
-local screenWidth, screenHeight = math.ceil(GetScreenWidth() / 20) * 20, math.ceil(GetScreenHeight() / 20) * 20;
-
-
 local indentWidth = 0.15
-
 
 local function createOptions(parentData, data, index, subIndex)
 
   local hiddenGlowExtra = function()
-    return WeakAuras.IsCollapsed("glow", "glow", "glowextra" .. index, true);
+    return OptionsPrivate.IsCollapsed("glow", "glow", "glowextra" .. index, true);
   end
 
   local options = {
     __title = L["Glow %s"]:format(subIndex),
     __order = 1,
-    __up = function()
-      if (WeakAuras.ApplyToDataOrChildData(parentData, WeakAuras.MoveSubRegionUp, index, "subglow")) then
-        WeakAuras.ReloadOptions2(parentData.id, parentData)
-      end
-    end,
-    __down = function()
-      if (WeakAuras.ApplyToDataOrChildData(parentData, WeakAuras.MoveSubRegionDown, index, "subglow")) then
-        WeakAuras.ReloadOptions2(parentData.id, parentData)
-      end
-    end,
-    __duplicate = function()
-      if (WeakAuras.ApplyToDataOrChildData(parentData, WeakAuras.DuplicateSubRegion, index, "subglow")) then
-        WeakAuras.ReloadOptions2(parentData.id, parentData)
-      end
-    end,
-    __delete = function()
-      if (WeakAuras.ApplyToDataOrChildData(parentData, WeakAuras.DeleteSubRegion, index, "subglow")) then
-        WeakAuras.ReloadOptions2(parentData.id, parentData)
-      end
-    end,
     glow = {
       type = "toggle",
       width = WeakAuras.normalWidth,
@@ -49,14 +27,14 @@ local function createOptions(parentData, data, index, subIndex)
       width = WeakAuras.normalWidth,
       name = L["Type"],
       order = 2,
-      values = WeakAuras.glow_types,
+      values = OptionsPrivate.Private.glow_types,
     },
     glow_anchor = {
       type = "select",
       width = WeakAuras.normalWidth,
       name = L["Glow Anchor"],
       order = 3,
-      values = WeakAuras.aurabar_anchor_areas,
+      values = OptionsPrivate.Private.aurabar_anchor_areas,
       hidden = function() return parentData.regionType ~= "aurabar" end
     },
     glowExtraDescription = {
@@ -101,21 +79,32 @@ local function createOptions(parentData, data, index, subIndex)
           if data.glowBorder then
             line = L["%s, Border"]:format(line)
           end
+        elseif data.glowType == "Proc" then
+          line = ("%s %s, Duration: %d"):format(line, color, data.glowDuration)
+          if data.glowStartAnim then
+            line = L["%s, Start Animation"]:format(line)
+          end
+          if data.glowXOffset ~= 0 or data.glowYOffset ~= 0 then
+            line = L["%s, offset: %0.2f;%0.2f"]:format(line, data.glowXOffset, data.glowYOffset)
+          end
         end
         return line
       end,
       width = WeakAuras.doubleWidth,
       order = 4,
       image = function()
-        local collapsed = WeakAuras.IsCollapsed("glow", "glow", "glowextra" .. index, true);
-        return collapsed and "Interface\\AddOns\\WeakAuras\\Media\\Textures\\edit" or "Interface\\AddOns\\WeakAuras\\Media\\Textures\\editdown"
+        local collapsed = OptionsPrivate.IsCollapsed("glow", "glow", "glowextra" .. index, true);
+        return collapsed and "collapsed" or "expanded"
       end,
-      imageWidth = 24,
-      imageHeight = 24,
-      func = function()
-        local collapsed = WeakAuras.IsCollapsed("glow", "glow", "glowextra" .. index, true);
-        WeakAuras.SetCollapsed("glow", "glow", "glowextra" .. index, not collapsed);
+      imageWidth = 15,
+      imageHeight = 15,
+      func = function(info, button)
+        local collapsed = OptionsPrivate.IsCollapsed("glow", "glow", "glowextra" .. index, true);
+        OptionsPrivate.SetCollapsed("glow", "glow", "glowextra" .. index, not collapsed);
       end,
+      arg = {
+        expanderName = "glow" .. index .. "#" .. subIndex
+      }
     },
     glow_space1 = {
       type = "description",
@@ -134,6 +123,7 @@ local function createOptions(parentData, data, index, subIndex)
     },
     glowColor = {
       type = "color",
+      hasAlpha = true,
       width = WeakAuras.normalWidth,
       name = L["Custom Color"],
       order = 7,
@@ -147,25 +137,45 @@ local function createOptions(parentData, data, index, subIndex)
       order = 8,
       hidden = hiddenGlowExtra,
     },
+    glowStartAnim = {
+      type = "toggle",
+      width = WeakAuras.normalWidth - indentWidth,
+      name = L["Start Animation"],
+      order = 8.5,
+      hidden = function() return hiddenGlowExtra() or data.glowType ~= "Proc" end
+    },
     glowLines = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth - indentWidth,
       name = L["Lines & Particles"],
       order = 9,
       min = 1,
       softMax = 30,
       step = 1,
-      hidden = function() return hiddenGlowExtra() or data.glowType == "buttonOverlay" end,
+      hidden = function() return hiddenGlowExtra() or data.glowType == "buttonOverlay" or data.glowType == "Proc" end,
     },
     glowFrequency = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       name = L["Frequency"],
       order = 10,
       softMin = -2,
       softMax = 2,
       step = 0.05,
-      hidden = function() return hiddenGlowExtra() or data.glowType == "buttonOverlay" end,
+      hidden = function() return hiddenGlowExtra() or data.glowType == "buttonOverlay" or data.glowType == "Proc" end,
+    },
+    glowDuration = {
+      type = "range",
+      control = "WeakAurasSpinBox",
+      width = WeakAuras.normalWidth,
+      name = L["Duration"],
+      order = 10,
+      softMin = 0.01,
+      softMax = 3,
+      step = 0.05,
+      hidden = function() return hiddenGlowExtra() or data.glowType ~= "Proc" end,
     },
     glow_space3 = {
       type = "description",
@@ -176,6 +186,7 @@ local function createOptions(parentData, data, index, subIndex)
     },
     glowLength = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth - indentWidth,
       name = L["Length"],
       order = 12,
@@ -186,6 +197,7 @@ local function createOptions(parentData, data, index, subIndex)
     },
     glowThickness = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       name = L["Thickness"],
       order = 13,
@@ -203,6 +215,7 @@ local function createOptions(parentData, data, index, subIndex)
     },
     glowXOffset = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth - indentWidth,
       name = L["X-Offset"],
       order = 15,
@@ -213,6 +226,7 @@ local function createOptions(parentData, data, index, subIndex)
     },
     glowYOffset = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth,
       name = L["Y-Offset"],
       order = 16,
@@ -230,6 +244,7 @@ local function createOptions(parentData, data, index, subIndex)
     },
     glowScale = {
       type = "range",
+      control = "WeakAurasSpinBox",
       width = WeakAuras.normalWidth - indentWidth,
       name = L["Scale"],
       order = 18,
@@ -245,8 +260,22 @@ local function createOptions(parentData, data, index, subIndex)
       name = L["Border"],
       order = 19,
       hidden = function() return hiddenGlowExtra() or data.glowType ~= "Pixel" end,
+    },
+
+    glow_expand_anchor = {
+      type = "description",
+      name = "",
+      order = 20,
+      hidden = hiddenGlowExtra,
+      control = "WeakAurasExpandAnchor",
+      arg = {
+        expanderName = "glow" .. index .. "#" .. subIndex
+      }
     }
   }
+
+  OptionsPrivate.AddUpDownDeleteDuplicate(options, parentData, index, "subglow")
+
   return options
 end
 

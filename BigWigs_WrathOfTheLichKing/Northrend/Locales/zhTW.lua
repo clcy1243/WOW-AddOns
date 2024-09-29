@@ -1,26 +1,17 @@
-
 local L = BigWigs:NewBossLocale("Onyxia", "zhTW")
+if not L then return end
 if L then
-	L.phase = "階段"
-	L.phase_desc = "當階段轉換時發出警報。"
-	L.phase2_message = "即將 第二階段！"
-	L.phase3_message = "即將 第三階段！"
+	L.phase1_trigger = "真是幸運。通常我為了覓食就必須離開窩"
+	L.phase2_trigger = "這毫無意義的行動讓我很厭煩。我會從上空把你們都燒成灰"
+	L.phase3_trigger = "看起來需要再給你一次教訓，凡人"
 
-	L.phase1_trigger = "真是幸運。通常我為了覓食就必須離開窩。"
-	L.phase2_trigger = "這毫無意義的行動讓我很厭煩。我會從上空把你們都燒成灰!"
-	L.phase3_trigger = "看起來需要再給你一次教訓，凡人!"
-
-	L.deepbreath_message = "即將 深呼吸！"
-	L.fear_message = "即將 恐懼！"
+	L.deep_breath = "深呼吸"
 end
 
 local L = BigWigs:NewBossLocale("Archavon the Stone Watcher", "zhTW")
 if L then
 	L.stomp_message = "踐踏 - 即將 衝鋒！"
 	L.stomp_warning = "約5秒後，可能踐踏！"
-	L.stomp_bar = "<踐踏 冷卻>"
-
-	L.cloud_message = ">你< 窒息之雲！"
 
 	L.charge = "衝鋒"
 	L.charge_desc = "當玩家中了衝鋒時發出警報。"
@@ -28,45 +19,15 @@ end
 
 L = BigWigs:NewBossLocale("Emalon the Storm Watcher", "zhTW")
 if L then
-	L.nova_next = "<閃電新星 冷卻>"
-
 	L.overcharge_message = "暴雨爪牙 - 超載！"
 	L.overcharge_bar = "<爆炸>"
-	L.overcharge_next = "<下一超載>"
 
 	L.custom_on_overcharge_mark = "Overcharge marker"
 	L.custom_on_overcharge_mark_desc = "Place the {rt8} marker on the overcharged minion, requires promoted or leader."
 end
 
-L = BigWigs:NewBossLocale("Halion", "zhTW")
-if L then
-	L.engage_trigger = "你們的世界在滅亡的邊緣搖搖欲墜。你們接下來全都會見證這個毀滅新紀元的來臨!"
-
-	L.phase_two_trigger = "在暮光的國度只有磨難在等著你!有膽量的話就進去吧!"
-
-	L.twilight_cutter_trigger = "暗影無所不在!"
-	L.twilight_cutter_bar = "<暮光切割>"
-	L.twilight_cutter_warning = "即將 暮光切割！"
-
-	L.fire_damage_message = ">你< 熾熱燃灼！"
-	L.fire_message = "熾熱燃灼！"
-	L.fire_bar = "<下一熾熱燃灼>"
-	L.shadow_message = "靈魂耗損！"
-	L.shadow_bar = "<下一靈魂耗損>"
-
-	L.meteorstrike_yell = "天堂也將燃燒!"
-	L.meteorstrike_bar = "<隕石轟擊>"
-	L.meteor_warning_message = "即將 隕石轟擊！"
-
-	L.sbreath_cooldown = "<下一闇息術>"
-	L.fbreath_cooldown = "<下一火息術>"
-end
-
 L = BigWigs:NewBossLocale("Koralon the Flame Watcher", "zhTW")
 if L then
-	L.fists_bar = "<下一隕石之拳>"
-	L.cinder_message = ">你< 燃焰餘燼！"
-
 	L.breath_bar = "<燃燒之息：%d>"
 	L.breath_message = "即將 燃燒之息：>%d<！"
 end
@@ -111,32 +72,21 @@ end
 
 L = BigWigs:NewBossLocale("Sartharion", "zhTW")
 if L then
-	L.engage_trigger = "我的職責就是要看守這些龍蛋。在他們受到任何傷害之前，我將會看著你陷入火焰之中!"
-
-	L.tsunami = "炎嘯"
-	L.tsunami_desc = "當熔岩攪動時發出警報及顯示計時條。"
-	L.tsunami_warning = "約5秒，炎嘯！"
-	L.tsunami_message = "炎嘯！"
-	L.tsunami_cooldown = "炎嘯冷卻！"
+	L.engage_trigger = "我的職責是看守這些龍蛋。在你傷害這些蛋以前，我會先燒了你！"
 	L.tsunami_trigger = "圍繞著%s的熔岩開始劇烈地翻騰!"
-
-	L.breath_cooldown = "火息術冷卻！"
+	L.twilight_trigger_vesperon = "一個維斯佩朗信徒從暮光中出現!"
+	L.twilight_trigger_shadron = "一個夏德朗信徒從暮光中出現!"
 
 	L.drakes = "飛龍增援"
 	L.drakes_desc = "當每只飛龍增援加入戰鬥時發出警報。"
-	L.drakes_incomingsoon = "約5秒後。%s即將到來！"
 
-	L.twilight = "暮光召喚"
-	L.twilight_desc = "當暮光召喚時發出警報。"
-	L.twilight_trigger_tenebron = "坦納伯朗在暮光中孵化龍蛋!"
-	L.twilight_trigger_vesperon = "一個維斯佩朗信徒從暮光中出現!"
-	L.twilight_trigger_shadron = "一個夏德朗信徒從暮光中出現!"
-	L.twilight_message_tenebron = "正在孵卵！"
-	L.twilight_message = "%s到來！"
-
+	-- Adds
 	L.shadron = "夏德朗"
 	L.tenebron = "坦納伯朗"
 	L.vesperon = "維斯佩朗"
+	L.lava_blaze = "熔炎" -- NPC 30643
+	L.acolyte_shadron = "夏德朗侍僧" -- NPC 31218
+	L.acolyte_vesperon = "維斯佩朗侍僧" -- NPC 31219
 end
 
 L = BigWigs:NewBossLocale("Toravon the Ice Watcher", "zhTW")
@@ -144,9 +94,5 @@ if L then
 	L.whiteout_bar = "寒霜厲雪：>%d<！"
 	L.whiteout_message = "即將寒霜厲雪：>%d<！"
 
-	L.frostbite_message = "霜寒刺骨%2$dx：>%1$s<！"
-
 	L.freeze_message = "冰凍之地！"
-
-	L.orb_bar = "<下一冰凍寶珠>"
 end

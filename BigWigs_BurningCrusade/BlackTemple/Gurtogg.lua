@@ -6,8 +6,8 @@
 local mod, CL = BigWigs:NewBoss("Gurtogg Bloodboil", 564, 1586)
 if not mod then return end
 mod:RegisterEnableMob(22948)
-mod.engageId = 605
---mod.respawnTime = 0 -- Resets, doesn't respawn
+mod:SetEncounterID(605)
+--mod:SetRespawnTime(0) -- Resets, doesn't respawn
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -59,7 +59,7 @@ end
 --
 
 function mod:Bloodboil(args)
-	self:Message(args.spellId, "yellow", "Info", CL.count:format(args.spellName, bloodCount))
+	self:MessageOld(args.spellId, "yellow", "info", CL.count:format(args.spellName, bloodCount))
 	if bloodCount == 3 then bloodCount = 0 end
 	bloodCount = bloodCount + 1
 	self:CDBar(args.spellId, 10, CL.count:format(args.spellName, bloodCount))
@@ -71,10 +71,10 @@ function mod:FelRage(args)
 	self:StopBar(40508) -- Fel-Acid Breath
 
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Fel Rage")
 	end
 	self:PrimaryIcon(args.spellId, args.destName)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Warning", nil, nil, true)
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "warning", nil, nil, true)
 	self:TargetBar(args.spellId, 30, args.destName)
 end
 
@@ -90,16 +90,16 @@ function mod:FelRageRemovedFromBoss(args)
 		self:Bar(42005, 10, CL.count:format(self:SpellName(42005), bloodCount)) -- Bloodboil
 		self:CDBar(40604, 52) -- Fel Rage 52-55
 		self:CDBar(40508, 26) -- Fel-Acid Breath
-		self:Message(40604, "cyan", "Info", CL.over:format(args.spellName)) -- Fel Rage Over
+		self:MessageOld(40604, "cyan", "info", CL.over:format(args.spellName)) -- Fel Rage Over
 	end
 end
 
 do
 	local function printTarget(self, player, guid)
 		if self:Me(guid) then
-			self:Say(40508, 18609) -- 18609 = "Breath"
+			self:Say(40508, CL.breath, nil, "Breath")
 		end
-		self:TargetMessage(40508, player, "red", "Alert")
+		self:TargetMessageOld(40508, player, "red", "alert")
 		self:PrimaryIcon(40508, player)
 	end
 
@@ -114,17 +114,17 @@ do
 end
 
 function mod:BewilderingStrikeApplied(args)
-	self:TargetMessage(args.spellId, args.destName, "green", "Alert")
+	self:TargetMessageOld(args.spellId, args.destName, "green", "alert")
 end
 
 function mod:AcidicWound(args)
 	if args.amount % 3 == 0 and args.amount > 8 then
-		self:StackMessage(args.spellId, args.destName, args.amount, "green", args.amount > 14 and "Alarm")
+		self:StackMessageOld(args.spellId, args.destName, args.amount, "green", args.amount > 14 and "alarm")
 	end
 end
 
 function mod:AcidicWoundRemoved(args)
 	if self:Me(args.destGUID) and self:Tank() then
-		self:Message(args.spellId, "green", "Alarm", CL.removed:format(args.spellName))
+		self:MessageOld(args.spellId, "green", "alarm", CL.removed:format(args.spellName))
 	end
 end

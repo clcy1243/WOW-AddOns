@@ -1,31 +1,36 @@
 
 BigWigs:AddSounds("Archavon the Stone Watcher", {
-	[58965] = "Alarm",
+	[58965] = "alarm",
 })
 
 BigWigs:AddSounds("Malygos", {
-	["breath"] = "Alert",
-	["sparks"] = "Alert",
-	["surge"] = "Alarm",
+	["breath"] = "alert",
+	["sparks"] = "alert",
+	["surge"] = "alarm",
 })
 
 BigWigs:AddSounds("Sartharion", {
-	["tsunami"] = "Alert",
-	["twilight"] = "Alarm",
+	[57491] = "warning",
+	[58793] = "info",
+	[58835] = "long",
+	[59127] = "alert",
+	["acolyte_shadron"] = "info",
 })
 
-BigWigs:AddSounds("Halion", {
-	[74562] = "Info",
-	[74648] = "Long",
-	[74769] = "Alert",
-	[74792] = "Info",
+BigWigs:AddSounds("Emalon the Storm Watcher", {
 })
 
 BigWigs:AddSounds("Koralon the Flame Watcher", {
-	[66684] = "Alarm",
+	[66684] = "alarm",
+})
+
+BigWigs:AddSounds("Toravon the Ice Watcher", {
 })
 
 BigWigs:AddSounds("Onyxia", {
-	[17086] = "Alarm",
-	[18435] = "Alert",
+	[17086] = "warning",
+	[18392] = "alarm",
+	[18431] = "info",
+	[18435] = "alert",
+	["stages"] = "long",
 })

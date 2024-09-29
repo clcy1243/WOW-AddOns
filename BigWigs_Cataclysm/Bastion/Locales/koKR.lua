@@ -1,6 +1,12 @@
 
-local L = BigWigs:NewBossLocale("Cho'gall", "koKR")
+local L = BigWigs:NewBossLocale("Halfus Wyrmbreaker", "koKR")
 if not L then return end
+if L then
+	L.strikes_message = "악의의 일격"
+	--L.freed_message = "%s freed %s"
+end
+
+L = BigWigs:NewBossLocale("Cho'gall", "koKR")
 if L then
 	L.orders = "상태 변경"
 	L.orders_desc = "초갈의 그림자/불꽃의 명령 상태를 알립니다."
@@ -46,16 +52,6 @@ if L then
 	L.twilight_shift = "황혼 이동"
 end
 
-L = BigWigs:NewBossLocale("Halfus Wyrmbreaker", "koKR")
-if L then
-	L.strikes_message = "악의의 일격"
-
-	L.breath_message = "곧 숨결!"
-	L.breath_bar = "~숨결"
-
-	L.engage_yell = "초갈 님께 네놈들의 머리를 바치겠다"
-end
-
 L = BigWigs:NewBossLocale("Sinestra", "koKR")
 if L then
 	L.whelps = "새끼용"
@@ -75,8 +71,6 @@ end
 
 L = BigWigs:NewBossLocale("Ascendant Council", "koKR")
 if L then
-	L.static_overload_say = "전화 과부하"
-	L.gravity_core_say = "중력 핵"
 	L.health_report = "%s 체력 -%d%%-, 곧 단계 변화!"
 	L.switch = "전환"
 	L.switch_desc = "보스의 전환을 알립니다."
@@ -96,4 +90,3 @@ if L then
 
 	L.last_phase_trigger = "꽤나 인상적이었다만..."
 end
-

@@ -2,120 +2,167 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Deathbringer Saurfang", 631, 1628)
+local mod, CL = BigWigs:NewBoss("Deathbringer Saurfang", 631, 1628)
 if not mod then return end
-mod:RegisterEnableMob(37813, 37200, 37830, 37187, 37920) -- Deathbringer Saurfang, Muradin, Marine, Overlord Saurfang, Kor'kron Reaver
-mod.toggleOptions = {"warmup", "adds", 72410, 72385, {72293, "ICON", "FLASH"}, 72737, "proximity", "berserk"}
+mod:RegisterEnableMob(37813, 37200, 37187) -- Deathbringer Saurfang, Muradin Bronzebeard, High Overlord Saurfang
+mod:SetEncounterID(mod:Classic() and 848 or 1096)
+--mod:SetRespawnTime(30) -- Instantly respawns
 
 --------------------------------------------------------------------------------
 -- Locals
 --
 
-local killed = nil
-local count = 1
-local prevWin = 0
+local markCount = 0
 
 --------------------------------------------------------------------------------
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
-	L.adds = "Blood Beasts"
-	L.adds_desc = "Shows a timer and messages for when Blood Beasts spawn."
-	L.adds_warning = "Blood Beasts in 5 sec!"
-	L.adds_message = "Blood Beasts!"
+	L.warmup_icon = "achievement_boss_saurfang"
+	L.adds_icon = "spell_shadow_rune"
+	L.blood_beast = "Blood Beast" --  NPC ID 38508
 
-	L.engage_trigger = "BY THE MIGHT OF THE LICH KING!"
 	L.warmup_alliance = "Let's get a move on then! Move ou..."
 	L.warmup_horde = "Kor'kron, move out! Champions, watch your backs. The Scourge have been..."
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
 --
 
-function mod:VerifyEnable()
-	return (GetTime() - prevWin) > 300 and BigWigsLoader.GetBestMapForUnit("player") == 188 -- Floor 3, Deathbringer's Rise
+local bloodBeastMarker = mod:AddMarkerOption(true, "npc", 8, "blood_beast", 8, 7, 6, 5, 4) -- Blood Beast
+function mod:GetOptions()
+	return {
+		"warmup",
+		"adds",
+		bloodBeastMarker,
+		72410, -- Rune of Blood
+		72385, -- Boiling Blood
+		{72293, "ME_ONLY_EMPHASIZE"}, -- Mark of the Fallen Champion
+		72737, -- Frenzy
+		"berserk",
+	},nil,{
+		["adds"] = L.blood_beast, -- Adds (Blood Beast)
+		[72293] = CL.mark, -- Mark of the Fallen Champion (Mark)
+		[72737] = CL.health_percent:format(30), -- Frenzy (30% Health)
+	}
+end
+
+function mod:VerifyEnable(unit, mobId)
+	if mobId == 37813 then -- Deathbringer Saurfang
+		return true
+	else
+		return self:UnitIsInteractable(unit) -- Muradin Bronzebeard & High Overlord Saurfang
+	end
+end
+
+function mod:OnRegister()
+	-- Delayed for custom locale
+	bloodBeastMarker = mod:AddMarkerOption(true, "npc", 8, "blood_beast", 8, 7, 6, 5, 4) -- Blood Beast
 end
 
 function mod:OnBossEnable()
-	self:Log("SPELL_CAST_SUCCESS", "Adds", 72173)
-	self:Log("SPELL_AURA_APPLIED", "RuneofBlood", 72410)
-	self:Log("SPELL_AURA_APPLIED", "BoilingBlood", 72385)
-	self:Log("SPELL_AURA_APPLIED", "Mark", 72293)
-	self:Log("SPELL_AURA_APPLIED", "Frenzy", 72737)
+	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-	self:Yell("Engage", L["engage_trigger"])
-	self:Yell("WarmupHorde", L["warmup_horde"])
-	self:Yell("WarmupAlliance", L["warmup_alliance"])
-
-	self:Death("Win", 37813)
+	self:Log("SPELL_SUMMON", "CallBloodBeast", 72172, 72173, 72356, 72357, 72358)
+	self:Log("SPELL_CAST_SUCCESS", "BoilingBlood", 72385)
+	self:Log("SPELL_AURA_APPLIED", "BoilingBloodApplied", 72385)
+	self:Log("SPELL_CAST_SUCCESS", "RuneOfBlood", 72410)
+	self:Log("SPELL_CAST_SUCCESS", "MarkOfTheFallenChampion", 72293)
+	self:Log("SPELL_CAST_SUCCESS", "Frenzy", 72737)
 end
 
 function mod:OnEngage()
-	self:OpenProximity("proximity", 11)
+	markCount = 0
 	self:Berserk(self:Heroic() and 360 or 480)
-	self:DelayedMessage("adds", 35, "orange", L["adds_warning"])
-	self:Bar("adds", 40, L["adds"], 72173)
-	count = 1
-end
-
-function mod:WarmupHorde()
-	self:OpenProximity("proximity", 11)
-	self:Bar("warmup", 96, self.displayName, "achievement_boss_saurfang")
-end
-
-function mod:WarmupAlliance()
-	self:OpenProximity("proximity", 11)
-	self:Bar("warmup", 48, self.displayName, "achievement_boss_saurfang")
-end
-
-function mod:OnWin()
-	prevWin = GetTime()
+	self:CDBar(72385, 16) -- Boiling Blood
+	self:CDBar(72410, 20) -- Rune of Blood
+	self:Bar("adds", 40, CL.adds, L.adds_icon)
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-do
-	local bbTargets, scheduled = mod:NewTargetList(), nil
-	local function boilingWarn()
-		mod:TargetMessage(72385, bbTargets, "orange")
-		scheduled = nil
+function mod:CHAT_MSG_MONSTER_YELL(_, msg)
+	if msg:find(L.warmup_horde, nil, true) then
+		self:Bar("warmup", 96, CL.active, L.warmup_icon)
+	elseif msg:find(L.warmup_alliance, nil, true) then
+		self:Bar("warmup", 48, CL.active, L.warmup_icon)
 	end
-	function mod:BoilingBlood(args)
-		bbTargets[#bbTargets + 1] = args.destName
-		if not scheduled then
-			scheduled = self:ScheduleTimer(boilingWarn, 0.3)
+end
+
+do
+	local beastCollector = {}
+	function mod:BeastMarking(_, unit, guid)
+		if beastCollector[guid] then
+			self:CustomIcon(bloodBeastMarker, unit, beastCollector[guid])
+			beastCollector[guid] = nil
+			if not next(beastCollector) then
+				self:UnregisterTargetEvents()
+			end
+		end
+	end
+
+	local prev = 0
+	local beastIcon = 8
+	function mod:CallBloodBeast(args)
+		if args.time - prev > 5 then
+			prev = args.time
+			beastCollector = {}
+			beastIcon = 8
+			self:Message("adds", "cyan", CL.adds, L.adds_icon)
+			self:Bar("adds", 40, CL.adds, L.adds_icon)
+		end
+
+		local unit = self:GetUnitIdByGUID(args.destGUID)
+		if unit then
+			self:CustomIcon(bloodBeastMarker, unit, beastIcon)
+		else
+			beastCollector[args.destGUID] = beastIcon
+			self:RegisterTargetEvents("BeastMarking")
+		end
+		beastIcon = beastIcon - 1
+
+		if beastIcon == 7 then
+			self:PlaySound("adds", "info")
 		end
 	end
 end
 
-function mod:Adds(args)
-	self:Message("adds", "green", "Alarm", L["adds_message"], args.spellId)
-	self:DelayedMessage("adds", 35, "orange", L["adds_warning"])
-	self:Bar("adds", 40, L["adds"], args.spellId)
-end
-
-function mod:RuneofBlood(args)
-	self:TargetMessage(72410, args.destName, "yellow")
-	self:CDBar(72410, 20)
-end
-
-function mod:Mark(args)
-	self:StackMessage(72293, args.destName, count, "yellow", "Alert")
-	count = count + 1
-	self:PrimaryIcon(72293, args.destName)
-	if self:Me(args.destGUID) then
-		self:Flash(72293)
+do
+	local playerList = {}
+	function mod:BoilingBlood(args)
+		playerList = {}
+		self:CDBar(args.spellId, 15.3) -- 15.3-16.3
+	end
+	function mod:BoilingBloodApplied(args)
+		if self:Difficulty() == 4 or self:Difficulty() == 6 then -- 3 debuffs on 25
+			playerList[#playerList+1] = args.destName
+			self:TargetsMessage(args.spellId, "orange", playerList, 3)
+		else
+			self:TargetMessage(args.spellId, "orange", args.destName)
+		end
 	end
 end
 
-function mod:Frenzy(args)
-	self:Message(72737, "red", "Long")
+function mod:RuneOfBlood(args)
+	self:TargetMessage(args.spellId, "purple", args.destName)
+	self:CDBar(args.spellId, 20)
+	if self:Tank() then
+		self:PlaySound(args.spellId, "warning")
+	end
 end
 
+function mod:MarkOfTheFallenChampion(args)
+	markCount = markCount + 1
+	self:TargetMessage(args.spellId, "yellow", args.destName, CL.count:format(CL.mark, markCount))
+	self:PlaySound(args.spellId, "alert")
+end
+
+function mod:Frenzy(args)
+	self:Message(args.spellId, "red", CL.percent:format(30, args.spellName))
+	self:PlaySound(args.spellId, "long")
+end

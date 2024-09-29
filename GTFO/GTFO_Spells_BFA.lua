@@ -5,7 +5,7 @@
 GTFO Spell List - Battle for Azeroth
 ]]--
 
-if (not GTFO.ClassicMode) then
+if (GTFO.RetailMode) then
 
 --- ******************************
 --- * Battle for Azeroth (World) *
@@ -282,7 +282,7 @@ GTFO.SpellID["318391"] = {
 GTFO.SpellID["315161"] = {
   --desc = "Eye of Corruption";
   sound = 2;
-  category = "EyeOfCorruption";
+  category = "EyeOfCorruption2";
 };
 
 GTFO.SpellID["315197"] = {
@@ -370,6 +370,58 @@ GTFO.SpellID["316258"] = {
 
 GTFO.SpellID["314565"] = {
   --desc = "Defiled Ground (Blood of the Corruptor)";
+  sound = 1;
+};
+
+GTFO.SpellID["308807"] = {
+  --desc = "Rain of Fire (Zardeth of the Black Claw)";
+  sound = 1;
+};
+
+GTFO.SpellID["309665"] = {
+  --desc = "Empowered Forge Breath (Therum Deepforge)";
+  sound = 1;
+};
+
+GTFO.SpellID["312121"] = {
+  --desc = "Explosive Ordnance (Therum Deepforge)";
+  sound = 1;
+};
+
+GTFO.SpellID["311400"] = {
+  --desc = "Blade Flourish (Armsmaster Terenson)";
+  sound = 1;
+};
+
+GTFO.SpellID["314432"] = {
+  --desc = "Force and Verve (Grand Empress Shek'zara)";
+  negatingDebuffSpellID = 314332;  -- Sound Barrier
+  sound = 1;
+};
+
+GTFO.SpellID["272455"] = {
+  --desc = "Conductive Blades (Warlord Zothix)";
+  sound = 1;
+};
+
+GTFO.SpellID["270685"] = {
+  --desc = "Resonance (Azerite Shard)";
+  sound = 1;
+};
+
+GTFO.SpellID["303800"] = {
+  --desc = "Oppressive Blast (HK-8 Aerial Oppression Unit)";
+  sound = 1;
+};
+
+GTFO.SpellID["313303"] = {
+  --desc = "Burned Bridge";
+  ignoreApplication = true;
+  sound = 2;
+};
+
+GTFO.SpellID["270012"] = {
+  --desc = "Defense Barrage";
   sound = 1;
 };
 
@@ -462,11 +514,6 @@ GTFO.SpellID["256552"] = {
 
 GTFO.SpellID["256546"] = {
   --desc = "Shark Tornado (Trothak)";
-  sound = 1;
-};
-
-GTFO.SpellID["257737"] = {
-  --desc = "Thundering Squall (Irontide Stormcaller)";
   sound = 1;
 };
 
@@ -927,6 +974,7 @@ GTFO.SpellID["287993"] = {
   applicationOnly = true;
   affirmingDebuffSpellID = 288297; -- Arctic Ground
   sound = 1;
+  trivialLevel = 70;
 };
 
 GTFO.SpellID["287365"] = {
@@ -941,6 +989,7 @@ GTFO.SpellID["288808"] = {
   heroicSound = 1;
   mythicSound = 1;
   sound = 0;
+  trivialLevel = 70;
   test = true;
 };
 
@@ -965,6 +1014,12 @@ GTFO.SpellID["287876"] = {
 -- ***********************
 -- * Operation: Mechagon *
 -- ***********************
+
+GTFO.SpellID["303313"] = {
+  --desc = "Exiting Mission Area";
+  applicationOnly = true;
+  sound = 1;
+};
 
 GTFO.SpellID["302384"] = {
   --desc = "Static Discharge (HK-8 Aerial Oppression Unit)";
@@ -1162,7 +1217,6 @@ GTFO.SpellID["298569"] = {
 -- *************
 
 -- TODO: Crackling Shard (Wrathion) -- Alert when NOT afflicated with Burning Madness
--- TODO: Acidic Blood (Ka'zir) -- Mythic only, avoidable?
 -- TODO: Infinite Void (Carapace of N'Zoth) 
 -- TODO: Paranoia (N'Zoth) -- FF, complicated mechanic to track?
 -- TODO: Devour Thoughts (N'Zoth) -- FF
@@ -1241,6 +1295,11 @@ GTFO.SpellID["308995"] = {
 
 GTFO.SpellID["307061"] = {
   --desc = "Mycelial Growth (Fury of N'Zoth)";
+  sound = 1;
+};
+
+GTFO.SpellID["313672"] = {
+  --desc = "Acid Pool (Ka'zir)";
   sound = 1;
 };
 

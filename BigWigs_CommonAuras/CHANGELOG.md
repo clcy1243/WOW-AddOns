@@ -1,11 +1,6 @@
 # BigWigs +Common Auras
 
-## [v8.2.0](https://github.com/BigWigsMods/BigWigs_CommonAuras/tree/v8.2.0) (2019-07-20)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_CommonAuras/compare/v8.1.1...v8.2.0)
+## [v11.0.2](https://github.com/BigWigsMods/BigWigs_CommonAuras/tree/v11.0.2) (2024-09-10)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_CommonAuras/compare/v11.0.1...v11.0.2) [Previous Releases](https://github.com/BigWigsMods/BigWigs_CommonAuras/releases)
 
-- Add Mallet of Thunderous Skins  
-- Update feats  
-- Update TOC for 8.2  
-- Add Unstable Temporal Time Shifter  
-- Update zhTW/zhCN (#13)  
-- Update zhCN/zhTW  
+- bump toc  

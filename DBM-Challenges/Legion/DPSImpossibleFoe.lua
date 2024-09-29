@@ -1,13 +1,15 @@
-﻿local mod	= DBM:NewMod("ArtifactImpossibleFoe", "DBM-Challenges", 3)
+local mod	= DBM:NewMod("ArtifactImpossibleFoe", "DBM-Challenges", 3)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200418165651")
+mod.statTypes = "normal,timewalker"
+
+mod:SetRevision("20220407221113")
 mod:SetCreatureID(115638)
-mod:SetZone()--Healer (1710), Tank (1698), DPS (1703-The God-Queen's Fury), DPS (Fel Totem Fall)
 mod.soloChallenge = true
-mod.onlyNormal = true
 
 mod:RegisterCombat("combat")
+mod:SetReCombatTime(20, 5)--Basically killing of recombat restriction. mage tower lets you spam retry, we want the mod to let you
+
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 243113",
 	"SPELL_AURA_REMOVED 243113",
@@ -17,14 +19,15 @@ mod:RegisterEventsInCombat(
 )
 --Notes:
 --NEW VOICE: attackshield
-
+--TODO, fix shield absorb, auto calculation doesn't work do to scaling tech. UnitAura detects invalid absorb amount
 local specWarnImpServants		= mod:NewSpecialWarningSwitch(235140, nil, nil, nil, 1, 2)--Agatha's Vengeance spellId used for now
 local specWarnDarkFury			= mod:NewSpecialWarningSwitch(243111, nil, nil, nil, 1, 7)
+local specWarnDarkFuryKick		= mod:NewSpecialWarningInterrupt(243111, nil, nil, nil, 1, 2)
 
 local timerImpServantsCD		= mod:NewCDTimer(45, 235140, nil, nil, nil, 1)
 local timerDarkFuryCD			= mod:NewCDTimer(51.1, 243111, nil, nil, nil, 5, nil, nil, nil, 1, 4)
 
-mod:AddInfoFrameOption(243113, true)
+mod:AddInfoFrameOption(243111, true)
 
 mod.vb.phase = 1
 
@@ -60,7 +63,8 @@ end
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 243113 then
-		specWarnDarkFury:Play("shieldover")
+		specWarnDarkFuryKick:Show(args.sourceName)
+		specWarnDarkFuryKick:Play("kickcast")
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:Hide()
 		end

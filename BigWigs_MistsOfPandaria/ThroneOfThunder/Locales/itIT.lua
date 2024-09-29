@@ -4,27 +4,23 @@ if L then
 	L.storm_duration = "Durata Tempesta di Fulmini"
 	L.storm_duration_desc = "Una barra di avviso separata per la durata del lancio di Tempesta di Fulmini"
 	L.storm_short = "Tempesta"
-
-	L.in_water = "Sei nell'acqua!"
 end
 
 L = BigWigs:NewBossLocale("Horridon", "itIT")
 if L then
-	L.focus_only = "|cffff0000Avviso solo per il bersaglio Focus.|r "
-
 	L.charge_trigger = "posa il suo sguardo"
 	L.door_trigger = "irrompono"
 	--L.orb_trigger = "charge" -- PLAYERNAME forces Horridon to charge the Farraki door!
 
-	L.chain_lightning_desc = L.focus_only .. "{-7124}"
+	L.chain_lightning_desc = "|cffff0000Avviso solo per il bersaglio Focus.|r {-7124}"
 	L.chain_lightning_message = "Il tuo focus sta lanciando Catena di Fulmini!"
 	L.chain_lightning_bar = "Focus: Catena di Fulmini"
 
-	L.fireball_desc = L.focus_only .. "{-7122}"
+	L.fireball_desc = "|cffff0000Avviso solo per il bersaglio Focus.|r {-7122}"
 	L.fireball_message = "Il tuo focus sta lanciando Palla di Fuoco!"
 	L.fireball_bar = "Focus: Palla di Fuoco"
 
-	L.venom_bolt_volley_desc = L.focus_only .. "{-7112}"
+	L.venom_bolt_volley_desc = "|cffff0000Avviso solo per il bersaglio Focus.|r {-7112}"
 	L.venom_bolt_volley_message = "Il tuo Focus sta lanciando Raffica Venefica!"
 	L.venom_bolt_volley_bar = "Focus: Raffica Venefica"
 
@@ -145,14 +141,7 @@ L = BigWigs:NewBossLocale("Iron Qon", "itIT") -- commented out strings not prese
 if L then
 	L.molten_energy = "Energia Fusa"
 
-	--L.overload_casting = "Lancio Sovraccarico Fuso"
-	--L.overload_casting_desc = "Avvisa quando viene lanciato Sovraccarico Fuso"
-
 	L.arcing_lightning_cleared = "Fulmine Arcuato non più presente sull'Incursione"
-
-	--L.custom_off_spear_target = "Bersaglio Tiro Lancia"
-	--L.custom_off_spear_target_desc = "Cerca di avvisare il bersaglio di Tiro Lancia. Questo metodo è molto esigente in quanto all'uso di CPU e a volte mostra il bersaglio errato quindi è disabilitato per default.\n|cFFADFF2FTIP: Impostare il ruolo di DIFENSORE dovrebbe aiutare l'accuratezza dell'avviso.|r"
-	--L.possible_spear_target = "Possibile Lancia"
 end
 
 L = BigWigs:NewBossLocale("Twin Consorts", "itIT")

@@ -5,6 +5,13 @@
 local mod, CL = BigWigs:NewBoss("Leotheras the Blind", 548, 1569)
 if not mod then return end
 mod:RegisterEnableMob(21215)
+if mod:Classic() then
+	mod:SetEncounterID(625)
+end
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local beDemon = mod:NewTargetList()
 local demonTimer = nil
@@ -64,17 +71,17 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Whisper", 37676)
 	self:Log("SPELL_AURA_APPLIED", "Madness", 37749)
 
-	self:Yell("Image", L["image_trigger"])
-	self:Yell("Phase", L["phase_trigger"])
+	self:BossYell("Image", L["image_trigger"])
+	self:BossYell("Phase", L["phase_trigger"])
 
-	self:Yell("Engage", L["enrage_trigger"])
+	self:BossYell("Engage", L["enrage_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 
 	self:Death("Win", 21215)
 end
 
 function mod:OnEngage()
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "target", "focus")
 	demonTimer = nil
 
 	self:DelayedMessage("phase", 55, "orange", L["phase_demonsoon"])
@@ -90,7 +97,7 @@ end
 do
 	local scheduled = nil
 	local function demonWarn(spellId)
-		mod:TargetMessage("whisper", beDemon, "yellow", nil, L["whisper_message"], spellId)
+		mod:TargetMessageOld("whisper", beDemon, "yellow", nil, L["whisper_message"], spellId)
 		scheduled = nil
 	end
 	function mod:Whisper(args)
@@ -104,7 +111,7 @@ do
 end
 
 function mod:Whirlwind(args)
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	self:Bar(args.spellId, 12, CL["cast"]:format(args.spellName))
 end
 
@@ -114,12 +121,12 @@ function mod:WhirlwindBar()
 end
 
 function mod:Madness(args)
-	self:TargetMessage("mindcontrol", args.destName, "orange", "Alert", L["mindcontrol_warning"], args.spellId)
+	self:TargetMessageOld("mindcontrol", args.destName, "orange", "alert", L["mindcontrol_warning"], args.spellId)
 end
 
 do
 	local function demonSoon()
-		mod:Message("phase", "red", nil, L["phase_normal"], false)
+		mod:MessageOld("phase", "red", nil, L["phase_normal"], false)
 		mod:DelayedMessage("phase", 40, "orange", L["phase_demonsoon"])
 		mod:Bar("phase", 45, L["demon_nextbar"], "Spell_Shadow_Metamorphosis")
 	end
@@ -129,7 +136,7 @@ do
 		self:StopBar(L["demon_nextbar"])
 		self:CancelAllTimers()
 
-		self:Message("phase", "yellow", nil, L["phase_demon"], false)
+		self:MessageOld("phase", "yellow", nil, L["phase_demon"], false)
 		self:DelayedMessage("phase", 55, "red", L["phase_normalsoon"])
 		self:Bar("whisper", 23, L["whisper_soon"], 37676)
 		self:Bar("phase", 60, L["demon_bar"], "Spell_Shadow_Metamorphosis")
@@ -144,14 +151,14 @@ function mod:Image()
 	self:CancelDelayedMessage(L["phase_demonsoon"])
 	self:StopBar(L["demon_bar"])
 	self:StopBar(L["demon_nextbar"])
-	self:Message("image", "red", nil, L["image_message"], false)
+	self:MessageOld("image", "red", nil, L["image_message"], false)
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 21215 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 21215 then
+		local hp = self:GetHealth(unit)
 		if hp > 15 and hp < 20 then
-			self:Message("image", "orange", nil, L["image_warning"], false)
+			self:MessageOld("image", "orange", nil, L["image_warning"], false)
 			self:UnregisterUnitEvent(event, "target", "focus")
 		end
 	end

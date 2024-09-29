@@ -1,7 +1,8 @@
 # BigWigs
 
-## [v184.2](https://github.com/BigWigsMods/BigWigs/tree/v184.2) (2020-03-08)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v184.1...v184.2)
+## [v364](https://github.com/BigWigsMods/BigWigs/tree/v364) (2024-09-27)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v363.2...v364) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
 
-- Nyalotha/Skitra: Fix 2nd project pre-warning.  
-- Nyalotha/Skitra: Adjust stage warnings to reflect hotfixes Feb 24th  
+- bump version  
+- Plugins/Nameplates: Make sure cooldowns of your target always show on top of other cooldowns  
+- Update deDE (#1855)  

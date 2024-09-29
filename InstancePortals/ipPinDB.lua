@@ -1,4 +1,4 @@
-IPUIContinentMapDB = {12, 13, 101, 113, 424, 572, 619, 905, 875, 876}
+IPUIContinentMapDB = {12, 13, 101, 113, 424, 572, 619, 905, 875, 876, 1550, 1978, 2274}
 
 IPUIPinDB = {
 
@@ -49,6 +49,8 @@ IPUIPinDB = {
 		{54.45, 79.37, {237}}, -- sunken temple
 		{53.17, 30.36, {236}}, -- stratholme
 		{52.73, 65.19, {239}}, -- uldaman
+		{51.8, 64.1, {1197}}, -- uldaman legacy of tyr
+
 		{40.92, 41.66, {64}}, -- shadowfang keep
 		{43.21, 60.42, {231}}, -- gnomeregan
 		{41.3, 82.63, {63}}, -- deadmines
@@ -581,4 +583,58 @@ IPUIPinDB = {
 	[68]={  --[[ MaraudonOutside FoulsporeCavern ]]--
 		{58.15, 32.66, {232}},
 	},
+ 
+     [1550]={ --[[ Shadowlands ]]--
+        {69, 60, {1182}}, --The Necrotic Wake
+        {74, 52, {1186}}, --Spires of Ascension
+        
+        {65, 26, {1183}}, --Plaguefall
+        {64, 22, {1187}}, --Theater of Pain
+        
+        {54, 86, {1188}}, --De Other Side
+        {45, 82, {1184}}, --Mists of Tirna Scithe
+
+        {31, 53, {1185}}, --Halls of Atonement
+        {27, 48, {1189}}, --Sanguine Depths
+
+        {23, 50, {1190}}, --Castle Nathria
+	
+		{26, 16, {1193}}, --Sanctum of Domination
+		{48, 53, {1194}}, --Tazavesh
+		{89.44, 80, {1195}}, --Sepulcher of the First Ones
+    },
+    
+	[1978]={ --[[ Dragon Isles ]]--
+		
+		{63, 49, {1204}}, -- Halls of Infusion
+		{64, 40, {1201}}, -- Algeth'ar Academy
+		{37, 75, {1196}}, -- Brackenhide Hollow
+		{43, 36, {1199}}, -- Neltharus
+		{52, 42, {1202}}, -- Ruby Life Pools
+		{47, 83, {1203}}, -- The Azure Vault
+		{45, 52, {1198}}, -- The Nokhud Offensive
+				
+		{65, 57, {1209}}, -- Dawn of the Infinite
+
+		{70, 46, {1200}}, --Vault of the Incarnates
+		{86.7, 73.4, {1208}}, --Aberrus
+		{31, 57, {1207}}, --Amirdrassil
+	},
+	
+	[2274]={ --[[ Khaz Algar ]]--
+		{84, 20, {1272}}, -- Cinderbrew Meadery
+		{69, 18, {1268}}, -- The Rookery
+		
+		{53, 43, {1269}}, -- The Stonevault
+		{57.5, 46, {1210}}, -- Darkflame Cleft
+
+		{40, 57, {1270}}, -- The Dawnbreaker
+		{34, 53, {1267}}, -- Priory of the Sacred Flame
+
+		{45, 82, {1271}}, -- Ara-Kara, City of Echoes
+		{44, 80, {1274}}, -- City of Threads
+		{44, 84, {1273}}, -- Nerub-ar Palace
+
+	}
+
 }

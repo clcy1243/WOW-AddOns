@@ -1,9 +1,11 @@
 # Advanced Interface Options
 
-## [1.3.4](https://github.com/Stanzilla/AdvancedInterfaceOptions/tree/1.3.4) (2020-01-22)
-[Full Changelog](https://github.com/Stanzilla/AdvancedInterfaceOptions/compare/1.3.3...1.3.4)
+## [2.1.0](https://github.com/Stanzilla/AdvancedInterfaceOptions/tree/2.1.0) (2024-08-13)
+[Full Changelog](https://github.com/Stanzilla/AdvancedInterfaceOptions/compare/2.0.0...2.1.0) [Previous Releases](https://github.com/Stanzilla/AdvancedInterfaceOptions/releases)
 
-- incremented retail build number  
-- Update FUNDING.yml  
-- Update FUNDING.yml  
-- Update FUNDING.yml  
+- Create a new panel for camera options + add new Camera Collision setting (#96)  
+    * Create a new panel for camera options + add new Camera Collision setting  
+    In 11.0 Blizzard added new camera collision options, and to this commit adds these new settings as well as moved other camera options into a dedicated panel.  
+    * Hide the new camera collision options if not WoW Retail  
+    * fix small typo. Whoops  
+- adjust maxCameraZoomFactor for cata  

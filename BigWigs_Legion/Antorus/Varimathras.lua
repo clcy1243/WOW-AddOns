@@ -73,7 +73,7 @@ end
 
 function mod:OnEngage()
 	tormentActive = 0
-	wipe(mobCollector)
+	mobCollector = {}
 
 	self:CDBar("stages", 5, self:SpellName(243968), 243968) -- Torment of Flames
 	self:CDBar(243960, 9.7) -- Shadow Strike
@@ -93,7 +93,7 @@ end
 function mod:TormentofFlames(args)
 	if tormentActive ~= 1 then
 		tormentActive = 1
-		self:Message("stages", "green", "Long", args.spellName, args.spellId)
+		self:MessageOld("stages", "green", "long", args.spellName, args.spellId)
 		if self:Easy() then
 			self:CDBar("stages", 355, self:SpellName(243973), 243973) -- Torment of Shadows
 		else
@@ -105,7 +105,7 @@ end
 function mod:TormentofFrost(args)
 	if tormentActive ~= 2 then
 		tormentActive = 2
-		self:Message("stages", "green", "Long", args.spellName, args.spellId)
+		self:MessageOld("stages", "green", "long", args.spellName, args.spellId)
 		self:CDBar("stages", self:Mythic() and 100 or 114, self:SpellName(243980), 243980) -- Torment of Fel
 	end
 end
@@ -113,7 +113,7 @@ end
 function mod:TormentofFel(args)
 	if tormentActive ~= 3 then
 		tormentActive = 3
-		self:Message("stages", "green", "Long", args.spellName, args.spellId)
+		self:MessageOld("stages", "green", "long", args.spellName, args.spellId)
 		self:CDBar("stages", self:Mythic() and 90 or 121, self:SpellName(243973), 243973) -- Torment of Shadows
 	end
 end
@@ -121,18 +121,18 @@ end
 function mod:TormentofShadows(args)
 	if tormentActive ~= 4 then
 		tormentActive = 4
-		self:Message("stages", "green", "Long", args.spellName, args.spellId)
+		self:MessageOld("stages", "green", "long", args.spellName, args.spellId)
 	end
 end
 
 function mod:Misery(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Alarm", CL.you:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alarm", CL.you:format(args.spellName))
 	end
 end
 
 function mod:ShadowStrike()
-	self:Message(243960, "purple", "Warning")
+	self:MessageOld(243960, "purple", "warning")
 	self:CDBar(243960, 9.8)
 end
 
@@ -141,19 +141,19 @@ function mod:DarkFissureStart(args)
 end
 
 function mod:DarkFissure(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 	self:CDBar(args.spellId, 32.9)
 end
 
 function mod:MarkedPrey(args)
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Marked Prey")
 		self:SayCountdown(args.spellId, 5)
-		self:PlaySound(args.spellId, "Alarm")
+		self:PlaySound(args.spellId, "alarm")
 	end
 	self:PrimaryIcon(args.spellId, args.destName)
-	self:TargetMessage2(args.spellId, "red", args.destName)
+	self:TargetMessage(args.spellId, "red", args.destName)
 	self:TargetBar(args.spellId, 5, args.destName)
 	self:CDBar(args.spellId, 32.8)
 end
@@ -170,16 +170,16 @@ do
 	local playerList, isOnMe, proxList = mod:NewTargetList(), false, {}
 
 	function mod:NecroticEmbraceSuccess()
-		wipe(proxList)
+		proxList = {}
 		self:CDBar(244094, 30.5)
 	end
 
 	local function warn()
 		if not isOnMe then
-			mod:TargetsMessage(244094, "orange", playerList, #playerList) -- Necrotic Embrace
+			mod:TargetsMessageOld(244094, "orange", playerList, #playerList) -- Necrotic Embrace
 			mod:OpenProximity(244094, 10, proxList)
 		else
-			wipe(playerList)
+			playerList = mod:NewTargetList()
 		end
 	end
 
@@ -192,9 +192,9 @@ do
 		local icon = count + 2
 		if self:Me(args.destGUID) then
 			isOnMe = true
-			self:PlaySound(args.spellId, "Warning")
-			self:TargetMessage2(args.spellId, "orange", args.destName, CL.count_icon:format(args.spellName, count, icon))
-			self:Say(args.spellId, CL.count_rticon:format(args.spellName, count, icon))
+			self:PlaySound(args.spellId, "warning")
+			self:TargetMessage(args.spellId, "orange", args.destName, CL.count_icon:format(args.spellName, count, icon))
+			self:Say(args.spellId, CL.count_rticon:format(args.spellName, count, icon), nil, ("Necrotic Embrace (%d{rt%d})"):format(count, icon))
 			self:Flash(args.spellId, icon)
 			self:SayCountdown(args.spellId, 6, icon)
 			self:OpenProximity(args.spellId, 10)
@@ -207,23 +207,23 @@ do
 		end
 
 		if self:GetOption(necroticEmbraceMarker) then
-			SetRaidTarget(args.destName, icon) -- Icons 3 and 4
+			self:CustomIcon(false, args.destName, icon) -- Icons 3 and 4
 		end
 	end
 
 	function mod:NecroticEmbraceRemoved(args)
 		if self:Me(args.destGUID) then
-			self:Message(args.spellId, "green", "Info", CL.removed:format(args.spellName))
+			self:MessageOld(args.spellId, "green", "info", CL.removed:format(args.spellName))
 			isOnMe = false
 			self:CancelSayCountdown(args.spellId)
 			self:CloseProximity(args.spellId)
 		end
 
 		if self:GetOption(necroticEmbraceMarker) then
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
 
-		tDeleteItem(proxList, args.destName)
+		self:DeleteFromTable(proxList, args.destName)
 
 		if not isOnMe then -- Don't change proximity if it's on you and expired on someone else
 			if #proxList == 0 then
@@ -241,7 +241,7 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 1.5 then
 			prev = t
-			self:Message(243999, "blue", "Alert", CL.underyou:format(args.spellName)) -- Dark Fissure
+			self:MessageOld(243999, "blue", "alert", CL.underyou:format(args.spellName)) -- Dark Fissure
 		end
 	end
 end
@@ -255,7 +255,7 @@ do
 			local t = GetTime()
 			if t-prev > 1.5 then -- Also don't spam too much if it's a wipe and several are spawning at the same time
 				prev = t
-				self:Message(-16350, "orange", "Alarm", nil, L.shadowOfVarimathras_icon)
+				self:MessageOld(-16350, "orange", "alarm", nil, L.shadowOfVarimathras_icon)
 			end
 		end
 	end

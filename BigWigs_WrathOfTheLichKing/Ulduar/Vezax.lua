@@ -5,8 +5,8 @@
 local mod, CL = BigWigs:NewBoss("General Vezax", 603, 1648)
 if not mod then return end
 mod:RegisterEnableMob(33271)
-mod.engageId = 1134
---mod.respawnTime = Doesn't despawn
+mod:SetEncounterID(mod:Classic() and 755 or 1134)
+-- mod:SetRespawnTime(0) -- resets, doesn't respawn
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -31,7 +31,7 @@ if L then
 	L.vapor = "Saronite Vapors"
 	L.vapor_desc = "Warn when Saronite Vapors spawn."
 	L.vapor_message = "Saronite Vapor %d!"
-	L.vapor_bar = "Vapor %d/6"
+	L.vapor_bar = "Vapor"
 	L.vapor_trigger = "A cloud of saronite vapors coalesces nearby!"
 
 	L.vaporstack = "Vapors Stack"
@@ -55,7 +55,7 @@ function mod:GetOptions()
 		{62660, "ICON", "SAY"}, -- Shadow Crash
 		{63276, "ICON", "SAY", "FLASH"}, -- Mark of the Faceless
 		62661, -- Searing Flames
-		62662, -- Surge of Darkness
+		{62662, "CASTBAR"}, -- Surge of Darkness
 		"animus",
 		"berserk",
 	}, {
@@ -63,7 +63,7 @@ function mod:GetOptions()
 		[62660] = 62660,
 		[63276] = 63276,
 		[62661] = "normal",
-		animus = -17610, -- Hard Mode
+		animus = "hard",
 		berserk = "general",
 	}
 end
@@ -93,42 +93,42 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg)
 	if msg == L.vapor_trigger then
-		self:Message("vapor", "green", nil, L.vapor_message:format(vaporCount), 63322)
+		self:MessageOld("vapor", "green", nil, L.vapor_message:format(vaporCount), 63322)
 		vaporCount = vaporCount + 1
-		if vaporCount < 7 then
-			self:Bar("vapor", 30, L.vapor_bar:format(vaporCount), 63322)
+		if vaporCount < (self:Classic() and 9 or 7) then
+			self:Bar("vapor", 30, CL.count_amount:format(L.vapor_bar, vaporCount, self:Classic() and 8 or 6), 63322)
 		end
 	elseif msg == L.animus_trigger then
-		self:Message("animus", "red", nil, L.animus_message, 87179) -- 87179 / Summon Water Elemental / spell_frost_summonwaterelemental_2 / icon 135862
+		self:MessageOld("animus", "red", nil, L.animus_message, "spell_frost_summonwaterelemental_2") -- spell_frost_summonwaterelemental_2 / icon 135862
 	end
 end
 
 function mod:SaroniteVaporsApplied(args)
 	if self:Me(args.destGUID) and args.amount > 5 then
-		self:Message("vaporstack", "blue", nil, L["vaporstack_message"]:format(args.amount), 63322)
+		self:MessageOld("vaporstack", "blue", nil, L["vaporstack_message"]:format(args.amount), 63322)
 		self:Flash("vaporstack", 63322)
 	end
 end
 
 do
 	local function printTarget(self, name, guid)
-		self:TargetMessage(62660, name, "orange", "Alert")
+		self:TargetMessageOld(62660, name, "orange", "alert")
 		self:SecondaryIcon(62660, name)
 		self:ScheduleTimer("SecondaryIcon", 3, 62660)
 		if self:Me(guid) then
-			self:Say(62660, L["crash_say"])
+			self:Say(62660, L["crash_say"], nil, "Crash")
 		end
 	end
 
 	function mod:ShadowCrash(args)
-		self:GetBossTarget(printTarget, 0.5, args.sourceGUID)
+		self:GetUnitTarget(printTarget, 0.5, args.sourceGUID) -- Classic doesn't have boss frames for GetBossTarget
 	end
 end
 
 function mod:MarkOfTheFaceless(args)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Alert")
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "alert")
 	if self:Me(args.destGUID) then
-		self:Say(63276, L.mark_message)
+		self:Say(63276, L.mark_message, nil, "Mark")
 		self:Flash(63276)
 	end
 	self:TargetBar(args.spellId, 10, args.destName, L.mark_message)
@@ -141,11 +141,11 @@ function mod:MarkOfTheFacelessRemoved(args)
 end
 
 function mod:SearingFlames(args)
-	self:Message(args.spellId, "yellow", self:Interrupter() and "Warning")
+	self:MessageOld(args.spellId, "yellow", self:Interrupter() and "warning")
 end
 
 function mod:SurgeOfDarkness(args)
-	self:Message(args.spellId, "red", "Long", CL.count:format(args.spellName, surgeCount))
+	self:MessageOld(args.spellId, "red", "long", CL.count:format(args.spellName, surgeCount))
 	self:CastBar(args.spellId, 3, L["surge_bar"]:format(surgeCount))
 	surgeCount = surgeCount + 1
 	self:Bar(args.spellId, 60, L["surge_bar"]:format(surgeCount))

@@ -1,9 +1,8 @@
 local mod	= DBM:NewMod("BrawlRank4", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200528135243")
+mod:SetRevision("20220128073654")
 --mod:SetModelID(28115)
-mod:SetZone()
 mod:SetUsedIcons(8)
 
 mod:RegisterEvents(
@@ -26,7 +25,7 @@ local specWarnDarkOutpour		= mod:NewSpecialWarningDodge(291394, nil, nil, nil, 2
 --local timerFirewallCD			= mod:NewCDTimer(17, 132666, nil, nil, nil, 3)--Sanoriak
 local timerDarkOutpourCD		= mod:NewCDTimer(43.5, 291394, nil, nil, nil, 3)--Ouroboros
 
-local brawlersMod = DBM:GetModByName("Brawlers")
+local brawlersMod = DBM:GetModByName("BrawlersGeneral")
 --local DominikaGUID = 0
 
 function mod:SPELL_CAST_START(args)
@@ -80,7 +79,7 @@ end
 
 function mod:PLAYER_TARGET_CHANGED()
 	if self.Options.SetIconOnDominika and not DBM.Options.DontSetIcons and UnitGUID("target") == DominikaGUID and GetRaidTargetIndex("target") ~= 8 then
-		SetRaidTarget("target", 8)
+		self:SetIcon("target", 8)
 	end
 end
 --]]

@@ -5,8 +5,8 @@
 local mod, CL = BigWigs:NewBoss("Auriaya", 603, 1643)
 if not mod then return end
 mod:RegisterEnableMob(33515)
-mod.engageId = 1131
-mod.respawnTime = 30
+mod:SetEncounterID(mod:Classic() and 750 or 1131)
+mod:SetRespawnTime(30)
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -59,13 +59,13 @@ end
 --
 
 function mod:SonicScreech(args)
-	self:Message(args.spellId, "yellow", "Warning")
+	self:MessageOld(args.spellId, "yellow", "warning")
 	self:Bar(args.spellId, 28)
 end
 
 function mod:DefenderSpawn(args)
 	-- Spawns with 9 lives
-	self:Message("defender", "yellow", nil, L.defender_message:format(9), args.spellId)
+	self:MessageOld("defender", "yellow", nil, L.defender_message:format(9), args.spellId)
 end
 
 function mod:DefenderKill(args)
@@ -75,18 +75,18 @@ function mod:DefenderKill(args)
 end
 
 function mod:GuardianSwarm(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Alert", L.swarm_message, nil, self:Healer())
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "alert", L.swarm_message, nil, self:Healer())
 	self:CDBar(args.spellId, 37, L.swarm_message)
 end
 
 function mod:TerrifyingScreech(args)
 	local fear = self:SpellName(5782) -- 5782 = "Fear"
-	self:Message(args.spellId, "orange", "Info", fear)
+	self:MessageOld(args.spellId, "orange", "info", fear)
 	self:CDBar(args.spellId, 35, fear)
 	self:DelayedMessage(args.spellId, 32, "orange", CL.soon:format(fear))
 end
 
 function mod:SentinelBlast(args)
-	self:Message(args.spellId, "red", "Long")
+	self:MessageOld(args.spellId, "red", "long")
 end
 

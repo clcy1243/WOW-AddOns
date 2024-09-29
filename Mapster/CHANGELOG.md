@@ -1,8 +1,12 @@
 # Mapster
 
-## [1.8.5](https://github.com/Nevcairiel/Mapster/tree/1.8.5) (2019-09-25)
-[Full Changelog](https://github.com/Nevcairiel/Mapster/compare/1.8.4...1.8.5)
+## [1.12.0](https://github.com/Nevcairiel/Mapster/tree/1.12.0) (2024-07-25)
+[Full Changelog](https://github.com/Nevcairiel/Mapster/compare/1.11.0...1.12.0) [Previous Releases](https://github.com/Nevcairiel/Mapster/releases)
 
-- Update TOC for 8.2.5  
-- Verify the map position can be obtained when computing cursor position  
-- Only create the map options button if its enabled  
+- Fix quest poi scalign and include world quests  
+- Fix settings button  
+- Add TWW FogClear data  
+- Update map drawing to the latest version  
+- Fix tint of explored map areas not clearing in 11  
+- Update TOC for WoW 11  
+- Update C\_AddOns API  

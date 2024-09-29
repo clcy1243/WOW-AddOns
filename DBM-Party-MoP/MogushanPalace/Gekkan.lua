@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(690, "DBM-Party-MoP", 5, 321)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod.statTypes = "normal,heroic,challenge,timewalker"
+
+mod:SetRevision("20230307064655")
 mod:SetCreatureID(61243, 61337, 61338, 61339, 61340)--61243 (Gekkan), 61337 (Glintrok Ironhide), 61338 (Glintrok Skulker), 61339 (Glintrok Oracle), 61340 (Glintrok Hexxer)
 mod:SetEncounterID(1509, 1510)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -12,28 +13,36 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 118988 129262 118958 118903",
 	"SPELL_AURA_APPLIED_DOSE 129262",
 	"SPELL_AURA_REMOVED 118988 129262 118903 118958",
-	"SPELL_CAST_START 118903 118963 118940",
-	"UNIT_DIED"
+	"SPELL_CAST_START 118903 118963 118940"
+--	"UNIT_DIED"
 )
 
 local warnRecklessInspiration	= mod:NewStackAnnounce(118988, 3)
-local warnIronProtector			= mod:NewTargetAnnounce(118958, 2)
-local warnShank					= mod:NewCastAnnounce(118963, 4)--Interruptable
-local warnCleansingFlame		= mod:NewCastAnnounce(118940, 3)
-local warnHexCast				= mod:NewCastAnnounce(118903, 3)--Interruptable
-local warnHex					= mod:NewTargetAnnounce(118903, 4, nil, "Healer")--Dispelable
+local warnIronProtector			= mod:NewTargetNoFilterAnnounce(118958, 2)
 
-local specWarnShank				= mod:NewSpecialWarningInterrupt(118963, false)--specWarns can be spam. Default value is off. Use this manually.
-local specWarnCleansingFlame	= mod:NewSpecialWarningInterrupt(118940, false)
-local specWarnHexInterrupt		= mod:NewSpecialWarningInterrupt(118903, false)
-local specWarnHexDispel			= mod:NewSpecialWarningDispel(118903, false)
+local specWarnShank				= mod:NewSpecialWarningInterrupt(118963, false, nil, nil, 1, 2)--specWarns can be spam. Default value is off. Use this manually.
+local specWarnCleansingFlame	= mod:NewSpecialWarningInterrupt(118940, "HasInterrupt", nil, nil, 1, 2)
+local specWarnHexInterrupt		= mod:NewSpecialWarningInterrupt(118903, "HasInterrupt", nil, nil, 1, 2)
+local specWarnHexDispel			= mod:NewSpecialWarningDispel(118903, "RemoveMagic", nil, nil, 1, 2)
 
-local timerInspiriation			= mod:NewTargetTimer(20, 118988)
-local timerIronProtector		= mod:NewTargetTimer(15, 118958)
-local timerHexCD				= mod:NewCDTimer(9, 118903, nil, nil, nil, 3)
-local timerHex					= mod:NewTargetTimer(20, 118903, nil, "Healer")
+local timerInspiriation			= mod:NewTargetTimer(20, 118988, nil, nil, nil, 5)
+local timerIronProtector		= mod:NewTargetTimer(15, 118958, nil, nil, nil, 5)
+local timerHex					= mod:NewTargetTimer(20, 118903, nil, "Healer", nil, 5, nil, DBM_COMMON_L.MAGIC_ICON)
 
-function mod:OnCombatStart(delay)
+--function mod:OnCombatStart(delay)
+--end
+
+function mod:SPELL_CAST_START(args)
+	if args.spellId == 118903 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnHexInterrupt:Show(args.sourceName)
+		specWarnHexInterrupt:Play("kickcast")
+	elseif args.spellId == 118963 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnShank:Show(args.sourceName)
+		specWarnShank:Play("kickcast")
+	elseif args.spellId == 118940 and self:CheckInterruptFilter(args.sourceGUID, false, true) then
+		specWarnCleansingFlame:Show(args.sourceName)
+		specWarnCleansingFlame:Play("kickcast")
+	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
@@ -44,8 +53,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnIronProtector:Show(args.destName)
 		timerIronProtector:Start(args.destName)
 	elseif args.spellId == 118903 then
-		warnHex:Show(args.destName)
-		specWarnHexDispel:Show(args.destName)
+		if self:CheckDispelFilter("magic") then
+			specWarnHexDispel:Show(args.destName)
+			specWarnHexDispel:Play("helpdispel")
+		end
 		timerHex:Start(args.destName)
 	end
 end
@@ -67,23 +78,11 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:SPELL_CAST_START(args)
-	if args.spellId == 118903 then
-		warnHexCast:Show()
-		specWarnHexInterrupt:Show(args.sourceName)
-		timerHexCD:Start()
-	elseif args.spellId == 118963 then
-		warnShank:Show()
-		specWarnShank:Show(args.sourceName)
-	elseif args.spellId == 118940 then
-		warnCleansingFlame:Show()
-		specWarnCleansingFlame:Show(args.sourceName)
-	end
-end
-
+--[[
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 61340 and self:IsInCombat() then--Seperate statement for Glintrok Hexxer since we actually need to cancel a cd bar.
-		timerHexCD:Cancel()
+--		timerHexCD:Cancel()
 	end
 end
+--]]

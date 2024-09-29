@@ -1,8 +1,15 @@
-## Interface: 80300
+## Interface: 110002
+
 ## Title: World Quest Tracker
-## Notes: Make more easy to see world quests
-## SavedVariables: WQTrackerDB
+## Notes: An addon by Terciob. Make more easy to see world quests
+## SavedVariables: WQTrackerDB, WQTrackerLanguage
 ## SavedVariablesPerCharacter: WQTrackerDBChr
+
+## X-Curse-Project-ID: 100610
+## X-Wago-ID: lQNlrEKe
+
+## Version: v11.0.2.520-Retail
+
 
 #@no-lib-strip@
 libs\libs.xml
@@ -26,16 +33,22 @@ WorldQuestTracker_Initialize.lua
 WorldQuestTracker_IDs.lua
 
 WorldQuestTracker.lua
+WorldQuestTracker_Tracker.lua
 
 WorldQuestTracker_Core.lua
 
+WorldQuestTracker_MapChange.lua
 WorldQuestTracker_FrameAPI.lua
 WorldQuestTracker_MapAPI.lua
+WorldQuestTracker_Summary.lua
 WorldQuestTracker_GroupFinder.lua
 WorldQuestTracker_RareFinder.lua
 WorldQuestTracker_ZoneMap.lua
 WorldQuestTracker_WorldMap.lua
-WorldQuestTracker_Tracker.lua
 WorldQuestTracker_Taxi.lua
 
+WorldQuestTracker_OptionsPanel.lua
+
 WorldQuestTrackerMixin.xml
+
+racing_helper.lua

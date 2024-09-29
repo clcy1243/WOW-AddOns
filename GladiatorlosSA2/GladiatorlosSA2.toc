@@ -1,10 +1,10 @@
-﻿## Interface: 80300
+﻿## Interface: 110200
 ## Title: GladiatorlosSA
 ## Notes: PvP Sound Alerter
-## Notes-zhTW: PVP技能語音提示
-## Author: Abatorlos(of Spinebreaker), DuskAshes, superk521, zuhligan, Grit (Legion Update), Mini_Dragon, LordKuper
+## Author: Mulvark
+## IconTexture: interface\icons\spell_misc_emotionangry.blp
 ## SavedVariables: GladiatorlosSADB
-## Version: 2.3
+## Version: TWWB2
 
 embeds.xml
 Locales\locales.xml
@@ -12,3 +12,8 @@ Locales\locales.xml
 GladiatorlosSA2.lua
 spelllist.lua
 options.lua
+
+ClassicEra\options_TBC.lua
+ClassicEra\spelllist_TBC.lua
+ClassicEra\options_WLK.lua
+ClassicEra\spelllist_WLK.lua

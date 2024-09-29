@@ -1,4 +1,4 @@
-﻿if (GetLocale() ~= "koKR") then
+if (GetLocale() ~= "koKR") then
 	return;
 end
 -- 지옥천사(윈드러너) 한글화
@@ -60,6 +60,7 @@ VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "§|cffffe566opt|r[ions] - 
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "§|cffffe566res|r[et] - 패널 위치 초기화";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "§|cffffe566lock|r - 패널 위치 잠금 토글";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "§|cffffe566mm, map, minimap|r - 미니맵 아이콘 토글";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566compart|r[ment] - Toggle AddOn Compartment Icon";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "§|cffffe566show, hide, toggle|r - 패널 켜기/끄기 전환";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "§|cffffe566load|r - [Profile],[Key Layout]";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "§[broad]|cffffe566cast, mt|r[s] - 메인 탱커 알림";
@@ -246,6 +247,7 @@ VUHDO_I18N_BOUQUET_STATUS_THREAT = "상태바: 위협 %";
 VUHDO_I18N_BOUQUET_NEW_ITEM_NAME = "-- 여기 (디)버프 입력 --";
 VUHDO_I18N_DEF_BOUQUET_TANK_COOLDOWNS = "탱커 쿨다운";
 VUHDO_I18N_DEF_BOUQUET_PW_S_WEAKENED_SOUL = "PW:S & 약화된 영혼";
+VUHDO_I18N_DEF_BOUQUET_MONK_STAGGER = "수도사 시간차";
 VUHDO_I18N_DEF_BOUQUET_BORDER_MULTI_AGGRO = "테두리: 다중 + 어그로";
 VUHDO_I18N_DEF_BOUQUET_BORDER_MULTI = "테두리: 다중";
 VUHDO_I18N_DEF_BOUQUET_BORDER_SIMPLE = "테두리: 단순";
@@ -349,7 +351,8 @@ VUHDO_I18N_SPELL_LAYOUT_NOT_EXIST = "주문 레이아웃 \"%s\"은 존재하지 
 --VUHDO_I18N_ADDON_WARNING = "경고: VuhDo와 함께 애드온 |cffffffff\"%s\"|r |1이;가; 활성화 되어있어 문제가 될 수 있습니다. 원인: %s";
 --VUHDO_I18N_MAY_CAUSE_LAGS = "심각한 지연을 초래할 수 있습니다.";
 
-VUHDO_I18N_DISABLE_BY_VERSION = "!!! VUHDO 사용불가 !!! 이 버전은 %d 이상의 클라이언트 버전에만 사용됩니다!!!";
+VUHDO_I18N_DISABLE_BY_MIN_VERSION = "!!! VUHDO IS DISABLED !!! This version (%s) is for client versions %d and above only !!!"
+VUHDO_I18N_DISABLE_BY_MAX_VERSION = "!!! VUHDO IS DISABLED !!! This version (%s) is for client versions %d and below only !!!"
 
 VUHDO_I18N_BOUQUET_STATUS_ALTERNATE_POWERS = "Statusbar: Altern. Power %";
 VUHDO_I18N_BOUQUET_ALTERNATE_POWERS_ABOVE = "Flag: 대체 능력 > %";
@@ -366,6 +369,8 @@ VUHDO_I18N_DEF_BOUQUET_TARGET_HEALTH = "체력 (일반, 대상)";
 
 VUHDO_I18N_TAPPED_COLOR = "Flag: 선택";
 VUHDO_I18N_ENEMY_STATE_COLOR = "색상: 우호적/적대적";
+VUHDO_I18N_FRIEND_STATUS = "Flag: 우호적";
+VUHDO_I18N_FOE_STATUS = "Flag: 적대적";
 VUHDO_I18N_BOUQUET_STATUS_ALWAYS_FULL = "상태바: 항상 전체";
 VUHDO_I18N_BOUQUET_STATUS_FULL_IF_ACTIVE = "상태바: 활성화 시 전체";
 VUHDO_I18N_AOE_ADVICE = "Icon: AOE 주의";
@@ -489,3 +494,63 @@ VUHDO_I18N_PLAY_SOUND_FILE_ERR = "\"%s\"소리를 재생할 수 없음: %s";
 VUHDO_I18N_PLAY_SOUND_FILE_DEBUFF_ERR = "기본 디버프에 대하여 소리 \"%s\" |1을;를; 재생할 수 없습니다. 'VuhDo 옵션> 디버프> 기본> 디버프 사운드'에서 설정을 조정하십시오.";
 VUHDO_I18N_PLAY_SOUND_FILE_CUSTOM_DEBUFF_ERR = "사용자 정의 디버프 \"%s\"에 대해 \"%s\"소리를 재생할 수 없습니다. 'VuhDo 옵션> 디버프> 사용자 정의'에서 설정을 조정하십시오.";
 
+-- 3.122
+VUHDO_I18N_BOUQUET_STATUS_POWER_TANK_ONLY = "Statusbar: Power % (Tank Only)";
+VUHDO_I18N_DEF_BOUQUET_BAR_MANA_TANK_ONLY = "Manabars: Power (Tank Only)";
+
+-- 3.131
+VUHDO_I18N_DEF_COUNTER_HEAL_ABSORB = "Counter: All Heal Absorb #k";
+VUHDO_I18N_DEF_STATUS_HEAL_ABSORB = "Statusbar: Heal Absorb";
+
+-- 3.135
+VUHDO_I18N_TRINKET_1 = "Trinket 1";
+VUHDO_I18N_TRINKET_2 = "Trinket 2";
+
+-- 3.139
+VUHDO_I18N_EVOKERS = "Evokers";
+
+-- 3.143
+VUHDO_I18N_BUFFC_EARTH_SHIELD = "Earth Shield (Self)";
+
+-- 3.150
+VUHDO_I18N_ADDON_COMPARTMENT_ICON = "AddOn Compartment Icon is now ";
+
+-- 3.152
+VUHDO_I18N_SPELL_TRACE_SINGLE = "Icon: Spell Trace (Single)";
+
+-- 3.154
+VUHDO_I18N_SPELL_TRACE_INCOMING = "Icon: Spell Trace (Incoming)";
+VUHDO_I18N_SPELL_TRACE_HEAL = "Icon: Spell Trace (Heal)";
+
+-- 3.157
+VUHDO_I18N_TEXT_PROVIDER_OVERHEAL = "Overheal: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_OVERHEAL_PLUS = "Overheal: +<#n>k";
+VUHDO_I18N_TEXT_PROVIDER_INCOMING_HEAL = "Incoming Heal: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_SHIELD_ABSORB = "Shield absorb total: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_HEAL_ABSORB = "Heal absorb total: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_THREAT = "Threat: <#n>%";
+VUHDO_I18N_TEXT_PROVIDER_CHI = "Chi: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_HOLY_POWER = "Holy Power: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_COMBO_POINTS = "Combo Points: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_SOUL_SHARDS = "Soul Shards: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_RUNES = "Runes: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_ARCANE_CHARGES = "Arcane Charges: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_PERCENT = "Mana: <#n>%";
+VUHDO_I18N_TEXT_PROVIDER_MANA_PERCENT_TENTH = "Mana: <#n/10%>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_UNIT_OF = "Mana: <#n>/<#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_KILO_OF = "Mana: <#nk>/<#nk>";
+VUHDO_I18N_TEXT_PROVIDER_MANA = "Mana: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_KILO = "Mana: <#nk>";
+VUHDO_I18N_BOUQUET_STATUS_HEALTH_IF_ACTIVE = "Statusbar: Health % if active";
+
+VUHDO_I18N_DEF_COUNTER_ACTIVE_AURAS = "Counter: Active Bouquet Auras #k";
+
+VUHDO_I18N_BOUQUET_EVOKER_REVERSION = "Evoker Reversion (non-echo)";
+VUHDO_I18N_BOUQUET_EVOKER_REVERSION_ECHO = "Evoker Reversion (echo)";
+VUHDO_I18N_BOUQUET_EVOKER_DREAM_BREATH = "Evoker Dream Breath (non-echo)";
+VUHDO_I18N_BOUQUET_EVOKER_DREAM_BREATH_ECHO = "Evoker Dream Breath (echo)";
+VUHDO_I18N_BOUQUET_EVOKER_ALL_ECHO = "Evoker All HoT Echoes";
+
+VUHDO_I18N_TRAIL_OF_LIGHT_NEXT = "Flag: Trail of Light (Next)";
+VUHDO_I18N_DEF_TRAIL_OF_LIGHT_NEXT = "Trail of Light (Next)";
+VUHDO_I18N_BOUQUET_DEBUFF_BLEED = "Flag: Debuff Bleed";

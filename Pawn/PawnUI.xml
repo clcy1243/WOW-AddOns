@@ -24,15 +24,9 @@
 		<Color r ="0.75" g="0.75" b="0.75" />
 	</Font>
 
-	<!-- Standard Pawn dialog and frame template -->	
+	<!-- Standard Pawn dialog template -->	
 	<Frame name="PawnUIDialogTemplate" virtual="true" parent="UIParent" frameStrata="FULLSCREEN_DIALOG" hidden="true" enableMouse="true">
 	 	<Anchors><Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER" /></Anchors>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<Color a="1" r="0" g="0" b="0" />
-			<BackgroundInsets><AbsInset left="10" right="11" top="11" bottom="10" /></BackgroundInsets>
-			<TileSize><AbsValue val="32" /></TileSize>
-			<EdgeSize><AbsValue val="32" /></EdgeSize>
-		</Backdrop>
 	</Frame>
 
 	<!-- Standard Pawn large frame tab template -->
@@ -114,7 +108,7 @@
 			<Color r=".196" g=".388" b=".8" />
 		</HighlightTexture>
 	</Button>
-	
+
 	<Button name="PawnUIFrame_ScaleSelector_ItemTemplate" virtual="true" inherits="PawnUIFrame_Generic_ItemTemplate" useParentLevel="true">
 		<Size><AbsDimension x="150" y="16" /></Size>
 		<DisabledFont style="PawnFontBlueSmall" />
@@ -310,7 +304,6 @@
 	
 	<!-- Pawn tooltips that look like glowy hint boxes -->
 	<GameTooltip name="PawnUI_HintTooltip_PointsUp" virtual="true" inherits="GlowBoxTemplate, GameTooltipTemplate">
-		<Backdrop /><!-- Gets rid of the GameTooltipTemplate border -->
 		<Frames>
 			<Frame>
 				<Size x="53" y="21" />
@@ -335,8 +328,19 @@
 				</Layers>
 			</Frame>
 		</Frames>
+		<Scripts>
+			<OnLoad>
+				if self.NineSlice then
+					-- WoW 9.1.5
+					self.NineSlice:Hide()
+				elseif self.SetBackdrop then
+					-- Burning Crusade Classic
+					self:SetBackdrop({})
+				end
+			</OnLoad>
+		</Scripts>
 	</GameTooltip>
-	
+
 	<!-- Pawn loot upgrade advisor -->
 	<Button name="PawnLootUpgradeAdvisor" inherits="GlowBoxTemplate" enableMouse="true" virtual="true">
 		<Size x="260" y="100"/>
@@ -381,7 +385,6 @@
 		<Size><AbsDimension x="40" y="40" /></Size>
 	</Texture>
 
-	
 	<!-- Pawn quest advisor -->
 	<Texture name="PawnUI_QuestAdvisorTexture" file="Interface\AddOns\Pawn\Textures\UpgradeArrowBig" virtual="true" hidden="true">
 		<Anchors><Anchor point="BOTTOMLEFT"><Offset><AbsDimension x="15" y="-5" /></Offset></Anchor></Anchors>
@@ -392,16 +395,11 @@
 		<Size><AbsDimension x="18" y="18" /></Size>
 	</Texture>
 
-
 	<!-- The main Pawn configuration UI -->
-	<Frame name="PawnUIFrame" toplevel="true" parent="UIParent" hidden="true" movable="true" enableMouse="true"><!-- WAS: frameStrata="MEDIUM" -->
+	<Frame name="PawnUIFrame" toplevel="true" parent="UIParent" hidden="true" movable="true" enableMouse="true">
 	 	<Anchors><Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER" /></Anchors>
 		<Size><AbsDimension x="800" y="525" /></Size>
 
-		<Backdrop bgFile="Interface\AddOns\Pawn\Textures\Background" tile="false">
-			<BackgroundInsets><AbsInset left="0" right="0" top="0" bottom="-311" /></BackgroundInsets>
-		</Backdrop>
-		
 		<Frames>
 
 			<Button name="PawnUIFrame_TinyCloseButton" hidden="false" inherits="UIPanelCloseButton">
@@ -470,6 +468,23 @@
 								<!-- Content added dynamically, and size updated dynamically -->
 
 								<Frames>
+
+									<Frame name="PawnUIFrame_ScaleSelector_NoneWarning">
+										<Anchors><Anchor point="TOPLEFT" /></Anchors>
+										<Size><AbsDimension x="162" y="80" /></Size>
+										<Layers>
+											<Layer level="ARTWORK">
+												<Texture file="Interface\DialogFrame\UI-Dialog-Icon-AlertNew">
+													<Anchors><Anchor point="TOP" x="0" y="-12" /></Anchors>
+													<Size><AbsDimension x="32" y="32" /></Size>
+												</Texture>
+												<FontString text="PawnUIFrame_ScaleSelector_NoneWarning_Text" inherits="GameFontNormalSmall" justifyH="MIDDLE" justifyV="MIDDLE">
+													<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="8" y="-40"/></Offset></Anchor></Anchors>
+													<Size><AbsDimension x="146" y="40" /></Size>
+												</FontString>
+											</Layer>
+										</Layers>
+									</Frame>
 
 									<Frame name="PawnUIFrame_ScaleSelector_HighlightFrame" hidden="true">
 										<Anchors><Anchor point="TOPLEFT"></Anchor></Anchors>
@@ -810,12 +825,20 @@
 					<Frame>
 						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="20" y="-80" /></Offset></Anchor></Anchors>
 						<Size><AbsDimension x="263" y="336" /></Size>
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<Color a="0.5" r="0" g="0" b="0" />
-							<EdgeSize><AbsValue val="16" /></EdgeSize>
-							<TileSize><AbsValue val="16" /></TileSize>
-							<BackgroundInsets><AbsInset left="4" right="4" top="4" bottom="4" /></BackgroundInsets>
-						</Backdrop>
+						<Scripts>
+							<OnLoad>
+								if BackdropTemplateMixin then Mixin(self, BackdropTemplateMixin) end
+								self:SetBackdrop({
+									bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+									edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+									tile = true,
+									edgeSize = 16,
+									tileSize = 16,
+									insets = { left = 4, right = 4, top = 4, bottom = 4 },
+								})
+								self:SetBackdropColor(0, 0, 0, 0.5)
+							</OnLoad>
+						</Scripts>
 					</Frame>
 					<ScrollFrame name="PawnUIFrame_StatsList" inherits="FauxScrollFrameTemplate">
 						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="25" y="-86" /></Offset></Anchor></Anchors>
@@ -931,14 +954,6 @@
 							<FontString name="$parent_Label" inherits="PawnUICheckboxLabelTemplate" />
 						</Layer></Layers>
 						<Scripts><OnClick function="PawnUIFrame_NoUpgradesCheck_OnClick" /></Scripts>
-					</CheckButton>
-
-					<CheckButton name="PawnUIFrame_FollowSpecializationCheck" inherits="PawnUICheckboxTemplate" hidden="true">
-						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="325" y="-315" /></Offset></Anchor></Anchors>
-						<Layers><Layer level="ARTWORK">
-							<FontString name="$parent_Label" inherits="PawnUICheckboxLabelTemplate" text="PawnUIFrame_FollowSpecializationCheck_Text" />
-						</Layer></Layers>
-						<Scripts><OnClick function="PawnUIFrame_FollowSpecializationCheck_OnClick" /></Scripts>
 					</CheckButton>
 
 					<CheckButton name="PawnUIFrame_NormalizeValuesCheck" inherits="PawnUICheckboxTemplate">
@@ -1474,6 +1489,14 @@
 						<Scripts><OnClick function="PawnUIFrame_ShowSocketingAdvisorCheck_OnClick" /></Scripts>
 					</CheckButton>
 					
+					<CheckButton name="PawnUIFrame_ShowReforgingAdvisorCheck" inherits="PawnUICheckboxTemplate">
+						<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="300" y="-185" /></Offset></Anchor></Anchors>
+						<Layers><Layer level="ARTWORK">
+							<FontString name="$parent_Label" inherits="PawnUICheckboxLabelTemplate" text="PawnUIFrame_ShowReforgingAdvisorCheck_Text" />
+						</Layer></Layers>
+						<Scripts><OnClick function="PawnUIFrame_ShowReforgingAdvisorCheck_OnClick" /></Scripts>
+					</CheckButton>
+					
 					<!-- Other options -->
 					
 					<CheckButton name="PawnUIFrame_DebugCheck" inherits="PawnUICheckboxTemplate">
@@ -1595,72 +1618,6 @@
 					
 				</Layers>
 			</Frame>
-			
-			<!-- The tab buttons -->
-			<!-- List the right-side tabs first so they overlap the others in case of custom fonts or long strings: the Gems tab is less important than Options. -->
-			<Button name="$parentTab6" inherits="CharacterFrameTabButtonTemplate" id="6" text="PawnUIFrame_AboutTab_Text">
-				<Anchors><Anchor point="RIGHT" relativePoint="BOTTOMRIGHT"><Offset><AbsDimension x="-6" y="-8" /></Offset></Anchor></Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-						PawnUISwitchToTab(PawnUIAboutTabPage)
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentTab7" inherits="CharacterFrameTabButtonTemplate" id="7" text="PawnUIFrame_HelpTab_Text">
-				<Anchors><Anchor point="RIGHT" relativeTo="$parentTab6" relativePoint="LEFT"><Offset><AbsDimension x="16" y="0" /></Offset></Anchor></Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-						PawnUISwitchToTab(PawnUIHelpTabPage)
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentTab5" inherits="CharacterFrameTabButtonTemplate" id="5" text="PawnUIFrame_OptionsTab_Text">
-				<Anchors><Anchor point="RIGHT" relativeTo="$parentTab7" relativePoint="LEFT"><Offset><AbsDimension x="16" y="0" /></Offset></Anchor></Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-						PawnUISwitchToTab(PawnUIOptionsTabPage)
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="PawnUIFrame_ScalesTab_Text">
-				<Anchors><Anchor point="LEFT" relativePoint="BOTTOMLEFT"><Offset><AbsDimension x="196" y="-8" /></Offset></Anchor></Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-						PawnUISwitchToTab(PawnUIScalesTabPage)
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentTab2" inherits="CharacterFrameTabButtonTemplate" id="2" text="PawnUIFrame_ValuesTab_Text">
-				<Anchors><Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT"><Offset><AbsDimension x="-16" y="0" /></Offset></Anchor></Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-						PawnUISwitchToTab(PawnUIValuesTabPage)
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentTab3" inherits="CharacterFrameTabButtonTemplate" id="3" text="PawnUIFrame_CompareTab_Text">
-				<Anchors><Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT"><Offset><AbsDimension x="-16" y="0" /></Offset></Anchor></Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-						PawnUISwitchToTab(PawnUICompareTabPage)
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentTab4" inherits="CharacterFrameTabButtonTemplate" id="4" text="PawnUIFrame_GemsTab_Text">
-				<Anchors><Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT"><Offset><AbsDimension x="-16" y="0" /></Offset></Anchor></Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-						PawnUISwitchToTab(PawnUIGemsTabPage)
-					</OnClick>
-				</Scripts>
-			</Button>
 
 		</Frames>
 
@@ -1674,13 +1631,24 @@
 				self:RegisterEvent("UNIT_INVENTORY_CHANGED")
 				self:RegisterEvent("ITEM_LOCKED")
 				self:RegisterEvent("GROUP_ROSTER_UPDATE")
-				if not VgerCore.IsClassic then
-					-- These events don't exist on Classic.
+				self:RegisterEvent("MERCHANT_UPDATE")
+				-- These events don't exist on Classic versions.
+				if VgerCore.SpecsExist then
 					self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+				end
+				if VgerCore.ArtifactsExist then
 					self:RegisterEvent("ARTIFACT_UPDATE")
 				end
-				PawnUITabList = { PawnUIScalesTabPage, PawnUIValuesTabPage, PawnUICompareTabPage, PawnUIGemsTabPage, PawnUIOptionsTabPage, PawnUIAboutTabPage, PawnUIHelpTabPage }
-				PanelTemplates_SetNumTabs(PawnUIFrame, #PawnUITabList)
+
+				PawnUITabList = { PawnUIScalesTabPage, PawnUIValuesTabPage, PawnUICompareTabPage, PawnUIGemsTabPage, PawnUIOptionsTabPage, PawnUIHelpTabPage, PawnUIAboutTabPage }
+				PawnUICreateTabs()
+
+				if BackdropTemplateMixin then Mixin(self, BackdropTemplateMixin) end
+				self:SetBackdrop({
+					bgFile = "Interface\\AddOns\\Pawn\\Textures\\Background",
+					tile = false,
+					insets = { left = 0, right = 0, top = 0, bottom = -311 },
+				})
 			</OnLoad>
 			<OnEvent>
 				PawnOnEvent(event, ...)
@@ -1744,8 +1712,9 @@
 				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="40" y="-155" /></Offset></Anchor></Anchors>
 				<Scripts>
 					<OnClick>
-						InterfaceOptionsFrameOkay_OnClick()
-						HideUIPanel(GameMenuFrame)
+						if InterfaceOptionsFrameOkay_OnClick then InterfaceOptionsFrameOkay_OnClick() end
+						if GameMenuFrame then HideUIPanel(GameMenuFrame) end
+						if SettingsPanel then HideUIPanel(SettingsPanel) end
 						PawnUIShow()
 					</OnClick>
 				</Scripts>
@@ -1784,6 +1753,8 @@
 				<Size><AbsDimension x="250" y="25" /></Size>
 				<Scripts>
 					<OnTextChanged function="PawnUIStringDialog_TextBox_OnTextChanged" />
+					<OnEnterPressed function="PawnUIStringDialog_OKButton_OnClick" />
+					<OnEscapePressed function="PawnUIStringDialog_CancelButton_OnClick" />
 				</Scripts>
 			</EditBox>
 			
@@ -1804,7 +1775,22 @@
 			</Button>
 			
 		</Frames>
-		
+
+		<Scripts>
+			<OnLoad>
+				tinsert(UISpecialFrames, self:GetName()) -- closes when you press Escape
+				if BackdropTemplateMixin then Mixin(self, BackdropTemplateMixin) end
+				self:SetBackdrop({
+					bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+					edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+					tile = true,
+					tileSize = 32,
+					edgeSize = 32,
+					insets = { left = 10, right = 11, top = 11, bottom = 10 },
+				})
+			</OnLoad>
+		</Scripts>
+
 	</Frame>
 	
 	<Frame name="PawnUIStringDialogMultiLine" inherits="PawnUIDialogTemplate">
@@ -1853,9 +1839,17 @@
 					<Anchor point="TOPLEFT" relativeTo="PawnUIStringDialogMultiLine_Scroller"><Offset><AbsDimension x="-7" y="7" /></Offset></Anchor>
 					<Anchor point="BOTTOMRIGHT" relativeTo="PawnUIStringDialogMultiLine_Scroller"><Offset><AbsDimension x="26" y="-7" /></Offset></Anchor>
 				</Anchors>
-				<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize><AbsValue val="16" /></EdgeSize>
-				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						if BackdropTemplateMixin then Mixin(self, BackdropTemplateMixin) end
+						self:SetBackdrop({
+							edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+							tile = true,
+							edgeSize = 16,
+						})
+						self:SetBackdropColor(0, 0, 0, 0.5)
+					</OnLoad>
+				</Scripts>
 			</Frame>
 
 			<Button parentKey="OKButton" hidden="false" inherits="UIPanelButtonTemplate">
@@ -1878,10 +1872,21 @@
 		
 		<Scripts>
 			<OnLoad>
+				tinsert(UISpecialFrames, self:GetName()) -- closes when you press Escape
+
 				PawnUIStringDialogMultiLine.TextBox = PawnUIStringDialogMultiLine_TextBox
+
+				if BackdropTemplateMixin then Mixin(self, BackdropTemplateMixin) end
+				self:SetBackdrop({
+					bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+					edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+					tile = true,
+					tileSize = 32,
+					edgeSize = 32,
+					insets = { left = 10, right = 11, top = 11, bottom = 10 },
+				})
 			</OnLoad>
 		</Scripts>
-
 	</Frame>
 	
 </Ui>

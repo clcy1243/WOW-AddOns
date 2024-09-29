@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(1980, "DBM-Party-Legion", 13, 945)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20240106080507")
 mod:SetCreatureID(124872)
 mod:SetEncounterID(2066)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -22,7 +21,7 @@ local warnUmbralFlanking				= mod:NewTargetAnnounce(247245, 3)
 local warnVoidTrap						= mod:NewSpellAnnounce(246026, 3, nil, nil, nil, nil, nil, 2)
 --local warnDreadScreech					= mod:NewCastAnnounce(248831, 2)
 
---local specWarnHuntersRush				= mod:NewSpecialWarningDefensive(247145, "Tank", nil, nil, 1, 2)
+--local specWarnHuntersRush				= mod:NewSpecialWarningDefensive(247145, nil, nil, nil, 1, 2)
 local specWarnOverloadTrap				= mod:NewSpecialWarningDodge(247206, nil, nil, nil, 2, 2)
 local specWarnUmbralFlanking			= mod:NewSpecialWarningMoveAway(247245, nil, nil, nil, 1, 2)
 local yellUmbralFlanking				= mod:NewYell(247245)
@@ -33,7 +32,7 @@ local timerVoidTrapCD					= mod:NewCDTimer(15.8, 246026, nil, nil, nil, 3)
 local timerOverloadTrapCD				= mod:NewCDTimer(20.6, 247206, nil, nil, nil, 3)
 local timerRavagingDarknessCD			= mod:NewCDTimer(8.8, 245802, nil, nil, nil, 3)
 local timerUmbralFlankingCD				= mod:NewCDTimer(35.2, 247245, nil, nil, nil, 3)
-local timerScreechCD					= mod:NewCDTimer(15.4, 248831, nil, nil, nil, 3, nil, DBM_CORE_L.HEROIC_ICON)
+local timerScreechCD					= mod:NewCDTimer(15.4, 248831, nil, nil, nil, 3, nil, DBM_COMMON_L.HEROIC_ICON)
 
 function mod:OnCombatStart(delay)
 	timerRavagingDarknessCD:Start(5.5-delay)
@@ -76,8 +75,10 @@ function mod:SPELL_AURA_APPLIED(args)
 			yellUmbralFlanking:Yell()
 		end
 --	elseif spellId == 247145 then
---		specWarnHuntersRush:Show()
---		specWarnHuntersRush:Play("defensive")
+--		if self:IsTanking("player", "boss1", nil, true) then
+--			specWarnHuntersRush:Show()
+--			specWarnHuntersRush:Play("defensive")
+--		end
 	end
 end
 
@@ -96,8 +97,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 end
 --]]
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 247175 then--Void Trap
 		warnVoidTrap:Show()
 		warnVoidTrap:Play("watchstep")

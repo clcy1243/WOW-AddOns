@@ -33,7 +33,7 @@ local sHealButtonWidthCache = { };
 local sTopHeightCache = { };
 local sBottomHeightCache = { };
 
-function resetSizeCalcCaches()
+function VUHDO_resetSizeCalcCaches()
 	table.wipe(sHealButtonWidthCache);
 	table.wipe(sTopHeightCache);
 	table.wipe(sBottomHeightCache);
@@ -49,8 +49,8 @@ function VUHDO_getAdditionalTopHeight(aPanelNum)
 	if not sTopHeightCache[aPanelNum] then
 		local tTopSpace;
 
-		if VUHDO_INDICATOR_CONFIG["BOUQUETS"]["THREAT_BAR"] ~= "" then
-			tTopSpace = VUHDO_INDICATOR_CONFIG["CUSTOM"]["THREAT_BAR"]["HEIGHT"];
+		if VUHDO_INDICATOR_CONFIG[aPanelNum]["BOUQUETS"]["THREAT_BAR"] ~= "" then
+			tTopSpace = VUHDO_INDICATOR_CONFIG[aPanelNum]["CUSTOM"]["THREAT_BAR"]["HEIGHT"];
 		else
 			tTopSpace = 0;
 		end

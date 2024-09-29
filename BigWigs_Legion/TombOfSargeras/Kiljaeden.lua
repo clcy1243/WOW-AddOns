@@ -175,9 +175,9 @@ function mod:GetOptions()
 		shadowsoulMarker,
 		"custom_on_track_illidan",
 		"custom_on_zoom_in",
-		238999, -- Darkness of a Thousand Souls
+		{238999, "CASTBAR"}, -- Darkness of a Thousand Souls
 		-15543, -- Demonic Obelisk
-		"obeliskExplosion",
+		{"obeliskExplosion", "CASTBAR"},
 		243982, -- Tear Rift
 		244856, -- Flaming Orb
 		240262, -- Burning
@@ -258,7 +258,7 @@ function mod:OnEngage()
 	focusedTarget = nil
 	timerMinimap = nil
 	timers = self:Mythic() and timersMythic or self:Heroic() and timersHeroic or self:Normal() and timersNormal or self:LFR() and timersLFR
-	wipe(mobCollector)
+	mobCollector = {}
 
 	self:Bar(240910, timers[240910][stage][armageddonCount], CL.count:format(self:SpellName(240910), armageddonCount)) -- Armageddon
 	if not self:Easy() then
@@ -289,13 +289,13 @@ end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg, _, _, _, target)
 	if msg:find("238502", nil, true) then -- Focused Dreadflame Target
-		self:TargetMessage(238505, target, "yellow", "Alarm", nil, nil, true)
+		self:TargetMessageOld(238505, target, "yellow", "alarm", nil, nil, true)
 		self:TargetBar(238505, 5, target)
 		self:PrimaryIcon(238505, target)
-		local guid = UnitGUID(target)
+		local guid = self:UnitGUID(target)
 		focusedTarget = guid
 		if self:Me(guid) then
-			self:Say(238505)
+			self:Say(238505, nil, nil, "Focused Dreadflame")
 			self:SayCountdown(238505, 5)
 		end
 		if not self:Easy() then
@@ -304,10 +304,10 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg, _, _, _, target)
 		-- Schedule fake success in case the target uses invis, etc
 		self:ScheduleTimer("FocusedDreadflameSuccess", 5.5)
 	elseif msg:find("235059", nil, true) then -- Rupturing Singularity
-		self:Message(235059, "orange", "Warning", CL.count:format(self:SpellName(235059), singularityCount))
+		self:MessageOld(235059, "orange", "warning", CL.count:format(self:SpellName(235059), singularityCount))
 		self:Bar("rupturingKnock", 9.85, CL.count:format(L.singularityImpact, singularityCount), 235059)
 		singularityCount = singularityCount + 1
-		local timer = 0
+		local timer
 		if inIntermission then -- Intermission timer
 			if self:Mythic() and stage == 2 then
 				timer = singularityCount % 2 == 1 and 20 or 10
@@ -329,14 +329,14 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 1.5 then
 			prev = t
-			self:Message(args.spellId, "blue", "Alert", CL.underyou:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alert", CL.underyou:format(args.spellName))
 		end
 	end
 end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 244856 then -- Flaming Orb
-		self:Message(spellId, "yellow", "Alert", CL.count:format(self:SpellName(spellId), flamingOrbCount))
+		self:MessageOld(spellId, "yellow", "alert", CL.count:format(self:SpellName(spellId), flamingOrbCount))
 		flamingOrbCount = (flamingOrbCount % (self:Mythic() and 3 or 2)) + 1
 		self:Bar(spellId, self:Mythic() and (flamingOrbCount == 2 and 15.0 or flamingOrbCount == 3 and 16.0 or 64) or flamingOrbCount == 2 and 30 or 64, CL.count:format(self:SpellName(spellId), flamingOrbCount))
 	end
@@ -344,11 +344,11 @@ end
 
 -- Stage One: The Betrayer
 function mod:Felclaws(args)
-	self:Message(args.spellId, "red", "Alarm", CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "red", "alarm", CL.casting:format(args.spellName))
 end
 
 function mod:FelclawsApplied(args)
-	self:Message(args.spellId, "red", "Info")
+	self:MessageOld(args.spellId, "red", "info")
 	felclawsCount = felclawsCount + 1
 	if self:Mythic() and stage == 3 then
 		self:Bar(args.spellId, felclawsCount % 4 == 0 and 29 or felclawsCount % 4 == 1 and 16 or 24)
@@ -363,9 +363,9 @@ function mod:FelclawsApplied(args)
 end
 
 function mod:Armageddon(args)
-	self:Message(args.spellId, "red", "Warning", CL.count:format(args.spellName, armageddonCount))
+	self:MessageOld(args.spellId, "red", "warning", CL.count:format(args.spellName, armageddonCount))
 	armageddonCount = armageddonCount + 1
-	local timer = 0
+	local timer
 	if inIntermission then -- Intermission timer
 		if armageddonCount == 2 then
 			timer = self:Mythic() and 58.9 or 29.4
@@ -388,7 +388,11 @@ do
 		playerList[#playerList+1] = args.destName
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId, self:Easy() and L.reflectionErupting or CL.count_rticon:format(L.reflectionErupting, #playerList, #playerList+2))
+			if self:Easy() then
+				self:Say(args.spellId, L.reflectionErupting, nil, "Reflection: Erupting")
+			else
+				self:Say(args.spellId, CL.count_rticon:format(L.reflectionErupting, #playerList, #playerList+2), nil, ("Reflection: Erupting (%d{rt%d})"):format(#playerList, #playerList+2))
+			end
 			self:SayCountdown(args.spellId, 8)
 		end
 		if #playerList == 1 then
@@ -398,11 +402,11 @@ do
 			elseif self:Mythic() and stage == 1 then
 				self:Bar(args.spellId, 109, INLINE_DAMAGER_ICON.." "..L.reflectionErupting)
 			end
-			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "orange", "Alert", L.reflectionErupting)
+			self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, playerList, "orange", "alert", L.reflectionErupting)
 		end
 
 		if self:GetOption(eruptingMarker) then
-			SetRaidTarget(args.destName, #playerList+2)  -- Skip marks 1 + 2 for visibility
+			self:CustomIcon(false, args.destName, #playerList+2)  -- Skip marks 1 + 2 for visibility
 		end
 	end
 
@@ -411,20 +415,20 @@ do
 			self:CancelSayCountdown(args.spellId)
 		end
 		if self:GetOption(eruptingMarker) and not self:Mythic() then -- Don't remove icons in Mythic
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
 	end
 
 	function mod:LingeringEruptionRemoved(args) -- Mythic only, Remove icons after this debuff instead
 		if self:GetOption(eruptingMarker) then
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
 	end
 end
 
 -- Intermission: Eternal Flame
 function mod:NetherGale(args)
-	self:Message("stages", "green", "Long", CL.intermission, false)
+	self:MessageOld("stages", "green", "long", CL.intermission, false)
 
 	self:StopBar(CL.count:format(self:SpellName(240910), armageddonCount)) -- Armageddon
 	self:StopBar(CL.count:format(self:SpellName(235059), singularityCount)) -- Rupturing Singularity
@@ -469,12 +473,12 @@ do
 	function mod:BurstingDreadflame(args)
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Bursting Dreadflame")
 			self:SayCountdown(args.spellId, 5)
 		end
 		playerList[#playerList+1] = args.destName
 		if #playerList == 1 then
-			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "red", "Warning")
+			self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, playerList, "red", "warning")
 			burstingDreadflameCount = burstingDreadflameCount + 1
 			self:Bar(args.spellId, timers[args.spellId][stage][stage == 3 and (burstingDreadflameCount % 2 == 0 and 2 or 3) or burstingDreadflameCount])
 		end
@@ -484,7 +488,7 @@ end
 function mod:NetherGaleRemoved() -- Stage 2
 	inIntermission = nil
 	stage = 2
-	self:Message("stages", "green", "Long", CL.stage:format(stage), false)
+	self:MessageOld("stages", "green", "long", CL.stage:format(stage), false)
 	focusedDreadflameCount = 1
 	burstingDreadflameCount = 1
 	singularityCount = 1
@@ -510,7 +514,7 @@ end
 -- Stage Two: Reflected Souls
 do
 	function mod:ShadowReflectionWailing(args)
-		self:TargetMessage(args.spellId, args.destName, "orange", "Alert", CL.count:format(L.reflectionWailing, wailingCounter), nil, true)
+		self:TargetMessageOld(args.spellId, args.destName, "orange", "alert", CL.count:format(L.reflectionWailing, wailingCounter), nil, true)
 		self:Bar(args.spellId, 7, INLINE_TANK_ICON.." "..CL.add)
 		wailingCounter = wailingCounter + 1
 		local timer = 114
@@ -520,7 +524,7 @@ do
 		self:Bar(args.spellId, timer, INLINE_TANK_ICON.." "..CL.count:format(L.reflectionWailing, wailingCounter)) -- Not seen 2nd add in P1
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId, L.reflectionWailing)
+			self:Say(args.spellId, L.reflectionWailing, nil, "Reflection: Wailing")
 			self:SayCountdown(args.spellId, 7)
 		end
 	end
@@ -533,7 +537,7 @@ do
 	end
 
 	function mod:SorrowfulWail(args)
-		self:Message(args.spellId, "yellow", "Alarm")
+		self:MessageOld(args.spellId, "yellow", "alarm")
 		self:Bar(args.spellId, 15.8)
 	end
 
@@ -550,12 +554,12 @@ do
 	local addMarks = {} -- Current marks on each add
 
 	function mod:ShadowsoulScanner(event, unit)
-		local guid = UnitGUID(unit)
+		local guid = self:UnitGUID(unit)
 		if self:MobId(guid) == 121193 and not mobCollector[guid] then
 			for i = 1, 5 do
 				if not decieversAddMarks[i] then
 					if self:GetOption(shadowsoulMarker) then
-						SetRaidTarget(unit, i)
+						self:CustomIcon(false, unit, i)
 					end
 					decieversAddMarks[i] = guid
 					mobCollector[guid] = true
@@ -570,7 +574,7 @@ do
 				addMaxHP = maxHp
 			end
 			addDmg[guid] = maxHp - UnitHealth(unit)
-			local icon = GetRaidTargetIndex(unit)
+			local icon = self:GetIcon(unit)
 			if icon and icon > 0 and icon < 9 then
 				addMarks[guid] = icon
 			end
@@ -638,9 +642,9 @@ do
 	end
 
 	local function loopTracking(self, n)
-		local _, _, active = GetTrackingInfo(n)
+		local _, _, active = C_Minimap.GetTrackingInfo(n)
 		if not active then
-			SetTracking(n, true)
+			C_Minimap.SetTracking(n, true)
 		else
 			self:CancelTimer(timerMinimap)
 			timerMinimap = nil
@@ -649,7 +653,7 @@ do
 
 	function mod:DeceiversVeilCast() -- Intermission 2
 		inIntermission = true
-		self:Message("stages", "green", "Long", CL.intermission, false)
+		self:MessageOld("stages", "green", "long", CL.intermission, false)
 		self:StopBar(CL.count:format(self:SpellName(240910), armageddonCount)) -- Armageddon
 		self:StopBar(INLINE_DAMAGER_ICON.." "..L.reflectionErupting) -- Shadow Reflection: Erupting
 		self:StopBar(INLINE_TANK_ICON.." "..CL.count:format(L.reflectionWailing, wailingCounter)) -- Shadow Reflection: Wailing
@@ -666,11 +670,11 @@ do
 
 		local shadowsoulOption = self:CheckOption("shadowsoul", "INFOBOX")
 		if self:GetOption(shadowsoulMarker) or shadowsoulOption then
-			wipe(decieversAddMarks)
+			decieversAddMarks = {}
 
 			if shadowsoulOption then
-				wipe(addDmg)
-				wipe(addMarks)
+				addDmg = {}
+				addMarks = {}
 				addMaxHP = -1
 				self:Log("SPELL_DAMAGE", "IntermissionAddDamage", "*")
 				self:Log("SPELL_PERIODIC_DAMAGE", "IntermissionAddDamage", "*")
@@ -689,8 +693,8 @@ do
 
 		if self:GetOption("custom_on_track_illidan") then
 			local trackHumanoids = self:SpellName(19883)
-			for i = 1, GetNumTrackingTypes() do
-				local name = GetTrackingInfo(i)
+			for i = 1, C_Minimap.GetNumTrackingTypes() do
+				local name = C_Minimap.GetTrackingInfo(i)
 				if name == trackHumanoids then
 					timerMinimap = self:ScheduleRepeatingTimer(loopTracking, 0.1, self, i)
 					break
@@ -711,10 +715,10 @@ do
 		end
 		if self:GetOption("custom_on_track_illidan") then
 			local trackHumanoids = self:SpellName(19883)
-			for i = 1, GetNumTrackingTypes() do
-				local name = GetTrackingInfo(i)
+			for i = 1, C_Minimap.GetNumTrackingTypes() do
+				local name = C_Minimap.GetTrackingInfo(i)
 				if name == trackHumanoids then
-					SetTracking(i, false)
+					C_Minimap.SetTracking(i, false)
 					break
 				end
 			end
@@ -751,7 +755,7 @@ do
 			end
 		end
 
-		self:Message("stages", "green", "Long", CL.stage:format(stage), false)
+		self:MessageOld("stages", "green", "long", CL.stage:format(stage), false)
 		self:Bar(238999, 2, CL.count:format(L.darkness, darknessCount)) -- Darkness of a Thousand Souls
 		self:Bar(239932, 11) -- Felclaws
 		self:Bar(243982, 15) -- Tear Rift
@@ -772,7 +776,7 @@ do
 		if self:Me(args.destGUID) then
 			if t-prev > 1.5 then
 				prev = t
-				self:Message(args.spellId, "blue", "Long", CL.you:format(args.spellName))
+				self:MessageOld(args.spellId, "blue", "long", CL.you:format(args.spellName))
 			end
 			self:Bar(args.spellId, 20)
 		end
@@ -781,13 +785,13 @@ end
 
 function mod:IllidansSightlessGazeRemoved(args)
 	if stage == 2 and self:Me(args.destGUID) then -- Don't warn in p3
-		self:Message(args.spellId, "blue", "Alert", CL.removed:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alert", CL.removed:format(args.spellName))
 	end
 end
 
 -- Stage Three: Darkness of A Thousand Souls
 function mod:DarknessofaThousandSouls(args)
-	self:Message(args.spellId, "orange", "Long", CL.casting:format(CL.count:format(args.spellName, darknessCount)))
+	self:MessageOld(args.spellId, "orange", "long", CL.casting:format(CL.count:format(args.spellName, darknessCount)))
 	self:CastBar(args.spellId, 9, CL.count:format(L.darkness, darknessCount))
 	darknessCount = darknessCount + 1
 	self:Bar(args.spellId, darknessCount == 2 and 90 or 95, CL.count:format(L.darkness, darknessCount))
@@ -808,7 +812,7 @@ end
 function mod:StartObeliskTimer(t)
 	local obeliskCounter = self:Mythic() and (obeliskCount+2) or self:Heroic() and (darknessCount+1) or darknessCount -- Mythic: 3-4-5-6-7... Heroic: 3-3-4-4-5... Normal: 2-2-3-3-4...
 	self:Bar(-15543, t, L.countx:format(self:SpellName(-15543), obeliskCounter))
-	self:ScheduleTimer("Message", t, -15543, "yellow", "Info", CL.spawned:format(L.countx:format(self:SpellName(-15543), obeliskCounter)))
+	self:ScheduleTimer("MessageOld", t, -15543, "yellow", "info", CL.spawned:format(L.countx:format(self:SpellName(-15543), obeliskCounter)))
 	self:ScheduleTimer("CastBar", t, "obeliskExplosion", 13, L.obeliskExplosion, -15543) -- will get readjusted in :DemonicObelisk()
 	obeliskCount = obeliskCount + 1
 	if obeliskCount % 2 == 0 then
@@ -817,7 +821,7 @@ function mod:StartObeliskTimer(t)
 end
 
 function mod:TearRift(args)
-	self:Message(args.spellId, "red", "Alarm")
+	self:MessageOld(args.spellId, "red", "alarm")
 	self:Bar(args.spellId, obeliskCount == 1 and 90 or 95)
 end
 
@@ -827,14 +831,14 @@ do
 	function mod:ShadowReflectionHopeless(args)
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId, L.reflectionHopeless)
+			self:Say(args.spellId, L.reflectionHopeless, nil, "Reflection: Hopeless")
 			self:SayCountdown(args.spellId, 8)
 		end
 		playerList[#playerList+1] = args.destName
 		if #playerList == 1 then
 			self:Bar(args.spellId, 196.0, INLINE_HEALER_ICON.." "..L.reflectionHopeless)
 			self:Bar(args.spellId, 8, INLINE_HEALER_ICON.." "..CL.adds)
-			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "orange", "Alert", L.reflectionHopeless)
+			self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, playerList, "orange", "alert", L.reflectionHopeless)
 		end
 	end
 	function mod:ShadowReflectionHopelessRemoved(args)

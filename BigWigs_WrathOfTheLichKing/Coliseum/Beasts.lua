@@ -10,7 +10,8 @@ mod:RegisterEnableMob(
 	35144, -- Acidmaw
 	34797  -- Icehowl
 )
---mod.engageId = 0 -- Inconsistent between tries, ends between bosses
+-- mod:SetEncounterID(1088) -- Inconsistent between tries, ends between bosses
+-- mod:SetRespawnTime(30)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -19,13 +20,6 @@ mod:RegisterEnableMob(
 local snobolledWarned = {}
 local sprayTimer = nil
 local handle_Jormungars = nil
-local icehowl, jormungars, gormok
-do
-	local _
-	_, gormok = EJ_GetCreatureInfo(1, 1618) -- Gormok the Impaler
-	_, jormungars = EJ_GetCreatureInfo(2, 1618) -- Acidmaw and Dreadscale
-	_, icehowl = EJ_GetCreatureInfo(3, 1618) -- Icehowl
-end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -40,10 +34,14 @@ if L then
 	L.icehowl_trigger = "The air itself freezes with the introduction of our next combatant, Icehowl! Kill or be killed, champions!"
 	L.boss_incoming = "%s incoming"
 
+	L.gormok = "Gormok the Impaler"
+	L.jormungars = "Acidmaw and Dreadscale"
+	L.icehowl = "Icehowl"
+
 	-- Gormok
 	L.snobold = "Snobold"
 	L.snobold_desc = "Warn who gets a Snobold on their heads."
-	L.snobold_message = "Add"
+	L.snobold_icon = 66406
 
 	-- Jormungars
 	L.submerge = "Submerge"
@@ -71,10 +69,11 @@ L = mod:GetLocale()
 -- Initialization
 --
 
-function mod:OnRegister()
+local function OnRegister(self)
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 end
-mod.OnBossDisable = mod.OnRegister
+mod.OnRegister = OnRegister
+mod.OnBossDisable = OnRegister
 
 function mod:GetOptions()
 	return {
@@ -103,11 +102,13 @@ function mod:GetOptions()
 		--[[ General ]]--
 		"bosses",
 		"berserk",
-	}, {
-		snobold = gormok,
-		submerge = jormungars,
-		[66770] = icehowl,
+	},{
+		snobold = L.gormok,
+		submerge = L.jormungars,
+		[66770] = L.icehowl,
 		bosses = "general",
+	},{
+		snobold = CL.add, -- Snobold (Add)
 	}
 end
 
@@ -118,6 +119,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Impale", 66331)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "Impale", 66331)
 	self:Log("SPELL_CAST_START", "StaggeringStomp", 66330)
+	self:Log("SPELL_AURA_APPLIED", "Snobolled", 66406)
 
 	-- Jormungars
 	self:Log("SPELL_CAST_SUCCESS", "SlimeCast", 66883)
@@ -137,19 +139,19 @@ function mod:OnBossEnable()
 	-- Common
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "Reboot")
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
-	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE", "Charge")
+	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE")
 	self:Death("Win", 34797)
 end
 
 function mod:OnEngage()
+	snobolledWarned = {}
 	self:CloseProximity()
-	self:Bar("bosses", 20, L["boss_incoming"]:format(gormok), 66331)
+	self:Bar("bosses", 20, L["boss_incoming"]:format(L.gormok), 66331)
 	if self:Heroic() then
-		self:Bar("bosses", 180, L["boss_incoming"]:format(jormungars), "INV_Misc_MonsterScales_18")
+		self:Bar("bosses", 180, L["boss_incoming"]:format(L.jormungars), "INV_Misc_MonsterScales_18")
 	else
 		self:Berserk(900)
 	end
-	wipe(snobolledWarned)
 	self:RegisterEvent("UNIT_AURA")
 end
 
@@ -176,29 +178,31 @@ end
 -- Gormok the Impaler
 --
 
-do
-	local snobolled = GetSpellInfo(66406)
-	function mod:UNIT_AURA(_, unit)
-		local debuffed = self:UnitDebuff(unit, snobolled)
-		local player = self:UnitName(unit)
-		if snobolledWarned[player] and not debuffed then
-			snobolledWarned[player] = nil
-		elseif debuffed and not snobolledWarned[player] then
-			self:TargetMessage("snobold", player, "yellow", nil, L["snobold_message"], 66406)
-			snobolledWarned[player] = true
-		end
+function mod:Snobolled(args) -- XXX Should be in patch 10.1.7, classic wrath pending
+	self:TargetMessageOld("snobold", args.destName, "yellow", nil, CL.add, args.spellId)
+	self:UnregisterEvent("UNIT_AURA")
+end
+
+function mod:UNIT_AURA(_, unit)
+	local debuffed = self:UnitDebuff(unit, self:SpellName(66406), 66406) -- Snobolled!
+	local player = self:UnitName(unit)
+	if snobolledWarned[player] and not debuffed then
+		snobolledWarned[player] = nil
+	elseif debuffed and not snobolledWarned[player] then
+		self:TargetMessageOld("snobold", player, "yellow", nil, CL.add, 66406)
+		snobolledWarned[player] = true
 	end
 end
 
 function mod:Impale(args)
 	if args.amount then
-		self:StackMessage(args.spellId, args.destName, args.amount, "orange", "Info")
+		self:StackMessageOld(args.spellId, args.destName, args.amount, "orange", "info")
 	end
 	self:Bar(args.spellId, 10)
 end
 
 function mod:StaggeringStomp(args)
-	self:Message(args.spellId, "red")
+	self:MessageOld(args.spellId, "red")
 	self:Bar(args.spellId, 21)
 end
 
@@ -208,7 +212,7 @@ do
 		if self:Me(args.destGUID) then
 			local t = GetTime()
 			if t-4 > last then
-				self:Message(args.spellId, "blue", "Alarm", CL["you"]:format(args.spellName))
+				self:MessageOld(args.spellId, "blue", "alarm", CL["you"]:format(args.spellName))
 				self:Flash(args.spellId)
 				last = t
 			end
@@ -221,11 +225,11 @@ end
 --
 
 function mod:Jormungars()
-	local m = L["boss_incoming"]:format(jormungars)
-	self:Message("bosses", "green", nil, m, "Ability_Hunter_Pet_Worm")
+	local m = L["boss_incoming"]:format(L.jormungars)
+	self:MessageOld("bosses", "green", nil, m, "Ability_Hunter_Pet_Worm")
 	self:Bar("bosses", 15, m, "INV_Misc_MonsterScales_18")
 	if self:Heroic() then
-		self:Bar("bosses", 200, L["boss_incoming"]:format(icehowl), "INV_Misc_MonsterHorn_07")
+		self:Bar("bosses", 200, L["boss_incoming"]:format(L.icehowl), "INV_Misc_MonsterHorn_07")
 	end
 	self:OpenProximity("proximity", 10)
 	-- The first worm to spray is Acidmaw, he has a 10 second spray timer after emerge
@@ -247,24 +251,24 @@ do
 	end
 
 	function mod:Spray(args)
-		self:Message("sprays", "red", nil, args.spellName, args.spellId)
+		self:MessageOld("sprays", "red", nil, args.spellName, args.spellId)
 		self:CDBar("sprays", 20, L["spray"], 5740)
 	end
 end
 
 
 function mod:SlimeCast(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 end
 
 function mod:Spew(args)
-	self:Message("spew", "yellow", nil, args.spellName, args.spellId)
+	self:MessageOld("spew", "yellow", nil, args.spellName, args.spellId)
 end
 
 do
 	local toxinTargets, scheduled = mod:NewTargetList(), nil
 	local function toxinWarn(spellId)
-		mod:TargetMessage(spellId, toxinTargets, "orange", "Info", L["toxin_spell"])
+		mod:TargetMessageOld(spellId, toxinTargets, "orange", "info", L["toxin_spell"])
 		scheduled = nil
 	end
 	function mod:Toxin(args)
@@ -272,7 +276,7 @@ do
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
 		end
-		if not scheduled then 
+		if not scheduled then
 			scheduled = self:ScheduleTimer(toxinWarn, 0.5, args.spellId)
 		end
 	end
@@ -281,19 +285,19 @@ end
 do
 	local burnTargets, scheduled = mod:NewTargetList()
 	local function burnWarn()
-		mod:TargetMessage(66869, burnTargets, "orange", "Info", L["burn_spell"])
+		mod:TargetMessageOld(66869, burnTargets, "orange", "info", L["burn_spell"])
 		scheduled = nil
 	end
 	function mod:Burn(args)
 		burnTargets[#burnTargets + 1] = args.destName
-		if not scheduled then 
+		if not scheduled then
 			scheduled = self:ScheduleTimer(burnWarn, 0.5)
 		end
 	end
 end
 
 function mod:Enraged(args)
-	self:Message(args.spellId, "red", "Long")
+	self:MessageOld(args.spellId, "red", "long")
 end
 
 do
@@ -302,7 +306,7 @@ do
 		if self:Me(args.destGUID) then
 			local t = GetTime()
 			if t-4 > last then
-				self:Message(args.spellId, "blue", "Alarm", L["slime_message"])
+				self:MessageOld(args.spellId, "blue", "alarm", L["slime_message"])
 				self:Flash(args.spellId)
 				last = t
 			end
@@ -315,43 +319,43 @@ end
 --
 
 function mod:Icehowl()
-	local m = L["boss_incoming"]:format(icehowl)
-	self:Message("bosses", "green", nil, m, "INV_Misc_Pet_Pandaren_Yeti")
-	self:Bar("bosses", 10, m, "INV_Misc_MonsterHorn_07")
+	local text = L["boss_incoming"]:format(L.icehowl)
+	self:MessageOld("bosses", "green", nil, text, "INV_Misc_Pet_Pandaren_Yeti")
+	self:Bar("bosses", 10, text, "INV_Misc_MonsterHorn_07")
 	self:CancelTimer(handle_Jormungars)
 	handle_Jormungars = nil
 	self:StopBar(L["spray"])
 	self:StopBar(L["submerge"])
 	if self:Heroic() then
-		self:Berserk(220, true, icehowl)
+		self:Berserk(220, true, L.icehowl)
 	end
 	self:CloseProximity()
 end
 
 function mod:Rage(args)
-	self:Message(args.spellId, "red")
+	self:MessageOld(args.spellId, "red")
 	self:Bar(args.spellId, 15)
 end
 
 function mod:Daze(args)
-	self:Message(args.spellId, "green")
+	self:MessageOld(args.spellId, "green")
 	self:Bar(args.spellId, 15)
 end
 
 function mod:Butt(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 	self:CDBar(args.spellId, 12)
 end
 
-function mod:Charge(_, msg, unit, _, _, player)
-	if unit == icehowl then
-		local furiousChargeId = 52311
-		self:TargetMessage("charge", player, "blue", "Alarm", furiousChargeId)
+function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg, unit, _, _, player)
+	if unit == L.icehowl then
+		-- Furious Charge
+		self:TargetMessageOld("charge", player, "blue", "alarm", 52311)
 		if UnitIsUnit(player, "player") then
-			self:Flash("charge", furiousChargeId)
-			self:Say("charge", furiousChargeId)
+			self:Flash("charge", 52311)
+			self:Say("charge", 52311, nil, "Furious Charge")
 		end
-		self:Bar("charge", 7.5, furiousChargeId)
+		self:Bar("charge", 7.5, 52311)
 		self:PrimaryIcon("charge", player)
 	end
 end

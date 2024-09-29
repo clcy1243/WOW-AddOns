@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod("MawTrash", "DBM-Party-Legion", 8)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod:SetRevision("20240808043723")
 --mod:SetEncounterID(1823)
-mod:SetZone()
 
 mod.isTrashMod = true
+mod.isTrashModBossFightAllowed = true
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 198405 195031"

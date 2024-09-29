@@ -1,3 +1,1449 @@
+Version 3.176  
+  
+  
+Known issues:  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed debuff icon border color display on multiple icons of the same type  
+-- Fixed debuff icon tracking of multiple icons with the same spell name  
+-- Fixed Monk friendly range check on forced specialization change  
+  
+  
+Improvements:  
+-- Added Paladin 'Rite of Sanctification' to Buff Watch  
+-- Added Evoker 'Sense Power' to Buff Watch  
+-- Added trinket ability 'Golden Glow' absorb tracking  
+-- VuhDo Options now automatically hides during combat  
+  
+  
+--------------------------------------------------------------  
+Version 3.175  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed profile and key layout auto-load on LFG forced spec change  
+-- Fixed stack overflow when hiding Blizzard default party frames  
+  
+  
+Improvements:  
+-- Added new bouquet validator 'Flag: Trail of Light (Next)'  
+-- Added new default bouquet 'Trail of Light (Next)'  
+-- Added Shaman supportive imbuements to Buff Watch  
+-- Added option to display debuff state color as debuff icon border  
+-- Added new debuff type for 'Bleed' effects  
+-- Added new bouquet validator 'Flag: Debuff Bleed'  
+-- Added Evoker 'Cauterizing Flame' debuff ability  
+-- Added Paladin 'Blessing of Protection' debuff ability  
+-- Added Shaman 'Poison Cleansing Totem' debuff ability  
+  
+  
+--------------------------------------------------------------  
+Version 3.174  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed range check when using spells that change based on hero talents  
+-- Fixed Druid 'Swiftmend' cooldown tracking when untalented  
+  
+  
+Improvements:  
+-- Added default bouquets to track both echo and non-echo Evoker HoTs  
+  
+  
+--------------------------------------------------------------  
+Version 3.173  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed Spell Trace bouquet updates on target and focus units  
+-- Fixed Buff Watch self targeted buffs during combat  
+-- Fixed Buff Watch when previously enabled abilities are untalented  
+-- Fixed player specialization based role detection  
+-- Fixed fallback role detection for Evoker damage specializations  
+-- Fixed dragging of spellbook items in 'VuhDo Options > Spells'  
+-- Fixed profile loading of tooltip spell info setting  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.172  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed health bar status color persisting after aura removal  
+-- Fixed incorrect display of icons in some VuhDo Options menus  
+  
+  
+Improvements:  
+-- Added Shaman 'Skyfury' to Buff Watch  
+  
+  
+--------------------------------------------------------------  
+Version 3.171  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 11.0.0 The War Within pre-patch  
+-- Added new bouquet validator 'Counter: Active Bouquet Auras #k'  
+  
+  
+--------------------------------------------------------------  
+Version 3.170  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.169  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed Buff Watch 'Missing' color during combat  
+-- Fixed dispellable debuff bar color fallback for custom debuffs  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.168  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.167  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.166  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 10.2.7  
+  
+  
+--------------------------------------------------------------  
+Version 3.165  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.164  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Added per panel indicator settings under 'VuhDo Options > Panels'  
+  
+  
+--------------------------------------------------------------  
+Version 3.163  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.162  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed detection of class dispel abilities  
+  
+  
+Improvements:  
+-- Bump TOC interface for 10.2.6  
+  
+  
+--------------------------------------------------------------  
+Version 3.161  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed 'Special Dot' indicator bar glow color  
+-- Fixed HoT display when tracking the same aura in multiple indicators  
+-- Fixed throttling of combat log event triggered updates  
+  
+  
+Improvements:  
+-- Added option to show effective health text  
+-- Added import and export of the standard debuff ignore list  
+  
+  
+--------------------------------------------------------------  
+Version 3.160  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.159  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Added option to turn axis for overshield and heal absorb bars  
+-- Added option to sort pet units last  
+-- Bump TOC interface for 10.2.5  
+  
+  
+--------------------------------------------------------------  
+Version 3.158  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed HoT Icon opacity when using 'Glossy' or 'Flat' icons  
+-- Fixed HoT Icon timer text color when using 'Glossy' or 'Flat' icons  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.157  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed HoT Icon opacity, fade and flash effects  
+-- Fixed HoT Icon timer text opacity  
+-- Fixed detection of spellbook and talent overrides  
+-- Fixed hiding empty panels when 'Own Group' filter is used  
+-- Fixed visibility of empty panels containing only target/focus models  
+  
+  
+Improvements:  
+-- Added text provider to display total heal absorption amount  
+-- Added warning for ambiguous macro names on command binds e.g. menu  
+-- Added new bouquet validator 'Statusbar: Health % if active'  
+-- Manual and Dungeon Finder roles now take priority over class roles  
+  
+  
+--------------------------------------------------------------  
+Version 3.156  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed range detection while in combat lockdown  
+  
+  
+Improvements:  
+-- Added display of private aura icons on unit health bars  
+  
+  
+--------------------------------------------------------------  
+Version 3.155  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed non-bar indicator display when a bouquet provides no background color  
+  
+  
+Improvements:  
+-- Bump TOC interface for 10.2.0  
+-- Bouquets will now apply the selected background color even when displaying icons  
+  
+  
+--------------------------------------------------------------  
+Version 3.154  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed Swiftmend indicator to not display for 'Wild Synthesis' talent  
+  
+  
+Improvements:  
+-- Added bouquet validator to display latest incoming Spell Trace  
+-- Added bouquet validator to display latest healing Spell Trace  
+-- HoT Icon scale now applies to all HoT Icon layouts  
+-- Added Priest spell 'Luminous Barrier' absorb tracking  
+-- Added trinket ability 'Writhing Ward' absorb tracking  
+  
+  
+--------------------------------------------------------------  
+Version 3.153  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Added position adjustments for the 'Special Dot' indicator  
+-- Bump TOC interface for 10.1.7  
+  
+  
+--------------------------------------------------------------  
+Version 3.152  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed smart cast of resurrection for Augmentation Evoker  
+-- Fixed duplicate scroll bar on combobox dropdowns  
+-- Safer handling when closing VuhDo Options during combat lockdown  
+  
+  
+Improvements:  
+-- Added Paladin shield for talent 'Overflowing Light'  
+-- Added bouquet validator to track only a single Spell Trace  
+-- Added incoming spell traces to track incoming spell casts  
+--   Tracking of incoming spell casts is by spell ID only  
+--   Works only for explicit caster targets (e.g. no mouseovers)  
+  
+  
+--------------------------------------------------------------  
+
+Version 3.151  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 10.1.5  
+  
+  
+--------------------------------------------------------------  
+Version 3.150  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Added new command line toggle for AddOn Compartment Icon  
+  
+  
+--------------------------------------------------------------  
+Version 3.149  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 10.1.0
+-- Added integration with Blizzard UI minimap add-on compartment  
+-- Added Druid 'Adaptive Swarm' as a default HoT  
+  
+  
+--------------------------------------------------------------  
+Version 3.148  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Disease only shows as dispelable when Priest 'Improved Purify' talented  
+  
+  
+Improvements:  
+-- Bump TOC interface for 10.0.7  
+  
+  
+--------------------------------------------------------------  
+Version 3.147  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Priest 'Holy Word: Salvation' is now recognized when talented  
+  
+  
+Improvements:  
+-- Bump TOC interface for 10.0.5  
+  
+  
+--------------------------------------------------------------  
+Version 3.146  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed latency when changing the player focus unit  
+-- Fixed bouquet validator icon opacity  
+-- Fixed bouquet validator display when bouquet has zero validators  
+-- Fixed bouquet validator invalid colors with safe fallback  
+  
+  
+Improvements:  
+-- Added default custom debuffs for Vault of Incarnates raid encounters  
+  
+  
+--------------------------------------------------------------  
+Version 3.145  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed tracking of ambiguously named HoTs by spell ID  
+-- Fixed resurrection smart cast for Evoker 'Return' and 'Mass Return'  
+-- Fixed Evoker debuff abilities ('Naturalize' and 'Expunge')  
+-- Fixed 'Flag: Debuff, configured' validator when no debuffs present  
+-- Fixed safe color application for statusbar type bouquet validators  
+  
+  
+Improvements:  
+-- Added default HoTs for Preservation Evoker  
+-- Added Rogue non-lethal 'Atrophic Poison' to Buff Watch  
+  
+  
+--------------------------------------------------------------  
+Version 3.144  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed visibility of empty panels containing only target/focus models  
+-- Fixed visibility of empty panels on show/hide of 'VuhDo Options > Move!'  
+-- Fixed VuhDo Options demo mode when 'Hide Panels > Empty' selected  
+-- Fixed keybindings under 'Game Menu > Options > Gameplay > Keybindings > AddOns'  
+-- Fixed mouse/key bindings after spells are learned from talent changes  
+-- Fixed debuff types for both basic and talented Shaman 'Purify Spirit'  
+-- Fixed clock sweep for HoT Icons whose duration increases post application  
+  
+  
+Improvements:  
+-- Added option to only show text with no icon for HoT Icons  
+-- Bump TOC interface for 10.0.2  
+  
+  
+--------------------------------------------------------------  
+Version 3.143  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed game stutters caused by macro'ed console commands  
+-- Fixed error where bouquets are evaluated before decompression  
+-- Fixed application of specified opacity for HoT Icons  
+  
+  
+Improvements:  
+-- Added Druid spell 'Mark of the Wild' to Buff Watch  
+-- Added Shaman totem 'Liquid Magma Totem' to Buff Watch  
+-- Added Shaman totem 'Wind Rush Totem' to Buff Watch  
+-- Added Shaman totem 'Tranquil Air Totem' to Buff Watch  
+-- Added Shaman totem 'Storm Elemental Totem' to Buff Watch  
+-- Added Shaman totem 'Stoneskin Totem' to Buff Watch  
+-- Added Shaman totem 'Mana Spring Totem' to Buff Watch  
+-- Added Shaman totem 'Poison Cleansing Totem' to Buff Watch  
+-- Added Shaman weapon enchant 'Earthliving Weapon' to Buff Watch  
+-- Added Priest spell 'Guardian Spirit' to Buff Watch  
+-- Added Mage spell 'Timewarp' to Buff Watch  
+-- Added Hunter spell 'Ancient Hysteria' to Buff Watch  
+-- Added Evoker spell 'Blessing of the Bronze' to Buff Watch  
+-- Added Evoker spell 'Fury of the Aspects' to Buff Watch  
+-- Added Paladin battle resurrection spell 'Intercession'  
+  
+  
+--------------------------------------------------------------  
+Version 3.142  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 10.0.0 Dragonflight pre-patch  
+  
+  
+--------------------------------------------------------------  
+Version 3.141  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.140  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.139  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.138  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.137  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 9.2.7  
+  
+  
+--------------------------------------------------------------  
+Version 3.136  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 9.2.5  
+  
+  
+--------------------------------------------------------------  
+Version 3.135  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Added background flash or fade out per HoT icon  
+-- Added unit macro conditional options for auto-trigger custom spells  
+-- Added trinket slots ('13' and '14') as valid actions  
+-- Updated string localizations for Russian (ruRU)  
+  
+  
+--------------------------------------------------------------  
+Version 3.134  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.133  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Fixed hiding of standard Blizzard UI frames (e.g. party, raid)  
+  
+  
+Improvements:  
+-- Increased maximum number of NPC units from 5 to 8  
+-- Added default custom debuffs for Sepulcher raid encounters  
+  
+  
+--------------------------------------------------------------  
+Version 3.132  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 9.2.0  
+-- Added class color option for incoming heal/shield/etc. bars  
+  
+  
+--------------------------------------------------------------  
+Version 3.131  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Added debuff absorb overlay bar to display healing absorption amount  
+-- Added new default bouquet 'Counter: All Heal Absorb #k'  
+-- Added new bouquet validator 'Counter: All Heal Absorb #k'  
+-- Added new bouquet validator 'Statusbar: Heal Absorb'  
+  
+  
+--------------------------------------------------------------  
+Version 3.130  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.129  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Bump TOC interface for 9.1.5  
+  
+  
+--------------------------------------------------------------  
+Version 3.128  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.127  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.126  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Fixed combobox model reset on profile change  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.125  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Fixed minimap icon visibility toggle  
+-- Fixed loading of custom debuff settings on profile change  
+-- Fixed combobox last item selection  
+  
+  
+Improvements:  
+-- Added default custom debuffs for Sanctum of Domination raid encounters  
+-- Added Sylvanas 'Veil of Darkness' debuff absorb tracking  
+-- Added Hopebreaker 'Destabilize' debuff absorb tracking  
+-- Bump TOC interface for 9.1.0  
+  
+  
+--------------------------------------------------------------  
+Version 3.124  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Fixed improper change of panel strata while VuhDo Options is open  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.123  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Fixed HoT icon clock sweep for auras with zero duration  
+-- Fixed entry selection of comboboxes with over 100 options  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.122  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Fixed inverted health display when shield bar is disabled  
+  
+  
+Improvements:  
+-- Added bouquet validator 'Statusbar: Power % (Tank Only)'  
+-- Added default bouquet 'Manabars: Power (Tank Only)'  
+  
+  
+--------------------------------------------------------------  
+Version 3.121  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Added workaround for bug in Blizzard API UnitPhaseReason  
+-- Fixed shield bar display when health bar is inverted  
+-- Fixed Priest 'Spirit Shell' maximum absorption amount  
+  
+  
+Improvements:  
+-- Added overshield bar to display excess absorption amount  
+-- Added Shaman 'Mana Tide Totem' to Buff Watch  
+-- Bump TOC interface for 9.0.5  
+  
+  
+--------------------------------------------------------------  
+Version 3.120  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Fixed error when slash command had zero arguments  
+-- Fixed class name text for classless units (defaults to creature type)  
+-- Fixed error on target switch in combat with show class name enabled  
+-- Fixed redundant profile reloading on talent change  
+  
+  
+Improvements:  
+-- Added Hunter 'Primal Fury' debuff 'Fatigued' to default ignore list  
+-- Added additional default custom debuffs for Castle Nathria encounters  
+-- Upgraded NickTag-1.0 library dependency to minor 14  
+  
+  
+--------------------------------------------------------------  
+Version 3.119  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Slash command arguments can now be properly quoted  
+  
+  
+Improvements:  
+-- Added Necrotic Wake 'Necrotic Bolt' debuff absorb tracking  
+-- Added Theater of Pain 'Necrotic Bolt' debuff absorb tracking  
+-- Added Theater of Pain 'Necrotic Bolt Volley' debuff absorb tracking  
+-- Added Death Knight ability 'Necrotic Wound' debuff absorb tracking  
+  
+  
+--------------------------------------------------------------  
+Version 3.118  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Added default custom debuffs for Castle Nathria raid encounters  
+-- Added Sun King's Salvation 'Cloak of Flames' debuff absorb tracking  
+-- Added new bouquet validator 'Flag: Friend'  
+-- Added new bouquet validator 'Flag: Foe'  
+  
+  
+--------------------------------------------------------------  
+Version 3.117  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Priest spell 'Holy Fire' will now be properly recognized  
+-- Removed deprecated Priest spell 'Clarity of Will'  
+-- Removed deprecated Priest spell 'Luminous Barrier'  
+  
+  
+Improvements:  
+-- Added Priest 'Spirit Shell' absorb tracking  
+-- Added Priest 'Spirit Shell' as a default HoT icon option  
+-- Added option to only show debuff icons for friendly units  
+-- Bump TOC interface for 9.0.2  
+  
+  
+--------------------------------------------------------------  
+Version 3.116  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Fixed backdrop border colors for panel borders, etc.  
+-- Fixed Druid 'Swiftmend' to trigger on 'Wild Growth' HoT presence  
+-- Fixed Druid 'Swiftmend' to not trigger on other players HoTs  
+-- Fixed mouse/key binding of Hunter ability 'Concussive Shot'  
+  
+  
+Improvements:  
+-- Added Shaman spell 'Water Shield' to Buff Watch  
+-- Added Shaman spell 'Windfury Weapon' to Buff Watch  
+-- Added Shaman spell 'Flametongue Weapon' to Buff Watch  
+-- Added Rogue ability 'Instant Poison' to Buff Watch  
+-- Added Rogue ability 'Numbing Poison' to Buff Watch  
+-- Added new default bouquet 'Monk Stagger'  
+-- Updated default bouquet 'Raid Cooldowns'  
+-- Updated default bouquet 'Tank Cooldowns Extd'  
+  
+  
+--------------------------------------------------------------  
+Version 3.115  
+  
+  
+Known issues:  
+-- Shadowlands stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+  
+  
+Bugfixes:  
+-- Removed deprecated debuff 'Bloodbath'  
+-- Removed deprecated event UNIT_HEALTH_FREQUENT  
+-- Removed deprecated Blizzard APIs GetNumFriends/GetFriendInfo  
+-- Removed deprecated Blizzard API UnitAlternatePowerInfo  
+-- Removed deprecated Blizzard APIs UnitIsWarModePhased/UnitInPhase  
+-- Migrated backdrops to BackdropTemplate and BackdropTemplateMixin  
+  
+  
+Improvements:  
+-- Bump TOC interface for 9.0.1   
+  
+  
+--------------------------------------------------------------  
+Version 3.114  
+  
+  
+Known issues:  
+-- BfA stat squish cleanup still a work in progress  
+--   AOE Advice spell equations need complete overhaul  
+--   Some text providers need changes to better display small numbers  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- In 8.2.0 Blizzard removed the ability to play sounds by file path  
+--   If you have LibSharedMedia installed make sure it is up to date  
+--   You may need to reselect your sound options in VuhDo for debuffs  
+  
+  
+Bugfixes:  
+-- Fixed VUHDO_UPDATE_ALIVE handling on unit dead state change  
+-- Fixed handling of unit dropdown menu under some conditions  
+  
+  
+Improvements:  
+-- Improved localization for zhCN  
+  
+  
+--------------------------------------------------------------  
 Version 3.113  
   
   

@@ -5,7 +5,14 @@
 GTFO Spell List - Classic
 ]]--
 
-if (GTFO.ClassicMode) then
+if (GTFO.ClassicMode or GTFO.BurningCrusadeMode) then
+
+GTFO.SpellID["21070"] = {
+  --desc = "Noxious Cloud (Noxious Slime - Maraudon)";
+  applicationOnly = true;
+  sound = 2;
+  trivialLevel = 60;
+};
 
 GTFO.SpellID["17742"] = {
 	--desc = "Cloud of Disease (Scholomance - Old)";
@@ -82,6 +89,45 @@ GTFO.SpellID["25989"] = {
 GTFO.SpellID["17086"] = {
 	--desc = "Breath (Onyxia)";
 	sound = 1;
+};
+
+GTFO.SpellID["28865"] = {
+	--desc = "Consumption (Lady Blaumeux - Void Zone - Naxxramas)";
+	sound = 1;
+};
+
+GTFO.SpellID["28062"] = {
+	--desc = "Positive Charge (Thaddius - Naxx)";
+	sound = 4;
+	damageMinimum = 1;
+	ignoreSelfInflicted = true;
+	test = true;
+};
+
+GTFO.SpellID["28085"] = {
+	--desc = "Negative Charge (Thaddius - Naxx)";
+	sound = 4;
+	damageMinimum = 1;
+	ignoreSelfInflicted = true;
+	test = true;
+};
+
+GTFO.SpellID["28801"] = {
+	--desc = "Slime (Thaddius - Naxx)";
+	sound = 2;
+	test = true;
+};
+
+GTFO.SpellID["30122"] = {
+	--desc = "Plague Cloud (Heigan the Unclean - Naxx)";
+	sound = 1;
+	test = true;
+};
+
+GTFO.SpellID["28547"] = {
+	--desc = "Chill (Sapphiron - Naxx)";
+	sound = 1;
+	specificMobs = { 16474 };
 };
 
 end

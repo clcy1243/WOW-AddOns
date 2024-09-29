@@ -1,8 +1,8 @@
 # BigWigs [Classic]
 
-## [v8.0.3](https://github.com/BigWigsMods/BigWigs_Classic/tree/v8.0.3) (2018-07-30)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Classic/compare/v8.0.2...v8.0.3)
+## [v11.0.27](https://github.com/BigWigsMods/BigWigs_Classic/tree/v11.0.27) (2024-09-27)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Classic/compare/v11.0.26...v11.0.27) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Classic/releases)
 
-- Add website to toc.  
-- cleanups  
-- AQ20/Buru: Fix locale error, closes #6  
+- Update option files  
+- BlackwingLair: Fix parser errors  
+- BlackwingLair: Cleanups for SoD  

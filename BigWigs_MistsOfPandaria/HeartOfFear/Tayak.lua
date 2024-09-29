@@ -40,7 +40,7 @@ function mod:GetOptions()
 	return {
 		{125310, "FLASH"},
 		122842, {-6346, "ICON", "SAY", "PROXIMITY"}, {123175, "PROXIMITY"}, "custom_off_windstep", {123474, "TANK_HEALER"}, -6350,
-		"proximity", "berserk",
+		"berserk",
 	}, {
 		[125310] = "heroic",
 		[122842] = "general",
@@ -70,14 +70,14 @@ function mod:OnEngage()
 	if self:Heroic() then
 		self:Bar(125310, 60) -- Blade Tempest
 	end
-	self:CDBar(122842, 9.8) -- Tempest Slash
-	self:CDBar(123175, 20.5) -- Wind Step
+	self:Bar(122842, 9.8) -- Tempest Slash
+	self:Bar(123175, 20.5) -- Wind Step
 	self:Bar(-6346, 30, CL["count"]:format(self:SpellName(122994), 1)) -- Unseen Strike
 	self:Bar(123474, 15, L["assault_message"])
 	self:OpenProximity(123175, 8)
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
 	self:Berserk(self:LFR() and 600 or 490)
-	wipe(usedMarks)
+	usedMarks = {}
 	phase = 1
 	strikeCounter = 1
 
@@ -104,7 +104,7 @@ do
 		local mark = GetAvailableMark()
 		if not mark then return end
 
-		SetRaidTarget(args.destName, mark)
+		self:CustomIcon(false, args.destName, mark)
 		usedMarks[mark] = args.destName
 	end
 	function mod:WindStepRemoved(args)
@@ -112,20 +112,20 @@ do
 		for i=1, 6 do
 			if usedMarks[i] == args.destName then
 				usedMarks[i] = nil
-				SetRaidTarget(args.destName, 0)
+				self:CustomIcon(false, args.destName)
 			end
 		end
 	end
 end
 
 function mod:BladeTempest(args)
-	self:Message(args.spellId, "red", "Alarm")
+	self:MessageOld(args.spellId, "red", "alarm")
 	self:Bar(args.spellId, 60)
 	self:Flash(args.spellId)
 end
 
 function mod:WindStep(args)
-	self:CDBar(args.spellId, 26.5)
+	self:Bar(args.spellId, 26.5)
 end
 
 do
@@ -143,10 +143,10 @@ do
 	end
 	local function warnStrike(notBoss)
 		local strike = mod:SpellName(122994)
-		local player = mod:UnitDebuff("boss1target", strike) and "boss1target"
+		local player = mod:UnitDebuff("boss1target", strike, 123017) and "boss1target" -- difficulty 3
 		if not player then -- Most of the time this won't run as boss1target works
 			for unit in mod:IterateGroup() do
-				player = mod:UnitDebuff(unit, strike) and unit
+				player = mod:UnitDebuff(unit, strike, 123017) and unit -- difficulty 3
 				if player then break end
 			end
 		end
@@ -155,15 +155,15 @@ do
 			timer = nil
 			local name = mod:UnitName(player)
 			if UnitIsUnit(player, "player") then
-				mod:Say(-6346)
+				mod:Say(-6346, nil, nil, "Unseen Strike")
 			else
 				mod:OpenProximity(-6346, 5, name, true)
 			end
 			if not notBoss then
-				mod:TargetMessage(-6346, name, "orange", "Alert", CL["count"]:format(strike, strikeCounter))
+				mod:TargetMessageOld(-6346, name, "orange", "alert", CL["count"]:format(strike, strikeCounter))
 				strikeCounter = strikeCounter + 1
 			else
-				mod:TargetMessage(-6346, name, "orange", "Alert")
+				mod:TargetMessageOld(-6346, name, "orange", "alert")
 			end
 			mod:TargetBar(-6346, 5.6, name)
 			mod:PrimaryIcon(-6346, name)
@@ -171,16 +171,16 @@ do
 	end
 	function mod:TayakCasts(_, _, _, spellId)
 		if spellId == 122949 then --Unseen Strike
-			self:CDBar(-6346, 53, CL["count"]:format(self:SpellName(122994), strikeCounter+1)) -- Unseen Strike, 53-60
-			self:DelayedMessage(-6346, 48, "yellow", L["unseenstrike_soon"]:format(strikeCounter+1), false, "Alarm")
+			self:Bar(-6346, 53, CL["count"]:format(self:SpellName(122994), strikeCounter+1)) -- Unseen Strike, 53-60
+			self:DelayedMessage(-6346, 48, "yellow", L["unseenstrike_soon"]:format(strikeCounter+1), false, "alarm")
 			if not timer then
 				timer = self:ScheduleRepeatingTimer(warnStrike, 0.05) -- ~1s faster than boss emote
 			end
 			self:ScheduleTimer(removeIcon, 6.2)
 		elseif spellId == 122839 then --Tempest Slash
-			self:CDBar(122842, self:LFR() and 20.5 or 15.6)
+			self:Bar(122842, self:LFR() and 20.5 or 15.6)
 		elseif spellId == 123814 then --Storm Unleashed (Phase 2)
-			self:Message(-6350, "green", "Long", "20% - "..CL["phase"]:format(2))
+			self:MessageOld(-6350, "green", "long", "20% - "..CL["phase"]:format(2))
 			self:StopBar(125310) --Blade Tempest
 			self:StopBar(L["assault_message"])
 			self:StopBar(122839) --Tempest Slash
@@ -193,7 +193,7 @@ do
 
 	local casts = {}
 	function mod:InstructorUnseenStrike(_, unit, spellCastGUID, spellId)
-		if spellId == 122949 and not casts[spellCastGUID] and self:MobId(UnitGUID(unit)) == 64340 then
+		if spellId == 122949 and not casts[spellCastGUID] and self:MobId(self:UnitGUID(unit)) == 64340 then
 			self:Sync("Strike", spellCastGUID) -- Instructor Maltik
 		end
 	end
@@ -209,22 +209,22 @@ do
 end
 
 function mod:Assault(args)
-	self:StackMessage(args.spellId, args.destName, args.amount, "orange", "Info", L["assault_message"])
+	self:StackMessageOld(args.spellId, args.destName, args.amount, "orange", "info", L["assault_message"])
 end
 
 function mod:AssaultCast(args)
 	-- If a tank dies from an assault, it will never apply, and the CD bar won't show. Show it on cast instead.
-	self:CDBar(args.spellId, 20.4, L["assault_message"])
+	self:Bar(args.spellId, 20.4, L["assault_message"])
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unitId)
-	local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+function mod:UNIT_HEALTH(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp < 25 and phase == 1 then -- phase starts at 20
-		self:Message(-6350, "green", "Long", CL["soon"]:format(CL["phase"]:format(2)))
+		self:MessageOld(-6350, "green", "long", CL["soon"]:format(CL["phase"]:format(2)))
 		phase = 2
 	elseif hp < 14 and phase == 2 then
-		self:Message(-6350, "green", "Long", CL["soon"]:format(L["side_swap"]))
-		self:UnregisterUnitEvent(event, unitId)
+		self:MessageOld(-6350, "green", "long", CL["soon"]:format(L["side_swap"]))
+		self:UnregisterUnitEvent(event, unit)
 	end
 end
 

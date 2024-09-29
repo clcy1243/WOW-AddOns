@@ -1,17 +1,21 @@
 local mod	= DBM:NewMod(583, "DBM-Party-WotLK", 1, 271)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+if not mod:IsClassic() then
+	mod.statTypes = "heroic,timewalker"
+else
+	mod.statTypes = "heroic"
+end
+
+mod:SetRevision("20230311193122")
 mod:SetCreatureID(30258)
-mod:SetEncounterID(262, 1989)
-mod:SetZone()
+mod:SetEncounterID(1989)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 57055"
 )
-mod.onlyHeroic = true
 
 local warningMini	= mod:NewSpellAnnounce(57055, 3)
 

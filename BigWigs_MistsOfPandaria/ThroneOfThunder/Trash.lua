@@ -57,7 +57,7 @@ end
 
 function mod:OnBossEnable()
 	scheduled = nil
-	wipe(debuffTargets)
+	debuffTargets = mod:NewTargetList()
 
 	self:Log("SPELL_AURA_APPLIED", "Storms", 139322, 139900) -- Storm Energy, Stormcloud
 	self:Log("SPELL_AURA_REMOVED", "StormsRemoved", 139322, 139900)
@@ -80,14 +80,18 @@ end
 do
 	local function warnStorms(spellId)
 		scheduled = nil
-		mod:TargetMessage(spellId, debuffTargets, "orange", "Alert")
+		mod:TargetMessageOld(spellId, debuffTargets, "orange", "alert")
 	end
 	function mod:Storms(args)
 		debuffTargets[#debuffTargets+1] = args.destName
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
 			self:OpenProximity(args.spellId, 10)
-			self:Say(args.spellId)
+			if args.spellId == 139900 then
+				self:Say(args.spellId, nil, nil, "Stormcloud")
+			else
+				self:Say(args.spellId, nil, nil, "Storm Energy")
+			end
 		end
 		if not scheduled then
 			scheduled = self:ScheduleTimer(warnStorms, 0.2, args.spellId)
@@ -102,19 +106,19 @@ end
 
 function mod:HorrifyingRoar(args)
 	self:Bar(args.spellId, 26.6) -- Either 29 or 26.6, which is picked may or may not be random
-	self:Message(args.spellId, "yellow", "Long", CL["casting"]:format(args.spellName))
+	self:MessageOld(args.spellId, "yellow", "long", CL["casting"]:format(args.spellName))
 end
 
 function mod:ConductiveShield(args)
-	if UnitGUID("target") == args.destGUID then
+	if self:UnitGUID("target") == args.destGUID then
 		self:Flash(args.spellId)
-		self:PlaySound(args.spellId, "Info")
+		self:PlaySound(args.spellId, "info")
 	end
 	if self:MobId(args.destGUID) == 69821 then -- Thunder Lord cooldown
 		self:Bar(args.spellId, 20.5)
 	end
 	self:Bar(args.spellId, 10, CL["other"]:format(self:SpellName(133249), args.destName)) -- "Shielded"
-	self:Message(args.spellId, "yellow", nil, CL["other"]:format(args.spellName, args.destName))
+	self:MessageOld(args.spellId, "yellow", nil, CL["other"]:format(args.spellName, args.destName))
 end
 
 do
@@ -133,7 +137,7 @@ do
 				elseif msg == "MonaraSN" then
 					local spellId = 139899
 					local name = self:SpellName(spellId)
-					self:Message(spellId, "orange", "Long", CL["incoming"]:format(name))
+					self:MessageOld(spellId, "orange", "long", CL["incoming"]:format(name))
 					self:Bar(spellId, 3, CL["cast"]:format(name))
 					self:Bar(spellId, 14.4)
 					self:Flash(spellId)

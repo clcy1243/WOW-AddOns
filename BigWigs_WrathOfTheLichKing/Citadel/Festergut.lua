@@ -5,6 +5,8 @@
 local mod, CL = BigWigs:NewBoss("Festergut", 631, 1629)
 if not mod then return end
 mod:RegisterEnableMob(36626)
+-- mod:SetEncounterID(1097)
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {{69279, "FLASH"}, 69165, 69195, 72219, 69240, 72295, "proximity", "berserk"}
 mod.optionHeaders = {
 	[69279] = "normal",
@@ -43,9 +45,9 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED_DOSE", "Bloat", 72219)
 	self:Death("Win", 36626)
 
-	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1")
+	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 
 	self:Log("SPELL_AURA_APPLIED", "Spores", 69279)
 end
@@ -65,7 +67,7 @@ end
 do
 	local sporeTargets, scheduled = mod:NewTargetList(), nil
 	local function sporeWarn()
-		mod:TargetMessage(69279, sporeTargets, "orange", "Alert")
+		mod:TargetMessageOld(69279, sporeTargets, "orange", "alert")
 		scheduled = nil
 	end
 	function mod:Spores(args)
@@ -82,7 +84,7 @@ do
 end
 
 function mod:InhaleCD(args)
-	self:Message(69165, "yellow", nil, CL["count"]:format(args.spellName, count))
+	self:MessageOld(69165, "yellow", nil, CL["count"]:format(args.spellName, count))
 	count = count + 1
 	if count == 4 then
 		self:DelayedMessage(69195, 28.5, "yellow", L["blight_warning"])
@@ -94,13 +96,13 @@ end
 
 function mod:Blight(args)
 	count = 1
-	self:Message(69195, "yellow")
+	self:MessageOld(69195, "yellow")
 	self:Bar(69165, 33.5, L["inhale_bar"]:format(count))
 end
 
 function mod:Bloat(args)
 	if args.amount > 5 then
-		self:StackMessage(72219, args.destName, args.amount, "green")
+		self:StackMessageOld(72219, args.destName, args.amount, "green")
 		self:CDBar(72219, 10)
 	end
 end
@@ -111,13 +113,17 @@ do
 		local time = GetTime()
 		if (time - t) > 2 then
 			t = time
-			self:Message(69240, "red")
+			self:MessageOld(69240, "red")
 		end
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
-	if spellId == 72299 then
-		self:Message(72295, "red", nil, L["ball_message"])
+do
+	local prev = 0
+	function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, castId, spellId)
+		if spellId == 72299 and castId ~= prev then
+			prev = castId
+			self:MessageOld(72295, "red", nil, L["ball_message"])
+		end
 	end
 end

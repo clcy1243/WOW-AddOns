@@ -1,79 +1,71 @@
-local L = BigWigs:NewBossLocale("Battleguard Sartura", "ruRU")
+local L = BigWigs:NewBossLocale("Viscidus", "ruRU")
 if not L then return end
 if L then
-	L.engage_trigger = "Загрязняются эти священные земли" -- You will be judged for defiling these sacred grounds!  The laws of the Ancients will not be challenged!  Trespassers will be annihilated!\r\n
-end
+	L.freeze = "Замораживающие состояния"
+	L.freeze_desc = "Предупреждать о различных замороженных состояниях."
 
-L = BigWigs:NewBossLocale("Viscidus", "ruRU")
-if L then
-	--L.freeze = "Freezing States"
-	--L.freeze_desc = "Warn for the different frozen states."
-	L.freeze_trigger1 = "%s замедлен!!"
-	L.freeze_trigger2 = "%s заморожен!"
-	--L.freeze_trigger3 = "%s заморожен!\ тело!"
+	L.freeze_trigger1 = "%s замедлен!"
+	L.freeze_trigger2 = "%s замерзает!"
+	L.freeze_trigger3 = "%s заморожен!"
 	L.freeze_trigger4 = "%s Начинает трескаться!"
-	L.freeze_trigger5 = "%s Скоро разобьётся на части!!"
-	--L.freeze_warn1 = "First freeze phase!"
-	--L.freeze_warn2 = "Second freeze phase!"
-	--L.freeze_warn3 = "Viscidus is frozen!"
-	--L.freeze_warn4 = "Cracking up - keep going!"
-	--L.freeze_warn5 = "Cracking up - almost there!"
-	--L.freeze_warn_melee = "%d melee attacks - %d more to go"
-	--L.freeze_warn_frost = "%d frost attacks - %d more to go"
+	L.freeze_trigger5 = "%s Скоро разобьётся на части!"
+
+	L.freeze_warn1 = "Первая фаза заморозки!"
+	L.freeze_warn2 = "Вторая фаза заморозки!"
+	L.freeze_warn3 = "Нечистотон заморожен!"
+	L.freeze_warn4 = "Ломается - продолжайте!"
+	L.freeze_warn5 = "Ломается - почти готово!"
+	L.freeze_warn_melee = "%d атак в ближнем бою - осталось %d"
+	L.freeze_warn_frost = "%d морозных атак - осталось еще %d"
 end
 
 L = BigWigs:NewBossLocale("Ouro", "ruRU")
 if L then
-	--L.engage_message = "Ouro engaged! Possible Submerge in 90sec!"
-	--L.possible_submerge_bar = "Possible submerge"
+	L.engage_message = "Оуро занят! Возможное погружение через 90 секунд!"
+	L.possible_submerge_bar = "Возможное погружение"
 
-	--L.emergeannounce = "Ouro has emerged!"
-	--L.emergewarn = "15 sec to possible submerge!"
-	--L.emergewarn2 = "15 sec to Ouro sumberge!"
-	--L.emergebartext = "Ouro submerge"
+	L.emerge_message = "Оуро появился"
+	L.emerge_bar = "Появление"
 
-	--L.submergeannounce = "Ouro has submerged!"
-	--L.submergewarn = "5 seconds until Ouro Emerges!"
-	--L.submergebartext = "Ouro Emerge"
+	L.submerge_message = "Оуро погрузился"
+	L.submerge_bar = "Погружение"
 
-	--L.scarab = "Scarab Despawn"
-	--L.scarab_desc = "Warn for Scarab Despawn."
-	--L.scarabdespawn = "Scarabs despawn in 10 Seconds"
-	--L.scarabbar = "Scarabs despawn"
-end
-
-L = BigWigs:NewBossLocale("Ahn'Qiraj Trash", "ruRU")
-if L then
-	L.defender = "Анубисат-защитник"
-	L.crawler = "Векнисский ядохвост"
+	L.scarab = "Скарабей исчез"
+	L.scarab_desc = "Предупреждать об исчезновении скарабея."
+	L.scarab_bar = "Скарабеи исчезли"
 end
 
 L = BigWigs:NewBossLocale("C'Thun", "ruRU")
 if L then
-	--L.tentacle_desc = "Warn for Tentacles"
+	L.claw_tentacle = "Когтещупальце"
+	L.claw_tentacle_desc = "Таймеры для Когтещупальца."
 
-	--L.giant = "Giant Eye Alert"
-	--L.giant_desc = "Warn for Giant Eyes"
+	L.giant_claw_tentacle = "Гигантское Когтещцпальце"
+	L.giant_claw_tentacle_desc = "Таймеры для Гигантского Когтещупальца."
 
-	--L.weakened = "Weakened Alert"
-	--L.weakened_desc = "Warn for Weakened State"
-	L.weakenedtrigger = "%s ослаблен!!"
+	L.eye_tentacles = "Глазастое щупальце"
+	L.eye_tentacles_desc = "Таймеры для 8 Глазастых щупалец."
 
-	--L.weakened_msg = "C'Thun is weakened for 45 sec"
-	--L.invulnerable2 = "Party ends in 5 seconds"
-	--L.invulnerable1 = "Party over - C'Thun invulnerable"
+	L.giant_eye_tentacle = "Огромный глаз"
+	L.giant_eye_tentacle_desc = "Таймеры для Огромного глазастого щупальца."
 
-	--L.giant3 = "Giant Eye - 10 sec"
-	--L.giant2 = "Giant Eye - 5 sec"
-	--L.giant1 = "Giant Eye - Poke it!"
+	L.weakened_desc = "Предупреждение об ослаблении."
 
-	--L.startwarn = "C'Thun engaged! - 45 sec until Dark Glare and Eyes"
-
-	--L.tentacleParty = "Tentacle party!"
-	--L.barWeakened = "C'Thun is weakened!"
-	--L.barGiant = "Giant Eye!"
-
-	--L.groupwarning = "Dark Glare on group %s (%s)"
-	--L.phase2starting = "The Eye is dead! Body incoming!"
+	--L.dark_glare_message = "%s: %s (Group %s)" -- Dark Glare: PLAYER_NAME (Group 1)
+	L.stomach = "Желудок"
+	L.tentacle = "Щупальце (%d)"
 end
 
+L = BigWigs:NewBossLocale("Ahn'Qiraj Trash", "ruRU")
+if L then
+	L.sentinel = "Анубисат-часовой" -- NPC 15264
+	L.brainwasher = "Киражский опустошитель разума" -- NPC 15247
+	L.defender = "Анубисат-защитник" -- NPC 15277
+	L.crawler = "Векнисский ядохвост" -- NPC 15240
+
+	L.target_buffs = "Предупреждения о баффах цели"
+	L.target_buffs_desc = "Когда ваша цель - Анубисат-часовой, показывать предупреждение о том, какой у него бафф."
+	L.target_buffs_message = "Бафф цели: %s"
+	L.detect_magic_missing_message = "Распознавание магии у вашей цели отсутствует"
+	L.detect_magic_warning = "Маг должен наложить \124cff71d5ff\124Hspell:2855:0\124h[Распознавание магии]\124h\124r на вашу цель, чтобы предупреждения о баффах работали."
+end

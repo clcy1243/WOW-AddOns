@@ -1,14 +1,14 @@
 local mod	= DBM:NewMod("BrawlRank3", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200528135243")
+mod:SetRevision("20240310194118")
 --mod:SetModelID(28649)
-mod:SetZone()
 mod:SetUsedIcons(8)
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 234489 138845 142621 142583",
 --	"SPELL_CAST_SUCCESS 232504",
+	"SPELL_AURA_APPLIED 138901",
 	"SPELL_AURA_APPLIED_DOSE 138901",
 	"SPELL_AURA_REMOVED 138901",
 	"SPELL_AURA_REMOVED_DOSE 138901"
@@ -28,7 +28,7 @@ local specWarnDivineCircle			= mod:NewSpecialWarningDodge(142585)--Ahoo'ru
 local timerShotgunRoarCD			= mod:NewCDTimer(9.9, 234489, nil, nil, nil, 3)--Oso
 local timerDivineCircleCD			= mod:NewCDTimer(26.7, 142585)--Insufficent data to say if accurate with certainty --Ahoo'ru
 
-local brawlersMod = DBM:GetModByName("Brawlers")
+local brawlersMod = DBM:GetModByName("BrawlersGeneral")
 
 function mod:SPELL_CAST_START(args)
 	if not brawlersMod.Options.SpectatorMode and not brawlersMod:PlayerFighting() then return end--Spectator mode is disabled, do nothing.
@@ -79,5 +79,5 @@ function mod:SPELL_AURA_APPLIED(args)
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
-mod.SPELL_AURA_REMOVED = mod.SPELL_AURA_APPLIED_DOSE
-mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_APPLIED_DOSE
+mod.SPELL_AURA_REMOVED = mod.SPELL_AURA_APPLIED
+mod.SPELL_AURA_REMOVED_DOSE = mod.SPELL_AURA_APPLIED

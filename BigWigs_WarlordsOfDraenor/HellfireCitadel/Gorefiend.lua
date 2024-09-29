@@ -155,7 +155,7 @@ do
 	function mod:TouchOfDoom(args)
 		list[#list+1] = args.destName
 		if #list == 1 then
-			self:ScheduleTimer("TargetMessage", 0.3, 179977, list, "red", "Alarm")
+			self:ScheduleTimer("TargetMessageOld", 0.3, 179977, list, "red", "alarm")
 			self:Bar(179977, 25)
 		end
 		if self:Me(args.destGUID) then
@@ -185,7 +185,7 @@ end
 
 function mod:GoreboundFortitude()
 	-- Enraged Spirit moving to the 'real' realm (becomes Gorebound Spirit)
-	self:Message(-11020, "cyan", self:Tank() and "Warning" or "Info", CL.spawning:format(self:SpellName(-11020)), false)
+	self:MessageOld(-11020, "cyan", self:Tank() and "warning" or "info", CL.spawning:format(self:SpellName(-11020)), false)
 end
 
 do
@@ -194,9 +194,9 @@ do
 		fatePlayer = args.destName
 		if self:Me(args.destGUID) then
 			self:Say(args.spellId, 135484) -- 135484 = "Rooted"
-			self:Message(args.spellId, "blue", "Alert", L.fate_root_you)
+			self:MessageOld(args.spellId, "blue", "alert", L.fate_root_you)
 		else
-			self:TargetMessage(args.spellId, fatePlayer, "yellow", nil, self:SpellName(135484)) -- 135484 = "Rooted"
+			self:TargetMessageOld(args.spellId, fatePlayer, "yellow", nil, self:SpellName(135484)) -- 135484 = "Rooted"
 		end
 		self:PrimaryIcon(args.spellId, fatePlayer)
 
@@ -217,10 +217,10 @@ function mod:SharedFateRun(args)
 	if self:Me(args.destGUID) then
 		self:Flash(179909)
 		if fatePlayer then -- Failsafe for whenever root doesn't end up first in the combat log
-			self:Message(179909, "blue", "Warning", L.fate_you:format(self:ColorName(fatePlayer)))
+			self:MessageOld(179909, "blue", "warning", L.fate_you:format(self:ColorName(fatePlayer)))
 			self:OpenProximity(179909, 6, fatePlayer, true)
 		else
-			self:TargetMessage(179909, args.destName, "blue", "Warning")
+			self:TargetMessageOld(179909, args.destName, "blue", "warning")
 		end
 	end
 end
@@ -234,7 +234,7 @@ end
 
 function mod:FeastOfSoulsStart(args)
 	self:CloseProximity("proximity")
-	self:Message(args.spellId, "green", "Long")
+	self:MessageOld(args.spellId, "green", "long")
 	self:Bar(args.spellId, 60, self:SpellName(117847))
 	-- cancel timers
 	self:StopBar(shadowOfDeathInfo.icon.dps.." "..self:SpellName(179864))
@@ -246,7 +246,7 @@ end
 
 function mod:FeastOfSoulsOver(args)
 	showProximity()
-	self:Message(args.spellId, "green", nil, CL.over:format(self:SpellName(117847))) -- Weakened
+	self:MessageOld(args.spellId, "green", nil, CL.over:format(self:SpellName(117847))) -- Weakened
 	self:StopBar(117847) -- If it finishes early due to failing
 	self:Bar(args.spellId, 123) -- Based on pull->first feast
 	self:Bar(179864, self:Mythic() and 3 or 2, shadowOfDeathInfo.icon.dps.." "..self:SpellName(179864)) -- DPS Shadow of Death
@@ -266,11 +266,11 @@ end
 function mod:Digest(args)
 	if self:Me(args.destGUID) then
 		self:CloseProximity("proximity")
-		self:Message(args.spellId, "yellow", "Long", CL.custom_sec:format(args.spellName, self:Mythic() and 30 or 40))
+		self:MessageOld(args.spellId, "yellow", "long", CL.custom_sec:format(args.spellName, self:Mythic() and 30 or 40))
 		if not self:Mythic() then -- you don't have any control over it on mythic
 			self:DelayedMessage(args.spellId, 20, "yellow", CL.custom_sec:format(args.spellName, 20))
-			self:DelayedMessage(args.spellId, 30, "yellow", CL.custom_sec:format(args.spellName, 10), nil, "Alert")
-			self:DelayedMessage(args.spellId, 35, "orange", CL.custom_sec:format(args.spellName, 5), nil, "Alert")
+			self:DelayedMessage(args.spellId, 30, "yellow", CL.custom_sec:format(args.spellName, 10), nil, "alert")
+			self:DelayedMessage(args.spellId, 35, "orange", CL.custom_sec:format(args.spellName, 5), nil, "alert")
 		end
 		self:TargetBar(args.spellId, self:Mythic() and 35 or 40, args.destName)
 	end
@@ -298,7 +298,7 @@ do
 
 		list[#list+1] = args.destName
 		if #list == 1 then
-			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, list, "orange", "Alarm", text)
+			self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, list, "orange", "alarm", text)
 
 			local count = shadowOfDeathInfo.count[role]
 			count = count + 1
@@ -316,7 +316,7 @@ do
 end
 
 --function mod:CrushingDarkness(args)
---	self:Message(args.spellId, "red", "Info", CL.incoming:format(args.spellName))
+--	self:MessageOld(args.spellId, "red", "info", CL.incoming:format(args.spellName))
 --end
 
 do
@@ -325,7 +325,7 @@ do
 		local t = GetTime()
 		if t-prev > 1.5 and self:Me(args.destGUID) then
 			prev = t
-			self:Message(args.spellId, "blue", "Alarm", CL.underyou:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alarm", CL.underyou:format(args.spellName))
 		end
 	end
 end
@@ -336,7 +336,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 and self:Me(args.destGUID) then
 			prev = t
-			self:Message(args.spellId, "blue", "Alarm", CL.you:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alarm", CL.you:format(args.spellName))
 		end
 	end
 end
@@ -344,7 +344,7 @@ end
 function mod:HungerForLife(args)
 	if self:Me(args.destGUID) and not fixateOnMe then -- Multiple debuffs, warn for the first.
 		fixateOnMe = true
-		self:TargetMessage(args.spellId, args.destName, "blue", "Warning")
+		self:TargetMessageOld(args.spellId, args.destName, "blue", "warning")
 		self:Flash(args.spellId)
 	end
 end
@@ -352,20 +352,20 @@ end
 function mod:HungerForLifeOver(args)
 	if self:Me(args.destGUID) and not self:UnitDebuff("player", args.spellName) then
 		fixateOnMe = nil
-		self:Message(args.spellId, "blue", "Alarm", CL.over:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alarm", CL.over:format(args.spellName))
 	end
 end
 
 function mod:BellowingShout(args)
 	self:CDBar(args.spellId, 13.5)
 	if self:Interrupter(args.sourceGUID) then
-		self:Message(args.spellId, "red", "Alert", CL.casting:format(args.spellName))
+		self:MessageOld(args.spellId, "red", "alert", CL.casting:format(args.spellName))
 	end
 end
 
 do
 	local function printTarget(self, name)
-		self:TargetMessage(187814, name, "red", "Alert", nil, nil, self:Tank() or self:Damager())
+		self:TargetMessageOld(187814, name, "red", "alert", nil, nil, self:Tank() or self:Damager())
 	end
 	function mod:RagingCharge(args)
 		self:GetUnitTarget(printTarget, 0.2, args.sourceGUID)
@@ -373,6 +373,6 @@ do
 end
 
 function mod:FelFlames(args)
-	self:StackMessage(args.spellId, args.destName, args.amount, "green", args.amount > 3 and "Warning")
+	self:StackMessageOld(args.spellId, args.destName, args.amount, "green", args.amount > 3 and "warning")
 end
 

@@ -1,4 +1,4 @@
-﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
+-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
 -- Last update: 12/29/2012
 
 if GetLocale() ~= "zhCN" then return end
@@ -7,7 +7,7 @@ local L
 --------------
 -- Brawlers --
 --------------
-L= DBM:GetModLocalization("Brawlers")
+L= DBM:GetModLocalization("BrawlersGeneral")
 
 L:SetGeneralLocalization({
 	name = "搏击俱乐部：设置"

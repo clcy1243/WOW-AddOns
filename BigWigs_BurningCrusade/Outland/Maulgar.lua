@@ -6,6 +6,9 @@ local mod, CL = BigWigs:NewBoss("High King Maulgar", 565, 1564)
 if not mod then return end
 --Maulgar, Krosh Firehand (Mage), Olm the Summoner (Warlock), Kiggler the Crazed (Shaman), Blindeye the Seer (Priest)
 mod:RegisterEnableMob(18831, 18832, 18834, 18835, 18836)
+if mod:Classic() then
+	mod:SetEncounterID(649)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -58,7 +61,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "Smash", 39144)
 	self:Log("SPELL_CAST_SUCCESS", "Flurry", 33232)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 
 	self:Death("Win", 18831)
 end
@@ -67,9 +70,9 @@ function mod:OnEngage()
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "StartWipeCheck")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "StopWipeCheck")
 
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "target", "focus")
 
-	self:Message(33238, "yellow", nil, L["whirlwind_warning"])
+	self:MessageOld(33238, "yellow", nil, L["whirlwind_warning"])
 	self:DelayedMessage(33238, 54, "orange", CL["soon"]:format(self:SpellName(33238))) -- Whirlwind
 	self:CDBar(33238, 59) -- Whirlwind
 end
@@ -79,30 +82,30 @@ end
 --
 
 function mod:Shield(args)
-	self:Message(args.spellId, "red", nil, L["shield_message"])
+	self:MessageOld(args.spellId, "red", nil, L["shield_message"])
 end
 
 function mod:SpellShield(args)
 	if self:MobId(args.destGUID) == 18832 then
-		self:Message(args.spellId, "yellow", "Info", L["spellshield_message"])
+		self:MessageOld(args.spellId, "yellow", "info", L["spellshield_message"])
 		self:Bar(args.spellId, 30)
 	end
 end
 
 function mod:Whirlwind(args)
-	self:Message(args.spellId, "red", nil, L["whirlwind_message"])
+	self:MessageOld(args.spellId, "red", nil, L["whirlwind_message"])
 	self:Bar(args.spellId, 15, CL["cast"]:format(args.spellName))
 	self:DelayedMessage(args.spellId, 55, "orange", CL["soon"]:format(args.spellName))
 	self:CDBar(args.spellId, 60)
 end
 
 function mod:Summon(args)
-	self:Message(args.spellId, "yellow", "Long", L["summon_message"])
+	self:MessageOld(args.spellId, "yellow", "long", L["summon_message"])
 	self:Bar(args.spellId, 50, L["summon_bar"])
 end
 
 function mod:Prayer(args)
-	self:Message(args.spellId, "red", "Alarm", L["heal_message"])
+	self:MessageOld(args.spellId, "red", "alarm", L["heal_message"])
 end
 
 function mod:Smash(args)
@@ -110,15 +113,15 @@ function mod:Smash(args)
 end
 
 function mod:Flurry(args)
-	self:Message(args.spellId, "red", nil, "50% - "..args.spellName)
+	self:MessageOld(args.spellId, "red", nil, "50% - "..args.spellName)
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 18831 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 18831 then
+		local hp = self:GetHealth(unit)
 		if hp > 50 and hp < 57 then
 			local flurry = self:SpellName(33232)
-			self:Message(33232, "green", nil, CL["soon"]:format(flurry))
+			self:MessageOld(33232, "green", nil, CL["soon"]:format(flurry))
 			self:UnregisterUnitEvent(event, "target", "focus")
 		end
 	end

@@ -2,7 +2,12 @@
 -- Module Declaration
 --
 
-local plugin = BigWigs:NewPlugin("Colors")
+local plugin = BigWigs:NewPlugin("Colors", {
+	"db",
+	"SetColorOptions",
+	"GetColorTable",
+	"GetColor",
+})
 if not plugin then return end
 
 local L = BigWigsAPI:GetLocale("BigWigs: Plugins")
@@ -18,15 +23,13 @@ plugin.defaultDB = {
 	yellow = { ["*"] = { ["*"] = { 1, 1, 0.1 } } },
 	green = { ["*"] = { ["*"] = { 0.2, 1, 0.2 } } },
 	cyan = { ["*"] = { ["*"] = { 0.2, 1, 1 } } },
-	purple = { ["*"] = { ["*"] = { 0.5, 0, 0.5 } } },
+	purple = { ["*"] = { ["*"] = { 0.7, 0, 0.7 } } },
 
 	barBackground = { ["*"] = { ["*"] = { 0.5, 0.5, 0.5, 0.3 } } },
 	barText = { ["*"] = { ["*"] = { 1, 1, 1, 1 } } },
 	barTextShadow = { ["*"] = { ["*"] = { 0, 0, 0, 1 } } },
 	barColor = { ["*"] = { ["*"] = { 0.25, 0.33, 0.68, 1 } } },
 	barEmphasized = { ["*"] = { ["*"] = { 1, 0, 0, 1 } } },
-
-	flash = { ["*"] = { ["*"] = { 0, 0, 1 } } },
 }
 
 local function copyTable(to, from)
@@ -95,11 +98,12 @@ end
 
 local colorOptions = {
 	type = "group",
-	name = L.colors,
+	name = "|TInterface\\AddOns\\BigWigs\\Media\\Icons\\Menus\\Colors:20|t ".. L.colors,
 	handler = plugin,
 	get = get,
 	set = set,
 	inline = true,
+	order = 3,
 	args = {
 		messages = {
 			type = "group",
@@ -196,25 +200,12 @@ local colorOptions = {
 				},
 			},
 		},
-		flash = {
-			type = "group",
-			name = L.flash,
-			inline = true,
-			order = 3,
-			args = {
-				flash = {
-					name = L.flash,
-					type = "color",
-					order = 11,
-				},
-			},
-		},
 		reset = {
 			type = "execute",
 			name = L.reset,
 			desc = L.resetDesc,
 			func = reset,
-			order = 4,
+			order = 3,
 			width = "full",
 		},
 	},
@@ -234,22 +225,18 @@ end
 local C = BigWigs.C
 local keyTable = {}
 function plugin:SetColorOptions(name, key, flags)
-	wipe(keyTable)
+	table.wipe(keyTable)
 	keyTable[1] = name
 	keyTable[2] = key
 	local t = addKey(colorOptions, keyTable)
 	t.args.messages.hidden = nil
 	t.args.bars.hidden = nil
-	t.args.flash.hidden = nil
 	if flags then
 		if bit.band(flags, C.MESSAGE) ~= C.MESSAGE then
 			t.args.messages.hidden = true
 		end
 		if bit.band(flags, C.BAR) ~= C.BAR then
 			t.args.bars.hidden = true
-		end
-		if bit.band(flags, C.FLASH) ~= C.FLASH then
-			t.args.flash.hidden = true
 		end
 	end
 	return t
@@ -281,7 +268,7 @@ function plugin:GetColorTable(hint, module, key)
 		name = module.name
 	end
 	local t = self.db.profile[hint][name][key] -- no key passed -> return our default
-	if compareTable(t, self.defaultDB[hint]["*"]["*"]) then -- unchanged profile entry, go with the defaultColors
+	if compareTable(t, plugin.defaultDB[hint]["*"]["*"]) then -- unchanged profile entry, go with the defaultColors
 		t = self.db.profile[hint][plugin.name][defaultKey]
 	end
 	return t

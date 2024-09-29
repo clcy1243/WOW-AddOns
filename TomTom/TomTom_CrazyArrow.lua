@@ -6,9 +6,16 @@
 --    with the artwork.)
 ----------------------------------------------------------------------------]]
 
+local addonName, addon = ...
+
 local sformat = string.format
 local L = TomTomLocals
 local ldb = LibStub("LibDataBroker-1.1")
+local ldd = LibStub('LibDropDown')
+
+local IMAGE_ARROW = "Interface\\Addons\\TomTom\\Images\\Arrow-1024"
+local IMAGE_ARROW_UP = "Interface\\AddOns\\TomTom\\Images\\Arrow-UP-1024"
+local IMAGE_STATIC_ARROW = "Interface\\Addons\\TomTom\\Images\\StaticArrow"
 
 local function ColorGradient(perc, ...)
 	local num = select("#", ...)
@@ -92,7 +99,7 @@ wayframe:RegisterEvent("PLAYER_ENTERING_WORLD")
 wayframe:SetScript("OnEvent", OnEvent)
 
 wayframe.arrow = wayframe:CreateTexture(nil, "OVERLAY")
-wayframe.arrow:SetTexture("Interface\\Addons\\TomTom\\Images\\Arrow")
+wayframe.arrow:SetTexture(IMAGE_ARROW)
 wayframe.arrow:SetAllPoints()
 
 local active_point, arrive_distance, showDownArrow, point_title
@@ -153,7 +160,7 @@ local function OnUpdate(self, elapsed)
 		return
 	end
 
-	status:SetText(sformat(L["%d yards"], dist))
+	status:SetText(addon:GetFormattedDistance(dist))
 
 	local cell
 
@@ -162,7 +169,7 @@ local function OnUpdate(self, elapsed)
 		if not showDownArrow then
 			arrow:SetHeight(70)
 			arrow:SetWidth(53)
-			arrow:SetTexture("Interface\\AddOns\\TomTom\\Images\\Arrow-UP")
+			arrow:SetTexture(IMAGE_ARROW_UP)
 			arrow:SetVertexColor(unpack(TomTom.db.profile.arrow.goodcolor))
 			showDownArrow = true
 		end
@@ -185,7 +192,7 @@ local function OnUpdate(self, elapsed)
 		if showDownArrow then
 			arrow:SetHeight(56)
 			arrow:SetWidth(42)
-			arrow:SetTexture("Interface\\AddOns\\TomTom\\Images\\Arrow")
+			arrow:SetTexture(IMAGE_ARROW)
 			showDownArrow = false
 		end
 
@@ -329,45 +336,68 @@ wayframe:SetScript("OnUpdate", OnUpdate)
 --  Dropdown
 -------------------------------------------------------------------------]]--
 
-local dropdown_info = {
-	-- Define level one elements here
-	[1] = {
+local function initDropdown(parent)
+	local menu = ldd:NewMenu(wayframe, 'MyFrameDropDown')
+	menu:SetAnchor("TOPLEFT", parent, "CENTER", 25, -25)
+
+	local dropdownInfo = {
 		{
-			-- Title
+			isTitle = true,
 			text = L["TomTom Waypoint Arrow"],
-			isTitle = 1,
 		},
 		{
-			-- Send waypoint
 			text = L["Send waypoint to"],
-			hasArrow = true,
-			value = "send",
+			menu = {
+				{
+					-- Title
+					text = L["Waypoint communication"],
+					isTitle = true,
+				},
+				{
+					-- Party
+					text = L["Send to party"],
+					func = function()
+						TomTom:SendWaypoint(TomTom.dropdown_uid, "PARTY")
+					end
+				},
+				{
+					-- Raid
+					text = L["Send to raid"],
+					func = function()
+						TomTom:SendWaypoint(TomTom.dropdown_uid, "RAID")
+					end
+				},
+				{
+					-- Battleground
+					text = L["Send to battleground"],
+					func = function()
+						TomTom:SendWaypoint(TomTom.dropdown_uid, "BATTLEGROUND")
+					end
+				},
+				{
+					-- Guild
+					text = L["Send to guild"],
+					func = function()
+						TomTom:SendWaypoint(TomTom.dropdown_uid, "GUILD")
+					end
+				},
+			},
 		},
 		{
 			-- Clear waypoint from crazy arrow
 			text = L["Clear waypoint from crazy arrow"],
 			func = function()
-				local prior = active_point
-
-				active_point = nil
-				if TomTom.profile.arrow.setclosest then
-					local uid = TomTom:GetClosestWaypoint()
-					if uid and uid ~= prior then
-						TomTom:SetClosestWaypoint()
-						return
-					end
-				end
+				TomTom:ClearCrazyArrowPoint(false)
 			end,
 		},
 		{
 			-- Remove a waypoint
 			text = L["Remove waypoint"],
 			func = function()
-				local uid = active_point
-				TomTom:RemoveWaypoint(uid)
+				TomTom:ClearCrazyArrowPoint(true)
 			end,
 		},
-        {
+		{
             -- Remove all waypoints from this zone
             text = L["Remove all waypoints from this zone"],
             func = function()
@@ -402,79 +432,18 @@ local dropdown_info = {
 			end,
 			isNotRadio = true,
 		}
-	},
-    [2] = {
-        send = {
-            {
-                -- Title
-                text = L["Waypoint communication"],
-                isTitle = true,
-            },
-            {
-                -- Party
-                text = L["Send to party"],
-                func = function()
-                    TomTom:SendWaypoint(TomTom.dropdown.uid, "PARTY")
-                end
-            },
-            {
-                -- Raid
-                text = L["Send to raid"],
-                func = function()
-                    TomTom:SendWaypoint(TomTom.dropdown.uid, "RAID")
-                end
-            },
-            {
-                -- Battleground
-                text = L["Send to battleground"],
-                func = function()
-                    TomTom:SendWaypoint(TomTom.dropdown.uid, "BATTLEGROUND")
-                end
-            },
-            {
-                -- Guild
-                text = L["Send to guild"],
-                func = function()
-                    TomTom:SendWaypoint(TomTom.dropdown.uid, "GUILD")
-                end
-            },
-        },
-    },
-}
+	}
 
-local function init_dropdown(self, level)
-	-- Make sure level is set to 1, if not supplied
-	level = level or 1
-
-	-- Get the current level from the info table
-	local info = dropdown_info[level]
-
-	-- If a value has been set, try to find it at the current level
-	if level > 1 and UIDROPDOWNMENU_MENU_VALUE then
-		if info[UIDROPDOWNMENU_MENU_VALUE] then
-			info = info[UIDROPDOWNMENU_MENU_VALUE]
-		end
-	end
-
-	-- Add the buttons to the menu
-	for idx,entry in ipairs(info) do
-		if type(entry.checked) == "function" then
-			-- Make this button dynamic
-			local new = {}
-			for k,v in pairs(entry) do new[k] = v end
-			new.checked = new.checked()
-			entry = new
-		end
-		UIDropDownMenu_AddButton(entry, level)
-	end
+	menu:AddLines(unpack(dropdownInfo))
+	return menu
 end
 
+local wayframeMenu = initDropdown(wayframe)
 local function WayFrame_OnClick(self, button)
 	if active_point then
 		if TomTom.db.profile.arrow.menu then
-			TomTom.dropdown.uid = active_point
-			UIDropDownMenu_Initialize(TomTom.dropdown, init_dropdown)
-			ToggleDropDownMenu(1, nil, TomTom.dropdown, "cursor", 0, 0)
+			TomTom.dropdown_uid = active_point
+			wayframeMenu:Toggle()
 		end
 	end
 end
@@ -505,8 +474,8 @@ local function wayframe_OnEvent(self, event, arg1, ...)
 			-- Create a data feed for coordinates
 			local feed_crazy = ldb:NewDataObject("TomTom_CrazyArrow", {
 				type = "data source",
-				icon = "Interface\\Addons\\TomTom\\Images\\Arrow",
-				staticIcon = "Interface\\Addons\\TomTom\\Images\\StaticArrow",
+				icon = IMAGE_ARROW,
+				staticIcon = IMAGE_STATIC_ARROW,
 				text = "Crazy",
 				iconR = 0.2,
 				iconG = 1.0,
@@ -677,4 +646,114 @@ function TomTom:DebugCrazyArrow()
         msg = string.format("|cffffff78TomTom:|r CrazyArrow point=%s frame=%s rpoint=%s xo=%.2f yo=%.2f",  point, relativeTo, relativePoint, xOfs, yOfs)
         ChatFrame1:AddMessage(msg)
     end
+end
+
+-- Clear the waypoint from the crazy arrow
+--   remove: true if the waypoint should be removed entirely, otherwise
+--   this method only clears it from the crazy arrow itself.
+function TomTom:ClearCrazyArrowPoint(remove)
+	if active_point then
+		if remove then
+			local uid = active_point
+			TomTom:RemoveWaypoint(uid)
+		else
+			local prior = active_point
+			active_point = nil
+			if TomTom.profile.arrow.setclosest then
+				local uid = TomTom:GetClosestWaypoint()
+				if uid and uid ~= prior then
+					TomTom:SetClosestWaypoint()
+					return
+				end
+			end
+		end
+	end
+end
+
+local regionsAreMetric = {
+	false, -- US
+	true,
+	true,
+	true,
+	true,
+}
+
+function TomTom:RegionIsMetric()
+	if self.accountRegion == nil then
+		local gameAccountInfo = C_BattleNet.GetGameAccountInfoByGUID(UnitGUID("player"))
+		local regionID = gameAccountInfo and gameAccountInfo.regionID or GetCurrentRegion()
+		self.accountRegion = regionID
+	end
+
+	if regionsAreMetric[self.accountRegion] ~= nil then
+		return regionsAreMetric[self.accountRegion]
+	else
+		-- Default to true
+		return true
+	end
+end
+
+local floor = math.floor
+
+local function yardsToMeters(yards)
+	local meters = yards * 0.9144
+	return meters
+end
+
+local function humanizeYardsMiles(yards)
+	local yardsInMile = 1760 -- yards in a mile
+	local miles = floor(yards / yardsInMile)
+	local remaining = floor(yards % yardsInMile)
+	return miles, remaining
+end
+
+local function humanizeYardsKilometers(yards)
+	local meters = yards * 0.9144
+	local km = floor(meters / 1000)
+	local remaining = floor(meters % 1000)
+	return km, remaining
+end
+
+-- Return the formatted distance, taking the player options
+-- into account and converting to Metric in appropriate circumstances
+-- Thanks to Lotimar for the contribution
+function TomTom:GetFormattedDistance(distanceInYards)
+	local distanceMode = "humanmeters"
+
+	if self.db.profile.arrow.distanceUnits == "auto" then
+		if not self:RegionIsMetric() then
+			distanceMode = "yards"
+		end
+	elseif self.db.profile.arrow.distanceUnits == "yards" then
+		distanceMode = "yards"
+	elseif self.db.profile.arrow.distanceUnits == "meters" then
+		distanceMode = "meters"
+	elseif self.db.profile.arrow.distanceUnits == "humanyards" then
+		distanceMode = "humanyards"
+	elseif self.db.profile.arrow.distanceUnits == "humanmeters" then
+		distanceMode = "humanmeters"
+	end
+
+	if distanceMode == "humanmeters" then
+		local km, meters = humanizeYardsKilometers(distanceInYards)
+		if km == 0 then
+			return L["%dm away"]:format(meters)
+		else
+			return L["%dkm %dm away"]:format(km, meters)
+		end
+	elseif distanceMode == "humanyards" then
+		local miles, yards = humanizeYardsMiles(distanceInYards)
+		if miles == 0 then
+			return L["%d yards away"]:format(yards)
+		elseif miles == 1 then
+			return L["%d mile %d away"]:format(miles, yards)
+		else
+			return L["%d miles %d yards away"]:format(miles, yards)
+		end
+	elseif distanceMode == "meters" then
+		local meters = yardsToMeters(distanceInYards)
+		return L["%dm away"]:format(meters)
+	elseif distanceMode == "yards" then
+		return L["%d yards away"]:format(distanceInYards)
+	end
 end

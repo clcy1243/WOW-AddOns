@@ -1,54 +1,55 @@
-local mod	= DBM:NewMod("Azuregos", "DBM-Azeroth")
+local mod	= DBM:NewMod("AzuregosVanilla", "DBM-Azeroth")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145731")
-mod:SetCreatureID(121820)--121820 TW ID, 6109 classic ID
+mod:SetRevision("20240719123709")
+mod:SetCreatureID(6109)--121820 TW ID, 6109 classic and SoD ID
+mod:SetEncounterID(3027)--Sod Encounter ID
 --mod:SetModelID(17887)
-mod:SetZone()
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 mod:RegisterCombat("combat_yell", L.Pull)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 243784 243789",
-	"SPELL_CAST_SUCCESS 243835"
+	"SPELL_CAST_START 21099",
+	"SPELL_CAST_SUCCESS 22067 21147"
 )
 
---TODO, maybe add yells for classic version, for timewalking version, it just doens't matter if marks don't run out
-local warningFrostBreath		= mod:NewSpellAnnounce(243789, 3)
+local warningFrostBreath		= mod:NewSpellAnnounce(21099, 3)
 
-local specWarnArcaneVacuum		= mod:NewSpecialWarningSpell(243784, nil, nil, nil, 2, 5)
-local specWarnReflection		= mod:NewSpecialWarningSpell(243835, "SpellCaster", nil, nil, 1, 2)--Change to CasterDps after next core release
+local specWarnArcaneVacuum		= mod:NewSpecialWarningSpell(21147, nil, nil, nil, 2, 5)
+local specWarnReflection		= mod:NewSpecialWarningSpell(22067, "CasterDps", nil, nil, 1, 2)
 
-local timerReflectionCD			= mod:NewCDTimer(15.7, 243835, nil, "SpellCaster", nil, 5, nil, DBM_CORE_L.DAMAGER_ICON)--15.7-30
-local timerFrostBreathCD		= mod:NewCDTimer(5, 243789, nil, nil, nil, 3)--8.5-20.1
---local timerArcaneVacuumCD		= mod:NewCDTimer(19.8, 243784, nil, nil, nil, 2)
+--Timers too variable, if the max is more than double the min time, a timer for min time is more misleading than helpful
+--local timerReflectionCD		= mod:NewCDTimer(15.7, 22067, nil, "CasterDps", nil, 5, nil, DBM_COMMON_L.DAMAGE_ICON)--15.7-33
+--local timerFrostBreathCD		= mod:NewCDTimer(10, 21099, nil, nil, nil, 3)--10-40 (lovely)
+--local timerArcaneVacuumCD		= mod:NewCDTimer(16, 21147, nil, nil, nil, 2)--16-35
 
 --mod:AddReadyCheckOption(48620, false)
 
 function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then
-		timerFrostBreathCD:Start(5.8-delay)
+		--timerFrostBreathCD:Start(5.8-delay)
 		--timerArcaneVacuumCD:Start(5.7-delay)--5.7-12
-		timerReflectionCD:Start(24.4-delay)--Recheck
+		--timerReflectionCD:Start(24.4-delay)--Recheck
 	end
 end
 
 function mod:SPELL_CAST_START(args)
-	if args.spellId == 243784  and self:AntiSpam(5, 1) then
-		specWarnArcaneVacuum:Show()
-		specWarnArcaneVacuum:Play("teleyou")
-		--timerArcaneVacuumCD:Start()
-	elseif args.spellId == 243789 and self:AntiSpam(3, 2) then
+	if args:IsSpell(21099) and self:AntiSpam(3, 2) then
 		warningFrostBreath:Show()
 		--timerFrostBreathCD:Start()
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args.spellId == 243784 then
+	if args:IsSpell(22067) then
 		specWarnReflection:Show()
 		specWarnReflection:Play("stilldanger")
 		--pull:176.7, 31.3, 23.1, 20.8, 30.6, 26.2, 25.5, 15.7, 33.1, 30.1
-		timerReflectionCD:Start()
+		--timerReflectionCD:Start()
+	elseif args:IsSpell(21147) and self:AntiSpam(5, 1) then
+		specWarnArcaneVacuum:Show()
+		specWarnArcaneVacuum:Play("teleyou")
+		--timerArcaneVacuumCD:Start()
 	end
 end

@@ -1,12 +1,11 @@
 local mod	= DBM:NewMod(1497, "DBM-Party-Legion", 6, 726)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "heroic,mythic,challenge"
+
+mod:SetRevision("20230307064655")
 mod:SetCreatureID(98203)
 mod:SetEncounterID(1827)
-mod:SetZone()
-
-mod.noNormal = true
 
 mod:RegisterCombat("combat")
 
@@ -30,8 +29,8 @@ local specWarnNetherLinkGTFO		= mod:NewSpecialWarningMove(196805, nil, nil, nil,
 local specWarnOverchargeMana		= mod:NewSpecialWarningInterrupt(196392, "HasInterrupt", nil, nil, 1, 2)
 
 local timerVolatileMagicCD			= mod:NewCDTimer(32, 196562, nil, nil, nil, 3)--Review, Might be health based? or just really variable
-local timerNetherLinkCD				= mod:NewCDTimer(30, 196804, nil, nil, nil, 3)
-local timerOverchargeManaCD			= mod:NewCDTimer(40, 196392, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
+local timerNetherLinkCD				= mod:NewCDTimer(30, 196805, nil, nil, nil, 3)
+local timerOverchargeManaCD			= mod:NewCDTimer(40, 196392, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 
 mod:AddRangeFrameOption(8, 196562)
 
@@ -45,6 +44,19 @@ end
 function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
+	end
+end
+
+function mod:SPELL_CAST_SUCCESS(args)
+	local spellId = args.spellId
+	if spellId == 196562 then
+		timerVolatileMagicCD:Start()
+	elseif spellId == 196804 then
+		timerNetherLinkCD:Start()
+	elseif spellId == 196392 then
+		specWarnOverchargeMana:Show(args.sourceName)
+		specWarnOverchargeMana:Play("kickcast")
+		timerOverchargeManaCD:Start()
 	end
 end
 
@@ -73,19 +85,6 @@ function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 196562 and args:IsPlayer() and self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
-	end
-end
-
-function mod:SPELL_CAST_SUCCESS(args)
-	local spellId = args.spellId
-	if spellId == 196562 then
-		timerVolatileMagicCD:Start()
-	elseif spellId == 196804 then
-		timerNetherLinkCD:Start()
-	elseif spellId == 196392 then
-		specWarnOverchargeMana:Show(args.sourceName)
-		specWarnOverchargeMana:Play("kickcast")
-		timerOverchargeManaCD:Start()
 	end
 end
 

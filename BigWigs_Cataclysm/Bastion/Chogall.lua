@@ -5,6 +5,8 @@
 local mod = BigWigs:NewBoss("Cho'gall", 671, 167)
 if not mod then return end
 mod:RegisterEnableMob(43324)
+mod:SetEncounterID(1029)
+mod:SetRespawnTime(30)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -21,7 +23,7 @@ local oozecount = 1
 -- Localization
 --
 
-local L = mod:NewLocale("enUS", true)
+local L = mod:GetLocale()
 if L then
 	L.orders = "Stance changes"
 	L.orders_desc = "Warning for when Cho'gall changes between Shadow/Flame Orders stances."
@@ -49,7 +51,6 @@ if L then
 	L.phase2_message = "Phase 2!"
 	L.phase2_soon = "Phase 2 soon!"
 end
-L = mod:GetLocale()
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -57,9 +58,9 @@ L = mod:GetLocale()
 
 function mod:GetOptions(CL)
 	return {
-		91303, {81538, "FLASH"}, {81685, "FLASH", "ICON", "SAY"}, 81571, 82524, 81628, 82299,
+		91303, 81538, {81685, "ICON", "SAY"}, 81571, 82524, 81628, 82299,
 		82630, 82414,
-		"orders", {82235, "FLASH", "PROXIMITY"}, "berserk"
+		"orders", 82235, "altpower", "berserk",
 	}, {
 		[91303] = CL.phase:format(1),
 		[82630] = CL.phase:format(2),
@@ -68,6 +69,10 @@ function mod:GetOptions(CL)
 end
 
 function mod:OnBossEnable()
+	if IsEncounterInProgress() then
+		self:OpenAltPower("altpower", 70602) -- Corruption
+	end
+
 	--normal
 	self:Log("SPELL_CAST_SUCCESS", "Orders", 81171, 81556)
 	self:Log("SPELL_AURA_APPLIED", "Worship", 91317)
@@ -80,10 +85,6 @@ function mod:OnBossEnable()
 
 	self:Log("SPELL_DAMAGE", "Blaze", 81538)
 	self:Log("SPELL_MISSED", "Blaze", 81538)
-
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
-
-	self:Death("Win", 43324)
 end
 
 function mod:OnEngage()
@@ -96,7 +97,9 @@ function mod:OnEngage()
 	counter = 1
 
 	self:RegisterUnitEvent("UNIT_AURA", "SicknessCheck", "player")
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
+
+	self:OpenAltPower("altpower", 70602) -- Corruption
 end
 
 --------------------------------------------------------------------------------
@@ -110,8 +113,8 @@ do
 		if (time - last) > 2 then
 			last = time
 			if self:Me(args.destGUID) then
-				self:Message(args.spellId, "blue", "Info", L["blaze_message"])
-				self:Flash(args.spellId)
+				self:MessageOld(args.spellId, "blue", "info", L["blaze_message"])
+				--self:Flash(args.spellId)
 			end
 		end
 	end
@@ -121,13 +124,13 @@ do
 	local function checkTarget(sGUID, spellId)
 		local mobId = mod:GetUnitIdByGUID(sGUID)
 		if mobId then
-			local player = UnitName(mobId.."target")
+			local player = mod:UnitName(mobId.."target")
 			if not player then return end
 			if UnitIsUnit("player", player) then
-				mod:Say(spellId, L["crash_say"])
-				mod:Flash(spellId)
+				mod:Say(spellId, L["crash_say"], nil, "Crash")
+				--mod:Flash(spellId)
 			end
-			mod:TargetMessage(spellId, player, "orange", "Long") -- Corrupting Crash
+			mod:TargetMessageOld(spellId, player, "orange", "long") -- Corrupting Crash
 			if counter == 1 then
 				mod:PrimaryIcon(spellId, player)
 			else
@@ -148,12 +151,11 @@ do
 	function mod:SicknessCheck(event, unit)
 		local t = GetTime()
 		if (t - prev) > 7 then
-			local sick = self:UnitDebuff(unit, sickness)
+			local sick = self:UnitDebuff(unit, sickness, 82235)
 			if sick then
 				prev = t
-				self:Message(82235, "blue", "Long", L["sickness_message"], 81831)
-				self:OpenProximity(82235, 5)
-				self:Flash(82235)
+				self:MessageOld(82235, "blue", "long", L["sickness_message"], 81831)
+				--self:Flash(82235)
 			end
 		end
 	end
@@ -161,18 +163,18 @@ end
 
 function mod:FuryOfChogall(args)
 	if firstFury == 1 then
-		self:Message(args.spellId, "yellow", nil, L["first_fury_message"])
+		self:MessageOld(args.spellId, "yellow", nil, L["first_fury_message"])
 		self:Bar(91303, 10, L["worship_cooldown"])
 		worshipCooldown = 40
 		firstFury = 2
 	else
-		self:Message(args.spellId, "yellow", nil, L["fury_message"])
+		self:MessageOld(args.spellId, "yellow", nil, L["fury_message"])
 	end
 	self:Bar(args.spellId, 47)
 end
 
 function mod:Orders(args)
-	self:Message("orders", "orange", nil, args.spellId)
+	self:MessageOld("orders", "orange", nil, args.spellId)
 	if args.spellId == 81556 then
 		if self:Heroic() then
 			self:Bar(81571, 24, L["unleashed_shadows"]) -- verified for 25man heroic
@@ -187,7 +189,7 @@ do
 		mod:Bar(spellId, 50, L["adherent_bar"]:format(bigcount))
 	end
 	function mod:SummonCorruptingAdherent(args)
-		self:Message(args.spellId, "red", nil, L["adherent_message"]:format(bigcount))
+		self:MessageOld(args.spellId, "red", nil, L["adherent_message"]:format(bigcount))
 		bigcount = bigcount + 1
 		self:ScheduleTimer(nextAdd, 41, args.spellId)
 
@@ -197,17 +199,17 @@ do
 end
 
 function mod:FesterBlood(args)
-	self:Message(args.spellId, "yellow", "Alert", L["ooze_message"]:format(oozecount))
+	self:MessageOld(args.spellId, "yellow", "alert", L["ooze_message"]:format(oozecount))
 	oozecount = oozecount + 1
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	local hp = self:GetHealth(unit)
 	if firstFury == 0 and hp > 86 and hp < 89 then
-		self:Message(82524, "yellow", nil, L["first_fury_soon"])
+		self:MessageOld(82524, "yellow", nil, L["first_fury_soon"])
 		firstFury = 1
 	elseif hp < 30 then
-		self:Message(82630, "yellow", "Info", L["phase2_soon"], false)
+		self:MessageOld(82630, "yellow", "info", L["phase2_soon"], false)
 		self:UnregisterUnitEvent(event, unit)
 	end
 end
@@ -216,19 +218,19 @@ function mod:LastPhase(args)
 	self:StopBar(L["adherent_bar"])
 	self:StopBar(L["ooze_bar"])
 	self:StopBar(L["worship_cooldown"])
-	self:Message(args.spellId, "green", nil, L["phase2_message"])
+	self:MessageOld(args.spellId, "green", nil, L["phase2_message"])
 	self:Bar(82414, 6, L["tentacles_bar"])
 end
 
 function mod:DarkenedCreations(args)
-	self:Message(args.spellId, "orange", nil, L["tentacles_message"])
+	self:MessageOld(args.spellId, "orange", nil, L["tentacles_message"])
 	self:Bar(args.spellId, 30, L["tentacles_bar"])
 end
 
 do
 	local scheduled = nil
 	local function worshipWarn(spellName)
-		mod:TargetMessage(91303, worshipTargets, "red", "Alarm", spellName, 91303, true)
+		mod:TargetMessageOld(91303, worshipTargets, "red", "alarm", spellName, 91303, true)
 		scheduled = nil
 	end
 	function mod:Worship(args)

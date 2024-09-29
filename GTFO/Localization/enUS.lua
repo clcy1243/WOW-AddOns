@@ -52,7 +52,7 @@ GTFOLocal =
 	UI_VolumeNormal = "3: Normal (Recommended)",
 	UI_VolumeQuiet = "1: Quiet",
 	UI_VolumeSoft = "2: Soft",
-	UI_VolumeLouder = "5: Loud",
+	UI_VolumeLouder = "5: That Bastard Chap",
 	-- 3.0
 	UI_Unmute = "Play sounds when muted",
 	-- 3.1
@@ -94,4 +94,25 @@ GTFOLocal =
 	UI_UnmuteDescription2 = "This requires the master volume (and selected channel) sliders to be higher than 0%.",
 	UI_SoundChannel = "Sound Channel",
 	UI_SoundChannelDescription = "This is the volume channel that GTFO alert sounds will attach themselves to.",
+	-- 4.66
+	Vibration_On = "Controller vibration on",
+	Vibration_Off = "Controller vibration off",
+	UI_Vibration = "Vibration",
+	UI_VibrationDescription = "This enables gamepad vibration when sounding alerts.",
+	UI_CustomSounds = "Custom Sounds",
+	UI_CustomSoundsHeader = "Override existing sound alerts",
+	UI_Reset = "Reset",
+	UI_ResetCustomSounds = "Reset this sound to use the default sound.",
+	-- 5.0
+	UI_CustomSounds_Set = "Custom sound for |cFFFFFFFF%s|r alert set.",
+	UI_CustomSounds_Removed = "Custom sound for |cFFFFFFFF%s|r alert is now set to default.",
+	-- 5.3
+	Help_IgnoreSpell = "Add/remove spells to your custom ignore list (Advanced)";
+	UI_NotSupported_Classic = "This feature is not supported in WoW Classic.";
+	UI_IgnoreSpell_Help = "To add/remove a spell to your custom ignore list, type: |cFFFFFFFF/GTFO Ignore 12345|r where |cFF44FFFF12345|r is the spell ID # you wish to ignore.";
+	UI_IgnoreSpell_None = "You are currently not ignoring any spells.";
+	UI_IgnoreSpell_List = "You are currently ignoring the following spells:";
+	UI_IgnoreSpell_InvalidSpellId = "The spell ID |cFF44FFFF%s|r is invalid.";
+	UI_IgnoreSpell_Add = "You are now ignoring Spell #%s: %s";
+	UI_IgnoreSpell_Remove = "You are no longer ignoring Spell #%s: %s";
 }

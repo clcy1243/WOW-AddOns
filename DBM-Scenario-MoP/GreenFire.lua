@@ -2,8 +2,9 @@ if select(2, UnitClass("player")) ~= "WARLOCK" then return end
 local mod	= DBM:NewMod("d594", "DBM-Scenario-MoP")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190814211345")
-mod:SetZone()
+mod.statTypes = "normal"
+
+mod:SetRevision("20240714050536")
 
 mod:RegisterCombat("scenario", 1112)
 
@@ -16,7 +17,6 @@ mod:RegisterEventsInCombat(
 	"CHAT_MSG_MONSTER_YELL",
 	"UNIT_DIED"
 )
-mod.onlyNormal = true
 
 --Essence of Order
 local warnSpellFlame			= mod:NewSpellAnnounce(134234, 3)
@@ -63,7 +63,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnHellfire:Show(args.sourceName)
 		timerHellfireCD:Start()
 	elseif args.spellId == 138559 then
-		specWarnChaosBolt:Show()
+		specWarnChaosBolt:Show(args.sourceName)
 	end
 end
 

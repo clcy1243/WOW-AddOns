@@ -5,6 +5,9 @@
 local mod, CL = BigWigs:NewBoss("ArchimondeHyjal", 534, 1581)
 if not mod then return end
 mod:RegisterEnableMob(17968)
+if mod:Classic() then
+	mod:SetEncounterID(622)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -37,7 +40,7 @@ function mod:OnBossEnable()
 
 	self:Log("SPELL_CAST_SUCCESS", "ProtectionOfElune", 38528)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 
 	self:Death("Win", 17968)
@@ -55,22 +58,22 @@ end
 --
 
 function mod:GripOfTheLegion(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Alert", L["grip_other"])
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "alert", L["grip_other"])
 end
 
 function mod:Fear(args)
 	self:CDBar(args.spellId, 41.5)
-	self:Message(args.spellId, "red", nil, L["fear_message"])
+	self:MessageOld(args.spellId, "red", nil, L["fear_message"])
 	self:DelayedMessage(args.spellId, 41.5, "orange", CL["soon"]:format(args.spellName))
 end
 
 do
 	local function printTarget(self, name, guid)
-		self:TargetMessage(32014, name, "red", "Long")
+		self:TargetMessageOld(32014, name, "red", "long")
 		self:PrimaryIcon(32014, name)
 		self:ScheduleTimer("PrimaryIcon", 5, 32014)
 		if self:Me(guid) then
-			self:Say(32014)
+			self:Say(32014, nil, nil, "Air Burst")
 		end
 	end
 
@@ -84,6 +87,6 @@ function mod:ProtectionOfElune()
 	self:PrimaryIcon(32014)
 	self:StopBar(31970) -- Fear
 	-- Use berserk instead of making a toggle option for this.
-	self:Bar("berserk", 36, L["killable"], "achievement_boss_archimonde-")
+	self:Bar("berserk", 36, L["killable"], 31984) -- 31984 = for finger of death spam
 end
 

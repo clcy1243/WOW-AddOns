@@ -1,4 +1,5 @@
 local L = BigWigs:NewBossLocale("Anub'arak", "esES")
+if not L then return end
 if L then
 	L.engage_message = "¡Anub'arak activo, se entierra en 80sec!"
 	L.engage_trigger = "¡Este lugar será vuestra tumba!"
@@ -13,8 +14,6 @@ if L then
 	L.nerubian_burrower = "Más adds"
 
 	L.shadow_soon = "¡Golpe de las Sombras en ~5sec!"
-
-	L.chase = "Perseguido"
 end
 
 L = BigWigs:NewBossLocale("The Beasts of Northrend", "esES")
@@ -26,10 +25,13 @@ if L then
 	L.icehowl_trigger = "El propio aire se congela al presentar a nuestro siguiente combatiente: ¡Aullahielo! ¡Matad o morid, campeones!"
 	L.boss_incoming = "%s entrando"
 
+	L.gormok = "Gormok el Empalador"
+	L.jormungars = "Fauceácida y Aterraescama"
+	L.icehowl = "Aullahielo"
+
 	-- Gormok
 	L.snobold = "Snobold"
 	L.snobold_desc = "Avisa quien tiene un Snobold en su cabeza."
-	L.snobold_message = "Add"
 
 	-- Jormungars
 	L.submerge = "Sumerge"

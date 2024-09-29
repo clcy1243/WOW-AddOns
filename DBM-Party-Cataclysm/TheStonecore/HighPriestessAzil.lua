@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(113, "DBM-Party-Cataclysm", 7, 67)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod.statTypes = "normal,heroic,timewalker"
+
+mod:SetRevision("20220920232426")
 mod:SetCreatureID(42333)
 mod:SetEncounterID(1057)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -28,7 +29,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 79351 and args:IsDestTypePlayer() then
 		warnGrip:Show(args.destName)
 		timerGrip:Start(args.destName)
-	elseif args.spellId == 79345 and self:CheckDispelFilter() then
+	elseif args.spellId == 79345 and self:CheckDispelFilter("curse") then
 		specWarnCurse:Show(args.destName)
 		specWarnCurse:Play("helpdispel")
 	end

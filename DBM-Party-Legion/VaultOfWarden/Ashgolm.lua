@@ -1,17 +1,14 @@
 local mod	= DBM:NewMod(1468, "DBM-Party-Legion", 10, 707)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20240412075414")
 mod:SetCreatureID(95886)
 mod:SetEncounterID(1816)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 192522 192631 192621",
-	"SPELL_PERIODIC_DAMAGE",
-	"SPELL_PERIODIC_MISSED"
+	"SPELL_CAST_START 192522 192631 192621"
 )
 
 local warnVolcano					= mod:NewSpellAnnounce(192621, 3, nil, nil, nil, nil, nil, 2)
@@ -21,7 +18,7 @@ local specWarnFissure				= mod:NewSpecialWarningSpell(192522, "Tank", nil, nil, 
 
 local timerVolcanoCD				= mod:NewCDTimer(20, 192621, nil, nil, nil, 1)--20-22 unless delayed by brittle
 local timerLavaWreathCD				= mod:NewCDTimer(42.5, 192631, nil, nil, nil, 3)--42 unless delayed by brittle
-local timerFissureCD				= mod:NewCDTimer(42.5, 192522, nil, nil, nil, 5, nil, DBM_CORE_L.TANK_ICON)--42 unless delayed by brittle
+local timerFissureCD				= mod:NewCDTimer(42.5, 192522, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)--42 unless delayed by brittle
 
 function mod:OnCombatStart(delay)
 	timerVolcanoCD:Start(10-delay)

@@ -29,14 +29,14 @@ function mod:GetOptions()
 		251445, -- Burning Maw
 		244072, -- Molten Touch
 		{244768, "SAY", "SAY_COUNTDOWN"}, -- Desolate Gaze
-		244057, -- Enflame Corruption
+		{244057, "CASTBAR"}, -- Enflame Corruption
 		{248815, "SAY", "SAY_COUNTDOWN"}, -- Enflamed
 
 		--[[ Shatug ]]--
 		245098, -- Corrupting Maw
 		244131, -- Consuming Sphere
 		{254429, "SAY", "SAY_COUNTDOWN", "FLASH"}, -- Weight of Darkness
-		244056, -- Siphon Corruption
+		{244056, "CASTBAR"}, -- Siphon Corruption
 		{248819, "SAY", "SAY_COUNTDOWN"}, -- Siphoned
 
 		--[[ General ]]--
@@ -114,13 +114,13 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 244159 then -- Consuming Sphere
-		self:Message(244131, "yellow", "Alert")
+		self:MessageOld(244131, "yellow", "alert")
 		consumingSphereCount = consumingSphereCount + 1
 		self:Bar(244131, self:Mythic() and (consumingSphereCount % 2 == 1 and 86 or 72.5) or self:Easy() and 85 or 78.5)
 	elseif spellId == 244069 then -- Weight of Darkness
 		weightofDarknessCount = weightofDarknessCount + 1
 		self:Flash(254429)
-		self:Message(254429, "orange", "Warning")
+		self:MessageOld(254429, "orange", "warning")
 		self:Bar(254429, self:Mythic() and (weightofDarknessCount % 2 == 1 and 72.5 or 86) or 78.5)
 	elseif spellId == 244064 then -- Desolate Gaze
 		self:Bar(244768, self:Mythic() and 103 or self:Easy() and 104 or 96.5)
@@ -128,7 +128,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 end
 
 function mod:BurningMaw(args)
-	self:Message(args.spellId, "red", "Alarm")
+	self:MessageOld(args.spellId, "red", "alarm")
 	self:CDBar(args.spellId, self:Mythic() and 10.9 or 11)
 end
 
@@ -146,9 +146,9 @@ do
 	function mod:MoltenTouchApplied(args)
 		playerList[#playerList+1] = args.destName
 		if self:Me(args.destGUID) then
-			self:PlaySound(args.spellId, "Warning")
+			self:PlaySound(args.spellId, "warning")
 		end
-		self:TargetsMessage(args.spellId, "yellow", playerList, 3)
+		self:TargetsMessageOld(args.spellId, "yellow", playerList, 3)
 	end
 end
 
@@ -157,11 +157,11 @@ do
 	function mod:DesolateGazeApplied(args)
 		playerList[#playerList+1] = args.destName
 		if self:Me(args.destGUID) then
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Desolate Gaze")
 			self:SayCountdown(args.spellId, 8)
 		end
-		self:PlaySound(args.spellId, "Warning", nil, playerList)
-		self:TargetsMessage(args.spellId, "orange", playerList, 5)
+		self:PlaySound(args.spellId, "warning", nil, playerList)
+		self:TargetsMessageOld(args.spellId, "orange", playerList, 5)
 	end
 end
 
@@ -172,20 +172,20 @@ function mod:DesolateGazeRemoved(args)
 end
 
 function mod:EnflameCorruption(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 	enflameCorruptionCount = enflameCorruptionCount + 1
 	self:Bar(args.spellId, self:Mythic() and (enflameCorruptionCount % 2 == 1 and 88.8 or 104.6) or self:Easy() and 104 or 95.5)
 	self:CastBar(args.spellId, 9)
 end
 
 function mod:CorruptingMaw(args)
-	self:Message(args.spellId, "red", "Alarm")
+	self:MessageOld(args.spellId, "red", "alarm")
 	self:CDBar(args.spellId, self:Mythic() and 10.9 or 11)
 end
 
 function mod:WeightofDarknessApplied(args)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Weight of Darkness")
 		self:SayCountdown(args.spellId, 5)
 	end
 end
@@ -197,7 +197,7 @@ function mod:WeightofDarknessRemoved(args)
 end
 
 function mod:SiphonCorruption(args)
-	self:Message(args.spellId, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 	siphonCorruptionCount = siphonCorruptionCount + 1
 	self:Bar(args.spellId, self:Mythic() and (siphonCorruptionCount % 2 == 1 and 86.3 or 73) or self:Easy() and 85 or 78.5)
 	self:CastBar(args.spellId, 9)
@@ -205,9 +205,13 @@ end
 
 function mod:EnflamedOrSiphoned(args)
 	if self:Me(args.destGUID) then
-		self:PlaySound(args.spellId, "Warning")
+		self:PlaySound(args.spellId, "warning")
 		self:PersonalMessage(args.spellId)
-		self:Say(args.spellId)
+		if args.spellId == 248815 then
+			self:Say(248815, nil, nil, "Enflamed")
+		else -- 248819
+			self:Say(248819, nil, nil, "Siphoned")
+		end
 		if self:Mythic() then
 			self:SayCountdown(args.spellId, 3, nil, 2)
 		else
@@ -228,7 +232,7 @@ do
 		local t = GetTime()
 		if t-prev > 0.5 then
 			prev = t
-			self:Message(244050, "orange", "Warning", args.spellName, args.spellId)
+			self:MessageOld(244050, "orange", "warning", args.spellName, args.spellId)
 		end
 	end
 end
@@ -239,7 +243,7 @@ do
 		local t = GetTime()
 		if t-prev > 1.5 then
 			prev = t
-			self:Message(args.spellId, "cyan", "Info")
+			self:MessageOld(args.spellId, "cyan", "info")
 			self:Bar(args.spellId, 15)
 		end
 	end
@@ -248,7 +252,7 @@ end
 --[[ Mythic ]]--
 function mod:Touched(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, args.spellId == 244054 and "red" or "blue", "Warning", CL.you:format(args.spellName)) -- Red for Flame, Blue for Shadow
+		self:MessageOld(args.spellId, args.spellId == 244054 and "red" or "blue", "warning", CL.you:format(args.spellName)) -- Red for Flame, Blue for Shadow
 	end
 end
 
@@ -259,7 +263,7 @@ do
 			local t = GetTime()
 			if t-prev > 2 then
 				prev = t
-				self:PlaySound(args.spellId, "Alert")
+				self:PlaySound(args.spellId, "alert")
 				self:PersonalMessage(args.spellId, "underyou")
 			end
 		end

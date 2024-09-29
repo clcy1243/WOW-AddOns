@@ -5,6 +5,9 @@
 local mod, CL = BigWigs:NewBoss("Gruul the Dragonkiller", 565, 1565)
 if not mod then return end
 mod:RegisterEnableMob(19044)
+if mod:Classic() then
+	mod:SetEncounterID(650)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -52,7 +55,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Shatter", 33654)
 	self:Log("SPELL_CAST_START", "Slam", 33525)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 
 	self:Death("Win", 19044)
 end
@@ -63,7 +66,7 @@ function mod:OnEngage()
 
 	self:OpenProximity("proximity", 15)
 
-	self:Message("grasp", "yellow", nil, L["engage_message"]:format(self.displayName), false)
+	self:MessageOld("grasp", "yellow", nil, L["engage_message"]:format(self.displayName), false)
 	self:DelayedMessage("grasp", 30, "orange", L["grasp_warning"])
 	self:CDBar("grasp", 33, 33525) -- Ground Slam
 
@@ -79,14 +82,14 @@ end
 
 function mod:CaveIn(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Alarm", CL["you"]:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alarm", CL["you"]:format(args.spellName))
 		self:Flash(args.spellId)
 	end
 end
 
 function mod:Grow(args)
 	local stack = args.amount or 1
-	self:Message("grow", "red", nil, L["grow_message"]:format(stack), args.spellId)
+	self:MessageOld("grow", "red", nil, L["grow_message"]:format(stack), args.spellId)
 	stack = stack + 1
 	if stack < 31 then
 		self:Bar("grow", 30, L["grow_bar"]:format(stack), args.spellId)
@@ -97,19 +100,19 @@ function mod:Grow(args)
 end
 
 function mod:Silence(args)
-	self:Message(args.spellId, "yellow", nil, L["silence_message"])
+	self:MessageOld(args.spellId, "yellow", nil, L["silence_message"])
 	self:DelayedMessage(args.spellId, 28, "orange", L["silence_warning"])
 	self:Bar(args.spellId, 31, L["silence_bar"])
 end
 
 function mod:Shatter(args)
-	self:Message("grasp", "green", nil, args.spellId)
+	self:MessageOld("grasp", "green", nil, args.spellId)
 	self:DelayedMessage("grasp", 56, "orange", L["grasp_warning"])
 	self:CDBar("grasp", 62, 33525)
 end
 
 function mod:Slam(args)
-	self:Message("grasp", "yellow", nil, L["grasp_message"], args.spellId)
+	self:MessageOld("grasp", "yellow", nil, L["grasp_message"], args.spellId)
 	self:Bar("grasp", 10, 33654) -- Shatter
 end
 

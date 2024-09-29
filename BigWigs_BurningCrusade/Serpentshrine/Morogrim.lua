@@ -5,6 +5,13 @@
 local mod = BigWigs:NewBoss("Morogrim Tidewalker", 548, 1571)
 if not mod then return end
 mod:RegisterEnableMob(21213)
+if mod:Classic() then
+	mod:SetEncounterID(627)
+end
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local inGrave = mod:NewTargetList()
 
@@ -51,7 +58,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Tidal", 37730)
 	self:Log("SPELL_CAST_SUCCESS", "Murlocs", 37764)
 
-	self:Yell("Globules", L["globules_trigger1"], L["globules_trigger2"])
+	self:BossYell("Globules", L["globules_trigger1"], L["globules_trigger2"])
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 
@@ -59,9 +66,9 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage()
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "target", "focus")
 
-	self:Message("murloc", "green", nil, L["murloc_engaged"]:format(self.displayName), false)
+	self:MessageOld("murloc", "green", nil, L["murloc_engaged"]:format(self.displayName), false)
 	self:Bar("murloc", 40, L["murloc_bar"], 42365)
 	self:Bar(37850, 20, L["grave_nextbar"])
 end
@@ -73,7 +80,7 @@ end
 do
 	local scheduled = nil
 	local function graveWarn()
-		mod:TargetMessage(37850, inGrave, "red", "Alert")
+		mod:TargetMessageOld(37850, inGrave, "red", "alert")
 		scheduled = nil
 	end
 	function mod:Grave(args)
@@ -88,25 +95,25 @@ do
 end
 
 function mod:Tidal(args)
-	self:Message(args.spellId, "orange", "Alarm")
+	self:MessageOld(args.spellId, "orange", "alarm")
 end
 
 function mod:Murlocs()
-	self:Message("murloc", "green", nil, L["murloc_message"], 42365)
+	self:MessageOld("murloc", "green", nil, L["murloc_message"], 42365)
 	self:Bar("murloc", 51, L["murloc_bar"], 42365)
 	self:DelayedMessage("murloc", 49, "yellow", L["murloc_soon_message"])
 end
 
 function mod:Globules()
-	self:Message("globules", "red", "Alert", L["globules_message"], false)
+	self:MessageOld("globules", "red", "alert", L["globules_message"], false)
 	self:Bar("globules", 36, L["globules_bar"], "INV_Elemental_Primal_Water")
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 21213 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 21213 then
+		local hp = self:GetHealth(unit)
 		if hp > 25 and hp < 30 then
-			self:Message("globules", "green", nil, L["globules_warning"], false)
+			self:MessageOld("globules", "green", nil, L["globules_warning"], false)
 			self:UnregisterUnitEvent(event, "target", "focus")
 		end
 	end

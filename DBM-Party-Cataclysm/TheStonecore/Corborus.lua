@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(110, "DBM-Party-Cataclysm", 7, 67)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "normal,heroic,timewalker"
+
+mod:SetRevision("20220116042005")
 mod:SetCreatureID(43438)
 mod:SetEncounterID(1056)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -22,7 +23,7 @@ local warnEmerge					= mod:NewAnnounce("WarnEmerge", 2, "Interface\\AddOns\\DBM-
 local specWarnCrystalBarrage		= mod:NewSpecialWarningYou(81634, nil, nil, nil, 1, 2)
 local specWarnCrystalBarrageClose	= mod:NewSpecialWarningClose(81634, nil, nil, nil, 1, 2)
 
-local timerDampening				= mod:NewCDTimer(10, 82415, nil, nil, nil, 3, nil, DBM_CORE_L.MAGIC_ICON)
+local timerDampening				= mod:NewCDTimer(10, 82415, nil, nil, nil, 3, nil, DBM_COMMON_L.MAGIC_ICON)
 local timerSubmerge					= mod:NewTimer(80, "TimerSubmerge", "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendBurrow.blp", nil, nil, 6)
 local timerEmerge					= mod:NewTimer(30, "TimerEmerge", "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendUnBurrow.blp", nil, nil, 6)
 
@@ -45,7 +46,7 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 86881 and not self:IsTrivial(90) then
+	if args.spellId == 86881 and not self:IsTrivial() then
 		warnCrystalBarrage:CombinedShow(0.3, args.destName)
 		if args:IsPlayer() then
 			specWarnCrystalBarrage:Show()

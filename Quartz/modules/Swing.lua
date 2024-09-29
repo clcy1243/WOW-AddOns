@@ -33,12 +33,14 @@ local UnitClass, UnitDamage, UnitAttackSpeed, UnitRangedDamage = UnitClass, Unit
 local math_abs, bit_band, unpack = math.abs, bit.band, unpack
 local COMBATLOG_FILTER_ME = COMBATLOG_FILTER_ME
 
+local GetSpellName = C_Spell and C_Spell.GetSpellName or GetSpellInfo
+
 local playerclass
-local autoshotname = GetSpellInfo(75)
-local slam = GetSpellInfo(1464)
+local autoshotname = GetSpellName(75)
+local slam = GetSpellName(1464)
 
 local resetautoshotspells = {
-	--[GetSpellInfo(19434)] = true, -- Aimed Shot
+	--[GetSpellName(19434)] = true, -- Aimed Shot
 }
 
 local swingbar, swingbar_width, swingstatusbar, remainingtext, durationtext
@@ -55,10 +57,10 @@ local defaults = {
 		swingheight = 4,
 		swingposition = "top",
 		swinggap = -4,
-		
+
 		durationtext = true,
 		remainingtext = true,
-		
+
 		x = 300,
 		y = 300,
 	}
@@ -89,7 +91,7 @@ end
 function Swing:OnInitialize()
 	self.db = Quartz3.db:RegisterNamespace(MODNAME, defaults)
 	db = self.db.profile
-	
+
 	self:SetEnabledState(Quartz3:GetModuleEnabled(MODNAME))
 	Quartz3:RegisterModuleOptions(MODNAME, getOptions, L["Swing"])
 
@@ -104,28 +106,28 @@ function Swing:OnEnable()
 	-- fired when autoshot (or autowand) is enabled/disabled
 	self:RegisterEvent("START_AUTOREPEAT_SPELL")
 	self:RegisterEvent("STOP_AUTOREPEAT_SPELL")
-	
+
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	
+
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	-- slam stuff
 	if playerclass == "WARRIOR" then
 		self:RegisterEvent("UNIT_SPELLCAST_START")
 		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 	end
-	
+
 	self:RegisterEvent("UNIT_ATTACK")
 	if not swingbar then
-		swingbar = CreateFrame("Frame", "Quartz3SwingBar", UIParent)
+		swingbar = CreateFrame("Frame", "Quartz3SwingBar", UIParent, "BackdropTemplate")
 		swingbar:SetFrameStrata("HIGH")
 		swingbar:SetScript("OnShow", OnShow)
 		swingbar:SetScript("OnHide", OnHide)
 		swingbar:SetMovable(true)
 		swingbar:RegisterForDrag("LeftButton")
 		swingbar:SetClampedToScreen(true)
-		
+
 		swingstatusbar = Quartz3:CreateStatusBar(nil, swingbar)
-		
+
 		durationtext = swingstatusbar:CreateFontString(nil, "OVERLAY")
 		remainingtext = swingstatusbar:CreateFontString(nil, "OVERLAY")
 		swingbar:Hide()
@@ -173,32 +175,32 @@ end
 function Swing:UNIT_SPELLCAST_SUCCEEDED(event, unit, guid, spell)
 	if unit ~= "player" then return end
 	if swingmode == 0 then
-		if GetSpellInfo(spell) == slam and slamstart then
+		if GetSpellName(spell) == slam and slamstart then
 			starttime = starttime + GetTime() - slamstart
 			slamstart = nil
 		end
 	elseif swingmode == 1 then
-		if GetSpellInfo(spell) == autoshotname then
+		if GetSpellName(spell) == autoshotname then
 			self:Shoot()
 		end
 	end
-	if resetautoshotspells[GetSpellInfo(spell)] then
+	if resetautoshotspells[GetSpellName(spell)] then
 		swingmode = 1
 		self:Shoot()
 	end
 end
 
 function Swing:UNIT_SPELLCAST_START(event, unit, guid, spell)
-	if unit == "player" and GetSpellInfo(spell) == slam then
+	if unit == "player" and GetSpellName(spell) == slam then
 		slamstart = GetTime()
 	end
-end 
+end
 
 function Swing:UNIT_SPELLCAST_INTERRUPTED(event, unit, guid, spell)
-	if unit == "player" and GetSpellInfo(spell) == slam and slamstart then
+	if unit == "player" and GetSpellName(spell) == slam and slamstart then
 		slamstart = nil
-	end 
-end 
+	end
+end
 
 function Swing:UNIT_ATTACK(event, unit)
 	if unit == "player" then
@@ -260,12 +262,12 @@ function Swing:ApplySettings()
 		else -- L["Free"]
 			swingbar:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", db.x, db.y)
 		end
-		
+
 		swingstatusbar:SetAllPoints(swingbar)
 		swingstatusbar:SetStatusBarTexture(media:Fetch("statusbar", Player.db.profile.texture))
 		swingstatusbar:SetStatusBarColor(unpack(db.barcolor))
 		swingstatusbar:SetMinMaxValues(0, 1)
-		
+
 		if db.durationtext then
 			durationtext:Show()
 			durationtext:ClearAllPoints()
@@ -280,7 +282,7 @@ function Swing:ApplySettings()
 		durationtext:SetTextColor(1,1,1)
 		durationtext:SetNonSpaceWrap(false)
 		durationtext:SetWidth(swingbar_width)
-		
+
 		if db.remainingtext then
 			remainingtext:Show()
 			remainingtext:ClearAllPoints()
@@ -310,7 +312,7 @@ do
 		db.y = swingbar:GetBottom()
 		swingbar:StopMovingOrSizing()
 	end
-	
+
 	local function setOpt(info, value)
 		db[info[#info]] = value
 		Swing:ApplySettings()
@@ -319,7 +321,7 @@ do
 	local function getOpt(info)
 		return db[info[#info]]
 	end
-	
+
 	local function getColor(info)
 		return unpack(getOpt(info))
 	end
@@ -327,7 +329,7 @@ do
 	local function setColor(info, r, g, b, a)
 		setOpt(info, {r, g, b, a})
 	end
-	
+
 	local options
 	function getOptions()
 		options = options or {

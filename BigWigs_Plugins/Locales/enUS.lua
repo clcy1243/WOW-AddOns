@@ -1,6 +1,7 @@
 local L = BigWigsAPI:NewLocale("BigWigs: Plugins", "enUS")
 
 L.general = "General"
+L.advanced = "Advanced"
 L.comma = ", "
 
 L.positionX = "X Position"
@@ -9,16 +10,48 @@ L.positionExact = "Exact Positioning"
 L.positionDesc = "Type in the box or move the slider if you need exact positioning from the anchor."
 L.width = "Width"
 L.height = "Height"
-L.sizeDesc = "Normally you set the size by dragging the anchor. If you need an exact size you can use this slider or type the value into the box, which has no maximum."
+L.sizeDesc = "Normally you set the size by dragging the anchor. If you need an exact size you can use this slider or type the value into the box."
+L.fontSizeDesc = "Adjust the font size using the slider or type the value into the box which has a much higher maximum of 200."
+L.disabled = "Disabled"
+L.disableDesc = "You are about to disable the feature '%s' which is |cffff4411not recommended|r.\n\nAre you sure you want to do this?"
+
+-- Anchor Points / Grow Directions
+L.UP = "Up"
+L.DOWN = "Down"
+L.TOP = "Top"
+L.RIGHT = "Right"
+L.BOTTOM = "Bottom"
+L.LEFT = "Left"
+L.TOPRIGHT = "Top Right"
+L.TOPLEFT = "Top Left"
+L.BOTTOMRIGHT = "Bottom Right"
+L.BOTTOMLEFT = "Bottom Left"
+L.CENTER = "Center"
+L.customAnchorPoint = "Advanced: Custom anchor point"
+L.sourcePoint = "Source Point"
+L.destinationPoint = "Destination Point"
 
 -----------------------------------------------------------------------
 -- AltPower.lua
 --
 
 L.altPowerTitle = "AltPower"
+L.altPowerDesc = "The AltPower display will only appear for bosses that apply AltPower to players, which is extremely rare. The display measures the amount of 'Alternative Power' you and your group has, displaying it in a list. To move the display around, please use the test button below."
 L.toggleDisplayPrint = "The display will show next time. To disable it completely for this encounter, you need to toggle it off in the encounter options."
-L.disabled = "Disabled"
 L.disabledDisplayDesc = "Disable the display for all modules that use it."
+L.resetAltPowerDesc = "Reset all the options related to AltPower, including the position of the AltPower anchor."
+L.test = "Test"
+L.altPowerTestDesc = "Show the 'Alternative Power' display, allowing you to move it, and simulating the power changes you would see on a boss encounter."
+L.yourPowerBar = "Your Power Bar"
+L.barColor = "Bar color"
+L.barTextColor = "Bar text color"
+L.additionalWidth = "Additional Width"
+L.additionalHeight = "Additional Height"
+L.additionalSizeDesc = "Add to the size of the standard display by adjusting this slider, or type the value into the box which has a much higher maximum of 100."
+L.yourPowerTest = "Your Power: %d" -- Your Power: 42
+L.yourAltPower = "Your %s: %d" -- e.g. Your Corruption: 42
+L.player = "Player %d" -- Player 7
+L.disableAltPowerDesc = "Globally disable the AltPower display, it will never show for any boss encounter."
 
 -----------------------------------------------------------------------
 -- AutoReply.lua
@@ -49,30 +82,14 @@ L.autoReplyLeftCombatAdvancedWipe = "I lost against '%s' at: %s"
 L.bars = "Bars"
 L.style = "Style"
 L.bigWigsBarStyleName_Default = "Default"
+L.resetBarsDesc = "Reset all the options related to bars, including the position of the bar anchors."
+L.testBarsBtn = "Create Test Bar"
+L.testBarsBtn_desc = "Creates a bar for you to test your current display settings with."
 
-L.nameplateBars = "Nameplate Bars"
-L.nameplateAutoWidth = "Match width of nameplate"
-L.nameplateAutoWidthDesc = "Sets the width of nameplate bars to the with of their parent nameplate."
-L.nameplateOffsetY = "Y Offset"
-L.nameplateOffsetYDesc = "Offset from the top of the nameplate for upwards bars and the bottom of the nameplate for downwards bars."
-
-L.clickableBars = "Clickable Bars"
-L.clickableBarsDesc = "BigWigs bars are click-through by default. This way you can target objects or launch targetted AoE spells behind them, change the camera angle, and so on, while your cursor is over the bars. |cffff4411If you enable clickable bars, this will no longer work.|r The bars will intercept any mouse clicks you perform on them.\n"
-L.interceptMouseDesc = "Enables bars to receive mouse clicks."
-L.modifier = "Modifier"
-L.modifierDesc = "Hold down the selected modifier key to enable click actions on the timer bars."
-L.modifierKey = "Only with modifier key"
-L.modifierKeyDesc = "Allows bars to be click-through unless the specified modifier key is held down, at which point the mouse actions described below will be available."
-
-L.tempEmphasize = "Temporarily Super Emphasizes the bar and any messages associated with it for the duration."
-L.report = "Report"
-L.reportDesc = "Reports the current bars status to the active group chat; either instance chat, raid, party or say, as appropriate."
-L.remove = "Remove"
-L.removeDesc = "Temporarily removes the bar and all associated messages."
-L.removeOther = "Remove other"
-L.removeOtherDesc = "Temporarily removes all other bars (except this one) and associated messages."
-L.disable = "Disable"
-L.disableDesc = "Permanently disables the boss encounter ability option that spawned this bar."
+L.toggleAnchorsBtnShow = "Show Moving Anchors"
+L.toggleAnchorsBtnHide = "Hide Moving Anchors"
+L.toggleAnchorsBtnHide_desc = "Hide all the moving anchors, locking everything in place."
+L.toggleBarsAnchorsBtnShow_desc = "Show all the moving anchors, allowing you to move the bars."
 
 L.emphasizeAt = "Emphasize at... (seconds)"
 L.growingUpwards = "Grow upwards"
@@ -85,7 +102,6 @@ L.emphasizeMultiplierDesc = "If you disable the bars moving to the emphasize anc
 L.enable = "Enable"
 L.move = "Move"
 L.moveDesc = "Moves emphasized bars to the Emphasize anchor. If this option is off, emphasized bars will simply change size and color."
-L.regularBars = "Regular bars"
 L.emphasizedBars = "Emphasized bars"
 L.align = "Align"
 L.alignText = "Align Text"
@@ -134,7 +150,8 @@ L.breakFinished = "Break time is now over!"
 --
 
 L.bossBlock = "Boss Block"
-L.bossBlockDesc = "Configure the various things you can block during a boss encounter."
+L.bossBlockDesc = "Configure the various things you can block during a boss encounter.\n\n"
+L.bossBlockAudioDesc = "Configure what audio to mute during a boss encounter.\n\nAny option here that is |cff808080greyed out|r has been disabled in WoW's sound options.\n\n"
 L.movieBlocked = "You've seen this movie before, skipping it."
 L.blockEmotes = "Block middle-screen emotes"
 L.blockEmotesDesc = "Some bosses show emotes for certain abilities, these messages are both way too long and descriptive. We try to produce smaller, more fitting messages that do not interfere with the gameplay, and don't tell you specifically what to do.\n\nPlease note: Boss emotes will still be visible in chat if you wish to read them."
@@ -146,12 +163,42 @@ L.blockGuildChallenge = "Block guild challenge popups"
 L.blockGuildChallengeDesc = "Guild challenge popups show for a few things, mainly when a group in your guild completes a heroic dungeon or a challenge mode dungeon.\n\nThese popups can cover up critical parts of your UI during a boss fight, so we recommend blocking them."
 L.blockSpellErrors = "Block spell failed messages"
 L.blockSpellErrorsDesc = "Messages such as \"Spell is not ready yet\" that usually show at the top of the screen will be blocked."
-L.disableSfx = "Disable sound effects"
-L.disableSfxDesc = "The 'Sound Effects' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
+L.blockZoneChanges = "Block zone changed messages"
+L.blockZoneChangesDesc = "The messages that show in the middle-top of the screen when you move into a new zone such as '|cFF33FF99Stormwind|r' or '|cFF33FF99Orgrimmar|r' will be blocked."
+L.audio = "Audio"
+L.music = "Music"
+L.ambience = "Ambient Sounds"
+L.sfx = "Sound Effects"
+L.errorSpeech = "Error Speech"
+L.disableMusic = "Mute music (recommended)"
+L.disableAmbience = "Mute ambient sounds (recommended)"
+L.disableSfx = "Mute sound effects (not recommended)"
+L.disableErrorSpeech = "Mute error speech (recommended)"
+L.disableAudioDesc = "The '%s' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
 L.blockTooltipQuests = "Block tooltip quest objectives"
 L.blockTooltipQuestsDesc = "When you need to kill a boss for a quest, it will usually show as '0/1 complete' in the tooltip when you place your mouse over the boss. This will be hidden whilst in combat with that boss to prevent the tooltip growing very large."
 L.blockObjectiveTracker = "Hide quest tracker"
 L.blockObjectiveTrackerDesc = "The quest objective tracker will be hidden during a boss encounter to clear up screen space.\n\nThis will NOT happen if you are in a mythic+ or are tracking an achievement."
+
+L.blockTalkingHead = "Hide 'Talking Head' NPC dialog popup"
+L.blockTalkingHeadDesc = "The 'Talking Head' is a popup dialog box that has an NPC head and NPC chat text at the middle-bottom of your screen that |cffff4411sometimes|r shows when an NPC is talking.\n\nYou can choose the different types of instances where this should be blocked from showing.\n\n|cFF33FF99Please Note:|r\n 1) This feature will allow the NPC voice to continue playing so you can still hear it.\n 2) For safety, only specific talking heads will be blocked. Anything special or unique, such as a one-time quest, will not be blocked."
+L.blockTalkingHeadDungeons = "Normal & Heroic Dungeons"
+L.blockTalkingHeadMythics = "Mythic & Mythic+ Dungeons"
+L.blockTalkingHeadRaids = "Raids"
+L.blockTalkingHeadTimewalking = "Timewalking (Dungeons & Raids)"
+L.blockTalkingHeadScenarios = "Scenarios"
+
+L.redirectPopups = "Redirect popup banners to BigWigs messages"
+L.redirectPopupsDesc = "Popup banners in the middle of your screen such as the '|cFF33FF99vault slot unlocked|r' banner will instead be displayed as BigWigs messages. These banners can be quite large, last a long time, and block your ability to click through them."
+L.redirectPopupsColor = "Color of the redirected message"
+L.blockDungeonPopups = "Block dungeon popup banners"
+L.blockDungeonPopupsDesc = "The popup banners that show when entering a dungeon can sometimes contain text which is very long. Enabling this feature will completely block them."
+L.itemLevel = "Item Level %d"
+
+L.userNotifySfx = "Sound Effects were disabled by BossBlock, forcing it back on."
+L.userNotifyMusic = "Music was disabled by BossBlock, forcing it back on."
+L.userNotifyAmbience = "Ambience was disabled by BossBlock, forcing it back on."
+L.userNotifyErrorSpeech = "Error speech was disabled by BossBlock, forcing it back on."
 
 L.subzone_grand_bazaar = "Grand Bazaar" -- Battle of Dazar'alor raid (Battle for Azeroth)
 L.subzone_port_of_zandalar = "Port of Zandalar" -- Battle of Dazar'alor raid (Battle for Azeroth)
@@ -165,7 +212,6 @@ L.colors = "Colors"
 
 L.text = "Text"
 L.textShadow = "Text Shadow"
-L.flash = "Flash"
 L.normal = "Normal"
 L.emphasized = "Emphasized"
 
@@ -188,20 +234,22 @@ L.purple = "Purple"
 L.purpleDesc = "Warnings for tank specific abilities such as stacks of a tank debuff."
 
 -----------------------------------------------------------------------
--- Emphasize.lua
+-- Countdown.lua
 --
 
-L.superEmphasize = "Super Emphasize"
-L.superEmphasizeDesc = "Boosts related messages or bars of a specific boss encounter ability.\n\nHere you configure exactly what should happen when you toggle on the Super Emphasize option in the advanced section for a boss encounter ability.\n\n|cffff4411Note that Super Emphasize is off by default for all abilities.|r\n"
-L.uppercase = "UPPERCASE"
-L.uppercaseDesc = "Uppercases all messages related to a super emphasized option."
-L.superEmphasizeDisableDesc = "Disable Super Emphasize for all modules that use it."
 L.textCountdown = "Text countdown"
 L.textCountdownDesc = "Show a visual counter during a count down."
 L.countdownColor = "Countdown color"
 L.countdownVoice = "Countdown voice"
 L.countdownTest = "Test countdown"
 L.countdownAt = "Countdown at... (seconds)"
+L.countdownAt_desc = "Choose how much time should be remaining on a boss ability (in seconds) when the countdown begins."
+L.countdown = "Countdown"
+L.countdownDesc = "The countdown feature involves a spoken audio countdown and a visual text countdown. It is rarely enabled by default, but you can enable it for any boss ability when looking at the specific boss encounter settings."
+L.countdownAudioHeader = "Spoken Audio Countdown"
+L.countdownTextHeader = "Visual Text Countdown"
+L.resetCountdownDesc = "Resets all the above countdown settings to their defaults."
+L.resetAllCountdownDesc = "If you've selected custom countdown voices for any boss encounter settings, this button will reset ALL of them as well as resetting all the above countdown settings to their defaults."
 
 -----------------------------------------------------------------------
 -- InfoBox.lua
@@ -215,20 +263,25 @@ L.infoBox = "InfoBox"
 
 L.sinkDescription = "Route output from this addon through the BigWigs message display. This display supports icons, colors and can show up to 4 messages on the screen at a time. Newly inserted messages will grow in size and shrink again quickly to notify the user."
 L.emphasizedSinkDescription = "Route output from this addon through the BigWigs Emphasized message display. This display supports text and colors, and can only show one message at a time."
-L.emphasizedCountdownSinkDescription = "Route output from this addon through the BigWigs Emphasized Countdown message display. This display supports text and colors, and can only show one message at a time."
+L.resetMessagesDesc = "Reset all the options related to messages, including the position of the message anchors."
+L.toggleMessagesAnchorsBtnShow_desc = "Show all the moving anchors, allowing you to move the messages."
+
+L.testMessagesBtn = "Create Test Message"
+L.testMessagesBtn_desc = "Creates a message for you to test your current display settings with."
 
 L.bwEmphasized = "BigWigs Emphasized"
 L.messages = "Messages"
-L.normalMessages = "Normal messages"
 L.emphasizedMessages = "Emphasized messages"
-L.output = "Output"
+L.emphasizedDesc = "The point of an emphasized message is to get your attention by being a large message in the middle of your screen. It is rarely enabled by default, but you can enable it for any boss ability when looking at the specific boss encounter settings."
+L.uppercase = "UPPERCASE"
+L.uppercaseDesc = "All emphasized messages will be converted to UPPERCASE."
 
-L.useColors = "Use colors"
-L.useColorsDesc = "Toggles white only messages ignoring coloring."
 L.useIcons = "Use icons"
 L.useIconsDesc = "Show icons next to messages."
 L.classColors = "Class colors"
-L.classColorsDesc = "Colors player names by their class."
+L.classColorsDesc = "Messages will sometimes contain player names. Enabling this option will color those names using class colors."
+L.chatFrameMessages = "Chat frame messages"
+L.chatFrameMessagesDesc = "Outputs all BigWigs messages to the default chat frame in addition to the display setting."
 
 L.fontSize = "Font size"
 L.none = "None"
@@ -245,6 +298,81 @@ L.fadeTime = "Fade time"
 L.fadeTimeDesc = "How long to fade out a message, in seconds"
 
 -----------------------------------------------------------------------
+-- Nameplates.lua
+--
+
+L.nameplates = "Nameplates"
+L.testNameplateIconBtn = "Show Test Icon"
+L.testNameplateIconBtn_desc = "Creates a test icon for you to test your current display settings with on your targeted nameplate."
+L.testNameplateTextBtn = "Show Text Test"
+L.testNameplateTextBtn_desc = "Creates a test text for you to test your current text settings with on your targeted nameplate."
+L.stopTestNameplateBtn = "Stop Tests"
+L.stopTestNameplateBtn_desc = "Stops the icon and text tests on your nameplates."
+L.noNameplateTestTarget = "You need to have a hostile target which is attackable selected to test nameplate functionality."
+L.anchoring = "Anchoring"
+L.growStartPosition = "Grow Start Position"
+L.growStartPositionDesc = "The starting position for the first icon."
+L.growDirection = "Grow Direction"
+L.growDirectionDesc = "The direction the icons will grow from the starting position."
+L.iconSpacingDesc = "Change the space between each icon."
+L.nameplateIconSettings = "Icon Settings"
+L.keepAspectRatio = "Keep Aspect Ratio"
+L.keepAspectRatioDesc = "Keep the aspect ratio of the icon 1:1 instead of stretching it to fit the size of the frame."
+L.iconColor = "Icon Color"
+L.iconColorDesc = "Change the color of the icon texture."
+L.desaturate = "Desaturate"
+L.desaturateDesc = "Desaturate the icon texture."
+L.zoom = "Zoom"
+L.zoomDesc = "Zoom the icon texture."
+L.showBorder = "Show Border"
+L.showBorderDesc = "Show a border around the icon."
+L.borderColor = "Border Color"
+L.borderSize = "Border Size"
+L.showNumbers = "Show Numbers"
+L.showNumbersDesc = "Show numbers on the icon."
+L.cooldown = "Cooldown"
+L.showCooldownSwipe = "Show Swipe"
+L.showCooldownSwipeDesc = "Show a swipe on the icon when the cooldown is active."
+L.showCooldownEdge = "Show Edge"
+L.showCooldownEdgeDesc = "Show an edge on the cooldown when the cooldown is active."
+L.inverse = "Inverse"
+L.inverseSwipeDesc = "Invert the cooldown animations."
+L.glow = "Glow"
+L.enableExpireGlow = "Enable Expire Glow"
+L.enableExpireGlowDesc = "Show a glow around the icon when the cooldown has expired."
+L.glowColor = "Glow Color"
+L.glowType = "Glow Type"
+L.glowTypeDesc = "Change the type of glow that is shown around the icon."
+L.resetNameplateIconsDesc = "Reset all the options related to nameplate icons."
+L.nameplateTextSettings = "Text Settings"
+L.fixate_test = "Fixate Test" -- Text that displays to test on the frame
+L.resetNameplateTextDesc = "Reset all the options related to nameplate text."
+L.autoScale = "Auto Scale"
+L.autoScaleDesc = "Automatically change scale according to the nameplate scale."
+L.glowAt = "Begin Glow (seconds)"
+L.glowAt_desc = "Choose how many seconds on the cooldown should be remaining when the glow begins."
+
+-- Glow types as part of LibCustomGlow
+L.pixelGlow = "Pixel Glow"
+L.autocastGlow = "Autocast Glow"
+L.buttonGlow = "Button Glow"
+L.procGlow = "Proc Glow"
+L.speed = "Speed"
+L.animation_speed_desc = "The speed at which the glow animation plays."
+L.lines = "Lines"
+L.lines_glow_desc = "The number of lines in the glow animation."
+L.intensity = "Intensity"
+L.intensity_glow_desc = "The intensity of the glow effect, higher means more sparks."
+L.length = "Length"
+L.length_glow_desc = "The length of the lines in the glow animation."
+L.thickness = "Thickness"
+L.thickness_glow_desc = "The thickness of the lines in the glow animation."
+L.scale = "Scale"
+L.scale_glow_desc = "The scale of the sparks in the animation."
+L.startAnimation = "Start Animation"
+L.startAnimation_glow_desc = "This glow has a starting animation, this will enable/disable that animation."
+
+-----------------------------------------------------------------------
 -- Proximity.lua
 --
 
@@ -254,8 +382,7 @@ L.proximity_name = "Proximity"
 L.soundDelay = "Sound delay"
 L.soundDelayDesc = "Specify how long BigWigs should wait between repeating the specified sound when someone is too close to you."
 
-L.proximity = "Proximity display"
-L.proximity_desc = "Show the proximity window when appropriate for this encounter, listing players who are standing too close to you."
+L.resetProximityDesc = "Reset all the options related to proximity, including the position of the proximity anchor."
 
 L.close = "Close"
 L.closeProximityDesc = "Closes the proximity display.\n\nTo disable it completely for any encounter, you have to go into the options for the relevant boss module and toggle the 'Proximity' option off."
@@ -289,19 +416,20 @@ L.pull = "Pull"
 L.engageSoundTitle = "Play a sound when a boss encounter has started"
 L.pullStartedSoundTitle = "Play a sound when the pull timer is started"
 L.pullFinishedSoundTitle = "Play a sound when the pull timer is finished"
-L.pullStarted = "Pull timer started by %s user %s."
+L.pullStartedBy = "Pull timer started by %s."
 L.pullStopped = "Pull timer cancelled by %s."
 L.pullStoppedCombat = "Pull timer cancelled because you entered combat."
 L.pullIn = "Pull in %d sec"
-L.sendPull = "Sending a pull timer to BigWigs and DBM users."
-L.wrongPullFormat = "Must be between 1 and 60 seconds. A correct example is: /pull 5"
+L.sendPull = "Sending a pull timer to your group."
+L.wrongPullFormat = "Invalid pull timer. A correct example is: /pull 5"
+L.countdownBegins = "Begin Countdown"
+L.countdownBegins_desc = "Choose how much time should be remaining on the pull timer (in seconds) when the countdown begins."
 
 -----------------------------------------------------------------------
 -- RaidIcon.lua
 --
 
 L.icons = "Icons"
-L.raidIconsDesc = "Some encounter scripts use raid icons to mark players that are of special interest to your group. For example 'bomb'-type effects and mind control. If you turn this off, you won't mark anyone.\n\n|cffff4411Only applies if you're either the group leader or promoted!|r"
 L.raidIconsDescription = "Some encounters might include elements such as bomb-type abilities targetted on a specific player, a player being chased, or a specific player might be of interest in other ways. Here you can customize which raid icons should be used to mark these players.\n\nIf an encounter only has one ability that is worth marking for, only the first icon will be used. One icon will never be used for two different abilities on the same encounter, and any given ability will always use the same icon next time.\n\n|cffff4411Note that if a player has already been marked manually, BigWigs will never change their icon.|r"
 L.primary = "Primary"
 L.primaryDesc = "The first raid target icon that a encounter script should use."
@@ -313,41 +441,42 @@ L.secondaryDesc = "The second raid target icon that a encounter script should us
 --
 
 L.Sounds = "Sounds"
+L.soundsDesc = "BigWigs uses the 'Master' sound channel to play all of its sounds. If you find that sounds are too quiet or too loud, open WoW's sound settings and adjust the 'Master Volume' slider to a level you like.\n\nBelow you can globally configure the different sounds that play for specific actions, or set them to 'None' to disable them. If you only want to change a sound for a specific boss ability, that can be done at the boss encounter settings.\n\n"
+L.oldSounds = "Old Sounds"
 
 L.Alarm = "Alarm"
 L.Info = "Info"
 L.Alert = "Alert"
 L.Long = "Long"
 L.Warning = "Warning"
+L.onyou = "A spell, buff, or debuff is on you"
+L.underyou = "You need to move out of a spell under you"
+L.privateaura = "Whenever a 'Private Aura' is on you"
 
 L.sound = "Sound"
-L.soundDesc = "Messages might come with a sound. Some people find it easier to listen for these after they've learned which sound goes with which message, as opposed to reading the actual messages."
 
-L.customSoundDesc = "Play the selected custom sound instead of the one supplied by the module"
+L.customSoundDesc = "Play the selected custom sound instead of the one supplied by the module."
+L.resetSoundDesc = "Resets the above sounds to their defaults."
 L.resetAllCustomSound = "If you've customized sounds for any boss encounter settings, this button will reset ALL of them so the sounds defined here will be used instead."
 
 -----------------------------------------------------------------------
 -- Statistics.lua
 --
 
-L.bossDefeatDurationPrint = "Defeated '%s' after %s."
-L.bossWipeDurationPrint = "Wiped on '%s' after %s."
-L.newBestTime = "New best time!"
 L.bossStatistics = "Boss Statistics"
-L.bossStatsDescription = "Recording of various boss-related statistics such as the amount of times a boss had been killed, the amount of wipes, total time that combat lasted, or the fastest boss kill. These statistics can be viewed on each boss's configuration screen, but will be hidden for bosses that have no recorded statistics."
-L.enableStats = "Enable Statistics"
-L.chatMessages = "Chat Messages"
-L.printBestTimeOption = "Best Time Notification"
-L.printDefeatOption = "Defeat Time"
-L.printWipeOption = "Wipe Time"
-L.countDefeats = "Count Defeats"
-L.countWipes = "Count Wipes"
-L.recordBestTime = "Remember Best Time"
+L.bossStatsDescription = "Recording of various boss-related statistics such as the amount of times you were victorious, the amount of times you were defeated, date of first victory, and the fastest victory. These statistics can be viewed on each boss's configuration screen, but will be hidden for bosses that have no recorded statistics."
 L.createTimeBar = "Show 'Best Time' bar"
 L.bestTimeBar = "Best Time"
-L.printHealthOption = "Boss Health"
 L.healthPrint = "Health: %s."
 L.healthFormat = "%s (%.1f%%)"
+L.chatMessages = "Chat Messages"
+L.newFastestVictoryOption = "New fastest victory"
+L.victoryOption = "You were victorious"
+L.defeatOption = "You were defeated"
+L.bossHealthOption = "Boss health"
+L.bossVictoryPrint = "You were victorious against '%s' after %s." -- You were victorious against 'BOSS_NAME' after COMBAT_DURATION.
+L.bossDefeatPrint = "You were defeated by '%s' after %s." -- You were defeated by 'BOSS_NAME' after COMBAT_DURATION.
+L.newFastestVictoryPrint = "New fastest victory: (-%s)" -- New fastest victory: (-COMBAT_DURATION)
 
 -----------------------------------------------------------------------
 -- Victory.lua

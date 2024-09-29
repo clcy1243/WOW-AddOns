@@ -5,6 +5,8 @@
 local mod = BigWigs:NewBoss("Malygos", 616, 1617)
 if not mod then return end
 mod:RegisterEnableMob(28859)
+-- mod:SetEncounterID(1094)
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {"phase", "sparks", "sparkbuff", "vortex", "breath", {"surge", "FLASH"}, 57429, "berserk"}
 
 --------------------------------------------------------------------------------
@@ -66,9 +68,9 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "Vortex", 56105)
 	self:Death("Win", 28859)
 
-	self:Yell("Phase2", L["phase2_trigger"])
-	self:Yell("P2End", L["phase2_end_trigger"])
-	self:Yell("Phase3", L["phase3_trigger"])
+	self:BossYell("Phase2", L["phase2_trigger"])
+	self:BossYell("P2End", L["phase2_end_trigger"])
+	self:BossYell("Phase3", L["phase3_trigger"])
 
 	self:RegisterEvent("RAID_BOSS_WHISPER")
 	self:RegisterEvent("RAID_BOSS_EMOTE")
@@ -84,7 +86,7 @@ function mod:OnEngage()
 	self:Bar("sparks", 25, L["sparks"], 56152)
 	self:DelayedMessage("sparks", 20, "yellow", L["sparks_warning"])
 	self:Berserk(600)
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
+	self:RegisterEvent("UNIT_HEALTH")
 end
 
 --------------------------------------------------------------------------------
@@ -93,19 +95,19 @@ end
 
 function mod:Spark(args)
 	if self:MobId(args.destGUID) == 28859 then
-		self:Message("sparkbuff", "red", nil, L["sparkbuff_message"], args.spellId)
+		self:MessageOld("sparkbuff", "red", nil, L["sparkbuff_message"], args.spellId)
 	end
 end
 
 function mod:Static(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "orange")
+		self:MessageOld(args.spellId, "orange")
 	end
 end
 
 function mod:Vortex(args)
 	self:Bar("vortex", 10, L["vortex"], args.spellId)
-	self:Message("vortex", "yellow", nil, L["vortex_message"], args.spellId)
+	self:MessageOld("vortex", "yellow", nil, L["vortex_message"], args.spellId)
 	self:Bar("vortex", 59, L["vortex_next"], args.spellId)
 	self:DelayedMessage("vortex", 54, "yellow", L["vortex_warning"])
 
@@ -115,20 +117,20 @@ end
 
 function mod:RAID_BOSS_WHISPER(event, msg, mob)
 	if phase == 3 and msg == L["surge_trigger"] then
-		self:Message("surge", "blue", "Alarm", L["surge_you"], 60936) -- 60936 for phase 3, not 56505
+		self:MessageOld("surge", "blue", "alarm", L["surge_you"], 60936) -- 60936 for phase 3, not 56505
 		self:Flash("surge", 60936)
 	end
 end
 
 function mod:RAID_BOSS_EMOTE(event, msg)
 	if phase == 1 then
-		self:Message("sparks", "red", "Alert", L["sparks_message"], 56152)
+		self:MessageOld("sparks", "red", "alert", L["sparks_message"], 56152)
 		self:Bar("sparks", 30, L["sparks"], 56152)
 		self:DelayedMessage("sparks", 25, "yellow", L["sparks_warning"])
 	elseif phase == 2 then
 		-- 43810 Frost Wyrm, looks like a dragon breathing 'deep breath' :)
 		-- Correct spellId for 'breath" in phase 2 is 56505
-		self:Message("breath", "red", "Alert", L["breath_message"], 43810)
+		self:MessageOld("breath", "red", "alert", L["breath_message"], 43810)
 		self:Bar("breath", 59, L["breath"], 43810)
 		self:DelayedMessage("breath", 54, "yellow", L["breath_warning"])
 	end
@@ -136,12 +138,12 @@ end
 
 function mod:Phase2()
 	phase = 2
-	self:UnregisterUnitEvent("UNIT_HEALTH_FREQUENT", "target", "focus")
+	self:UnregisterEvent("UNIT_HEALTH")
 	self:CancelDelayedMessage(L["vortex_warning"])
 	self:CancelDelayedMessage(L["sparks_warning"])
 	self:StopBar(L["sparks"])
 	self:StopBar(L["vortex_next"])
-	self:Message("phase", "yellow", nil, L["phase2_message"], false)
+	self:MessageOld("phase", "yellow", nil, L["phase2_message"], false)
 	self:Bar("breath", 92, L["breath"], 43810)
 	self:DelayedMessage("breath", 87, "yellow", L["breath_warning"])
 end
@@ -149,20 +151,20 @@ end
 function mod:P2End()
 	self:CancelDelayedMessage(L["breath_warning"])
 	self:StopBar(L["breath"])
-	self:Message("phase", "yellow", nil, L["phase3_warning"], false)
+	self:MessageOld("phase", "yellow", nil, L["phase3_warning"], false)
 end
 
 function mod:Phase3()
 	phase = 3
-	self:Message("phase", "yellow", nil, L["phase3_message"], false)
+	self:MessageOld("phase", "yellow", nil, L["phase3_message"], false)
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if phase == 1 and self:MobId(UnitGUID(unit)) == 28859 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if phase == 1 and self:MobId(self:UnitGUID(unit)) == 28859 then
+		local hp = self:GetHealth(unit)
 		if hp < 54 then
-			self:Message("phase", "yellow", nil, L["phase2_warning"], false)
-			self:UnregisterUnitEvent(event, "target", "focus")
+			self:MessageOld("phase", "yellow", nil, L["phase2_warning"], false)
+			self:UnregisterEvent(event)
 		end
 	end
 end

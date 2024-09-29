@@ -1,25 +1,17 @@
 local L = BigWigs:NewBossLocale("Onyxia", "deDE")
+if not L then return end
 if L then
-	L.phase = "Phasen"
-	L.phase_desc = "Warnt, wenn ein Phasenwechsel bevorsteht."
-	L.phase2_message = "Phase 2 - Onyxia hebt ab!"
-	L.phase3_message = "Phase 3 - Onyxia landet!"
-
 	L.phase1_trigger = "Was für ein Zufall"
 	L.phase2_trigger = "Diese sinnlose Anstrengung langweilt mich"
 	L.phase3_trigger = "Mir scheint, dass Ihr noch eine Lektion braucht"
 
-	L.deepbreath_message = "Tiefer Atem!"
-	L.fear_message = "Furcht!"
+	L.deep_breath = "Tiefer Atem"
 end
 
 local L = BigWigs:NewBossLocale("Archavon the Stone Watcher", "deDE")
 if L then
 	L.stomp_message = "Stampfen - Ansturm bald!"
 	L.stomp_warning = "Mögliches Stampfen in ~5 sek!"
-	L.stomp_bar = "~Stampfen"
-
-	L.cloud_message = "Erstickende Wolke auf DIR!"
 
 	L.charge = "Ansturm"
 	L.charge_desc = "Warnt, wenn ein Spieler angestürmt wird."
@@ -27,11 +19,8 @@ end
 
 L = BigWigs:NewBossLocale("Emalon the Storm Watcher", "deDE")
 if L then
-	L.nova_next = "~Blitzschlagnova"
-
 	L.overcharge_message = "Sturmdiener überladen!"
 	L.overcharge_bar = "Explosion"
-	L.overcharge_next = "~Überladen"
 
 	L.custom_on_overcharge_mark = "Overcharge marker"
 	L.custom_on_overcharge_mark_desc = "Place the {rt8} marker on the overcharged minion, requires promoted or leader."
@@ -39,10 +28,6 @@ end
 
 L = BigWigs:NewBossLocale("Koralon the Flame Watcher", "deDE")
 if L then
-	L.fists_bar = "~Meteorfäuste"
-
-	L.cinder_message = "Flamme auf DIR!"
-
 	L.breath_bar = "Atem %d"
 	L.breath_message = "Atem %d bald!"
 end
@@ -88,31 +73,20 @@ end
 L = BigWigs:NewBossLocale("Sartharion", "deDE")
 if L then
 	L.engage_trigger = "Meine Aufgabe ist es, über diese Eier zu wachen. Kommt ihnen zu nahe und von euch bleibt nur ein Häuflein Asche."
-
-	L.tsunami = "Flammentsunami"
-	L.tsunami_desc = "Warnungen und Timer für Flammentsunami."
-	L.tsunami_warning = "Flammentsunami in ~5 sek!"
-	L.tsunami_message = "Flammentsunami!"
-	L.tsunami_cooldown = "~Flammentsunami"
 	L.tsunami_trigger = "Die Lava um %s brodelt!"
-
-	L.breath_cooldown = "~Flammenatem"
+	L.twilight_trigger_vesperon = "Ein Vesperonjünger erscheint im Zwielicht!"
+	L.twilight_trigger_shadron = "Ein Shadronjünger erscheint im Zwielicht!"
 
 	L.drakes = "Drachen"
 	L.drakes_desc = "Warnungen und Timer für den Kampfbeitritt der Drachen."
-	L.drakes_incomingsoon = "%s kommt in ~5 sek!"
 
-	L.twilight = "Zwielicht Ereignisse"
-	L.twilight_desc = "Warnungen und Timer für Ereignisse in der Zwielichtzone."
-	L.twilight_trigger_tenebron = "Tenebron beginnt im Zwielicht Eier auszubrüten!"
-	L.twilight_trigger_vesperon = "Ein Vesperonjünger erscheint im Zwielicht!"
-	L.twilight_trigger_shadron = "Ein Shadronjünger erscheint im Zwielicht!"
-	L.twilight_message_tenebron = "Eier schlüpfen"
-	L.twilight_message = "%s kommt dazu!"
-
+	-- Adds
 	L.shadron = "Shadron"
 	L.tenebron = "Tenebron"
 	L.vesperon = "Vesperon"
+	L.lava_blaze = "Lavaflamme" -- NPC 30643
+	L.acolyte_shadron = "Akolyth von Shadron" -- NPC 31218
+	L.acolyte_vesperon = "Akolyth von Vesperon" -- NPC 31219
 end
 
 L = BigWigs:NewBossLocale("Toravon the Ice Watcher", "deDE")
@@ -120,33 +94,5 @@ if L then
 	L.whiteout_bar = "Schneesturm %d"
 	L.whiteout_message = "Schneesturm %d bald!"
 
-	L.frostbite_message = "%2$dx Erfrierung: %1$s"
-
 	L.freeze_message = "Eingefroren"
-
-	L.orb_bar = "Nächste Kugel"
-end
-
-L = BigWigs:NewBossLocale("Halion", "deDE")
-if L then
-	L.engage_trigger = "Eure Welt steht auf Messers Schneide. Ihr ALLE werdet Zeuge des Anbeginns eines neuen Zeitalters der ZERSTÖRUNG!"
-
-	L.phase_two_trigger = "Ihr werdet im Reich des Zwielichts nur Leid finden! Tretet ein, wenn ihr es wagt!"
-
-	L.twilight_cutter_trigger = "Die kreisenden Sphären pulsieren vor dunkler Energie!"
-	L.twilight_cutter_bar = "~Zwielichtschnitter"
-	L.twilight_cutter_warning = "Zwielichtschnitter!"
-
-	L.fire_damage_message = "Deine Füße brennen!"
-	L.fire_message = "Einäscherung"
-	L.fire_bar = "~Einäscherung"
-	L.shadow_message = "Seelenverzehrung"
-	L.shadow_bar = "~Seelenverzehrung"
-
-	L.meteorstrike_yell = "Die Himmel brennen!"
-	L.meteorstrike_bar = "Meteorschlag"
-	L.meteor_warning_message = "Meteor!"
-
-	L.sbreath_cooldown = "~Schattenatem"
-	L.fbreath_cooldown = "~Feueratem"
 end

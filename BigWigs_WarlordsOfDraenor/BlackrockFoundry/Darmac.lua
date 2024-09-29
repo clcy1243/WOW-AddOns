@@ -73,7 +73,7 @@ function mod:GetOptions()
 		[155061] = -9301, -- Cruelfang
 		[155030] = -9302, -- Dreadwing
 		[155236] = -9303, -- Ironcrusher
-		[155284] = ("%s (%s)"):format(self:SpellName(-9304), CL.mythic), -- Faultline (Mythic)
+		[159043] = ("%s (%s)"):format(self:SpellName(-9304), CL.mythic), -- Faultline (Mythic)
 		[154960] = "general",
 	}
 end
@@ -120,7 +120,7 @@ function mod:OnEngage()
 	phase = 1
 	conflagMark = 1
 	tantrumCount = 1
-	wipe(pinnedList)
+	pinnedList = mod:NewTargetList()
 
 	self:Bar(154975, self:Easy() and 19.5 or 9.5) -- Call the Pack
 	self:Bar(154960, 11) -- Pinned Down
@@ -130,7 +130,7 @@ function mod:OnEngage()
 		self:OpenProximity("proximity", 8)
 	end
 
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
 	self:RegisterUnitEvent("UNIT_TARGETABLE_CHANGED", nil, "boss1")
 end
 
@@ -174,16 +174,16 @@ function mod:UNIT_TARGETABLE_CHANGED(_, unit)
 		mountId = nil
 		for i = 2, 5 do
 			local boss = ("boss%d"):format(i)
-			local mobId = self:MobId(UnitGUID(boss))
+			local mobId = self:MobId(self:UnitGUID(boss))
 			if mobId == 76884 or mobId == 76874 or mobId == 76945 or mobId == 76946 then -- Cruelfang, Dreadwing, Ironcrusher, Faultline
 				mountId = boss
 				break
 			end
 		end
-		self:Message("stages", "cyan", "Info", mountId and self:UnitName(mountId) or self:SpellName(169650), false) -- 169650 = Mounted
+		self:MessageOld("stages", "cyan", "info", mountId and self:UnitName(mountId) or self:SpellName(169650), false) -- 169650 = Mounted
 		if not mountId then return end -- rip initial timers with 4x Chimearon pets
 
-		local mobId = self:MobId(UnitGUID(mountId))
+		local mobId = self:MobId(self:UnitGUID(mountId))
 		if mobId == 76884 then -- Cruelfang
 			self:CDBar(155061, 13) -- Rend and Tear
 			self:CDBar(155198, 17) -- Savage Howl
@@ -200,20 +200,20 @@ function mod:UNIT_TARGETABLE_CHANGED(_, unit)
 			self:CDBar(155321, 11) -- Unstoppable
 		end
 	else -- Dismount
-		self:Message("stages", "cyan", "Info", 45874, false) -- 45874 = Mount Dismount
+		self:MessageOld("stages", "cyan", "info", 45874, false) -- 45874 = Mount Dismount
 	end
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 76865 then -- Darmac
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 76865 then -- Darmac
+		local hp = self:GetHealth(unit)
 		-- Warnings for 85%, 65%, 45%, and 25% for mythic
 		if (phase == 1 and hp < 90) or (phase == 2 and hp < 71) or (phase == 3 and hp < 50) or (phase == 4 and hp < 30) then
 			phase = phase + 1
 			if phase > (self:Mythic() and 4 or 3) then
 				self:UnregisterUnitEvent(event, unit)
 			end
-			self:Message("stages", "cyan", "Info", L.next_mount, false)
+			self:MessageOld("stages", "cyan", "info", L.next_mount, false)
 		end
 	end
 end
@@ -228,31 +228,31 @@ do
 		aboutToCast = false
 
 		local target = unit.."target"
-		local guid = UnitGUID(target)
+		local guid = self:UnitGUID(target)
 
 		if not guid then
-			self:Message(unit == "boss1" and 155499 or 154989, "orange", "Alert") -- There's a ~5% chance he won't target anyone, show a generic message
+			self:MessageOld(unit == "boss1" and 155499 or 154989, "orange", "alert") -- There's a ~5% chance he won't target anyone, show a generic message
 			return
 		end
 
-		if UnitDetailedThreatSituation(target, unit) ~= false or self:MobId(guid) ~= 1 then return end
+		if self:Tanking(unit, target) or self:MobId(guid) ~= 1 then return end
 
 		if self:Me(guid) then
 			self:Say(unit == "boss1" and 155499 or 154989, 18584) -- 18584 = Breath
 			self:Flash(unit == "boss1" and 155499 or 154989)
 		end
-		self:TargetMessage(unit == "boss1" and 155499 or 154989, self:UnitName(target), "orange", "Alert", nil, nil, true)
+		self:TargetMessageOld(unit == "boss1" and 155499 or 154989, self:UnitName(target), "orange", "alert", nil, nil, true)
 	end
 
 	function mod:UNIT_SPELLCAST_SUCCEEDED(_, unit, _, spellId)
 		if spellId == 155221 then -- Tantrum, from Iron Crusher
 			self:StopBar(CL.count:format(self:SpellName(spellId), tantrumCount))
-			self:Message(155222, "yellow", nil, CL.count:format(self:SpellName(spellId), tantrumCount))
+			self:MessageOld(155222, "yellow", nil, CL.count:format(self:SpellName(spellId), tantrumCount))
 			tantrumCount = tantrumCount + 1
 			self:CDBar(155222, 23, CL.count:format(self:SpellName(spellId), tantrumCount))
 		elseif spellId == 155520 then -- Tantrum, from Darmac
 			self:StopBar(CL.count:format(self:SpellName(spellId), tantrumCount))
-			self:Message(155222, "yellow", nil, CL.count:format(self:SpellName(spellId), tantrumCount))
+			self:MessageOld(155222, "yellow", nil, CL.count:format(self:SpellName(spellId), tantrumCount))
 			tantrumCount = tantrumCount + 1
 			self:CDBar(155222, 23, CL.count:format(self:SpellName(spellId), tantrumCount))
 		elseif spellId == 155423 then -- Face Random Non-Tank (Inferno Breath by Dreadwing)
@@ -268,7 +268,7 @@ do
 		elseif spellId == 155385 or spellId == 155515 then -- Rend and Tear first jump casts (Cruelfang, Darmac)
 			self:CDBar(155061, 12) -- Rend and Tear, 12-16
 			if self:Melee() then
-				self:Message(155061, "orange", nil, CL.incoming:format(self:SpellName(155061)))
+				self:MessageOld(155061, "orange", nil, CL.incoming:format(self:SpellName(155061)))
 			end
 		end
 	end
@@ -280,11 +280,11 @@ do
 	-- spear marking
 	function mod:UNIT_TARGET(_, firedUnit)
 		local unit = firedUnit and firedUnit.."target" or "mouseover"
-		local guid = UnitGUID(unit)
+		local guid = self:UnitGUID(unit)
 		if spearList[guid] and spearList[guid] ~= "marked" then -- Use this method as one spear can hit multiple people
 			for i = 8, 4, -1 do
 				if not spearMarksUsed[i] then
-					SetRaidTarget(unit, i)
+					self:CustomIcon(false, unit, i)
 					spearList[guid] = "marked"
 					spearMarksUsed[i] = guid
 					return
@@ -300,7 +300,7 @@ do
 
 		pinnedList[#pinnedList+1] = args.destName
 		if #pinnedList == 1 then
-			self:ScheduleTimer("TargetMessage", 0.2, args.spellId, pinnedList, "red", "Alarm", nil, nil, true)
+			self:ScheduleTimer("TargetMessageOld", 0.2, args.spellId, pinnedList, "red", "alarm", nil, nil, true)
 		end
 
 		if self.db.profile.custom_off_pinned_marker and not spearList[args.sourceGUID] then -- One spear can hit multiple people, so don't overwrite existing entries
@@ -310,14 +310,14 @@ do
 
 	function mod:PinDown(args)
 		local ranged = self:Ranged()
-		self:Message(154960, "orange", ranged and "Warning", CL.incoming:format(args.spellName))
+		self:MessageOld(154960, "orange", ranged and "warning", CL.incoming:format(args.spellName))
 		self:CDBar(154960, 20)
 		if ranged then
 			self:Flash(154960)
 		end
 		if self.db.profile.custom_off_pinned_marker then
-			wipe(spearMarksUsed)
-			wipe(spearList)
+			spearMarksUsed = {}
+			spearList = {}
 			self:RegisterEvent("UPDATE_MOUSEOVER_UNIT", "UNIT_TARGET")
 			self:RegisterEvent("UNIT_TARGET")
 			self:ScheduleTimer("UnregisterEvent", 10, "UPDATE_MOUSEOVER_UNIT")
@@ -327,7 +327,7 @@ do
 end
 
 function mod:CallThePack(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:CDBar(args.spellId, self:Easy() and 40 or 30) -- can be delayed
 end
 
@@ -335,12 +335,12 @@ end
 
 function mod:RendAndTear(args)
 	if self:Tank(args.destName) then
-		self:StackMessage(155061, args.destName, args.amount, "yellow", args.amount and "Warning")
+		self:StackMessageOld(155061, args.destName, args.amount, "yellow", args.amount and "warning")
 	end
 end
 
 function mod:SavageHowl(args)
-	self:Message(args.spellId, "red", self:Dispeller("enrage", true) and "Alert")
+	self:MessageOld(args.spellId, "red", self:Dispeller("enrage", true) and "alert")
 	self:Bar(args.spellId, 26)
 end
 
@@ -352,37 +352,37 @@ do
 
 	function mod:ConflagrationApplied(args)
 		if self.db.profile.custom_off_conflag_marker and conflagMark < 4 then
-			SetRaidTarget(args.destName, conflagMark)
+			self:CustomIcon(false, args.destName, conflagMark)
 			conflagMark = conflagMark + 1
 		end
 		-- Time between applications can be so long that delaying is pointless.
-		self:TargetMessage(args.spellId, args.destName, "orange", self:Dispeller("magic") and "Info")
+		self:TargetMessageOld(args.spellId, args.destName, "orange", self:Dispeller("magic") and "info")
 	end
 
 	function mod:ConflagrationRemoved(args)
 		if self.db.profile.custom_off_conflag_marker then
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
 	end
 end
 
 function mod:SearedFlesh(args)
 	if args.amount % 3 == 0 then
-		self:StackMessage(args.spellId, args.destName, args.amount, "yellow", args.amount > 8 and "Warning")
+		self:StackMessageOld(args.spellId, args.destName, args.amount, "yellow", args.amount > 8 and "warning")
 	end
 end
 
 function mod:Stampede(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:CDBar(args.spellId, 20)
 end
 
 function mod:CrushArmor(args)
-	self:StackMessage(args.spellId, args.destName, args.amount, "yellow", args.amount and "Warning")
+	self:StackMessageOld(args.spellId, args.destName, args.amount, "yellow", args.amount and "warning")
 end
 
 function mod:Epicenter()
-	self:Message(159043, "orange")
+	self:MessageOld(159043, "orange")
 	self:CDBar(159043, 19)
 end
 
@@ -392,13 +392,13 @@ do
 		local t = GetTime()
 		if t-prev > 2 and self:Me(args.destGUID) then
 			prev = t
-			self:Message(159043, "blue", "Alarm", CL.underyou:format(args.spellName))
+			self:MessageOld(159043, "blue", "alarm", CL.underyou:format(args.spellName))
 		end
 	end
 end
 
 function mod:Unstoppable(args)
-	self:Message(args.spellId, "yellow", nil, CL.count:format(args.spellName, args.amount or 1))
+	self:MessageOld(args.spellId, "yellow", nil, CL.count:format(args.spellName, args.amount or 1))
 	self:Bar(args.spellId, 15)
 end
 
@@ -410,7 +410,7 @@ do
 		local t = GetTime()
 		if t-prev > 0.5 and self:Me(args.destGUID) then
 			prev = t
-			self:Message(args.spellId, "blue", "Alarm", CL.underyou:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alarm", CL.underyou:format(args.spellName))
 		end
 	end
 end

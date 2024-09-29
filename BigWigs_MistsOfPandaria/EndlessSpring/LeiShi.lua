@@ -55,7 +55,7 @@ function mod:GetOptions()
 end
 
 function mod:VerifyEnable(unit)
-	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+	local hp = self:GetHealth(unit)
 	if hp > 8 and UnitCanAttack("player", unit) then
 		return true
 	end
@@ -81,17 +81,17 @@ end
 function mod:OnEngage(diff)
 	hiding = nil
 	nextProtectWarning = 85
-	self:CDBar("special", 32, L["special"], L.special_icon)
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "HealthCheck", "boss1")
+	markableMobs = {}
+	marksUsed = {}
+	markTimer = nil
+	self:Bar("special", 32, L["special"], L.special_icon)
+	self:RegisterUnitEvent("UNIT_HEALTH", "HealthCheck", "boss1")
 	self:Berserk(self:Heroic() and 420 or 600)
 	self:OpenProximity(123121, 4)
 	-- marking
 	if self.db.profile.custom_off_addmarker then
 		self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 	end
-	wipe(markableMobs)
-	wipe(marksUsed)
-	markTimer = nil
 end
 
 --------------------------------------------------------------------------------
@@ -102,8 +102,8 @@ function mod:EngageCheck()
 	self:CheckBossStatus()
 	if hiding then
 		hiding = nil
-		self:Message(123244, "yellow", nil, CL["over"]:format(self:SpellName(123244))) -- Hide
-		self:CDBar("special", 32, L["special"], L.special_icon)
+		self:MessageOld(123244, "yellow", nil, CL["over"]:format(self:SpellName(123244))) -- Hide
+		self:Bar("special", 32, L["special"], L.special_icon)
 		nextSpecial = GetTime() + 32
 	end
 end
@@ -113,14 +113,14 @@ do
 	local function reportFog(spellName)
 		local highestStack, highestStackPlayer = 0
 		for unit in mod:IterateGroup() do
-			local _, stack, duration = mod:UnitDebuff(unit, spellName)
+			local _, stack, duration = mod:UnitDebuff(unit, 123705)
 			if stack and stack > highestStack and duration > 0 then
 				highestStack = stack
 				highestStackPlayer = unit
 			end
 		end
 		local player = mod:UnitName(highestStackPlayer)
-		mod:StackMessage(123705, player, highestStack, "yellow")
+		mod:StackMessageOld(123705, player, highestStack, "yellow")
 		scheduled = nil
 	end
 
@@ -129,7 +129,7 @@ do
 			self:OpenProximity(args.spellId, 4)
 		end
 		if not scheduled then
-			self:CDBar(args.spellId, 19)
+			self:Bar(args.spellId, 19)
 			scheduled = self:ScheduleTimer(reportFog, 0.2, args.spellName)
 		end
 	end
@@ -144,35 +144,35 @@ end
 function mod:Spray(args)
 	local amount = args.amount or 1
 	if UnitIsPlayer(args.destName) and amount > (self:LFR() and 11 or 5) and amount % 2 == 0 then
-		self:StackMessage(args.spellId, args.destName, amount, "orange", "Info")
+		self:StackMessageOld(args.spellId, args.destName, amount, "orange", "info")
 	end
 end
 
 function mod:Hide(args)
 	hiding = true
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 end
 
 do
 	local getAwayStartHP
 	function mod:GetAwayApplied(args)
 		if UnitHealthMax("boss1") > 0 then
-			getAwayStartHP = UnitHealth("boss1") / UnitHealthMax("boss1") * 100
-			self:Message(args.spellId, "red", "Alarm")
+			getAwayStartHP = self:GetHealth("boss1")
+			self:MessageOld(args.spellId, "red", "alarm")
 		end
 	end
 	function mod:GetAwayRemoved()
 		getAwayStartHP = nil
-		self:CDBar("special", 32, L["special"], L.special_icon)
+		self:Bar("special", 32, L["special"], L.special_icon)
 		nextSpecial = GetTime() + 32
 	end
 
 	local prev = 0
 	local lastHpToGo
-	function mod:HealthCheck(_, unitId)
-		local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+	function mod:HealthCheck(_, unit)
+		local hp = self:GetHealth(unit)
 		if hp < nextProtectWarning then
-			self:Message(123250, "green", nil, CL["soon"]:format(self:SpellName(123250))) -- Protect
+			self:MessageOld(123250, "green", nil, CL["soon"]:format(self:SpellName(123250))) -- Protect
 			nextProtectWarning = hp - 20
 			if nextProtectWarning < 20 then
 				nextProtectWarning = 0
@@ -185,7 +185,7 @@ do
 				local hpToGo = math.ceil(4 - (getAwayStartHP - hp))
 				if lastHpToGo ~= hpToGo and hpToGo > 0 then
 					lastHpToGo = hpToGo
-					self:Message(123461, "green", nil, L["hp_to_go"]:format(hpToGo))
+					self:MessageOld(123461, "green", nil, L["hp_to_go"]:format(hpToGo))
 				end
 			end
 		end
@@ -193,20 +193,21 @@ do
 end
 
 function mod:Protect(args)
-	self:Message(args.spellId, "red", "Alarm")
+	self:MessageOld(args.spellId, "red", "alarm")
 	self:StopBar(L["special"]) --stop the bar since it's pretty likely the cd will expire during protect
 end
 
 function mod:ProtectRemoved()
+	-- marking
+	markableMobs = {}
+	marksUsed = {}
+
 	local left = nextSpecial - GetTime()
 	if left > 4 then -- restart the bar if there are more than a few seconds left on the special's cd
-		self:CDBar("special", left, L["special"], L.special_icon)
+		self:Bar("special", left, L["special"], L.special_icon)
 	else
-		self:Message("special", "yellow", nil, CL["soon"]:format(L["special"]), L.special_icon)
+		self:MessageOld("special", "yellow", nil, CL["soon"]:format(L["special"]), L.special_icon)
 	end
-	-- marking
-	wipe(markableMobs)
-	wipe(marksUsed)
 end
 
 function mod:Kill(_, _, _, spellId)
@@ -221,7 +222,7 @@ do
 	local function setMark(unit, guid)
 		for mark=8, 1, -1 do
 			if not marksUsed[mark] then
-				SetRaidTarget(unit, mark)
+				mod:CustomIcon(false, unit, mark)
 				markableMobs[guid] = "marked"
 				marksUsed[mark] = guid
 				return
@@ -248,7 +249,7 @@ do
 	end
 
 	function mod:UPDATE_MOUSEOVER_UNIT()
-		local guid = UnitGUID("mouseover")
+		local guid = self:UnitGUID("mouseover")
 		if guid and markableMobs[guid] == true then
 			setMark("mouseover", guid)
 		end

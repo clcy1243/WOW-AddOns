@@ -5,6 +5,9 @@
 local mod, CL = BigWigs:NewBoss("Terestian Illhoof", 532, 1560)
 if not mod then return end
 mod:RegisterEnableMob(15688)
+if mod:Classic() then
+	mod:SetEncounterID(657)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -41,7 +44,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Weakened", 30065)
 	self:Log("SPELL_AURA_REMOVED", "WeakenedRemoved", 30065)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 
 	self:Death("Win", 15688)
@@ -56,7 +59,7 @@ end
 --
 
 function mod:Sacrifice(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 	self:TargetBar(args.spellId, 30, args.destName)
 	self:DelayedMessage(args.spellId, 40, "orange", CL["soon"]:format(args.spellName))
 	self:CDBar(args.spellId, 42)
@@ -69,13 +72,13 @@ function mod:SacrificeRemoved(args)
 end
 
 function mod:Weakened(args)
-	self:Message("weak", "red", "Alarm", L["weak_message"], args.spellId)
+	self:MessageOld("weak", "red", "alarm", L["weak_message"], args.spellId)
 	self:DelayedMessage("weak", 40, "yellow", L["weak_warning1"])
 	self:Bar("weak", 45, L["weak_bar"], args.spellId)
 end
 
 function mod:WeakenedRemoved()
-	self:Message("weak", "yellow", "Info", L["weak_warning2"])
+	self:MessageOld("weak", "yellow", "info", L["weak_warning2"])
 	self:CancelDelayedMessage(L["weak_warning1"])
 	self:StopBar(L["weak_bar"])
 end

@@ -1,12 +1,11 @@
 local mod	= DBM:NewMod(1702, "DBM-Party-Legion", 9, 777)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "normal,heroic,mythic"
+
+mod:SetRevision("20220127091750")
 mod:SetCreatureID(102431)
 mod:SetEncounterID(1855)
-mod:SetZone()
-
-mod.imaspecialsnowflake = true
 
 mod:RegisterCombat("combat")
 
@@ -24,11 +23,11 @@ local warnMindControlled			= mod:NewTargetAnnounce(202804, 4)
 local warnCallBlood					= mod:NewSpellAnnounce(203381, 2)
 
 local specWarnEssenceoftheBloodQueen= mod:NewSpecialWarningYou(202779)
-local specWarnBloodthirst			= mod:NewSpecialWarningYou(202792, nil, nil, nil, 3)
+local specWarnBloodthirst			= mod:NewSpecialWarningYou(202792, nil, nil, nil, 3, 12)
 local yellBloodThirst				= mod:NewShortFadesYell(202792)
 
-local timerHunger					= mod:NewBuffFadesTimer(20, 202792, nil, nil, nil, 5, nil, DBM_CORE_L.DEADLY_ICON)
-local timerBloodCallCD				= mod:NewNextTimer(30, 203381, nil, nil, nil, 1, nil, DBM_CORE_L.HEROIC_ICON)
+local timerHunger					= mod:NewBuffFadesTimer(20, 202792, nil, nil, nil, 5, nil, DBM_COMMON_L.DEADLY_ICON)
+local timerBloodCallCD				= mod:NewNextTimer(30, 203381, nil, nil, nil, 1, nil, DBM_COMMON_L.HEROIC_ICON)
 
 function mod:OnCombatStart(delay)
 	if not self:IsNormal() then
@@ -55,6 +54,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 202792 then
 		if args:IsPlayer() then
 			specWarnBloodthirst:Show()
+			specWarnBloodthirst:Play("bitenow")
 			timerHunger:Start()
 			yellBloodThirst:Schedule(9, 1)
 			yellBloodThirst:Schedule(8, 2)
@@ -84,8 +84,7 @@ function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 153500 then
 
 	end

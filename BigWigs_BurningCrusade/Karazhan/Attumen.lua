@@ -5,6 +5,9 @@
 local mod = BigWigs:NewBoss("Attumen the Huntsman Raid", 532, 1553)
 if not mod then return end
 mod:RegisterEnableMob(16152, 16151, 15550)
+if mod:Classic() then
+	mod:SetEncounterID(652)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -31,7 +34,7 @@ end
 
 function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Curse", 29833)
-	self:Yell("Phase3", L["phase3_trigger"])
+	self:BossYell("Phase3", L["phase3_trigger"])
 
 	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
 	self:Death("Win", 15550)
@@ -42,16 +45,16 @@ end
 --
 
 function mod:Curse(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 end
 
 function mod:CHAT_MSG_MONSTER_EMOTE(_, msg)
 	if msg == L["phase2_trigger"] then
-		self:Message("phase", "red", nil, L["phase2_message"], false)
+		self:MessageOld("phase", "red", nil, L["phase2_message"], false)
 	end
 end
 
 function mod:Phase3()
-	self:Message("phase", "red", nil, L["phase3_message"], false)
+	self:MessageOld("phase", "red", nil, L["phase3_message"], false)
 end
 

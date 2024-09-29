@@ -1,4 +1,3 @@
-
 local L = BigWigs:NewBossLocale("Auriaya", "frFR")
 if not L then return end
 if L then
@@ -48,6 +47,10 @@ end
 
 L = BigWigs:NewBossLocale("The Iron Council", "frFR")
 if L then
+	L.stormcaller_brundir = "Mande-foudre Brundir"
+	L.steelbreaker = "Brise-acier"
+	L.runemaster_molgeim = "Maître des runes Molgeim"
+
 	L.summoning_message = "Arrivée des élémentaires !"
 
 	L.chased_other = "%s est poursuivi(e) !"
@@ -141,7 +144,7 @@ if L then
 	L.vapor = "Vapeurs de saronite"
 	L.vapor_desc = "Prévient quand des Vapeurs de saronite apparaissent."
 	L.vapor_message = "Vapeurs de saronite %d !"
-	L.vapor_bar = "Vapeurs %d/6"
+	L.vapor_bar = "Vapeurs"
 	L.vapor_trigger = "Un nuage de vapeurs saronitiques se forme non loin !"
 
 	L.vaporstack = "Cumul des Vapeurs"
@@ -155,7 +158,6 @@ end
 
 L = BigWigs:NewBossLocale("XT-002 Deconstructor", "frFR")
 if L then
-	L.gravitybomb_other = "Gravité"
 	L.lightbomb_other = "Lumière"
 end
 

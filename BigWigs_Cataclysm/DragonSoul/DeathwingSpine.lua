@@ -75,15 +75,15 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Nuclear", 105845)
 	self:Log("SPELL_CAST_START", "Seal", 105847, 105848) -- Left, Right
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 
 	self:Death("BurningTendonDeaths", 56575, 56341) -- Burning Tendons
 end
 
 -- Note: Engage is not called as early as you may expect. It is about 4s from the start of combat
 function mod:OnEngage(diff)
-	wipe(corruptionStatus)
-	wipe(bloodTimers)
+	corruptionStatus = {}
+	bloodTimers = {}
 	lastBar = true
 	bloodCount = 0
 
@@ -111,17 +111,17 @@ do
 			-- Timer should not be spamming
 			self:CancelTimer(timer)
 		end
-		if not self:UnitDebuff("player", tendrils) and not UnitIsDead("player") then -- Grasping Tendrils
-			self:Message("roll", "blue", not self:Solo() and "Alert", L.not_hooked, 105563)
+		if not self:UnitDebuff("player", tendrils, 105563) and not UnitIsDead("player") then -- Grasping Tendrils
+			self:MessageOld("roll", "blue", not self:Solo() and "alert", L.not_hooked, 105563)
 		end
 	end
 
 	function mod:AboutToRoll()
 		local solo = self:Solo()
-		local rollTime = self:Solo() and 10 or 5
+		local rollTime = self:Solo() and 20 or 5
 		local rollMsg = self:SpellName(L.roll)
 		self:Bar("roll", rollTime, rollMsg, L.roll_icon)
-		self:Message("roll", "yellow", not solo and "Long", CL.custom_sec:format(rollMsg, rollTime), L.roll_icon)
+		self:MessageOld("roll", "yellow", not solo and "long", CL.custom_sec:format(rollMsg, rollTime), L.roll_icon)
 		if not solo then
 			self:Flash("roll", L.roll_icon)
 		end
@@ -129,13 +129,13 @@ do
 		timer = self:ScheduleRepeatingTimer(graspCheck, 2, self)
 	end
 	function mod:Rolls()
-		self:Message("roll", "green", nil, L.roll_message, L.roll_icon)
+		self:MessageOld("roll", "green", nil, L.roll_message, L.roll_icon)
 		self:Bar("roll", 5, CL.cast:format(self:SpellName(L.roll)), L.roll_icon)
 		self:CancelTimer(timer)
 		timer = nil
 	end
 	function mod:Level()
-		self:Message("roll", "green", nil, L.level_message, L.roll_icon)
+		self:MessageOld("roll", "green", nil, L.level_message, L.roll_icon)
 		self:StopBar(self:SpellName(L.roll))
 		self:CancelTimer(timer)
 		timer = nil
@@ -144,7 +144,7 @@ end
 
 do
 	local function printStacks(self, spellId, spellName, amount, destGUID)
-		self:Message(spellId, amount < 9 and "orange" or "red", nil, CL.count:format(spellName, amount))
+		self:MessageOld(spellId, amount < 9 and "orange" or "red", nil, CL.count:format(spellName, amount))
 		bloodTimers[destGUID] = nil
 	end
 
@@ -192,7 +192,7 @@ function mod:SearingPlasmaCast(args)
 		corruptionStatus[args.sourceGUID] = corruptionStatus[args.sourceGUID] + 1
 	end
 
-	local gripTime = 0
+	local gripTime
 	if self:Difficulty() % 2 == 0 then
 		-- 25 man has 2 casts of 8s
 		gripTime = 16
@@ -225,7 +225,7 @@ do
 	-- many are up to prevent spamming when the mob picks up a bunch
 	local scheduled = nil
 	local function reportBloods()
-		mod:Message("residue", "yellow", nil, L["residue_message"]:format(bloodCount), 105223)
+		mod:MessageOld("residue", "yellow", nil, L["residue_message"]:format(bloodCount), 105223)
 		scheduled = nil
 	end
 	local haltPrinting = true
@@ -285,20 +285,20 @@ do
 end
 
 function mod:Nuclear(args)
-	self:Message(args.spellId, "red", "Info")
+	self:MessageOld(args.spellId, "red", "info")
 	self:Bar(args.spellId, 5)
 	self:Flash(args.spellId)
 end
 
 function mod:Seal(args)
-	self:Message(105848, "red", nil, L["exposed"])
+	self:MessageOld(105848, "red", nil, L["exposed"])
 	self:Bar(105848, self:LFR() and 33 or 23, L["exposed"]) -- 33 is a guess
 end
 
 do
 	local scheduled = nil
 	local function grip(spellId)
-		mod:TargetMessage(spellId, gripTargets, "orange")
+		mod:TargetMessageOld(spellId, gripTargets, "orange")
 		scheduled = nil
 	end
 	function mod:FieryGripApplied(args)

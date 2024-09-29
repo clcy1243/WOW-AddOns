@@ -82,7 +82,7 @@ function Amr:RenderTabLog(container)
 	_lblLogging:SetText(L.LogNote)
 	_lblLogging:SetWidth(200)	
 	_lblLogging:SetFont(Amr.CreateFont("Italic", 14, Amr.Colors.BrightGreen))
-	_lblLogging:SetJustifyH("MIDDLE")
+	_lblLogging:SetJustifyH("CENTER")
 	_lblLogging:SetPoint("TOP", _btnToggle.frame, "BOTTOM", 0, -5)
 	
 	local btnReload = AceGUI:Create("AmrUiButton")
@@ -100,7 +100,7 @@ function Amr:RenderTabLog(container)
 	lbl:SetText(L.LogReloadNote)
 	lbl:SetWidth(200)	
 	lbl:SetFont(Amr.CreateFont("Italic", 14, Amr.Colors.TextTan))
-	lbl:SetJustifyH("MIDDLE")
+	lbl:SetJustifyH("CENTER")
 	lbl:SetPoint("TOP", btnReload.frame, "BOTTOM", 0, -5)
 	container:AddChild(lbl)
 	
@@ -125,7 +125,7 @@ function Amr:RenderTabLog(container)
 	lbl:SetText(L.LogUndoWipeNote)
 	lbl:SetWidth(200)	
 	lbl:SetFont(Amr.CreateFont("Italic", 14, Amr.Colors.TextTan))
-	lbl:SetJustifyH("MIDDLE")
+	lbl:SetJustifyH("CENTER")
 	lbl:SetPoint("TOP", btnUndoWipe.frame, "BOTTOM", 0, -5)
 	_panelUndoWipe:AddChild(lbl)
 	
@@ -133,7 +133,7 @@ function Amr:RenderTabLog(container)
 	lbl2:SetText(L.LogUndoWipeDate(date("%B %d", time()), date("%I:%M %p", time())))
 	lbl2:SetWidth(200)	
 	lbl2:SetFont(Amr.CreateFont("Italic", 14, Amr.Colors.TextTan))
-	lbl2:SetJustifyH("MIDDLE")
+	lbl2:SetJustifyH("CENTER")
 	lbl2:SetPoint("TOP", lbl.frame, "BOTTOM", 0, -2)
 	_panelUndoWipe:AddChild(lbl2)
 	
@@ -151,7 +151,7 @@ function Amr:RenderTabLog(container)
 	lbl:SetText(L.LogWipeNote)
 	lbl:SetWidth(200)	
 	lbl:SetFont(Amr.CreateFont("Italic", 14, Amr.Colors.TextTan))
-	lbl:SetJustifyH("MIDDLE")
+	lbl:SetJustifyH("CENTER")
 	lbl:SetPoint("TOP", btnWipe.frame, "BOTTOM", 0, -5)
 	container:AddChild(lbl)
 	
@@ -159,7 +159,7 @@ function Amr:RenderTabLog(container)
 	lbl2:SetText(L.LogWipeNote2("/amr wipe"))
 	lbl2:SetWidth(200)	
 	lbl2:SetFont(Amr.CreateFont("Italic", 14, Amr.Colors.TextTan))
-	lbl2:SetJustifyH("MIDDLE")
+	lbl2:SetJustifyH("CENTER")
 	lbl2:SetPoint("TOP", lbl.frame, "BOTTOM", 0, -2)
 	container:AddChild(lbl2)
 	]]
@@ -313,6 +313,14 @@ local function updateAutoLogging(force, noWait)
 	end
 end
 
+-- sometimes the game doesn't repaint checkboxes when it should... doing this forces it to do so
+local function setCheckboxChecked(chk, val)
+	chk:SetChecked(val)
+	chk:SetChecked(not val)
+	chk:SetChecked(val)
+	chk:SetText(chk:GetText())
+end
+
 -- refresh the state of the tab based on current settings
 function Amr:RefreshLogUi()
 	if not _btnToggle then return end
@@ -334,6 +342,7 @@ function Amr:RefreshLogUi()
 	end
 	
 	local all = isAllAutoLoggingEnabled()
+	--setCheckboxChecked(_chkAutoAll, all)
 	_chkAutoAll:SetChecked(all)
 	
 	for i, instanceId in ipairs(Amr.InstanceIdsOrdered) do
@@ -341,7 +350,8 @@ function Amr:RefreshLogUi()
 			Amr.db.profile.Logging.Auto[instanceId] = {}
 		end
 		for k, difficultyId in pairs(Amr.Difficulties) do
-			_autoChecks[instanceId][difficultyId]:SetChecked(Amr.db.profile.Logging.Auto[instanceId][difficultyId])
+			setCheckboxChecked(_autoChecks[instanceId][difficultyId], Amr.db.profile.Logging.Auto[instanceId][difficultyId])
+			--_autoChecks[instanceId][difficultyId]:SetChecked(Amr.db.profile.Logging.Auto[instanceId][difficultyId])
 		end
 	end
 end

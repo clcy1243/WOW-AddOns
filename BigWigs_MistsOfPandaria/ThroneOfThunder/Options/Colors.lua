@@ -6,7 +6,6 @@ BigWigs:AddColors("Jin'rokh the Breaker", {
 	[137313] = "red",
 	[138006] = "blue",
 	[138349] = {"blue","orange"},
-	[138375] = "blue",
 	[138732] = {"green","red"},
 	[139467] = "blue",
 })
@@ -97,7 +96,7 @@ BigWigs:AddColors("Durumu the Forgotten", {
 	[133767] = {"blue","yellow"},
 	[133768] = {"blue","orange"},
 	[133798] = {"blue","green","red"},
-	[134626] = {"blue","orange"},
+	[134626] = "orange",
 	[140502] = "blue",
 	["adds"] = {"green","orange","yellow"},
 	["initial_life_drain"] = {"blue","orange"},

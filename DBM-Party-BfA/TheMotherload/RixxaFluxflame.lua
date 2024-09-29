@@ -1,10 +1,9 @@
-local mod	= DBM:NewMod(2115, "DBM-Party-BfA", 7, 1001)
+local mod	= DBM:NewMod(2115, "DBM-Party-BfA", 7, 1012)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200602212246")
+mod:SetRevision("20240417180519")
 mod:SetCreatureID(129231)
 mod:SetEncounterID(2107)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -20,17 +19,14 @@ mod:RegisterEventsInCombat(
 local warnAxeriteCatalyst			= mod:NewSpellAnnounce(259022, 2)--Cast often, so general warning not special
 local warnPoropellantBlast			= mod:NewTargetNoFilterAnnounce(259940, 2)
 
-local specWarnChemBurn				= mod:NewSpecialWarningDispel(259853, "Healer", nil, nil, 1, 2)
+local specWarnChemBurn				= mod:NewSpecialWarningDispel(259853, "RemoveMagic", nil, 2, 1, 2)
 local specWarnPoropellantBlast		= mod:NewSpecialWarningYou(259940, nil, nil, nil, 1, 2)
 local yellPoropellantBlast			= mod:NewYell(259940)
-local specWarnPoropellantBlastNear	= mod:NewSpecialWarningClose(259940, nil, nil, nil, 1, 2)
 
 local timerAxeriteCatalystCD		= mod:NewCDTimer(13, 259022, nil, nil, nil, 3)
-local timerChemBurnCD				= mod:NewCDTimer(13, 259853, nil, nil, 2, 5, nil, DBM_CORE_L.HEALER_ICON..DBM_CORE_L.MAGIC_ICON)
+local timerChemBurnCD				= mod:NewCDTimer(13, 259853, nil, nil, 2, 5, nil, DBM_COMMON_L.HEALER_ICON..DBM_COMMON_L.MAGIC_ICON)
 --local timerPropellantBlastCD		= mod:NewCDTimer(13, 259940, nil, nil, nil, 3)--Longer pull/more data needed (32.5, 6.0, 36.1)
---local timerGushingCatalystCD		= mod:NewCDTimer(13, 275992, nil, nil, nil, 3, nil, DBM_CORE_L.HEROIC_ICON)
-
---mod:AddRangeFrameOption(5, 194966)
+--local timerGushingCatalystCD		= mod:NewCDTimer(13, 275992, nil, nil, nil, 3, nil, DBM_COMMON_L.HEROIC_ICON)
 
 mod.vb.chemBurnCast = 0
 mod.vb.azeriteCataCast = 0
@@ -41,9 +37,6 @@ function mod:BlastTarget(targetname)
 		specWarnPoropellantBlast:Show()
 		specWarnPoropellantBlast:Play("targetyou")
 		yellPoropellantBlast:Yell()
-	elseif self:CheckNearby(10, targetname) then
-		specWarnPoropellantBlastNear:Show(targetname)
-		specWarnPoropellantBlastNear:Play("runaway")
 	else
 		warnPoropellantBlast:Show(targetname)
 	end
@@ -62,7 +55,7 @@ end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
-	if spellId == 259853 and self:CheckDispelFilter() then
+	if spellId == 259853 and self:CheckDispelFilter("magic") then
 		specWarnChemBurn:CombinedShow(1, args.destName)
 		specWarnChemBurn:ScheduleVoice(1, "dispelnow")
 	end

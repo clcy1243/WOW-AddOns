@@ -1,6 +1,9 @@
 local VUHDO_1_DIV_2_PI_MUL_108 = 108 / math.pi / 2;
+
 local UnitIsUnit = UnitIsUnit;
 local floor = floor;
+local _;
+
 local sOldButton;
 local sOldDistance;
 local sIsDeadOnly;
@@ -79,10 +82,16 @@ local VUHDO_getRedGreenForDistance = VUHDO_getRedGreenForDistance;
 
 --
 local tInfo;
+local tIsInInstance;
 function VUHDO_shouldDisplayArrow(aUnit)
+	tIsInInstance, _ = IsInInstance();
+
+	if tIsInInstance then
+		return false;
+	end
+
 	tInfo = VUHDO_RAID[aUnit];
-	return
-	  not UnitIsUnit("player", aUnit)
+	return not UnitIsUnit("player", aUnit)
 		and tInfo
 		and (not tInfo["range"] or sIsAlways)
 		and (not sIsDeadOnly or tInfo["dead"])
@@ -95,6 +104,7 @@ local VUHDO_shouldDisplayArrow = VUHDO_shouldDisplayArrow;
 
 --
 local tUnit;
+local tDirection;
 local tCell;
 local sLastCell = nil;
 local tButton = nil;

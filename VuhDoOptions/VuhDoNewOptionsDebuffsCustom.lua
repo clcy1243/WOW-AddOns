@@ -125,6 +125,9 @@ function VUHDO_customDebuffUpdateEditBox(anEditBox)
 		if (VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED_SETTINGS"][tValue].color == nil) then
 			VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED_SETTINGS"][tValue].color
 				= VUHDO_deepCopyTable(VUHDO_PANEL_SETUP.BAR_COLORS["DEBUFF" .. VUHDO_DEBUFF_TYPE_CUSTOM]);
+
+			VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED_SETTINGS"][tValue].color.useBackground = true;
+			VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED_SETTINGS"][tValue].color.useText = true;
 		end
 
 		tColorSwatch = _G[tPanelName .. "ColorTexture"];
@@ -208,7 +211,11 @@ function VUHDO_customDebuffUpdateEditBox(anEditBox)
 		VUHDO_OTHERS_MODEL = true;
 		VUHDO_BAR_GLOW_MODEL = VUHDO_CONFIG.CUSTOM_DEBUFF.isBarGlow;
 		VUHDO_ICON_GLOW_MODEL = VUHDO_CONFIG.CUSTOM_DEBUFF.isIconGlow;
+
 		VUHDO_COLOR_SWATCH_MODEL = VUHDO_deepCopyTable(VUHDO_PANEL_SETUP.BAR_COLORS["DEBUFF" .. VUHDO_DEBUFF_TYPE_CUSTOM]);
+		VUHDO_COLOR_SWATCH_MODEL.useBackground = true;
+		VUHDO_COLOR_SWATCH_MODEL.useText = true;
+
 		VUHDO_BAR_GLOW_SWATCH_MODEL = VUHDO_deepCopyTable(VUHDO_PANEL_SETUP.BAR_COLORS["DEBUFF_BAR_GLOW"]);
 		VUHDO_ICON_GLOW_SWATCH_MODEL = VUHDO_deepCopyTable(VUHDO_PANEL_SETUP.BAR_COLORS["DEBUFF_ICON_GLOW"]);
 		VUHDO_SOUND_MODEL = VUHDO_CONFIG.CUSTOM_DEBUFF.SOUND;
@@ -412,23 +419,27 @@ function VUHDO_deleteCustomDebuffOnClick(aButton)
 	if (tIndex ~= nil and #tValue > 0) then
 		tremove(VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED"], tIndex);
 		VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED_SETTINGS"][tValue] = nil;
+		VUHDO_CONFIG["CUSTOM_DEBUFF"]["SELECTED"] = "";
+
 		VUHDO_Msg("(de)buff " .. tValue .. " removed.", 1, 0.4, 0.4);
 	else
 		VUHDO_Msg("(de)buff " .. tValue .. " doesn't exist.", 1, 0.4, 0.4);
 	end
 
 	VUHDO_initCustomDebuffComboModel();
+
+	VuhDoNewOptionsDebuffsCustomStorePanelEditBox:SetText("");
 	VUHDO_customDebuffUpdateEditBox(VuhDoNewOptionsDebuffsCustomStorePanelEditBox);
+
 	VuhDoNewOptionsDebuffsCustom:Hide();
 	VuhDoNewOptionsDebuffsCustom:Show();
-	VuhDoNewOptionsDebuffsCustomStorePanelEditBox:SetText("");
 end
 
 
 
 --
 function VUHDO_applyToAllCustomDebuffOnClick()
-	for tName, tSettings in pairs(VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED_SETTINGS"]) do
+	for _, tSettings in pairs(VUHDO_CONFIG["CUSTOM_DEBUFF"]["STORED_SETTINGS"]) do
 		tSettings["isIcon"] = VUHDO_CONFIG.CUSTOM_DEBUFF.isIcon;
 		tSettings["isColor"] = VUHDO_CONFIG.CUSTOM_DEBUFF.isColor;
 		tSettings["SOUND"] = VUHDO_CONFIG.CUSTOM_DEBUFF.SOUND;

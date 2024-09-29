@@ -1,7 +1,9 @@
 local _;
+local LoadAddOn = C_AddOns.LoadAddOn or LoadAddOn;
+local IsAddOnLoaded = C_AddOns.IsAddOnLoaded or IsAddOnLoaded;
 
 -- For initializing the minimap
-VUHDO_MM_SETTINGS = { };
+VUHDO_MM_SETTINGS = VUHDO_MM_SETTINGS or { };
 
 VUHDO_LibSharedMedia = LibStub("LibSharedMedia-3.0");
 VUHDO_LibDataBroker = LibStub("LibDataBroker-1.1", true);
@@ -88,7 +90,11 @@ function VUHDO_initFuBar()
 			icon = VUHDO_STANDARD_ICON,
 			OnClick = function(aClickedFrame, aButton)
 				if aButton == "RightButton" then
-					ToggleDropDownMenu(1, nil, VuhDoMinimapDropDown, aClickedFrame:GetName(), 0, -5);
+					if AddonCompartmentFrame and aClickedFrame:GetParent() == DropDownList1 then
+						ToggleDropDownMenu(1, nil, VuhDoMinimapDropDown, "cursor", 0, 0);
+					else
+						ToggleDropDownMenu(1, nil, VuhDoMinimapDropDown, aClickedFrame:GetName(), 0, -5);
+					end
 				else
 					VUHDO_slashCmd("opt");
 				end
@@ -102,6 +108,12 @@ function VUHDO_initFuBar()
 
 		-- Minimap icon provided by LibDBIcon
 		if VUHDO_LibDBIcon then
+			-- if the old configuration still exists, migrate to the LibDBIcon database
+			if VUHDO_CONFIG["SHOW_MINIMAP"] ~= nil then
+				VUHDO_MM_SETTINGS["hide"] = not VUHDO_forceBooleanValue(VUHDO_CONFIG["SHOW_MINIMAP"]);
+				VUHDO_CONFIG["SHOW_MINIMAP"] = nil;
+			end
+
 			VUHDO_LibDBIcon:Register("VuhDo", minimapObject, VUHDO_MM_SETTINGS);
 
 			VUHDO_initMinimap();
@@ -221,6 +233,7 @@ end
 function VUHDO_initMinimap()
 
 	VUHDO_initShowMinimap();
+	VUHDO_initShowAddOnCompartment();
 
 end
 
@@ -230,10 +243,25 @@ end
 function VUHDO_initShowMinimap()
 
 	if VUHDO_LibDataBroker and VUHDO_LibDBIcon then
-		if VUHDO_CONFIG["SHOW_MINIMAP"] then
+		if not VUHDO_MM_SETTINGS["hide"] then
 			VUHDO_LibDBIcon:Show("VuhDo");
 		else
 			VUHDO_LibDBIcon:Hide("VuhDo");
+		end
+	end
+
+end
+
+
+
+--
+function VUHDO_initShowAddOnCompartment()
+
+	if VUHDO_LibDataBroker and VUHDO_LibDBIcon then
+		if not VUHDO_MM_SETTINGS["addon_compartment_hide"] then
+			VUHDO_LibDBIcon:AddButtonToCompartment("VuhDo");
+		else
+			VUHDO_LibDBIcon:RemoveButtonFromCompartment("VuhDo");
 		end
 	end
 

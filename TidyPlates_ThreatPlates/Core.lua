@@ -12,7 +12,7 @@ local tonumber, pairs = tonumber, pairs
 local SetNamePlateFriendlyClickThrough = C_NamePlate.SetNamePlateFriendlyClickThrough
 local SetNamePlateEnemyClickThrough = C_NamePlate.SetNamePlateEnemyClickThrough
 local UnitName, IsInInstance, InCombatLockdown = UnitName, IsInInstance, InCombatLockdown
-local GetCVar, IsAddOnLoaded = GetCVar, IsAddOnLoaded
+local GetCVar, IsAddOnLoaded = GetCVar, C_AddOns.IsAddOnLoaded
 local C_NamePlate, Lerp =  C_NamePlate, Lerp
 local C_Timer_After = C_Timer.After
 local NamePlateDriverFrame = NamePlateDriverFrame
@@ -20,8 +20,8 @@ local NamePlateDriverFrame = NamePlateDriverFrame
 -- ThreatPlates APIs
 local TidyPlatesThreat = TidyPlatesThreat
 local LibStub = LibStub
-local LSM = t.Media
-local L = t.L
+local L = Addon.ThreatPlates.L
+local CVars = Addon.CVars
 
 local _G =_G
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
@@ -35,17 +35,114 @@ local task_queue_ooc = {}
 local LSMUpdateTimer
 
 ---------------------------------------------------------------------------------------------------
--- Global configs and funtions
+-- Functions different depending on WoW version
 ---------------------------------------------------------------------------------------------------
 
-t.Print = function(val,override)
-  local db = TidyPlatesThreat.db.profile
-  if override or db.verbose then
-    print(t.Meta("titleshort")..": "..val)
+if Addon.WOW_USES_CLASSIC_NAMEPLATES then
+  local function CalculateSynchedNameplateSize()
+    local db = Addon.db.profile.settings
+  
+    local width = db.healthbar.width
+    local height = db.healthbar.height
+    if db.frame.SyncWithHealthbar then
+      width = width + 6
+      height = height + 22
+    end
+
+    -- Update values in settings, so that the options dialog (clickable area) shows the correct values
+    db.frame.width = width
+    db.frame.height = height
+  
+    return width, height
+  end
+
+  Addon.SetBaseNamePlateSize = function(self)
+    local db = self.db.profile
+
+    -- Classic has the same nameplate size for friendly and enemy units, so either set both or non at all (= set it to default values)
+    if not db.ShowFriendlyBlizzardNameplates and not db.ShowEnemyBlizzardNameplates and not self.IsInPvEInstance then
+      local width, height = CalculateSynchedNameplateSize()
+      C_NamePlate.SetNamePlateFriendlySize(width, height)
+      C_NamePlate.SetNamePlateEnemySize(width, height)
+    else
+      -- Smaller nameplates are not available in Classic
+      C_NamePlate.SetNamePlateFriendlySize(128, 32)
+      C_NamePlate.SetNamePlateEnemySize(128, 32)
+    end
+
+    Addon:ConfigClickableArea(false)
+  end
+else 
+  local function CalculateSynchedNameplateSize(width_key, height_key)
+    local width, height
+    
+    local db = Addon.db.profile.settings
+    if db.frame.SyncWithHealthbar then
+      -- This functions were interpolated from ratio of the clickable area and the Blizzard nameplate healthbar
+      -- for various sizes
+      width = db.healthbar[width_key] + 24.5
+      height = (db.healthbar[height_key] + 11.4507) / 0.347764  
+    else
+      width = db.frame[width_key]
+      height = db.frame[height_key]
+    end
+  
+    -- Update values in settings, so that the options dialog (clickable area) shows the correct values
+    db.frame[width_key] = width
+    db.frame[height_key] = height
+
+    return width, height
+  end
+
+  local function CalculateSynchedNameplateSizeForEnemy()
+    return CalculateSynchedNameplateSize("width", "height")
+  end
+
+  local function CalculateSynchedNameplateSizeForFriend()
+    return CalculateSynchedNameplateSize("widthFriend", "heightFriend")
+  end
+
+  local function SetNameplatesToDefaultSize(nameplate_size_func)
+    if NamePlateDriverFrame:IsUsingLargerNamePlateStyle() then
+      nameplate_size_func(154, 64)
+    else
+      nameplate_size_func(110, 45)
+    end
+  end
+
+  Addon.SetBaseNamePlateSize = function(self)
+    local db = self.db.profile
+
+    if CVars:GetAsBool("nameplateShowOnlyNames") then
+      -- The clickable area of friendly nameplates will be set to zero so that they don't interfere with enemy nameplates stacking (not in Classic or TBC Classic).
+      C_NamePlate.SetNamePlateFriendlySize(0.1, 0.1)    
+    elseif db.ShowFriendlyBlizzardNameplates or self.IsInPvEInstance then
+      SetNameplatesToDefaultSize(C_NamePlate.SetNamePlateFriendlySize)
+    else
+      local width, height = CalculateSynchedNameplateSizeForFriend()
+      C_NamePlate.SetNamePlateFriendlySize(width, height)
+    end
+
+    if db.ShowEnemyBlizzardNameplates then
+      SetNameplatesToDefaultSize(C_NamePlate.SetNamePlateEnemySize)
+    else
+      local width, height = CalculateSynchedNameplateSizeForEnemy()
+      C_NamePlate.SetNamePlateEnemySize(width, height)
+    end
+  
+    Addon:ConfigClickableArea(false)
+
+    -- For personal nameplate:
+    --local clampedZeroBasedScale = Saturate(zeroBasedScale)
+    --C_NamePlate_SetNamePlateSelfSize(baseWidth * horizontalScale * Lerp(1.1, 1.0, clampedZeroBasedScale), baseHeight)
   end
 end
 
-function TidyPlatesThreat:SpecName()
+---------------------------------------------------------------------------------------------------
+-- Global configs and funtions
+---------------------------------------------------------------------------------------------------
+
+function Addon:SpecName()
   local _,name,_,_,_,role = GetSpecializationInfo(GetSpecialization(false,false,1),nil,false)
   if name then
     return name
@@ -57,7 +154,7 @@ end
 local tankRole = L["|cff00ff00tanking|r"]
 local dpsRole = L["|cffff0000dpsing / healing|r"]
 
-function TidyPlatesThreat:RoleText()
+function Addon:RoleText()
   if Addon:PlayerRoleIsTank() then
     return tankRole
   else
@@ -71,8 +168,8 @@ local EVENTS = {
   --"PLAYER_TALENT_UPDATE"
 
   "PLAYER_ENTERING_WORLD",
-  "PLAYER_LOGIN",
-  "PLAYER_LOGOUT",
+  --"PLAYER_LOGIN",
+  --"PLAYER_LOGOUT",
   "PLAYER_REGEN_ENABLED",
   "PLAYER_REGEN_DISABLED",
 
@@ -151,22 +248,26 @@ StaticPopupDialogs["IncompatibleAddon"] = {
   text = "|cffFFA500" .. t.Meta("title") .. " Warning|r \n---------------------------------------\n" ..
     L["You currently have two nameplate addons enabled: |cff89F559Threat Plates|r and |cff89F559%s|r. Please disable one of these, otherwise two overlapping nameplates will be shown for units."],
   button1 = OKAY,
+  button2 = L["Don't Ask Again"],
   timeout = 0,
   whileDead = 1,
   hideOnEscape = 1,
   OnAccept = function(self, _, _) end,
+  OnCancel = function(self, _, _)
+    Addon.db.profile.CheckForIncompatibleAddons = false
+  end,
 }
 
-function TidyPlatesThreat:ReloadTheme()
+function Addon:ReloadTheme()
   -- Castbars have to be disabled everytime we login
-  if TidyPlatesThreat.db.profile.settings.castbar.show or TidyPlatesThreat.db.profile.settings.castbar.ShowInHeadlineView then
+  if Addon.db.profile.settings.castbar.show or Addon.db.profile.settings.castbar.ShowInHeadlineView then
     Addon:EnableCastBars()
   else
     Addon:DisableCastBars()
   end
 
   -- Recreate all TidyPlates styles for ThreatPlates("normal", "dps", "tank", ...) - required, if theme style settings were changed
-  Addon:SetThemes(self)
+  Addon:SetThemes()
   Addon:UpdateConfigurationStatusText()
   Addon:InitializeCustomNameplates()
   Addon.Widgets:InitializeAllWidgets()
@@ -178,40 +279,39 @@ function TidyPlatesThreat:ReloadTheme()
   -- that event fires.
   Addon:CallbackWhenOoC(function() Addon:SetBaseNamePlateSize() end, L["Unable to change a setting while in combat."])
   Addon:CallbackWhenOoC(function()
-    local db = self.db.profile
+    local db = Addon.db.profile
     SetNamePlateFriendlyClickThrough(db.NamePlateFriendlyClickThrough)
     SetNamePlateEnemyClickThrough(db.NamePlateEnemyClickThrough)
   end)
 
   -- CVars setup for nameplates of occluded units
-  if TidyPlatesThreat.db.profile.nameplate.toggle.OccludedUnits then
+  if Addon.db.profile.nameplate.toggle.OccludedUnits then
     Addon:CallbackWhenOoC(function()
       Addon:SetCVarsForOcclusionDetection()
     end)
   end
 
   for plate, unitid in pairs(Addon.PlatesVisible) do
-    Addon:UpdateNameplateStyle(plate, unitid)
+    Addon.SetNameplateVisibility(plate, unitid)
   end
 
   Addon:ForceUpdate()
 end
 
-function TidyPlatesThreat:CheckForFirstStartUp()
-  local db = self.db.global
+function Addon:CheckForFirstStartUp()
+  local db = Addon.db.global
 
-  if not self.db.char.welcome then
-    self.db.char.welcome = true
-    local Welcome = L["|cff89f559Welcome to |r|cff89f559Threat Plates!\nThis is your first time using Threat Plates and you are a(n):\n|r|cff"]..t.HCC[Addon.PlayerClass]..self:SpecName().." "..UnitClass("player").."|r|cff89F559.|r\n"
+  if not Addon.db.char.welcome then
+    Addon.db.char.welcome = true
 
-    -- initialize roles for all available specs (level > 10) or set to default (dps/healing)
-    for index=1, GetNumSpecializations() do
-      local id, spec_name, description, icon, background, role = GetSpecializationInfo(index)
-      self:SetRole(t.SPEC_ROLES[Addon.PlayerClass][index], index)
+    -- GetNumSpecializations: Mists - Patch 5.0.4 (2012-08-28): Replaced GetNumTalentTabs.
+    if Addon.IS_MAINLINE then
+      -- initialize roles for all available specs (level > 10) or set to default (dps/healing)
+      for index=1, GetNumSpecializations() do
+        local id, spec_name, description, icon, background, role = GetSpecializationInfo(index)
+        Addon:SetRole(t.SPEC_ROLES[Addon.PlayerClass][index], index)
+      end
     end
-
-    t.Print(Welcome..L["|cff89f559You are currently in your "]..self:RoleText()..L["|cff89f559 role.|r"])
-    t.Print(L["|cff89f559Additional options can be found by typing |r'/tptp'|cff89F559.|r"])
 
     local new_version = tostring(t.Meta("version"))
     if db.version ~= "" and db.version ~= new_version then
@@ -227,79 +327,36 @@ function TidyPlatesThreat:CheckForFirstStartUp()
     end
     db.version = new_version
   end
+
+  --t.MigrateDatabase(db.version)
 end
 
-function TidyPlatesThreat:CheckForIncompatibleAddons()
+function Addon:CheckForIncompatibleAddons()
   -- Check for other active nameplate addons which may create all kinds of errors and doesn't make
   -- sense anyway:
-  if IsAddOnLoaded("TidyPlates") then
-    StaticPopup_Show("TidyPlatesEnabled", "TidyPlates")
-  end
-  if IsAddOnLoaded("Kui_Nameplates") then
-    StaticPopup_Show("IncompatibleAddon", "KuiNameplates")
-  end
-  if IsAddOnLoaded("ElvUI") and ElvUI[1].private.nameplates.enable then
-    StaticPopup_Show("IncompatibleAddon", "ElvUI Nameplates")
-  end
-  if IsAddOnLoaded("Plater") then
-    StaticPopup_Show("IncompatibleAddon", "Plater Nameplates")
-  end
-  if IsAddOnLoaded("SpartanUI") and SUI.DB.EnabledComponents.Nameplates then
-    StaticPopup_Show("IncompatibleAddon", "SpartanUI Nameplates")
+  if Addon.db.profile.CheckForIncompatibleAddons then
+    if IsAddOnLoaded("TidyPlates") then
+      StaticPopup_Show("TidyPlatesEnabled", "TidyPlates")
+    end
+    if IsAddOnLoaded("Kui_Nameplates") then
+      StaticPopup_Show("IncompatibleAddon", "KuiNameplates")
+    end
+    if IsAddOnLoaded("ElvUI") and ElvUI[1] and ElvUI[1].private and ElvUI[1].private.nameplates and ElvUI[1].private.nameplates.enable then
+    --if IsAddOnLoaded("ElvUI") and ElvUI[1].private.nameplates.enable then
+      StaticPopup_Show("IncompatibleAddon", "ElvUI Nameplates")
+    end
+    if IsAddOnLoaded("Plater") then
+      StaticPopup_Show("IncompatibleAddon", "Plater Nameplates")
+    end
+    if IsAddOnLoaded("SpartanUI") and SUI.IsModuleEnabled and SUI:IsModuleEnabled("Nameplates") then
+      StaticPopup_Show("IncompatibleAddon", "SpartanUI Nameplates")
+    end
   end
 end
 
 ---------------------------------------------------------------------------------------------------
 -- AceAddon functions: do init tasks here, like loading the Saved Variables, or setting up slash commands.
 ---------------------------------------------------------------------------------------------------
--- Copied from ElvUI:
-function Addon:SetBaseNamePlateSize()
-  local db = TidyPlatesThreat.db.profile.settings
-
-  local width = db.frame.width
-  local height = db.frame.height
-  if db.frame.SyncWithHealthbar then
-    -- this wont taint like NamePlateDriverFrame.SetBaseNamePlateSize
-    local zeroBasedScale = tonumber(GetCVar("NamePlateVerticalScale")) - 1.0
-    local horizontalScale = tonumber(GetCVar("NamePlateHorizontalScale"))
-
-    width = (db.healthbar.width - 10) * horizontalScale
-    height = (db.healthbar.height + 35) * Lerp(1.0, 1.25, zeroBasedScale)
-
-    db.frame.width = width
-    db.frame.height = height
-  end
-
-  -- Set to default values if Blizzard nameplates are enabled or in an instance (for friendly players)
-  local isInstance, instanceType = IsInInstance()
-  isInstance = isInstance and (instanceType == "party" or instanceType == "raid")
-
-  db = TidyPlatesThreat.db.profile
-  if db.ShowFriendlyBlizzardNameplates or isInstance then
-    if NamePlateDriverFrame:IsUsingLargerNamePlateStyle() then
-      C_NamePlate.SetNamePlateFriendlySize(154, 64)
-    else
-      C_NamePlate.SetNamePlateFriendlySize(110, 45)
-    end
-  else
-    C_NamePlate.SetNamePlateFriendlySize(width, height)
-  end
-
-  if db.ShowEnemyBlizzardNameplates then
-    if NamePlateDriverFrame:IsUsingLargerNamePlateStyle() then
-      C_NamePlate.SetNamePlateEnemySize(154, 64)
-    else
-      C_NamePlate.SetNamePlateEnemySize(110, 45)
-    end
-  else
-    C_NamePlate.SetNamePlateEnemySize(width, height)
-  end
-
-  Addon:ConfigClickableArea(false)
-
-  --local clampedZeroBasedScale = Saturate(zeroBasedScale)
-  --C_NamePlate_SetNamePlateSelfSize(baseWidth * horizontalScale * Lerp(1.1, 1.0, clampedZeroBasedScale), baseHeight)
-end
 
 -- The OnInitialize() method of your addon object is called by AceAddon when the addon is first loaded
 -- by the game client. It's a good time to do things like restore saved settings (see the info on
@@ -314,41 +371,30 @@ function TidyPlatesThreat:OnInitialize()
   end
 
   local db = LibStub('AceDB-3.0'):New('ThreatPlatesDB', defaults, 'Default')
-  self.db = db
+  Addon.db = db
 
-  -- Change defaults if deprecated custom nameplates are used (not yet migrated)
-  Addon.SetDefaultsForCustomNameplates()
+  Addon.LibAceConfigDialog = LibStub("AceConfigDialog-3.0")
+  Addon.LibAceConfigRegistry = LibStub("AceConfigRegistry-3.0")
+  Addon.LibSharedMedia = LibStub("LibSharedMedia-3.0")
+  Addon.LibCustomGlow = LibStub("LibCustomGlow-1.0")
+
+  Addon.LoadOnDemandLibraries()
 
   local RegisterCallback = db.RegisterCallback
-  RegisterCallback(self, 'OnProfileChanged', 'ProfChange')
-  RegisterCallback(self, 'OnProfileCopied', 'ProfChange')
-  RegisterCallback(self, 'OnProfileReset', 'ProfChange')
+  RegisterCallback(Addon, 'OnProfileChanged', 'ProfChange')
+  RegisterCallback(Addon, 'OnProfileCopied', 'ProfChange')
+  RegisterCallback(Addon, 'OnProfileReset', 'ProfChange')
 
   -- Setup Interface panel options
   local app_name = t.ADDON_NAME
   local dialog_name = app_name .. " Dialog"
   LibStub("AceConfig-3.0"):RegisterOptionsTable(dialog_name, t.GetInterfaceOptionsTable())
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(dialog_name, t.ADDON_NAME)
+  Addon.LibAceConfigDialog:AddToBlizOptions(dialog_name, t.ADDON_NAME)
 
   -- Setup chat commands
   self:RegisterChatCommand("tptp", "ChatCommand")
-end
 
-local function SetCVarHook(name, value, c)
-  -- Used as detection for switching between small and large nameplates
-  if name == "NamePlateVerticalScale" then
-    local db = TidyPlatesThreat.db.profile.Automation
-    local isInstance, instanceType = IsInInstance()
-
-    if not NamePlateDriverFrame:IsUsingLargerNamePlateStyle() then
-      -- reset to previous setting
-      Addon.CVars:RestoreFromProfile("nameplateGlobalScale")
-    elseif db.SmallPlatesInInstances and isInstance then
-      Addon.CVars:Set("nameplateGlobalScale", 0.4)
-    end
-
-    Addon:SetBaseNamePlateSize()
-  end
+  Addon.CVars:Initialize()
 end
 
 -- The OnEnable() and OnDisable() methods of your addon object are called by AceAddon when your addon is
@@ -357,20 +403,21 @@ end
 -- AceAddon function: Do more initialization here, that really enables the use of your addon.
 -- Register Events, Hook functions, Create Frames, Get information from the game that wasn't available in OnInitialize
 function TidyPlatesThreat:OnEnable()
-  TidyPlatesThreat:CheckForFirstStartUp()
-  TidyPlatesThreat:CheckForIncompatibleAddons()
+  Addon:CheckForFirstStartUp()
+  Addon:CheckForIncompatibleAddons()
 
-  Addon.CVars:OverwriteBoolProtected("nameplateResourceOnTarget", self.db.profile.PersonalNameplate.ShowResourceOnTarget)
+  if not Addon.WOW_USES_CLASSIC_NAMEPLATES then
+    CVars:OverwriteBool("nameplateResourceOnTarget", Addon.db.profile.PersonalNameplate.ShowResourceOnTarget)
+  end
 
-  TidyPlatesThreat:ReloadTheme()
+  Addon.LoadOnDemandLibraries()
+
+  Addon:ReloadTheme()
 
   -- Register callbacks at LSM, so that we can refresh everything if additional media is added after TP is loaded
   -- Register this callback after ReloadTheme as media will be updated there anyway
-  LSM.RegisterCallback(self, "LibSharedMedia_SetGlobal", "MediaUpdate" )
-  LSM.RegisterCallback(self, "LibSharedMedia_Registered", "MediaUpdate" )
-
-  -- Get updates for changes regarding: Large Nameplates
-  hooksecurefunc("SetCVar", SetCVarHook)
+  Addon.LibSharedMedia.RegisterCallback(Addon, "LibSharedMedia_SetGlobal", "MediaUpdate" )
+  Addon.LibSharedMedia.RegisterCallback(Addon, "LibSharedMedia_Registered", "MediaUpdate" )
 
   EnableEvents()
 end
@@ -380,13 +427,13 @@ function TidyPlatesThreat:OnDisable()
   DisableEvents()
 
   -- Reset all CVars to its initial values
-  -- Addon.CVars:RestoreAllFromProfile()
+  -- CVars:RestoreAllFromProfile()
 end
 
 function Addon:CallbackWhenOoC(func, msg)
   if InCombatLockdown() then
     if msg then
-      t.Print(msg .. L[" The change will be applied after you leave combat."], true)
+      Addon.Logging.Warning(msg .. L[" The change will be applied after you leave combat."])
     end
     task_queue_ooc[#task_queue_ooc + 1] = func
   else
@@ -395,15 +442,15 @@ function Addon:CallbackWhenOoC(func, msg)
 end
 
 -- Register callbacks at LSM, so that we can refresh everything if additional media is added after TP is loaded
-function TidyPlatesThreat.MediaUpdate(addon_name, name, mediatype, key)
-  if mediatype ~= LSM.MediaType.SOUND and not LSMUpdateTimer then
+function Addon.MediaUpdate(addon_name, name, mediatype, key)
+  if mediatype ~= Addon.LibSharedMedia.MediaType.SOUND and not LSMUpdateTimer then
     LSMUpdateTimer = true
 
     -- Delay the update for one second to avoid firering this several times when multiple media are registered by another addon
     C_Timer_After(1, function()
       LSMUpdateTimer = nil
       -- Basically, ReloadTheme but without CVar and some other stuff
-      Addon:SetThemes(TidyPlatesThreat)
+      Addon:SetThemes()
       -- no media used: Addon:UpdateConfigurationStatusText()
       -- no media used: Addon:InitializeCustomNameplates()
       Addon.Widgets:InitializeAllWidgets()
@@ -413,24 +460,25 @@ function TidyPlatesThreat.MediaUpdate(addon_name, name, mediatype, key)
 end
 
 -----------------------------------------------------------------------------------
--- Functions for keybindings
+-- Functions for keybindings and addon compartment
 -----------------------------------------------------------------------------------
 
 function TidyPlatesThreat:ToggleNameplateModeFriendlyUnits()
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
 
   db.Visibility.FriendlyPlayer.UseHeadlineView = not db.Visibility.FriendlyPlayer.UseHeadlineView
   db.Visibility.FriendlyNPC.UseHeadlineView = not db.Visibility.FriendlyNPC.UseHeadlineView
-  db.Visibility.FriendlyTotem.UseHeadlineView = not db.Visibility.FriendlyTotem.UseHeadlineView
-  db.Visibility.FriendlyGuardian.UseHeadlineView = not db.Visibility.FriendlyGuardian.UseHeadlineView
+  -- db.Visibility.FriendlyMinion.UseHeadlineView = not db.Visibility.FriendlyTotem.UseHeadlineView
   db.Visibility.FriendlyPet.UseHeadlineView = not db.Visibility.FriendlyPet.UseHeadlineView
+  db.Visibility.FriendlyGuardian.UseHeadlineView = not db.Visibility.FriendlyGuardian.UseHeadlineView
+  db.Visibility.FriendlyTotem.UseHeadlineView = not db.Visibility.FriendlyTotem.UseHeadlineView
   db.Visibility.FriendlyMinus.UseHeadlineView = not db.Visibility.FriendlyMinus.UseHeadlineView
 
   Addon:ForceUpdate()
 end
 
 function TidyPlatesThreat:ToggleNameplateModeNeutralUnits()
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
 
   db.Visibility.NeutralNPC.UseHeadlineView = not db.Visibility.NeutralNPC.UseHeadlineView
   db.Visibility.NeutralMinus.UseHeadlineView = not db.Visibility.NeutralMinus.UseHeadlineView
@@ -439,16 +487,22 @@ function TidyPlatesThreat:ToggleNameplateModeNeutralUnits()
 end
 
 function TidyPlatesThreat:ToggleNameplateModeEnemyUnits()
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
 
   db.Visibility.EnemyPlayer.UseHeadlineView = not db.Visibility.EnemyPlayer.UseHeadlineView
   db.Visibility.EnemyNPC.UseHeadlineView = not db.Visibility.EnemyNPC.UseHeadlineView
-  db.Visibility.EnemyTotem.UseHeadlineView = not db.Visibility.EnemyTotem.UseHeadlineView
-  db.Visibility.EnemyGuardian.UseHeadlineView = not db.Visibility.EnemyGuardian.UseHeadlineView
+  -- db.Visibility.EnemyMinion.UseHeadlineView = not db.Visibility.EnemyPet.UseHeadlineView
   db.Visibility.EnemyPet.UseHeadlineView = not db.Visibility.EnemyPet.UseHeadlineView
+  db.Visibility.EnemyGuardian.UseHeadlineView = not db.Visibility.EnemyGuardian.UseHeadlineView
+  db.Visibility.EnemyTotem.UseHeadlineView = not db.Visibility.EnemyTotem.UseHeadlineView
   db.Visibility.EnemyMinus.UseHeadlineView = not db.Visibility.EnemyMinus.UseHeadlineView
 
   Addon:ForceUpdate()
+end
+
+function TidyPlatesThreat_OnAddonCompartmentClick(addonName, buttonName)
+  -- addonName: TidyPlates_ThreatPlates (name of directory)
+  Addon:OpenOptions()
 end
 
 -----------------------------------------------------------------------------------
@@ -458,53 +512,73 @@ end
 -- Fired when the player enters the world, reloads the UI, enters/leaves an instance or battleground, or respawns at a graveyard.
 -- Also fires any other time the player sees a loading screen
 function TidyPlatesThreat:PLAYER_ENTERING_WORLD()
-  -- Sync internal settings with Blizzard CVars
-  -- SetCVar("ShowClassColorInNameplate", 1)
-
-  local db = self.db.profile.questWidget
-  if db.ON or db.ShowInHeadlineView then
-    Addon.CVars:Set("showQuestTrackingTooltips", 1)
-    --SetCVar("showQuestTrackingTooltips", 1)
-  else
-    Addon.CVars:RestoreFromProfile("showQuestTrackingTooltips")
+  local db = Addon.db.profile.questWidget
+  -- showQuestTrackingTooltips: not sure when introduced
+  if Addon.IS_MAINLINE then
+    if db.ON or db.ShowInHeadlineView then
+      CVars:Set("showQuestTrackingTooltips", 1)
+    else
+      CVars:RestoreFromProfile("showQuestTrackingTooltips")
+    end
   end
 
-  db = self.db.profile.Automation
-  local isInstance, instanceType = IsInInstance()
+  db = Addon.db.profile.Automation
+  local isInstance, instance_type = IsInInstance()
 
-  if db.HideFriendlyUnitsInInstances and isInstance then
-    Addon.CVars:Set("nameplateShowFriends", 0)
-  else
-    -- reset to previous setting
-    Addon.CVars:RestoreFromProfile("nameplateShowFriends")
+  --Addon.IsInInstance = isInstance
+  Addon.IsInPvEInstance = isInstance and (instance_type == "party" or instance_type == "raid")
+  Addon.IsInPvPInstance = isInstance and (instance_type == "arena" or instance_type == "pvp")
+
+  if db.ShowFriendlyUnitsInInstances then
+    if Addon.IsInPvEInstance then
+      CVars:Set("nameplateShowFriends", 1)
+    else
+      -- Restore the value from before entering the instance
+      CVars:RestoreFromProfile("nameplateShowFriends")
+    end
+  elseif db.HideFriendlyUnitsInInstances then
+    if Addon.IsInPvEInstance then  
+      CVars:Set("nameplateShowFriends", 0)
+    else
+      -- Restore the value from before entering the instance
+      CVars:RestoreFromProfile("nameplateShowFriends")
+    end
   end
 
-  if db.SmallPlatesInInstances and NamePlateDriverFrame:IsUsingLargerNamePlateStyle() and isInstance then
-    Addon.CVars:Set("nameplateGlobalScale", 0.4)
-  else
-    -- reset to previous setting
-    Addon.CVars:RestoreFromProfile("nameplateGlobalScale")
+  if Addon.db.profile.BlizzardSettings.Names.ShowPlayersInInstances then
+    if Addon.IsInPvEInstance then  
+      CVars:Set("UnitNameFriendlyPlayerName", 1)
+      -- CVars:Set("UnitNameFriendlyPetName", 1)
+      -- CVars:Set("UnitNameFriendlyGuardianName", 1)
+      CVars:Set("UnitNameFriendlyTotemName", 1)
+      -- CVars:Set("UnitNameFriendlyMinionName", 1)
+    else
+      -- Restore the value from before entering the instance
+      CVars:RestoreFromProfile("UnitNameFriendlyPlayerName")
+      -- CVars:RestoreFromProfile("UnitNameFriendlyPetName")
+      -- CVars:RestoreFromProfile("UnitNameFriendlyGuardianName")
+      CVars:RestoreFromProfile("UnitNameFriendlyTotemName")
+      -- CVars:RestoreFromProfile("UnitNameFriendlyMinionName")
+    end  
   end
+
+  -- Update custom styles for the current instance
+  Addon.UpdateStylesForCurrentInstance()
 
   -- Adjust clickable area if we are in an instance. Otherwise the scaling of friendly nameplates' healthbars will
   -- be bugged
   Addon:SetBaseNamePlateSize()
+  Addon.Font:SetNamesFonts()
 end
 
 --function TidyPlatesThreat:PLAYER_LEAVING_WORLD()
 --end
 
-function TidyPlatesThreat:PLAYER_LOGIN(...)
-  self.db.profile.cache = {}
+-- function TidyPlatesThreat:PLAYER_LOGIN(...)
+-- end
 
-  if self.db.char.welcome then
-    t.Print(L["|cff89f559Threat Plates:|r Welcome back |cff"]..t.HCC[Addon.PlayerClass]..UnitName("player").."|r!!")
-  end
-end
-
-function TidyPlatesThreat:PLAYER_LOGOUT(...)
-  self.db.profile.cache = {}
-end
+--function TidyPlatesThreat:PLAYER_LOGOUT(...)
+--end
 
 -- Fires when the player leaves combat status
 -- Syncs addon settings with game settings in case changes weren't possible during startup, reload
@@ -516,15 +590,7 @@ function TidyPlatesThreat:PLAYER_REGEN_ENABLED()
     task_queue_ooc[i] = nil
   end
 
---  local db = TidyPlatesThreat.db.profile.threat
---  -- Required for threat/aggro detection
---  if db.ON and (GetCVar("threatWarning") ~= 3) then
---    SetCVar("threatWarning", 3)
---  elseif not db.ON and (GetCVar("threatWarning") ~= 0) then
---    SetCVar("threatWarning", 0)
---  end
-
-  local db = TidyPlatesThreat.db.profile.Automation
+  local db = Addon.db.profile.Automation
   local isInstance, _ = IsInInstance()
 
   -- Dont't use automation for friendly nameplates if in an instance and Hide Friendly Nameplates is enabled
@@ -538,13 +604,14 @@ end
 
 -- Fires when the player enters combat status
 function TidyPlatesThreat:PLAYER_REGEN_DISABLED()
-  local db = self.db.profile.Automation
+  local db = Addon.db.profile.Automation
   local isInstance, _ = IsInInstance()
 
   -- Dont't use automation for friendly nameplates if in an instance and Hide Friendly Nameplates is enabled
   if db.FriendlyUnits ~= "NONE" and not (isInstance and db.HideFriendlyUnitsInInstances) then
     _G.SetCVar("nameplateShowFriends", (db.FriendlyUnits == "SHOW_COMBAT" and 1) or 0)
-  end  if db.EnemyUnits ~= "NONE" then
+  end
+  if db.EnemyUnits ~= "NONE" then
     _G.SetCVar("nameplateShowEnemies", (db.EnemyUnits == "SHOW_COMBAT" and 1) or 0)
   end
 end

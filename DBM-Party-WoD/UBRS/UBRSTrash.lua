@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod("UBRSTrash", "DBM-Party-WoD", 8)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+mod:SetRevision("20240808043723")
 --mod:SetModelID(47785)
-mod:SetZone()
 
 mod.isTrashMod = true
+mod.isTrashModBossFightAllowed = true
 
 mod:RegisterEvents(
 	"SPELL_AURA_APPLIED 155586 155498",
@@ -28,15 +28,13 @@ local specWarnSmash						= mod:NewSpecialWarningDodge(155572, "Tank", nil, nil, 
 local specWarnFranticMauling			= mod:NewSpecialWarningDodge(154039, "Tank", nil, nil, 1, 2)
 local specWarnEruption					= mod:NewSpecialWarningDodge(155037, "Tank", nil, nil, 1, 2)
 
-local timerSmashCD						= mod:NewCDTimer(13, 155572, nil, nil, nil, 3)
-local timerEruptionCD					= mod:NewCDTimer(10, 155037, nil, false, nil, 3)--10-15 sec variation. May be distracting or spammy since two of them
-
-local isTrivial = mod:IsTrivial(110)
+local timerSmashCD						= mod:NewCDNPTimer(13, 155572, nil, nil, nil, 3)
+local timerEruptionCD					= mod:NewCDNPTimer(10, 155037, nil, false, nil, 3)--10-15 sec variation. May be distracting or spammy since two of them
 
 function mod:SPELL_AURA_APPLIED(args)
-	if not self.Options.Enabled or self:IsDifficulty("normal5") or isTrivial then return end
+	if not self.Options.Enabled or self:IsDifficulty("normal5") or self:IsTrivial() then return end
 	local spellId = args.spellId
-	if spellId == 155586 and self:CheckDispelFilter() then
+	if spellId == 155586 and self:CheckDispelFilter("curse") then
 		specWarnVeilofShadowDispel:Show(args.destName)
 		specWarnVeilofShadowDispel:Play("helpdispel")
 	elseif spellId == 155498 and not args:IsDestTypePlayer() then
@@ -46,7 +44,7 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:SPELL_CAST_START(args)
-	if not self.Options.Enabled or self:IsDifficulty("normal5") or isTrivial then return end
+	if not self.Options.Enabled or self:IsDifficulty("normal5") or self:IsTrivial() then return end
 	local spellId = args.spellId
 	if spellId == 155505 then
 		if self:CheckInterruptFilter(args.sourceGUID, false, true) then

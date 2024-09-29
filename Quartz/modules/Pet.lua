@@ -19,10 +19,10 @@
 local Quartz3 = LibStub("AceAddon-3.0"):GetAddon("Quartz3")
 local L = LibStub("AceLocale-3.0"):GetLocale("Quartz3")
 
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then return end
-
 local MODNAME = "Pet"
 local Pet = Quartz3:NewModule(MODNAME, "AceEvent-3.0")
+
+local WoWRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
 
 ----------------------------
 -- Upvalues
@@ -34,7 +34,7 @@ local defaults = {
 	profile = Quartz3:Merge(Quartz3.CastBarTemplate.defaults,
 	{
 		hideblizz = true,
-		
+
 		--x =  -- applied automatically in :ApplySettings()
 		y = 300,
 		h = 18,
@@ -98,16 +98,21 @@ function Pet:ApplySettings()
 	else
 		PetCastingBarFrame.RegisterEvent = nil
 		PetCastingBarFrame:UnregisterAllEvents()
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_START")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
-		PetCastingBarFrame:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
+		PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "pet")
+		PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "pet")
+		PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "pet")
+		PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "pet")
+		PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", "pet")
+		PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "pet")
+		PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "pet")
+		PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "pet")
+		if WoWRetail then
+			PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", "pet")
+			PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", "pet")
+			PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", "pet")
+			PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "pet")
+			PetCastingBarFrame:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "pet")
+		end
 		PetCastingBarFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 		PetCastingBarFrame:RegisterEvent("UNIT_PET")
 	end

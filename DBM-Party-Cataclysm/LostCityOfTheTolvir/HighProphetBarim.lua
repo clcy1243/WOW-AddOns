@@ -1,15 +1,16 @@
 local mod	= DBM:NewMod(119, "DBM-Party-Cataclysm", 5, 69)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+mod.statTypes = "normal,heroic,timewalker"
+
+mod:SetRevision("20240412075414")
 mod:SetCreatureID(43612)
 mod:SetEncounterID(1053)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_AURA_APPLIED 82622 82506 82255 88814",
+	"SPELL_AURA_APPLIED 82622 82506 82255 88814 82320",
 	"SPELL_AURA_REMOVED 82622 82506",
 	"SPELL_DAMAGE 81942",
 	"SPELL_MISSED 81942"
@@ -84,3 +85,4 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 		specWarnHeavenFury:Play("runaway")
 	end
 end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE

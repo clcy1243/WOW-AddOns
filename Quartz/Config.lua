@@ -19,6 +19,7 @@
 local Quartz3 = LibStub("AceAddon-3.0"):GetAddon("Quartz3")
 local L = LibStub("AceLocale-3.0"):GetLocale("Quartz3")
 local media = LibStub("LibSharedMedia-3.0")
+local LibDualSpec = LibStub("LibDualSpec-1.0", true)
 
 ----------------------------
 -- Upvalues
@@ -28,20 +29,20 @@ local pairs, unpack, type = pairs, unpack, type
 local getOpt, setOpt, getColor, setColor
 do
 	function getOpt(info)
-		local key = info[#info] 
+		local key = info[#info]
 		return Quartz3.db.profile[key]
 	end
-	
+
 	function setOpt(info, value)
 		local key = info[#info]
 		Quartz3.db.profile[key] = value
 		Quartz3:ApplySettings()
 	end
-	
+
 	function getColor(info)
 		return unpack(getOpt(info))
 	end
-	
+
 	function setColor(info, r, g, b, a)
 		setOpt(info, {r, g, b, a})
 	end
@@ -193,8 +194,12 @@ end
 
 function Quartz3:ChatCommand(input)
 	if not input or input:trim() == "" then
-		InterfaceOptionsFrame_OpenToCategory(Quartz3.optFrames.Profiles)
-		InterfaceOptionsFrame_OpenToCategory(Quartz3.optFrames.Quartz3)
+		if InterfaceOptionsFrame_OpenToCategory then
+			InterfaceOptionsFrame_OpenToCategory(Quartz3.optFrames.Profiles)
+			InterfaceOptionsFrame_OpenToCategory(Quartz3.optFrames.Quartz3)
+		else
+			Settings.OpenToCategory("Quartz 3")
+		end
 	else
 		LibStub("AceConfigCmd-3.0").HandleCommand(Quartz3, "quartz", "Quartz3", input)
 	end
@@ -204,9 +209,16 @@ function Quartz3:SetupOptions()
 	self.optFrames = {}
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("Quartz3", getOptions)
 	self.optFrames.Quartz3 = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Quartz3", "Quartz 3", nil, "general")
-	self:RegisterModuleOptions("Profiles", LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db), "Profiles")
 	self:RegisterChatCommand("quartz", "ChatCommand")
 	self:RegisterChatCommand("q3", "ChatCommand")
+
+	local profileOptions = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+	if LibDualSpec then
+		LibDualSpec:EnhanceDatabase(self.db, "Quartz3")
+		LibDualSpec:EnhanceOptions(profileOptions, self.db)
+	end
+
+	self:RegisterModuleOptions("Profiles", profileOptions, "Profiles")
 end
 
 function Quartz3:RegisterModuleOptions(name, optTable, displayName)

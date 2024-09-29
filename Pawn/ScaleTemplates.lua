@@ -1,20 +1,17 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2020 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2024 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 --
 -- Scale templates
 ------------------------------------------------------------
 
 
--- Test code for getting spec IDs matched up:
---/script local Index; for Index = 1, GetNumSpecializations() do local ID, Name = GetSpecializationInfo(Index) VgerCore.Message("(" .. Index .. ") Spec ID " .. ID .. " is " .. Name) end
-
 -- Returns the template from PawnScaleTemplates for a given class ID and spec ID.
 function PawnFindScaleTemplate(ClassID, SpecID)
 	local _, Template
-	
-	if VgerCore.IsClassic then
+
+	if VgerCore.IsClassic or VgerCore.IsBurningCrusade or VgerCore.IsWrath or VgerCore.IsCataclysm then
 		for _, Template in pairs(PawnScaleTemplatesClassic) do
 			if Template.ClassID == ClassID then return Template end
 		end
@@ -34,33 +31,36 @@ function PawnGetStatValuesForTemplate(Template, NoStats)
 	if NoStats then
 		ScaleValues = {}
 	else
-		if VgerCore.IsClassic then
-			ScaleValues = 
+		if VgerCore.IsClassic or VgerCore.IsBurningCrusade or VgerCore.IsWrath or VgerCore.IsCataclysm then
+			ScaleValues =
 			{
 				["Stamina"] = 0.01,
 				["Armor"] = 0.1,
 
-				["HitRating"] = 10,
-				["SpellHitRating"] = 8,
-				["CritRating"] = 14,
-				["SpellCritRating"] = 14,
-				-- ["HasteRating"] = 10,
-				-- ["SpellHasteRating"] = 10,
-				-- ["AxeRating"] = 2.5,
-				-- ["2HAxeRating"] = 2.5,
-				-- ["DaggerRating"] = 2.5,
-				-- ["SwordRating"] = 2.5,
-				-- ["2HSwordRating"] = 2.5,
-				-- ["MaceRating"] = 2.5,
-				-- ["2HMaceRating"] = 2.5,
-				-- ["UnarmedRating"] = 2.5,
-				-- ["GunRating"] = 2.5,
-				-- ["BowRating"] = 2.5,
-				-- ["CrossbowRating"] = 2.5,
+				-- These should really be multiplied on Classic Era, but this is just a template so the values aren't that important.
+				["HitRating"] = 1,
+				["SpellHitRating"] = 1,
+				["CritRating"] = 1,
+				["SpellCritRating"] = 1,
+				["HasteRating"] = 1,
+				["SpellHasteRating"] = 1,
+				["ExpertiseRating"] = 1,
+				["SpellPenetration"] = 1,
+				-- ["AxeRating"] = 1,
+				-- ["2HAxeRating"] = 1,
+				-- ["DaggerRating"] = 1,
+				-- ["SwordRating"] = 1,
+				-- ["2HSwordRating"] = 1,
+				-- ["MaceRating"] = 1,
+				-- ["2HMaceRating"] = 1,
+				-- ["UnarmedRating"] = 1,
+				-- ["GunRating"] = 1,
+				-- ["BowRating"] = 1,
+				-- ["CrossbowRating"] = 1,
 				["Ap"] = 0.5,
 				["Rap"] = 0.4,
 				["FeralAp"] = 0.5,
-	
+
 				["SpellDamage"] = 0.855,
 				["Healing"] = 0.455,
 
@@ -69,7 +69,10 @@ function PawnGetStatValuesForTemplate(Template, NoStats)
 				["ParryRating"] = 1,
 				["BlockRating"] = 1,
 				["BlockValue"] = 0.65,
-	
+				["ResilienceRating"] = 1,
+
+				["MetaSocketEffect"] = 36,
+
 				["Mp5"] = 2.5,
 				["Hp5"] = 2.5,
 				["FireResist"] = 1,
@@ -82,7 +85,7 @@ function PawnGetStatValuesForTemplate(Template, NoStats)
 				["NatureSpellDamage"] = 0.7,
 				["ArcaneSpellDamage"] = 0.7,
 				["FrostSpellDamage"] = 0.7,
-				["HolySpellDamage"] = 0.7,	
+				["HolySpellDamage"] = 0.7,
 
 				["Dps"] = 3.4,
 			}
@@ -137,16 +140,34 @@ function PawnGetStatValuesForTemplate(Template, NoStats)
 			if Template.ClassID ~= 11 then
 				ScaleValues.FeralAp = nil
 			end
+
+			-- Wrath merged some stats together.
+			if VgerCore.IsWrath or VgerCore.IsCataclysm then
+				ScaleValues.SpellCritRating = nil
+				ScaleValues.SpellHitRating = nil
+				ScaleValues.SpellHasteRating = nil
+				ScaleValues.SpellPower = ScaleValues.SpellDamage
+				ScaleValues.SpellDamage = nil
+				ScaleValues.Healing = nil
+			end
+
+			-- Cataclysm removed a few more things.
+			if VgerCore.IsCataclysm then
+				ScaleValues.DefenseRating = nil
+				ScaleValues.BlockValue = nil
+				ScaleValues.HolySpellDamage = nil
+				ScaleValues.Rap = nil
+			end
 		else
-			ScaleValues = 
+			ScaleValues =
 			{
 				["Stamina"] = 0.01,
-	
+
 				["CritRating"] = 0.5,
 				["HasteRating"] = 0.5,
 				["MasteryRating"] = 0.5,
 				["Versatility"] = 0.5,
-	
+
 				["MovementSpeed"] = 0.01,
 				["Avoidance"] = 0.01,
 				["Leech"] = 0.01,
@@ -169,7 +190,7 @@ function PawnGetStatValuesForTemplate(Template, NoStats)
 		for _, StatName in pairs(Template.UnusableStats) do
 			ScaleValues[StatName] = PawnIgnoreStatValue
 
-			if VgerCore.IsClassic and StatName == "IsShield" then
+			if (VgerCore.IsClassic or VgerCore.IsBurningCrusade or VgerCore.IsWrath or VgerCore.IsCataclysm) and StatName == "IsShield" then
 				ScaleValues.BlockRating = nil
 				ScaleValues.BlockValue = nil
 			end
@@ -198,7 +219,6 @@ PawnScaleTemplates =
 	["SpecID"] = 2, -- Frost
 	["Role"] = "DAMAGER",
 	["PrimaryStat"] = "Strength",
-	["HideUpgrades"] = 2, -- Hide 2H upgrades
 	["UnusableStats"] = { "IsFrill" }
 },
 
@@ -258,6 +278,30 @@ PawnScaleTemplates =
 {
 	["ClassID"] = 11, -- Druid
 	["SpecID"] = 4, -- Restoration
+	["Role"] = "HEALER",
+	["PrimaryStat"] = "Intellect",
+	["UnusableStats"] = {}
+},
+
+{
+	["ClassID"] = 13, -- Evoker
+	["SpecID"] = 3, -- Augmentation
+	["Role"] = "DAMAGER",
+	["PrimaryStat"] = "Intellect",
+	["UnusableStats"] = {}
+},
+
+{
+	["ClassID"] = 13, -- Evoker
+	["SpecID"] = 1, -- Devastation
+	["Role"] = "DAMAGER",
+	["PrimaryStat"] = "Intellect",
+	["UnusableStats"] = {}
+},
+
+{
+	["ClassID"] = 13, -- Evoker
+	["SpecID"] = 2, -- Preservation
 	["Role"] = "HEALER",
 	["PrimaryStat"] = "Intellect",
 	["UnusableStats"] = {}
@@ -430,7 +474,7 @@ PawnScaleTemplates =
 	["Role"] = "DAMAGER",
 	["PrimaryStat"] = "Agility",
 	["HideUpgrades"] = 2, -- Hide 2H upgrades
-	["UnusableStats"] = { "IsShield", "IsFrill" }
+	["UnusableStats"] = { "IsDagger", "IsShield", "IsFrill" }
 },
 
 {
@@ -493,19 +537,13 @@ PawnScaleTemplates =
 
 }
 
--- Adjustments for WoW Classic:
-if VgerCore.IsClassic then
-	for _, Template in pairs(PawnScaleTemplates) do
-		-- Enhancement Shaman
-		if Template.ClassID == 7 and Template.SpecID == 2 then
-			Template.HideUpgrades = nil
-			Template.UnusableStats.IsOffHand = true
-		end
-	end
-end
-
 PawnScaleTemplatesClassic =
 {
+
+{
+	["ClassID"] = 6, -- Death Knight
+	["PrimaryStats"] = { "Strength", "Agility", "Stamina" }
+},
 
 {
 	["ClassID"] = 11, -- Druid
@@ -554,43 +592,99 @@ PawnScaleTemplatesClassic =
 
 }
 
+-- PawnNewbieSpec: Which spec should we give advice for before level 10?
+PawnNewbieSpec =
+{
+	[1] = -- Warrior
+	1, -- Arms
+
+	[2] = -- Paladin
+	3, -- Retribution
+
+	[3] = -- Hunter
+	2, -- Marksmanship
+
+	[4] = -- Rogue
+	1, -- Assassination
+
+	[5] = -- Priest
+	3, -- Shadow
+
+	[6] = -- Death Knight
+	2, -- Frost
+
+	[7] = -- Shaman
+	1, -- Elemental
+
+	[8] = -- Mage
+	1, -- Arcane
+
+	[9] = -- Warlock
+	2, -- Destruction
+
+	[10] = -- Monk
+	3, -- Windwalker
+
+	[11] = -- Druid
+	1, -- Balance
+
+	[12] = -- Demon Hunter
+	2, -- Vengeance
+
+	[13] = -- Evoker
+	1, -- Devastation
+}
+
 -- PawnNeverUsableStats: Master list of stats that are NEVER usable for each class, regardless of spec. 
 PawnNeverUsableStats =
 {
 	[1] = -- Warrior
-	{ "IsWand", "IsWarglaive" },
+	{ "IsWand", "IsWarglaive", "IsRelic" },
 
 	[2] = -- Paladin
-	{ "IsDagger", "IsFist", "IsStaff", "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsWarglaive", "IsOffHand" },
+	{ "IsDagger", "IsFist", "IsStaff", "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsWarglaive", "IsOffHand", "IsThrown" },
 
 	[3] = -- Hunter
-	{ "IsWand", "IsMace", "Is2HMace", "IsWarglaive", "IsPlate", "IsShield" },
+	{ "IsWand", "IsMace", "Is2HMace", "IsWarglaive", "IsPlate", "IsShield", "IsRelic" },
 
 	[4] = -- Rogue
-	{ "IsPolearm", "IsStaff", "Is2HAxe", "Is2HMace", "Is2HSword", "IsWand", "IsWarglaive", "IsMail", "IsPlate", "IsShield" },
+	{ "IsPolearm", "IsStaff", "Is2HAxe", "Is2HMace", "Is2HSword", "IsWand", "IsWarglaive", "IsMail", "IsPlate", "IsShield", "IsRelic" },
 
-	[5] = --Priest
-	{ "IsAxe", "Is2HAxe", "IsFist", "IsPolearm", "IsSword", "Is2HSword", "Is2HMace", "IsWarglaive", "IsBow", "IsCrossbow", "IsGun", "IsOffHand", "IsLeather", "IsMail", "IsPlate", "IsShield" },
+	[5] = -- Priest
+	{ "IsAxe", "Is2HAxe", "IsFist", "IsPolearm", "IsSword", "Is2HSword", "Is2HMace", "IsWarglaive", "IsBow", "IsCrossbow", "IsGun", "IsOffHand", "IsLeather", "IsMail", "IsPlate", "IsShield", "IsThrown", "IsRelic" },
 
 	[6] = -- Death Knight
-	{ "IsDagger", "IsFist", "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsStaff", "IsWarglaive", "IsShield" },
+	{ "IsDagger", "IsFist", "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsStaff", "IsWarglaive", "IsShield", "IsThrown", "IsRelic" },
 
 	[7] = -- Shaman
-	{ "IsPolearm", "IsSword", "Is2HSword", "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsWarglaive", "IsPlate" },
+	{ "IsPolearm", "IsSword", "Is2HSword", "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsWarglaive", "IsPlate", "IsThrown" },
 
-	[8] = --Mage
-	{ "IsAxe", "Is2HAxe", "IsFist", "IsPolearm", "Is2HSword", "IsMace", "Is2HMace", "IsWarglaive", "IsBow", "IsCrossbow", "IsGun", "IsOffHand", "IsLeather", "IsMail", "IsPlate", "IsShield" },
+	[8] = -- Mage
+	{ "IsAxe", "Is2HAxe", "IsFist", "IsPolearm", "Is2HSword", "IsMace", "Is2HMace", "IsWarglaive", "IsBow", "IsCrossbow", "IsGun", "IsOffHand", "IsLeather", "IsMail", "IsPlate", "IsShield", "IsThrown", "IsRelic" },
 
 	[9] = -- Warlock
-	{ "IsAxe", "Is2HAxe", "IsFist", "IsPolearm", "Is2HSword", "IsMace", "Is2HMace", "IsWarglaive", "IsBow", "IsCrossbow", "IsGun", "IsOffHand", "IsLeather", "IsMail", "IsPlate", "IsShield" },
+	{ "IsAxe", "Is2HAxe", "IsFist", "IsPolearm", "Is2HSword", "IsMace", "Is2HMace", "IsWarglaive", "IsBow", "IsCrossbow", "IsGun", "IsOffHand", "IsLeather", "IsMail", "IsPlate", "IsShield", "IsThrown", "IsRelic" },
 
 	[10] = -- Monk
-	{ "IsDagger", "Is2HAxe", "Is2HMace", "Is2HSword", "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsWarglaive", "IsMail", "IsPlate", "IsShield", "IsOffHand" },
+	{ "IsDagger", "Is2HAxe", "Is2HMace", "Is2HSword", "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsWarglaive", "IsMail", "IsPlate", "IsShield", "IsOffHand", "IsThrown", "IsRelic" },
 
 	[11] = -- Druid
-	{ "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsAxe", "Is2HAxe", "IsSword", "Is2HSword", "IsWarglaive", "IsOffHand", "IsMail", "IsPlate", "IsShield" },
+	{ "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsAxe", "Is2HAxe", "IsSword", "Is2HSword", "IsWarglaive", "IsOffHand", "IsMail", "IsPlate", "IsShield", "IsThrown" },
 	-- Note: feral and guardian artifacts are actually off-hand items, even though druids can't normally equip them.
 
 	[12] = -- Demon Hunter
-	{ "IsWand", "IsBow", "IsCrossbow", "IsGun", "Is2HAxe", "Is2HMace", "Is2HSword", "IsPolearm", "IsStaff", "IsMail", "IsPlate", "IsShield" },
+	{ "IsDagger", "IsMace", "IsWand", "IsBow", "IsCrossbow", "IsGun", "Is2HAxe", "Is2HMace", "Is2HSword", "IsPolearm", "IsStaff", "IsMail", "IsPlate", "IsShield", "IsThrown", "IsRelic" },
+
+	[13] = -- Evoker
+	{  "IsWand", "IsBow", "IsCrossbow", "IsGun", "IsPolearm", "IsWarglaive", "IsOffHand", "IsPlate", "IsShield", "IsThrown", "IsRelic" },
 }
+
+if VgerCore.IsClassic then
+	-- Shamans didn't learn to dual-wield until Burning Crusade.
+	tinsert(PawnNeverUsableStats[7], "IsOffHand")
+end
+
+if VgerCore.IsClassic or VgerCore.IsBurningCrusade then
+	-- Rogues didn't learn to use axes until Wrath of the Lich King.
+	tinsert(PawnNeverUsableStats[4], "IsAxe")
+end

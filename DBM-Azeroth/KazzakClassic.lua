@@ -1,63 +1,79 @@
-local mod	= DBM:NewMod("KazzakClassic", "DBM-Azeroth")
+local mod	= DBM:NewMod("KazzakClassicVanilla", "DBM-Azeroth")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145731")
-mod:SetCreatureID(121818)--121818 TW ID, 12397 classic ID
+mod:SetRevision("20240721201209")
+if DBM:IsSeasonal("SeasonOfDiscovery") then
+	mod:SetCreatureID(230302)
+else
+	mod:SetCreatureID(12397)--121818 TW ID, 12397 classic ID
+end
+mod:SetEncounterID(3026)--Sod Encounter ID
 --mod:SetModelID(17887)
-mod:SetZone()
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 mod:RegisterCombat("combat_yell", L.Pull)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 243712",
-	"SPELL_AURA_APPLIED 243713 243723 156598",
-	"SPELL_AURA_APPLIED_DOSE 243713"
+	"SPELL_CAST_SUCCESS 21341",
+	"SPELL_AURA_APPLIED 21056"
 )
 
---TODO, maybe add yells for classic version, for timewalking version, it just doens't matter if marks don't run out
-local warnVoidBolt				= mod:NewStackAnnounce(243713, 2, nil, "Tank")
-local warningFrenzy				= mod:NewSpellAnnounce(156598, 3)
-local warningMark				= mod:NewTargetAnnounce(243723, 4)
-local warningShadowBoltVolley	= mod:NewSpellAnnounce(243712, 2)
+local warningMark				= mod:NewTargetNoFilterAnnounce(21056, 4)
+local warningShadowBoltVolley	= mod:NewSpellAnnounce(21341, 2)
 
-local specWarnMark				= mod:NewSpecialWarningMoveAway(243723, nil, nil, nil, 1, 2)
+local specWarnMark				= mod:NewSpecialWarningYou(21056, nil, nil, nil, 1, 2)--No Yell on purpose, outdoor chat restrictions and all
 
-local timerVoidBoltCD			= mod:NewCDTimer(27.8, 243713, nil, "Tank", nil, 5, nil, DBM_CORE_L.TANK_ICON)--Iffy
-local timerMarkCD				= mod:NewCDTimer(19.1, 243723, nil, nil, nil, 3, nil, DBM_CORE_L.MAGIC_ICON)
---local timerShadowBoltVolleyCD	= mod:NewCDTimer(7.6, 243712, nil, nil, nil, 2)
+local enrageTimer				= mod:NewBerserkTimer(180)
+
+--Timers seem totally random, like 5-40 type random nonsense, so are utterly worthless
+--local timerMarkCD				= mod:NewCDTimer(19.1, 21056, nil, nil, nil, 3, nil, DBM_COMMON_L.MAGIC_ICON)
+--local timerShadowBoltVolleyCD	= mod:NewCDTimer(7.6, 21341, nil, nil, nil, 2)
 
 --mod:AddReadyCheckOption(48620, false)
 
 function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then
-		timerVoidBoltCD:Start(8.3-delay)
 		--timerShadowBoltVolleyCD:Start(11.5-delay)
-		timerMarkCD:Start(14.1-delay)
+		--timerMarkCD:Start(14.1-delay)
+	end
+	if IsInInstance() or yellTriggered then -- To unreliable for random outdoor pull timers
+		enrageTimer:Start(-delay)
 	end
 end
 
-function mod:SPELL_CAST_START(args)
-	if args.spellId == 243712 then
+function mod:SPELL_CAST_SUCCESS(args)
+	if args:IsSpell(21341) and args:IsSrcTypeHostile() then
 		warningShadowBoltVolley:Show()
 		--timerShadowBoltVolleyCD:Start()
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	local spellId = args.spellId
-	if spellId == 243713 then
-		local amount = args.amount or 1
-		warnVoidBolt:Show(args.destName, amount)
-		timerVoidBoltCD:Start()
-	elseif spellId == 156598 then
-		warningFrenzy:Show()
-	elseif spellId == 243723 then
-		warningMark:CombinedShow(0.5, args.destName)
-		timerMarkCD:DelayedStart(0.5)
-		if args:IsPlayer() then
-			specWarnMark:Show()
-			specWarnMark:Play("runout")
+	if args:IsSpell(21056) then
+		self:SendSync("Mark", args.destName)
+		if self:AntiSpam(5, 1) then
+			if args:IsPlayer() then
+				specWarnMark:Show()
+				specWarnMark:Play("targetyou")
+			else
+				warningMark:Show(args.destName)
+			end
 		end
 	end
 end
-mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
+
+do
+	local playerName = UnitName("player")
+
+	function mod:OnSync(msg, targetName, sender)
+		if not self:IsInCombat() then return end
+		if msg == "Mark" and sender and self:AntiSpam(5, 1) then
+			if targetName == playerName then
+				specWarnMark:Show()
+				specWarnMark:Play("targetyou")
+			else
+				warningMark:Show(targetName)
+			end
+		end
+	end
+end

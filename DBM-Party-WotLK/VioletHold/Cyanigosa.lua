@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(632, "DBM-Party-WotLK", 12, 283)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20240105194015")
 mod:SetCreatureID(31134)
-mod:SetEncounterID(545, 546, 2020)
-mod:SetZone()
+mod:SetEncounterID(2020)
 
 mod:RegisterCombat("combat")
 
@@ -21,10 +20,10 @@ mod:RegisterEventsInCombat(
 local warningVacuum		= mod:NewSpellAnnounce(58694, 1)
 local warningBlizzard	= mod:NewSpellAnnounce(58693, 3)
 
-local specwarnMana		= mod:NewSpecialWarningDispel(59374, "Healer", nil, nil, 1, 2)
+local specwarnMana		= mod:NewSpecialWarningDispel(59374, "RemoveMagic", nil, 2, 1, 2)
 
 local timerVacuumCD		= mod:NewCDTimer(35, 58694, nil, nil, nil, 2)
-local timerMana			= mod:NewTargetTimer(8, 59374, nil, "Healer", nil, 5, nil, DBM_CORE_L.MAGIC_ICON)
+local timerMana			= mod:NewTargetTimer(8, 59374, nil, "Healer", nil, 5, nil, DBM_COMMON_L.MAGIC_ICON)
 local timerCombat		= mod:NewCombatTimer(14)
 
 function mod:OnCombatStart(delay)
@@ -43,7 +42,7 @@ end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 59374 then
-		if self:CheckDispelFilter() then
+		if self:CheckDispelFilter("magic") then
 			specwarnMana:Show(args.destName)
 			specwarnMana:Play("helpdispel")
 		end

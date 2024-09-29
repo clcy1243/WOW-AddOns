@@ -1,18 +1,19 @@
 local mod	= DBM:NewMod(1225, "DBM-Party-WoD", 1, 547)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200601143611")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(77734)
 mod:SetEncounterID(1714)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_AURA_APPLIED 156965 156842 156921 157168 164841 156856",
+	"SPELL_AURA_APPLIED 156965 156842 156921 157168 164841 156856 156964",
 	"SPELL_AURA_REMOVED 156921 157168",
 	"SPELL_CAST_SUCCESS 156854 156974",
-	"SPELL_CAST_START 157039 157001 156975 156857 156964",
+	"SPELL_CAST_START 157039 157001 156975 156857",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
@@ -30,9 +31,9 @@ local warnDoom					= mod:NewTargetNoFilterAnnounce(156965, 3, nil, "Healer")
 
 --Basic Abilities
 local specWarnDrainLife			= mod:NewSpecialWarningInterrupt(156854, "HasInterrupt", nil, nil, 1, 2)
-local specWarnCorruption		= mod:NewSpecialWarningDispel(156842, "Healer", nil, nil, 1, 2)
+local specWarnCorruption		= mod:NewSpecialWarningDispel(156842, "RemoveMagic", nil, 2, 1, 2)
 local specWarnRainOfFire		= mod:NewSpecialWarningSpell(156857, nil, nil, nil, 2, 2)--156856 fires SUCCESS but do not use, it fires for any player walking in or out of it
-local specWarnRainOfFireMove	= mod:NewSpecialWarningMove(156857, nil, nil, nil, 1, 8)
+local specWarnRainOfFireMove	= mod:NewSpecialWarningGTFO(156857, nil, nil, nil, 1, 8)
 --Unknown Abilities
 local specWarnFixate			= mod:NewSpecialWarningRun(157168, nil, nil, 2, 4, 2)
 --Affliction Abilities
@@ -41,7 +42,7 @@ local specWarnSeedOfMelevolence	= mod:NewSpecialWarningMoveAway(156921, nil, nil
 local specWarnExhaustion		= mod:NewSpecialWarningDispel(164841, "RemoveCurse", nil, 2, 1, 2)
 --Destruction Abilities
 local specWarnChaosBolt			= mod:NewSpecialWarningInterrupt(156975, "HasInterrupt", nil, nil, 3, 2)
-local specWarnImmolate			= mod:NewSpecialWarningDispel(156964, "Healer", nil, nil, 1, 2)
+local specWarnImmolate			= mod:NewSpecialWarningDispel(156964, "RemoveMagic", nil, 2, 1, 2)
 --Demonic Abilities
 local specWarnDemonicLeap		= mod:NewSpecialWarningYou(157039, nil, nil, nil, 1, 2)
 local yellDemonicLeap			= mod:NewYell(157039)
@@ -49,12 +50,12 @@ local specWarnChaosWave			= mod:NewSpecialWarningYou(157001, nil, nil, nil, 1, 2
 local yellWarnChaosWave			= mod:NewYell(157001)
 
 --Basic Abilities
-local timerDrainLifeCD			= mod:NewCDTimer(15, 156854, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)--15~18 variation
+local timerDrainLifeCD			= mod:NewCDTimer(15, 156854, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--15~18 variation
 local timerFixate				= mod:NewTargetTimer(12, 157168, nil, "-Tank", 3, 3)
-local timerRainOfFireCD			= mod:NewCDTimer(12, 156857, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)--12-22sec variation phase 2. Unknown Phase 1 repeat timer
+local timerRainOfFireCD			= mod:NewCDTimer(12, 156857, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--12-22sec variation phase 2. Unknown Phase 1 repeat timer
 --Destruction Abilities
-local timerChaosBoltCD			= mod:NewCDTimer(20.5, 156975, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)--20-25 variation.
-local timerImmolateCD			= mod:NewCDTimer(12, 156964, nil, "Healer", nil, 5, nil, DBM_CORE_L.HEALER_ICON)--Only timer that's probably not variable
+local timerChaosBoltCD			= mod:NewCDTimer(20.5, 156975, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--20-25 variation.
+local timerImmolateCD			= mod:NewCDTimer(12, 156964, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON)--Only timer that's probably not variable
 --Affliction Abilities
 local timerSeedOfMelevolence	= mod:NewTargetTimer(18, 156921, nil, "-Tank")
 local timerSeedOfMelevolenceCD	= mod:NewCDTimer(22, 156921, nil, nil, nil, 3)--22-25
@@ -65,7 +66,7 @@ local timerDemonicLeapCD		= mod:NewCDTimer(20, 157039, nil, nil, nil, 3)
 
 mod:AddRangeFrameOption(10, 156921)
 
-local seedDebuff = DBM:GetSpellInfo(156921)
+local seedDebuff = DBM:GetSpellName(156921)
 local DebuffFilter
 do
 	DebuffFilter = function(uId)
@@ -74,7 +75,6 @@ do
 end
 
 mod.vb.seedCount = 0
-mod.vb.phase = 1
 
 function mod:LeapTarget(targetname, uId)
 	if not targetname then return end
@@ -100,7 +100,7 @@ end
 
 function mod:OnCombatStart(delay)
 	self.vb.seedCount = 0
-	self.vb.phase = 1
+	self:SetStage(1)
 	timerRainOfFireCD:Start(15-delay)
 end
 
@@ -114,7 +114,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 156965 then
 		warnDoom:Show(args.destName)
-	elseif spellId == 156842 and self:CheckDispelFilter() then
+	elseif spellId == 156842 and self:CheckDispelFilter("magic") then
 		specWarnCorruption:Show(args.destName)
 		specWarnCorruption:Play("dispelnow")
 	elseif spellId == 156921 and args:IsDestTypePlayer() then--This debuff can be spread to the boss. bugged?
@@ -141,16 +141,16 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			warnFixate:Show(args.destName)
 		end
-	elseif spellId == 164841 and self:CheckDispelFilter() then
+	elseif spellId == 164841 and self:CheckDispelFilter("curse") then
 		specWarnExhaustion:Show(args.destName)
 		specWarnExhaustion:Play("dispelnow")
 		--timerExhaustionCD:Start()
-	elseif spellId == 156964 and self:CheckDispelFilter() then--Base version cast only in phase 1
+	elseif spellId == 156964 and self:CheckDispelFilter("magic") then--Base version cast only in phase 1
 		specWarnImmolate:Show(args.destName)
 		timerImmolateCD:Start()
 		specWarnImmolate:Play("dispelnow")
 	elseif spellId == 156856 and args:IsPlayer() then
-		specWarnRainOfFireMove:Show()
+		specWarnRainOfFireMove:Show(args.spellName)
 		specWarnRainOfFireMove:Play("watchfeet")
 	end
 end
@@ -208,19 +208,19 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 156919 then--Demonology Transformation
-		self.vb.phase = 2
+		self:SetStage(2)
 		timerDrainLifeCD:Cancel()
 		timerRainOfFireCD:Cancel()
 		timerChaosWaveCD:Start(10)
 		timerDemonicLeapCD:Start(23)
 	elseif spellId == 156863 then--Affliction Transformation
-		self.vb.phase = 2
+		self:SetStage(2)
 		timerRainOfFireCD:Cancel()
 		--timerSeedOfMelevolenceCD:Start(5)
 		--timerDrainLifeCD:Start()--Update timer here
 		--no timers. need logs.
 	elseif spellId == 156866 then--Destruction Transformation
-		self.vb.phase = 2
+		self:SetStage(2)
 		timerDrainLifeCD:Cancel()
 		if self:IsDifficulty("challenge5") then-- (in CM, it says he goes into this form but it's a lie)
 			timerSeedOfMelevolenceCD:Start(5)

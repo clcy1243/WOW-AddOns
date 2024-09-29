@@ -11,8 +11,15 @@ local ADDON_NAME, Addon = ...
 local pairs, next = pairs, next
 
 -- WoW APIs
+local GetNamePlateForUnit = C_NamePlate.GetNamePlateForUnit
+local UnitIsUnit = UnitIsUnit
 
 -- ThreatPlates APIs
+
+local _G = _G
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: CreateFrame
 
 local WidgetHandler = {
   Widgets = {},
@@ -52,7 +59,7 @@ local function UnitEventHandler(self, event, ...)
   end
 end
 
-WidgetHandler.EventHandlerFrame = CreateFrame("Frame", nil, WorldFrame)
+WidgetHandler.EventHandlerFrame = _G.CreateFrame("Frame", nil, WorldFrame)
 WidgetHandler.EventHandlerFrame:SetScript("OnEvent", EventHandler)
 
 local function RegisterEvent(widget, event, func)
@@ -66,7 +73,7 @@ end
 
 local function RegisterUnitEvent(widget, event, unitid, func)
   if not widget.EventHandlerFrame then
-    widget.EventHandlerFrame = CreateFrame("Frame", nil, WorldFrame)
+    widget.EventHandlerFrame = _G.CreateFrame("Frame", nil, WorldFrame)
     widget.EventHandlerFrame.Widget = widget
     widget.EventHandlerFrame:SetScript("OnEvent", UnitEventHandler)
   end
@@ -193,6 +200,32 @@ function WidgetHandler:NewWidget(widget_name)
     OnDisable = function(self)
       self:UnregisterAllEvents()
     end,
+    GetThreatPlateForUnit = function(self, unitid)
+      if not unitid or unitid == "player" or UnitIsUnit("player", unitid) then return end
+
+      local plate = GetNamePlateForUnit(unitid)
+      if plate and plate.TPFrame.Active then
+        return plate.TPFrame
+      end
+    end,
+    GetWidgetFrameForUnit = function(self, unitid)
+      if not unitid or unitid == "player" or UnitIsUnit("player", unitid) then return end
+
+      local plate = GetNamePlateForUnit(unitid)
+      if plate and plate.TPFrame.Active then
+        local widget_frame = plate.TPFrame.widgets[self.Name]
+        if widget_frame.Active then
+          return widget_frame
+        end
+      end
+      -- local tp_frame = self:GetThreatPlateForUnit(unitid)
+      -- if tp_frame then
+      --   local widget_frame = tp_frame.widgets[self.Name]
+      --   if widget_frame.Active then
+      --     return widget_frame
+      --   end
+      -- end
+    end,
   }
 
   self.Widgets[widget_name] = widget
@@ -219,11 +252,8 @@ end
 function WidgetHandler:InitializeWidget(widget_name)
   local widget = self.Widgets[widget_name]
 
-  if widget.UpdateSettings then
-    widget:UpdateSettings()
-  end
-
   if widget:IsEnabled() then
+    self:UpdateSettings(widget_name)
     self:EnableWidget(widget_name)
   else
     self:DisableWidget(widget_name)
@@ -237,18 +267,17 @@ function WidgetHandler:InitializeAllWidgets()
 end
 
 function WidgetHandler:EnableWidget(widget_name)
-  -- Enable widgets only once
-  if self.EnabledTargetWidgets[widget_name] or self.EnabledWidgets[widget_name] then
-    return
-  end
-
   local widget = self.Widgets[widget_name]
   if widget.TargetOnly then
-    self.EnabledTargetWidgets[widget_name] = widget
-    widget:Create()
+    if not self.EnabledTargetWidgets[widget_name] then
+      self.EnabledTargetWidgets[widget_name] = widget
+      widget:Create()
+    end
   elseif widget.FocusOnly then
-    self.EnabledFocusWidget = widget
-    widget:Create()
+    if not self.EnabledFocusWidget then
+      self.EnabledFocusWidget = widget
+      widget:Create()
+    end
   else
     self.EnabledWidgets[widget_name] = widget
 
@@ -284,12 +313,13 @@ function WidgetHandler:EnableWidget(widget_name)
 end
 
 function WidgetHandler:DisableWidget(widget_name)
-  -- Disable widgets only once
-  if not (self.EnabledTargetWidgets[widget_name] or self.EnabledWidgets[widget_name]) then
+  local widget = self.Widgets[widget_name]
+
+  -- Disable widgets only if they are enabled
+  if not (self.EnabledTargetWidgets[widget_name] or self.EnabledWidgets[widget_name] or self.EnabledFocusWidget == widget) then
     return
   end
 
-  local widget = self.Widgets[widget_name]
   if widget.TargetOnly then
     self.EnabledTargetWidgets[widget_name] = nil
 
@@ -307,8 +337,11 @@ function WidgetHandler:DisableWidget(widget_name)
       self.EnabledWidgets[widget_name] = nil
 
       widget:OnDisable()
-      for plate, _ in pairs(Addon.PlatesVisible) do
-        plate.TPFrame.widgets[widget_name]:Hide()
+
+      for _, tp_frame in pairs(Addon.PlatesCreated) do
+        local widget_frame = tp_frame.widgets[widget_name]
+        widget_frame.Active = false
+        widget_frame:Hide()
       end
     end
   end
@@ -327,11 +360,13 @@ end
 function WidgetHandler:OnUnitAdded(tp_frame, unit)
   local plate_widgets = tp_frame.widgets
 
-  if unit.isTarget then
+  if unit.IsSoftTarget then
     for _, widget in pairs(self.EnabledTargetWidgets) do
       widget:OnTargetUnitAdded(tp_frame, unit)
     end
-  elseif unit.IsFocus and self.EnabledFocusWidget then
+  end
+
+  if unit.IsFocus and self.EnabledFocusWidget then
     self.EnabledFocusWidget:OnFocusUnitAdded(tp_frame, unit)
   end
 
@@ -341,7 +376,7 @@ function WidgetHandler:OnUnitAdded(tp_frame, unit)
     -- I think it could happen that a nameplate was created, then a widget is enabled, and afterwise the unit is
     -- added to the nameplate, i.e., InitializedWidgets is called.
     --    if plate_widgets[widget_name] == nil then
-    --      TidyPlatesThreat.db.global.Unit = tp_frame
+    --      Addon.db.global.Unit = tp_frame
     --    end
     --    assert (plate_widgets[widget_name] ~= nil, "Uninitialized widget found: " .. widget_name .. " for unit " .. unit.name .. " (" .. tp_frame:GetName() .. ")")
 
@@ -367,11 +402,13 @@ function WidgetHandler:OnUnitRemoved(tp_frame, unit)
   --    end
   --  end
 
-  if unit.isTarget then
+  if unit.IsSoftTarget then
     for _, widget in pairs(self.EnabledTargetWidgets) do
       widget:OnTargetUnitRemoved()
     end
-  elseif unit.IsFocus and self.EnabledFocusWidget then
+  end
+
+  if unit.IsFocus and self.EnabledFocusWidget then
     self.EnabledFocusWidget:OnFocusUnitRemoved()
   end
 
@@ -382,7 +419,7 @@ function WidgetHandler:OnUnitRemoved(tp_frame, unit)
     widget_frame:Hide()
 
     if widget.OnUnitRemoved then
-      widget:OnUnitRemoved(widget_frame)
+      widget:OnUnitRemoved(widget_frame, unit)
     end
   end
 end
@@ -390,7 +427,33 @@ end
 function WidgetHandler:UpdateSettings(widget_name)
   local widget = self.Widgets[widget_name]
 
-  widget:UpdateSettings()
+  if widget.UpdateSettings then
+    widget:UpdateSettings()
+  end
+
+  if not (widget.TargetOnly or widget.FocusOnly) then
+    self:UpdateLayoutOfAllPlates(widget)
+  end
+end
+
+function WidgetHandler:UpdateLayoutOfAllPlates(widget)
+  for _, tp_frame in pairs(Addon.PlatesCreated) do
+    local widget_frame = tp_frame.widgets[widget.Name]
+
+    -- widget_frame could be nil if the widget as disabled and is enabled as part of a profile switch
+    -- For these frames, UpdateAuraWidgetLayout will be called anyway when the widget is initalized
+    -- (which happens after the settings update)
+    if widget_frame then
+      if widget.UpdateLayout then
+        widget:UpdateLayout(widget_frame)
+      end
+
+      -- plate is visible and widget is active, i.e., shown currently
+      if tp_frame.Active and widget_frame.Active then
+        widget:OnUnitAdded(widget_frame, widget_frame.unit)
+      end
+    end
+  end
 end
 
 --function Addon:WidgetsOnUpdate(tp_frame, unit)
@@ -411,7 +474,7 @@ end
 
 -- Currently only working for target-only widgets
 --function Addon:WidgetsModeChanged(tp_frame, unit)
---  if unit.isTarget then
+--  if unit.IsSoftTarget then
 --    for _, widget in pairs(EnabledTargetWidgets) do
 --      widget:OnModeChange(tp_frame, unit)
 --    end

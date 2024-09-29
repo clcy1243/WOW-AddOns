@@ -73,8 +73,8 @@ function mod:OnEngage()
 	-- no need to start bars here we do it at regeneration
 	phase = 1
 	if self.db.profile.custom_off_mine_marks then
-		wipe(markableMobs)
-		wipe(marksUsed)
+		markableMobs = {}
+		marksUsed = {}
 		markTimer = nil
 	end
 end
@@ -87,7 +87,7 @@ do
 	local function setMark(unit, guid)
 		for mark = 1, 3 do
 			if not marksUsed[mark] then
-				SetRaidTarget(unit, mark)
+				mod:CustomIcon(false, unit, mark)
 				markableMobs[guid] = "marked"
 				marksUsed[mark] = guid
 				return
@@ -114,7 +114,7 @@ do
 	end
 
 	function mod:UPDATE_MOUSEOVER_UNIT()
-		local guid = UnitGUID("mouseover")
+		local guid = self:UnitGUID("mouseover")
 		if guid then
 			if markableMobs[guid] == true then
 				setMark("mouseover", guid)
@@ -138,8 +138,8 @@ do
 		self:UnregisterEvent("UPDATE_MOUSEOVER_UNIT")
 		self:CancelTimer(markTimer)
 		markTimer = nil
-		wipe(markableMobs)
-		wipe(marksUsed)
+		markableMobs = {}
+		marksUsed = {}
 	end
 end
 
@@ -151,7 +151,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 then
 			prev = t
-			self:Message(144498, "blue", "Info", CL.underyou:format(args.spellName))
+			self:MessageOld(144498, "blue", "info", CL.underyou:format(args.spellName))
 			self:Flash(144498)
 		end
 	end
@@ -163,7 +163,7 @@ end
 
 function mod:CutterLaserApplied(args)
 	-- way too varied timer 11-21
-	self:TargetMessage(-8190, args.destName, "red", "Warning")
+	self:TargetMessageOld(-8190, args.destName, "red", "warning")
 	self:PrimaryIcon(-8190, args.destName)
 	if self:Me(args.destGUID) then
 		self:Flash(-8190)
@@ -171,23 +171,23 @@ function mod:CutterLaserApplied(args)
 end
 
 function mod:ShockPulse(args)
-	self:Message(args.spellId, "yellow", "Alert", CL.count:format(args.spellName, shockPulseCounter))
+	self:MessageOld(args.spellId, "yellow", "alert", CL.count:format(args.spellName, shockPulseCounter))
 	shockPulseCounter = shockPulseCounter + 1
 	if shockPulseCounter < 4 then
-		self:CDBar(args.spellId, 16, CL.count:format(args.spellName, shockPulseCounter))
+		self:Bar(args.spellId, 16, CL.count:format(args.spellName, shockPulseCounter))
 	end
 end
 
 -- Assault mode
 function mod:IgniteArmor(args)
-	self:StackMessage(args.spellId, args.destName, args.amount, "yellow")
-	self:CDBar(args.spellId, 9)
+	self:StackMessageOld(args.spellId, args.destName, args.amount, "yellow")
+	self:Bar(args.spellId, 9)
 end
 
 do
 	local burnList, scheduled = mod:NewTargetList(), nil
 	local function warnBurn(spellId)
-		mod:TargetMessage(spellId, burnList, "red")
+		mod:TargetMessageOld(spellId, burnList, "red")
 		scheduled = nil
 	end
 	function mod:LaserBurn(args)
@@ -205,7 +205,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 then
 			prev = t
-			self:Message(-8179, "blue", "Info", CL.underyou:format(args.spellName))
+			self:MessageOld(-8179, "blue", "info", CL.underyou:format(args.spellName))
 			self:Flash(-8179)
 		end
 	end
@@ -213,56 +213,56 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 144296 then -- Borer Drill
-		self:Message(-8179, "yellow")
-		self:CDBar(-8179, 19)
+		self:MessageOld(-8179, "yellow")
+		self:Bar(-8179, 19)
 	elseif spellId == 144673 then -- Crawler Mine
 		local spellName = self:SpellName(spellId)
-		self:Message(-8183, "orange", nil, CL.count:format(spellName, mineCounter))
+		self:MessageOld(-8183, "orange", nil, CL.count:format(spellName, mineCounter))
 		self:Bar(-8183, 18, 144718) -- 48732 = Mine Explosion?
 		mineCounter = mineCounter + 1
 		if phase == 1 then
 			self:Bar(-8183, 30, CL.count:format(spellName, mineCounter))
 		else
-			self:CDBar(-8183, 25, CL.count:format(spellName, mineCounter))
+			self:Bar(-8183, 25, CL.count:format(spellName, mineCounter))
 		end
 		if self.db.profile.custom_off_mine_marks then
 			self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 			self:ScheduleTimer("ResetMarking", 18) -- cast time is 15, we should be safe with 18
 		end
 	elseif spellId == 144492 then -- Explosive Tar
-		self:Message(144498, "yellow")
-		self:CDBar(144498, 20)
+		self:MessageOld(144498, "yellow")
+		self:Bar(144498, 20)
 	elseif spellId == 146359 then -- Regeneration (Assault mode)
 		phase = 1
-		self:Message("stages", "cyan", "Long", CL.phase:format(phase), false)
+		self:MessageOld("stages", "cyan", "long", CL.phase:format(phase), false)
 		self:Bar("stages", 120, CL.phase:format(2), 144498) -- maybe should use UNIT_POWER to adjust timer since there seems to be a 6 sec variance
 		if self:Healer() then
-			self:CDBar(144459, 8) -- Laser Burn
+			self:Bar(144459, 8) -- Laser Burn
 		end
 		self:StopBar(CL.count:format(self:SpellName(144673), mineCounter)) -- Crawler Mine
 		mineCounter = 1
 		self:Bar(-8183, 30, CL.count:format(self:SpellName(144673), mineCounter)) -- Crawler Mine
-		self:CDBar(-8179, 19) -- Borer Drill
+		self:Bar(-8179, 19) -- Borer Drill
 		self:StopBar(144498) -- Explosive Tar
 		self:StopBar(CL.phase:format(1)) -- in case it overruns
 	elseif spellId == 146360 then -- Depletion (Siege mode)
 		phase = 2
-		self:Message("stages", "cyan", "Long", CL.phase:format(phase), false)
+		self:MessageOld("stages", "cyan", "long", CL.phase:format(phase), false)
 		self:Bar("stages", 64, CL.phase:format(1), 144464) -- maybe should use UNIT_POWER to adjust timer since there seems to be a 6 sec variance
 		self:StopBar(CL.count:format(self:SpellName(144673), mineCounter)) -- Crawler Mine
 		mineCounter = 1
 		shockPulseCounter = 1
-		self:CDBar(-8183, 23, CL.count:format(self:SpellName(144673), mineCounter)) -- Crawler Mine
-		self:CDBar(144485, 15, CL.count:format(self:SpellName(144485), shockPulseCounter)) -- Shock Pulse, 15 - 15.8
-		self:CDBar(144498, 10) -- Explosive Tar
+		self:Bar(-8183, 23, CL.count:format(self:SpellName(144673), mineCounter)) -- Crawler Mine
+		self:Bar(144485, 15, CL.count:format(self:SpellName(144485), shockPulseCounter)) -- Shock Pulse, 15 - 15.8
+		self:Bar(144498, 10) -- Explosive Tar
 		self:StopBar(144459) -- Laser Burn
 		self:StopBar(-8179) -- Borer Drill
 		self:StopBar(-8181) -- Ricochet
 		self:StopBar(144467) -- Ignite Armor
 		self:StopBar(CL.phase:format(2)) -- in case it overruns
 	elseif spellId == 144356 then -- Ricochet
-		self:Message(-8181, "yellow")
-		self:CDBar(-8181, 15) -- 15-20s
+		self:MessageOld(-8181, "yellow")
+		self:Bar(-8181, 15) -- 15-20s
 	end
 end
 

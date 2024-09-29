@@ -1,15 +1,14 @@
 local mod	= DBM:NewMod(1818, "DBM-Party-Legion", 11, 860)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190625143517")
+mod.statTypes = "heroic,mythic,challenge"
+
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(114252)
 mod:SetEncounterID(1959)
-mod:SetZone()
 --mod:SetUsedIcons(1)
 --mod:SetHotfixNoticeRev(14922)
 --mod.respawnTime = 30
-
-mod.noNormal = true
 
 mod:RegisterCombat("combat")
 
@@ -25,12 +24,12 @@ local warnArcaneBomb				= mod:NewSpellAnnounce(227618, 3)
 local specWarnDecimatingEssence		= mod:NewSpecialWarningSpell(227507, nil, nil, nil, 3, 2)
 local specWarnCoalescePower			= mod:NewSpecialWarningMoveTo(227297, nil, nil, nil, 1, 2)
 
-local timerEnergyVoidCD				= mod:NewCDTimer(21.7, 227523, nil, nil, nil, 3)
+local timerEnergyVoidCD				= mod:NewCDTimer(20.6, 227523, nil, nil, nil, 3)
 local timerCoalescePowerCD			= mod:NewNextTimer(30, 227297, nil, nil, nil, 1, nil, nil, nil, 1, 4)
 
 mod:AddInfoFrameOption(227502, true)
 
-local unstableMana, looseMana = DBM:GetSpellInfo(227502), DBM:GetSpellInfo(227296)
+local unstableMana, looseMana = DBM:GetSpellName(227502), DBM:GetSpellName(227296)
 
 function mod:OnCombatStart(delay)
 	timerEnergyVoidCD:Start(14.5-delay)

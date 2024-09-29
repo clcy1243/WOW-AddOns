@@ -5,10 +5,12 @@ if not mod.L then -- Support repo users by checking if it already exists
 end
 local L = mod.L
 
--- Options
+--- Options
+L.introduction = "The options below can always be accessed by typing the following command in chat: /capping"
 L.general = "General"
 L.test = "Test"
 L.lock = "Lock"
+L.lockDesc = "Enable the lock to hide the bar moving anchor, preventing the bars from being moved."
 L.barIcon = "Bar Icon"
 L.showTime = "Show Time"
 L.fillBar = "Fill Bar"
@@ -37,7 +39,7 @@ L.queueBars = "Queue Bars"
 L.otherBars = "Other Bars"
 L.barBackground = "Bar Background"
 
--- Features
+--- Features
 L.features = "Features"
 L.queueBarsDesc = "Enable the bars showing which queues you have joined and the estimated time you will be in the queue for."
 L.barClickDesc = "Configure the keyboard modifier you wish to use for specific chat output when clicking on a bar. Setting all 3 to 'None' will disable clickable bars, allowing you to click through them."
@@ -49,3 +51,5 @@ L.raidChat = "Group Chat"
 L.clickableBars = "Clickable Bars"
 L.loudQueue = "Loud Queue"
 L.loudQueueDesc = "When the queue is ready the sound notification will be forced to play over the 'Master' sound channel."
+L.autoTurnIn = "Auto Turn-In"
+L.autoTurnInDesc = "Automatically turn in quest items in zones like Alterac Valley and Ashran."

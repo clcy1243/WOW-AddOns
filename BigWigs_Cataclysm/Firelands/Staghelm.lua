@@ -2,7 +2,7 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Majordomo Staghelm", 720, 197)
+local mod, CL = BigWigs:NewBoss("Majordomo Staghelm", 720, 197)
 if not mod then return end
 mod:RegisterEnableMob(52571, 53619) --Staghelm, Druid of the Flame
 
@@ -16,7 +16,6 @@ mod:RegisterEnableMob(52571, 53619) --Staghelm, Druid of the Flame
 local specialCD = {17.3, 14.4, 12, 10.9, 9.6, 8.4, 8.4, 7.2, 7.2, 6.0, 6.0}
 local specialCounter = 1
 local form = "cat"
-local seedTimer = nil
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -37,15 +36,21 @@ L = mod:GetLocale()
 
 function mod:GetOptions()
 	return {
-		98379, 98474,
-		{98374, "PROXIMITY"}, {98476, "FLASH", "ICON", "SAY"},
-		{98450, "FLASH", "PROXIMITY"}, 98451,
-		97238, "berserk"
-	}, {
+		98379,
+		98474,
+		98374,
+		{98476, "ICON", "SAY"},
+		{98450, "CASTBAR", "CASTBAR_COUNTDOWN", "SAY_COUNTDOWN", "ME_ONLY_EMPHASIZE"},
+		98451,
+		97238,
+		"berserk",
+	},{
 		[98379] = 98379,
 		[98374] = 98374,
 		[98450] = -2922,
 		[97238] = "general"
+	},{
+		[98450] = CL.bomb, -- Searing Seeds (Bomb)
 	}
 end
 
@@ -56,7 +61,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "ScorpionForm", 98379)
 	self:Log("SPELL_CAST_SUCCESS", "LeapingFlames", 98476)
 	self:Log("SPELL_CAST_START", "RecklessLeap", 99629)
-	self:Log("SPELL_AURA_APPLIED", "SearingSeeds", 98450)
+	self:Log("SPELL_AURA_APPLIED", "SearingSeedsApplied", 98450)
 	self:Log("SPELL_AURA_REMOVED", "SearingSeedsRemoved", 98450)
 	self:Log("SPELL_CAST_START", "BurningOrbs", 98451)
 
@@ -69,7 +74,6 @@ function mod:OnEngage()
 	self:Berserk(600) -- assumed
 	specialCounter = 1
 	form = "cat"
-	seedTimer = nil
 end
 
 --------------------------------------------------------------------------------
@@ -77,7 +81,7 @@ end
 --
 
 function mod:Adrenaline(args)
-	self:Message(args.spellId, "yellow", nil, L["adrenaline_message"]:format(args.amount or 1))
+	self:MessageOld(args.spellId, "yellow", nil, L["adrenaline_message"]:format(args.amount or 1))
 	 -- this is power based, not time. Power regen is affected by adrenaline
 	 -- adrenaline gets stacked every special
 	specialCounter = specialCounter + 1
@@ -92,15 +96,15 @@ do
 	local prev, fired, timer = 0, 0, nil
 	local function checkTarget(spellId)
 		fired = fired + 1
-		local player = UnitName("boss1target")
-		if player and not UnitDetailedThreatSituation("boss1target", "boss1") then
+		local guid = mod:UnitGUID("boss1target")
+		if guid and not mod:Tanking("boss1", "boss1target") then
 			mod:CancelTimer(timer)
 			timer = nil
-			if UnitIsUnit("player", "boss1target") then
-				mod:Say(spellId, L["leap_say"])
-				mod:Flash(spellId)
+			if mod:Me(guid) then
+				mod:Say(spellId, L["leap_say"], nil, "Leap")
 			end
-			mod:TargetMessage(spellId, player, "orange", "Long") -- Leaping Flames
+			local player = mod:UnitName("boss1target")
+			mod:TargetMessageOld(spellId, player, "orange", "long") -- Leaping Flames
 			mod:PrimaryIcon(spellId, player)
 			return
 		end
@@ -124,9 +128,8 @@ do
 	local function checkTarget(guid)
 		for unit in mod:IterateGroup() do
 			local leapTarget = unit.."target"
-			if UnitGUID(leapTarget) == guid and UnitIsUnit("player", leapTarget.."target") then
-				mod:Say(98476, L["leap_say"])
-				mod:Flash(98476)
+			if mod:UnitGUID(leapTarget) == guid and UnitIsUnit("player", leapTarget.."target") then
+				mod:Say(98476, L["leap_say"], nil, "Leap")
 				break
 			end
 		end
@@ -139,35 +142,36 @@ end
 
 function mod:CatForm(args)
 	form = "cat"
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	specialCounter = 1
 	self:Bar(98476, specialCD[specialCounter]) -- Leaping Flames
 	--Don't open if already opened from seed
-	local hasDebuff, _, _, remaining = self:UnitDebuff("player", self:SpellName(98450)) -- Searing Seeds
-	if not hasDebuff or (remaining - GetTime() > 6) then
-		self:OpenProximity(args.spellId, 10)
-	end
+	--local hasDebuff, _, _, remaining = self:UnitDebuff("player", self:SpellName(98450)) -- Searing Seeds
+	--if not hasDebuff or (remaining - GetTime() > 6) then
+	--	self:OpenProximity(args.spellId, 10)
+	--end
 end
 
 function mod:ScorpionForm(args)
 	form = "scorpion"
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	self:PrimaryIcon(98476)
-	self:CloseProximity(98374)
+	--self:CloseProximity(98374)
 	specialCounter = 1
 	self:Bar(98474, specialCD[specialCounter]) -- Flame Scythe
 end
 
 function mod:SearingSeedsRemoved(args)
-	if not self:Me(args.destGUID) then return end
-	self:StopBar(L["seed_bar"])
-	if form == "cat" then
-		self:OpenProximity(98374, 10)
-	else
-		self:CloseProximity(args.spellId)
+	if self:Me(args.destGUID) then
+		self:CancelSayCountdown(args.spellId)
+		self:StopBar(CL.cast:format(CL.explosion))
+		self:PersonalMessage(args.spellId, "removed", CL.bomb)
 	end
-	self:CancelTimer(seedTimer)
-	seedTimer = nil
+	--if form == "cat" then
+	--	self:OpenProximity(98374, 10)
+	--else
+	--	self:CloseProximity(args.spellId)
+	--end
 end
 
 function mod:BurningOrbs(args)
@@ -175,23 +179,21 @@ function mod:BurningOrbs(args)
 end
 
 do
-	local function searingSeed(spellId)
-		mod:Message(spellId, "blue", "Alarm", L["seed_explosion"])
-		mod:Flash(spellId)
-		mod:OpenProximity(spellId, 12)
-	end
+	--local function searingSeed(spellId)
+		--mod:OpenProximity(spellId, 12)
+	--end
 
-	function mod:SearingSeeds(args)
+	function mod:SearingSeedsApplied(args)
 		self:StopBar(98476) -- Leaping Flames
-		if not self:Me(args.destGUID) then return end
-		local _, _, _, remaining = self:UnitDebuff("player", args.spellName)
-		remaining = remaining - GetTime()
-		self:Bar(args.spellId, remaining, L["seed_bar"])
-		if remaining < 5 then
-			searingSeed()
-		else
-			seedTimer = self:ScheduleTimer(searingSeed, remaining - 5, args.spellId)
+		if self:Me(args.destGUID) then
+			self:PersonalMessage(args.spellId, "you", CL.bomb)
+			local tbl = self:GetPlayerAura(args.spellId) -- Duration is different for everyone
+			if tbl then
+				local duration = tbl.duration
+				self:SayCountdown(args.spellId, duration, nil, 5)
+				self:CastBar(args.spellId, duration, CL.explosion)
+			end
+			self:PlaySound(args.spellId, "warning")
 		end
 	end
 end
-

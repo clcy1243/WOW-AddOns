@@ -6,8 +6,8 @@
 local mod, CL = BigWigs:NewBoss("High Warlord Naj'entus", 564, 1582)
 if not mod then return end
 mod:RegisterEnableMob(22887)
-mod.engageId = 601
---mod.respawnTime = 0 -- Resets, doesn't respawn
+mod:SetEncounterID(601)
+--mod:SetRespawnTime(0) -- Resets, doesn't respawn
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -58,20 +58,20 @@ end
 --
 
 function mod:TidalShield(args)
-	self:Message(args.spellId, "red", "Alert")
+	self:MessageOld(args.spellId, "red", "alert")
 	self:DelayedMessage(args.spellId, 50, "yellow", CL.custom_sec:format(args.spellName, 10))
 	self:CDBar(args.spellId, 56) -- 56-60
 end
 
 function mod:TidalShieldRemoved(args)
-	self:Message(args.spellId, "green", nil, CL.removed:format(args.spellName))
+	self:MessageOld(args.spellId, "green", nil, CL.removed:format(args.spellName))
 end
 
 function mod:ImpalingSpine(args)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Impaling Spine")
 	end
-	self:TargetMessage(args.spellId, args.destName, "red", "Warning", nil, nil, true)
+	self:TargetMessageOld(args.spellId, args.destName, "red", "warning", nil, nil, true)
 	self:PrimaryIcon(args.spellId, args.destName)
 end
 

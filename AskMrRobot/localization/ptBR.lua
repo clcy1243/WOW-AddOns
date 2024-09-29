@@ -8,42 +8,45 @@ General
 ------------------------------------------------------------------------]]
 
 L.SpecsShort = {
-    [1] = "Sangue", -- DeathKnightBlood
-    [2] = "Gélido", -- DeathKnightFrost
-    [3] = "Profano", -- DeathKnightUnholy
-    [4] = "Devastação", -- DemonHunterHavoc
-    [5] = "Vingança", -- DemonHunterVengeance
-    [6] = "Equilíbrio", -- DruidBalance
+	[1] = "Blood", -- DeathKnightBlood
+    [2] = "Frost", -- DeathKnightFrost
+    [3] = "Unholy", -- DeathKnightUnholy
+	[4] = "Havoc", -- DemonHunterHavoc
+	[5] = "Vengeance", -- DemonHunterVengeance
+    [6] = "Moon", -- DruidBalance
     [7] = "Feral", -- DruidFeral
-    [8] = "Guardião", -- DruidGuardian
-    [9] = "Restaura.", -- DruidRestoration
-    [10] = "Dom. das Feras", -- HunterBeastMastery
-    [11] = "Precis.", -- HunterMarksmanship
-    [12] = "Sobrev.", -- HunterSurvival
-    [13] = "Arcano", -- MageArcane
-    [14] = "Fogo", -- MageFire
-    [15] = "Gélido", -- MageFrost
-    [16] = "Mest. Cerv.", -- MonkBrewmaster
-    [17] = "Tec. da Név.", -- MonkMistweaver
-    [18] = "And. do Vento", -- MonkWindwalker
-    [19] = "Sagrado", -- PaladinHoly
-    [20] = "Proteção", -- PaladinProtection
-    [21] = "Retri.", -- PaladinRetribution
-    [22] = "Disc.", -- PriestDiscipline
-    [23] = "Sagrado", -- PriestHoly
-    [24] = "Sombra", -- PriestShadow
-    [25] = "Assass.", -- RogueAssassination
-    [26] = "Fora da Lei", -- RogueOutlaw
-    [27] = "Subter.", -- RogueSubtlety
-    [28] = "Ele.", -- ShamanElemental
-    [29] = "Aperfeiç.", -- ShamanEnhancement
-    [30] = "Rest.", -- ShamanRestoration
-    [31] = "Suplício", -- WarlockAffliction
-    [32] = "Demo.", -- WarlockDemonology
-    [33] = "Destru.", -- WarlockDestruction
-    [34] = "Armas", -- WarriorArms
-    [35] = "Fúria", -- WarriorFury
-    [36] = "Proteção", -- WarriorProtection
+    [8] = "Bear", -- DruidGuardian
+    [9] = "Resto", -- DruidRestoration
+    [10] = "Devastate", -- EvokerDevastation
+    [11] = "Preserve", -- EvokerPreservation
+    [12] = "Augment", -- EvokerAugmentation
+    [13] = "BM", -- HunterBeastMastery
+    [14] = "Marks", -- HunterMarksmanship
+    [15] = "Survival", -- HunterSurvival
+    [16] = "Arcane", -- MageArcane
+    [17] = "Fire", -- MageFire
+    [18] = "Frost", -- MageFrost
+    [19] = "Brew", -- MonkBrewmaster
+    [20] = "Mist", -- MonkMistweaver
+    [21] = "Wind", -- MonkWindwalker
+    [22] = "Holy", -- PaladinHoly
+    [23] = "Prot", -- PaladinProtection
+    [24] = "Ret", -- PaladinRetribution
+    [25] = "Disc", -- PriestDiscipline
+    [26] = "Holy", -- PriestHoly
+    [27] = "Shadow", -- PriestShadow
+    [28] = "Assn", -- RogueAssassination
+    [29] = "Outlaw", -- RogueOutlaw
+    [30] = "Sub", -- RogueSubtlety
+    [31] = "Elem", -- ShamanElemental
+    [32] = "Enh", -- ShamanEnhancement
+    [33] = "Resto", -- ShamanRestoration
+    [34] = "Aff", -- WarlockAffliction
+    [35] = "Demo", -- WarlockDemonology
+    [36] = "Destro", -- WarlockDestruction
+    [37] = "Arms", -- WarriorArms
+    [38] = "Fury", -- WarriorFury
+    [39] = "Prot", -- WarriorProtection
 }
 
 -- stat strings for e.g. displaying gem/enchant abbreviations, make as short as possible without being confusing/ambiguous
@@ -75,7 +78,14 @@ L.InstanceNames = {
     [2070] = "Dazar'alor",
     [2096] = "Crucible of Storms",
     [2164] = "The Eternal Palace",
-    [2217] = "Ny'alotha"
+    [2217] = "Ny'alotha",    
+    [2296] = "Castle Nathria",
+    [2450] = "Sanctum of Domination",
+    [2481] = "Sepulcher of the First Ones",
+    [2522] = "Vault of the Incarnates",
+    [2569] = "Aberrus, the Shadowed Crucible",
+    [2549] = "Amirdrassil, the Dream's Hope",
+    [2657] = "Nerub-ar Palace"
 }
 
 L.DifficultyNames = {
@@ -192,6 +202,8 @@ L.GearTipCommands =
 [[/amr equip [1-4]
 sem arg = rotaciona]]
 -- note to translators: the slash commands are literal and should stay as english
+
+L.GearTalentError1 = "Unable to load your AMR setup talents at this time."
 
 
 --[[----------------------------------------------------------------------
@@ -313,6 +325,9 @@ L.OptionsShopAhDesc = "Sempre que você abrir a casa de leilões, automaticament
 L.OptionsDisableEmName = "Desligar criação de listas do Gerenciador de Equipamentos"
 L.OptionsDisableEmDesc = "Uma lista no Gerenciador de Equipamentos da Blizzard é criada sempre que você equipa uma lista de equipamentos do AMR. Isso é útil para marcar itens nas suas listas otimizadas. Marque para desligar este padrão, se desejar."
 
+L.OptionsDisableTalName = "Do not change talents when changing gear sets"
+L.OptionsDisableTalDesc = "A setup sent to the addon contains the selected talents and gear for that setup. Check this if you don't want the addon to automatically choose those talents when swapping gear."
+    
 L.OptionsUiScaleName = "Escala de tamanho da UI do Ask Mr. Robot"
 L.OptionsUiScaleDesc = "Digite um valor entre 0.5 e 1.5 para trocar a escala de tamanho da interface de usuário do Ask Mr. Robot, pressione Enter, então feche/abra a janela para fazer efeito. Se o posicionamento ficar bagunçado, use o comando /amr reset."
 

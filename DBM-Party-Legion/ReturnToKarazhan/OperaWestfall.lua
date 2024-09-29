@@ -1,24 +1,22 @@
 local mod	= DBM:NewMod(1826, "DBM-Party-Legion", 11, 860)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190625143517")
+mod.statTypes = "heroic,mythic,challenge"
+
+mod:SetRevision("20240412075414")
 mod:SetCreatureID(114261, 114260, 999999)--Remove 9s if phase 1 and 2 don't fire UNIT_DIED events
 mod:SetEncounterID(1957)--Shared (so not used for encounter START since it'd fire 3 mods)
 mod:DisableESCombatDetection()--However, with ES disabled, EncounterID can be used for BOSS_KILL/ENCOUNTER_END
-mod:SetZone()
 --mod:SetHotfixNoticeRev(14922)
 mod:SetBossHPInfoToHighest()
 --mod.respawnTime = 30
-
-mod.noNormal = true
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 227568 227420 227783",
 	"SPELL_CAST_SUCCESS 227777",
-	"SPELL_AURA_APPLIED 227777",
-	"SPELL_AURA_REMOVED 227777"
+	"SPELL_AURA_APPLIED 227777"
 )
 
 --TODO: phase detection
@@ -29,7 +27,7 @@ local specWarnLegSweep				= mod:NewSpecialWarningRun(227568, "Melee", nil, nil, 
 local specWarnThunderRitual			= mod:NewSpecialWarningMoveAway(227777, nil, nil, nil, 1, 2)
 local yellThunderRitual				= mod:NewYell(227777)
 local specWarnBubbleBlast			= mod:NewSpecialWarningInterrupt(227420, "HasInterrupt", nil, nil, 1, 2)
-local specWarnWashAway				= mod:NewSpecialWarningDodge(227783, nil, nil, nil, 1, 2)
+local specWarnWashAway				= mod:NewSpecialWarningDodge(227783, nil, nil, 2, 2, 2)
 
 --Stage One: Defias Brotherhood
 local timerLegSweepCD				= mod:NewAITimer(40, 227568, nil, "Melee", nil, 2)
@@ -40,18 +38,9 @@ local timerWashAwayCD				= mod:NewAITimer(40, 227783, nil, nil, nil, 3)
 --local berserkTimer				= mod:NewBerserkTimer(300)
 
 --mod:AddInfoFrameOption(198108, false)
-mod:AddRangeFrameOption(5, 227777)
-
-mod.vb.phase = 1
 
 function mod:OnCombatStart(delay)
-	self.vb.phase = 1
-end
-
-function mod:OnCombatEnd()
-	if self.Options.RangeFrame then
-		DBM.RangeCheck:Hide()
-	end
+	self:SetStage(1)
 end
 
 function mod:SPELL_CAST_START(args)
@@ -83,9 +72,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnThunderRitual:Show()
 			specWarnThunderRitual:Play("range5")
 			yellThunderRitual:Yell()
-			if self.Options.RangeFrame then
-				DBM.RangeCheck:Show(5)
-			end
 		end
 	end
 end

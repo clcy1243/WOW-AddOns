@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(1695, "DBM-Party-Legion", 10, 707)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20230814220424")
 mod:SetCreatureID(96015)
 mod:SetEncounterID(1850)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -23,11 +22,11 @@ local specWarnSapSoulHard		= mod:NewSpecialWarningCast(200905, nil, nil, nil, 1,
 local specWarnFear				= mod:NewSpecialWarningSpell(201488, nil, nil, nil, 2, 2)
 local specWarnStare				= mod:NewSpecialWarningYou(212564, nil, nil, nil, 1, 2)--Disable by default if spammy
 
-local timerSapSoulCD			= mod:NewCDTimer(21.5, 200905, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON, nil, 1, 4)
+local timerSapSoulCD			= mod:NewCDTimer(21.5, 200905, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON, nil, 1, 4)
 local timerTormOrbCD			= mod:NewNextTimer(15, 212567, nil, nil, nil, 1)
 
 function mod:OnCombatStart(delay)
-	timerSapSoulCD:Start(13-delay)--Might be 10-13?
+	timerSapSoulCD:Start(10.9-delay)--10-13
 	if not self:IsNormal() then
 		timerTormOrbCD:Start(20-delay)
 	end
@@ -66,8 +65,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 214970 then--Summon Tormenting Orb
 		timerTormOrbCD:Start()
 	end

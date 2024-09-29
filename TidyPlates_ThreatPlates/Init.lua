@@ -11,19 +11,70 @@ local ThreatPlates = Addon.ThreatPlates
 ---------------------------------------------------------------------------------------------------
 
 -- Lua APIs
-local string = string
+local string, floor = string, floor
+local rawset = rawset
 
-local UnitPlayerControlled = UnitPlayerControlled
+-- WoW APIs
+local UnitIsUnit, UnitClass, UnitExists = UnitIsUnit, UnitClass, UnitExists
+local LoadAddOn = C_AddOns and C_AddOns.LoadAddOn or _G.LoadAddOn
+
+-- ThreatPlates APIs
+local UnitDetailedThreatSituation = UnitDetailedThreatSituation
+
+---------------------------------------------------------------------------------------------------
+-- WoW Version Check
+---------------------------------------------------------------------------------------------------
+Addon.IS_CLASSIC = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+Addon.IS_CLASSIC_SOD = (Addon.IS_CLASSIC and (select(4, GetBuildInfo()) >= 11500))
+Addon.IS_TBC_CLASSIC = (GetClassicExpansionLevel and GetClassicExpansionLevel() == LE_EXPANSION_BURNING_CRUSADE)
+Addon.IS_WRATH_CLASSIC = (GetClassicExpansionLevel and GetClassicExpansionLevel() == LE_EXPANSION_WRATH_OF_THE_LICH_KING)
+Addon.IS_CATA_CLASSIC = (GetClassicExpansionLevel and GetClassicExpansionLevel() == LE_EXPANSION_CATACLYSM)
+Addon.IS_MAINLINE = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
+-- Addon.IS_TBC_CLASSIC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE)
+-- Addon.IS_WRATH_CLASSIC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING)
+Addon.WOW_USES_CLASSIC_NAMEPLATES = (Addon.IS_CLASSIC or Addon.IS_TBC_CLASSIC or Addon.IS_WRATH_CLASSIC or Addon.IS_CATA_CLASSIC)
+-- ? Addon.WOW_FEATURE_ABSORBS
+
+Addon.ExpansionIsClassicAndAtLeast = function(expansion_id)
+	-- Method does not exist which means that this is the most recent / highest WoW version (Mainline) 
+	-- so we have to return true
+	-- Method exists, so this is a Classic WoW version, but as the expansion id is unknown, the expansion is 
+	-- an older one, so we have to return false
+	if Addon.IS_MAINLINE or not GetClassicExpansionLevel or not expansion_id then
+		return false
+	else
+		return GetClassicExpansionLevel() >= expansion_id
+	end
+end
+
+-- For Mainline, this always returns true. 
+Addon.ExpansionIsAtLeast = function(expansion_id)
+	return Addon.IS_MAINLINE or Addon.ExpansionIsClassicAndAtLeast(expansion_id)
+end
 
 ---------------------------------------------------------------------------------------------------
 -- Libraries
 ---------------------------------------------------------------------------------------------------
 local LibStub = LibStub
 ThreatPlates.L = LibStub("AceLocale-3.0"):GetLocale("TidyPlatesThreat")
-ThreatPlates.Media = LibStub("LibSharedMedia-3.0")
-Addon.LibCustomGlow = LibStub("LibCustomGlow-1.0")
-Addon.LibAceConfigDialog = LibStub("AceConfigDialog-3.0")
-Addon.LibAceConfigRegistry = LibStub("AceConfigRegistry-3.0")
+
+Addon.BackdropTemplate = BackdropTemplateMixin and "BackdropTemplate"
+
+local L = ThreatPlates.L
+
+-- Use this once SetBackdrop backwards compatibility is removed
+--if BackdropTemplateMixin then -- Shadowlands
+--	Addon.BackdropTemplate = "BackdropTemplate"
+--
+--	Addon.SetBackdrop = function(frame, backdrop)
+--		frame.backdropInfo = backdrop
+--		frame:ApplyBackdrop()
+--	end
+--else
+--	Addon.SetBackdrop = function(frame, backdrop)
+--		frame:SetBackdrop(backdrop)
+--	end
+--end
 
 ---------------------------------------------------------------------------------------------------
 -- Define AceAddon TidyPlatesThreat
@@ -32,19 +83,149 @@ TidyPlatesThreat = LibStub("AceAddon-3.0"):NewAddon("TidyPlatesThreat", "AceCons
 -- Global for DBM to differentiate between Threat Plates and Tidy Plates: Threat
 TidyPlatesThreatDBM = true
 
+-- Returns if the currently active spec is tank (true) or dps/heal (false)
+Addon.PlayerClass = select(2, UnitClass("player"))
+Addon.PlayerName = select(1, UnitName("player"))
+
+-- Cache (weak table) for memoizing expensive text functions (like abbreviation, tranliteration)
+local CacheCreateEntry = function(table, key)
+	local entry = {}
+	rawset(table, key, entry)
+	return entry
+end
+
+local CreateTextCache = function()
+	local text_cache = {}
+	setmetatable(text_cache, {
+		__mode = "kv",
+		__index = CacheCreateEntry,
+	})
+	return text_cache
+end
+
+---------------------------------------------------------------------------------------------------
+-- Caches to the reduce CPU load of expensive functions
+---------------------------------------------------------------------------------------------------
+
 Addon.Animations = {}
 Addon.Cache = {
+	Texts = CreateTextCache(),
 	TriggerWildcardTests = {},
 	CustomPlateTriggers = {
 		Name = {},
 		NameWildcard = {},
 		Aura = {},
-		Cast = {}
+		Cast = {},
+		Script = {},
+	},
+	Styles = {
+		ForAllInstances = {},
+		PerInstance = {},
+		ForCurrentInstance = {},
 	}
+}
+-- Internal API
+Addon.Data = {}
+Addon.Logging = {}
+Addon.Debug = {}
+
+---------------------------------------------------------------------------------------------------
+-- Addon-wide wrapper functions and constants for WoW Classic
+---------------------------------------------------------------------------------------------------
+
+-- UnitDetailedThreatSituation: WotLK - Patch 3.0.2 (2008-10-14): Added
+-- C_PvP.IsSoloShuffle: Shadowlands - Patch 9.2.0 (2022-02-22): Added.
+if Addon.IS_MAINLINE then
+	Addon.UnitDetailedThreatSituationWrapper = UnitDetailedThreatSituation
+	Addon.IsSoloShuffle = C_PvP.IsSoloShuffle
+	Addon.GetSpellInfo = C_Spell.GetSpellInfo 
+else
+  Addon.UnitDetailedThreatSituationWrapper = function(source, target)
+    local is_tanking, status, threatpct, rawthreatpct, threat_value = UnitDetailedThreatSituation(source, target)
+
+    if (threat_value) then
+      threat_value = floor(threat_value / 100)
+    end
+
+    return is_tanking, status, threatpct, rawthreatpct, threat_value
+  end
+
+	-- Not available in Classic
+	Addon.IsSoloShuffle = function() return false end
+
+	Addon.GetSpellInfo = function(...) 
+		--local name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon = _G.GetSpellInfo()
+		local name, _, icon = _G.GetSpellInfo(...)
+		return {
+			name = name,
+			iconID = icon 
+			-- castTime = castTime,
+			-- minRange = castTime,
+			-- maxRange = maxRange,
+			-- spellID = spellID,
+			-- originalIconID = originalIcon,
+		}
+	end
+end
+
+---------------------------------------------------------------------------------------------------
+-- Aura Highlighting
+---------------------------------------------------------------------------------------------------
+local function Wrapper_ButtonGlow_Start(frame, color, framelevel)
+	Addon.LibCustomGlow.ButtonGlow_Start(frame, color, nil, framelevel)
+end
+
+local function Wrapper_PixelGlow_Start(frame, color, framelevel)
+	Addon.LibCustomGlow.PixelGlow_Start(frame, color, nil, nil, nil, nil, nil, nil, nil, nil, framelevel)
+end
+
+local function Wrapper_AutoCastGlow_Start(frame, color, framelevel)
+	Addon.LibCustomGlow.AutoCastGlow_Start(frame, color, nil, nil, nil, nil, nil, nil, framelevel)
+end
+
+Addon.CUSTOM_GLOW_FUNCTIONS = {
+	Button = { "ButtonGlow_Start", "ButtonGlow_Stop", 8 },
+	Pixel = { "PixelGlow_Start", "PixelGlow_Stop", 3 },
+	AutoCast = { "AutoCastGlow_Start", "AutoCastGlow_Stop", 4 },
+}
+
+Addon.CUSTOM_GLOW_WRAPPER_FUNCTIONS = {
+	ButtonGlow_Start = Wrapper_ButtonGlow_Start,
+	PixelGlow_Start = Wrapper_PixelGlow_Start,
+	AutoCastGlow_Start = Wrapper_AutoCastGlow_Start,
 }
 
 --------------------------------------------------------------------------------------------------
 -- General Functions
+---------------------------------------------------------------------------------------------------
+
+Addon.LoadOnDemandLibraries = function()
+	local db = Addon.db.profile
+
+	-- Enable or disable LibDogTagSupport based on custom status text being actually used
+	if db.HeadlineView.FriendlySubtext == "CUSTOM" or db.HeadlineView.EnemySubtext == "CUSTOM" or db.settings.customtext.FriendlySubtext == "CUSTOM" or db.settings.customtext.EnemySubtext == "CUSTOM" then
+		if Addon.LibDogTag == nil then
+			LoadAddOn("LibDogTag-3.0")
+			Addon.LibDogTag = LibStub("LibDogTag-3.0", true)
+			if not Addon.LibDogTag then
+				Addon.LibDogTag = false
+				Addon.Logging.Error(L["Custom status text requires LibDogTag-3.0 to function."])
+			else
+				LoadAddOn("LibDogTag-Unit-3.0")
+			  if not LibStub("LibDogTag-Unit-3.0", true) then
+					Addon.LibDogTag = false
+					Addon.Logging.Error(L["Custom status text requires LibDogTag-Unit-3.0 to function."])
+				elseif not Addon.LibDogTag.IsLegitimateUnit or not Addon.LibDogTag.IsLegitimateUnit["nameplate1"] then
+					Addon.LibDogTag = false
+					Addon.Logging.Error(L["Your version of LibDogTag-Unit-3.0 does not support nameplates. You need to install at least v90000.3 of LibDogTag-Unit-3.0."])
+				end
+			end
+		end
+	end
+end
+
+--------------------------------------------------------------------------------------------------
+-- Utils: Handling of colors
 ---------------------------------------------------------------------------------------------------
 
 -- Create a percentage-based WoW color based on integer values from 0 to 255 with optional alpha value
@@ -74,16 +255,29 @@ ThreatPlates.HEX2RGB = function (hex)
   return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
 end
 
-ThreatPlates.Update = function()
-	Addon:ForceUpdate()
+Addon.ColorByClass = function(class_name, text)
+	if class_name then
+		return "|c" .. Addon.db.profile.Colors.Classes[class_name].colorStr .. text .. "|r"
+	else
+		return text
+	end
 end
+
+-- Addon.ColorByClassUnitID = function(unitid, text)
+-- 	local _, class_name = UnitClass(unitid)
+-- 	return Addon.ColorByClass(class_name, text)
+-- end
+
+--------------------------------------------------------------------------------------------------
+-- Utility functions
+---------------------------------------------------------------------------------------------------
 
 ThreatPlates.Meta = function(value)
 	local meta
 	if strlower(value) == "titleshort" then
-		meta = "TP|cff89F559TP|r"
+		meta = "|cff89F559TP|r"
 	else
-		meta = GetAddOnMetadata("TidyPlates_ThreatPlates",value)
+		meta = C_AddOns.GetAddOnMetadata("TidyPlates_ThreatPlates",value)
 	end
 	return meta or ""
 end
@@ -140,6 +334,8 @@ ThreatPlates.CopyTable = function(input)
 end
 
 Addon.MergeIntoTable = function(target, source)
+	if source == nil then return end
+
   for k,v in pairs(source) do
     if type(v) == "table" then
 			target[k] = target[k] or {}
@@ -198,152 +394,185 @@ Addon.Split = function(split_string)
 	return result
 end
 
+Addon.SplitByWhitespace = function(split_string)
+	local parts = {}
+
+	for w in split_string:gmatch("%S+") do
+		parts[#parts + 1] = w
+	end
+
+	return parts, #parts
+end
+
 --------------------------------------------------------------------------------------------------
--- Some functions to fix TidyPlates bugs
+-- Logging Functions
 ---------------------------------------------------------------------------------------------------
 
-ThreatPlates.Dump = function(value, index)
-	if not IsAddOnLoaded("Blizzard_DebugTools") then
-		LoadAddOn("Blizzard_DebugTools")
-	end
-	local i
-	if index and type(index) == "number" then
-	  i = index
+local function LogMessage(channel, ...)
+	-- Meta("titleshort")
+	if channel == "DEBUG" then
+		print("|cff89F559TP|r - |cff0000ff" .. channel .. "|r:", ...)
+	elseif channel == "ERROR" then
+		print("|cff89F559TP|r - |cffff0000" .. channel .. "|r:", ...)
+	elseif channel == "WARNING" then
+		print("|cff89F559TP|r - |cffff8000" .. channel .. "|r:", ...)
 	else
-	  i = 1
+		print("|cff89F559TP|r:", channel, ...)
 	end
-	DevTools_Dump(value, i)
 end
 
--- With TidyPlates:
---local function FixUpdateUnitCondition(unit)
---	local unitid = unit.unitid
---
---	-- Enemy players turn to neutral, e.g., when mounting a flight path mount, so fix reaction in that situations
---	if unit.reaction == "NEUTRAL" and (unit.type == "PLAYER" or UnitPlayerControlled(unitid)) then
---		unit.reaction = "HOSTILE"
---	end
---end
+Addon.Logging.Debug = function(...)
+	if Addon.DEBUG then
+		LogMessage("DEBUG", ...)
+	end
+end
+
+Addon.Logging.Error = function(...)
+	LogMessage("ERROR", ...)
+end
+
+Addon.Logging.Warning = function(...)
+	LogMessage("WARNING", ...)
+end
+
+Addon.Logging.Info = function(...)
+	if Addon.db.profile.verbose or Addon.DEBUG then
+		LogMessage(...)
+	end
+end
+
+Addon.Logging.Print = function(...)
+	LogMessage(...)
+end
 
 --------------------------------------------------------------------------------------------------
--- Debug Functions
+-- Debug functions
 ---------------------------------------------------------------------------------------------------
-
-local function DEBUG(...)
-  print (ThreatPlates.Meta("titleshort") .. "-Debug:", ...)
-end
 
 -- Function from: https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/
-local function DEBUG_PRINT_TABLE(data)
+Addon.Debug.PrintTable = function(data)
   local print_r_cache={}
   local function sub_print_r(data,indent)
     if (print_r_cache[tostring(data)]) then
-      ThreatPlates.DEBUG (indent.."*"..tostring(data))
+			Addon.Logging.Debug(indent.."*"..tostring(data))
     else
       print_r_cache[tostring(data)]=true
       if (type(data)=="table") then
         for pos,val in pairs(data) do
           if (type(val)=="table") then
-            ThreatPlates.DEBUG (indent.."["..pos.."] => "..tostring(data).." {")
+						Addon.Logging.Debug(indent.."["..tostring(pos).."] => "..tostring(data).." {")
             sub_print_r(val,indent..string.rep(" ",string.len(pos)+8))
-            ThreatPlates.DEBUG (indent..string.rep(" ",string.len(pos)+6).."}")
+						Addon.Logging.Debug(indent..string.rep(" ",string.len(pos)+6).."}")
           elseif (type(val)=="string") then
-            ThreatPlates.DEBUG (indent.."["..pos..'] => "'..val..'"')
+						Addon.Logging.Debug(indent.."["..tostring(pos)..'] => "'..val..'"')
           else
-            ThreatPlates.DEBUG (indent.."["..pos.."] => "..tostring(val))
+						Addon.Logging.Debug(indent.."["..tostring(pos).."] => "..tostring(val))
           end
         end
       else
-        ThreatPlates.DEBUG (indent..tostring(data))
+				Addon.Logging.Debug(indent..tostring(data))
       end
     end
   end
   if (type(data)=="table") then
-    ThreatPlates.DEBUG (tostring(data).." {")
+		Addon.Logging.Debug(tostring(data).." {")
     sub_print_r(data,"  ")
-    ThreatPlates.DEBUG ("}")
+		Addon.Logging.Debug("}")
   else
     sub_print_r(data,"  ")
   end
 end
 
-local function DEBUG_PRINT_UNIT(unit, full_info)
-	DEBUG("Unit:", unit.name)
-	DEBUG("-------------------------------------------------------------")
-	for key, val in pairs(unit) do
-		DEBUG(key .. ":", val)
-  end
+Addon.Debug.PrintUnit = function(unitid)
+	local plate = C_NamePlate.GetNamePlateForUnit(unitid)
+	if not plate then return end
 
-  if full_info and unit.unitid then
-    --		DEBUG("  isFriend = ", TidyPlatesUtilityInternal.IsFriend(unit.name))
-    --		DEBUG("  isGuildmate = ", TidyPlatesUtilityInternal.IsGuildmate(unit.name))
-    DEBUG("  IsOtherPlayersPet = ", UnitIsOtherPlayersPet(unit))
-    DEBUG("  IsBattlePet = ", UnitIsBattlePet(unit.unitid))
-    DEBUG("  PlayerControlled = ", UnitPlayerControlled(unit.unitid))
-    DEBUG("  CanAttack = ", UnitCanAttack("player", unit.unitid))
-    DEBUG("  Reaction = ", UnitReaction("player", unit.unitid))
-    local r, g, b, a = UnitSelectionColor(unit.unitid, true)
-    DEBUG("  SelectionColor: r =", ceil(r * 255), ", g =", ceil(g * 255), ", b =", ceil(b * 255), ", a =", ceil(a * 255))
-		DEBUG("  Threat ---------------------------------")
-		DEBUG("    UnitAffectingCombat = ", UnitAffectingCombat(unit.unitid))
-		DEBUG("    Addon:OnThreatTable = ", Addon:OnThreatTable(unit))
-		DEBUG("    UnitThreatSituation = ", UnitThreatSituation("player", unit.unitid))
-		DEBUG("    Target Unit = ", UnitExists(unit.unitid .. "target"))
-		if unit.style == "unique" then
-			DEBUG("    GetThreatSituation(Unique) = ", Addon.GetThreatSituation(unit, unit.style, TidyPlatesThreat.db.profile.threat.toggle.OffTank))
+	Addon.Logging.Debug("Unit:", UnitName(unitid), "=>", unitid)
+	Addon.Logging.Debug("-------------------------------------------------------------")
+	Addon.Logging.Debug("  Show UnitFrame =", plate.UnitFrame:IsShown())
+	Addon.Logging.Debug("  Show TPFrame =", plate.TPFrame:IsShown())
+	Addon.Logging.Debug("  Active =", plate.TPFrame.Active)
+	Addon.Logging.Debug("-------------------------------------------------------------")
+
+	if unitid then
+		local tp_frame = plate.TPFrame
+		local unit = tp_frame and tp_frame.unit
+
+		if Addon.IS_MAINLINE then
+			Addon.Logging.Debug("  UnitNameplateShowsWidgetsOnly = ", UnitNameplateShowsWidgetsOnly(unitid))
+		end
+    Addon.Logging.Debug("  Reaction = ", UnitReaction("player", unitid))
+    local r, g, b, a = UnitSelectionColor(unitid, true)
+    Addon.Logging.Debug("  SelectionColor: r =", ceil(r * 255), ", g =", ceil(g * 255), ", b =", ceil(b * 255), ", a =", ceil(a * 255))
+		Addon.Logging.Debug("  -- Threat ---------------------------------")
+		Addon.Logging.Debug("    UnitAffectingCombat = ", UnitAffectingCombat(unitid))
+		if unit then
+			Addon.Logging.Debug("    Addon:OnThreatTable = ", Addon:OnThreatTable(unit))
+		end
+		Addon.Logging.Debug("    UnitThreatSituation = ", UnitThreatSituation("player", unitid))
+		Addon.Logging.Debug("    Target Unit = ", UnitExists(unitid .. "target"))
+		if unit then
+			if unit.style == "unique" then
+				Addon.Logging.Debug("    GetThreatSituation(Unique) = ", Addon.GetThreatSituation(unit, unit.style, Addon.db.profile.threat.toggle.OffTank))
+			else
+				Addon.Logging.Debug("    GetThreatSituation = ", Addon.GetThreatSituation(unit, Addon:GetThreatStyle(unit), Addon.db.profile.threat.toggle.OffTank))
+			end
+		end
+		Addon.Logging.Debug("  -- Player Control ---------------------------------")
+		Addon.Logging.Debug("    UnitPlayerControlled =", UnitPlayerControlled(unitid))
+		Addon.Logging.Debug("    Player is UnitIsOwnerOrControllerOfUnit =", UnitIsOwnerOrControllerOfUnit("player", unitid))
+		Addon.Logging.Debug("    Player Pet =", UnitIsUnit(unitid, "pet"))
+    Addon.Logging.Debug("    IsOtherPlayersPet =", UnitIsOtherPlayersPet(unitid))
+		if Addon.IS_MAINLINE then
+			Addon.Logging.Debug("    IsBattlePet =", UnitIsBattlePet(unitid))
+		end
+		Addon.Logging.Debug("  -- PvP ---------------------------------")
+		Addon.Logging.Debug("    PvP On =", UnitIsPVP(unitid))
+		Addon.Logging.Debug("    PvP Sanctuary =", UnitIsPVPSanctuary(unitid))
+
+    --		Addon.Logging.Debug("  isFriend = ", TidyPlatesUtilityInternal.IsFriend(unit.name))
+    --		Addon.Logging.Debug("  isGuildmate = ", TidyPlatesUtilityInternal.IsGuildmate(unit.name))
+
+		if unit then
+			for key, val in pairs(unit) do
+				Addon.Logging.Debug(key .. ":", val)
+			end	
 		else
-			DEBUG("    GetThreatSituation = ", Addon.GetThreatSituation(unit, Addon:GetThreatStyle(unit), TidyPlatesThreat.db.profile.threat.toggle.OffTank))
+			Addon.Logging.Debug("  <No TPFrame>")
 		end
-  else
-    DEBUG("  <no unit id>")
   end
 
-  DEBUG("--------------------------------------------------------------")
+  Addon.Logging.Debug("--------------------------------------------------------------")
 end
 
 
-local function DEBUG_PRINT_TARGET(unit)
-  if unit.isTarget then
-		DEBUG_PRINT_UNIT(unit)
-  end
-end
+--local function DEBUG_PRINT_TARGET(unit)
+--  if unit.isTarget then
+--		DEBUG_PRINT_UNIT(unit)
+--  end
+--end
+--
+--local function DEBUG_AURA_LIST(data)
+--	local res = ""
+--	for pos,val in pairs(data) do
+--		local a = data[pos]
+--		if not a then
+--			res = res .. " nil"
+--		elseif not a.priority then
+--			res = res .. " nil(" .. a.name .. ")"
+--		else
+--			res = res .. a.name
+--		end
+--		if pos ~= #data then
+--			res = res .. " - "
+--		end
+--	end
+--	ThreatPlates.DEBUG("Aura List = [ " .. res .. " ]")
+--end
 
-local function DEBUG_AURA_LIST(data)
-	local res = ""
-	for pos,val in pairs(data) do
-		local a = data[pos]
-		if not a then
-			res = res .. " nil"
-		elseif not a.priority then
-			res = res .. " nil(" .. a.name .. ")"
-		else
-			res = res .. a.name
-		end
-		if pos ~= #data then
-			res = res .. " - "
-		end
-	end
-	ThreatPlates.DEBUG("Aura List = [ " .. res .. " ]")
-end
-
-Addon.DebugPrintCaches = function()
+Addon.Debug.PrintCaches = function()
 	print ("Wildcard Unit Test Cache:")
 	for k, v in pairs(Addon.Cache.TriggerWildcardTests) do
 		print ("  " .. k .. ":", v)
 	end
 end
-
----------------------------------------------------------------------------------------------------
--- Expoerted local functions
----------------------------------------------------------------------------------------------------
-
--- With TidyPlates:
---ThreatPlates.FixUpdateUnitCondition = FixUpdateUnitCondition
-
-ThreatPlates.DEBUG = DEBUG
-ThreatPlates.DEBUG_PRINT_TABLE = DEBUG_PRINT_TABLE
-ThreatPlates.DEBUG_PRINT_UNIT = DEBUG_PRINT_UNIT
-ThreatPlates.DEBUG_PRINT_TARGET = DEBUG_PRINT_TARGET
-ThreatPlates.DEBUG_AURA_LIST = DEBUG_AURA_LIST
-
-

@@ -170,6 +170,8 @@ function VUHDO_saveKeyLayoutCallback(aDecision)
 				["I1N"] = VUHDO_SPELL_CONFIG["FIRE_CUSTOM_1_SPELL"],
 				["I2N"] = VUHDO_SPELL_CONFIG["FIRE_CUSTOM_2_SPELL"],
 				["T3"] = VUHDO_SPELL_CONFIG["IS_FIRE_GLOVES"],
+				["I1U"] = VUHDO_SPELL_CONFIG["custom1Unit"],
+				["I2U"] = VUHDO_SPELL_CONFIG["custom2Unit"],
 			},
 			["HOTS"] = VUHDO_compressTable(VUHDO_PANEL_SETUP["HOTS"]),
 		};
@@ -272,6 +274,7 @@ end
 
 --
 local tEditBox;
+local tEditText;
 local tSelectedKeyLayout;
 local tKeyLayout;
 function VUHDO_keyLayoutExportButtonShown(aEditBox)
@@ -374,7 +377,7 @@ function VUHDO_shareCurrentKeyLayout(aUnitName, aKeyLayoutName)
 	end
 
 	local tQuestion = VUHDO_PLAYER_NAME .. " requests to transmit\nKey Layout " .. aKeyLayoutName .. " to you.\nProceed?"
-	VUHDO_startShare(aUnitName, { aKeyLayoutName, tLayout }, sCmdKeyLayoutDataChunk, sCmdKeyLayoutDataEnd, tQuestion);
+	VUHDO_startShare(aUnitName, { aKeyLayoutName, tLayout }, VUHDO_sCmdKeyLayoutDataChunk, VUHDO_sCmdKeyLayoutDataEnd, tQuestion);
 end
 
 

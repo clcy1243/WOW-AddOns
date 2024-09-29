@@ -1,12 +1,11 @@
-local mod	= DBM:NewMod(2145, "DBM-Party-BfA", 6, 1001)
+local mod	= DBM:NewMod(2145, "DBM-Party-BfA", 6, 1030)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200602212246")
+mod:SetRevision("20240417180519")
 mod:SetCreatureID(133392)
 mod:SetEncounterID(2127)
-mod:SetZone()
-mod:SetBossHPInfoToHighest()
-mod.noBossDeathKill = true
+mod.onlyHighest = true--Instructs DBM health tracking to literally only store highest value seen during fight, even if it drops below that
+mod:DisableBossDeathKill()
 
 mod:RegisterCombat("combat")
 
@@ -26,12 +25,12 @@ local warnLifeForce					= mod:NewSpellAnnounce(274149, 1)
 local specWarnChainLightning		= mod:NewSpecialWarningInterrupt(268061, nil, nil, nil, 1, 2)
 local specWarnRainofToads			= mod:NewSpecialWarningSpell(269688, nil, nil, nil, 2, 2)
 local specWarnPlague				= mod:NewSpecialWarningDispel(269686, "RemoveDisease", nil, nil, 1, 2)
-local specWarnSnakeCharm			= mod:NewSpecialWarningDispel(268008, "Healer", nil, nil, 1, 2)
+local specWarnSnakeCharm			= mod:NewSpecialWarningDispel(268008, "RemoveMagic", nil, 2, 1, 2)
 
---local timerRainofToadsCD			= mod:NewAITimer(20, 269688, nil, nil, nil, 1)--More work needed
-local timerPlague					= mod:NewTargetTimer(10, 269686, nil, "RemoveDisease", nil, 5, nil, DBM_CORE_L.DISEASE_ICON)
-local timerPulseCD					= mod:NewCDTimer(15, 268024, nil, "Healer", nil, 5, nil, DBM_CORE_L.HEALER_ICON)
---local timerLifeForce				= mod:NewBuffActiveTimer(20, 274149, nil, nil, nil, 6, nil, DBM_CORE_L.HEALER_ICON)
+--local timerRainofToadsCD			= mod:NewCDTimer(20, 269688, nil, nil, nil, 1)--More work needed
+local timerPlague					= mod:NewTargetTimer(10, 269686, nil, "RemoveDisease", nil, 5, nil, DBM_COMMON_L.DISEASE_ICON)
+local timerPulseCD					= mod:NewCDTimer(15, 268024, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
+--local timerLifeForce				= mod:NewBuffActiveTimer(20, 274149, nil, nil, nil, 6, nil, DBM_COMMON_L.HEALER_ICON)
 
 mod:AddNamePlateOption("NPAuraOnSnakeCharm", 268008)
 
@@ -55,14 +54,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.Options.NPAuraOnSnakeCharm then
 			DBM.Nameplate:Show(true, args.destGUID, spellId, nil, 15)
 		end
-	elseif spellId == 269686 and self:CheckDispelFilter() then
+	elseif spellId == 269686 and self:CheckDispelFilter("disease") then
 		specWarnPlague:Show(args.destName)
 		specWarnPlague:Play("helpdispel")
 		timerPlague:Start(args.destName)
 	elseif spellId == 268024 and self:AntiSpam(3, 1) then
 		warnPulse:Show()
 		timerPulseCD:Start()
-	elseif spellId == 268008 and self:AntiSpam(3, 3) and self:CheckDispelFilter() then
+	elseif spellId == 268008 and self:AntiSpam(3, 3) and self:CheckDispelFilter("magic") then
 		specWarnSnakeCharm:Show(args.destName)
 		specWarnSnakeCharm:Play("helpdispel")
 	end
@@ -77,7 +76,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	elseif spellId == 269686 then
 		timerPlague:Stop(args.destName)
 	elseif spellId == 274149 then--Life Force Ending
-		timerPulseCD:Start(11)
+		timerPulseCD:Start(9.4)
 	end
 end
 

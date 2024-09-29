@@ -1,4 +1,3 @@
-
 local L = BigWigs:NewBossLocale("Auriaya", "deDE")
 if not L then return end
 if L then
@@ -48,6 +47,10 @@ end
 
 L = BigWigs:NewBossLocale("The Iron Council", "deDE")
 if L then
+	L.stormcaller_brundir = "Sturmrufer Brundir"
+	L.steelbreaker = "Stahlbrecher"
+	L.runemaster_molgeim = "Runenmeister Molgeim"
+
 	L.summoning_message = "Elementare!"
 
 	L.chased_other = "%s wird verfolgt!"
@@ -81,11 +84,7 @@ if L then
 	L.phase4_trigger = "Vorversuchsphase abgeschlossen. Jetzt kommt der eigentliche Test!"
 	L.phase_bar = "Phase %d"
 
-	L.hardmode = "Hard Mode"
-	L.hardmode_desc = "Timer für den Hard Mode."
 	L.hardmode_trigger = "^Warum habt Ihr das denn jetzt gemacht?"
-	L.hardmode_message = "Hard Mode aktiviert!"
-	L.hardmode_warning = "BOOM!"
 
 	L.plasma_warning = "Wirkt Plasmaeruption!"
 	L.plasma_soon = "Plasmaeruption bald!"
@@ -145,7 +144,7 @@ if L then
 	L.vapor = "Saronitdämpfe"
 	L.vapor_desc = "Warnung und Timer für das Auftauchen von Saronitdämpfen."
 	L.vapor_message = "Saronitdämpfe %d!"
-	L.vapor_bar = "Saronitdämpfe %d/6"
+	L.vapor_bar = "Saronitdämpfe"
 	L.vapor_trigger = "Eine Wolke Saronitdämpfe bildet sich in der Nähe!"
 
 	L.vaporstack = "Saronitdämpfe Stapel"
@@ -159,7 +158,6 @@ end
 
 L = BigWigs:NewBossLocale("XT-002 Deconstructor", "deDE")
 if L then
-	L.gravitybomb_other = "Gravitation"
 	L.lightbomb_other = "Licht"
 end
 

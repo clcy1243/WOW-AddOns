@@ -12,34 +12,28 @@ L.WebsiteButton				= "Sito Web"
 L.OTabBosses	= "Boss"
 L.OTabOptions	= "Opzioni"
 
+--L.FOLLOWER								= "Follower"--i.e. the new dungeon type in 10.2.5. I haven't found a translated string yet
+
 L.TabCategory_Options	 	= "Opzioni Generali"
--- L.TabCategory_BFA	 		= EXPANSION_NAME7 or "Battle for Azeroth"
--- L.TabCategory_LEG	 		= EXPANSION_NAME6
--- L.TabCategory_WOD	 		= EXPANSION_NAME5
--- L.TabCategory_MOP	 		= EXPANSION_NAME4
--- L.TabCategory_CATA	 		= EXPANSION_NAME3
--- L.TabCategory_WOTLK 		= EXPANSION_NAME2
--- L.TabCategory_BC 			= EXPANSION_NAME1
--- L.TabCategory_CLASSIC		= EXPANSION_NAME0
-L.TabCategory_OTHER    		= "Altre Mod"
+L.TabCategory_OTHER			= "Altre Mod"
 
 L.BossModLoaded 			= "%s statistiche"
 L.BossModLoad_now 			= [[Boss Mod non caricata.
 Verrà caricata all'entrata dell'istanza.
 Puoi cliccare il pulsante per forzarne il caricamento.]]
 
-L.PosX						= 'Posizione X'
-L.PosY						= 'Posizione Y'
+L.PosX						= "Posizione X"
+L.PosY						= "Posizione Y"
 
-L.MoveMe 					= 'Spostami'
-L.Button_OK 				= 'OK'
-L.Button_Cancel 			= 'Annulla'
-L.Button_LoadMod 			= 'Carica AddOn'
-L.Mod_Enabled				= "Abilita boss mod"
+L.MoveMe 					= "Spostami"
+L.Button_OK 				= "OK"
+L.Button_Cancel 			= "Annulla"
+L.Button_LoadMod 			= "Carica AddOn"
+L.Mod_Enabled				= "Abilita: %s"
 L.Mod_Reset					= "Ripristina predefiniti"
 L.Reset 					= "Resetta"
 
-L.Enable  					= "Abilita"
+L.Enable					= "Abilita"
 L.Disable					= "Disabilita"
 
 L.NoSound					= "Nessun Suono"
@@ -57,6 +51,7 @@ L.Statistic_BestRank		= "Migliore Grado:"--Maybe not get used, not sure yet, loc
 -- Tab: General Core Options
 L.General 					= "Impostazioni Generali DBM"
 L.EnableMiniMapIcon			= "Mostra pulsante minimappa"
+--L.EnableCompartmentIcon	= "Show compartment button"
 L.UseSoundChannel			= "Imposta canale audio usato da DBM per gli avvisi sonori."
 L.UseMasterChannel			= "Canale audio Principale."
 L.UseDialogChannel			= "Canale audio Dialoghi."
@@ -90,10 +85,6 @@ L.WarningIconLeft 			= "Mostra icona nel lato sinistro"
 L.WarningIconRight 			= "Mostra icona nel lato destro"
 L.WarningIconChat 			= "Mostra icone nel riquadro chat"
 L.WarningAlphabetical		= "Ordina nomi alfabeticamente"
-L.Warn_FontType				= "Seleziona carattere"
-L.Warn_FontStyle			= "Stile carattere"
-L.Warn_FontShadow			= "Ombre"
-L.Warn_FontSize				= "Dimensioni carattere: %d"
 L.Warn_Duration				= "Durata avviso: %0.1f s"
 L.None						= "Nessuno"
 L.Random					= "Casuale"
@@ -102,6 +93,10 @@ L.ThickOutline				= "Contorno spesso"
 L.MonochromeOutline			= "Contono monocromatico"
 L.MonochromeThickOutline	= "Contono spesso monocromatico"
 L.RaidWarnSound				= "Esegui suoni avviso incursione"
+--L.SAOne						= "Global Sound 1 (Personal)"
+--L.SATwo						= "Global Sound 2 (Everyone)"
+--L.SAThree					= "Global Sound 3 (High Priority Action)"
+--L.SAFour					= "Global Sound 4 (High Priority Run Away)"
 
 -- Tab: Generalwarnings
 L.Tab_GeneralMessages 		= "Messaggi Generali"
@@ -120,15 +115,13 @@ L.DisableStatusWhisper 		= "Disabilita sussurri stato per il gruppo (richiede Ca
 L.DisableGuildStatus 		= "Disabilita messaggi di progresso alla gilda per il gruppo (richiede Capoincursione)."
 
 -- Tab: Barsetup
-L.BarSetup   				= "Impostazioni barre"
+L.TabCategory_Timers		= "Impostazioni barre"
 L.BarTexture 				= "Texture barre"
 L.BarStyle					= "Stile barre"
 L.BarDBM					= "DBM (animate)"
 L.BarSimple					= "Semplici (non animate)"
 L.BarStartColor				= "Colore iniziale"
 L.BarEndColor 				= "Colore finale"
-L.Bar_Font					= "Carattere delle barre"
-L.Bar_FontSize				= "Dimensione carattere"
 L.Bar_Height				= "Altezza barra: %d"
 L.Slider_BarOffSetX 		= "Sfasamento X: %d"
 L.Slider_BarOffSetY 		= "Sfasamento Y: %d"
@@ -178,7 +171,7 @@ L.ExpandUpwards				= "Espandi verso l'alto"
 L.FillUpBars				= "Riempi la barre"
 L.ClickThrough				= "Disabilita eventi mouse (clicca attraverso)"
 L.Bar_Decimal				= "Decimali mostrati dopo tempo: %d"
-L.Bar_Alpha					= "Trasparenza barra: %0.1f"
+L.Bar_Alpha					= "Trasparenza: %0.1f"
 L.Bar_EnlargeTime			= "Allargamento barra sotto i: %d"
 L.BarSpark					= "Barra scintillante"
 L.BarFlash					= "Flash barra in scadenza"
@@ -198,16 +191,11 @@ L.ShowSWarningsInChat 		= "Mostra avvisi speciali nella chat"
 L.SWarnNameInNote			= "Usa opzioni SW5 se una nota contiene il tuo nome"
 L.SpecialWarningIcon		= "Mostra icone negli avvisi speciali"
 L.SpecWarn_FlashFrameRepeat	= "Ripeti %d volte (se abilitato)"
-L.SpecWarn_Font				= "Carattere avvisi speciali"
-L.SpecWarn_FontSize			= "Dimensione carattere: %d"
-L.SpecWarn_FontColor		= "Colore carattere"
-L.SpecWarn_FontType			= "Selezione carattere"
 L.SpecWarn_FlashRepeat		= "Ripeti flash"
 L.SpecWarn_FlashColor		= "Colore flash %d"
 L.SpecWarn_FlashDur			= "Durata flash: %0.1f"
 L.SpecWarn_FlashAlpha		= "Trasp. flash: %0.1f"
 L.SpecWarn_DemoButton		= "Esempio"
-L.SpecWarn_MoveMe			= "Setta Posizione"
 L.SpecWarn_ResetMe			= "Ripristina predefiniti"
 
 -- Tab: Spoken Alerts Frame
@@ -218,15 +206,8 @@ L.CountdownVoice2			= "Seconda Voce conto alla rovescia"
 L.CountdownVoice3			= "Terza Voce conto alla rovescia"
 L.VoicePackChoice			= "Pacchetto vocale avvisi parlati"
 L.Area_CountdownOptions		= "Opzioni Conto alla Rovescia"
-L.Area_VoicePackOptions		= "Opzioni Pacchetto Vocale (pacchetti di terze parti)"
-L.SpecWarn_NoSoundsWVoice	= "Filtra suoni avvisi speciali che hanno anche avvisi con avvisi parlati..." -- TODO: Ricontrollare
-L.SWFNever					= "Mai"
-L.SWFDefaultOnly			= "quando gli avvisi speciali usano suono pred. (Permetti esecuzione di suoni personali)"
-L.SWFAll					= "quando gli avvisi speciali usano qualunque suono"
 L.SpecWarn_AlwaysVoice		= "Riproduci sempre tutti gli avvisi parlati (Anche se Avvisi Speciali disabilitati. Utili per Capo Incursione, sconsigliati altrimenti)"
 -- TODO, maybe add URLS right to GUI panel on where to acquire 3rd party voice packs?
-L.Area_GetVEM				= "Ottieni Pacchetto Vocale VEM"
-L.VEMDownload				= "|cFF73C2FBhttps://www.curseforge.com/wow/addons/dbm-voicepack-vem|r"
 L.Area_BrowseOtherVP		= "Altri pacchetti vocali su curse"
 L.BrowseOtherVPs			= "|cFF73C2FBhttps://www.curseforge.com/wow/addons/search?search=dbm+voice|r"
 L.Area_BrowseOtherCT		= "Altri conti alla rovescia su curse"
@@ -254,7 +235,6 @@ L.SpamBlockNoShowTgtAnnounce= "Niente testo o suoni per annuncio generale BERSAG
 L.SpamBlockNoSpecWarnText	= "Niente annunci speciali, ma permetti pacchetti vocali (filtro sopra sovrascrive questo)"
 
 L.Area_SpamFilter_Timers	= "Timer Global Disable & Filter Options"
-L.SpamBlockNoShowTimers		= "Niente temporizzatori mod (Boss Mod/CM/LFG/Respawn)"
 L.SpamBlockNoShowUTimers	= "Niente temporizzatori utente (Personalizzato/Pull/Pausa)"
 L.SpamBlockNoCountdowns		= "Niente suoni conto alla rovescia"
 
@@ -264,7 +244,6 @@ L.SpamBlockNoRangeFrame		= "Non mostrare distanziometro"
 L.SpamBlockNoInfoFrame		= "Non mostrare riquadro info"
 L.SpamBlockNoHudMap			= "Non mostrare HudMap"
 L.SpamBlockNoNameplate		= "Non mostrare Auree Barre Vitali (disabilita completamente)"
-L.SpamBlockNoNameplateLines	= "Non mostrare linee Aura Barre Vitali (icone aura visibili)"
 L.SpamBlockNoYells			= "Non urlare in chat"
 L.SpamBlockNoNoteSync		= "Non accettare note condivise"
 
@@ -276,40 +255,47 @@ L.SpamBlockNoRangeRestore	= "Non ripristinare distanziometro allo stato preceden
 L.Area_SpamFilter			= "Opzioni Filtro Spam"
 L.DontShowFarWarnings		= "Non mostrare annunci/temporizzatori di eventi lontani"
 L.StripServerName			= "Togli nome reame negli avvisi e temporizzatori"
-L.FilterVoidFormSay			= "Niente posizioni/conteggi in chat in Forma del Vuoto"
+L.FilterVoidFormSay2			= "Niente posizioni/conteggi in chat in Forma del Vuoto"
 
 L.Area_SpecFilter			= "Opzioni Filtro Ruolo"
 L.FilterTankSpec			= "Filtra avvisi per i Tank quando senza spec da Tank. (Nota: E' sconsigliato disabilitarlo a tutti gli utenti in quanto gli avvisi 'taunt' sono tutti attivi di base.)"
-L.FilterInterruptsHeader	= "Filtra avvisi per abilità interrompibili basate sulle preferenze comportamento."
-L.FilterInterrupts			= "Se il caster non è obiettivo/focus attuale (Sempre)."
-L.FilterInterrupts2			= "Se il caster non è obiettivo/focus attuale (Sempre), CD interrompibili (Solo Boss)"
-L.FilterInterrupts3			= "Se il caster non è obiettivo/focus attuale (Sempre), CD interrompibili (Boss/Scartini)"
 L.FilterInterruptNoteName	= "Filtra avvisi solo per abilità interrompibili (con conteggio) se l'avviso non contiene il tuo nome in nota personalizzata"
 L.FilterDispels				= "Filtra avvisi per abilità dispellabili se i tuoi dispel sono in ricarica"
+--L.FilterCrowdControl				= "Filter announcements for crowd control based interrupts if your CC is on cooldown"
 L.FilterTrashWarnings		= "Filtra tutti gli avvisi degli scartini nelle spedizioni normali ed eroiche"
 
-L.Area_PullTimer			= "Opzioni Filtro Temporizzatori Pull, Pause, Combattimenti e Personalizzati"
+L.Area_PullTimer			= "Opzioni Filtro Temporizzatori Pull, Pause, e Personalizzati"
 L.DontShowPTNoID			= "Blocca Temporizzatori Pull se non inviati dalla tua zona"
 L.DontShowPT				= "Niente barre Temporizzatore Pull/Pausa"
 L.DontShowPTText			= "Niente annunci testuali Temporizzatore Pull/Pausa"
-L.DontShowPTCountdownText	= "Niente testo conto alla rovescia Pull"
-L.DontPlayPTCountdown		= "Niente audio conto alla rovescia Pull/Pausa/Combattimento/Temp. Personale"
-L.PT_Threshold				= "No audio conto alla rovescia Pull/Pausa/Combattimento/Temp. Personale sopra: %d"
+L.DontPlayPTCountdown		= "Niente audio conto alla rovescia Pull/Pausa/Temp. Personale"
+L.PT_Threshold				= "No audio conto alla rovescia Pull/Pausa/Temp. Personale sopra: %d"
 
-L.Panel_HideBlizzard		= "Forzature Blizzard"
-L.Area_HideBlizzard			= "Opzioni Forzature Blizzard"
-L.HideBossEmoteFrame		= "Nascondi riquadro emote boss durante i combattimenti"
-L.HideWatchFrame			= "Nascondi tracciamento obiettivi durante i boss se non tracciati e se non in Mitiche+"
-L.HideGarrisonUpdates		= "Nascondi notifiche seguaci durante i boss"
-L.HideGuildChallengeUpdates	= "Nascondi notifiche sfide gilda durante i boss"
-L.HideQuestTooltips			= "Nascondi obiettivi missioni dai suggerimenti durante i boss"
-L.HideTooltips				= "Nascondi completamente suggerimenti durante i boss"
-L.DisableSFX				= "Disabilita canale effetti sonori durante i boss"
-L.DisableCinematics			= "Nascondi cinematiche in gioco"
-L.OnlyFight					= "Solo durante i combattimenti, dopo aver visto il filmato almeno una volta"
-L.AfterFirst				= "Nelle istanze, dopo aver visto il filmato almeno una volta"
-L.CombatOnly				= "Disabilita in combattimento (qualunque)"
-L.RaidCombat				= "Disabilita in combattimento (solo boss)"
+-- Panel: Blizzard Features
+L.Panel_HideBlizzard				= "Block Blizzard Features"
+--Toast
+L.Area_HideToast					= "Disable blizzard toasts (popups)"
+L.HideGarrisonUpdates				= "Hide follower toasts during boss fights"
+L.HideGuildChallengeUpdates			= "Hide guild challenge toasts during boss fights"
+--L.HideBossKill					= "Hide boss kill toasts"--NYI
+--L.HideVaultUnlock					= "Hide vault unlock toasts"--NYI
+--Cut Scenes
+L.Area_Cinematics					= "Block in-game cinematics"
+L.DuringFight						= "Block in combat cut scenes during boss encounters"--uses explicite IsEncounterInProgress check
+L.InstanceAnywhere					= "Block non combat cut scenes anywhere inside a dungeon or raid instance"
+L.NonInstanceAnywhere				= "DANGER: Block cut scenes in outdoor open world (NOT recommended)"
+L.OnlyAfterSeen						= "Only block cut scenes after they have been seen at least once (STRONGLY recommended, to experience story as intended at least once)"
+--Sound
+L.Area_Sound						= "Block in-game sounds"
+L.DisableSFX						= "Disable sound effects channel during boss fights"
+L.DisableAmbiance					= "Disable ambiance channel during boss fights"
+L.DisableMusic						= "Disable music channel during boss fights (Note: If enabled, custom boss music will not play if enabled in event sounds)"
+--Other
+L.Area_HideBlizzard					= "Disable & Hide other Blizzard Annoyances"
+L.HideBossEmoteFrame				= "Hide raid boss emote frame during boss fights"
+L.HideWatchFrame					= "Hide watch (objectives) frame during boss fights if no achievements are being tracked and if not in a Mythic+"
+L.HideQuestTooltips					= "Hide quest objectives from tooltips during boss fights"--Currently hidden (NYI)
+L.HideTooltips						= "Completely hide tooltips during boss fights"
 
 L.Panel_ExtraFeatures		= "Funzionalità Aggiuntive"
 --
@@ -333,11 +319,9 @@ L.ShowQueuePop				= "Mostra tempo rimanente per accettare la coda (LFG, CdB, ecc
 L.Area_AutoLogging			= "Opzioni Registro Automatico"
 L.AutologBosses				= "Registra automaticamente gli incontri log con il registro di combattimento blizzard (Usa /dbm pull prima dei boss per registrare prepozze e altri eventi precedenti.)"
 L.AdvancedAutologBosses		= "Regostra automaticamente gli scontri boss con Transcriptor"
-L.LogOnlyNonTrivial			= "Registra gli scontri boss incursione solo dell'espansione attuale (esclude Ricerca Incursioni/gruppo/scenari/vecchi contenuti)"
 --
 L.Area_3rdParty				= "Opzioni di Terze Parti"
-L.ShowBBOnCombatStart		= "Esegui controllo Big Brother a inizio combattimento"
-L.BigBrotherAnnounceToRaid	= "Annuncia risultati Big Brother all'incursione"
+--L.oRA3AnnounceConsumables	= "Announce oRA3 consumables check on combat start"
 L.Area_Invite				= "Opzioni Invito"
 L.AutoAcceptFriendInvite	= "Accetta automaticamente inviti gruppo da parte di amici"
 L.AutoAcceptGuildInvite		= "Accetta automaticamente inviti gruppo da parte di gildani"
@@ -367,4 +351,10 @@ L.SelectModProfileCopyNote	= "Copia impostazioni note da"
 L.SelectModProfileDelete	= "Elimina impostazioni mod"
 
 -- Misc
+L.FontType					= "Seleziona carattere"
+L.FontStyle					= "Stile carattere"
+L.FontColor					= "Colore carattere"
+L.FontShadow				= "Ombre"
+L.FontSize					= "Dimensioni carattere: %d"
+
 L.FontHeight	= 16

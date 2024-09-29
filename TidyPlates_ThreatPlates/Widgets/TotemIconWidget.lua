@@ -12,7 +12,6 @@ local Widget = Addon.Widgets:NewWidget("TotemIcon")
 -- WoW APIs
 
 -- ThreatPlates APIs
-local TidyPlatesThreat = TidyPlatesThreat
 
 local _G =_G
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
@@ -42,7 +41,7 @@ function Widget:Create(tp_frame)
 end
 
 function Widget:IsEnabled()
-	return TidyPlatesThreat.db.profile.totemWidget.ON
+	return Addon.db.profile.totemWidget.ON
 end
 
 --function Widget:UNIT_NAME_UPDATE()
@@ -53,7 +52,7 @@ end
 --end
 
 function Widget:EnabledForStyle(style, unit)
-	return (style == "totem" or style == "etotem")
+	return (style == "totem" or style == "etotem") and unit.TP_DetailedUnitType == "Totem"
 end
 
 function Widget:OnUnitAdded(widget_frame, unit)
@@ -65,12 +64,12 @@ function Widget:OnUnitAdded(widget_frame, unit)
     return
   end
 
-  local db = TidyPlatesThreat.db.profile.totemWidget
+  local db = Addon.db.profile.totemWidget
 
   -- not used: db[totem_id].ShowIcon
   widget_frame:SetPoint("CENTER", widget_frame:GetParent(), db.x, db.y)
   widget_frame:SetSize(db.scale, db.scale)
-  widget_frame.Icon:SetTexture(PATH .. totem_settings.Style .. "\\" .. totem_settings.ID)
+  widget_frame.Icon:SetTexture(PATH .. totem_settings.Style .. "\\" .. totem_settings.Icon)
 
   widget_frame:Show()
 end

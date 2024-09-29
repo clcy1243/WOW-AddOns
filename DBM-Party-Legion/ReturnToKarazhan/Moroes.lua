@@ -1,14 +1,13 @@
 local mod	= DBM:NewMod(1837, "DBM-Party-Legion", 11, 860)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+mod.statTypes = "heroic,mythic,challenge"
+
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(114312)
 mod:SetEncounterID(1961)
-mod:SetZone()
 --mod:SetHotfixNoticeRev(14922)
 --mod.respawnTime = 30
-
-mod.noNormal = true
 
 mod:RegisterCombat("combat")
 
@@ -35,17 +34,17 @@ local warnEmpoweredArms				= mod:NewTargetAnnounce(227616, 3)
 
 --Moroes
 local specWarnCoatCheck				= mod:NewSpecialWarningDefensive(227832, nil, nil, nil, 1, 2)
-local specWarnCoatCheckHealer		= mod:NewSpecialWarningDispel(227832, "Healer", nil, nil, 1, 2)
+local specWarnCoatCheckHealer		= mod:NewSpecialWarningDispel(227832, "RemoveMagic", nil, 2, 1, 2)
 --Lord Crispin Ference
 local specWarnWillBreaker			= mod:NewSpecialWarningSpell(227672, "Tank", nil, nil, 1, 2)
 
 --Moroes
-local timerCoatCheckCD				= mod:NewNextTimer(33.8, 227832, nil, "Tank|Healer", nil, 5)
-local timerVanishCD					= mod:NewNextTimer(20.5, 227737, nil, nil, nil, 3)
+local timerCoatCheckCD				= mod:NewNextTimer(32.7, 227832, nil, "Tank|Healer", nil, 5)
+local timerVanishCD					= mod:NewCDTimer(19.3, 227737, nil, nil, nil, 3)
 --Lady Lady Catriona Von'Indi
 local timerHealingStreamCD			= mod:NewAITimer(40, 227578, nil, nil, nil, 0)--Interruptable via stun?
 --Lord Crispin Ference
-local timerWillBreakerCD			= mod:NewAITimer(40, 227672, nil, "Tank", nil, 5)
+local timerWillBreakerCD			= mod:NewCDTimer(10.6, 227672, nil, "Tank", nil, 5)
 
 --local berserkTimer					= mod:NewBerserkTimer(300)
 
@@ -54,13 +53,13 @@ mod:AddInfoFrameOption(227909, true)
 local updateInfoFrame
 do
 	local ccList = {
-		[1] = DBM:GetSpellInfo(227909),--Trap included with fight
-		[2] = DBM:GetSpellInfo(6770),--Rogue Sap
-		[3] = DBM:GetSpellInfo(9484),--Priest Shackle
-		[4] = DBM:GetSpellInfo(20066),--Paladin Repentance
-		[5] = DBM:GetSpellInfo(118),--Mage Polymorph
-		[6] = DBM:GetSpellInfo(51514),--Shaman Hex
-		[7] = DBM:GetSpellInfo(3355),--Hunter Freezing Trap
+		[1] = DBM:GetSpellName(227909),--Trap included with fight
+		[2] = DBM:GetSpellName(6770),--Rogue Sap
+		[3] = DBM:GetSpellName(9484),--Priest Shackle
+		[4] = DBM:GetSpellName(20066),--Paladin Repentance
+		[5] = DBM:GetSpellName(118),--Mage Polymorph
+		[6] = DBM:GetSpellName(51514),--Shaman Hex
+		[7] = DBM:GetSpellName(3355),--Hunter Freezing Trap
 	}
 	local lines = {}
 	local floor = math.floor
@@ -88,7 +87,7 @@ function mod:OnCombatStart(delay)
 	timerVanishCD:Start(8.2-delay)
 	timerCoatCheckCD:Start(33-delay)
 	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(227909))
+		DBM.InfoFrame:SetHeader(DBM:GetSpellName(227909))
 		DBM.InfoFrame:Show(5, "function", updateInfoFrame, false, true)
 	end
 end

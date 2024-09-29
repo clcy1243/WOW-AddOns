@@ -1,15 +1,18 @@
 -- This file uses models and textures taken from TomTom. The 3D arrow model was created by Guillotine (curse.guillotine@gmail.com) and 2D minimap textures by Cladhaire.
 
----------------
---  Globals  --
----------------
-DBM.Arrow = {}
+---@class DBM
+local DBM = DBM
+
+local L = DBM_CORE_L
 
 --------------
 --  Locals  --
 --------------
-local arrowFrame = DBM.Arrow
+---@class DBMArrow
+local arrowFrame = {}
 local frame, runAwayArrow, targetType, targetPlayer, targetX, targetY, targetMapId, hideTime, hideDistance
+
+DBM.Arrow = arrowFrame
 
 --------------------------------------------------------
 --  Cache frequently used global variables in locals  --
@@ -21,6 +24,7 @@ local UnitPosition, GetTime = UnitPosition, GetTime
 --------------------
 --  Create Frame  --
 --------------------
+---@class DBMArrowFrame: Button
 frame = CreateFrame("Button", "DBMArrow", UIParent)
 frame:Hide()
 frame:SetFrameStrata("HIGH")
@@ -39,6 +43,7 @@ frame:SetScript("OnDragStop", function(self)
 	DBM.Options.ArrowPosY = y
 end)
 
+---@class DBMArrowTextFrame: Frame
 local textframe = CreateFrame("Frame", nil, frame)
 frame.distance = textframe:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 frame.title = textframe:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -63,8 +68,8 @@ do
 end
 
 -- GetPlayerFacing seems to return values between -pi and pi instead of 0 - 2pi sometimes since 3.3.3
-local GetPlayerFacing = function(...)
-	local result = GetPlayerFacing(...) or 0
+local GetPlayerFacing = function()
+	local result = GetPlayerFacing() or 0
 	if result < 0 then
 		result = result + pi2
 	end
@@ -210,7 +215,7 @@ local function show(runAway, x, y, distance, time, legacy, _, title, customAreaI
 	else
 		targetType = "fixed"
 		if legacy and x >= 0 and x <= 100 and y >= 0 and y <= 100 then
-			local _, temptable = C_Map.GetWorldPosFromMapPos(tonumber(customAreaID) or C_Map.GetBestMapForUnit("player"), CreateVector2D(x / 100, y / 100))
+			local _, temptable = C_Map.GetWorldPosFromMapPos(tonumber(customAreaID) or C_Map.GetBestMapForUnit("player") or 0, CreateVector2D(x / 100, y / 100))
 			x, y = temptable.x, temptable.y
 		end
 		targetX, targetY = x, y
@@ -261,11 +266,37 @@ function arrowFrame:Move()
 	hideDistance = 0
 	frame:EnableMouse(true)
 	frame:Show()
-	DBM.Bars:CreateBar(25, DBM_CORE_L.ARROW_MOVABLE, 237538)
+	DBT:CreateBar(25, L.ARROW_MOVABLE, 237538)
 	DBM:Unschedule(endMove)
 	DBM:Schedule(25, endMove)
 end
 
 function arrowFrame:LoadPosition()
 	frame:SetPoint(DBM.Options.ArrowPoint, DBM.Options.ArrowPosX, DBM.Options.ArrowPosY)
+end
+
+do
+	SLASH_DEADLYBOSSMODSDWAY1 = "/dway"--/way not used because DBM would load before TomTom and can't check
+	SlashCmdList["DEADLYBOSSMODSDWAY"] = function(msg)
+		if DBM:HasMapRestrictions() then
+			DBM:AddMsg(L.NO_ARROW)
+			return
+		end
+		msg = msg:sub(1):trim()
+		local x, y = strsplit(" ", msg) -- Try splitting by space
+		local xNum, yNum = tonumber(x or ""), tonumber(y or "")
+		if not xNum or not yNum then
+			x, y = strsplit(",", msg) -- And then by comma
+			xNum, yNum = tonumber(x or ""), tonumber(y or "")
+		end
+		if xNum and yNum then
+			DBM.Arrow:ShowRunTo(xNum, yNum, 1, nil, true)
+			return
+		end
+		if DBM.Arrow:IsShown() then
+			DBM.Arrow:Hide()
+		else
+			DBM:AddMsg(L.ARROW_WAY_USAGE)
+		end
+	end
 end

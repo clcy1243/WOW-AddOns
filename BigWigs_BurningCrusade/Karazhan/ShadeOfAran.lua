@@ -5,6 +5,9 @@
 local mod, CL = BigWigs:NewBoss("Shade of Aran", 532, 1559)
 if not mod then return end
 mod:RegisterEnableMob(16524)
+if mod:Classic() then
+	mod:SetEncounterID(658)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -65,7 +68,7 @@ end
 
 function mod:OnEngage()
 	self:RegisterUnitEvent("UNIT_POWER_FREQUENT", nil, "target", "focus")
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "target", "focus")
 end
 
 --------------------------------------------------------------------------------
@@ -76,36 +79,36 @@ do
 	local scheduled = nil
 	local inWreath = mod:NewTargetList()
 	local function wreathWarn(spellId)
-		mod:TargetMessage(30004, inWreath, "red", "Long", spellId)
+		mod:TargetMessageOld(30004, inWreath, "red", "long", spellId)
 		scheduled = nil
 	end
 	function mod:FlameWreath(args)
 		inWreath[#inWreath + 1] = args.destName
 		if not scheduled then
 			scheduled = true
-			self:Bar(30004, 21, L["flame_bar"], args.spellId)
+			self:Bar(30004, 21, args.spellName, args.spellId)
 			self:ScheduleTimer(wreathWarn, 0.4, args.spellId)
 		end
 	end
 end
 
 function mod:FlameWreathStart(args)
-	self:Message(args.spellId, "red", "Alarm", CL["cast"]:format(args.spellName))
+	self:MessageOld(args.spellId, "red", "alarm", CL["cast"]:format(args.spellName))
 	self:Bar(args.spellId, 5, CL["cast"]:format(args.spellName))
 end
 
 function mod:Blizzard(args)
-	self:Message("blizzard", "yellow", nil, L["blizzard_message"], args.spellId)
+	self:MessageOld("blizzard", "yellow", nil, L["blizzard_message"], args.spellId)
 	self:Bar("blizzard", 36, L["blizzard_message"], args.spellId)
 end
 
 function mod:Drinking()
-	self:Message("drink", "green", nil, L["drink_message"], L.drink_icon)
+	self:MessageOld("drink", "green", nil, L["drink_message"], L.drink_icon)
 	self:Bar("drink", 15, L["drink_bar"], 29978) --Pyroblast id
 end
 
 function mod:Elementals()
-	self:Message("adds", "red", nil, L["adds_message"], L["adds_icon"])
+	self:MessageOld("adds", "red", nil, L["adds_message"], L["adds_icon"])
 	self:Bar("adds", 90, L["adds_bar"], L["adds_icon"])
 end
 
@@ -115,27 +118,27 @@ do
 		local time = GetTime()
 		if (time - last) > 5 then
 			last = time
-			self:Message("pull", "yellow", nil, L["pull_message"], 29973)
+			self:MessageOld("pull", "yellow", nil, L["pull_message"], 29973)
 			self:Bar("pull", 12, L["pull_bar"], 29973)
 		end
 	end
 end
 
 function mod:UNIT_POWER_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 16524 then
+	if self:MobId(self:UnitGUID(unit)) == 16524 then
 		local mana = UnitPower(unit)
 		if mana > 33000 and mana < 37000 then
-			self:Message("drink", "orange", "Alert", L["drink_warning"], false)
+			self:MessageOld("drink", "orange", "alert", L["drink_warning"], false)
 			self:UnregisterUnitEvent(event, "target", "focus")
 		end
 	end
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 16524 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 16524 then
+		local hp = self:GetHealth(unit)
 		if hp > 40 and hp < 46 then
-			self:Message("adds", "orange", "Alert", L["adds_warning"], false)
+			self:MessageOld("adds", "orange", "alert", L["adds_warning"], false)
 			self:UnregisterUnitEvent(event, "target", "focus")
 		end
 	end

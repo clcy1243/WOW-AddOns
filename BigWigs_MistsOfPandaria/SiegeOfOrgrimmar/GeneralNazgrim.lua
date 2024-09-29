@@ -121,8 +121,8 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "ChainHeal", 143473)
 	self:Log("SPELL_CAST_SUCCESS", "EarthShield", 143475)
 	self:Log("SPELL_AURA_APPLIED", "Fixate", 143480)
-	self:Yell("Adds", L.adds_trigger1, L.adds_trigger2, L.adds_trigger3, L.adds_trigger4, L.adds_trigger5)
-	self:Yell("ExtraAdds", L.adds_trigger_extra_wave, L.adds_trigger_extra_wave_demonic)
+	self:BossYell("Adds", L.adds_trigger1, L.adds_trigger2, L.adds_trigger3, L.adds_trigger4, L.adds_trigger5)
+	self:BossYell("ExtraAdds", L.adds_trigger_extra_wave, L.adds_trigger_extra_wave_demonic)
 	-- Boss
 	self:Log("SPELL_CAST_START", "WarSong", 143503)
 	self:Log("SPELL_CAST_SUCCESS", "Ravager", 143872) -- _START has no destName but boss has target, so that could be better, but since this can target pets, and it takes 2 sec before any damage is done after _SUCCESS I guess we can live with using _SUCCESS over _START here
@@ -139,14 +139,14 @@ end
 
 function mod:OnEngage()
 	self:Berserk(600)
-	wipe(marksUsed)
-	self:CDBar(143494, 10) -- Sundering Blow
+	marksUsed = {}
+	self:Bar(143494, 10) -- Sundering Blow
 	self:Bar(143638, 15.5) -- Bonecracker
 	addWaveCounter = 1
 	self:Bar(-7920, 46, CL.count:format(CL.adds, addWaveCounter), "achievement_guildperk_everybodysfriend") -- adds
 	if not self:LFR() then
 		self:OpenProximity("proximity", 10) -- Heroic Shockwave , Magistrike is 8 yard
-		self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+		self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
 	end
 end
 
@@ -160,12 +160,12 @@ function mod:HuntersMark(args)
 	if self:Me(args.destGUID) then
 		self:Flash(-7947)
 	end
-	self:TargetMessage(-7947, args.destName, "yellow", "Alarm")
+	self:TargetMessageOld(-7947, args.destName, "yellow", "alarm")
 end
 
 function mod:Execute(args)
-	self:Message(args.spellId, "red", "Warning", CL.casting:format(args.spellName))
-	self:CDBar(args.spellId, 18) -- varies a bit due to ability casts
+	self:MessageOld(args.spellId, "red", "warning", CL.casting:format(args.spellName))
+	self:Bar(args.spellId, 18) -- varies a bit due to ability casts
 	if UnitIsUnit("player", "boss1target") then -- poor mans target check
 		self:Flash(args.spellId)
 	end
@@ -173,8 +173,8 @@ end
 
 -- Adds
 function mod:ArcaneShock(args)
-	if UnitGUID("focus") == args.sourceGUID then
-		self:Message("arcane_shock", "blue", "Alert", L.arcane_shock_message, args.spellId)
+	if self:UnitGUID("focus") == args.sourceGUID then
+		self:MessageOld("arcane_shock", "blue", "alert", L.arcane_shock_message, args.spellId)
 	end
 end
 
@@ -184,18 +184,18 @@ do
 		local t = GetTime()
 		if t-prev > 3 and self:Dispeller("magic", nil, args.spellId) then -- don't spam
 			prev = t
-			self:Message(args.spellId, "red", "Alarm", args.spellName, args.spellId)
+			self:MessageOld(args.spellId, "red", "alarm", args.spellName, args.spellId)
 		end
 	end
 end
 
 function mod:HealingTideTotem(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 end
 
 function mod:ChainHeal(args)
-	if UnitGUID("focus") == args.sourceGUID then
-		self:Message("chain_heal", "blue", "Alert", L.chain_heal_message, args.spellId)
+	if self:UnitGUID("focus") == args.sourceGUID then
+		self:MessageOld("chain_heal", "blue", "alert", L.chain_heal_message, args.spellId)
 	end
 end
 
@@ -207,37 +207,37 @@ function mod:EarthShield(args)
 	if UnitExists(target) then
 		self:SecondaryIcon(args.spellId, target) -- try to mark earth shield target, not really trying too hard tho
 	end
-	self:TargetMessage(args.spellId, args.destName, "green", offensiveDispeller and "Warning")
+	self:TargetMessageOld(args.spellId, args.destName, "green", offensiveDispeller and "warning")
 	if offensiveDispeller then
 		self:Flash(args.spellId) -- for pulse (best would be pulse only no flash :S)
 	end
 end
 
 function mod:Fixate(args)
-	self:TargetMessage(-7933, args.destName, "yellow", "Info")
+	self:TargetMessageOld(-7933, args.destName, "yellow", "info")
 	if self:Me(args.destGUID) then
 		self:Flash(-7933)
 	end
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp < 17 then
-		self:Message(-7920, "cyan", "Info", CL.soon:format(L.extra_adds))
+		self:MessageOld(-7920, "cyan", "info", CL.soon:format(L.extra_adds), false)
 		self:UnregisterUnitEvent(event, unit)
 	end
 end
 
 function mod:ExtraAdds()
-	self:Message(-7920, "cyan", "Long", "10% - ".. L.extra_adds)
+	self:MessageOld(-7920, "cyan", "long", "10% - ".. L.extra_adds, false)
 end
 
 function mod:Adds()
 	local mobs = self:Mythic() and addsMythic[addWaveCounter] or addsNormal[addWaveCounter]
 	if addWaveCounter == 10 then
-		self:Message(-7920, "cyan", "Long", L.add_wave:format(L.final_wave, addWaveCounter, mobs))
+		self:MessageOld(-7920, "cyan", "long", L.add_wave:format(L.final_wave, addWaveCounter, mobs), false)
 	else
-		self:Message(-7920, "cyan", "Long", L.add_wave:format(CL.adds, addWaveCounter, mobs))
+		self:MessageOld(-7920, "cyan", "long", L.add_wave:format(CL.adds, addWaveCounter, mobs), false)
 	end
 
 	addWaveCounter = addWaveCounter + 1
@@ -250,19 +250,19 @@ end
 
 function mod:WarSong(args)
 	self:Bar(args.spellId, 3, CL.cast:format(args.spellName))
-	self:Message(args.spellId, "red", "Warning")
+	self:MessageOld(args.spellId, "red", "warning")
 end
 
 function mod:Ravager(args)
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Ravager")
 	end
-	self:TargetMessage(args.spellId, args.destName, "orange", "Alarm")
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "alarm")
 end
 
 function mod:Banner(args)
-	self:Message(143536, "yellow", "Alert")
+	self:MessageOld(143536, "yellow", "alert")
 end
 
 do
@@ -270,11 +270,11 @@ do
 		if self:Me(guid) then
 			self:Flash(143716)
 		end
-		self:TargetMessage(143716, player, "orange", "Alarm")
+		self:TargetMessageOld(143716, player, "orange", "alarm")
 	end
 	function mod:HeroicShockwave(_, unit, _, spellId)
 		if spellId == 143500 then -- Heroic Shockwave
-			self:GetBossTarget(warnShockwave, 0.2, UnitGUID(unit))
+			self:GetBossTarget(warnShockwave, 0.2, self:UnitGUID(unit))
 		end
 	end
 end
@@ -284,15 +284,15 @@ function mod:CoolingOff(args)
 end
 
 function mod:Stances(args)
-	self:Message(-7915, "green", args.spellId == 143593 and "Alert", args.spellName, args.spellId) -- Play sound if he switches to defensive -- this might conflich with War Song
+	self:MessageOld(-7915, "green", args.spellId == 143593 and "alert", args.spellName, args.spellId) -- Play sound if he switches to defensive -- this might conflich with War Song
 	local nextStance
 	if args.spellId == 143589 then -- battle
 		nextStance = 143594 -- berserker
 	elseif args.spellId == 143594 then -- berserker
 		nextStance = 143593 -- defensive
-		self:DelayedMessage(-7915, 55, "green", CL.custom_sec:format(self:SpellName(nextStance), 5), nextStance, "Alert")
-		self:DelayedMessage(-7915, 57, "green", CL.custom_sec:format(self:SpellName(nextStance), 3), nextStance, "Alert")
-		self:DelayedMessage(-7915, 59, "green", CL.custom_sec:format(self:SpellName(nextStance), 1), nextStance, "Alert")
+		self:DelayedMessage(-7915, 55, "green", CL.custom_sec:format(self:SpellName(nextStance), 5), nextStance, "alert")
+		self:DelayedMessage(-7915, 57, "green", CL.custom_sec:format(self:SpellName(nextStance), 3), nextStance, "alert")
+		self:DelayedMessage(-7915, 59, "green", CL.custom_sec:format(self:SpellName(nextStance), 1), nextStance, "alert")
 	elseif args.spellId == 143593 then -- defensive
 		nextStance = 143589 -- battle
 	end
@@ -305,7 +305,7 @@ do
 			for i = 1, 7 do
 				if marksUsed[i] == args.destName then
 					marksUsed[i] = false
-					SetRaidTarget(args.destName, 0)
+					self:CustomIcon(false, args.destName, 0)
 				end
 			end
 		end
@@ -314,7 +314,7 @@ do
 	local function markBonecrackers(destName)
 		for i = 1, 7 do
 			if not marksUsed[i] then
-				SetRaidTarget(destName, i)
+				mod:CustomIcon(false, destName, i)
 				marksUsed[i] = destName
 				return
 			end
@@ -322,7 +322,7 @@ do
 	end
 	function mod:BoneCrackerApplied(args)
 		if self:Me(args.destGUID) then
-			self:TargetMessage(args.spellId, args.destName, "blue", "Info") -- so you know to be extra careful since your max hp is halved
+			self:TargetMessageOld(args.spellId, args.destName, "blue", "info") -- so you know to be extra careful since your max hp is halved
 		end
 		if self.db.profile.custom_off_bonecracker_marks then
 			markBonecrackers(args.destName)
@@ -331,12 +331,12 @@ do
 end
 
 function mod:BoneCracker(args)
-	self:Message(args.spellId, "orange")
+	self:MessageOld(args.spellId, "orange")
 	self:Bar(args.spellId, 32)
 end
 
 function mod:SunderingBlow(args)
-	self:StackMessage(args.spellId, args.destName, args.amount, "yellow", "Info")
-	self:CDBar(args.spellId, 8)
+	self:StackMessageOld(args.spellId, args.destName, args.amount, "yellow", "info")
+	self:Bar(args.spellId, 8)
 end
 

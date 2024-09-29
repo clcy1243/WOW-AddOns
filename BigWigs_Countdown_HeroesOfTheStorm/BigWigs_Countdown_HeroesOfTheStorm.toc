@@ -1,8 +1,8 @@
-## Interface: 80300
+## Interface: 11504, 11503, 20504, 30403, 40400, 40401, 110005, 110000, 110002
 ## Title: BigWigs |cffff7f3f+|r|cffffffffCountdown: Heroes of the Storm|r
 ## Title-deDE: BigWigs |cffff7f3f+|r|cffffffffCountdown: Heroes of the Storm|r
 ## Title-esES: BigWigs |cffff7f3f+|r|cffffffffCuenta Atrás: Heroes of the Storm|r
-## Title-esEX: BigWigs |cffff7f3f+|r|cffffffffCuenta Atrás: Heroes of the Storm|r
+## Title-esMX: BigWigs |cffff7f3f+|r|cffffffffCuenta Atrás: Heroes of the Storm|r
 ## Title-frFR: BigWigs |cffff7f3f+|r|cffffffffCompte à rebours : Heroes of the Storm|r
 ## Title-itIT: BigWigs |cffff7f3f+|r|cffffffffConto alla Rovescia: Heroes of the Storm|r
 ## Title-koKR: BigWigs |cffff7f3f+|r|cffffffff초읽기 : 히어로즈 오브 더 스톰|r
@@ -10,11 +10,15 @@
 ## Title-ruRU: BigWigs |cffff7f3f+|r|cffffffffОбратный отсчет: Heroes of the Storm|r
 ## Title-zhCN: BigWigs |cffff7f3f+|r|cffffffff倒数：风暴英雄|r
 ## Title-zhTW: BigWigs |cffff7f3f+|r|cffffffff倒數：暴雪英霸|r
+## IconTexture: Interface\AddOns\BigWigs\Media\Icons\core-enabled
 ## Author: Neb
-## Version: 1.2.7
+## Version: 1.3.4
 ## Dependencies: BigWigs
 ## LoadOnDemand: 1
 ## X-BigWigs-LoadOn-CoreEnabled: 1
+## X-Curse-Project-ID: 89683
+## X-WoWI-ID: 26065
+## X-Wago-ID: YK9E8lKL
 
 Locales.lua
 Core.lua

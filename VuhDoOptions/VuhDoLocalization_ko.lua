@@ -1,4 +1,4 @@
-﻿if (GetLocale() ~= "koKR") then
+if (GetLocale() ~= "koKR") then
 	return;
 end
 -- 지옥천사(윈드러너) 한글화
@@ -189,9 +189,9 @@ VUHDO_I18N_TT.K060 = "자신이 제거할 수 있는 디버프만 표시되도�
 VUHDO_I18N_TT.K062 = "과 치유를 선택하면 체력바가 밝아집니다.";
 VUHDO_I18N_TT.K063 = "또한 자신이 직접 받는 치유를 보여줍니다. 이것은 일부 플레이어에 의해 오도된 것으로 느껴집니다.";
 VUHDO_I18N_TT.K065 = "플레이어가 거리내에 있을때 얼만큼의 주기로 거리 정보를 업데이트 할 것인지 선택합니다. 정보: 낮은 값을 입력한다면 시스템의 성능을 저하시킬 수 있습니다.";
-VUHDO_I18N_TT.K066 = "대다수가 가지고 있는 \"전형적인\" 주문으로 거리를 체크합니다. 거리 체크에 사용할만한 스킬을 가지고 있지 않다면 이 옵션을 사용하십시오."; -- 임의 수정, 이거 맞나...
+VUHDO_I18N_TT.K066 = "Check this to use the range of a \"typical\" spell. Also select this if you dont have any relevant spells.";
 VUHDO_I18N_TT.K067 = "입력한 주문을 통하여 거리를 체크합니다.";
-VUHDO_I18N_TT.K068 = "오른쪽에 입력된 주문을 통하여 거리를 체크합니다.";
+VUHDO_I18N_TT.K068 = "Select this to have the spell range checked due to the range of the spell below.";
 VUHDO_I18N_TT.K070 = "HoT 아이콘 크기의 바 높이를 백분율로 선택합니다";  -- 임의 수정
 VUHDO_I18N_TT.K071 = "상태 표시 줄의 오른쪽에 HoT 아이콘을 표시하려면 선택하십시오.";
 VUHDO_I18N_TT.K072 = "상태 표시 줄의 왼쪽에 HoT 아이콘을 표시하려면 선택하십시오.";
@@ -640,6 +640,21 @@ VUHDO_I18N_TT.K578 = "아이콘 광택의 색상을 선택하십시오.";
 VUHDO_I18N_TT.K579 = "바 광택의 색상을 선택하십시오.";
 VUHDO_I18N_TT.K580 = "디버프 아이콘을 제외목록에 표시하려면 마우스 오른쪽 버튼으로 사용할 수정 키를 선택하십시오."
 VUHDO_I18N_TT.K581 = "Check to show player nickname on bars.";
+VUHDO_I18N_TT.K582 = "Select the unit to target.";
+VUHDO_I18N_TT.K583 = "Check to make all HoT icons fade out when the HoT is expiring.";
+VUHDO_I18N_TT.K584 = "Check to make all HoT icons flash when the HoT is expiring.";
+VUHDO_I18N_TT.K585 = "Select a color for Evokers";
+VUHDO_I18N_TT.K586 = "Enable to show text only with no icon.";
+VUHDO_I18N_TT.K587 = "Show incoming spell casts only. Spells must be tracked by spell ID not name.";
+VUHDO_I18N_TT.K588 = "Show incoming spell casts from friendly units.";
+VUHDO_I18N_TT.K589 = "Show incoming spell casts from enemy units.";
+VUHDO_I18N_TT.K590 = "Show all incoming spell casts.";
+VUHDO_I18N_TT.K591 = "Filter to show only incoming spell casts from boss/NPC units.";
+VUHDO_I18N_TT.K592 = "Check this to show private aura icons on the health bar.";
+VUHDO_I18N_TT.K593 = "Select a size for your private aura icons.";
+VUHDO_I18N_TT.K594 = "Check to sort pet units last.";
+VUHDO_I18N_TT.K595 = "Show effective HP (health including shields) of player.";
+VUHDO_I18N_TT.K596 = "Click to change color to indicate players afflicted by bleed debuffs.";
 
 VUHDO_I18N_DEFAULT_PROFILE = "기본 프로필";
 VUHDO_I18N_DEFAULT_LAYOUT = "기본 배치";
@@ -1050,8 +1065,8 @@ VUHDO_I18N_CLEAR_BINDING = "단축키 해제";
 VUHDO_I18N_MACRO_EDITOR = "VuhDo 매크로 편집툴";
 VUHDO_I18N_ACCEPT = "수락";
 VUHDO_I18N_DISCARD = "취소";
-VUHDO_I18N_LKA_HINT_1 = "매크로에서 다음 템플리트를 사용: |c00000000vuhdo|r => 유닛 자체, |c00000000vdname|r => 유닛 이름" justifyH="LEFT" inherits="VuDoButtonFontDark";
-VUHDO_I18N_LKA_HINT_2 = "|c00000000vdtarget, vdtargettarget|r => 유닛 대상/ToT, |c00000000vdpet|r => 유닛 소환수, 예제: /cast [@vuhdo] 순간 치유" justifyH="LEFT" inherits="VuDoButtonFontDark";
+VUHDO_I18N_LKA_HINT_1 = "매크로에서 다음 템플리트를 사용: |c00000000vuhdo|r => 유닛 자체, |c00000000vdname|r => 유닛 이름";
+VUHDO_I18N_LKA_HINT_2 = "|c00000000vdtarget, vdtargettarget|r => 유닛 대상/ToT, |c00000000vdpet|r => 유닛 소환수, 예제: /cast [@vuhdo] 순간 치유";
 VUHDO_I18N_LKA_CUSTOM_MACRO_DISCARDED = "사용자 매크로 텍스트가 삭제되었습니다.";
 VUHDO_I18N_NAME_CHANGE_DISCARDED = "아이템 이름의 변경이 취소되었습니다.";
 VUHDO_I18N_LKA_TYPE_CHANGED = "VuhDo 사용자 매크로에서 주문 또는 WoW 클라이언트 매크로로 유형이 변경되었습니다.\n사용자 매크로 텍스트를 삭제 하시겠습니까?";
@@ -1147,3 +1162,46 @@ VUHDO_I18N_BLACKLIST_KEY_MODIFIES = "무시 목록 수정 키";
 
 VUHDO_I18N_NICKNAME = "Details!\nNickname"
 
+VUHDO_I18N_DEBUFF_SHOW_ONLY_FOR_FRIENDLY_TEXT = "Show only\nfor friendly";
+VUHDO_I18N_DEBUFF_SHOW_ONLY_FOR_FRIENDLY_TOOLTIP = "Shows debuffs only for friendly units";
+
+VUHDO_I18N_SHOW_OVERSHIELD = "Show\nOvershield";
+VUHDO_I18N_OVERSHIELD_BAR = "Overshield Bar";
+
+VUHDO_I18N_SHOW_HEAL_ABSORB = "Show\nHeal Absorb";
+VUHDO_I18N_HEAL_ABSORB_BAR = "Heal Absorb Bar";
+
+VUHDO_I18N_PLAYER = "Player unit";
+VUHDO_I18N_TARGET = "Target unit"
+VUHDO_I18N_TARGET_TARGET = "Target's target unit"
+VUHDO_I18N_FOCUS = "Focus unit";
+VUHDO_I18N_MOUSEOVER = "Mouseover unit";
+VUHDO_I18N_MOUSEOVER_TARGET = "Mouseover's target unit";
+VUHDO_I18N_MOUSEOVER_TARGET_TARGET = "Mouseover's target's target unit";
+VUHDO_I18N_TARGET_HARM = "Target unit (hostile only)";
+VUHDO_I18N_TARGET_TARGET_HARM = "Target's target unit (hostile only)";
+VUHDO_I18N_FOCUS_HARM = "Focus unit (hostile only)";
+VUHDO_I18N_MOUSEOVER_HARM = "Mouseover unit (hostile only)";
+VUHDO_I18N_MOUSEOVER_TARGET_HARM = "Mouseover's target unit (hostile only)";
+VUHDO_I18N_MOUSEOVER_TARGET_TARGET_HARM = "Mouseover's target's target unit (hostile only)";
+
+VUHDO_I18N_CLOCK = "Clock";
+
+VUHDO_I18N_TEXT_ONLY = "Text only";
+
+VUHDO_I18N_SHOW_FRIENDLY = "Show\nFriendly";
+VUHDO_I18N_SHOW_ENEMY = "Show\nEnemy";
+VUHDO_I18N_SHOW_ALL = "Show All";
+VUHDO_I18N_BOSS_ONLY = "Boss Only";
+
+VUHDO_I18N_X = "X";
+VUHDO_I18N_Y = "Y";
+
+VUHDO_I18N_PRIVATE_AURAS = "Private Auras";
+
+VUHDO_I18N_PETS_LAST = "Pets last";
+
+VUHDO_I18N_SHOW_EFFECTIVE = "Show\nEffective";
+VUHDO_I18N_DEBUFF_IGNORE_IMPORTED = "Debuff ignore list successfully imported.";
+
+VUHDO_I18N_BLEED = "Bleed";

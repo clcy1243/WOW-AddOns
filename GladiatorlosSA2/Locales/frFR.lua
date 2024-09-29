@@ -93,25 +93,26 @@ L["In arena, alert when enemy is drinking"] = "Alerte quand un ennemi est en tra
 L["PvP Trinketed Class"] = "Classe du bijou utilisé"
 L["Also announce class name with trinket alert when hostile targets use PvP trinket in arena"] = "Annonce la classe de l'ennemie qui utilise un bijou JcJ en arène"
 L["General Abilities"] = "Abilitées Générales"
-L["|cffFF7D0ADruid|r"] = "|cffFF7D0ADruide|r"
-L["|cffF58CBAPaladin|r"] = "|cffF58CBAPaladin|r"
-L["|cffFFF569Rogue|r"] = "|cffFFF569Voleur|r"
-L["|cffC79C6EWarrior|r"] = "|cffC79C6EGuerrier|r"
-L["|cffFFFFFFPriest|r"] = "|cffFFFFFFPrêtre|r"
-L["|cff0070daShaman|r"] = "|cff0070DEChaman|r"
-L["|cff0070daShaman (Totems)|r"] = true
-L["|cff69CCF0Mage|r"] = "|cff69CCF0Mage|r"
-L["|cffC41F3BDeath Knight|r"] = "|cffC41F3BChevalier de la mort|r"
-L["|cffABD473Hunter|r"] = "|cffABD473Chasseur|r"
-L["|cFF00FF96Monk|r"] = "|cFF00FF96Moine|r"
-L["|cffA330C9Demon Hunter|r"] = "|cffA330C9?|r"
+L["Druid"] = "|cffFF7D0ADruide|r"
+L["Paladin"] = "Paladin"
+L["Rogue"] = "|cffFFF569Voleur|r"
+L["Warrior"] = "|cffC79C6EGuerrier|r"
+L["Priest"] = "|cffFFFFFFPrêtre|r"
+L["Shaman"] = "|cff0070DEChaman|r"
+L["ShamanTotems"] = true
+L["Mage"] = "Mage"
+L["DeathKnight"] = "|cffC41F3BChevalier de la mort|r"
+L["Hunter"] = "|cffABD473Chasseur|r"
+L["Monk"] = "|cFF00FF96Moine|r"
+L["DemonHunter"] = "|cffA330C9?|r"
+L["Evoker"] = true
 L["Buff Down"] = "Fin de buffs"
 L["Spell Casting"] = "Lancement d'un sort"
 L["BigHeal"] = "Gros soin"
 L["BigHeal_Desc"] = "Soins supérieurs, Lumière divine, Vague de soin supérieure, Toucher guérisseur, Brume enveloppante"
 L["Resurrection"] = "Resurrection"
 L["Resurrection_Desc"] = "Résurrection, Redemption, Esprit Ancestral, Ranimer, Ressusciter"
-L["|cff9482C9Warlock|r"] = "|cff9482C9Démoniste|r"
+L["Warlock"] = "|cff9482C9Démoniste|r"
 L["Special Abilities"] = "Abilitées spéciales"
 L["Friendly Interrupt"] = "Interruption amicale"
 L["Spell Lock, Counterspell, Kick, Pummel, Mind Freeze, Skull Bash, Rebuke, Solar Beam, Spear Hand Strike, Wind Shear"] = "Verrou magique, Contresort, Coup de pied, Volée de coup, Gel de l'esprit, Coup de crâne, Réprimandes, Rayon solaire, Pique de main, Cisaille de vent"
@@ -174,3 +175,53 @@ L["TankTauntsON_Desc"] = true
 
 L["Connected"] = true
 L["Connected_Desc"] = true
+
+L["CovenantAbilities"] = true
+
+L["FrostDK"] = true
+L["BloodDK"] = true
+L["UnholyDK"] = true
+
+L["HavocDH"] = true
+L["VengeanceDH"] = true
+
+L["FeralDR"] = true
+L["BalanceDR"] = true
+L["RestorationDR"] = true
+L["GuardianDR"] = true
+
+L["MarksmanshipHN"] = true
+L["SurvivalHN"] = true
+L["BeastMasteryHN"] = true
+
+L["FrostMG"] = true
+L["FireMG"] = true
+L["ArcaneMG"] = true
+
+L["MistweaverMN"] = true
+L["WindwalkerMN"] = true
+L["BrewmasterMN"] = true
+
+L["HolyPD"] = true
+L["RetributionPD"] = true
+L["ProtectionPD"] = true
+
+L["HolyPR"] = true
+L["DisciplinePR"] = true
+L["ShadowPR"] = true
+
+L["OutlawRG"] = true
+L["AssassinationRG"] = true
+L["SubtletyRG"] = true
+
+L["RestorationSH"] = true
+L["EnhancementSH"] = true
+L["ElementalSH"] = true
+
+L["DestructionWL"] = true
+L["DemonologyWL"] = true
+L["AfflictionWL"] = true
+
+L["ArmsWR"] = true
+L["FuryWR"] = true
+L["ProtectionWR"] = true

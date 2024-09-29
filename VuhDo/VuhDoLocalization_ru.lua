@@ -1,4 +1,4 @@
-﻿if (GetLocale() ~= "ruRU") then
+if (GetLocale() ~= "ruRU") then
 	return;
 end
 -- Class Names
@@ -13,7 +13,7 @@ VUHDO_I18N_SHAMANS = "Шаманы";
 VUHDO_I18N_DRUIDS = "Друиды";
 VUHDO_I18N_PRIESTS = "Жрецы";
 VUHDO_I18N_DEATH_KNIGHT = "Рыцари Смерти";
-VUHDO_I18N_MONKS = "Monks";
+VUHDO_I18N_MONKS = "Монахи";
 
 
 -- Group Model Names
@@ -74,23 +74,24 @@ VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566opt|r[ions] - 
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566res|r[et] - сбросить позицию панелей";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566lock|r - вкл./выкл. закрепление панелей";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566mm, map, minimap|r - вкл./выкл. иконку у миникарты";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566compart|r[ment] - Toggle AddOn Compartment Icon";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566show, hide, toggle|r - включить/выключить панели";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566load|r - [Skin],[Arrangement],[Key Layout]";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n[broad]|cffffe566cast, mt|r[s] - передать список главных танков рейду";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566role|r - сбросить роли игроков";
-VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566ab|r[out] - About this add-on";
+VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566ab|r[out] - про аддон";
 VUHDO_I18N_COMMAND_LIST = VUHDO_I18N_COMMAND_LIST .. "|n|cffffe566help,?|r - список данных команд\n";
 
 VUHDO_I18N_BAD_COMMAND = "Некорректный аргумент! Введите '/vuhdo help' или '/vd ?' для получения списка команд.";
-VUHDO_I18N_CHAT_SHOWN = "|cffffe566shown|r.";
-VUHDO_I18N_CHAT_HIDDEN = "|cffffe566hidden|r.";
+VUHDO_I18N_CHAT_SHOWN = "|cffffe566показана|r.";
+VUHDO_I18N_CHAT_HIDDEN = "|cffffe566скрыта|r.";
 VUHDO_I18N_MM_ICON = "Иконка у миникарты: ";
 VUHDO_I18N_MTS_BROADCASTED = "Основные танки переданы в рейд";
-VUHDO_I18N_PANELS_SHOWN = "Панель исцеления: |cffffe566shown|r.";
-VUHDO_I18N_PANELS_HIDDEN = "Панель исцеления: |cffffe566hidden|r.";
+VUHDO_I18N_PANELS_SHOWN = "Панель исцеления: |cffffe566показана|r.";
+VUHDO_I18N_PANELS_HIDDEN = "Панель исцеления: |cffffe566скрыта|r.";
 VUHDO_I18N_LOCK_PANELS_PRE = "Позиция панели: ";
-VUHDO_I18N_LOCK_PANELS_LOCKED = "|cffffe566locked|r.";
-VUHDO_I18N_LOCK_PANELS_UNLOCKED = "|cffffe566unlocked|r.";
+VUHDO_I18N_LOCK_PANELS_LOCKED = "|cffffe566закреплена|r.";
+VUHDO_I18N_LOCK_PANELS_UNLOCKED = "|cffffe566откреплена|r.";
 VUHDO_I18N_PANELS_RESET = "Позиция панели сброшена.";
 
 
@@ -140,7 +141,7 @@ VUHDO_I18N_BUFFC_SHOUT = "Крик";
 -- Hunter
 VUHDO_I18N_BUFFC_ASPECT = "Дух";
 -- Monk
-VUHDO_I18N_BUFFC_STANCE = "Stance";
+VUHDO_I18N_BUFFC_STANCE = "Стойка";
 -- Key Binding Headers/Names
 -- @EXACT = false
 BINDING_HEADER_VUHDO_TITLE = "VuhDo";
@@ -186,9 +187,9 @@ VUHDO_I18N_O_REALLY = "Точно?";
 
 
 -- #+v1.184
-VUHDO_I18N_BW_CD = "CD";
+VUHDO_I18N_BW_CD = "КД";
 VUHDO_I18N_BW_GO = "GO!";
-VUHDO_I18N_BW_LOW = "LOW";
+VUHDO_I18N_BW_LOW = "Низкий";
 VUHDO_I18N_BW_N_A = "|cffff0000N/A|r";
 VUHDO_I18N_BW_RNG_RED = "|cffff0000RNG|r";
 VUHDO_I18N_BW_OK = "OK";
@@ -295,6 +296,7 @@ VUHDO_I18N_BOUQUET_NEW_ITEM_NAME = "-- введите сюда (де)баф --";
 
 VUHDO_I18N_DEF_BOUQUET_TANK_COOLDOWNS = "Откаты танка";
 VUHDO_I18N_DEF_BOUQUET_PW_S_WEAKENED_SOUL = "СС:Щ и Ослабленная душа";
+VUHDO_I18N_DEF_BOUQUET_MONK_STAGGER = "Монах Пошатывание";
 VUHDO_I18N_DEF_BOUQUET_BORDER_MULTI_AGGRO = "Границы: Комплексная + угроза";
 VUHDO_I18N_DEF_BOUQUET_BORDER_MULTI = "Границы: Комплексная";
 VUHDO_I18N_DEF_BOUQUET_BORDER_SIMPLE = "Границы: Простая";
@@ -423,11 +425,13 @@ VUHDO_I18N_SPELL_LAYOUT_NOT_EXIST = "Раскладка способностей
 --VUHDO_I18N_ADDON_WARNING = "WARNING: Addon |cffffffff\"%s\"|r is enabled along with VuhDo, which may be problematic. Reason: %s";
 --VUHDO_I18N_MAY_CAUSE_LAGS = "May cause severe lags.";
 
-VUHDO_I18N_DISABLE_BY_VERSION = "!!! VUHDO ОТКЛЮЧЕН !!! Эта версия предназначена для игрового клиента версии %d и выше!!!"
+VUHDO_I18N_DISABLE_BY_MIN_VERSION = "!!! VUHDO IS DISABLED !!! This version (%s) is for client versions %d and above only !!!"
+VUHDO_I18N_DISABLE_BY_MAX_VERSION = "!!! VUHDO IS DISABLED !!! This version (%s) is for client versions %d and below only !!!"
 
 VUHDO_I18N_BOUQUET_STATUS_ALTERNATE_POWERS = "Полоса состояния: Альтернативная энергия %"
 VUHDO_I18N_BOUQUET_ALTERNATE_POWERS_ABOVE = "Флаг: Альтернативная энергия > %";
 VUHDO_I18N_DEF_ALTERNATE_POWERS = "Альтернативная энергия";
+VUHDO_I18N_DEF_TANK_CDS_EXTENDED = "Танк: расширенные кд";
 VUHDO_I18N_BOUQUET_HOLY_POWER_EQUALS = "Флаг: Энергия Света ==";
 VUHDO_I18N_DEF_PLAYER_HOLY_POWER = "Энергия Света";
 VUHDO_I18N_CUSTOM_ICON_ONE_THIRD = "Трети: Одна";
@@ -437,10 +441,12 @@ VUHDO_I18N_DEF_ROLE_ICON = "Иконка роли";
 VUHDO_I18N_DEF_BOUQUET_TARGET_HEALTH = "Здоровье (общее, цель)";
 VUHDO_I18N_TAPPED_COLOR = "Флаг: Присоединенный";
 VUHDO_I18N_ENEMY_STATE_COLOR = "Цвет: Союзник/Враг";
+VUHDO_I18N_FRIEND_STATUS = "Флаг: Союзник";
+VUHDO_I18N_FOE_STATUS = "Флаг: Враг";
 VUHDO_I18N_BOUQUET_STATUS_ALWAYS_FULL = "Полоса состояния: всегда полная";
 VUHDO_I18N_BOUQUET_STATUS_FULL_IF_ACTIVE = "Полоса состояния: полная при активности";
 VUHDO_I18N_AOE_ADVICE = "Иконка: AOE Советник";
-VUHDO_I18N_DEF_AOE_ADVICE = "AOE Советник";
+VUHDO_I18N_DEF_AOE_ADVICE = "АОЕ Советник";
 VUHDO_I18N_BOUQUET_DURATION_ABOVE = "Флаг: Длительность > сек";
 VUHDO_I18N_BOUQUET_DURATION_BELOW = "Флаг: Длительность < сек";
 VUHDO_I18N_DEF_WRACK = "Синестра: Смятие";
@@ -462,92 +468,160 @@ VUHDO_I18N_DEF_ROLE_COLOR = "Цвет роли";
 VUHDO_I18N_BOUQUET_ROLE_TANK = "Флаг: Роль - танк";
 VUHDO_I18N_BOUQUET_ROLE_DAMAGE = "Флаг: Роль - ДД";
 VUHDO_I18N_BOUQUET_ROLE_HEALER = "Флаг: Роль - Целитель";
+
 VUHDO_I18N_BOUQUET_STACKS = "Флаг: Стаки >";
+VUHDO_I18N_DEF_PLAYER_CHI = "Ци игрока";
 
-VUHDO_I18N_BOUQUET_TARGET_RAID_ICON = "Icon: Target's Raid Symbol";
-VUHDO_I18N_BOUQUET_OWN_CHI_EQUALS = "Flag: Own Chi ==";
-VUHDO_I18N_CUSTOM_ICON_FOUR_THIRDS = "Thirds: Four";
-VUHDO_I18N_CUSTOM_ICON_FIVE_THIRDS = "Thirds: Five";
-VUHDO_I18N_DEF_RAID_CDS = "Raid Cooldowns";
-VUHDO_I18N_BOUQUET_STATUS_CLASS_COLOR_IF_ACTIVE = "Flag: Class Color if active";
+VUHDO_I18N_BOUQUET_TARGET_RAID_ICON = "Иконка: Рейд символ цели";
+VUHDO_I18N_BOUQUET_OWN_CHI_EQUALS = "Флаг: Своя ци ==";
+VUHDO_I18N_CUSTOM_ICON_FOUR_THIRDS = "Трети: Четыре";
+VUHDO_I18N_CUSTOM_ICON_FIVE_THIRDS = "Трети: Пять";
+VUHDO_I18N_DEF_RAID_CDS = "Рейдовые кулдауны";
+VUHDO_I18N_BOUQUET_STATUS_CLASS_COLOR_IF_ACTIVE = "Флаг: Цвет класа если активен";
 
-VUHDO_I18N_DEF_PVP_FLAGS="PvP Flag Carriers";
-VUHDO_I18N_DEF_STATUS_SHIELD = "Statusbar: Shield";
-VUHDO_I18N_TARGET = "Target";
-VUHDO_I18N_FOCUS = "Focus";
-VUHDO_I18N_DEF_STATUS_OVERSHIELDED = "Statusbar: Overshielded";
+VUHDO_I18N_LETHAL_POISONS = "Летальные яды";
+VUHDO_I18N_NON_LETHAL_POISONS = "Нелетальные яды";
+VUHDO_I18N_DEF_COUNTER_SHIELD_ABSORB = "Счётчик: Абсорб всех щитов # тыс.";
+VUHDO_I18N_BUFFC_WEAPON_ENCHANT_OFF = "Зачарование оружия (левая рука)";
+
+VUHDO_I18N_DEF_PVP_FLAGS="ПвП переносчик флага";
+VUHDO_I18N_DEF_STATUS_SHIELD = "Статус: Щит";
+
+VUHDO_I18N_TARGET = "Цель";
+VUHDO_I18N_FOCUS = "Фокус";
+VUHDO_I18N_DEF_STATUS_OVERSHIELDED = "Статус: Избыточный щит";
 
 -- 3.65
-VUHDO_I18N_BOUQUET_OUTSIDE_ZONE = "Flag: Player Zone, outside";
-VUHDO_I18N_BOUQUET_INSIDE_ZONE = "Flag: Player Zone, inside";
-VUHDO_I18N_BOUQUET_WARRIOR_TANK = "Flag: Role Tank, Warrior";
-VUHDO_I18N_BOUQUET_PALADIN_TANK = "Flag: Role Tank, Paladin";
-VUHDO_I18N_BOUQUET_DK_TANK = "Flag: Role Tank, Death Knight";
-VUHDO_I18N_BOUQUET_MONK_TANK = "Flag: Role Tank, Monk";
-VUHDO_I18N_BOUQUET_DRUID_TANK = "Flag: Role Tank, Druid";
+VUHDO_I18N_BOUQUET_OUTSIDE_ZONE = "Флаг: Зона игрока, снаружи";
+VUHDO_I18N_BOUQUET_INSIDE_ZONE = "Флаг: Зона игрока, внутри";
+VUHDO_I18N_BOUQUET_WARRIOR_TANK = "Флаг: Танк, Воин";
+VUHDO_I18N_BOUQUET_PALADIN_TANK = "Флаг: Танк, Паладин";
+VUHDO_I18N_BOUQUET_DK_TANK = "Флаг: Танк, Рыцарь Смерти";
+VUHDO_I18N_BOUQUET_MONK_TANK = "Флаг: Танк, Монах";
+VUHDO_I18N_BOUQUET_DRUID_TANK = "Флаг: Танк, Друид";
 
 -- 3.66
-VUHDO_I18N_BOUQUET_PALADIN_BEACON = "Paladin Beacon";
-VUHDO_I18N_BOUQUET_STATUS_EXCESS_ABSORB = "Statusbar: Excess Absorption %";
-VUHDO_I18N_BOUQUET_STATUS_TOTAL_ABSORB = "Statusbar: Total Absorption %";
+VUHDO_I18N_BOUQUET_PALADIN_BEACON = "Паладин: частица";
+VUHDO_I18N_BOUQUET_STATUS_EXCESS_ABSORB = "Статус: Излишний Абсорб %";
+VUHDO_I18N_BOUQUET_STATUS_TOTAL_ABSORB = "Статус: Общий Абсорб %";
 
 -- 3.67
 VUHDO_I18N_NO_BOSS = "[no NPC]";
-VUHDO_I18N_BOSSES = "NPCs";
+VUHDO_I18N_BOSSES = "НПС";
 
 -- 3.71
-VUHDO_I18N_BOUQUET_CUSTOM_FLAG = "Custom Flag";
-VUHDO_I18N_ERROR_CUSTOM_FLAG_LOAD = "{VuhDo} Error: Your custom flag validator did not load:";
-VUHDO_I18N_ERROR_CUSTOM_FLAG_EXECUTE = "{VuhDo} Error: Your custom flag validator did not execute:";
-VUHDO_I18N_ERROR_CUSTOM_FLAG_BLOCKED = "{VuhDo} Error: A custom flag of this bouquet tried to call a forbidden function but has been blocked from doing so. Remember only to import strings from trusted sources.";
-VUHDO_I18N_ERROR_INVALID_VALIDATOR = "{VuhDo} Error: Invalid validator:";
+VUHDO_I18N_BOUQUET_CUSTOM_FLAG = "Свой флаг";
+VUHDO_I18N_ERROR_CUSTOM_FLAG_LOAD = "{VuhDo} Ошибка: Валидатор Вашего флага не загрузился:";
+VUHDO_I18N_ERROR_CUSTOM_FLAG_EXECUTE = "{VuhDo} Ошибка: Валидатор Вашего флага не был выполнен:";
+VUHDO_I18N_ERROR_CUSTOM_FLAG_BLOCKED = "{VuhDo} Ошибка: Флаг этого букета пытался вызвать недоступную функцию и был заблокирован. Старайтесь загружать букеты только из доверенных источников.";
+VUHDO_I18N_ERROR_INVALID_VALIDATOR = "{VuhDo} Ошибка: Недоступный валидатор:";
 
 -- 3.72
-VUHDO_I18N_BOUQUET_DEMON_HUNTER_TANK = "Flag: Role Tank, Demon Hunter";
-VUHDO_I18N_DEMON_HUNTERS = "Demon Hunters";
+VUHDO_I18N_BOUQUET_DEMON_HUNTER_TANK = "Флаг: Танк, Охотник на демонов";
+VUHDO_I18N_DEMON_HUNTERS = "Охотники на демонов";
 
 -- 3.77
-VUHDO_I18N_DEF_COUNTER_OVERFLOW_ABSORB = "Counter: Mythic+ Overflow Absorb #k";
+VUHDO_I18N_DEF_COUNTER_OVERFLOW_ABSORB = "Счётчик: М+ Абсорб Переполняющего аффикса # тыс.";
 
 -- 3.79
-VUHDO_I18N_DEFAULT_RES_ANNOUNCE_MASS = "Casting mass resurrection!";
+VUHDO_I18N_DEFAULT_RES_ANNOUNCE_MASS = "Использую массовое воскрешение!";
 
 -- 3.81
-VUHDO_I18N_BOUQUET_OVERFLOW_COUNTER = "Overflow Mythic+ Affix";
+VUHDO_I18N_BOUQUET_OVERFLOW_COUNTER = "Переполняющий М+ аффикс";
 
 -- 3.82
-VUHDO_I18N_SPELL_TRACE = "Icon: Spell Trace";
-VUHDO_I18N_DEF_SPELL_TRACE = "Spell Trace";
-VUHDO_I18N_TRAIL_OF_LIGHT = "Icon: Trail of Light";
-VUHDO_I18N_DEF_TRAIL_OF_LIGHT = "Trail of Light";
+VUHDO_I18N_SPELL_TRACE = "Иконка: Отслеживание";
+VUHDO_I18N_DEF_SPELL_TRACE = "Отслеживание";
+VUHDO_I18N_TRAIL_OF_LIGHT = "Иконка: Дорога Света";
+VUHDO_I18N_DEF_TRAIL_OF_LIGHT = "Дорога Света";
 
 -- 3.83
-VUHDO_I18N_BOUQUET_STATUS_MANA_HEALER_ONLY = "Statusbar: Mana % (Healer Only)";
-VUHDO_I18N_DEF_BOUQUET_BAR_MANA_HEALER_ONLY = "Manabars: Mana (Healer Only)";
+VUHDO_I18N_BOUQUET_STATUS_MANA_HEALER_ONLY = "Статус: Мана % (Только целители)";
+VUHDO_I18N_DEF_BOUQUET_BAR_MANA_HEALER_ONLY = "Манабар: Мана (Только целители)";
 
 -- 3.98
-VUHDO_I18N_BOUQUET_HAS_SUMMON_ICON = "Icon: Has Summon";
-VUHDO_I18N_DEF_BOUQUET_HAS_SUMMON = "Summon Status Icon";
-VUHDO_I18N_DEF_BOUQUET_ROLE_AND_SUMMON = "Role & Summon Status Icon";
+VUHDO_I18N_BOUQUET_HAS_SUMMON_ICON = "Иконка: Есть призванное существо";
+VUHDO_I18N_DEF_BOUQUET_HAS_SUMMON = "Вызванное существо: иконка статуса";
+VUHDO_I18N_DEF_BOUQUET_ROLE_AND_SUMMON = "Роль & Статус вызванного существа";
 
 -- 3.99
-VUHDO_I18N_BOUQUET_IS_PHASED = "Icon: Is Phased";
-VUHDO_I18N_BOUQUET_IS_WAR_MODE_PHASED = "Icon: Is War Mode Phased";
-VUHDO_I18N_DEF_BOUQUET_IS_PHASED = "Is Phased Icon";
+VUHDO_I18N_BOUQUET_IS_PHASED = "Иконка: фаза";
+VUHDO_I18N_BOUQUET_IS_WAR_MODE_PHASED = "Иконка: В фазе Режима Войны";
+VUHDO_I18N_DEF_BOUQUET_IS_PHASED = "Иконка фазы";
 
 -- 3.101
-VUHDO_I18N_DEF_PLAYER_COMBO_POINTS = "Player Combo Points";
-VUHDO_I18N_BOUQUET_OWN_COMBO_POINTS_EQUALS = "Flag: Own Combo Points ==";
-VUHDO_I18N_DEF_PLAYER_SOUL_SHARDS = "Player Soul Shards";
-VUHDO_I18N_BOUQUET_OWN_SOUL_SHARDS_EQUALS = "Flag: Own Soul Shards ==";
-VUHDO_I18N_DEF_PLAYER_RUNES = "Player Runes";
-VUHDO_I18N_BOUQUET_OWN_RUNES_EQUALS = "Flag: Own Runes ==";
-VUHDO_I18N_DEF_PLAYER_ARCANE_CHARGES = "Player Arcane Charges";
-VUHDO_I18N_BOUQUET_OWN_ARCANE_CHARGES_EQUALS = "Flag: Own Arcane Charges ==";
-VUHDO_I18N_DEBUFF_BLACKLIST_ADDED = "Added \"[%s] %s\" to the debuff backlist.";
+VUHDO_I18N_DEF_PLAYER_COMBO_POINTS = "Серия приёмов игрока";
+VUHDO_I18N_BOUQUET_OWN_COMBO_POINTS_EQUALS = "Флаг: Своя серия приёмов ==";
+VUHDO_I18N_DEF_PLAYER_SOUL_SHARDS = "Осколки души игрока";
+VUHDO_I18N_BOUQUET_OWN_SOUL_SHARDS_EQUALS = "Флаг: Свои осколки души ==";
+VUHDO_I18N_DEF_PLAYER_RUNES = "Руны игрока";
+VUHDO_I18N_BOUQUET_OWN_RUNES_EQUALS = "Флаг: Свои руны ==";
+VUHDO_I18N_DEF_PLAYER_ARCANE_CHARGES = "Чародейские заряды игрока";
+VUHDO_I18N_BOUQUET_OWN_ARCANE_CHARGES_EQUALS = "Флаг: Свои чародейские заряды ==";
+VUHDO_I18N_DEBUFF_BLACKLIST_ADDED = "Добавлено \"[%s] %s\" к чёрному списку дебафов.";
 
 -- 3.104
-VUHDO_I18N_PLAY_SOUND_FILE_ERR = "Could not play sound \"%s\": %s";
-VUHDO_I18N_PLAY_SOUND_FILE_DEBUFF_ERR = "Could not play sound \"%s\" for standard debuff. Adjust your settings under 'VuhDo Options > Debuffs > Standard > Debuff Sound'.";
-VUHDO_I18N_PLAY_SOUND_FILE_CUSTOM_DEBUFF_ERR = "Could not play sound \"%s\" for custom debuff \"%s\". Adjust your settings under 'VuhDo Options > Debuffs > Custom'.";
+VUHDO_I18N_PLAY_SOUND_FILE_ERR = "Не удалось воспроизвести звук \"%s\": %s";
+VUHDO_I18N_PLAY_SOUND_FILE_DEBUFF_ERR = "Не удалось воспроизвести звук \"%s\" для стандартного дебафа. Измените свой настройки в 'VuhDo Настройки > Дебафф > Стандарт > Звук дебаффа'.";
+VUHDO_I18N_PLAY_SOUND_FILE_CUSTOM_DEBUFF_ERR = "Не удалось воспроизвести звук \"%s\" для своего дебафа \"%s\". Измените свой настройки в 'VuhDo Настройки > Дебафф > Своё'.";
 
+-- 3.122
+VUHDO_I18N_BOUQUET_STATUS_POWER_TANK_ONLY = "Статус: Ресурс % (Танки)";
+VUHDO_I18N_DEF_BOUQUET_BAR_MANA_TANK_ONLY = "Манабар: Ресурс (Танки)";
+
+-- 3.131
+VUHDO_I18N_DEF_COUNTER_HEAL_ABSORB = "Счётчик: Всё поглощение исцеления # тыс.";
+VUHDO_I18N_DEF_STATUS_HEAL_ABSORB = "Статус: Поглощение исцеления";
+
+-- 3.135
+VUHDO_I18N_TRINKET_1 = "Тринкет 1";
+VUHDO_I18N_TRINKET_2 = "Тринкет 2";
+
+-- 3.139
+VUHDO_I18N_EVOKERS = "Пробудители";
+
+-- 3.143
+VUHDO_I18N_BUFFC_EARTH_SHIELD = "Щит земли (Свой)";
+
+-- 3.150
+VUHDO_I18N_ADDON_COMPARTMENT_ICON = "Иконка в списке аддонов: ";
+
+-- 3.152
+VUHDO_I18N_SPELL_TRACE_SINGLE = "Иконка: Отслеживание Спеллов (Одиночное)";
+
+-- 3.154
+VUHDO_I18N_SPELL_TRACE_INCOMING = "Иконка: Отслеживание Спеллов (Входящие)";
+VUHDO_I18N_SPELL_TRACE_HEAL = "Иконка: Отслеживание Спеллов (Исцеление)";
+
+-- 3.157
+VUHDO_I18N_TEXT_PROVIDER_OVERHEAL = "Избыточное исцеление: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_OVERHEAL_PLUS = "Избыточное исцеление: +<#n>k";
+VUHDO_I18N_TEXT_PROVIDER_INCOMING_HEAL = "Входящее исцеление: <#nk>";
+VUHDO_I18N_TEXT_PROVIDER_SHIELD_ABSORB = "Защищающий щит: <#nk>"; -- might want to check later
+VUHDO_I18N_TEXT_PROVIDER_HEAL_ABSORB = "Общее поглощение исцеления: <#nk>"; 
+VUHDO_I18N_TEXT_PROVIDER_THREAT = "Угроза: <#n>%";
+VUHDO_I18N_TEXT_PROVIDER_CHI = "Ци: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_HOLY_POWER = "Энергия света: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_COMBO_POINTS = "Очки комбо: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_SOUL_SHARDS = "Осколки души: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_RUNES = "Руны: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_ARCANE_CHARGES = "Чародейские заряды: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_PERCENT = "Мана: <#n>%";
+VUHDO_I18N_TEXT_PROVIDER_MANA_PERCENT_TENTH = "Мана: <#n/10%>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_UNIT_OF = "Мана: <#n>/<#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_KILO_OF = "Мана: <#nk>/<#nk>";
+VUHDO_I18N_TEXT_PROVIDER_MANA = "Мана: <#n>";
+VUHDO_I18N_TEXT_PROVIDER_MANA_KILO = "Мана: <#nk>";
+VUHDO_I18N_BOUQUET_STATUS_HEALTH_IF_ACTIVE = "Панель статуса: Здоровье % если активно";
+
+VUHDO_I18N_DEF_COUNTER_ACTIVE_AURAS = "Counter: Active Bouquet Auras #k";
+
+VUHDO_I18N_BOUQUET_EVOKER_REVERSION = "Evoker Reversion (non-echo)";
+VUHDO_I18N_BOUQUET_EVOKER_REVERSION_ECHO = "Evoker Reversion (echo)";
+VUHDO_I18N_BOUQUET_EVOKER_DREAM_BREATH = "Evoker Dream Breath (non-echo)";
+VUHDO_I18N_BOUQUET_EVOKER_DREAM_BREATH_ECHO = "Evoker Dream Breath (echo)";
+VUHDO_I18N_BOUQUET_EVOKER_ALL_ECHO = "Evoker All HoT Echoes";
+
+VUHDO_I18N_TRAIL_OF_LIGHT_NEXT = "Flag: Trail of Light (Next)";
+VUHDO_I18N_DEF_TRAIL_OF_LIGHT_NEXT = "Trail of Light (Next)";
+VUHDO_I18N_BOUQUET_DEBUFF_BLEED = "Flag: Debuff Bleed";

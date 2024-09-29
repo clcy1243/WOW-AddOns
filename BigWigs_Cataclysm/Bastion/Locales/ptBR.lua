@@ -1,6 +1,12 @@
 
-local L = BigWigs:NewBossLocale("Cho'gall", "ptBR")
+local L = BigWigs:NewBossLocale("Halfus Wyrmbreaker", "ptBR")
 if not L then return end
+if L then
+	L.strikes_message = "Golpe"
+	--L.freed_message = "%s freed %s"
+end
+
+L = BigWigs:NewBossLocale("Cho'gall", "ptBR")
 if L then
 	L.orders = "Trocas de modos"
 	L.orders_desc = "Avisa quando Cho'gall muda a ordem de posições entre Sombra/Chamas."
@@ -44,17 +50,6 @@ if L then
 	L.twilight_shift = "Troca"
 end
 
-L = BigWigs:NewBossLocale("Halfus Wyrmbreaker", "ptBR")
-if L then
-	L.strikes_message = "Golpe"
-
-	L.breath_message = "Baforada iminente!"
-	L.breath_bar = "~Baforada"
-
-	L.engage_yell = "Cho'gall irá decapitar vocês!"
-
-end
-
 L = BigWigs:NewBossLocale("Sinestra", "ptBR")
 if L then
 	L.whelps = "Dragonetes"
@@ -74,8 +69,6 @@ end
 
 L = BigWigs:NewBossLocale("Ascendant Council", "ptBR")
 if L then
-	L.static_overload_say = "Sobrecarga estática"
-	L.gravity_core_say = "Núcleo gravitacional"
 	L.health_report = "%s com %d%%, mudança de fase iminente!"
 	L.switch = "Troca"
 	L.switch_desc = "Avisa a troca de chefes."
@@ -95,4 +88,3 @@ if L then
 
 	L.last_phase_trigger = "Que apresentação incrível..."
 end
-

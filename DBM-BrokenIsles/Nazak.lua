@@ -1,11 +1,11 @@
-local mod	= DBM:NewMod(1783, "DBM-BrokenIsles", nil, 822)
+local mod	= DBM:NewMod(1783, "DBM-BrokenIsles", 1, 822)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145614")
+mod:SetRevision("20240422191412")
 mod:SetCreatureID(110321)
 mod:SetEncounterID(1950)
 mod:SetReCombatTime(20)
-mod:SetZone()
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 mod:RegisterCombat("combat")
 
@@ -21,7 +21,7 @@ local warnWebWrap				= mod:NewTargetAnnounce(219865, 2)
 local specWarnFoundation		= mod:NewSpecialWarningSpell(219591)
 local specWarnWebWrap			= mod:NewSpecialWarningSwitch(219865, "Dps")--Overkill? maybe just melee or just ranged or off by default
 
-local timerCorrodingSprayCD		= mod:NewCDTimer(23.2, 219349, nil, nil, nil, 5, nil, DBM_CORE_L.TANK_ICON)
+local timerCorrodingSprayCD		= mod:NewCDTimer(23.2, 219349, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 local timerFoundatoinCD			= mod:NewAITimer(90, 219591, nil, nil, nil, 6)
 local timerWebWrapCD			= mod:NewCDTimer(36.9, 219865, nil, nil, nil, 3)
 
@@ -57,7 +57,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if spellId == 219591 then
 		specWarnFoundation:Show()
 --		specWarnFoundation:Play("")
-		timerFoundatoinCD:start()
+		timerFoundatoinCD:Start()
 	elseif spellId == 219865 then
 		warnWebWrap:CombinedShow(0.3, args.destName)
 	end

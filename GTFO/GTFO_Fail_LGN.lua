@@ -5,7 +5,7 @@
 GTFO Fail List - Legion
 ]]--
 
-if (not GTFO.ClassicMode) then
+if (GTFO.RetailMode) then
 
 --- ********************
 --- * The Broken Isles *
@@ -425,6 +425,29 @@ GTFO.SpellID["241666"] = {
   sound = 3;
 };
 
+GTFO.SpellID["241719"] = {
+  --desc = "Jormog's Fury (Jormog the Behemoth)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["242472"] = {
+  --desc = "Spit Bile (Bile Spitter)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["238027"] = {
+  --desc = "Stalactite (Tugar Bloodtotem)";
+  sound = 3;
+};
+
+GTFO.SpellID["286002"] = {
+  --desc = "Explode (Bomb Bot)";
+  sound = 3;
+  vehicle = true;
+};
+
 -- *******************
 -- * Brawler's Guild *
 -- *******************
@@ -725,11 +748,6 @@ GTFO.SpellID["201273"] = {
   sound = 3;
 };
 
-GTFO.SpellID["201400"] = {
-  --desc = "Dread Inferno (Dreadfire Imp)";
-  sound = 3;
-};
-
 GTFO.SpellID["200111"] = {
   --desc = "Apocalyptic Fire (Shade of Xavius)";
   sound = 3;
@@ -739,6 +757,12 @@ GTFO.SpellID["198916"] = {
   --desc = "Vile Burst (Vile Mushroom)";
   sound = 3;
 };
+
+GTFO.SpellID["198386"] = {
+  --desc = "Primal Rampage (Archdruid Glaidalis)";
+  sound = 3;
+};
+
 
 -- ******************
 -- * Eye of Azshara *
@@ -815,6 +839,12 @@ GTFO.SpellID["192708"] = {
 -- * Neltharion's Lair *
 -- *********************
 
+GTFO.SpellID["188169"] = {
+  --desc = "Razor Shards (Rokmora)";
+  sound = 3;
+  tankSound = 0;
+};
+
 GTFO.SpellID["202089"] = {
   --desc = "Scorch (Burning Geode)";
   sound = 3;
@@ -835,6 +865,19 @@ GTFO.SpellID["226406"] = {
   sound = 3;
   tankSound = 0;
 };
+
+GTFO.SpellID["183100"] = {
+  --desc = "Avalanche (Mightstone Breaker)";
+  sound = 3;
+};
+
+GTFO.SpellID["226296"] = {
+  --desc = "Piercing Shards (Vileshard Hulk)";
+  applicationOnly = true;
+  sound = 3;
+  tankSound = 0;
+};
+
 
 -- *************
 -- * The Nexus *
@@ -997,6 +1040,14 @@ GTFO.SpellID["219498"] = {
   sound = 3;
 };
 
+GTFO.SpellID["224333"] = {
+  --desc = "Fel Detonation (Felbound Enforcer)";
+  applicationOnly = true;
+  sound = 3;
+  tankSound = 0;
+  test = true;
+};
+
 GTFO.SpellID["209378"] = {
   --desc = "Whirling Blades (Imacu'tya)";
   applicationOnly = true;
@@ -1026,14 +1077,13 @@ GTFO.SpellID["224333"] = {
 GTFO.SpellID["209630"] = {
   --desc = "Piercing Gale (Advisor Melandrus)";
   sound = 3;
-  test = true;
 };
 
 GTFO.SpellID["209628"] = {
   --desc = "Piercing Gale (Advisor Melandrus)";
   sound = 3;
-  test = true;
 };
+
 
 
 -- ************************
@@ -1112,6 +1162,12 @@ GTFO.SpellID["200256"] = {
 
 GTFO.SpellID["200261"] = {
   --desc = "Bonebreaking Strike (Soul-Torn Champion)";
+  sound = 3;
+};
+
+GTFO.SpellID["197974"] = {
+  --desc = "Bonecrushing Strike (Soul-Torn Vanguard)";
+  applicationOnly = true;
   sound = 3;
 };
 
@@ -1651,10 +1707,14 @@ GTFO.SpellID["228519"] = {
 -- TODO: Wash Away (Mrrgria)
 -- TODO: Bubble Blast (Shoreline Tidespeaker)
 -- TODO: Severe Dusting (Babblet)
--- TODO: Mortal Strike (Attumen) -- Non-tank fail (Avoidable?)
 -- TODO: Will Breaker (Lord Crispin Ference) -- Non-tank fail
 -- TODO: Flame Wreath (Shade of Medivh) -- (If you cause it)
 -- TODO: Shadow Phlegm (Viz'aduum the Watcher) -- Avoidable?
+
+GTFO.SpellID["227568"] = {
+  --desc = "Burning Leg Sweep (Toe Knee)";
+  sound = 3;
+};
 
 GTFO.SpellID["227416"] = {
   --desc = "Wondrous Radiance (Galindre)";
@@ -1682,13 +1742,29 @@ GTFO.SpellID["227977"] = {
   sound = 3;
 };
 
+GTFO.SpellID["227493"] = {
+  --desc = "Mortal Strike (Attumen the Huntsman)";
+  sound = 3;
+  tankSound = 0;
+};
+
 GTFO.SpellID["227339"] = {
-  --desc = "Mezair (Midnight)";
+  --desc = "Mezair - Fire (Midnight)";
+  sound = 3;
+};
+
+GTFO.SpellID["254644"] = {
+  --desc = "Mezair - Physical (Midnight)";
   sound = 3;
 };
 
 GTFO.SpellID["227645"] = {
   --desc = "Spectral Charge (Midnight)";
+  sound = 3;
+};
+
+GTFO.SpellID["228603"] = {
+  --desc = "Charge (Spectral Charger)";
   sound = 3;
 };
 
@@ -1761,6 +1837,27 @@ GTFO.SpellID["229161"] = {
 GTFO.SpellID["229151"] = {
   --desc = "Disintegrate (Viz'aduum the Watcher)";
   sound = 3;
+};
+
+GTFO.SpellID["227434"] = {
+  --desc = "Bubble Blast (Shoreline Tidespeaker)";
+  sound = 3;
+};
+
+GTFO.SpellID["227799"] = {
+  --desc = "Wash Away (Mrrgria)";
+  sound = 3;
+};
+
+GTFO.SpellID["227780"] = {
+  --desc = "Thunder Ritual (Mrrgria)";
+	soundFunction = function() -- Warn only if you get hit more than once
+		if (GTFO_FindEvent("ThunderRitual")) then
+			return 3;
+		end
+		GTFO_AddEvent("ThunderRitual", 2);
+		return 0;
+	end
 };
 
 -- **************************

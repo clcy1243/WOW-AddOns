@@ -5,7 +5,7 @@
 GTFO Spell List - Legion
 ]]--
 
-if (not GTFO.ClassicMode) then
+if (GTFO.RetailMode) then
 
 --- ********************
 --- * The Broken Isles *
@@ -398,8 +398,19 @@ GTFO.SpellID["52117"] = {
 GTFO.SpellID["234422"] = {
   --desc = "Aura of Decay (Inquisitor Variss)";
   applicationOnly = true;
-	minimumStacks = 3;
-  sound = 2;
+  soundFunction = function() 
+	local stacks = GTFO_DebuffStackCount("player", 234422);
+	if (stacks >= 5) then
+		return 1;
+	else
+		return 2;
+	end
+  end;
+};
+
+GTFO.SpellID["240782"] = {
+  --desc = "Nether Storm (Highlord Kruul)";
+  sound = 1;
 };
 
 GTFO.SpellID["199349"] = {
@@ -437,7 +448,10 @@ GTFO.SpellID["238443"] = {
   sound = 1;
 };
 
-
+GTFO.SpellID["293579"] = {
+  --desc = "Electric Wave (Essence of Hati)";
+  sound = 1;
+};
 
 -- **********
 -- * Mardum *
@@ -911,6 +925,11 @@ GTFO.SpellID["211391"] = {
   sound = 1;
 };
 
+GTFO.SpellID["209512"] = {
+  --desc = "Disrupting Energy (Guardian Construct)";
+  sound = 1;
+};
+
 -- ************************
 -- * Vault of the Wardens *
 -- ************************
@@ -984,6 +1003,7 @@ GTFO.SpellID["197521"] = {
 
 GTFO.SpellID["197821"] = {
   --desc = "Felblazed Ground (Illysanna Ravencrest)";
+  ignoreApplication = true;
   sound = 1;
 };
 
@@ -1384,10 +1404,14 @@ GTFO.SpellID["230197"] = {
 --- * Return to Karazhan *
 --- **********************
 
--- TODO: Flame Gale (Toe Knee)
 -- TODO: Flashing Forks (Coggleston)
 -- TODO: Iron Whirlwind (Baron Rafe Dreuger) -- tank avoidable?
 
+GTFO.SpellID["227480"] = {
+  --desc = "Flame Gale (Toe Knee)";
+  applicationOnly = true;
+  sound = 1;
+};
 
 GTFO.SpellID["228200"] = {
   --desc = "Burning Blaze (Luminore)";

@@ -4,27 +4,23 @@ if L then
 	L.storm_duration = "Tormenta de relámpagos duración"
 	L.storm_duration_desc = "Una barra a parte avisa para la duración del casteo de la Tormenta de relámpagos."
 	L.storm_short = "Tormenta"
-
-	L.in_water = "¡Estás en el agua!"
 end
 
 L = BigWigs:NewBossLocale("Horridon", "esES") or BigWigs:NewBossLocale("Horridon", "esMX")
 if L then
-	L.focus_only = "|cffff0000Solo alertas de Foco.|r "
-
 	L.charge_trigger = "fija la vista" -- Horridon sets his eyes on PLAYERNAME and stamps his tail!
 	L.door_trigger = "salen en tropel" -- Farraki forces pour from the Farraki Tribal Door!
 	--L.orb_trigger = "charge" -- PLAYERNAME forces Horridon to charge the Farraki door!
 
-	L.chain_lightning_desc = L.focus_only .. "{-7124}"
+	L.chain_lightning_desc = "|cffff0000Solo alertas de Foco.|r {-7124}"
 	L.chain_lightning_message = "¡Tu foco está casteando Cadena de relámpagos!"
 	L.chain_lightning_bar = "Foco: Cadena de relámpagos"
 
-	L.fireball_desc = L.focus_only .. "{-7122}"
+	L.fireball_desc = "|cffff0000Solo alertas de Foco.|r {-7122}"
 	L.fireball_message = "¡Tu foco está casteando Bola de Fuego!"
 	L.fireball_bar = "Foco: Bola de Fuego"
 
-	L.venom_bolt_volley_desc = L.focus_only .. "{-7112}"
+	L.venom_bolt_volley_desc = "|cffff0000Solo alertas de Foco.|r {-7112}"
 	L.venom_bolt_volley_message = "¡Tu foco está casteando Salva!"
 	L.venom_bolt_volley_bar = "Foco: Salva"
 
@@ -147,14 +143,7 @@ L = BigWigs:NewBossLocale("Iron Qon", "esES") or BigWigs:NewBossLocale("Iron Qon
 if L then
 	L.molten_energy = "Energía de arrabio"
 
-	L.overload_casting = "Casteando Sobrecarga de arrabio"
-	L.overload_casting_desc = "Avisa cuando está casteando Sobrecarga de arrabio"
-
 	L.arcing_lightning_cleared = "Raid limpia de Arco de relámpagos"
-
-	L.custom_off_spear_target = "Objetivo de Lanzar lanza"
-	L.custom_off_spear_target_desc = "Intentará avisar del objetivo de Lanzar lanza. Esto requiere un uso elevado de la CPU y a veces muestra un objetivo equivocado así que esta deshabilitado por defecto.\n|cFFADFF2FCONSEJO: Crear roles de TANQUE debería ayudar a aumentar la precisión del aviso.|r"
-	L.possible_spear_target = "Posible Lanza"
 end
 
 L = BigWigs:NewBossLocale("Twin Consorts", "esES") or BigWigs:NewBossLocale("Twin Consorts", "esMX")

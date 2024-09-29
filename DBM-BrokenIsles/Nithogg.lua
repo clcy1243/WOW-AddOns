@@ -1,18 +1,18 @@
-local mod	= DBM:NewMod(1749, "DBM-BrokenIsles", nil, 822)
+local mod	= DBM:NewMod(1749, "DBM-BrokenIsles", 1, 822)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145614")
+mod:SetRevision("20230124052137")
 mod:SetCreatureID(107023)
 mod:SetEncounterID(1880)
 mod:SetReCombatTime(20)
-mod:SetZone()
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 212867 212852",
 	"SPELL_CAST_SUCCESS 212887",
-	"SPELL_AURA_APPLIED 212943 212852 212884",
+	"SPELL_AURA_APPLIED 212943 212852 212884 212887",
 	"RAID_BOSS_WHISPER",
 	"UNIT_SPELLCAST_SUCCEEDED target focus mouseover"
 )
@@ -32,7 +32,7 @@ local specWarnStorm					= mod:NewSpecialWarningMove(212884, nil, nil, nil, 1, 2)
 local timerCracklingJoltCD			= mod:NewCDTimer(11, 212841, nil, nil, nil, 3)
 local timerLightningStormCD			= mod:NewCDTimer(30.5, 212867, nil, nil, nil, 3)
 local timerStaticChargeCD			= mod:NewCDTimer(40.2, 212887, nil, "-Tank", nil, 3)
-local timerStormBreathCD			= mod:NewCDTimer(23.1, 212852, nil, "Tank", nil, 5, nil, DBM_CORE_L.TANK_ICON)
+local timerStormBreathCD			= mod:NewCDTimer(23.1, 212852, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 
 --mod:AddReadyCheckOption(37460, false)
 
@@ -113,8 +113,7 @@ function mod:OnTranscriptorSync(msg, targetName)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 212837 and self:AntiSpam(4, 2) then--Only event. not targetting boss no timer sorry!
 		--Could sync, but I don't want to spam comms for this, that's just stupid.
 		timerCracklingJoltCD:Start()

@@ -1,6 +1,7 @@
 local IPUIDebug=false
 
 function InstancePortalUI_OnLoad(self)
+	local LoadAddOn = C_AddOns.LoadAddOn or LoadAddOn
 	LoadAddOn("Blizzard_WorldMap")
 	self:RegisterEvent("ADDON_LOADED")
 
@@ -28,6 +29,13 @@ end
 function IPUIDropDownInit(_, _, dropDownFrame, _, _, _, _, clickedButton)
 	local trackingOptionsFrame = WorldMapFrame.overlayFrames[2]
 	local trackingOptionsMenu = trackingOptionsFrame.DropDown
+
+	local _, _, _, tocVersion = GetBuildInfo()
+
+	--Quick fix for issue with Skada and others
+	if tocVersion >= 110000 then
+		return
+	end
 
 	IPUIPrintDebug("IPUIDropDownInit")
 
@@ -61,7 +69,7 @@ function IPUIDropDownInit(_, _, dropDownFrame, _, _, _, _, clickedButton)
 		info.func = OnSelection;
 		info.keepShownOnClick = true;
 		info.value = "IPUITrackInstancePortals";
-		UIDropDownMenu_AddButton(info);
+		--UIDropDownMenu_AddButton(info);
 		
 		info = UIDropDownMenu_CreateInfo();
 		info.isTitle = nil;
@@ -78,11 +86,12 @@ end
 
 function IPUIPrintDebug(t)
 	if (IPUIDebug) then
-		print(t)
+		print("IPUIDEBUG - "..t)
 	end
 end
 
 function IPUIGetEntranceInfoForMapID(mapID, i)
+		IPUIPrintDebug("IPUIGetEntranceInfoForMapID:"..mapID)
 
 		instancePortal = IPUIPinDB[mapID][i]
 		if not (instancePortal) then
@@ -99,14 +108,19 @@ function IPUIGetEntranceInfoForMapID(mapID, i)
 		local playerFaction = UnitFactionGroup("player")
 
 		if hubName == "FactionSpecific" then
+			IPUIPrintDebug("FactionSpecific for map: "..mapID)
 			factionWhitelist = playerFaction;
 			desired_IPUIInstanceMapDB = IPUIInstanceFactionSpecificDB[factionWhitelist];
 			hubName = nil
 		elseif hubName == "Alliance" or hubName == "Horde" then
-			factionWhitelist = hubName;
+			IPUIPrintDebug("HubName:"..hubName.." for map: "..mapID)
+		factionWhitelist = hubName;
 			desired_IPUIInstanceMapDB = IPUIInstanceFactionSpecificDB[factionWhitelist];
 			hubName = nil
 		end
+		
+		IPUIPrintDebug("A")
+
 		
 		if hubName then
 			entranceInfo = {};
@@ -127,10 +141,10 @@ function IPUIGetEntranceInfoForMapID(mapID, i)
 
 				if dungonType == 1 then
 					dungeonCount=dungeonCount+1
-					description = description..localizedName.." |cFF888888("..LFG_TYPE_DUNGEON.." - "..requiredLevel..")|r\n"
+					description = description..localizedName.." |cFF888888("..LFG_TYPE_DUNGEON..")|r\n"
 				else
 					raidCount=raidCount+1
-					description = description..localizedName.." |cFF888888("..LFG_TYPE_RAID.." - "..requiredLevel..")|r\n"
+					description = description..localizedName.." |cFF888888("..LFG_TYPE_RAID..")|r\n"
 				end
 			end
 
@@ -150,6 +164,9 @@ function IPUIGetEntranceInfoForMapID(mapID, i)
 
 			return entranceInfo
 		end
+		
+		IPUIPrintDebug("B")
+
 
 		local m = 1
 		if desired_IPUIInstanceMapDB[subInstanceMapIDs[m]] then
@@ -176,7 +193,7 @@ function IPUIGetEntranceInfoForMapID(mapID, i)
 
 			local localizedName = EJ_GetInstanceInfo(instanceID);
 
-			entranceInfo["name"] = localizedName.." |cFF888888("..requiredLevel..")|r";
+			entranceInfo["name"] = localizedName.."|r";
 
 			entranceInfo["journalInstanceID"] = instanceID;
 			entranceInfo["tier"] = tier;
@@ -187,4 +204,7 @@ function IPUIGetEntranceInfoForMapID(mapID, i)
 
 			return entranceInfo
 		end
+		
+		IPUIPrintDebug("C")
+
 end

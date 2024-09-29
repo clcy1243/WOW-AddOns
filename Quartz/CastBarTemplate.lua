@@ -19,8 +19,16 @@
 local Quartz3 = LibStub("AceAddon-3.0"):GetAddon("Quartz3")
 local L = LibStub("AceLocale-3.0"):GetLocale("Quartz3")
 
+local LibWindow = LibStub("LibWindow-1.1")
 local media = LibStub("LibSharedMedia-3.0")
 local lsmlist = AceGUIWidgetLSMlists
+
+local WoWRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
+local WoWCata = (WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC)
+local WoWWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC)
+local WoWClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+
+local LibClassicCasterino = WoWClassic and LibStub("LibClassicCasterino", true)
 
 ----------------------------
 -- Upvalues
@@ -28,16 +36,13 @@ local min, type, format, unpack, setmetatable = math.min, type, string.format, u
 local CreateFrame, GetTime, UIParent = CreateFrame, GetTime, UIParent
 local UnitName, UnitCastingInfo, UnitChannelInfo = UnitName, UnitCastingInfo, UnitChannelInfo
 
-local WoWClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
-if WoWClassic then
+if LibClassicCasterino then
 	UnitCastingInfo = function(unit)
-		if unit ~= "player" then return end
-		return CastingInfo()
+		return LibClassicCasterino:UnitCastingInfo(unit)
 	end
 
 	UnitChannelInfo = function(unit)
-		if unit ~= "player" then return end
-		return ChannelInfo()
+		return LibClassicCasterino:UnitChannelInfo(unit)
 	end
 end
 
@@ -83,7 +88,7 @@ local function OnUpdate(self)
 		elseif self.channeling then
 			remainingTime = endTime - currentTime
 			perc = remainingTime / (endTime - startTime)
-			
+
 			delayFormat, delayFormatTime = "|cffff0000-%.1f|cffffffff %s", "|cffff0000-%.1f|cffffffff %s / %s"
 		end
 
@@ -91,17 +96,18 @@ local function OnUpdate(self)
 		self.Spark:ClearAllPoints()
 		self.Spark:SetPoint("CENTER", self.Bar, "LEFT", perc * self.Bar:GetWidth(), 0)
 
+		local timeTextValue = db.casttimecountup and ((endTime - startTime) - remainingTime) or remainingTime
 		if delay and delay ~= 0 then
 			if db.hidecasttime then
-				self.TimeText:SetFormattedText("|cffff0000+%.1f|cffffffff %s", delay, format(TimeFmt(remainingTime)))
+				self.TimeText:SetFormattedText(delayFormat, delay, format(TimeFmt(timeTextValue)))
 			else
-				self.TimeText:SetFormattedText("|cffff0000+%.1f|cffffffff %s / %s", delay, format(TimeFmt(remainingTime)), format(TimeFmt(endTime - startTime, true)))
+				self.TimeText:SetFormattedText(delayFormatTime, delay, format(TimeFmt(timeTextValue)), format(TimeFmt(endTime - startTime, true)))
 			end
 		else
 			if db.hidecasttime then
-				self.TimeText:SetFormattedText(TimeFmt(remainingTime))
+				self.TimeText:SetFormattedText(TimeFmt(timeTextValue))
 			else
-				self.TimeText:SetFormattedText("%s / %s", format(TimeFmt(remainingTime)), format(TimeFmt(endTime - startTime, true)))
+				self.TimeText:SetFormattedText("%s / %s", format(TimeFmt(timeTextValue)), format(TimeFmt(endTime - startTime, true)))
 			end
 		end
 
@@ -143,14 +149,17 @@ end
 ----------------------------
 -- Template Methods
 
-local function SetNameText(self, name)
+function CastBarTemplate:SetNameText(name)
 	if self.config.targetname and self.targetName and self.targetName ~= "" then
-		self.Text:SetFormattedText("%s -> %s", name, self.targetName)
+		if self.config.targetnamestyle == "on" then
+			self.Text:SetFormattedText(L["%s on %s"], name, self.targetName)
+		else
+			self.Text:SetFormattedText("%s -> %s", name, self.targetName)
+		end
 	else
 		self.Text:SetText(name)
 	end
 end
-CastBarTemplate.SetNameText = SetNameText
 
 local function ToggleCastNotInterruptible(self, notInterruptible, init)
 	if self.unit == "player" and not init then return end
@@ -170,7 +179,12 @@ local function ToggleCastNotInterruptible(self, notInterruptible, init)
 		r,g,b = unpack(Quartz3.db.profile.bordercolor)
 		a = Quartz3.db.profile.borderalpha
 	end
-	self:SetBackdrop(self.backdrop)
+
+	-- apply new backdrop
+	self.backdropInfo = self.backdrop
+	self:ApplyBackdrop()
+
+	-- setbackdrop colors
 	self:SetBackdropBorderColor(r, g, b, a)
 
 	r, g, b = unpack(Quartz3.db.profile.backgroundcolor)
@@ -210,22 +224,36 @@ function CastBarTemplate:UNIT_SPELLCAST_START(event, unit, guid, spellID)
 		return
 	end
 	local db = self.config
-	if event == "UNIT_SPELLCAST_START" then
-		self.casting, self.channeling = true, nil
-	else
-		self.casting, self.channeling = nil, true
-	end
 
-	local spell, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible
-	if self.casting then
-		spell, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
+	local spell, displayName, icon, startTime, endTime, _, notInterruptible, numStages
+	if event == "UNIT_SPELLCAST_START" then
+		spell, displayName, icon, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(unit)
 	else -- self.channeling
-		spell, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
+		spell, displayName, icon, startTime, endTime, _, notInterruptible, _, _, numStages = UnitChannelInfo(unit)
 		-- channeling spells sometimes just display "Channeling" - this is not wanted
 		displayName = spell
 	end
 	-- in case this returned nothing
 	if not startTime or not endTime then return end
+
+	-- this property doesn't exist in BC, and aliases with the spellID
+	if not WoWRetail and not WoWWrath and not WoWCata then
+		notInterruptible = false
+	end
+
+	local isChargeSpell = numStages and numStages > 0
+
+	if isChargeSpell then
+		endTime = endTime + GetUnitEmpowerHoldAtMaxTime(self.unit)
+	end
+
+	if event == "UNIT_SPELLCAST_START" then
+		self.casting, self.channeling, self.chargeSpell = true, nil, nil
+	elseif isChargeSpell then
+		self.casting, self.channeling, self.chargeSpell = true, nil, true
+	else
+		self.casting, self.channeling, self.chargeSpell = nil, true, nil
+	end
 
 	startTime = startTime / 1000
 	endTime = endTime / 1000
@@ -233,6 +261,7 @@ function CastBarTemplate:UNIT_SPELLCAST_START(event, unit, guid, spellID)
 	self.endTime = endTime
 	self.delay = 0
 	self.fadeOut = nil
+	self.numStages = numStages
 
 	self.Bar:SetStatusBarColor(unpack(self.casting and Quartz3.db.profile.castingcolor or Quartz3.db.profile.channelingcolor))
 
@@ -240,12 +269,12 @@ function CastBarTemplate:UNIT_SPELLCAST_START(event, unit, guid, spellID)
 	self:Show()
 	self:SetAlpha(db.alpha)
 
-	SetNameText(self, displayName)
+	self:SetNameText(displayName or spell)
 
 	self.Spark:Show()
 
 	if (icon == "Interface\\Icons\\Temp" or icon == 136235) and Quartz3.db.profile.hidesamwise then
-		icon = nil
+		icon = 136243
 	end
 	self.Icon:SetTexture(icon)
 
@@ -265,6 +294,7 @@ function CastBarTemplate:UNIT_SPELLCAST_START(event, unit, guid, spellID)
 	call(self, "UNIT_SPELLCAST_START", unit, guid, spellID)
 end
 CastBarTemplate.UNIT_SPELLCAST_CHANNEL_START = CastBarTemplate.UNIT_SPELLCAST_START
+CastBarTemplate.UNIT_SPELLCAST_EMPOWER_START = CastBarTemplate.UNIT_SPELLCAST_START
 
 function CastBarTemplate:UNIT_SPELLCAST_STOP(event, unit)
 	if not (self.channeling or self.casting) or (unit ~= self.unit and not (self.unit == "player" and unit == "vehicle")) then
@@ -283,6 +313,7 @@ function CastBarTemplate:UNIT_SPELLCAST_STOP(event, unit)
 	call(self, "UNIT_SPELLCAST_STOP", unit)
 end
 CastBarTemplate.UNIT_SPELLCAST_CHANNEL_STOP = CastBarTemplate.UNIT_SPELLCAST_STOP
+CastBarTemplate.UNIT_SPELLCAST_EMPOWER_STOP = CastBarTemplate.UNIT_SPELLCAST_STOP
 
 function CastBarTemplate:UNIT_SPELLCAST_FAILED(event, unit)
 	if self.channeling or self.casting or (unit ~= self.unit and not (self.unit == "player" and unit == "vehicle")) then
@@ -304,7 +335,7 @@ function CastBarTemplate:UNIT_SPELLCAST_INTERRUPTED(event, unit)
 	if unit ~= self.unit and not (self.unit == "player" and unit == "vehicle") then
 		return
 	end
-	self.casting, self.channeling = nil, nil
+	self.casting, self.channeling, self.chargeSpell = nil, nil, nil
 	self.fadeOut = true
 	if not self.stopTime then
 		self.stopTime = GetTime()
@@ -322,11 +353,11 @@ function CastBarTemplate:UNIT_SPELLCAST_DELAYED(event, unit)
 		return
 	end
 	local oldStart = self.startTime
-	local spell, displayName, icon, startTime, endTime
-	if self.casting then
-		spell, displayName, icon, startTime, endTime = UnitCastingInfo(unit)
+	local _, startTime, endTime
+	if self.casting and not self.chargeSpell then
+		_, _, _, startTime, endTime = UnitCastingInfo(unit)
 	else
-		spell, displayName, icon, startTime, endTime = UnitChannelInfo(unit)
+		_, _, _, startTime, endTime = UnitChannelInfo(unit)
 	end
 
 	if not startTime or not endTime then
@@ -338,7 +369,7 @@ function CastBarTemplate:UNIT_SPELLCAST_DELAYED(event, unit)
 	self.startTime = startTime
 	self.endTime = endTime
 
-	if self.casting then
+	if self.casting and not self.chargeSpell then
 		self.delay = (self.delay or 0) + (startTime - (oldStart or startTime))
 	else
 		self.delay = (self.delay or 0) + ((oldStart or startTime) - startTime)
@@ -347,6 +378,7 @@ function CastBarTemplate:UNIT_SPELLCAST_DELAYED(event, unit)
 	call(self, "UNIT_SPELLCAST_DELAYED", unit)
 end
 CastBarTemplate.UNIT_SPELLCAST_CHANNEL_UPDATE = CastBarTemplate.UNIT_SPELLCAST_DELAYED
+CastBarTemplate.UNIT_SPELLCAST_EMPOWER_UPDATE = CastBarTemplate.UNIT_SPELLCAST_DELAYED
 
 
 function CastBarTemplate:UNIT_SPELLCAST_INTERRUPTIBLE(event, unit)
@@ -375,6 +407,7 @@ end
 
 function CastBarTemplate:SetConfig(config)
 	self.config = config
+	LibWindow.RegisterConfig(self, self.config)
 end
 
 function CastBarTemplate:ApplySettings()
@@ -384,11 +417,14 @@ function CastBarTemplate:ApplySettings()
 	if not db.x then
 		db.x = (UIParent:GetWidth() / 2 - (db.w * db.scale) / 2) / db.scale
 	end
-	self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", db.x, db.y)
+
 	self:SetWidth(db.w + 10)
 	self:SetHeight(db.h + 10)
 	self:SetAlpha(db.alpha)
-	self:SetScale(db.scale)
+
+	LibWindow.RestorePosition(self)
+
+	self:SetFrameStrata(db.strata)
 
 	ToggleCastNotInterruptible(self, self.lastNotInterruptible, true)
 
@@ -511,17 +547,37 @@ function CastBarTemplate:RegisterEvents()
 	if self.unit == "player" then
 		self:RegisterEvent("UNIT_SPELLCAST_SENT")
 	end
-	self:RegisterEvent("UNIT_SPELLCAST_START")
-	self:RegisterEvent("UNIT_SPELLCAST_STOP")
-	self:RegisterEvent("UNIT_SPELLCAST_FAILED")
-	self:RegisterEvent("UNIT_SPELLCAST_DELAYED")
-	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-	if self.unit ~= "player" then
-		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
-		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
+
+	if LibClassicCasterino then
+		local CastbarEventHandler = function(event, ...)
+			return self[event](self, event, ...)
+		end
+		LibClassicCasterino.RegisterCallback(self, "UNIT_SPELLCAST_START", CastbarEventHandler)
+		LibClassicCasterino.RegisterCallback(self, "UNIT_SPELLCAST_STOP", CastbarEventHandler)
+		LibClassicCasterino.RegisterCallback(self, "UNIT_SPELLCAST_FAILED", CastbarEventHandler)
+		LibClassicCasterino.RegisterCallback(self, "UNIT_SPELLCAST_DELAYED", CastbarEventHandler)
+		LibClassicCasterino.RegisterCallback(self, "UNIT_SPELLCAST_INTERRUPTED", CastbarEventHandler)
+		LibClassicCasterino.RegisterCallback(self, "UNIT_SPELLCAST_CHANNEL_START", CastbarEventHandler)
+		LibClassicCasterino.RegisterCallback(self, "UNIT_SPELLCAST_CHANNEL_UPDATE", CastbarEventHandler)
+		LibClassicCasterino.RegisterCallback(self, "UNIT_SPELLCAST_CHANNEL_STOP", CastbarEventHandler)
+	else
+		self:RegisterEvent("UNIT_SPELLCAST_START")
+		self:RegisterEvent("UNIT_SPELLCAST_STOP")
+		self:RegisterEvent("UNIT_SPELLCAST_FAILED")
+		self:RegisterEvent("UNIT_SPELLCAST_DELAYED")
+		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+		if self.unit ~= "player" and WoWRetail then
+			self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
+			self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
+		end
+		if WoWRetail then
+			self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_START")
+			self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_STOP")
+			self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_UPDATE")
+		end
 	end
 
 	media.RegisterCallback(self, "LibSharedMedia_SetGlobal", function(mtype, override)
@@ -541,6 +597,9 @@ function CastBarTemplate:UnregisterEvents()
 	self:UnregisterAllEvents()
 	media.UnregisterCallback(self, "LibSharedMedia_SetGlobal")
 	media.UnregisterCallback(self, "LibSharedMedia_Registered")
+	if LibClassicCasterino then
+		LibClassicCasterino.UnregisterAllCallbacks(self)
+	end
 end
 
 do
@@ -549,13 +608,12 @@ do
 	end
 
 	local function dragstop(self)
-		self.config.x = self:GetLeft()-UIParent:GetLeft()
-		self.config.y = self:GetBottom()-UIParent:GetBottom()
 		self:StopMovingOrSizing()
+		LibWindow.SavePosition(self)
 	end
 
 	local function nothing(self)
-		self:SetAlpha(self.config.alpha)
+		self:SetAlpha(self.config.alpha or 1.0)
 	end
 
 	function CastBarTemplate:Unlock()
@@ -618,7 +676,7 @@ do
 		local db = getBar(info).config
 		return not db.noInterruptChangeColor
 	end
-	
+
 	local function icondisabled(info)
 		local db = getBar(info).config
 		return db.hideicon
@@ -628,9 +686,13 @@ do
 		local bar = getBar(info)
 		local scale = bar.config.scale
 		if v == "horizontal" then
-			bar.config.x = (UIParent:GetWidth() / 2 - (bar.config.w * scale) / 2) / scale
+			bar.config.point = bar.config.point:gsub("LEFT", ""):gsub("RIGHT", "")
+			if bar.config.point == "" then bar.config.point = "CENTER" end
+			bar.config.x = 0
 		else -- L["Vertical"]
-			bar.config.y = (UIParent:GetHeight() / 2 - (bar.config.h * scale) / 2) / scale
+			bar.config.point = bar.config.point:gsub("TOP", ""):gsub("BOTTOM", "")
+			if bar.config.point == "" then bar.config.point = "CENTER" end
+			bar.config.y = 0
 		end
 		bar:ApplySettings()
 	end
@@ -687,11 +749,9 @@ do
 					order = 99,
 					width = "full",
 				},
-				h = {
-					type = "range",
-					name = L["Height"],
-					desc = L["Height"],
-					min = 10, max = 50, step = 1,
+				nlstart = {
+					type = "description",
+					name = "",
 					order = 200,
 				},
 				w = {
@@ -699,27 +759,20 @@ do
 					name = L["Width"],
 					desc = L["Width"],
 					min = 50, max = 1500, bigStep = 5,
-					order = 200,
+					order = 200.1,
 				},
-				x = {
+				h = {
 					type = "range",
-					name = L["X"],
-					desc = L["Set an exact X value for this bar's position."],
-					min = -2560, max = 2560, bigStep = 1,
-					order = 200,
-				},
-				y = {
-					type = "range",
-					name = L["Y"],
-					desc = L["Set an exact Y value for this bar's position."],
-					min = -1600, max = 1600, bigStep = 1,
-					order = 200,
+					name = L["Height"],
+					desc = L["Height"],
+					min = 10, max = 50, step = 1,
+					order = 200.2,
 				},
 				scale = {
 					type = "range",
 					name = L["Scale"],
 					desc = L["Scale"],
-					min = 0.2, max = 1, bigStep = 0.025,
+					min = 0.2, max = 1.5, bigStep = 0.025,
 					order = 201,
 				},
 				alpha = {
@@ -729,6 +782,56 @@ do
 					isPercent = true,
 					min = 0.1, max = 1, bigStep = 0.025,
 					order = 202,
+				},
+				x = {
+					type = "range",
+					name = L["X"],
+					desc = L["Set an exact X value for this bar's position."],
+					min = -2560, max = 2560, bigStep = 1,
+					order = 203,
+				},
+				y = {
+					type = "range",
+					name = L["Y"],
+					desc = L["Set an exact Y value for this bar's position."],
+					min = -1600, max = 1600, bigStep = 1,
+					order = 204,
+				},
+				point = {
+					type = "select",
+					name = L["Anchor point"],
+					values = {
+						["TOP"] = L["Top"],
+						["RIGHT"] = L["Right"],
+						["BOTTOM"] = L["Bottom"],
+						["LEFT"] = L["Left"],
+						["TOPRIGHT"] = L["Top Right"],
+						["TOPLEFT"] = L["Top Left"],
+						["BOTTOMLEFT"] = L["Bottom Left"],
+						["BOTTOMRIGHT"] = L["Bottom Right"],
+						["CENTER"] = L["Center"]
+					},
+					order = 205,
+				},
+				strata = {
+					type = "select",
+					name = L["Strata"],
+					desc = L["Set the bar in front of or behind other UI elements."],
+					values = {
+						["BACKGROUND"] = L["BACKGROUND"],
+						["LOW"] = L["LOW"],
+						["MEDIUM"] = L["MEDIUM"],
+						["HIGH"] = L["HIGH"],
+						["DIALOG"] = L["DIALOG"],
+					},
+					sorting = {
+						"BACKGROUND",
+						"LOW",
+						"MEDIUM",
+						"HIGH",
+						"DIALOG",
+					},
+					order = 206,
 				},
 				icon = {
 					type = "header",
@@ -790,11 +893,6 @@ do
 					desc = L["Disable the text that displays the spell name"],
 					order = 401,
 				},
-				nlname = {
-					type = "description",
-					name = "",
-					order = 403,
-				},
 				nametextposition = {
 					type = "select",
 					name = L["Spell Name Position"],
@@ -827,6 +925,11 @@ do
 					disabled = hidenametextoptions,
 					order = 407,
 				},
+				nltimetext = {
+					type = "description",
+					name = "",
+					order = 410,
+				},
 				hidetimetext = {
 					type = "toggle",
 					name = L["Hide Time Text"],
@@ -840,6 +943,14 @@ do
 					disabled = hidetimetextoptions,
 					order = 412,
 				},
+				timetextposition = {
+					type = "select",
+					name = L["Time Text Position"],
+					desc = L["Set the alignment of the time text"],
+					values = {["left"] = L["Left"], ["right"] = L["Right"], ["center"] = L["Center (CastBar)"], ["centerback"] = L["Center (Backdrop)"], ["caststart"] = L["Cast Start Side"], ["castend"] = L["Cast End Side"]},
+					disabled = hidetimetextoptions,
+					order = 413,
+				},
 				timefontsize = {
 					type = "range",
 					name = L["Time Font Size"],
@@ -847,14 +958,6 @@ do
 					min = 7, max = 20, step = 1,
 					order = 414,
 					disabled = hidetimetextoptions,
-				},
-				timetextposition = {
-					type = "select",
-					name = L["Time Text Position"],
-					desc = L["Set the alignment of the time text"],
-					values = {["left"] = L["Left"], ["right"] = L["Right"], ["center"] = L["Center (CastBar)"], ["centerback"] = L["Center (Backdrop)"], ["caststart"] = L["Cast Start Side"], ["castend"] = L["Cast End Side"]},
-					disabled = hidetimetextoptions,
-					order = 415,
 				},
 				timetextx = {
 					type = "range",
@@ -871,6 +974,13 @@ do
 					min = -35, max = 35, step = 1,
 					disabled = hidetimetextoptions,
 					order = 417,
+				},
+				casttimecountup = {
+					type = "toggle",
+					name = L["Cast Time Count Up"],
+					desc = L["Count up from zero instead of down from the cast duration"],
+					disabled = hidetimetextoptions,
+					order = 418,
 				},
 				textureheader = {
 					type = "header",
@@ -988,6 +1098,8 @@ Quartz3.CastBarTemplate = {}
 Quartz3.CastBarTemplate.defaults = {
 	--x =  -- applied automatically in applySettings()
 	y = 180,
+	point = "BOTTOMLEFT",
+	strata = "MEDIUM",
 	h = 25,
 	w = 250,
 	scale = 1,
@@ -1024,17 +1136,17 @@ Quartz3.CastBarTemplate.template = CastBarTemplate
 Quartz3.CastBarTemplate.bars = {}
 function Quartz3.CastBarTemplate:new(parent, unit, name, localizedName, config)
 	local frameName = "Quartz3CastBar" .. name
-	local bar = setmetatable(CreateFrame("Frame", frameName, UIParent), CastBarTemplate_MT)
+	local bar = setmetatable(CreateFrame("Frame", frameName, UIParent, "BackdropTemplate"), CastBarTemplate_MT)
 	bar.unit = unit
 	bar.parent = parent
-	bar.config = config
 	bar.modName = name
 	bar.localizedName = localizedName
 	bar.locked = true
 
+	bar:SetConfig(config)
+
 	Quartz3.CastBarTemplate.bars[name] = bar
 
-	bar:SetFrameStrata("MEDIUM")
 	bar:SetScript("OnShow", OnShow)
 	bar:SetScript("OnHide", OnHide)
 	bar:SetScript("OnUpdate", OnUpdate)
@@ -1046,7 +1158,7 @@ function Quartz3.CastBarTemplate:new(parent, unit, name, localizedName, config)
 	bar.Bar      = Quartz3:CreateStatusBar(nil, bar) --CreateFrame("StatusBar", nil, bar)
 	bar.Text     = bar.Bar:CreateFontString(nil, "OVERLAY")
 	bar.TimeText = bar.Bar:CreateFontString(nil, "OVERLAY")
-	bar.Icon     = bar.Bar:CreateTexture(nil, "DIALOG")
+	bar.Icon     = bar.Bar:CreateTexture(nil, "ARTWORK")
 	bar.Spark    = bar.Bar:CreateTexture(nil, "OVERLAY")
 	if unit ~= "player" then
 		bar.Shield = bar.Bar:CreateTexture(nil, "ARTWORK")

@@ -30,24 +30,20 @@ local TimeFmt = Quartz3.Util.TimeFormat
 local media = LibStub("LibSharedMedia-3.0")
 local lsmlist = AceGUIWidgetLSMlists
 
-local WoWClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
-
 ----------------------------
 -- Upvalues
--- GLOBALS: 
+-- GLOBALS:
 local CreateFrame, GetTime, UIParent = CreateFrame, GetTime, UIParent
-local UnitIsUnit, UnitBuff, UnitDebuff = UnitIsUnit, UnitBuff, UnitDebuff
-local unpack, pairs, next, unpack, sort = unpack, pairs, next, unpack, sort
-
-
+local UnitIsUnit = UnitIsUnit
+local unpack, pairs, next, sort = unpack, pairs, next, sort
 
 local targetlocked = true
 local focuslocked = true
 
 local OnUpdate
-local showicons
+local showicons = false
 
-local db, getOptions
+local db
 
 local defaults = {
 	profile = {
@@ -57,59 +53,59 @@ local defaults = {
 		targetfixedduration = 0,
 		targeticons = true,
 		targeticonside = "right",
-		
+
 		targetanchor = "player",--L["Free"], L["Target"], L["Focus"]
 		targetx = 500,
 		targety = 350,
 		targetgrowdirection = "up", --L["Down"]
 		targetposition = "topright",
-		
+
 		targetgap = 1,
 		targetspacing = 1,
 		targetoffset = 3,
-		
+
 		targetwidth = 120,
 		targetheight = 12,
-		
+
 		focus = true,
 		focusbuffs = true,
 		focusdebuffs = true,
 		focusfixedduration = 0,
 		focusicons = true,
 		focusiconside = "left",
-		
+
 		focusanchor = "player",--L["Free"], L["Target"], L["Focus"]
 		focusx = 400,
 		focusy = 350,
 		focusgrowdirection = "up", --L["Down"]
 		focusposition = "bottomleft",
-		
+
 		focusgap = 1,
 		focusspacing = 1,
 		focusoffset = 3,
-		
+
 		focuswidth = 120,
 		focusheight = 12,
-		
+
 		buffnametext = true,
 		bufftimetext = true,
-		
+
 		bufftexture = "LiteStep",
 		bufffont = "Friz Quadrata TT",
 		bufffontsize = 9,
 		buffalpha = 1,
-		
+
 		buffcolor = {0,0.49, 1},
-		
+
 		debuffsbytype = true,
 		debuffcolor = {1.0, 0.7, 0},
 		Poison = {0, 1, 0},
 		Magic = {0, 0, 1},
 		Disease = {.55, .15, 0},
 		Curse = {1, 0, 1},
-		
+
 		bufftextcolor = {1,1,1},
-		
+
 		timesort = true,
 	}
 }
@@ -148,7 +144,7 @@ local framefactory = {
 		bar:SetBackdropColor(0,0,0)
 		bar.text = bar:CreateFontString(nil, "OVERLAY")
 		bar.timetext = bar:CreateFontString(nil, "OVERLAY")
-		bar.icon = bar:CreateTexture(nil, "DIALOG")
+		bar.icon = bar:CreateTexture(nil, "ARTWORK")
 		if k == 1 then
 			bar:SetMovable(true)
 			bar:RegisterForDrag("LeftButton")
@@ -175,27 +171,27 @@ do
 		["rightup"] = L["Right (grow up)"],
 		["rightdown"] = L["Right (grow down)"],
 	}
-	
+
 	local function hidedebuffsbytype()
 		return not db.debuffsbytype
 	end
-	
+
 	local function hidedebuffsnottype()
 		return db.debuffsbytype
 	end
-	
+
 	local function gettargetfreeoptionshidden()
 		return db.targetanchor ~= "free"
 	end
-	
+
 	local function gettargetnotfreeoptionshidden()
 		return db.targetanchor == "free"
 	end
-	
+
 	local function targetdragstart()
 		targetbars[1]:StartMoving()
 	end
-	
+
 	local function targetdragstop()
 		db.targetx = targetbars[1]:GetLeft()
 		db.targety = targetbars[1]:GetBottom()
@@ -221,7 +217,7 @@ do
 	local function focusnothing()
 		focusbars[1]:SetAlpha(db.buffalpha)
 	end
-	
+
 	local function setOpt(info, value)
 		db[info.arg or info[#info]] = value
 		Buff:ApplySettings()
@@ -230,7 +226,7 @@ do
 	local function getOpt(info)
 		return db[info.arg or info[#info]]
 	end
-	
+
 	local function setOptFocus(info, value)
 		db[info.arg or ("focus"..info[#info])] = value
 		Buff:ApplySettings()
@@ -239,7 +235,7 @@ do
 	local function getOptFocus(info)
 		return db[info.arg or ("focus"..info[#info])]
 	end
-	
+
 	local function setOptTarget(info, value)
 		db[info.arg or ("target"..info[#info])] = value
 		Buff:ApplySettings()
@@ -259,7 +255,7 @@ do
 
 	local options
 	function getOptions()
-		if not options then 
+		if not options then
 			options = {
 				type = "group",
 				name = L["Buff"],
@@ -578,7 +574,6 @@ do
 								name = L["Gap"],
 								desc = L["Tweak the vertical position of the bars for your %s"]:format(L["Target"]),
 								min = -35, max = 35, step = 1,
-								order = 101,
 								hidden = gettargetnotfreeoptionshidden,
 								order = 104,
 							},
@@ -651,7 +646,7 @@ do
 							},
 							bufftexture = {
 								type = "select",
-								dialogControl = "LSM30_Statusbar", 
+								dialogControl = "LSM30_Statusbar",
 								name = L["Texture"],
 								desc = L["Set the buff bar Texture"],
 								values = lsmlist.statusbar,
@@ -782,9 +777,7 @@ end
 function Buff:OnEnable()
 	self:RegisterBucketEvent("UNIT_AURA", 0.5)
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateBars")
-	if not WoWClassic then
-		self:RegisterEvent("PLAYER_FOCUS_CHANGED", "UpdateBars")
-	end
+	self:RegisterEvent("PLAYER_FOCUS_CHANGED", "UpdateBars")
 	media.RegisterCallback(self, "LibSharedMedia_SetGlobal", function(mtype, override)
 		if mtype == "statusbar" then
 			for i, v in pairs(targetbars) do
@@ -868,7 +861,7 @@ do
 		tbl.isbuff, tbl.dispeltype = nil, nil
 		tblCache[tbl] = true
 	end
-	
+
 	local function mysort(a,b)
 		if db.timesort then
 			if a.isbuff == b.isbuff then
@@ -884,7 +877,7 @@ do
 			end
 		end
 	end
-	
+
 	local tmp = {}
 	local called = false -- prevent recursive calls when new bars are created.
 	function Buff:UpdateTargetBars()
@@ -899,39 +892,39 @@ do
 			end
 			if db.targetbuffs then
 				for i = 1, 32 do
-					local name, texture, applications, _, duration, expirationTime, caster = UnitBuff("target", i)
-					local remaining = expirationTime and (expirationTime - GetTime()) or nil
-					if not name then
+					local auraData = C_UnitAuras.GetBuffDataByIndex("target", i)
+					if (not auraData) or (not auraData.name) then
 						break
 					end
-					if (caster=="player" or caster=="pet" or caster=="vehicle") and duration > 0 then
+					local remaining = auraData.expirationTime and (auraData.expirationTime - GetTime()) or nil
+					if (auraData.sourceUnit == "player" or auraData.sourceUnit == "pet" or auraData.sourceUnit == "vehicle") and auraData.duration > 0 then
 						local t = new()
 						tmp[#tmp+1] = t
-						t.name = name
-						t.texture = texture
-						t.duration = duration
+						t.name = auraData.name
+						t.texture = auraData.icon
+						t.duration = auraData.duration
 						t.remaining = remaining
 						t.isbuff = true
-						t.applications = applications
+						t.applications = auraData.applications
 					end
 				end
 			end
 			if db.targetdebuffs then
 				for i = 1, 40 do
-					local name, texture, applications, dispeltype, duration, expirationTime, caster = UnitDebuff("target", i)
-					local remaining =  expirationTime and (expirationTime - GetTime()) or nil
-					if not name then
+					local auraData = C_UnitAuras.GetDebuffDataByIndex("target", i)
+					if (not auraData) or (not auraData.name) then
 						break
 					end
-					if (caster=="player" or caster=="pet" or caster=="vehicle") and duration > 0 then
+					local remaining = auraData.expirationTime and (auraData.expirationTime - GetTime()) or nil
+					if (auraData.sourceUnit == "player" or auraData.sourceUnit == "pet" or auraData.sourceUnit == "vehicle") and auraData.duration > 0 then
 						local t = new()
 						tmp[#tmp+1] = t
-						t.name = name
-						t.texture = texture
-						t.duration = duration
+						t.name = auraData.name
+						t.texture = auraData.icon
+						t.duration = auraData.duration
 						t.remaining = remaining
-						t.dispeltype = dispeltype
-						t.applications = applications
+						t.dispeltype = auraData.dispelName
+						t.applications = auraData.applications
 					end
 				end
 			end
@@ -1007,39 +1000,39 @@ do
 			end
 			if db.focusbuffs then
 				for i = 1, 32 do
-					local name, texture, applications, dispeltype, duration, expirationTime, caster = UnitBuff("focus", i)
-					local remaining =  expirationTime and (expirationTime - GetTime()) or nil
-					if not name then
+					local auraData = C_UnitAuras.GetBuffDataByIndex("focus", i)
+					if (not auraData) or (not auraData.name) then
 						break
 					end
-					if (caster=="player" or caster=="pet" or caster=="vehicle") and duration > 0 then
+					local remaining = auraData.expirationTime and (auraData.expirationTime - GetTime()) or nil
+					if (auraData.sourceUnit == "player" or auraData.sourceUnit == "pet" or auraData.sourceUnit == "vehicle") and auraData.duration > 0 then
 						local t = new()
 						tmp[#tmp+1] = t
-						t.name = name
-						t.texture = texture
-						t.duration = duration
+						t.name = auraData.name
+						t.texture = auraData.icon
+						t.duration = auraData.duration
 						t.remaining = remaining
 						t.isbuff = true
-						t.applications = applications
+						t.applications = auraData.applications
 					end
 				end
 			end
 			if db.focusdebuffs then
 				for i = 1, 40 do
-					local name, texture, applications, dispeltype, duration, expirationTime, caster = UnitDebuff("focus", i)
-					local remaining =  expirationTime and (expirationTime - GetTime()) or nil
-					if not name then
+					local auraData = C_UnitAuras.GetDebuffDataByIndex("focus", i)
+					if (not auraData) or (not auraData.name) then
 						break
 					end
-					if (caster=="player" or caster=="pet" or caster=="vehicle") and duration > 0 then
+					local remaining = auraData.expirationTime and (auraData.expirationTime - GetTime()) or nil
+					if (auraData.sourceUnit == "player" or auraData.sourceUnit == "pet" or auraData.sourceUnit == "vehicle") and auraData.duration > 0 then
 						local t = new()
 						tmp[#tmp+1] = t
-						t.name = name
-						t.texture = texture
-						t.duration = duration
+						t.name = auraData.name
+						t.texture = auraData.icon
+						t.duration = auraData.duration
 						t.remaining = remaining
-						t.dispeltype = dispeltype
-						t.applications = applications
+						t.dispeltype = auraData.dispelName
+						t.applications = auraData.applications
 					end
 				end
 			end
@@ -1105,7 +1098,7 @@ do
 	end
 end
 do
-	local function apply(unit, i, bar, db, direction)
+	local function apply(unit, i, bar, direction)
 		local bars, position, icons, iconside, gap, spacing, offset, anchor, x, y, grow, height, width
 		local qpdb = Player.db.profile
 		if unit == "target" then
@@ -1143,7 +1136,7 @@ do
 		bar:SetHeight(height)
 		bar:SetScale(qpdb.scale)
 		bar:SetAlpha(db.buffalpha)
-		
+
 		if anchor == "free" then
 			if i == 1 then
 				bar:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x, y)
@@ -1169,7 +1162,7 @@ do
 				else -- L["Player"]
 					anchorframe = Player.Bar
 				end
-				
+
 				if position == "top" then
 					direction = 1
 					bar:SetPoint("BOTTOM", anchorframe, "TOP", 0, gap)
@@ -1233,7 +1226,7 @@ do
 				end
 			end
 		end
-		
+
 		local timetext = bar.timetext
 		if db.bufftimetext then
 			timetext:Show()
@@ -1250,12 +1243,12 @@ do
 		timetext:SetTextColor(unpack(db.bufftextcolor))
 		timetext:SetNonSpaceWrap(false)
 		timetext:SetHeight(height)
-		
+
 		local temptext = timetext:GetText()
 		timetext:SetText("10.0")
 		local normaltimewidth = timetext:GetStringWidth()
 		timetext:SetText(temptext)
-		
+
 		local text = bar.text
 		if db.buffnametext then
 			text:Show()
@@ -1276,7 +1269,7 @@ do
 		text:SetTextColor(unpack(db.bufftextcolor))
 		text:SetNonSpaceWrap(false)
 		text:SetHeight(height)
-		
+
 		local icon = bar.icon
 		if icons then
 			icon:Show()
@@ -1292,7 +1285,7 @@ do
 		else
 			icon:Hide()
 		end
-		
+
 		return direction
 	end
 	function Buff:ApplySettings()
@@ -1312,11 +1305,11 @@ do
 				focusbars[1]:SetScript("OnDragStop", nil)
 			end
 			for i, v in pairs(targetbars) do
-				direction = apply("target", i, v, db, direction)
+				direction = apply("target", i, v, direction)
 			end
 			direction = nil
 			for i, v in pairs(focusbars) do
-				direction = apply("focus", i, v, db, direction)
+				direction = apply("focus", i, v, direction)
 			end
 			self:UpdateBars()
 		end

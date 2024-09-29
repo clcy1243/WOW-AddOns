@@ -1,40 +1,46 @@
 local mod = DBM:NewMod(533, "DBM-Party-BC", 16, 249)
 local L = mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+if mod:IsRetail() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
+
+mod:SetRevision("20240616044034")
 mod:SetCreatureID(24664)
 mod:SetEncounterID(1894)
-mod:SetModelID(22906)--Here for a reason?
+
+if not mod:IsRetail() then
+	mod:SetModelID(22906)
+end
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 36819",
+	"SPELL_CAST_START 36819 44224",
 	"SPELL_CAST_SUCCESS 44194 36819",
 	"SPELL_AURA_APPLIED 46165",
 	"SPELL_AURA_REMOVED 46165",
-	"UNIT_SPELLCAST_SUCCEEDED boss1",
+	"UNIT_SPELLCAST_SUCCEEDED",
 	"CHAT_MSG_MONSTER_YELL"
 )
 
-local WarnShockBarrior		= mod:NewSpellAnnounce(46165, 3)
+local WarnShockBarrior		= mod:NewTargetNoFilterAnnounce(46165, 3)
 local WarnGravityLapse		= mod:NewSpellAnnounce(44224, 2)
 
 local specwarnPyroblast		= mod:NewSpecialWarningInterrupt(36819, "HasInterrupt", nil, 2, 1, 2)
 local specwarnPhoenix		= mod:NewSpecialWarningSwitch(44194, "-Healer", nil, nil, 1, 2)
 
-local timerPyroblast		= mod:NewCastTimer(4, 36819, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
-local timerShockBarrior		= mod:NewNextTimer(60, 46165, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
+local timerPyroblast		= mod:NewCastTimer(4, 36819, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
+local timerShockBarrior		= mod:NewNextTimer(60, 46165, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 local timerPhoenix			= mod:NewCDTimer(45, 44194, nil, nil, nil, 1)--45-70?
 local timerGravityLapse		= mod:NewBuffActiveTimer(35, 44194, nil, nil, nil, 6)
 local timerGravityLapseCD	= mod:NewNextTimer(13.5, 44194, nil, nil, nil, 6)
 
 mod.vb.interruptable = false
-mod.vb.phase = 1
 
 function mod:OnCombatStart(delay)
 	self.vb.interruptable = false
-	self.vb.phase = 1
+	self:SetStage(1)
 	if not self:IsDifficulty("normal5") then
         timerShockBarrior:Start(-delay)
     end
@@ -49,8 +55,8 @@ function mod:SPELL_CAST_START(args)
 		WarnGravityLapse:Show()
 		timerGravityLapse:Start()
 		timerGravityLapseCD:Schedule(35)--Show after current lapse has ended
-		if self.vb.phase < 2 then
-			self.vb.phase = 2
+		if self:GetStage(1) then
+			self:SetStage(2)
 			timerShockBarrior:Stop()
 			timerPhoenix:Stop()
 		end
@@ -85,16 +91,22 @@ end
 --	"<231.31 20:53:15> [UNIT_SPELLCAST_SUCCEEDED] Kael'thas Sunstrider(Omegal) [[target:Clear Flight::0:44232]]", -- [530]
 --	"<231.31 20:53:15> [UNIT_SPELLCAST_SUCCEEDED] Kael'thas Sunstrider(Omegal) [[target:Power Feedback::0:47109]]", -- [531]
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
-	if spellId == 47109 and self.vb.phase < 2 then--Power Feedback
-		self.vb.phase = 2
+	if spellId == 47109 and self:GetStage(1) then--Power Feedback
+		self:SendSync("Stage2")
+	end
+end
+
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if msg == L.KaelP2 and self:GetStage(1) then
+		self:SetStage(2)
 		timerShockBarrior:Stop()
 		timerPhoenix:Stop()
 	end
 end
 
-function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if msg == L.KaelP2 and self.vb.phase < 2 then
-		self.vb.phase = 2
+function mod:OnSync(msg)
+	if msg == "Stage2" and self:GetStage(1) then
+		self:SetStage(2)
 		timerShockBarrior:Stop()
 		timerPhoenix:Stop()
 	end

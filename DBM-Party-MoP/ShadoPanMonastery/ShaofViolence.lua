@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(685, "DBM-Party-MoP", 3, 312)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod.statTypes = "normal,heroic,challenge,timewalker"
+
+mod:SetRevision("20240603224808")
 mod:SetCreatureID(56719)
 mod:SetEncounterID(1305)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 mod:RegisterKill("yell", L.Kill)
@@ -19,22 +20,25 @@ local warnDisorientingSmash		= mod:NewTargetAnnounce(106872, 2)
 local warnShaSpike				= mod:NewTargetAnnounce(106877, 3)
 local warnEnrage				= mod:NewSpellAnnounce(38166, 4)
 
-local specWarnShaSpike			= mod:NewSpecialWarningMove(106877)
-local specWarnShaSpikeNear		= mod:NewSpecialWarningClose(106877)
+local specWarnShaSpike			= mod:NewSpecialWarningMoveAway(106877, nil, nil, nil, 1, 2)
+local specWarnShaSpikeNear		= mod:NewSpecialWarningClose(106877, nil, nil, nil, 1, 2)
 
-local timerDisorientingSmashCD	= mod:NewCDTimer(13, 106872)--variable. not confirmed
-local timerShaSpikeCD			= mod:NewNextTimer(9, 106877)
+local timerDisorientingSmashCD	= mod:NewCDTimer(13, 106872, nil, nil, nil, 5, nil, DBM_COMMON_L.MAGIC_ICON..DBM_COMMON_L.HEALER_ICON)
+local timerShaSpikeCD			= mod:NewNextTimer(8.5, 106877, nil, nil, nil, 3)
 
 function mod:ShaSpikeTarget(targetname, uId)
 	if not targetname then return end
-	warnShaSpike:Show(targetname)
 	if targetname == UnitName("player") then
 		specWarnShaSpike:Show()
+		specWarnShaSpike:Play("runout")
 	else
 		if uId then
 			local inRange = DBM.RangeCheck:GetDistance("player", uId)
 			if inRange and inRange < 6 then
 				specWarnShaSpikeNear:Show(targetname)
+				specWarnShaSpikeNear:Play("runaway")
+			else
+				warnShaSpike:Show(targetname)
 			end
 		end
 	end

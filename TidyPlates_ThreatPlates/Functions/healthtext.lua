@@ -4,6 +4,13 @@ local ThreatPlates = Addon.ThreatPlates
 ---------------------------------------------------------------------------------------------------
 -- Imported functions and constants
 ---------------------------------------------------------------------------------------------------
+
+-- Lua APIs
+local gsub = gsub
+local ceil = ceil
+local string = string
+
+-- WoW APIs
 local UnitIsPlayer = UnitIsPlayer
 local UnitPlayerControlled = UnitPlayerControlled
 local UnitExists = UnitExists
@@ -11,22 +18,22 @@ local UnitName = UnitName
 local UNIT_LEVEL_TEMPLATE = UNIT_LEVEL_TEMPLATE
 local GetGuildInfo = GetGuildInfo
 local UnitName = UnitName
+local C_TooltipInfo_GetUnit = C_TooltipInfo and C_TooltipInfo.GetUnit
 
-local _G = _G
-local gsub = gsub
-local ceil = ceil
-local format = format
-local string = string
-
-local TidyPlatesThreat = TidyPlatesThreat
+-- ThreatPlates APIs
 local RGB = ThreatPlates.RGB
 local RGB_P = ThreatPlates.RGB_P
 local GetColorByHealthDeficit = ThreatPlates.GetColorByHealthDeficit
+local Truncate
+local TransliterateCyrillicLetters = Addon.TransliterateCyrillicLetters
+local L = ThreatPlates.L
 
 local _G =_G
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
 -- List them here for Mikk's FindGlobals script
 -- GLOBALS: UnitClassification, UnitGetTotalAbsorbs
+
+local LineNoOfNPCRole
 
 ---------------------------------------------------------------------------------------------------
 -- Functions for subtext from TidyPlates
@@ -36,76 +43,38 @@ local COLOR_ROLE = RGB(255, 255, 255, .7)
 local COLOR_GUILD = RGB(178, 178, 229, .7)
 
 local UnitSubtitles = {}
-local ScannerName = "ThreatPlates_Tooltip_Subtext"
-local TooltipScanner = CreateFrame( "GameTooltip", ScannerName , nil, "GameTooltipTemplate" ) -- Tooltip name cannot be nil
-TooltipScanner:SetOwner( WorldFrame, "ANCHOR_NONE" )
+
+if not Addon.IS_MAINLINE then
+  local ScannerName = "ThreatPlates_Tooltip_Subtext"
+  local TooltipScanner = CreateFrame( "GameTooltip", ScannerName , nil, "GameTooltipTemplate" ) -- Tooltip name cannot be nil
+  TooltipScanner:SetOwner( WorldFrame, "ANCHOR_NONE" )
+
+  local TooltipScannerData = {
+    lines = {
+      [1] = {},
+      [2] = {},
+      [3] = {},
+    }
+  }
+
+  -- Compatibility functions for tooltips in WoW Classic
+  C_TooltipInfo_GetUnit = function(unitid)
+    TooltipScanner:ClearLines()
+		TooltipScanner:SetUnit(unitid)
+
+    TooltipScannerData.lines[1].leftText = _G[ScannerName .. "TextLeft1"]:GetText()
+    TooltipScannerData.lines[2].leftText = _G[ScannerName .. "TextLeft2"]:GetText()
+    TooltipScannerData.lines[3].leftText = _G[ScannerName .. "TextLeft3"]:GetText()
+    
+    return TooltipScannerData
+  end
+end
 
 ---------------------------------------------------------------------------------------------------
 -- Cached configuration settings
 ---------------------------------------------------------------------------------------------------
 local Settings
 local ShowHealth, ShowAbsorbs
-
----------------------------------------------------------------------------------------------------
--- Determine correct number units: Western or East Asian Nations (CJK)
----------------------------------------------------------------------------------------------------
-local function TruncateWestern(value)
-  if not TidyPlatesThreat.db.profile.text.truncate then
-    return value
-  end
-
-  if value >= 1e6 then
-    return format("%.1fm", value / 1e6)
-  elseif value >= 1e4 then
-    return format("%.1fk", value / 1e3)
-  else
-    return value
-  end
-end
-
-local TruncateEastAsian = TruncateWestern
-local Truncate = TruncateWestern
-
-local MAP_LOCALE_TO_UNIT_SYMBOL = {
-  koKR = { -- Korrean
-    Unit_1K = "천",
-    Unit_10K = "만",
-    Unit_1B = "억",
-  },
-  zhCN = { -- Simplified Chinese
-    Unit_1K = "千",
-    Unit_10K = "万",
-    Unit_1B = "亿",
-  },
-  zhTW = { -- Traditional Chinese
-    Unit_1K = "千",
-    Unit_10K = "萬",
-    Unit_1B = "億",
-  },
-}
-
-local locale = GetLocale()
-if MAP_LOCALE_TO_UNIT_SYMBOL[locale] then
-  local Format_Unit_1K = "%.1f" .. MAP_LOCALE_TO_UNIT_SYMBOL[locale].Unit_1K
-  local Format_Unit_10K = "%.1f" .. MAP_LOCALE_TO_UNIT_SYMBOL[locale].Unit_10K
-  local Format_Unit_1B = "%.1f" .. MAP_LOCALE_TO_UNIT_SYMBOL[locale].Unit_1B
-
-  TruncateEastAsian = function(value)
-    if not TidyPlatesThreat.db.profile.text.truncate then
-      return value
-    end
-
-    if value >= 1e8 then
-      return format(Format_Unit_1B, value / 1e8)
-    elseif value >= 1e4 then
-      return format(Format_Unit_10K, value / 1e4)
-    elseif value >= 1e3 then
-      return format(Format_Unit_1K, value / 1e3)
-    else
-      return value
-    end
-  end
-end
 
 local function GetUnitSubtitle(unit)
 	-- Bypass caching while in an instance
@@ -114,40 +83,37 @@ local function GetUnitSubtitle(unit)
 
 	--local guid = UnitGUID(unit.unitid)
 	local name = unit.name
-	local subTitle = UnitSubtitles[name]
+	local subtitle = UnitSubtitles[name]
 
-	if not subTitle then
-		TooltipScanner:ClearLines()
-		TooltipScanner:SetUnit(unit.unitid)
+	if not subtitle then
+		local tooltip_data = C_TooltipInfo_GetUnit(unit.unitid)
+    if tooltip_data then
+      -- If colorbind mode is enabled, additional information (reputation) is shown in the tooltip
+      -- before the NPC information (line 3 instead of line 2)
+      if #tooltip_data.lines >= LineNoOfNPCRole then 
+        name = tooltip_data.lines[1].leftText
 
-		local TooltipTextLeft1 = _G[ScannerName.."TextLeft1"]
-		local TooltipTextLeft2 = _G[ScannerName.."TextLeft2"]
-		--local TooltipTextLeft3 = _G[ScannerName.."TextLeft3"]
-		--local TooltipTextLeft4 = _G[ScannerName.."TextLeft4"]
+        if name then name = gsub( gsub( (name), "|c........", "" ), "|r", "" ) else return end	-- Strip color escape sequences: "|c"
+        if name ~= UnitName(unit.unitid) then return end	-- Avoid caching information for the wrong unit
 
-		name = TooltipTextLeft1:GetText()
-
-		if name then name = gsub( gsub( (name), "|c........", "" ), "|r", "" ) else return end	-- Strip color escape sequences: "|c"
-		if name ~= UnitName(unit.unitid) then return end	-- Avoid caching information for the wrong unit
-
-
-		-- Tooltip Format Priority:  Faction, Description, Level
-		local toolTipText = TooltipTextLeft2:GetText() or ""
-
-		if string.match(toolTipText, UNIT_LEVEL_TEMPLATE) then
-			subTitle = ""
-		else
-			subTitle = toolTipText
-		end
-
-		UnitSubtitles[name] = subTitle
+        -- Tooltip Format Priority: Faction, Description, Level
+        local tooltip_subtitle = tooltip_data.lines[LineNoOfNPCRole].leftText or ""
+        if string.match(tooltip_subtitle, UNIT_LEVEL_TEMPLATE) then
+          subtitle = ""
+        else
+          subtitle = tooltip_subtitle
+        end
+        
+        UnitSubtitles[name] = subtitle
+      end
+    end
 	end
 
 	-- Maintaining a cache allows us to avoid the hit
-	if subTitle == "" then
+	if subtitle == "" then
 		return nil
 	else
-		return subTitle
+		return subtitle
 	end
 end
 
@@ -156,22 +122,22 @@ local function GetLevelDescription(unit)
 	local description
 
 	if classification == "worldboss" then
-		description = "World Boss"
+		description = L["World Boss"]
 	else
 		if unit.level > 0 then
-      description = "Level " .. unit.level
+      description = L["Level "] .. unit.level
     else
-      description = "Level ??"
+      description = L["Level ??"]
     end
 
 		if unit.isRare then
 			if unit.isElite then
-				description = description .. " (Rare Elite)"
+				description = description .. L[" (Rare Elite)"]
 			else
-				description = description .. " (Rare)"
+				description = description .. L[" (Rare)"]
 			end
 		elseif unit.isElite then
-			description = description .. " (Elite)"
+			description = description .. L[" (Elite)"]
 		end
 	end
 
@@ -184,28 +150,30 @@ local function DummyFunction() return nil, COLOR_ROLE end
 local function TextHealthPercentColored(unit)
   local text_health, text_absorbs, color = "", "", COLOR_ROLE
 
-  local absorbs_amount = _G.UnitGetTotalAbsorbs(unit.unitid) or 0
-  if ShowAbsorbs and absorbs_amount > 0 then
-    if Settings.AbsorbsAmount then
-      if Settings.AbsorbsShorten then
-        text_absorbs = Truncate(absorbs_amount)
-      else
-        text_absorbs = absorbs_amount
+  if ShowAbsorbs then
+    local absorbs_amount = _G.UnitGetTotalAbsorbs(unit.unitid) or 0
+    if absorbs_amount > 0 then
+      if Settings.AbsorbsAmount then
+        if Settings.AbsorbsShorten then
+          text_absorbs = Truncate(absorbs_amount)
+        else
+          text_absorbs = absorbs_amount
+        end
       end
-    end
 
-    if Settings.AbsorbsPercentage then
-      local absorbs_percentage = ceil(100 * absorbs_amount / unit.healthmax) .. "%"
+      if Settings.AbsorbsPercentage then
+        local absorbs_percentage = ceil(100 * absorbs_amount / unit.healthmax) .. "%"
 
-      if text_absorbs == "" then
-        text_absorbs = absorbs_percentage
-      else
-        text_absorbs = text_absorbs .. " - " .. absorbs_percentage
+        if text_absorbs == "" then
+          text_absorbs = absorbs_percentage
+        else
+          text_absorbs = text_absorbs .. " - " .. absorbs_percentage
+        end
       end
-    end
 
-    if text_absorbs ~= "" then
-      text_absorbs = "[" .. text_absorbs .. "]"
+      if text_absorbs ~= "" then
+        text_absorbs = "[" .. text_absorbs .. "]"
+      end
     end
   end
 
@@ -270,7 +238,9 @@ local function TextRoleGuildLevel(unit)
 		-- color = RGB_P(unit.levelcolorRed, unit.levelcolorGreen, unit.levelcolorBlue, .70)
 	end
 
-	return description, color
+  description = TransliterateCyrillicLetters(description)
+
+  return description, color
 end
 
 local function TextRoleGuild(unit)
@@ -284,6 +254,8 @@ local function TextRoleGuild(unit)
     color = COLOR_GUILD
 	end
 
+  description = TransliterateCyrillicLetters(description)
+
 	return description, color
 end
 
@@ -295,6 +267,8 @@ local function TextNPCRole(unit)
 	if unit.type == "NPC" then
     description = GetUnitSubtitle(unit)
   end
+
+  description = TransliterateCyrillicLetters(description)
 
   return description, color
 end
@@ -328,39 +302,77 @@ local SUBTEXT_FUNCTIONS =
 --
 ---------------------------------------------------------------------------------------------------
 
-function Addon:SetCustomText(unit)
+local function GetStatusTextSettings(unit)
   local style = unit.style
 
-	local db = TidyPlatesThreat.db.profile
-	if style == "NameOnly" or style == "NameOnly-Unique" then
-		db = db.HeadlineView
-	else
-		db = db.settings.customtext
-	end
+  local db = Addon.db.profile
+  if style == "NameOnly" or style == "NameOnly-Unique" then
+    db = db.HeadlineView
+  else
+    db = db.settings.customtext
+  end
 
-	local customtext = (unit.reaction == "FRIENDLY" and db.FriendlySubtext) or db.EnemySubtext
+  local status_text_function = (unit.reaction == "FRIENDLY" and db.FriendlySubtext) or db.EnemySubtext
 
-	if customtext == "NONE" then return nil, COLOR_ROLE end
+  return db, status_text_function
+end
 
-	local func = SUBTEXT_FUNCTIONS[customtext]
-	local subtext, color = func(unit)
+function Addon.SetCustomText(tp_frame, unit)
+  -- Set Special-Case Regions
+  if not tp_frame.style.customtext.show then return end
 
-	if db.SubtextColorUseHeadline then
-		return subtext, Addon:SetNameColor(unit)
-	elseif db.SubtextColorUseSpecific then
-		return subtext, color.r, color.g, color.b, color.a
-	end
+  local customtext = tp_frame.visual.customtext
 
-	local color = db.SubtextColor
-	return subtext, color.r, color.g, color.b, color.a
+  local db, status_text_function = GetStatusTextSettings(unit)
+  if status_text_function == "NONE" then
+    customtext:SetText("")
+    customtext:SetTextColor(COLOR_ROLE.r, COLOR_ROLE.g, COLOR_ROLE.b, COLOR_ROLE.a) -- This should not be necessary ...
+  elseif status_text_function ~= "CUSTOM" then
+    local func = SUBTEXT_FUNCTIONS[status_text_function]
+    local subtext, color = func(unit)
+
+    if db.SubtextColorUseHeadline then
+      color.r, color.g, color.b, color.a = Addon:SetNameColor(unit)
+    elseif not db.SubtextColorUseSpecific then
+      color = db.SubtextColor
+    end
+
+    customtext:SetText(subtext or "")
+    customtext:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
+  elseif not Addon.LibDogTag then -- status_text_function == "CUSTOM"
+    customtext:SetText("")
+  end
+end
+
+function Addon.UpdateStyleForStatusText(tp_frame, unit)
+  if not Addon.LibDogTag then return end
+
+  local db, status_text_function = GetStatusTextSettings(unit)
+  if status_text_function == "CUSTOM" then
+    local custom_dog_tag_text = (unit.reaction == "FRIENDLY" and db.FriendlySubtextCustom) or db.EnemySubtextCustom
+    Addon.LibDogTag:AddFontString(tp_frame.visual.customtext, tp_frame, custom_dog_tag_text, "Unit", { unit = unit.unitid })
+  else
+    Addon.LibDogTag:RemoveFontString(tp_frame.visual.customtext)
+  end
 end
 
 function Addon:UpdateConfigurationStatusText()
-  Settings = TidyPlatesThreat.db.profile.text
+  Settings = self.db.profile.text
 
-  Truncate = (Settings.LocalizedUnitSymbol and TruncateEastAsian) or TruncateWestern
+  if Settings.truncate then
+    Truncate = self.Truncate
+  else
+    Truncate = function(value) return value end
+  end
+  
+  -- Absorbs: Mists - Added
+  if Addon.IS_MAINLINE then
+    ShowAbsorbs = Settings.AbsorbsAmount or Settings.AbsorbsPercentage
+  else
+    ShowAbsorbs = false
+  end
 
-  ShowAbsorbs = Settings.AbsorbsAmount or Settings.AbsorbsPercentage
   ShowHealth = Settings.amount or Settings.percent
-end
 
+  LineNoOfNPCRole = (Addon.CVars:GetAsBool("colorblindMode") and 3) or 2
+end

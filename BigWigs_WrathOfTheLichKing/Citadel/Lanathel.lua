@@ -5,7 +5,10 @@
 local mod = BigWigs:NewBoss("Blood-Queen Lana'thel", 631, 1633)
 if not mod then return end
 mod:RegisterEnableMob(37955)
+-- mod:SetEncounterID(1103)
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {{71340, "FLASH"}, {71265, "FLASH"}, 70877, 71772, 71623, "proximity", "berserk"}
+mod:SetStage(1)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -55,7 +58,7 @@ function mod:OnBossEnable()
 	-- 71623. 72264 are 10 man (and so on)
 	self:Log("SPELL_AURA_APPLIED", "Slash", 71623, 72264)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:Emote("Shadows", L["shadow"])
 
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
@@ -63,6 +66,7 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage(diff)
+	self:SetStage(1)
 	self:Berserk(320, true)
 	self:OpenProximity("proximity", 6)
 	self:Bar(71772, airPhaseTimers[diff][1], L["phase2_bar"])
@@ -77,7 +81,7 @@ end
 do
 	local scheduled = nil
 	local function pact()
-		mod:TargetMessage(71340, pactTargets, "red", nil, L["pact_message"])
+		mod:TargetMessageOld(71340, pactTargets, "red", nil, L["pact_message"])
 		scheduled = nil
 	end
 	function mod:Pact(args)
@@ -96,24 +100,30 @@ function mod:Shadows(msg, _, _, _, player)
 	if UnitIsUnit(player, "player") then
 		self:Flash(71265)
 	end
-	self:TargetMessage(71265, player, "yellow", nil, L["shadow_message"])
+	self:TargetMessageOld(71265, player, "yellow", nil, L["shadow_message"])
 	self:Bar(71265, 30, L["shadow_bar"])
 end
 
 function mod:Feed(args)
 	if self:Me(args.destGUID) then
-		self:Message(70877, "orange", "Alert", L["feed_message"])
+		self:MessageOld(70877, "orange", "alert", L["feed_message"])
 		self:Bar(70877, 15, L["feed_message"])
 	end
 end
 
 function mod:AirPhase(args)
-	self:Message(71772, "red", "Alarm", L["phase_message"])
+	self:SetStage(2)
+	self:MessageOld(71772, "red", "alarm", L["phase_message"])
 	self:Bar(71772, 12, L["phase1_bar"])
 	self:Bar(71772, airPhaseTimers[self:Difficulty()][2], L["phase2_bar"])
+	self:ScheduleTimer("GroundPhase", airPhaseTimers[self:Difficulty()][2])
+end
+
+function mod:GroundPhase()
+	self:SetStage(1)
 end
 
 function mod:Slash(args)
-	self:TargetMessage(71623, args.destName, "yellow")
+	self:TargetMessageOld(71623, args.destName, "yellow")
 end
 

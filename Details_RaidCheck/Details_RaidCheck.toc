@@ -1,10 +1,9 @@
-## Interface: 80300
+## Interface: 110002
 ## Title: Details!: Raid Check (plugin)
 ## Notes: Show talents and item level for all members in your group, also shows food and flask state.
 ## RequiredDeps: Details
+## IconTexture: Interface\AddOns\Details\images\minimap
 
-#@no-lib-strip@
-embeds.xml
-#@end-no-lib-strip@
+## X-Wago-ID: WL6Jk2Kv
 
 Details_RaidCheck.lua

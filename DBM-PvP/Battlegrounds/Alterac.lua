@@ -1,45 +1,68 @@
 local mod	= DBM:NewMod("z30", "DBM-PvP")
+local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524113830")
+mod:SetRevision("20240414045728")
 mod:SetZone(DBM_DISABLE_ZONE_DETECTION)
-mod:RegisterEvents("ZONE_CHANGED_NEW_AREA")
+mod:RegisterEvents(
+	"LOADING_SCREEN_DISABLED",
+	"ZONE_CHANGED_NEW_AREA",
+	"PLAYER_ENTERING_WORLD"
+)
 
 mod:AddBoolOption("AutoTurnIn")
 
 do
 	local bgzone = false
 
-	function mod:OnInitialize()
+	function mod:Init()
 		local zoneID = DBM:GetCurrentArea()
-		if zoneID == 30 or zoneID == 2197 then -- Regular AV (retail and classic), Korrak
+		if not bgzone and (zoneID == 30 or zoneID == 2197) then -- Regular AV (retail and classic), Korrak
 			bgzone = true
 			self:RegisterShortTermEvents(
+				"CHAT_MSG_MONSTER_YELL",
 				"GOSSIP_SHOW",
 				"QUEST_PROGRESS",
 				"QUEST_COMPLETE"
 			)
 			local assaultID
 			if zoneID == 30 then
-				assaultID = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC and 1459 or 91
+				assaultID = WOW_PROJECT_ID ~= (WOW_PROJECT_MAINLINE or 1) and 1459 or 91
 			elseif zoneID == 2197 then
 				assaultID = 1537
 			end
-			DBM:GetModByName("PvPGeneral"):SubscribeAssault(assaultID, 0)
-			-- TODO: Add boss health
-		elseif bgzone then
+			local generalMod = DBM:GetModByName("PvPGeneral")
+			generalMod:SubscribeAssault(assaultID, 0)
+			if not self.tracker then
+				self.tracker = generalMod:NewHealthTracker()
+				self.tracker:TrackHealth(11948, "AllianceBoss", BLUE_FONT_COLOR)
+				self.tracker:TrackHealth(11949, "Balinda", BLUE_FONT_COLOR)
+				self.tracker:TrackHealth(13419, "Ivus", BLUE_FONT_COLOR)
+				self.tracker:TrackHealth(11946, "HordeBoss", RED_FONT_COLOR)
+				self.tracker:TrackHealth(11947, "Galvangar", RED_FONT_COLOR)
+				self.tracker:TrackHealth(13256, "Lokholar", RED_FONT_COLOR)
+			end
+		elseif bgzone and (zoneID ~= 30 and zoneID ~= 2197) then
 			bgzone = false
 			self:UnregisterShortTermEvents()
+			self:Stop()
+			if self.tracker then
+				self.tracker:Cancel()
+				self.tracker = nil
+			end
 		end
 	end
 
-	function mod:ZONE_CHANGED_NEW_AREA()
-		self:ScheduleMethod(1, "OnInitialize")
+	function mod:LOADING_SCREEN_DISABLED()
+		self:ScheduleMethod(1, "Init")
 	end
+	mod.ZONE_CHANGED_NEW_AREA	= mod.LOADING_SCREEN_DISABLED
+	mod.PLAYER_ENTERING_WORLD	= mod.LOADING_SCREEN_DISABLED
+	mod.OnInitialize			= mod.LOADING_SCREEN_DISABLED
 end
 
 do
 	local ipairs, type = ipairs, type
-	local UnitGUID, GetItemCount, GetNumGossipActiveQuests, SelectGossipActiveQuest, SelectGossipAvailableQuest, IsQuestCompletable, CompleteQuest, GetQuestReward = UnitGUID, GetItemCount, GetNumGossipActiveQuests, SelectGossipActiveQuest, SelectGossipAvailableQuest, IsQuestCompletable, CompleteQuest, GetQuestReward
+	local UnitGUID, GetItemCount, GetNumGossipActiveQuests, SelectGossipActiveQuest, SelectGossipAvailableQuest, IsQuestCompletable, CompleteQuest, GetQuestReward = UnitGUID, GetItemCount, C_GossipInfo and C_GossipInfo.GetNumActiveQuests, C_GossipInfo and C_GossipInfo.SelectActiveQuest, C_GossipInfo and C_GossipInfo.SelectAvailableQuest, IsQuestCompletable, CompleteQuest, GetQuestReward
 
 	local quests = {
 		[13442] = { -- Archdruid Renferal [A]
@@ -63,7 +86,7 @@ do
 	}
 
 	function mod:GOSSIP_SHOW()
-		if not self.Options.AutoTurnIn then
+		if not self.Options.AutoTurnIn or DBM.Options.DontAutoGossip then
 			return
 		end
 		local quest = quests[self:GetCIDFromGUID(UnitGUID("target") or "") or 0]
@@ -80,7 +103,9 @@ do
 				end
 			end
 		elseif quest then
-			if GetItemCount(quest[1]) > quest[2] then
+			local questId = quest[1]
+			---@cast questId number
+			if GetItemCount(questId) > quest[2] then
 				SelectGossipAvailableQuest(1)
 			end
 		end
@@ -95,5 +120,24 @@ do
 
 	function mod:QUEST_COMPLETE()
 		GetQuestReward(0)
+	end
+end
+
+do
+	local bossTimer	= mod:NewTimer(600, "TimerBoss")
+
+	function mod:CHAT_MSG_MONSTER_YELL(msg, npc)
+		local isAlly = msg == L.BossAlly or msg:match(L.BossAlly)
+		if not isAlly and msg ~= L.BossHorde and not msg:match(L.BossHorde) then
+			return
+		end
+		bossTimer:Start(nil, npc)
+		if isAlly then
+			bossTimer:SetColor({r=0, g=0, b=1})
+			bossTimer:UpdateIcon("132486") -- Interface\\Icons\\INV_BannerPVP_02.blp
+		else
+			bossTimer:SetColor({r=1, g=0, b=0})
+			bossTimer:UpdateIcon("132485") -- Interface\\Icons\\INV_BannerPVP_01.blp
+		end
 	end
 end

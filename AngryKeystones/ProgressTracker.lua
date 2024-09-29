@@ -10,7 +10,7 @@ local lastAmount
 local lastAmountTime
 local lastQuantity
 
-local REAPING_AFFIX_ID = 117
+local PRIDEFUL_AFFIX_ID = 121
 
 local progressPresets = {}
 
@@ -58,15 +58,18 @@ function Mod:SCENARIO_CRITERIA_UPDATE()
 	if scenarioType == LE_SCENARIO_TYPE_CHALLENGE_MODE then
 		local numCriteria = select(3, C_Scenario.GetStepInfo())
 		for criteriaIndex = 1, numCriteria do
-			local criteriaString, criteriaType, _, quantity, totalQuantity, _, _, quantityString, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
-			if isWeightedProgress then
-				local currentQuantity = quantityString and tonumber( strsub(quantityString, 1, -2) )
-				if lastQuantity and currentQuantity < totalQuantity and currentQuantity > lastQuantity then
+			-- local criteriaString, criteriaType, _, quantity, totalQuantity, _, _, quantityString, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
+			local criteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
+			if criteriaInfo and criteriaInfo.isWeightedProgress then
+				local quantityString = criteriaInfo.quantityString
+				local currentQuantity = quantityString and tonumber( quantityString:match("%d+") )
+				if lastQuantity and currentQuantity < criteriaInfo.totalQuantity and currentQuantity > lastQuantity then
 					lastAmount = currentQuantity - lastQuantity
 					lastAmountTime = GetTime()
 					ProcessLasts()
 				end
 				lastQuantity = currentQuantity
+				break
 			end
 		end
 	end
@@ -76,10 +79,12 @@ local function StartTime()
 	Mod:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	local numCriteria = select(3, C_Scenario.GetStepInfo())
 	for criteriaIndex = 1, numCriteria do
-		local criteriaString, criteriaType, _, quantity, totalQuantity, _, _, quantityString, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
-		if isWeightedProgress then
-			local quantityString = select(8, C_Scenario.GetCriteriaInfo(criteriaIndex))
-			lastQuantity = quantityString and tonumber( strsub(quantityString, 1, -2) )
+		-- local criteriaString, criteriaType, _, quantity, totalQuantity, _, _, quantityString, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
+		local criteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
+		if criteriaInfo and criteriaInfo.isWeightedProgress then
+			local quantityString = criteriaInfo.quantityString
+			lastQuantity = quantityString and tonumber( quantityString:match("%d+") )
+			break
 		end
 	end
 end
@@ -118,10 +123,12 @@ local function OnTooltipSetUnit(tooltip)
 				local total
 				local progressName
 				for criteriaIndex = 1, numCriteria do
-					local criteriaString, _, _, quantity, totalQuantity, _, _, quantityString, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
-					if isWeightedProgress then
-						progressName = criteriaString
-						total = totalQuantity
+					-- local criteriaString, _, _, quantity, totalQuantity, _, _, quantityString, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
+					local criteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
+					if criteriaInfo and criteriaInfo.isWeightedProgress then
+						progressName = criteriaInfo.description
+						total = criteriaInfo.totalQuantity
+						break
 					end
 				end
 
@@ -189,81 +196,72 @@ function Mod:CHALLENGE_MODE_START(...) CheckTime(GetWorldElapsedTimers()) end
 function Mod:CHALLENGE_MODE_RESET(...) wipe(Mod.playerDeaths) end
 
 local function ProgressBar_SetValue(self, percent)
-	if self.criteriaIndex then
-		local _, _, _, _, totalQuantity, _, _, quantityString, _, _, _, _, _ = C_Scenario.GetCriteriaInfo(self.criteriaIndex)
-		local currentQuantity = quantityString and tonumber( strsub(quantityString, 1, -2) )
-		if currentQuantity and totalQuantity then
-			if Addon.Config.progressFormat == 1 then
-				self.Bar.Label:SetFormattedText("%.2f%%", currentQuantity/totalQuantity*100)
-			elseif Addon.Config.progressFormat == 2 then
-				self.Bar.Label:SetFormattedText("%d/%d", currentQuantity, totalQuantity)
-			elseif Addon.Config.progressFormat == 3 then
-				self.Bar.Label:SetFormattedText("%.2f%% - %d/%d", currentQuantity/totalQuantity*100, currentQuantity, totalQuantity)
-			elseif Addon.Config.progressFormat == 4 then
-				self.Bar.Label:SetFormattedText("%.2f%% (%.2f%%)", currentQuantity/totalQuantity*100, (totalQuantity-currentQuantity)/totalQuantity*100)
-			elseif Addon.Config.progressFormat == 5 then
-				self.Bar.Label:SetFormattedText("%d/%d (%d)", currentQuantity, totalQuantity, totalQuantity - currentQuantity)
-			elseif Addon.Config.progressFormat == 6 then
-				self.Bar.Label:SetFormattedText("%.2f%% (%.2f%%) - %d/%d (%d)", currentQuantity/totalQuantity*100, (totalQuantity-currentQuantity)/totalQuantity*100, currentQuantity, totalQuantity, totalQuantity - currentQuantity)
-			end
+	-- local _, _, _, _, totalQuantity, _, _, quantityString, _, _, _, _, _ = C_Scenario.GetCriteriaInfo(self.criteriaIndex)
+
+	local scenarioType = select(10, C_Scenario.GetInfo())
+
+	if scenarioType ~= LE_SCENARIO_TYPE_CHALLENGE_MODE then return end
+
+	local numCriteria = select(3, C_Scenario.GetStepInfo())
+	local criteriaInfo
+	local cInfo
+
+	for criteriaIndex = 1, numCriteria do
+		cInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
+		if cInfo and cInfo.isWeightedProgress then
+			criteriaInfo = cInfo
+			break
 		end
+	end
 
-		local isReapingActive = false
-		local _, affixes, _ = C_ChallengeMode.GetActiveKeystoneInfo()
-		if affixes then
-			for i = 1, #affixes do
-				if affixes[i] == REAPING_AFFIX_ID then
-					isReapingActive = true
-				end
-			end
-		end
+	if not criteriaInfo then return end
 
-		if isReapingActive and currentQuantity < totalQuantity then
-			if not self.ReapingFrame then
-				local reapingFrame = CreateFrame("Frame", nil, self)
-				reapingFrame:SetSize(56, 16)
-				reapingFrame:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
-		
-				reapingFrame.Icon = CreateFrame("Frame", nil, reapingFrame, "ScenarioChallengeModeAffixTemplate")
-				reapingFrame.Icon:SetPoint("LEFT", reapingFrame, "LEFT", 0, 0)
-				reapingFrame.Icon:SetSize(14, 14)
-				reapingFrame.Icon.Portrait:SetSize(12, 12)
-				reapingFrame.Icon:SetUp(REAPING_AFFIX_ID)
+	local totalQuantity = criteriaInfo.totalQuantity
+	local quantityString = criteriaInfo.quantityString
+	local currentQuantity = quantityString and tonumber( quantityString:match("%d+") )
 
-				reapingFrame.Text = reapingFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-				reapingFrame.Text:SetPoint("LEFT", reapingFrame.Icon, "RIGHT", 4, 0)
-
-				self.ReapingFrame = reapingFrame
-
-				self:HookScript("OnShow", function(self) self.ReapingFrame:Show(); self.ReapingFrame.Icon:Show() end )
-				self:HookScript("OnHide", function(self) self.ReapingFrame:Hide(); self.ReapingFrame.Icon:Hide() end )
-			end
-			local threshold = totalQuantity / 5
-			local current = currentQuantity
-			local value = threshold - current % threshold
-			local total = totalQuantity
-			if Addon.Config.progressFormat == 1 or Addon.Config.progressFormat == 4 then
-				self.ReapingFrame.Text:SetFormattedText("%.2f%%", value/total*100)
-			elseif Addon.Config.progressFormat == 2 or Addon.Config.progressFormat == 5 then
-				self.ReapingFrame.Text:SetFormattedText("%d", ceil(value))
-			elseif Addon.Config.progressFormat == 3 or Addon.Config.progressFormat == 6 then
-				self.ReapingFrame.Text:SetFormattedText("%.2f%% - %d", value/total*100, ceil(value))
-			else
-				self.ReapingFrame.Text:SetFormattedText("%d%%", value/total*100)
-			end
-			self.ReapingFrame:Show()
-			self.ReapingFrame.Icon:Show()
-		elseif self.ReapingFrame then
-			self.ReapingFrame:Hide()
-			self.ReapingFrame.Icon:Hide()
+	if currentQuantity and totalQuantity then
+		if Addon.Config.progressFormat == 1 then
+			self.Bar.Label:SetFormattedText("%.2f%%", currentQuantity/totalQuantity*100)
+		elseif Addon.Config.progressFormat == 2 then
+			self.Bar.Label:SetFormattedText("%d/%d", currentQuantity, totalQuantity)
+		elseif Addon.Config.progressFormat == 3 then
+			self.Bar.Label:SetFormattedText("%.2f%% - %d/%d", currentQuantity/totalQuantity*100, currentQuantity, totalQuantity)
+		elseif Addon.Config.progressFormat == 4 then
+			self.Bar.Label:SetFormattedText("%.2f%% (%.2f%%)", currentQuantity/totalQuantity*100, (totalQuantity-currentQuantity)/totalQuantity*100)
+		elseif Addon.Config.progressFormat == 5 then
+			self.Bar.Label:SetFormattedText("%d/%d (%d)", currentQuantity, totalQuantity, totalQuantity - currentQuantity)
+		elseif Addon.Config.progressFormat == 6 then
+			self.Bar.Label:SetFormattedText("%.2f%% (%.2f%%) - %d/%d (%d)", currentQuantity/totalQuantity*100, (totalQuantity-currentQuantity)/totalQuantity*100, currentQuantity, totalQuantity, totalQuantity - currentQuantity)
 		end
 	end
 end
 
+local progressBarFound = false
+
+local function findProgressBar()
+
+	if progressBarFound then return end
+
+	local usedBars = ScenarioObjectiveTracker.usedProgressBars or {}
+
+	for _, bar in pairs(usedBars) do
+		if bar.used then
+			hooksecurefunc(bar, "SetValue", ProgressBar_SetValue)
+			progressBarFound = true
+			break
+		end
+	end
+end
+
+hooksecurefunc(ScenarioObjectiveTracker.ObjectivesBlock, "AddProgressBar", findProgressBar )
+
 local function DeathCount_OnEnter(self)
+	local parent = self:GetParent()
+
 	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-	GameTooltip:SetText(CHALLENGE_MODE_DEATH_COUNT_TITLE:format(self.count), 1, 1, 1)
-	GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(SecondsToClock(self.timeLost, false)))
+	GameTooltip:SetText(CHALLENGE_MODE_DEATH_COUNT_TITLE:format(parent.deathCount), 1, 1, 1)
+	GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(SecondsToClock(parent.timeLost, false)))
 
 	GameTooltip:AddLine(" ")
 	local list = {}
@@ -289,7 +287,7 @@ local function DeathCount_OnEnter(self)
 end
 
 function Mod:Blizzard_ObjectiveTracker()
-	ScenarioChallengeModeBlock.DeathCount:SetScript("OnEnter", DeathCount_OnEnter)
+	ScenarioObjectiveTracker.ChallengeModeBlock.DeathCount:SetScript("OnEnter", DeathCount_OnEnter)
 end
 
 function Mod:Startup()
@@ -316,14 +314,17 @@ function Mod:Startup()
 	self:RegisterEvent("CHALLENGE_MODE_RESET")
 	self:RegisterAddOnLoaded("Blizzard_ObjectiveTracker")
 	CheckTime(GetWorldElapsedTimers())
-	GameTooltip:HookScript("OnTooltipSetUnit", OnTooltipSetUnit)
+	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, OnTooltipSetUnit)
 
 	Addon.Config:RegisterCallback('progressFormat', function()
-		local usedBars = SCENARIO_TRACKER_MODULE.usedProgressBars[ScenarioObjectiveBlock] or {}
+		local usedBars = ScenarioObjectiveTracker.usedProgressBars or {}
 		for _, bar in pairs(usedBars) do
-			ProgressBar_SetValue(bar)
+			if bar.used then
+				ProgressBar_SetValue(bar)
+				break
+			end
 		end
 	end)
 end
 
-hooksecurefunc("ScenarioTrackerProgressBar_SetValue", ProgressBar_SetValue)
+-- hooksecurefunc("ScenarioTrackerProgressBar_SetValue", ProgressBar_SetValue)

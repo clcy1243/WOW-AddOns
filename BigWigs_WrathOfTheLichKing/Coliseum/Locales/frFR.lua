@@ -1,4 +1,5 @@
 local L = BigWigs:NewBossLocale("Anub'arak", "frFR")
+if not L then return end
 if L then
 	L.engage_message = "Anub'arak engagé, Fouir dans 80 sec. !"
 	L.engage_trigger = "Ce terreau sera votre tombeau !"
@@ -13,8 +14,6 @@ if L then
 	L.nerubian_burrower = "Plus de fouisseurs"
 
 	L.shadow_soon = "Attaque d'ombre dans ~5 sec. !"
-
-	L.chase = "Poursuivi"
 end
 
 L = BigWigs:NewBossLocale("The Beasts of Northrend", "frFR")
@@ -26,10 +25,13 @@ if L then
 	L.icehowl_trigger = "L'air se gèle à l'entrée de notre prochain combattant, Glace-hurlante ! Tuez ou soyez tués, champions !"
 	L.boss_incoming = "Arrivée de %s"
 
+	L.gormok = "Gormok l’Empaleur"
+	L.jormungars = "Gueule-d’acide et Ecaille-d’effroi"
+	L.icehowl = "Glace-Hurlante"
+
 	-- Gormok
 	L.snobold = "Frigbold"
 	L.snobold_desc = "Prévient quand un joueur a un frigbold sur sa tête."
-	L.snobold_message = "Frigbold"
 
 	-- Jormungars
 	L.submerge = "Dans le sol"

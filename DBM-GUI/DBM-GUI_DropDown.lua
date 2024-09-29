@@ -1,22 +1,18 @@
+local _, private = ...
+
 local L = DBM_GUI_L
 
-local pairs, next, type, ipairs, setmetatable, mmax = pairs, next, type, ipairs, setmetatable, math.max
+---@class DBMGUI
+local DBM_GUI = DBM_GUI
+
+local pairs, next, type, ipairs, setmetatable, mfloor, mmax = pairs, next, type, ipairs, setmetatable, math.floor, math.max
 local CreateFrame, GameFontNormalSmall = CreateFrame, GameFontNormalSmall
 local DBM = DBM
 
 local defaultFont, defaultFontSize = GameFontHighlightSmall:GetFont()
 
-local hack = OptionsList_OnLoad
-function OptionsList_OnLoad(self, ...)
-	if self:GetName() ~= "DBM_GUI_DropDown" then
-		hack(self, ...)
-	end
-end
-
-local tabFrame1 = CreateFrame("Frame", "DBM_GUI_DropDown", _G["DBM_GUI_OptionsFrame"], DBM:IsAlpha() and "BackdropTemplate,OptionsFrameListTemplate" or "OptionsFrameListTemplate")
-tabFrame1:Hide()
-tabFrame1:SetFrameStrata("TOOLTIP")
-tabFrame1.offset = 0
+---@class DBM_GUI_DropDownTemplate: ScrollFrame, BackdropTemplate
+local tabFrame1 = CreateFrame("ScrollFrame", "DBM_GUI_DropDown", _G["DBM_GUI_OptionsFrame"], "DBM_GUI_DropDownTemplate")
 tabFrame1.backdropInfo = {
 	bgFile		= "Interface\\ChatFrame\\ChatFrameBackground", -- 130937
 	edgeFile	= "Interface\\Tooltips\\UI-Tooltip-Border", -- 137057
@@ -25,14 +21,15 @@ tabFrame1.backdropInfo = {
 	edgeSize	= 16,
 	insets		= { left = 3, right = 3, top = 5, bottom = 3 }
 }
-if not DBM:IsAlpha() then
-	tabFrame1:SetBackdrop(tabFrame1.backdropInfo)
-else
-	tabFrame1:ApplyBackdrop()
-end
-tabFrame1:SetBackdropColor(0.1, 0.1, 0.1, 0.6)
+
+tabFrame1:Hide()
+tabFrame1:SetFrameStrata("TOOLTIP")
+tabFrame1.offset = 0
+tabFrame1:ApplyBackdrop()
+tabFrame1:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 tabFrame1:SetBackdropBorderColor(0.4, 0.4, 0.4)
 
+-- Temporary hack, till I get both versions running smoothly on the new system
 local tabFrame1List = _G[tabFrame1:GetName() .. "List"]
 tabFrame1List:SetScript("OnVerticalScroll", function(self, offset)
 	local scrollbar = _G[self:GetName() .. "ScrollBar"]
@@ -40,34 +37,35 @@ tabFrame1List:SetScript("OnVerticalScroll", function(self, offset)
 	scrollbar:SetValue(offset)
 	_G[self:GetName() .. "ScrollBarScrollUpButton"]:SetEnabled(offset ~= 0)
 	_G[self:GetName() .. "ScrollBarScrollDownButton"]:SetEnabled(scrollbar:GetValue() - max ~= 0)
-	tabFrame1.offset = math.floor((offset / 16) + 0.5)
+	tabFrame1.offset = mfloor(offset)
 	tabFrame1:Refresh()
 end)
-tabFrame1List:SetBackdropBorderColor(0.6, 0.6, 0.6, 0.6)
+Mixin(tabFrame1List, BackdropTemplateMixin)
+tabFrame1List:SetBackdropBorderColor(0.6, 0.6, 0.6, 0.9)
 
 local tabFrame1ScrollBar = _G[tabFrame1List:GetName() .. "ScrollBar"]
 tabFrame1ScrollBar:SetMinMaxValues(0, 11)
-tabFrame1ScrollBar:SetValueStep(16)
+tabFrame1ScrollBar:SetValueStep(1)
 tabFrame1ScrollBar:SetValue(0)
 
 local scrollUpButton = _G[tabFrame1ScrollBar:GetName() .. "ScrollUpButton"]
 scrollUpButton:SetSize(12, 12)
 scrollUpButton:Disable()
 scrollUpButton:SetScript("OnClick", function(self)
-	self:GetParent():SetValue(self:GetParent():GetValue() - 16)
+	self:GetParent():SetValue(self:GetParent():GetValue() - 1)
 end)
 local scrollDownButton = _G[tabFrame1ScrollBar:GetName() .. "ScrollDownButton"]
 scrollDownButton:SetSize(12, 12)
 scrollDownButton:Enable()
 scrollDownButton:SetScript("OnClick", function(self)
-	self:GetParent():SetValue(self:GetParent():GetValue() + 16)
+	self:GetParent():SetValue(self:GetParent():GetValue() + 1)
 end)
 
 _G[tabFrame1ScrollBar:GetName() .. "ThumbTexture"]:SetSize(12, 16)
 
 tabFrame1:EnableMouseWheel(true)
 tabFrame1:SetScript("OnMouseWheel", function(_, delta)
-	tabFrame1ScrollBar:SetValue(tabFrame1ScrollBar:GetValue() - (delta * 16))
+	tabFrame1ScrollBar:SetValue(tabFrame1ScrollBar:GetValue() - delta)
 end)
 
 local ClickFrame = CreateFrame("Button", nil, UIParent)
@@ -83,7 +81,8 @@ end)
 
 tabFrame1.buttons = {}
 for i = 1, 10 do
-	local button = CreateFrame("Button", tabFrame1:GetName() .. "Button" .. i, tabFrame1, "UIDropDownMenuButtonTemplate")
+	---@class DBMFrameButton: Button, BackdropTemplate
+	local button = CreateFrame("Button", tabFrame1:GetName() .. "Button" .. i, tabFrame1, "BackdropTemplate,UIDropDownMenuButtonTemplate")
 	_G[button:GetName() .. "Check"]:Hide()
 	_G[button:GetName() .. "UnCheck"]:Hide()
 	button:SetFrameLevel(tabFrame1ScrollBar:GetFrameLevel() - 1)
@@ -117,11 +116,7 @@ for i = 1, 10 do
 		_G[self:GetName() .. "NormalText"]:SetFont(defaultFont, defaultFontSize)
 		self:SetHeight(0)
 		self:SetText("")
-		if DBM:IsAlpha() then
-			self:ClearBackdrop()
-		else
-			self:SetBackdrop(nil)
-		end
+		self:ClearBackdrop()
 	end
 	tabFrame1.buttons[i] = button
 end
@@ -138,11 +133,7 @@ function tabFrame1:ShowMenu()
 				button.backdropInfo = {
 					bgFile	= entry.value
 				}
-				if DBM:IsAlpha() then
-					button:ApplyBackdrop()
-				else
-					button:SetBackdrop(button.backdropInfo)
-				end
+				button:ApplyBackdrop()
 			end
 		end
 	end
@@ -162,6 +153,9 @@ function tabFrame1:ShowFontMenu()
 end
 
 function tabFrame1:Refresh()
+	if #self.dropdown.values == 0 then -- Quirky case where there may be no elements in the dropdown???
+		return
+	end
 	self:Show()
 	if self.offset < 0 then
 		self.offset = 0
@@ -178,7 +172,7 @@ function tabFrame1:Refresh()
 	self:SetHeight(#self.buttons * 16 + 8)
 	if #self.dropdown.values > #self.buttons then
 		tabFrame1List:Show()
-		tabFrame1ScrollBar:SetMinMaxValues(0, valuesWOButtons * 16)
+		tabFrame1ScrollBar:SetMinMaxValues(0, valuesWOButtons)
 	else
 		if #self.dropdown.values < #self.buttons then
 			tabFrame1List:Hide()
@@ -193,15 +187,21 @@ function tabFrame1:Refresh()
 	for _, button in pairs(self.buttons) do
 		button:SetWidth(bwidth)
 	end
+	bwidth = math.max(bwidth, tabFrame1.largestWidth or 0)
+	tabFrame1.largestWidth = bwidth
 	self:SetWidth(bwidth + 16)
 	ClickFrame:Show()
 end
 
+---@class DBMDropdownTemplate: Frame
+---@field values table
+---@field myheight number
 local dropdownPrototype = CreateFrame("Frame")
 
+-- For lazily loaded dropdowns: pass a single dropdown entry, for normal dropdowns pass a single value or name
 function dropdownPrototype:SetSelectedValue(selected)
+	local text = _G[self:GetName() .. "Text"]
 	if selected and self.values and type(self.values) == "table" then
-		local text = _G[self:GetName() .. "Text"]
 		for _, v in next, self.values do
 			if v.value ~= nil and v.value == selected or v.text == selected then
 				text:SetText(v.text)
@@ -209,9 +209,14 @@ function dropdownPrototype:SetSelectedValue(selected)
 				self.text = v.text
 			end
 		end
+	elseif type(self.values) ~= "table" then -- lazily loaded dropdown, set to whatever was given no matter if it exists
+		text:SetText(selected.text)
+		self.value = selected.value
+		self.text = selected.text
 	end
 end
 
+-- values can either be a table or a function, if it's a function it gets called every time the dropdown is opened to populate the values
 function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, height, parent)
 	if type(values) == "table" then
 		for _, entry in next, values do
@@ -219,13 +224,21 @@ function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, he
 			entry.value = entry.value or entry.text
 		end
 	end
+	---@class DBMDropDown: Frame, DBMDropdownTemplate
+	---@diagnostic disable-next-line: undefined-field -- frame comes from a subclass of DBM_GUI
 	local dropdown = CreateFrame("Frame", "DBM_GUI_DropDown" .. self:GetNewID(), parent or self.frame, "UIDropDownMenuTemplate")
-	dropdown.values = values
+	dropdown.mytype = "dropdown"
+	dropdown.width = width
+	if type(values) == "function" then
+		dropdown.valueGetter = values
+	else
+		dropdown.values = values
+	end
 	dropdown.callfunc = callfunc
 	local dropdownText = _G[dropdown:GetName() .. "Text"]
 	if not width then
 		width = 120
-		if title ~= L.Warn_FontType and title ~= L.Warn_FontStyle and title ~= L.Bar_Font then
+		if title ~= L.FontType and title ~= L.FontStyle and title ~= L.FontShadow then
 			for _, v in ipairs(values) do
 				dropdownText:SetText(v.text)
 				width = mmax(width, dropdownText:GetStringWidth())
@@ -239,16 +252,19 @@ function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, he
 	dropdownText:SetPoint("LEFT", dropdown:GetName() .. "Left", 30, 2)
 	_G[dropdown:GetName() .. "Middle"]:SetWidth(width + 30)
 	local dropdownButton = _G[dropdown:GetName() .. "Button"]
-	dropdownButton:SetScript("OnMouseDown", nil)
+	dropdownButton:SetScript("OnMouseDown", function() DBM:PlaySoundFile(567407) end)
 	dropdownButton:SetScript("OnClick", function(self)
-		DBM:PlaySound(856)
 		if tabFrame1:IsShown() then
 			tabFrame1:Hide()
 			tabFrame1.dropdown = nil
 		else
+			if dropdown.valueGetter then
+				dropdown.values = dropdown.valueGetter(dropdown)
+			end
+			tabFrame1.largestWidth = 0
 			tabFrame1:ClearAllPoints()
 			tabFrame1:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", 0, -3)
-			tabFrame1.dropdown = self:GetParent()
+			tabFrame1.dropdown = dropdown
 			tabFrame1:Refresh()
 		end
 	end)
@@ -256,7 +272,7 @@ function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, he
 		local titleText = dropdown:CreateFontString(dropdown:GetName() .. "TitleText", "BACKGROUND")
 		titleText:SetPoint("BOTTOMLEFT", dropdown, "TOPLEFT", 21, 1)
 		titleText:SetFontObject(GameFontNormalSmall)
-		titleText:SetText(title)
+		titleText:SetText(private.parseDescription(title))
 	end
 	if vartype and vartype == "DBM" and DBM.Options[var] ~= nil then
 		dropdown:SetScript("OnShow", function()
@@ -264,13 +280,13 @@ function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, he
 		end)
 	elseif vartype and vartype == "DBT" then
 		dropdown:SetScript("OnShow", function()
-			dropdown:SetSelectedValue(DBM.Bars:GetOption(var))
+			dropdown:SetSelectedValue(DBT.Options[var])
 		end)
 	elseif vartype then
 		dropdown:SetScript("OnShow", function()
 			dropdown:SetSelectedValue(vartype.Options[var])
 		end)
-	else -- For external modules like DBM-RaidLeadTools
+	elseif type(dropdown.values) == "table" then
 		for _, v in next, dropdown.values do
 			if v.value ~= nil and v.value == var or v.text == var then
 				dropdownText:SetText(v.text)

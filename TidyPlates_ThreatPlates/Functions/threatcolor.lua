@@ -8,7 +8,6 @@ local InCombatLockdown, IsInInstance = InCombatLockdown, IsInInstance
 local UnitIsConnected = UnitIsConnected
 
 -- ThreatPlates APIs
-local TidyPlatesThreat = TidyPlatesThreat
 local RGB = ThreatPlates.RGB
 
 local _G =_G
@@ -18,8 +17,12 @@ local _G =_G
 
 local COLOR_TRANSPARENT = RGB(0, 0, 0, 0) -- opaque
 
+---------------------------------------------------------------------------------------------------
+-- Wrapper functions for WoW Classic
+---------------------------------------------------------------------------------------------------
+
 local function ShowThreatGlow(unit)
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
 
   if db.ShowThreatGlowOnAttackedUnitsOnly then
     if IsInInstance() and db.threat.UseHeuristicInInstances then
@@ -35,7 +38,7 @@ end
 function Addon:SetThreatColor(unit)
   local color
 
-  local db = TidyPlatesThreat.db.profile
+  local db = Addon.db.profile
   if not UnitIsConnected(unit.unitid) and ShowThreatGlow(unit) then
     color = db.ColorByReaction.DisconnectedUnit
   elseif unit.isTapped and ShowThreatGlow(unit) then
@@ -55,10 +58,10 @@ function Addon:SetThreatColor(unit)
     -- is already in combat, but not yet on the mob's threat table for a sec or so.
     if db.threat.ON and db.threat.useHPColor then
       if style == "dps" or style == "tank" then
-        color = Addon:GetThreatColor(unit, style, db.ShowThreatGlowOnAttackedUnitsOnly)
+        color = Addon:GetThreatColor(unit, style, db.ShowThreatGlowOnAttackedUnitsOnly) -- ShowThreatGlowOnAttackedUnitsOnly is ignored in WoW Classic
       end
     elseif InCombatLockdown() and (style == "normal" or style == "dps" or style == "tank") then
-      color = Addon:GetThreatColor(unit, style, db.ShowThreatGlowOnAttackedUnitsOnly)
+      color = Addon:GetThreatColor(unit, style, db.ShowThreatGlowOnAttackedUnitsOnly)   -- ShowThreatGlowOnAttackedUnitsOnly is ignored in WoW Classic
     end
   end
 

@@ -1,10 +1,9 @@
-local mod	= DBM:NewMod(2097, "DBM-Party-BfA", 9, 1001)
+local mod	= DBM:NewMod(2097, "DBM-Party-BfA", 9, 1002)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200528135243")
+mod:SetRevision("20240417180519")
 mod:SetCreatureID(127479)
 mod:SetEncounterID(2101)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -20,19 +19,16 @@ local warnUpheavelCast				= mod:NewCastAnnounce(257617, 2, 5)--Cast time until w
 local specWarnSandTrap				= mod:NewSpecialWarningDodge(257092, nil, nil, nil, 2, 2)
 local specWarnUpheavel				= mod:NewSpecialWarningYou(257617, nil, nil, nil, 2, 2)
 local yellUpheavel					= mod:NewYell(257617)
-local specWarnUpheavelNear			= mod:NewSpecialWarningClose(257617, nil, nil, nil, 2, 2)
 local specWarnSandstorm				= mod:NewSpecialWarningSpell(257495, nil, nil, nil, 2, 2)
 
---local timerReapSoulCD				= mod:NewNextTimer(13, 194956, nil, nil, nil, 5, nil, DBM_CORE_L.TANK_ICON..DBM_CORE_L.DEADLY_ICON)
-local timerSandTrapCD				= mod:NewCDTimer(14.2, 257092, nil, nil, nil, 3)--14.2-18.6
-local timerUpheavelCD				= mod:NewCDTimer(43.4, 257617, nil, nil, nil, 3)
+--local timerReapSoulCD				= mod:NewNextTimer(13, 194956, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON..DBM_COMMON_L.DEADLY_ICON)
+local timerSandTrapCD				= mod:NewCDTimer(13.2, 257092, nil, nil, nil, 3)--14.2-18.6
+local timerUpheavelCD				= mod:NewCDTimer(38.5, 257617, nil, nil, nil, 3)
 local timerSandstormCD				= mod:NewCDTimer(34, 257495, nil, nil, nil, 2)--Health based?
 
---mod:AddRangeFrameOption(5, 194966)
-
 function mod:OnCombatStart(delay)
-	timerSandTrapCD:Start(8.5-delay)
-	timerUpheavelCD:Start(20.5-delay)
+	timerSandTrapCD:Start(8.1-delay)
+	timerUpheavelCD:Start(20.2-delay)
 	timerSandstormCD:Start(30.3-delay)
 end
 
@@ -59,9 +55,6 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, targetname)
 				specWarnUpheavel:Show()
 				specWarnUpheavel:Play("targetyou")
 				yellUpheavel:Yell()
-			elseif self:CheckNearby(10, targetname) then
-				specWarnUpheavelNear:Show(targetname)
-				specWarnUpheavelNear:Play("watchstep")
 			else
 				warnUpheavel:Show(targetname)
 			end

@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(283, "DBM-Party-Cataclysm", 12, 184)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod.statTypes = "heroic,timewalker"
+
+mod:SetRevision("20220209180132")
 mod:SetCreatureID(54544)
 mod:SetEncounterID(1884)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -13,14 +14,13 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED_DOSE 102472",
 	"SPELL_CAST_START 102472 102173"
 )
-mod.onlyHeroic = true
 
 local warnGuidance		= mod:NewSpellAnnounce(102472, 3)
 local warnGuidanceStack	= mod:NewCountAnnounce(102472, 2, nil, false)
 
 local specwarnStardust	= mod:NewSpecialWarningInterrupt(102173, "HasInterrupt", nil, nil, 1, 2)
 
-local timerGuidance		= mod:NewNextTimer(20, 102472)
+local timerGuidance		= mod:NewCDTimer(8.4, 102472)--Iffy, and might be worth removing
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 102472 then

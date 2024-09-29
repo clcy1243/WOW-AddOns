@@ -23,20 +23,14 @@ local MODNAME = "Tradeskill"
 local Tradeskill = Quartz3:NewModule(MODNAME, "AceEvent-3.0", "AceHook-3.0")
 local Player = Quartz3:GetModule("Player")
 
+local WoWRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
+
 local TimeFmt = Quartz3.Util.TimeFormat
 
 ----------------------------
 -- Upvalues
 local GetTime, UnitCastingInfo = GetTime, UnitCastingInfo
 local unpack, tonumber, format = unpack, tonumber, format
-
-local WoWClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
-if WoWClassic then
-	UnitCastingInfo = function(unit)
-		if unit ~= "player" then return end
-		return CastingInfo()
-	end
-end
 
 local getOptions
 
@@ -51,11 +45,11 @@ local function tradeskillOnUpdate()
 	if casting then
 		local elapsed = duration * completedcasts + currentTime - starttime
 		castBar:SetValue(elapsed)
-		
+
 		local perc = (currentTime - starttime) / duration
 		castBarSpark:ClearAllPoints()
 		castBarSpark:SetPoint("CENTER", castBar, "LEFT", perc * castBar:GetWidth(), 0)
-		
+
 		if Player.db.profile.hidecasttime then
 			castBarTimeText:SetFormattedText(TimeFmt(totaltime - elapsed))
 		else
@@ -73,10 +67,10 @@ local function tradeskillOnUpdate()
 		else
 			local elapsed = duration * completedcasts
 			castBar:SetValue(elapsed)
-			
+
 			castBarSpark:ClearAllPoints()
 			castBarSpark:SetPoint("CENTER", castBar, "LEFT", castBar:GetWidth(), 0)
-			
+
 			if Player.db.profile.hidecasttime then
 				castBarTimeText:SetFormattedText(TimeFmt(totaltime - elapsed))
 			else
@@ -97,10 +91,22 @@ function Tradeskill:OnEnable()
 	self:RegisterEvent("UNIT_SPELLCAST_STOP")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	if WoWClassic then
-		self:SecureHook("DoTradeSkill")
+	if WoWRetail then
+		if ProfessionsFrame then
+			self:SecureHook(ProfessionsFrame.CraftingPage, "CreateInternal", "DoTradeSkill")
+		else
+			self:RegisterEvent("ADDON_LOADED")
+		end
+	elseif C_TradeSkillUI and C_TradeSkillUI.CraftRecipe then
+		self:SecureHook(C_TradeSkillUI, "CraftRecipe", "DoTradeSkillClassic")
 	else
-		self:SecureHook(C_TradeSkillUI, "CraftRecipe", "DoTradeSkill")
+		self:SecureHook("DoTradeSkill", "DoTradeSkillClassic")
+	end
+end
+
+function Tradeskill:ADDON_LOADED(event, addon)
+	if addon == "Blizzard_Professions" then
+		self:SecureHook(ProfessionsFrame.CraftingPage, "CreateInternal", "DoTradeSkill")
 	end
 end
 
@@ -119,15 +125,15 @@ function Tradeskill:UNIT_SPELLCAST_START(object, bar, unit, guid, spellID)
 		castSpellID = spellID
 		bail = nil
 		Player.Bar.endTime = nil
-		
+
 		castBar:SetStatusBarColor(unpack(Quartz3.db.profile.castingcolor))
 		castBar:SetMinMaxValues(0, totaltime)
-		
+
 		castBar:SetValue(0)
 		castBarParent:Show()
 		castBarParent:SetScript("OnUpdate", tradeskillOnUpdate)
 		castBarParent:SetAlpha(Player.db.profile.alpha)
-		
+
 		local numleft = repeattimes - completedcasts
 		if numleft <= 1 then
 			castBarText:SetText(displayName)
@@ -135,7 +141,13 @@ function Tradeskill:UNIT_SPELLCAST_START(object, bar, unit, guid, spellID)
 			castBarText:SetFormattedText("%s (%s)", displayName, numleft)
 		end
 		castBarSpark:Show()
+
+		if (icon == "Interface\\Icons\\Temp" or icon == 136235) and Quartz3.db.profile.hidesamwise then
+			icon = 136243
+		end
 		castBarIcon:SetTexture(icon)
+
+		Player:ClearStages(bar)
 	else
 		castBar:SetMinMaxValues(0, 1)
 		return self.hooks[object].UNIT_SPELLCAST_START(object, bar, unit, guid, spellID)
@@ -165,9 +177,13 @@ function Tradeskill:UNIT_SPELLCAST_INTERRUPTED(event, unit)
 	bail = true
 end
 
-function Tradeskill:DoTradeSkill(index, num)
+function Tradeskill:DoTradeSkill(_, id, num)
 	completedcasts = 0
 	repeattimes = tonumber(num) or 1
+end
+
+function Tradeskill:DoTradeSkillClassic(id, num)
+	self:DoTradeSkill(nil, id, num)
 end
 
 function Tradeskill:ApplySettings()

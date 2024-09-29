@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(675, "DBM-Party-MoP", 4, 303)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "normal,heroic,challenge,timewalker"
+
+mod:SetRevision("20230708234551")
 mod:SetCreatureID(56589)
 mod:SetEncounterID(1405)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -19,14 +20,12 @@ mod:RegisterEventsInCombat(
 
 local warnImpalingStrike	= mod:NewTargetAnnounce(107047, 3)
 local warnPreyTime			= mod:NewTargetAnnounce(106933, 3, nil, "Healer")
-local warnStrafingRun		= mod:NewSpellAnnounce("ej5660", 4)
 
-local specWarnStafingRun	= mod:NewSpecialWarningSpell("ej5660", nil, nil, nil, 2)
-local specWarnStafingRunAoe	= mod:NewSpecialWarningMove(116297)
-local specWarnAcidBomb		= mod:NewSpecialWarningMove(115458)
+local specWarnStafingRun	= mod:NewSpecialWarningDodge(-5660, nil, nil, nil, 2, 2)
+local specWarnGTFO			= mod:NewSpecialWarningGTFO(116297, nil, nil, nil, 1, 8)
 
-local timerImpalingStrikeCD	= mod:NewNextTimer(30, 107047)
-local timerPreyTime			= mod:NewTargetTimer(5, 106933, nil, "Healer", nil, 5, nil, DBM_CORE_L.HEALER_ICON)
+local timerImpalingStrikeCD	= mod:NewCDTimer(25.5, 107047, nil, "Tank|Healer", nil, 5)
+local timerPreyTime			= mod:NewTargetTimer(5, 106933, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
 local timerPreyTimeCD		= mod:NewNextTimer(14.5, 106933, nil, nil, nil, 3)
 
 function mod:OnCombatStart(delay)
@@ -55,19 +54,20 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 115458 and destGUID == UnitGUID("player") and self:AntiSpam() then
-		specWarnAcidBomb:Show()
-	elseif spellId == 116297 and destGUID == UnitGUID("player") and self:AntiSpam() then
-		specWarnStafingRunAoe:Show()
+function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spellName)
+	if (spellId == 115458 or spellId == 116297) and destGUID == UnitGUID("player") and self:AntiSpam() then
+		specWarnGTFO:Show(spellName)
+		specWarnGTFO:Play("watchfeet")
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:RAID_BOSS_EMOTE(msg)--Needs a better trigger if possible using transcriptor.
 	if msg == L.StaffingRun or msg:find(L.StaffingRun) then
-		warnStrafingRun:Show()
 		specWarnStafingRun:Show()
+		specWarnStafingRun:Play("watchstep")
+		timerPreyTimeCD:Stop()
+		timerImpalingStrikeCD:Stop()
 		timerImpalingStrikeCD:Start(29)
 		timerPreyTimeCD:Start(32.5)
 	end

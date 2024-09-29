@@ -1,10 +1,11 @@
-﻿local mod	= DBM:NewMod(186, "DBM-Party-Cataclysm", 10, 77)
+local mod	= DBM:NewMod(186, "DBM-Party-Cataclysm", 10, 77)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200220142801")
+mod.statTypes = "heroic,timewalker"
+
+mod:SetRevision("20240428124541")
 mod:SetCreatureID(23574)
 mod:SetEncounterID(1189)
-mod:SetZone()
 mod:SetUsedIcons(1, 8)
 
 mod:RegisterCombat("combat")
@@ -13,7 +14,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 97318",
 	"SPELL_CAST_SUCCESS 43648"
 )
-mod.onlyHeroic = true
 
 local warnStormSoon		= mod:NewSoonAnnounce(43648, 5, 3)
 local warnPlucked		= mod:NewTargetNoFilterAnnounce(97318, 3)
@@ -26,8 +26,8 @@ local timerStormCD		= mod:NewCDTimer(55, 43648, nil, nil, nil, 3)
 local berserkTimer		= mod:NewBerserkTimer(600)
 
 mod:AddBoolOption("RangeFrame", true)
-mod:AddSetIconOption("StormIcon", 43648, true, false, {1})
-mod:AddSetIconOption("SetIconOnEagle", 97318, true, true, {8})
+mod:AddSetIconOption("StormIcon", 43648, true, 0, {1})
+mod:AddSetIconOption("SetIconOnEagle", 97318, true, 5, {8})
 
 function mod:OnCombatStart(delay)
 	warnStormSoon:Schedule(43)
@@ -49,7 +49,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsDestTypePlayer() then
 			warnPlucked:Show(args.destName)
 		else
-			self:ScanForMobs(args.destGUID, 2, 8, 1, 0.1, 10, "SetIconOnEagle")
+			self:ScanForMobs(args.destGUID, 2, 8, 1, nil, 10, "SetIconOnEagle")
 		end
 	end
 end

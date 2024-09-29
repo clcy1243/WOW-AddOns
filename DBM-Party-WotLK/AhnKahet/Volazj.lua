@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(584, "DBM-Party-WotLK", 1, 271)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20231117105343")
 mod:SetCreatureID(29311)
-mod:SetEncounterID(215, 263, 1968)
-mod:SetZone()
+mod:SetEncounterID(1968)
 
 mod:RegisterCombat("combat")
 
@@ -12,15 +11,21 @@ mod:RegisterEvents(
 	"SPELL_CAST_START 60848"
 )
 
-mod:RegisterEventsInCombat(
-	"UNIT_SPELLCAST_START boss1"
-)
+if mod:IsClassic() then
+	mod:RegisterEventsInCombat(
+		"UNIT_SPELLCAST_START"
+	)
+else
+	mod.statTypes = "normal,heroic,timewalker"
+	mod:RegisterEventsInCombat(
+		"UNIT_SPELLCAST_START boss1"
+	)
+end
 
-local warnShadowCrash			= mod:NewTargetAnnounce(60848, 4)
+local warnShadowCrash			= mod:NewTargetAnnounce(62660, 4)
 local warningInsanity			= mod:NewCastAnnounce(57496, 3)--Not currently working, no CLEU for it
 
-local specWarnShadowCrash		= mod:NewSpecialWarningDodge(60848, nil, nil, nil, 1, 2)
-local specWarnShadowCrashNear	= mod:NewSpecialWarningClose(60848, nil, nil, nil, 1, 2)
+local specWarnShadowCrash		= mod:NewSpecialWarningDodge(62660, nil, nil, nil, 1, 2)
 local yellShadowCrash			= mod:NewYell(62660)
 
 local timerInsanity				= mod:NewCastTimer(5, 57496, nil, nil, nil, 6)
@@ -35,7 +40,7 @@ end
 function mod:ShadowCrashTarget(targetname, uId)
 	if not targetname then
 		if DBM.Options.DebugMode then
-			warnShadowCrash:Show(DBM_CORE_L.UNKNOWN)
+			warnShadowCrash:Show(DBM_COMMON_L.UNKNOWN)
 		end
 		return
 	end
@@ -44,9 +49,6 @@ function mod:ShadowCrashTarget(targetname, uId)
 			specWarnShadowCrash:Show()
 			specWarnShadowCrash:Play("watchstep")
 			yellShadowCrash:Yell()
-		elseif self:CheckNearby(5, targetname) then
-			specWarnShadowCrashNear:Show(targetname)
-			specWarnShadowCrashNear:Play("watchstep")
 		else
 			warnShadowCrash:Show(targetname)
 		end
@@ -61,7 +63,19 @@ end
 
 function mod:UNIT_SPELLCAST_START(uId, _, spellId)
    if spellId == 57496 then -- Insanity
+		if self:IsClassic() then
+			self:SendSync("Insanity")
+		else
+			warningInsanity:Show()
+			timerInsanity:Start()
+		end
+   end
+end
+
+function mod:OnSync(event)
+	if not self:IsInCombat() then return end
+	if event == "Insanity" then
 		warningInsanity:Show()
 		timerInsanity:Start()
-   end
+	end
 end

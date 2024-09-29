@@ -62,13 +62,13 @@ local function defaultcvar()
     -- 背包剩餘空間，0關
     SetCVar("displayFreeBagSlots", 1)
     -- 背包反序排列
-    SetSortBagsRightToLeft(false)
+    -- SetSortBagsRightToLeft(false)
     -- 反向放置戰利品
-    SetInsertItemsLeftToRight(false)
+    -- SetInsertItemsLeftToRight(false)
     -- 個人資源上的閃光動畫效果
     SetCVar("showSpenderFeedback", 1)
     -- 頭像上不顯示即將到來的治療，這個設定要重載才會生效
-    SetCVar("predictedHealth", 0)
+    SetCVar("predictedHealth", 1)
     -- 自動打開拾取紀錄，0關
     SetCVar("autoOpenLootHistory", 0)
 

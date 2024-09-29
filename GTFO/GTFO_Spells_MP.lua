@@ -5,7 +5,7 @@
 GTFO Spell List - Mists of Pandaria
 ]]--
 
-if (not GTFO.ClassicMode) then
+if (GTFO.RetailMode) then
 
 -- ***************
 -- * Scholomance *
@@ -177,6 +177,26 @@ GTFO.SpellID["146919"] = {
 	--desc = "Dash of Spice (Ghost of Lin Da-Gu)";
 	sound = 1;
 	trivialPercent = 0;
+};
+
+GTFO.SpellID["397785"] = {
+  --desc = "Wash Away (Wise Mari)";
+  sound = 1;
+};
+
+GTFO.SpellID["397799"] = {
+  --desc = "Corrupted Vortex (Wise Mari)";
+  sound = 1;
+};
+
+GTFO.SpellID["398301"] = {
+  --desc = "Flames of Doubt (Shambling Infester)";
+  sound = 1;
+};
+
+GTFO.SpellID["396003"] = {
+  --desc = "Terrorial Display (The Songbird Queen)";
+  sound = 1;
 };
 
 -- *********************
@@ -1215,12 +1235,14 @@ GTFO.SpellID["138319"] = {
 	soundFunction = function()
 		local debuffCount = 0;
 		for i = 1, 40 do
-			local _, _, _, _, _, _, expirationTime, _, _, _, debuffSpellId = UnitDebuff("player", i);
-			if (debuffSpellId == 134256) then
-				return 1; -- Standing in a pool with the residual debuff
-			end
-			if (debuffSpellId == 138319) then
-				debuffCount = debuffCount + 1;
+			local index, debuff = C_UnitAuras.GetAuraDataByIndex("player", i, "HARMFUL");
+			if (debuff) then
+				if (debuff.spellId == 134256) then
+					return 1; -- Standing in a pool with the residual debuff
+				end
+				if (debuff.spellId == 138319) then
+					debuffCount = debuffCount + 1;
+				end
 			end
 		end
 		if (debuffCount > 1) then
@@ -2483,6 +2505,11 @@ GTFO.SpellID["135868"] = {
 GTFO.SpellID["131831"] = {
 	--desc = "Fiery Keg Smash (Master Cheng)";
 	sound = 1;
+};
+
+GTFO.SpellID["126292"] = {
+  --desc = "Shadow Fissure (Shadowmaster Sydow)";
+  sound = 1;
 };
 
 end

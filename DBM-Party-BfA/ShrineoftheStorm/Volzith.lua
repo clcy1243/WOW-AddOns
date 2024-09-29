@@ -1,10 +1,9 @@
-local mod	= DBM:NewMod(2156, "DBM-Party-BfA", 4, 1001)
+local mod	= DBM:NewMod(2156, "DBM-Party-BfA", 4, 1036)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200528135243")
+mod:SetRevision("20240417180519")
 mod:SetCreatureID(134069)
 mod:SetEncounterID(2133)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -23,12 +22,12 @@ local specWarnGrasp					= mod:NewSpecialWarningSpell(267360, nil, nil, nil, 2, 2
 --local specWarnGTFO				= mod:NewSpecialWarningGTFO(238028, nil, nil, nil, 1, 8)
 
 local timerYawningGateCD			= mod:NewCDTimer(21, 269399, nil, nil, nil, 3)
-local timerCalltheAbyssCD			= mod:NewNextTimer(90, 267299, nil, nil, nil, 5, nil, DBM_CORE_L.TANK_ICON)
+local timerCalltheAbyssCD			= mod:NewNextTimer(90, 267299, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 local timerGraspCD					= mod:NewNextTimer(50, 267360, nil, nil, nil, 6, nil, nil, nil, 1, 4)
 
 
 function mod:OnCombatStart(delay)
-	timerYawningGateCD:Start(13-delay)
+	timerYawningGateCD:Start(12.1-delay)
 	timerGraspCD:Start(20.5-delay)
 	--if not self:IsNormal() then
 		--timerCalltheAbyssCD:Start(73-delay)
@@ -38,10 +37,10 @@ end
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 267444 then
+		timerYawningGateCD:Start(3)
 		if not self:IsNormal() then
 			timerCalltheAbyssCD:Start(5.5)
 		end
-		timerYawningGateCD:Start(16.3)
 		timerGraspCD:Start()
 	end
 end
@@ -73,7 +72,11 @@ function mod:SPELL_ENERGIZE(_, _, _, _, destGUID, _, _, _, spellId, _, _, amount
 		local bossPower = UnitPower("boss1")
 		bossPower = bossPower / 2--2 energy per second, grasp every 50 seconds there abouts.
 		local remaining = 50-bossPower
-		local newTimer = 50-remaining
-		timerGraspCD:Update(newTimer, 50)
+		if remaining > 0 then
+			local newTimer = 50-remaining
+			timerGraspCD:Update(newTimer, 50)
+		else
+			timerGraspCD:Stop()
+		end
 	end
 end

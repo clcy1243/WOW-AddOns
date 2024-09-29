@@ -1,11 +1,11 @@
-local mod	= DBM:NewMod(1884, "DBM-BrokenIsles", nil, 822)
+local mod	= DBM:NewMod(1884, "DBM-BrokenIsles", 1, 822)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200110163156")
+mod:SetRevision("20240426185020")
 mod:SetCreatureID(117303)
 --mod:SetEncounterID(1880)
 mod:SetReCombatTime(20)
-mod:SetZone()
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 mod:RegisterCombat("combat")
 
@@ -32,7 +32,7 @@ local timerShadowBarrageCD			= mod:NewCDTimer(16.7, 234452, nil, nil, nil, 2)
 
 --mod:AddReadyCheckOption(37460, false)
 mod:AddRangeFrameOption(8, 233568)
-local PanicDebuff = DBM:GetSpellInfo(233568)
+local PanicDebuff = DBM:GetSpellName(233568)
 
 local debuffFilter
 do
@@ -44,7 +44,7 @@ do
 end
 
 function mod:OnCombatStart(delay, yellTriggered)
-	PanicDebuff = DBM:GetSpellInfo(233568)
+	PanicDebuff = DBM:GetSpellName(233568)
 	if yellTriggered then
 
 	end

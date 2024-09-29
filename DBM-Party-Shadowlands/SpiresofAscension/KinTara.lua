@@ -1,143 +1,186 @@
 local mod	= DBM:NewMod(2399, "DBM-Party-Shadowlands", 5, 1186)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200528135243")
-mod:SetCreatureID(162059, 163077, 163061)--162059 Kin-Tara, 163077 Azules, 163061 Janari
+mod:SetRevision("20240106080507")
+mod:SetCreatureID(162059, 163077)--162059 Kin-Tara, 163077 Azules
 mod:SetEncounterID(2357)
-mod:SetZone()
 mod:SetBossHPInfoToHighest()
 mod:SetUsedIcons(1)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_AURA_APPLIED 320965 317667",
-	"SPELL_CAST_START 320866 317665 317661",
---	"SPELL_CAST_SUCCESS",
+	"SPELL_CAST_START 320966 327481 317623 324368",
+	"SPELL_CAST_SUCCESS 323636",
+	"SPELL_AURA_APPLIED 323828",
 	"SPELL_PERIODIC_DAMAGE 317626",
 	"SPELL_PERIODIC_MISSED 317626",
 	"UNIT_DIED",
-	"CHAT_MSG_RAID_BOSS_EMOTE",
-	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"
+	"CHAT_MSG_MONSTER_YELL",
+	"CHAT_MSG_RAID_BOSS_EMOTE"
+--	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2"
 )
 
---TODO, does fight need all 3 to die, or just Kin-Tara?
---TODO, change special warning for sweeping strike to fire few seconds before (based on timer/scheduling) when timer is known
---TODO, Flight detection
---TODO, verify/fix charged spear detection
---TODO, verify/fix crash down detection
---TODO, verify/fix savage charge
---TODO, https://shadowlands.wowhead.com/spell=324369/attenuated-barrage ?
+--TODO, Verify new and improved flight detection
+--TODO, the entire enrage mechanic seems to be gone? All logs havev bosses die together and none of enraged abilities ever used
+--[[
+(ability.id = 321009 or ability.id = 320966 or ability.id = 317623) and type = "begincast"
+ or ability.id = 323636 and type = "cast"
+ or ability.id = 323828 or ability.id = 331249
+ or (target.id = 162059 or target.id = 163077 or target.id = 174212) and type = "death"
+ or (ability.id = 324368 or ability.id = 317661) and type = "begincast"
+--]]
 --Kin-Tara
-local warnDeepWound					= mod:NewTargetNoFilterAnnounce(320965, 4, nil, "Tank|Healer")
+local KinTara = DBM:EJ_GetSectionInfo(21637)
+mod:AddTimerLine(KinTara)
 local warnChargedSpear				= mod:NewTargetNoFilterAnnounce(321009, 4)
-local warnRavage					= mod:NewTargetNoFilterAnnounce(317667, 3, nil, "Healer")
 
---Kin-Tara
-local specWarnSweepingStrike		= mod:NewSpecialWarningSoak(320866, "Tank", nil, nil, 1, 2)
+local specWarnOverheadSlash			= mod:NewSpecialWarningDefensive(320966, nil, nil, nil, 1, 2)
+local specWarnDarkLance				= mod:NewSpecialWarningInterrupt(327481, "HasInterrupt", nil, nil, 1, 2)
 local specWarnChargedSpear			= mod:NewSpecialWarningMoveAway(321009, nil, nil, nil, 1, 2)
 local yellChargedSpear				= mod:NewYell(321009)
-local specWarnChargedSpearNear		= mod:NewSpecialWarningClose(321009, nil, nil, nil, 1, 2)
-local specWarnCrashDown				= mod:NewSpecialWarningSoakPos(321035, nil, nil, nil, 2, 2)
-local yellCrashDown					= mod:NewYell(321035)
---Janari
-local specWarnSavageCharge			= mod:NewSpecialWarningYou(317665, nil, nil, nil, 1, 2)
-local yellSavageCharge				= mod:NewYell(317665)
---Azules
-local specWarnGTFO					= mod:NewSpecialWarningGTFO(317626, nil, nil, nil, 1, 8)
-local specWarnAnimaJolt				= mod:NewSpecialWarningInterrupt(317661, "HasInterrupt", nil, nil, 1, 2)
 
---Kin-Tara
-mod:AddTimerLine(DBM:EJ_GetSectionInfo(21637))
-local timerSweepingStrikeCD			= mod:NewAITimer(13, 320866, nil, nil, nil, 5, nil, DBM_CORE_L.TANK_ICON)
-local timerFlightCD					= mod:NewAITimer(13, 313606, nil, nil, nil, 6)
-local timerChargedSpearCD			= mod:NewAITimer(15.8, 321009, nil, nil, nil, 3, nil, DBM_CORE_L.DEADLY_ICON)
---Janari
-mod:AddTimerLine(DBM:EJ_GetSectionInfo(21638))
-local timerSavageChargeCD			= mod:NewAITimer(15.8, 317665, nil, nil, nil, 3)
+local timerOverheadSlashCD			= mod:NewCDTimer(6.3, 320966, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)--6.3-11
+local timerFlightCD					= mod:NewCDTimer(145, 313606, nil, nil, nil, 6)
+local timerChargedSpearCD			= mod:NewCDTimer(15.8, 321009, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
 --Azules
 mod:AddTimerLine(DBM:EJ_GetSectionInfo(21639))
-local timerAnimaJoltCD				= mod:NewAITimer(15.8, 317661, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
+local specBarrage					= mod:NewSpecialWarningDodge(324368, nil, nil, nil, 2, 6)
+local specWarnGTFO					= mod:NewSpecialWarningGTFO(317626, nil, nil, nil, 1, 8)
 
-mod:AddSetIconOption("SetIconOnCrashDown", 321035, true, false, {1})
+local timerInsidiousVenomCD			= mod:NewCDTimer(11.4, 317661, nil, nil, nil, 2)
+local timerMawTouchedVenomCD		= mod:NewCDTimer(15.8, 317655, nil, nil, nil, 3)
 
-function mod:ChargeTarget(targetname, uId)
-	if not targetname then return end
-	if targetname == UnitName("player") then
-		specWarnSavageCharge:Show()
-		specWarnSavageCharge:Play("targetyou")
-		yellSavageCharge:Yell()
-	end
-	DBM:AddMsg("ChargeTarget returned: "..targetname.." Report if accurate or inaccurate to DBM Author")
-end
+mod.vb.Enraged = false
+mod.vb.flightActive = false
+mod.vb.spearCount = 0
 
 function mod:OnCombatStart(delay)
+	self.vb.Enraged = false
+	self.vb.spearCount = 0
+	self.vb.flightActive = false
 	--Kin-Tara
-	timerSweepingStrikeCD:Start(1-delay)
-	timerFlightCD:Start(1-delay)
-	timerChargedSpearCD:Start(1-delay)--TODO, Move to flight event
-	--Janari
-	timerSavageChargeCD:Start(1-delay)
-	--Azules
-	timerAnimaJoltCD:Start(1-delay)
+	timerOverheadSlashCD:Start(8.3-delay)
+	timerFlightCD:Start(30.5-delay)
+end
+
+function mod:OnCombatEnd()
+	self:UnregisterShortTermEvents()
 end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
-	if spellId == 320866 then
-		specWarnSweepingStrike:Show()--Will be moved to fire earlier with timers
-		specWarnSweepingStrike:Play("gathershare")
-		timerSweepingStrikeCD:Start()
-	elseif spellId == 317665 then
-		self:ScheduleMethod(0.1, "BossTargetScanner", args.sourceGUID, "ChargeTarget", 0.1, 6)
-	elseif spellId == 317661 then
-		timerAnimaJoltCD:Start()
-		if self:CheckInterruptFilter(args.sourceGUID, false, true) then
-			specWarnAnimaJolt:Show(args.sourceName)
-			specWarnAnimaJolt:Play("kickcast")
+	if spellId == 320966 then
+		if self.vb.flightActive then
+			self.vb.flightActive = false
+			self:UnregisterShortTermEvents()
 		end
+		if self:IsTanking("player", "boss1", nil, true) then
+			specWarnOverheadSlash:Show()--Will be moved to fire earlier with timers
+			specWarnOverheadSlash:Play("defensive")
+		end
+		timerOverheadSlashCD:Start()
+	elseif spellId == 327481 then
+		if self.vb.flightActive then
+			self.vb.flightActive = false
+			self:UnregisterShortTermEvents()
+		end
+		if self:CheckInterruptFilter(args.sourceGUID, false, true) then
+			specWarnDarkLance:Show(args.sourceName)
+			specWarnDarkLance:Play("kickcast")
+		end
+--	elseif spellId == 317623 then
+--		timerMawTouchedVenomCD:Start()
+	elseif spellId == 324368 and self:AntiSpam(6, 1) then
+		specBarrage:Show()
+		specBarrage:Play("watchorb")
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
-	if spellId == 257316 then
-
+	if spellId == 323636 then
+		timerInsidiousVenomCD:Start()
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
-	if spellId == 320965 then
-		warnDeepWound:Show(args.destName)
-	elseif spellId == 317667 then
-		warnRavage:CombinedShow(0.3, args.destName)
+	if spellId == 323828 and not self.vb.Enraged then
+		self.vb.Enraged = true--Enraged will fire again when 2nd one dies, even though it's a win, don't want to fire alerts/timers on combat end
+		local cid = self:GetCIDFromGUID(args.destGUID)
+		if cid == 163077 or cid == 174212 then--Azules/Azoras
+			timerInsidiousVenomCD:Start(3)
+			timerMawTouchedVenomCD:Start(8.4)
+		elseif cid == 162059 then--Kin-Tara
+			self.vb.spearCount = 0
+			timerChargedSpearCD:Stop()
+			timerOverheadSlashCD:Stop()
+			timerOverheadSlashCD:Start(4.5)
+			timerChargedSpearCD:Start(8, 1)
+		end
 	end
 end
 
---Total guesswork, but I neither have any debuff ID
---the entire premise of these mechanics is to actually know who it's on, so they have to have emotes
-function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, npc, _, _, targetname)
+--Yell possibly using bosses name possible, or yell using string, and on mythic and above deep connection can be used foor flight detection
+--"<246.11 02:57:42> [CHAT_MSG_MONSTER_YELL] Your doom takes flight!#Kin-Tara###Kin-Tara##0#0##0#251#nil#0#false#false#false#false", -- [2110]
+--"<227.02 19:43:08> [CLEU] SPELL_AURA_REMOVED#Creature-0-2085-2285-7016-163077-000026CDCA#Azules#Creature-0-2085-2285-7016-162059-000026CDCA#Kin-Tara#331249#Deep Connection#DEBUFF#nil", -- [2470]
+--"<227.24 19:43:08> [CHAT_MSG_MONSTER_YELL] Fear the skies!#Kin-Tara###Kin-Tara##0#0##0#67#nil#0#false#false#false#false", -- [2475]
+function mod:CHAT_MSG_MONSTER_YELL(msg, _, _, _, targetname)
+	if targetname == KinTara then--I believe only time she target herself in a yell is flight yell
+--	if msg == L.Flight or msg:find(L.Flight) or msg == L.Flight2 or msg:find(L.Flight2) then--Backup solution ready to apply if more data reveals she can yell at herself other times
+--		self:SendSync("Flight")
+		self.vb.flightActive = true
+		self.vb.spearCount = 0
+		timerOverheadSlashCD:Stop()
+		timerChargedSpearCD:Stop()
+		timerChargedSpearCD:Start(3.6, 1)
+		--Only reliable way to detect air phase ending on non mythic
+		--Mythic can use Deep Connection but this mod has to encompass normal/heroic as well
+		self:RegisterShortTermEvents(
+			"UNIT_POWER_UPDATE boss1"
+		)
+	end
+end
+
+--[[
+function mod:OnSync(msg)
+	if not self:IsInCombat() then return end
+	if msg == "Flight" then
+		self.vb.flightActive = true
+		self.vb.spearCount = 0
+		timerOverheadSlashCD:Stop()
+		timerChargedSpearCD:Stop()
+		timerChargedSpearCD:Start(3.6, 1)
+		--Only reliable way to detect air phase ending on non mythic
+		--Mythic can use Deep Connection but this mod has to encompass normal/heroic as well
+		self:RegisterShortTermEvents(
+			"UNIT_POWER_UPDATE boss1"
+		)
+	end
+end
+--]]
+
+function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 	if msg:find("spell:321009") then
-		timerChargedSpearCD:Start()
-		if targetname == UnitName("player") then
-			specWarnChargedSpear:Show()
-			specWarnChargedSpear:Play("runout")
-			yellChargedSpear:Yell()
-		elseif self:CheckNearby(5, targetname) then
-			specWarnChargedSpearNear:Show(targetname)
-			specWarnChargedSpearNear:Play("runaway")
-		else
-			warnChargedSpear:Show(targetname)
+		self.vb.spearCount = self.vb.spearCount + 1
+		if self.vb.flightActive then
+			if self.vb.spearCount == 1 then
+				timerChargedSpearCD:Start(11, 2)
+			elseif self.vb.Enraged then--Boss will still cast it when landing
+				timerChargedSpearCD:Start(46.1, 1)
+			end
+		else--Casting it when on ground because enraged
+			timerChargedSpearCD:Start(23.1, self.vb.spearCount+1)
 		end
-	elseif msg:find("spell:321035") then
-		specWarnCrashDown:Show(targetname or "UNKNOWN")
+		local targetname = DBM:GetUnitFullName(target)
 		if targetname then
 			if targetname == UnitName("player") then
-				yellCrashDown:Yell()
-			end
-			if self.Options.SetIconOnCrashDown then
-				self:SetIcon(targetname, 1, 5)
+				specWarnChargedSpear:Show()
+				specWarnChargedSpear:Play("runout")
+				yellChargedSpear:Yell()
+			else
+				warnChargedSpear:Show(targetname)
 			end
 		end
 	end
@@ -153,15 +196,30 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
-	if cid == 163077 then--Azules
-		timerAnimaJoltCD:Stop()
-	elseif cid == 163061 then--Janari
-		timerSavageChargeCD:Stop()
+	if cid == 163077 or cid == 174212 then--Azules/Azoras
+		timerInsidiousVenomCD:Stop()
+		timerMawTouchedVenomCD:Stop()
+	elseif cid == 162059 then--Kin-Tara
+		timerOverheadSlashCD:Stop()
+		timerFlightCD:Stop()
+		timerChargedSpearCD:Stop()
 	end
 end
 
+--[[
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
-	if spellId == 313606 then--Total guesswork
-		timerFlightCD:Start()
+	if spellId == 321088 then--Charged Spear
+--		timerChargedSpearCD:Start()
+	end
+end
+--]]
+
+function mod:UNIT_POWER_UPDATE()
+	local bossPower = UnitPower("boss1")--Get Boss Power
+	if self.vb.flightActive and bossPower == 0 then--Boss does a hard energy reset to 0 when she lands (flight phase ends)
+		self.vb.flightActive = false
+		self:UnregisterShortTermEvents()
+		timerOverheadSlashCD:Start(7.2)
+		timerFlightCD:Start(30.4)
 	end
 end

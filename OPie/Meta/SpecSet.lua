@@ -3,12 +3,9 @@ if select(4,GetBuildInfo()) < 8e4 then return end
 
 local EV, L = T.Evie, T.L
 local AB = assert(T.ActionBook:compatible(2,23), "A compatible version of ActionBook is required.")
-local RW = assert(AB:compatible("Rewire", 1,7), "A compatible version of Rewire is required")
 local CHARNAME = UnitName("player") .. "@" .. GetRealmName()
 
-do -- RW/opiespecset
-	local f = CreateFrame("Frame", nil, nil, "SecureFrameTemplate")
-	f:SetAttribute("RunSlashCmd", [[self:CallMethod("SwitchSpec", ...)]])
+do -- /opiespecset
 	local esSpec, esSet, esDeadline
 	function EV:PLAYER_SPECIALIZATION_CHANGED(unit)
 		if esDeadline and unit == "player" and GetSpecialization() == esSpec and not InCombatLockdown() and esDeadline > GetTime() then
@@ -16,17 +13,17 @@ do -- RW/opiespecset
 			esDeadline, esSpec, esSet = sid and C_EquipmentSet.UseEquipmentSet(sid) and nil
 		end
 	end
-	function f:SwitchSpec(_cmd, args)
-		local sid, sname = args:match("(%d+) {(.*)}")
+	SLASH_OPIE_SPECSET1 = "/opiespecset"
+	function SlashCmdList.OPIE_SPECSET(msg)
+		local sid, sname = msg:match("^(%d+) {(.*)}$")
 		sid = tonumber(sid)
-		if GetSpecialization() ~= sid and not InCombatLockdown() then
+		if sid and GetSpecialization() ~= sid and not InCombatLockdown() then
 			SetSpecialization(sid)
 			if sname ~= "" then
 				esSpec, esSet, esDeadline = sid, sname, GetTime()+9
 			end
 		end
 	end
-	RW:RegisterCommand("/opiespecset", false, false, f)
 end
 do -- AB/specset
 	local slot, tspec, tset = {}, {}, {}
@@ -79,8 +76,7 @@ do -- AB/specset
 		local tk = idx .. "#" .. setName
 		local ret = slot[tk]
 		if specName and UnitLevel("player") >= 10 and GetNumSpecializations() >= idx and not ret then
-			ret = AB:GetActionSlot("macrotext", ("/cancelform [nospec:%d,form:travel,flyable,noflying,nocombat]\n/opiespecset %d {%s}\n%s [spec:%d] %s"):format(idx, idx, setName, SLASH_EQUIP_SET1, setName ~= "" and idx or 5, setName))
-			ret = AB:CreateActionSlot(hintSpecSet, tk, "clone", ret)
+			ret = AB:CreateActionSlot(hintSpecSet, tk, "retext", ("/cancelform [nospec:%d,form:travel,anyflyable,noflying,nocombat]\n/opiespecset %d {%s}\n%s [spec:%d] %s"):format(idx, idx, setName, SLASH_EQUIP_SET1, setName ~= "" and idx or 5, setName))
 			slot[tk] = ret
 		end
 		return ret
@@ -89,7 +85,7 @@ do -- AB/specset
 		local _, name, _, ico = GetSpecializationInfo(idx)
 		return SPECIALIZATION, name or idx, ico or "Interface/Icons/Temp", nil, SetSpecializationTooltip, idx
 	end
-	AB:RegisterActionType("specset", createSpecSet, describeSpecSet)
+	AB:RegisterActionType("specset", createSpecSet, describeSpecSet, 2)
 	AB:AugmentCategory("Miscellaneous", function(_, add)
 		for i=1,GetNumSpecializations() do
 			add("specset", i)
@@ -98,7 +94,7 @@ do -- AB/specset
 end
 do -- EditorUI
 	local bg = CreateFrame("Frame")
-	local drop = CreateFrame("Frame", "OPie_SS_Drop", bg, "UIDropDownMenuTemplate")
+	local drop = CreateFrame("Frame", "OPie_SSDrop", bg, "UIDropDownMenuTemplate")
 	local lab = drop:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	local myPlayerMap, mySpecID, mySpecName
 	lab:SetPoint("LEFT", bg, "TOPLEFT", 0, -18)
@@ -119,7 +115,7 @@ do -- EditorUI
 	function drop:text()
 		local name = getCurrentValue()
 		local _, ico = C_EquipmentSet.GetEquipmentSetInfo(name and C_EquipmentSet.GetEquipmentSetID(name) or -1)
-		UIDropDownMenu_SetText(drop, name == false and NONE or ((ico and "|T" .. ico .. ":0|t " or "|cffc02020") .. name))
+		UIDropDownMenu_SetText(drop, name == false and NONE or ((ico and "|T" .. ico .. ":0|t " or "|cffb0b0b0") .. name))
 	end
 	function drop:set(name)
 		if name == mySpecName then
@@ -132,9 +128,13 @@ do -- EditorUI
 				myPlayerMap = nil
 			end
 		end
-		drop:text() -- SaveAction would normally cause a refresh via :SetAction.
+		drop:text()
 		local p = bg:GetParent()
-		p = p and p.SaveAction and p:SaveAction()
+		if p and type(p.OnActionChanged) == "function" then
+			p:OnActionChanged(bg)
+		elseif p and type(p.SaveAction) == "function" then -- DEPRECATED [2303/Y8]
+			p:SaveAction()
+		end
 	end
 	function drop:initialize()
 		local value = getCurrentValue()
@@ -155,38 +155,32 @@ do -- EditorUI
 
 	--[[ The action format is: "specset", specIndex, {CHARNAME => equipSetName}
 	     The map in [3] is needed to allow different characters to use the
-	     "same" specset action to equip different sets. This editor only changes
-	     the set equipped by the current character. However, the table causes some
-	     degree of alarm: other code has pointers to it (and could modify it while
-	     we're not looking), this editor could modify the original table without
-	     intending to save its changes (possibly bypassing the host's undo
-	     functionality), and :GetAction(into) needs us to write the full action
-	     into an empty table (so keeping just this character's set name
-	     internally isn't an option).
-
-	     Current editor, action, and editor host implementations would be fine
-	     with us keeping, mutating, and handing back the original table. To avoid
-	     headaches in the future, we nevertheless create copies in both :GetAction
-	     and :SetAction. What's a little table churn between friends?
+	     "same" specset action to equip different sets. This editor only shows
+	     and edits the equipment set used for the current character.
+	     Note that this editor will happily hand out the *original map reference*
+	     to anyone who asks. The caller is responsible for mitigating this,
+	     e.g. via ActionBook:CreateEditorHost.
 	--]]
-	local function shallowCopy(t)
-		if type(t) ~= "table" then
-			return nil
-		end
-		local r = {}
-		for k,v in pairs(t) do
-			r[k] = v
-		end
-		return r
-	end
 	function bg:SetAction(owner, action)
+		local op = self:GetParent()
+		if op and op ~= owner and type(op.OnEditorRelease) == "function" then
+			securecall(op.OnEditorRelease, op, self)
+		end
 		bg:SetParent(nil)
 		bg:ClearAllPoints()
 		bg:SetAllPoints(owner)
 		bg:SetParent(owner)
+		drop:ClearAllPoints()
+		if bg:GetWidth() < 400 then
+			drop:SetPoint("TOPLEFT", -16, -32)
+		else
+			local ofsX = owner.optionsColumnOffset
+			ofsX = type(ofsX) == "number" and ofsX or 256
+			drop:SetPoint("TOPLEFT", ofsX-16, 0)
+		end
 		bg:Show()
 
-		mySpecID, myPlayerMap = action[2], shallowCopy(action[3])
+		mySpecID, myPlayerMap = action[2], action[3]
 		if type(myPlayerMap) ~= "table" then
 			myPlayerMap = nil
 		end
@@ -197,7 +191,7 @@ do -- EditorUI
 		end
 	end
 	function bg:GetAction(into)
-		into[1], into[2], into[3] = "specset", mySpecID, shallowCopy(myPlayerMap)
+		into[1], into[2], into[3] = "specset", mySpecID, myPlayerMap
 	end
 	function bg:Release(owner)
 		if bg:IsOwned(owner) then

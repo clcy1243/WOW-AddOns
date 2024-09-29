@@ -19,10 +19,8 @@
 local Quartz3 = LibStub("AceAddon-3.0"):GetAddon("Quartz3")
 local L = LibStub("AceLocale-3.0"):GetLocale("Quartz3")
 
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then return end
-
 local MODNAME = "Target"
-local Target = Quartz3:NewModule(MODNAME, "AceEvent-3.0")
+local Target = Quartz3:NewModule(MODNAME, "AceEvent-3.0", "AceHook-3.0")
 
 ----------------------------
 -- Upvalues
@@ -39,17 +37,31 @@ local defaults = {
 		w = 200,
 		texture = "LiteStep",
 		iconposition = "right",
-		
+
 		showfriendly = true,
 		showhostile = true,
+
+		hideblizz = true,
 	})
 }
 
 do
+	local function setOpt(info, value)
+		db[info[#info]] = value
+		Target:ApplySettings()
+	end
+
 	local options
 	function getOptions()
 		if not options then
 			options = Target.Bar:CreateOptions()
+			options.args.hideblizz = {
+				type = "toggle",
+				name = L["Disable Blizzard Cast Bar"],
+				desc = L["Disable and hide the default UI's casting bar"],
+				set = setOpt,
+				order = 101,
+			}
 			options.args.showfriendly = {
 				type = "toggle",
 				name = L["Show for Friends"],
@@ -80,6 +92,9 @@ end
 function Target:OnEnable()
 	self.Bar:RegisterEvents()
 	self.Bar:RegisterEvent("PLAYER_TARGET_CHANGED")
+	if TargetFrameSpellBar then
+		self:HookScript(TargetFrameSpellBar, "OnEvent", "Target_Spellbar_OnEvent")
+	end
 	self.Bar.PLAYER_TARGET_CHANGED = self.Bar.UpdateUnit
 	self.lastNotInterruptible = false
 	self:ApplySettings()
@@ -100,9 +115,27 @@ end
 function Target:ApplySettings()
 	db = self.db.profile
 
+	if TargetFrameSpellBar then
+		if self:IsEnabled() and db.hideblizz then
+			TargetFrameSpellBar.showCastbar = false
+			TargetFrameSpellBar:Hide()
+		else
+			if GetCVar("showTargetCastbar") ~= "0" then
+				TargetFrameSpellBar.showCastbar = true
+			end
+		end
+	end
+
 	self.Bar:SetConfig(db)
 	if self:IsEnabled() then
 		self.Bar:ApplySettings()
+	end
+end
+
+function Target:Target_Spellbar_OnEvent(frame, event, arg1)
+	if (event == "VARIABLES_LOADED" or (event == "CVAR_UPDATE" and arg1 == "SHOW_TARGET_CASTBAR")) and self:IsEnabled() and db.hideblizz then
+		TargetFrameSpellBar.showCastbar = false
+		TargetFrameSpellBar:Hide()
 	end
 end
 

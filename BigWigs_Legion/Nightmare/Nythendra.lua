@@ -32,18 +32,18 @@ local rotMarker = mod:AddMarkerOption(false, "player", 1, 203096, 1, 2, 3, 4, 5)
 function mod:GetOptions()
 	return {
 		--[[ General ]]--
-		202977, -- Infested Breath
+		{202977, "CASTBAR"}, -- Infested Breath
 		{203096, "SAY", "SAY_COUNTDOWN", "FLASH", "PROXIMITY"}, -- Rot
 		rotMarker,
 		{204463, "SAY", "FLASH", "ICON"}, -- Volatile Rot
-		203552, -- Heart of the Swarm
+		{203552, "CASTBAR"}, -- Heart of the Swarm
 		203045, -- Infested Ground
 		"berserk",
 
 		--[[ Mythic ]]--
 		{204504, "INFOBOX"}, -- Infested
-		{225943, "SAY", "FLASH"}, -- Infested Mind
-		205070, -- Spread Infestation
+		{225943, "CASTBAR", "SAY", "FLASH"}, -- Infested Mind
+		--205070, -- Spread Infestation
 	},{
 		[202977] = "general",
 		[204504] = "mythic",
@@ -71,7 +71,7 @@ end
 function mod:OnEngage()
 	rotCount = 1
 	myInfestedStacks = 0
-	wipe(infestedStacks)
+	infestedStacks = {}
 	self:Berserk(self:Normal() and 600 or 480) -- Can be delayed by 2nd phase
 	self:CDBar(203096, 5.8) -- Rot
 	self:CDBar(204463, 22.8) -- Volatile Rot
@@ -89,7 +89,7 @@ end
 
 function mod:UNIT_SPELLCAST_START(_, _, _, spellId)
 	if spellId == 202977 then -- Infested Breath
-		self:Message(spellId, "orange", "Alarm", CL.casting:format(self:SpellName(spellId)))
+		self:MessageOld(spellId, "orange", "alarm", CL.casting:format(self:SpellName(spellId)))
 		self:CastBar(spellId, 8) -- 3s cast time + 5s channel
 
 		if self:BarTimeLeft(203552) > 37 then -- Heart of the Swarm
@@ -104,7 +104,7 @@ do
 		if self:Me(args.destGUID) then
 			isOnMe = true
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Rot")
 			self:TargetBar(args.spellId, 9, args.destName)
 			self:OpenProximity(args.spellId, 10)
 			self:SayCountdown(args.spellId, 9)
@@ -115,12 +115,12 @@ do
 			self:OpenProximity(args.spellId, 10, proxList)
 		end
 		if self:GetOption(rotMarker) then
-			SetRaidTarget(args.destName, #proxList)
+			self:CustomIcon(false, args.destName, #proxList)
 		end
 
 		playerList[#playerList+1] = args.destName
 		if #playerList == 1 then
-			self:ScheduleTimer("TargetMessage", 0.1, args.spellId, playerList, "red", "Warning")
+			self:ScheduleTimer("TargetMessageOld", 0.1, args.spellId, playerList, "red", "warning")
 			rotCount = rotCount + 1
 
 			if self:BarTimeLeft(203552) > 15.9 then -- Heart of the Swarm
@@ -138,9 +138,9 @@ do
 		end
 
 		if self:GetOption(rotMarker) then
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
-		tDeleteItem(proxList, args.destName)
+		self:DeleteFromTable(proxList, args.destName)
 
 		if not isOnMe then -- Don't change proximity if it's on you and expired on someone else
 			if #proxList == 0 then
@@ -154,11 +154,11 @@ end
 
 function mod:VolatileRot(args)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Volatile Rot")
 		self:Flash(args.spellId)
 	end
 	self:PrimaryIcon(args.spellId, args.destName)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Warning", nil, nil, self:Tank())
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "warning", nil, nil, self:Tank())
 	self:TargetBar(args.spellId, 8, args.destName)
 	if self:BarTimeLeft(203552) > 23 then -- Heart of the Swarm
 		self:CDBar(args.spellId, 23)
@@ -170,7 +170,7 @@ function mod:VolatileRotRemoved(args)
 end
 
 function mod:HeartOfTheSwarm(args)
-	self:Message(args.spellId, "cyan", "Info", CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "cyan", "info", CL.casting:format(args.spellName))
 	self:CastBar(args.spellId, 23.7) -- 3.7s cast time + 20s channel
 	-- This is basically a phase, so start timers for next "normal" phase here
 	self:CDBar(args.spellId, 120)
@@ -189,7 +189,7 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 1.5 then
 			prev = t
-			self:Message(args.spellId, "blue", "Alert", CL.underyou:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alert", CL.underyou:format(args.spellName))
 		end
 	end
 end
@@ -201,7 +201,7 @@ do
 			infestedStacks[args.destName] = args.amount
 			if self:Me(args.destGUID) then
 				if args.amount > 6 and args.amount < 11 then -- be careful at 7-9, at 10 you're getting mc'd
-					self:StackMessage(args.spellId, args.destName, args.amount, "blue", "Warning")
+					self:StackMessageOld(args.spellId, args.destName, args.amount, "blue", "warning")
 				end
 				myInfestedStacks = args.amount
 			end
@@ -225,11 +225,11 @@ end
 
 function mod:InfestedMindCast(args)
 	if myInfestedStacks > 9 then
-		self:Message(args.spellId, "blue", "Long", CL.you:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "long", CL.you:format(args.spellName))
 		self:Flash(args.spellId)
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Infested Mind")
 	else
-		self:Message(args.spellId, "yellow", "Long", CL.incoming:format(args.spellName))
+		self:MessageOld(args.spellId, "yellow", "long", CL.incoming:format(args.spellName))
 	end
 
 	self:CastBar(args.spellId, 3)

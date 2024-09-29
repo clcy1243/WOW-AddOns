@@ -1,9 +1,13 @@
 local mod	= DBM:NewMod(643, "DBM-Party-WotLK", 11, 286)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+if not mod:IsClassic() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
+
+mod:SetRevision("20230311193122")
 mod:SetCreatureID(26693)
-mod:SetEncounterID(581, 582, 2029)
+mod:SetEncounterID(2029)
 
 mod:RegisterCombat("yell", L.Phase2)
 
@@ -21,7 +25,7 @@ local warningPoison		= mod:NewTargetNoFilterAnnounce(59331, 2, nil, "Healer")
 
 local specWarnWhirlwind	= mod:NewSpecialWarningRun(59322, nil, nil, 2, 4, 2)
 
-local timerPoison		= mod:NewTargetTimer(12, 59331, nil, "Healer", 2, 5, nil, DBM_CORE_L.HEALER_ICON)
+local timerPoison		= mod:NewTargetTimer(12, 59331, nil, "Healer", 2, 5, nil, DBM_COMMON_L.HEALER_ICON)
 local timerWhirlwindCD	= mod:NewCDTimer(23, 59322, nil, nil, nil, 2)
 local timerAchieve		= mod:NewAchievementTimer(180, 1873)
 
@@ -31,7 +35,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerPoison:Start(args.destName)
 	elseif args:IsSpellID(59322, 50228) then
 		timerWhirlwindCD:Start()
-		if not self:IsTrivial(90) then
+		if not self:IsTrivial() then
 			specWarnWhirlwind:Show()
 			specWarnWhirlwind:Play("runout")
 		end

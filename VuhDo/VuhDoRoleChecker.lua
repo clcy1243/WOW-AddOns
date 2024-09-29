@@ -10,17 +10,14 @@ VUHDO_NEXT_INSPECT_TIME_OUT = nil;
 
 
 --------------------------------------------------------------
-local twipe = table.wipe;
-local CheckInteractDistance = CheckInteractDistance;
-local UnitIsUnit = UnitIsUnit;
 local NotifyInspect = NotifyInspect;
 local GetSpecializationInfo = GetSpecializationInfo;
 local ClearInspectPlayer = ClearInspectPlayer;
 local UnitStat = UnitStat;
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned;
-local UnitLevel = UnitLevel;
 local UnitPowerType = UnitPowerType;
 local VUHDO_isUnitInModel;
+local VUHDO_checkInteractDistance;
 local pairs = pairs;
 local _;
 
@@ -33,6 +30,7 @@ function VUHDO_roleCheckerInitLocalOverrides()
 	VUHDO_RAID_NAMES = _G["VUHDO_RAID_NAMES"];
 	VUHDO_RAID = _G["VUHDO_RAID"];
 	VUHDO_isUnitInModel = _G["VUHDO_isUnitInModel"];
+	VUHDO_checkInteractDistance = _G["VUHDO_checkInteractDistance"];
 end
 --------------------------------------------------------------
 
@@ -103,7 +101,7 @@ local function VUHDO_shouldBeInspected(aUnit)
 	end
 
 	-- In inspect range?
-	return CheckInteractDistance(aUnit, 1);
+	return VUHDO_checkInteractDistance(aUnit, 1);
 end
 
 
@@ -132,6 +130,7 @@ local tClassId;
 local tRole;
 local tTreeId;
 function VUHDO_inspectRole(aUnit)
+
 	tInfo = VUHDO_RAID[aUnit];
 
 	if not tInfo then 
@@ -145,7 +144,7 @@ function VUHDO_inspectRole(aUnit)
 			return VUHDO_ID_UNDEFINED;
 		end
 		
-		tTreeId, _, _, _, _, tRole = GetSpecializationInfo(tActiveTree, false, false);
+		tTreeId, _, _, _, tRole = GetSpecializationInfo(tActiveTree, false, false);
 	else
 		tTreeId = GetInspectSpecialization(aUnit);
 		tRole = GetSpecializationRoleByID(tTreeId);
@@ -187,12 +186,13 @@ function VUHDO_inspectRole(aUnit)
 			else
 				return VUHDO_ID_RANGED_DAMAGE;
 			end
-		else
+		else -- e.g. Evoker Devastation
 			return VUHDO_ID_RANGED_DAMAGE;
 		end
 	else
 		return VUHDO_ID_UNDEFINED;
 	end
+
 end
 
 
@@ -221,7 +221,7 @@ function VUHDO_inspectLockRole()
 			return;
 		end
 
-		tTreeId, _, _, _, _, tRole = GetSpecializationInfo(tActiveTree, false, false);
+		tTreeId, _, _, _, tRole = GetSpecializationInfo(tActiveTree, false, false);
 	else
 		tTreeId = GetInspectSpecialization(VUHDO_NEXT_INSPECT_UNIT);
 		tRole = GetSpecializationRoleByID(tTreeId);
@@ -280,7 +280,8 @@ local function VUHDO_determineDfToolRole(anInfo)
 			or anInfo["classId"] == VUHDO_ID_WARLOCKS 
 			or anInfo["classId"] == VUHDO_ID_MAGES 
 			or anInfo["classId"] == VUHDO_ID_SHAMANS 
-			or anInfo["classId"] == VUHDO_ID_DRUIDS then
+			or anInfo["classId"] == VUHDO_ID_DRUIDS 
+			or anInfo["classId"] == VUHDO_ID_EVOKERS then
 			VUHDO_DF_TOOL_ROLES[tName] = VUHDO_ID_RANGED_DAMAGE;
 			tReturnRole = VUHDO_ID_RANGED_DAMAGE;
 		else -- Hunters default to ranged but requires inspect to determine spec ID so no return
@@ -313,14 +314,8 @@ function VUHDO_determineRole(aUnit)
 	tInfo = VUHDO_RAID[aUnit];
 	if not tInfo or tInfo["isPet"] then	return nil; end
 
-	-- Role determined by non-hybrid class?
-	tClassId = tInfo["classId"];
-	tClassRole = VUHDO_CLASS_ROLES[tClassId];
-	if tClassRole then
-		return tClassRole;
-	end
-
 	tName = tInfo["name"];
+
 	-- Manual role override oder dungeon finder role?
 	tFixRole = VUHDO_MANUAL_ROLES[tName] or VUHDO_determineDfToolRole(tInfo);
 	if tFixRole then
@@ -330,6 +325,13 @@ function VUHDO_determineRole(aUnit)
 	-- Assigned for MT?
 	if VUHDO_isUnitInModel(aUnit, 41) then -- VUHDO_ID_MAINTANKS
 		return 60; -- VUHDO_ID_MELEE_TANK
+	end
+
+	-- Role determined by non-hybrid class?
+	tClassId = tInfo["classId"];
+	tClassRole = VUHDO_CLASS_ROLES[tClassId];
+	if tClassRole then
+		return tClassRole;
 	end
 
 	-- Talent tree inspected?
@@ -445,6 +447,14 @@ function VUHDO_determineRole(aUnit)
 			else
 				return 60; -- VUHDO_ID_MELEE_TANK
 			end
+		end
+
+	elseif 32 == tClassId then -- VUHDO_ID_EVOKERS
+		-- FIXME: all Evoker specs have the same max mana and essence
+		if UnitPowerMax(aUnit) == 250000 then
+			return 62; -- VUHDO_ID_RANGED_DAMAGE
+		else
+			return 63; -- VUHDO_ID_RANGED_HEAL
 		end
 
 	end

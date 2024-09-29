@@ -1,16 +1,15 @@
 local mod	= DBM:NewMod("BrawlRank7", "DBM-Brawlers")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200528135243")
+mod:SetRevision("20240305165926")
 --mod:SetModelID(46798)
-mod:SetZone()
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 133308 229154",
 	"SPELL_CAST_SUCCESS 133227",
-	"SPELL_AURA_APPLIED_DOSE 138901",
-	"SPELL_AURA_REMOVED_DOSE 138901",
-	"SPELL_AURA_REMOVED 138901",
+--	"SPELL_AURA_APPLIED_DOSE 138901",
+--	"SPELL_AURA_REMOVED_DOSE 138901",
+--	"SPELL_AURA_REMOVED 138901",
 	"UNIT_DIED"
 )
 
@@ -24,7 +23,7 @@ local timerThrowNetCD				= mod:NewCDTimer(20, 133308, nil, nil, nil, 3)--Fran an
 local timerGoblinDeviceCD			= mod:NewCDTimer(21.8, 133227, nil, nil, nil, 3)--Fran and Riddoh
 local timerHighNoon					= mod:NewCastTimer(80, 229154, nil, nil, nil, 3)
 
-local brawlersMod = DBM:GetModByName("Brawlers")
+local brawlersMod = DBM:GetModByName("BrawlersGeneral")
 
 function mod:SPELL_CAST_START(args)
 	if not brawlersMod.Options.SpectatorMode and not brawlersMod:PlayerFighting() then return end--Spectator mode is disabled, do nothing.

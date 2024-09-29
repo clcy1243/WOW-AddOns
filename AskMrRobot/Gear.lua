@@ -29,19 +29,23 @@ local function countItemDifferences(item1, item2)
 	
 	-- one nil and other not, or different id, totally different
 	if (not item1 and item2) or (item1 and not item2) or item1.id ~= item2.id then 
-		return 100000 
+		return 1000000 
 	end
 	
-    -- different versions of same item (id + bonus ids + suffix + drop level, constitutes a different physical drop)
-    if Amr.GetItemUniqueId(item1, true, true) ~= Amr.GetItemUniqueId(item2, true, true) then
-		return 10000
-    end
-    
-    -- different upgrade levels of the same item
-    if item1.upgradeId ~= item2.upgradeId then
-        return 1000
-	end
-	
+	--if item1.guid and item2.guid and item1.guid == item2.guid then
+	--	-- these have the same guid, so even if bonus id or something doesn't match for some reason, they are identical items
+	--else
+		-- different versions of same item (id + bonus ids + suffix + drop level, constitutes a different physical drop)
+		if Amr.GetItemUniqueId(item1, true, true) ~= Amr.GetItemUniqueId(item2, true, true) then
+			return 100000
+		end
+		
+		-- different upgrade levels of the same item
+		if item1.upgradeId ~= item2.upgradeId then
+			return 10000
+		end
+	--end
+
 	-- a change that requires reforging is considered more different than a change that does not;
 	-- it is assumed that item1 is how we want the item to be in the end, and item2 is how it currently is
 	local aztReforges = 0
@@ -51,7 +55,7 @@ local function countItemDifferences(item1, item2)
 		-- azerite that needs to be reforged
 		if item2.azerite and not item1.azerite then
 			-- kind of a dumb case... but we would need to blank all azerite on item2 to match item1
-			aztReforges = #item2.azerite * 100
+			aztReforges = #item2.azerite * 1000
 		elseif item2.azerite then
 			-- count up azerite on item2 but not on item1, these would need to be reforged
 			for i = 1, #item2.azerite do
@@ -62,7 +66,7 @@ local function countItemDifferences(item1, item2)
 					end
 				end
 				if missing then
-					aztReforges = aztReforges + 100
+					aztReforges = aztReforges + 1000
 				end
 			end
 		end
@@ -70,7 +74,7 @@ local function countItemDifferences(item1, item2)
 		-- azerite that needs to be selected
 		if item1.azerite and not item2.azerite then
 			-- item2 is blank, so just need to choose all the right ones
-			aztSelects = #item1.azerite * 10
+			aztSelects = #item1.azerite * 100
 		elseif item1.azerite then
 			-- count up azerite on item1 but not on item2, these would need to be selected
 			for i = 1, #item1.azerite do				
@@ -81,7 +85,7 @@ local function countItemDifferences(item1, item2)
 					end
 				end
 				if missing then
-					aztSelects = aztSelects + 10
+					aztSelects = aztSelects + 100
 				end
 			end
 		end		
@@ -91,17 +95,23 @@ local function countItemDifferences(item1, item2)
     local gemDiffs = 0
     for i = 1, 3 do
         if item1.gemIds[i] ~= item2.gemIds[i] then
-            gemDiffs = gemDiffs + 1
+            gemDiffs = gemDiffs + 10
         end
     end
     
 	-- different enchants
     local enchantDiff = 0
     if item1.enchantId ~= item2.enchantId then
-        enchantDiff = 1
+        enchantDiff = 10
     end
-    
-    return aztReforges + aztSelects + gemDiffs + enchantDiff
+	
+	-- different guid
+	local guidDiff = 0
+	if item1.guid and item2.guid and item1.guid ~= item2.guid then
+		guidDiff = 1
+	end
+
+    return aztReforges + aztSelects + gemDiffs + enchantDiff + guidDiff
 end
 
 -- given a table of items (keyed or indexed doesn't matter) find closest match to item, or nil if none are a match
@@ -112,6 +122,7 @@ local function findMatchingItemFromTable(item, list, bestItem, bestDiff, bestLoc
 	for k,listItem in pairs(list) do		
 		if listItem then
 			local diff = countItemDifferences(item, listItem)
+
 			if diff < bestDiff then
 				-- each physical item can only be used once, the usedItems table has items we can't use in this search
 				local key = string.format("%s_%s", tableType, k)
@@ -119,10 +130,10 @@ local function findMatchingItemFromTable(item, list, bestItem, bestDiff, bestLoc
 					bestItem = listItem
 					bestDiff = diff
 					bestLoc = key
-					found = true
 				end
 			end
-			if found then break end
+
+			if bestDiff == 0 then break end
 		end
 	end
 	
@@ -134,14 +145,14 @@ function Amr:FindMatchingItem(item, player, usedItems)
 	if not item then return nil end
 
 	local equipped = player.Equipped and player.Equipped[player.ActiveSpec] or nil
-	local bestItem, bestDiff, bestLoc = findMatchingItemFromTable(item, equipped, nil, 100000, nil, usedItems, "equip")
+	local bestItem, bestDiff, bestLoc = findMatchingItemFromTable(item, equipped, nil, 1000000, nil, usedItems, "equip")
 	bestItem, bestDiff, bestLoc = findMatchingItemFromTable(item, player.BagItems, bestItem, bestDiff, bestLoc, usedItems, "bag")
 	if player.BankItems then
 		bestItem, bestDiff, bestLoc = findMatchingItemFromTable(item, player.BankItems, bestItem, bestDiff, bestLoc, usedItems, "bank")		
 	end	
 
-	if bestDiff >= 100000 then
-		return nil, 100000
+	if bestDiff >= 1000000 then
+		return nil, 1000000
 	else
 		usedItems[bestLoc] = true
 		return bestItem, bestDiff
@@ -161,7 +172,7 @@ local function renderEmptyGear(container)
 	panelBlank:AddChild(lbl)
 	lbl:SetText(L.GearBlank)
 	lbl:SetWidth(700)
-	lbl:SetJustifyH("MIDDLE")
+	lbl:SetJustifyH("CENTER")
 	lbl:SetFont(Amr.CreateFont("Italic", 16, Amr.Colors.TextTan))		
 	lbl:SetPoint("BOTTOM", panelBlank.content, "CENTER", 0, 20)
 	
@@ -169,7 +180,7 @@ local function renderEmptyGear(container)
 	panelBlank:AddChild(lbl2)
 	lbl2:SetText(L.GearBlank2)
 	lbl2:SetWidth(700)
-	lbl2:SetJustifyH("MIDDLE")
+	lbl2:SetJustifyH("CENTER")
 	lbl2:SetFont(Amr.CreateFont("Italic", 16, Amr.Colors.TextTan))		
 	lbl2:SetPoint("TOP", lbl.frame, "CENTER", 0, -20)
 end
@@ -235,7 +246,7 @@ local function renderGear(setupId, container)
 	end
 
 	local equipped = player.Equipped[player.ActiveSpec]
-	local equippedEssences = player.Essences[player.ActiveSpec]
+	--local equippedEssences = player.Essences[player.ActiveSpec]
 
 	if not gear then
 		-- no gear has been imported for this spec so show a message
@@ -302,19 +313,25 @@ local function renderGear(setupId, container)
 			local isEquipped = false			
 			if equippedItem and optimalItem and Amr.GetItemUniqueId(equippedItem, false, true) == Amr.GetItemUniqueId(optimalItem, false, true) then
 
-				if slotId == 1 or slotId == 3 or slotId == 5 then
-					-- show the item as not equipped if azerite doesn't match... might mean they have to switch to another version of same item
-					local aztDiff = countItemDifferences(optimalItem, equippedItem)
-					if aztDiff < 10 then
-						isEquipped = true
-					end
+				if optimalItem.guid then						
+					isEquipped = optimalItem.guid == equippedItem.guid
 				else
-					isEquipped = true
+					--[[if slotId == 1 or slotId == 3 or slotId == 5 then					
+						-- show the item as not equipped if azerite doesn't match... might mean they have to switch to another version of same item
+						local aztDiff = countItemDifferences(optimalItem, equippedItem)
+						if aztDiff < 100 then
+							isEquipped = true
+						end
+					else]]
+						isEquipped = true
+					--end
 				end
 			end
 
-			local isAzerite = optimalItem and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(optimalItem.id)
-			local isEssence = essences and optimalItem and optimalItem.id == 158075
+			--local isAzerite = optimalItem and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(optimalItem.id)
+			--local isEssence = essences and optimalItem and optimalItem.id == 158075
+			local isAzerite = false
+			local isEssence = false
 			
 			-- find the item in the player's inventory that best matches what the optimization wants to use
 			local matchItem = Amr:FindMatchingItem(optimalItem, player, usedItems)
@@ -387,7 +404,7 @@ local function renderGear(setupId, container)
 							local socketBorder, socketIcon = createSocketWidget(panelMods, prevSocket or lblItem, prevSocket, isPowerActive)
 							
 							-- set icon and tooltip
-							local _, _, spellIcon = GetSpellInfo(spellId)
+							local spellIcon = C_Spell.GetSpellInfo(spellId).iconID
 							socketIcon:SetIcon(spellIcon)
 							Amr:SetSpellTooltip(socketIcon, spellId, "ANCHOR_TOPRIGHT")
 							
@@ -528,7 +545,7 @@ function Amr:RenderTabGear(container)
 	lbl:SetText(L.GearImportNote)
 	lbl:SetWidth(100)
 	lbl:SetFont(Amr.CreateFont("Italic", 12, Amr.Colors.TextTan))
-	lbl:SetJustifyH("MIDDLE")
+	lbl:SetJustifyH("CENTER")
 	lbl:SetPoint("TOP", btnImport.frame, "BOTTOM", 0, -5)
 	
 	local lbl2 = AceGUI:Create("AmrUiLabel")
@@ -536,7 +553,7 @@ function Amr:RenderTabGear(container)
 	lbl2:SetText(L.GearTipTitle)
 	lbl2:SetWidth(140)
 	lbl2:SetFont(Amr.CreateFont("Italic", 20, Amr.Colors.Text))
-	lbl2:SetJustifyH("MIDDLE")
+	lbl2:SetJustifyH("CENTER")
 	lbl2:SetPoint("TOP", lbl.frame, "BOTTOM", 0, -50)
 	
 	lbl = AceGUI:Create("AmrUiLabel")
@@ -544,7 +561,7 @@ function Amr:RenderTabGear(container)
 	lbl:SetText(L.GearTipText)
 	lbl:SetWidth(140)
 	lbl:SetFont(Amr.CreateFont("Italic", 12, Amr.Colors.Text))
-	lbl:SetJustifyH("MIDDLE")
+	lbl:SetJustifyH("CENTER")
 	lbl:SetPoint("TOP", lbl2.frame, "BOTTOM", 0, -5)
 	
 	lbl2 = AceGUI:Create("AmrUiLabel")
@@ -643,16 +660,15 @@ local beginEquipGearSet, processCurrentGearOp, nextGearOp
 local function findFirstEmptyBagSlot(usedBagSlots)
 	
 	local bagIds = {}
-	table.insert(bagIds, BACKPACK_CONTAINER)
-	for bagId = 1, NUM_BAG_SLOTS do
+	for bagId = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
 		table.insert(bagIds, bagId)
 	end
 	
 	for i, bagId in ipairs(bagIds) do
-		local numSlots = GetContainerNumSlots(bagId)
+		local numSlots = C_Container.GetContainerNumSlots(bagId)
 		for slotId = 1, numSlots do
 			if not usedBagSlots or not usedBagSlots[bagId] or not usedBagSlots[bagId][slotId] then
-				local _, _, _, _, _, _, itemLink = GetContainerItemInfo(bagId, slotId)
+				local itemLink = C_Container.GetContainerItemLink(bagId, slotId)
 				if not itemLink then
 					-- this prevents repeated calls to this from returning the same bag slot if desired
 					if usedBagSlots then
@@ -675,22 +691,32 @@ end
 
 -- scan a bag for the best matching item
 local function scanBagForItem(item, bagId, bestItem, bestDiff, bestLink)
-	local numSlots = GetContainerNumSlots(bagId)
-	local loc = ItemLocation.CreateEmpty()
+	local numSlots = C_Container.GetContainerNumSlots(bagId)
+	--local loc = ItemLocation.CreateEmpty()
+	local blizzItem
 	for slotId = 1, numSlots do
-		local _, _, _, _, _, _, itemLink = GetContainerItemInfo(bagId, slotId)
+		local itemLink = C_Container.GetContainerItemLink(bagId, slotId)
         -- we skip any stackable item, as far as we know, there is no equippable gear that can be stacked
 		if itemLink then
 			local bagItem = Amr.ParseItemLink(itemLink)
 			if bagItem ~= nil then
+
+				blizzItem = Item:CreateFromBagAndSlot(bagId, slotId)
+
+				-- seems to be of the form Item-1147-0-4000000XXXXXXXXX, so we take just the last 9 digits
+				bagItem.guid = blizzItem:GetItemGUID()
+				if bagItem.guid and strlen(bagItem.guid) > 9 then
+					bagItem.guid = strsub(bagItem.guid, -9)
+				end
+
 				-- see if this is an azerite item and read azerite power ids
-				loc:SetBagAndSlot(bagId, slotId)
+				--[[loc:SetBagAndSlot(bagId, slotId)
 				if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
 					local powers = Amr.ReadAzeritePowers(loc)
 					if powers then
 						bagItem.azerite = powers
 					end
-				end
+				end]]
 
 				local diff = countItemDifferences(item, bagItem)
 				if diff < bestDiff then
@@ -714,8 +740,7 @@ local function findCurrentGearOpItem()
 	local bestDiff = 10000
 	
 	-- inventory
-	bestItem, bestDiff, bestLink = scanBagForItem(item, BACKPACK_CONTAINER, bestItem, bestDiff, bestLink)
-	for bagId = 1, NUM_BAG_SLOTS do
+	for bagId = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
 		bestItem, bestDiff, bestLink = scanBagForItem(item, bagId, bestItem, bestDiff, bestLink)
 	end
 
@@ -744,7 +769,7 @@ local function findCurrentGearOpItem()
 	-- bank
 	if bestDiff > 0 then
 		bestItem, bestDiff, bestLink = scanBagForItem(item, BANK_CONTAINER, bestItem, bestDiff, bestLink)
-		for bagId = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+		for bagId = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
 			bestItem, bestDiff, bestLink = scanBagForItem(item, bagId, bestItem, bestDiff, bestLink)
 		end
 	end
@@ -787,17 +812,248 @@ local function createAmrEquipmentSet()
 	end
 end
 
--- on completion, create an equipment manager set if desired
-local function onEquipGearSetComplete()
-	if Amr.db.profile.options.disableEm then return end
-	
-	-- create an equipment manager set
-	createAmrEquipmentSet()
+local function setTalents(setup)
 
-	-- need to call it twice because on first load the WoW equipment manager just doesn't work
-	Amr.Wait(1, function()
+	if setup.Talents and not Amr.db.profile.options.disableTal then
+		
+		if setup.TalentConfigId then				
+			-- load one of the player's saved loadouts... calling methods on C_ClassTalents fails miserably, leaves the UI in a broken state
+			-- and doesn't actually activate the loadout... seems going through ClassTalentHelper.SwitchToLoadoutByName is more reliable
+			local c = C_Traits.GetConfigInfo(setup.TalentConfigId)
+			if c then
+				ClassTalentHelper.SwitchToLoadoutByName(c.name)
+			end
+		else
+			-- UI needs to be opened once to create it, or else this stuff doesn't really work
+			local uiOpened = false
+			if not PlayerSpellsFrame then
+				TogglePlayerSpellsFrame()
+				uiOpened = true
+			end
+			
+			local specPos = GetSpecialization()
+			local specId = GetSpecializationInfo(specPos)
+
+			-- janky AF way to force the "default" loadout to be active
+			if PlayerSpellsFrame then
+				PlayerSpellsFrame.TalentsFrame:ClearLastSelectedConfigID()
+				PlayerSpellsFrame.TalentsFrame:MarkTreeDirty()
+			end
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(specId, 0)
+
+			-- the active config seems to always be the same and just gets modified/overwritten by loadouts?
+			local configId = C_ClassTalents.GetActiveConfigID()
+			if not configId then
+				Amr:Print(L.GearTalentError1)
+				return
+			end
+
+			-- get nodes and entries
+			local configData = Amr:GetTalentConfigData(configId)
+			if not configData then
+				Amr:Print(L.GearTalentError1)
+				return
+			end
+
+			-- go in order by node ID and then the order the entry IDs appear in the data, which is the same order that we export/store the talent string
+			local path = {}
+			local pos = 1
+			for nodeId, nodeData in Amr.spairs(configData.nodes) do
+				for i, entryId in ipairs(nodeData.entryIds) do
+					if #setup.Talents >= pos and setup.Talents[pos] > 0 then
+						table.insert(path, {
+							nodeId = nodeId,
+							entryId = entryId,
+							rank = setup.Talents[pos],
+							isSelection = #nodeData.entryIds > 1
+						})				
+					end
+					pos = pos + 1
+				end
+			end
+
+			--[[
+			local config = C_Traits.GetConfigInfo(configId)
+			if not config or config.type ~= Enum.TraitConfigType.Combat then 
+				Amr:Print(L.GearTalentError1)
+				return
+			end
+
+			local talMap = {}
+			local treeIds = config["treeIDs"]
+			local heroTreeNodeId
+			for i = 1, #treeIds do
+				for _, nodeId in pairs(C_Traits.GetTreeNodes(treeIds[i])) do
+					local node = C_Traits.GetNodeInfo(configId, nodeId)
+					if node.ID and node.isVisible and node.maxRanks > 0 then
+						if node.type == 3 then
+							heroTreeNodeId = node.ID
+						else
+							talMap[node.ID] = node.entryIDs
+						end						
+					end
+				end		
+			end
+
+			-- go in order by node ID and then entry ID, which is the same order that we export/store the talent string				
+			local path = {}
+			local pos = 1
+			for nodeId, entryIds in Amr.spairs(talMap) do
+				for i, entryId in ipairs(entryIds) do
+					if setup.Talents[pos] > 0 then
+						table.insert(path, {
+							nodeId = nodeId,
+							entryId = entryId,
+							rank = setup.Talents[pos],
+							isSelection = #entryIds > 1
+						})				
+					end
+					pos = pos + 1
+				end
+			end
+			]]
+
+
+			local treeIds = configData.treeIds
+			local heroTreeNodeId = configData.heroTreeNodeId
+			
+			-- this seems to work alright now with the jank above that ensures default loadout is selected before you start
+
+			-- reset the trees
+			for i = 1, #treeIds do
+				C_Traits.ResetTree(configId, treeIds[i])
+			end
+
+			-- start by activating the hero tree with the special selection node
+			if heroTreeNodeId and setup.HeroTreeEntryId > 0 then
+				local node = C_Traits.GetNodeInfo(configId, heroTreeNodeId)
+				C_Traits.SetSelection(configId, heroTreeNodeId, setup.HeroTreeEntryId)
+			end
+
+			-- pick all the nodes, kinda dumb but you have to "script" clicking on each node in a valid order
+			local loopSafety = 1000
+			while #path > 0 and loopSafety > 0 do
+				loopSafety = loopSafety - 1
+
+				for i = 1, #path do
+					local node = C_Traits.GetNodeInfo(configId, path[i].nodeId)
+					if node.canPurchaseRank then
+						if path[i].isSelection then
+							C_Traits.SetSelection(configId, path[i].nodeId, path[i].entryId)
+						else
+							for r = 1, path[i].rank do
+								C_Traits.PurchaseRank(configId, path[i].nodeId)
+							end
+						end
+						table.remove(path, i)
+						break
+					end
+				end
+
+			end
+
+			-- the changes don't actually take effect until this is called
+			C_Traits.CommitConfig(configId)
+
+			if uiOpened then
+				PlayerSpellsFrame:Hide()
+			end			
+	
+		end	
+
+		-- the below approach would create a loadout called "AMR Latest Setup" but could not reliably activate it
+		--[[
+		-- create import data required by blizz import function
+		local entries = {}
+		local pos = 1
+		for nodeId, entryIds in Amr.spairs(talMap) do
+			for i, entryId in ipairs(entryIds) do
+				if setup.Talents[pos] > 0 then
+					table.insert(entries, {
+						nodeID = nodeId,
+						ranksPurchased = setup.Talents[pos],
+						selectionEntryID = entryId
+					})				
+				end
+				pos = pos + 1		
+			end
+		end
+
+		-- see if we already have an AMR Current loadout, and delete it... there is no way to import and update a loadout, only create a new one
+		
+		for i, c in ipairs(C_ClassTalents.GetConfigIDsBySpecID(specId)) do
+			local config = C_Traits.GetConfigInfo(c)
+			if config.name == "AMR Latest Setup" then
+				C_ClassTalents.DeleteConfig(c)
+				break
+			end
+		end
+
+
+		-- import and create a new loadout
+		C_ClassTalents.ImportLoadout(configId, entries, "AMR Latest Setup")
+		]]
+
+		-- actually loading/activating the loadout does not consistently work... revisit when Blizz gets the API working better
+		--[[
+		Amr.Wait(1, function()
+			-- activate the new loadout
+			local newLoadoutId = nil
+			for i, c in ipairs(C_ClassTalents.GetConfigIDsBySpecID(specId)) do
+				local config = C_Traits.GetConfigInfo(c)
+				if config.name == "AMR Current" then
+					newLoadoutId = c
+					break
+				end
+			end
+
+			C_ClassTalents.LoadConfig(newLoadoutId, true)
+		end)
+		]]
+
+
+
+
+
+		--[[
+		-- pre-dragonflight code
+		local currentSpec = GetSpecialization()
+		local talents = {}
+		for tier, col in ipairs(setup.Talents) do
+			local talentId = GetTalentInfoBySpecialization(currentSpec, tier, col)
+			if talentId then
+				table.insert(talents, talentId)
+			end
+		end
+		if #talents then
+			pcall(function() LearnTalents(unpack(talents)) end)
+		end
+		]]
+	end
+
+	--[[
+	if setup.SoulbindId and C_Soulbinds.CanActivateSoulbind(setup.SoulbindId) and not Amr.db.profile.options.disableTal then
+		C_Soulbinds.ActivateSoulbind(setup.SoulbindId)
+	end
+	]]
+end
+
+
+-- on completion, create an equipment manager set if desired
+local function onEquipGearSetComplete(setup)
+
+	-- set talents after gear is equipped, if desired
+	setTalents(setup)
+
+	if not Amr.db.profile.options.disableEm then
+		-- create an equipment manager set
 		createAmrEquipmentSet()
-	end)
+
+		-- need to call it twice because on first load the WoW equipment manager just doesn't work
+		Amr.Wait(1, function()
+			createAmrEquipmentSet()
+		end)
+	end
 end
 
 -- stop any currently in-progress gear swapping operation and clean up
@@ -852,7 +1108,7 @@ function processCurrentGearOp()
 		end
 
 		PickupInventoryItem(_currentGearOp.nextSlot)
-		PickupContainerItem(invBag, invSlot)
+		C_Container.PickupContainerItem(invBag, invSlot)
 
 		-- set an action to happen on ITEM_UNLOCKED, triggered by ClearCursor
 		_itemLockAction = {
@@ -877,7 +1133,7 @@ function processCurrentGearOp()
 			Amr:Print(L.GearEquipErrorNotFound2)
 			disposeGearOp()
 			
-		elseif bestItem and bestItem.bag and (bestItem.bag == BANK_CONTAINER or bestItem.bag >= NUM_BAG_SLOTS + 1 and bestItem.bag <= NUM_BAG_SLOTS + NUM_BANKBAGSLOTS) then
+		elseif bestItem and bestItem.bag and (bestItem.bag == BANK_CONTAINER or bestItem.bag >= NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 and bestItem.bag <= NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS) then
 			-- find first empty bag slot
 			local invBag, invSlot = findFirstEmptyBagSlot()
 			if not invBag then
@@ -888,8 +1144,8 @@ function processCurrentGearOp()
 			end
 	
 			-- move from bank to bag
-			PickupContainerItem(bestItem.bag, bestItem.slot)
-			PickupContainerItem(invBag, invSlot)
+			C_Container.PickupContainerItem(bestItem.bag, bestItem.slot)
+			C_Container.PickupContainerItem(invBag, invSlot)
 	
 			-- set an action to happen on ITEM_UNLOCKED, triggered by ClearCursor
 			_itemLockAction = {
@@ -912,7 +1168,7 @@ function processCurrentGearOp()
 
 			-- an item in the player's bags or already equipped, equip it
 			if bestItem.bag then
-				PickupContainerItem(bestItem.bag, bestItem.slot)
+				C_Container.PickupContainerItem(bestItem.bag, bestItem.slot)
 			else
 				_gearOpWaiting.inventory[bestItem.slot] = true
 				PickupInventoryItem(bestItem.slot)
@@ -1020,9 +1276,9 @@ local function handleItemUnlocked(bagId, slotId)
 			if IsInventoryItemLocked(_itemLockAction.invSlot) then return end
 
 			if _itemLockAction.bagId then
-				local _, _, locked = GetContainerItemInfo(_itemLockAction.bagId, _itemLockAction.slotId)
+				local itemInfo = C_Container.GetContainerItemInfo(_itemLockAction.bagId, _itemLockAction.slotId)
 				-- the bag slot we're swapping from is still locked, can't continue yet
-				if locked then return end
+				if itemInfo and itemInfo.isLocked then return end
 			else
 				-- inventory slot we're swapping from is still locked, can't continue yet
 				if IsInventoryItemLocked(_itemLockAction.slotId) then return end
@@ -1059,7 +1315,7 @@ local _ohFirst = {
     [36] = true -- WarriorProtection
 }
 
-function beginEquipGearSet(setupId, passes)
+function beginEquipGearSet(setupId, passes, firstCall)
 
 	local setup = getSetupById(setupId)
 	
@@ -1067,6 +1323,12 @@ function beginEquipGearSet(setupId, passes)
 		Amr:Print(L.GearEquipErrorEmpty)
 		return
 	end
+
+	-- set talents first
+	--[[
+	if firstCall then
+		setTalents(setup)
+	end]]
 
 	local gear = setup.Gear
 	local spec = setup.SpecSlot
@@ -1128,11 +1390,12 @@ function beginEquipGearSet(setupId, passes)
 
 				-- find the best matching item anywhere in the player's gear
 				local bestItem, bestDiff = Amr:FindMatchingItem(new, player, usedItems)
+				
 				new = bestItem
-
 				local diff = countItemDifferences(new, old)				
 
-				if diff > 0 then	
+				if diff > 0 then
+
 					list[slotId] = new
 					if list == itemsToEquip.mh or list == itemsToEquip.oh then
 						itemsToEquip.weapons[slotId] = {}
@@ -1219,7 +1482,7 @@ function beginEquipGearSet(setupId, passes)
 		end
 
 	else
-		onEquipGearSetComplete()
+		onEquipGearSetComplete(setup)
 	end	
 end
 
@@ -1228,6 +1491,7 @@ local function onActiveTalentGroupChanged()
 	local auto = Amr.db.profile.options.autoGear
 	local currentSpec = GetSpecialization()
 	local waitingSpec = _waitingForSpec
+	local canTalentSwap = _waitingForSpec and not auto
 	_waitingForSpec = 0
 	
 	-- when spec changes, change active setup to first one for this spec (does nothing if they have no setups for this spec)
@@ -1241,9 +1505,33 @@ local function onActiveTalentGroupChanged()
 	if currentSpec == waitingSpec or auto then
 		-- spec is what we want, now equip the gear but after a short delay because the game auto-swaps artifact weapons
 		Amr.Wait(2, function()
-			beginEquipGearSet(_activeSetupId, 0)
+			beginEquipGearSet(_activeSetupId, 0, canTalentSwap)
 		end)
 	end
+end
+
+function Amr:DeleteGearSet(setupIndex)
+
+	if not setupIndex then
+		Amr:Print("Please specify the index of the setup to delete, 1 is the first, 2 is the second, etc. as seen in the dropdown list on the Gear tab.")
+	end
+
+	setupIndex = tonumber(setupIndex)
+
+	if setupIndex > #Amr.db.char.GearSetups then
+		Amr:Print("You specified " .. setupIndex .. " but you only have " .. #Amr.db.char.GearSetups .. " setups.")
+	end
+
+	local oldId = Amr.db.char.GearSetups[setupIndex].Id
+	
+	table.remove(Amr.db.char.GearSetups, setupIndex)
+
+	if _activeSetupId == oldId then
+		_activeSetupId = 0
+		Amr:PickFirstSetupForSpec()
+	end
+
+	Amr:RefreshGearDisplay()
 end
 
 -- activate the specified spec and then equip the saved gear set
@@ -1288,7 +1576,7 @@ function Amr:EquipGearSet(setupIndex)
 		SetSpecialization(setup.SpecSlot)
 	else
 		-- spec is what we want, now equip the gear
-		beginEquipGearSet(_activeSetupId, 0)
+		beginEquipGearSet(_activeSetupId, 0, true)
 	end
 end
 
@@ -1305,6 +1593,8 @@ end
 
 function Amr:InitializeGear()
 	Amr:AddEventHandler("ACTIVE_TALENT_GROUP_CHANGED", onActiveTalentGroupChanged)
+
+	--Amr:AddEventHandler("TRAIT_CONFIG_UPDATED", onTraitConfigUpdated)
 
 	--Amr:AddEventHandler("CHAT_MSG_CHANNEL", testfunc)
 	

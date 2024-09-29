@@ -17,7 +17,7 @@ if L then
 	L[257966] = "Приговор" -- short for Sentence of Sargeras
 
 	L.stage2_early = "Ярость морей смоет эту скверну!"  -- Aman'thul's accurate quote
-	L.stage3_early = "Надежды нет. Есть только боль!" -- Argus' accurate quote 
+	L.stage3_early = "Надежды нет. Есть только боль!" -- Argus' accurate quote
 
 	L.gifts = "Дары: %s (Небо), %s (Море)"
 	L.burst = "|T1778229:15:15:0:0:64:64:4:60:4:60|tВзрыв:%s" -- short for Soulburst
@@ -56,10 +56,6 @@ end
 L = BigWigs:NewBossLocale("Eonar the Life-Binder", "ruRU")
 if L then
 	L.warp_in_desc = "Отображает таймеры и сообщения для каждой волны, вместе с каждым специальным аддом в волне."
-
-	L.top_lane = "Верх"
-	L.mid_lane = "Центр"
-	L.bot_lane = "Низ"
 
 	L.purifier = "Очиститель" -- Fel-Powered Purifier
 	L.destructor = "Разрушитель" -- Fel-Infused Destructor
@@ -111,7 +107,7 @@ if L then
 	L.flameweaver = "Заклинатель пламени"
 
 	-- [[ Before Antoran High Command ]] --
-	L.ravager = "Присягнувший клинку опустошитель"
+	L.ravager = "Присягнувший клинку - опустошитель"
 	L.deconix = "Император Деконикс"
 	L.clobex = "Клобекc"
 

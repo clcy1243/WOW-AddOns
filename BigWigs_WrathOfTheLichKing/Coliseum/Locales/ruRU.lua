@@ -1,4 +1,5 @@
 local L = BigWigs:NewBossLocale("Anub'arak", "ruRU")
+if not L then return end
 if L then
 	L.engage_message = "Ануб'арак вступил в бой, зарывание в землю через 80сек!"
 	L.engage_trigger = "Это место станет вашей могилой!"
@@ -13,8 +14,6 @@ if L then
 	L.nerubian_burrower = "Ещё жуки"
 
 	L.shadow_soon = "Теневой удар через ~5сек!"
-
-	L.chase = "Преследование"
 end
 
 L = BigWigs:NewBossLocale("The Beasts of Northrend", "ruRU")
@@ -26,10 +25,13 @@ if L then
 	L.icehowl_trigger = "В воздухе повеяло ледяным дыханием следующего бойца: на арену выходит Ледяной Рев! Сражайтесь или погибните, чемпионы!"
 	L.boss_incoming = "На подходе %s"
 
+	L.gormok = "Гормок Пронзающий Бивень"
+	L.jormungars = "Кислотная Утроба и Жуткая Чешуя"
+	L.icehowl = "Ледяной Рев"
+
 	-- Gormok
 	L.snobold = "Снобольд"
 	L.snobold_desc = "Сообщать о том, на кого прыгнул снобольд."
-	L.snobold_message = "Снобольд на:"
 
 	-- Jormungars
 	L.submerge = "Погружение"

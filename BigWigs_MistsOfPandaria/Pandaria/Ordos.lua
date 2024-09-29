@@ -28,13 +28,13 @@ L = mod:GetLocale()
 
 function mod:GetOptions()
 	return {
-		144688, {144689, "FLASH", "SAY", "PROXIMITY"}, 144692, 144695,
+		144688, {144689, "FLASH", "PROXIMITY"}, 144692, 144695,
 		"berserk",
 	}
 end
 
 function mod:OnBossEnable()
-	self:Yell("Engage", L.engage_yell)
+	self:BossYell("Engage", L.engage_yell)
 
 	self:Log("SPELL_CAST_START", "MagmaCrush", 144688)
 	self:Log("SPELL_AURA_APPLIED", "BurningSoul", 144689)
@@ -51,9 +51,9 @@ end
 
 function mod:OnEngage()
 	self:Berserk(300) -- Eternal Agony
-	self:CDBar(144688, 10) -- Magma Crush
-	self:CDBar(144689, 23) -- Burning Soul
-	self:CDBar(144695, 44) -- Ancient Flame
+	self:Bar(144688, 10) -- Magma Crush
+	self:Bar(144689, 23) -- Burning Soul
+	self:Bar(144695, 44) -- Ancient Flame
 end
 
 --------------------------------------------------------------------------------
@@ -61,13 +61,13 @@ end
 --
 
 function mod:MagmaCrush(args)
-	self:Message(args.spellId, "orange", nil, CL["casting"]:format(args.spellName))
-	self:CDBar(args.spellId, 12)
+	self:MessageOld(args.spellId, "orange", nil, CL["casting"]:format(args.spellName))
+	self:Bar(args.spellId, 12)
 end
 
 function mod:PoolOfFire(args)
-	self:Message(args.spellId, "yellow", "Alarm")
-	self:CDBar(args.spellId, 32)
+	self:MessageOld(args.spellId, "yellow", "alarm")
+	self:Bar(args.spellId, 32)
 end
 
 do
@@ -77,15 +77,15 @@ do
 			local t = GetTime()
 			if t-prev > 4 then
 				prev = t
-				self:Message(144692, "blue", "Info", CL["underyou"]:format(args.spellName))
+				self:MessageOld(144692, "blue", "info", CL["underyou"]:format(args.spellName))
 			end
 		end
 	end
 end
 
 function mod:AncientFlame(args)
-	self:Message(args.spellId, "yellow")
-	self:CDBar(args.spellId, 44)
+	self:MessageOld(args.spellId, "yellow")
+	self:Bar(args.spellId, 44)
 end
 
 do
@@ -95,7 +95,7 @@ do
 			local t = GetTime()
 			if t-prev > 4 then
 				prev = t
-				self:Message(144695, "blue", "Info", CL["you"]:format(args.spellName))
+				self:MessageOld(144695, "blue", "info", CL["you"]:format(args.spellName))
 			end
 		end
 	end
@@ -104,7 +104,7 @@ end
 do
 	local coloredNames, burningSoulList, isOnMe, scheduled = mod:NewTargetList(), {}, nil, nil
 	local function warnBurningSoul(spellId)
-		mod:CDBar(spellId, 24)
+		mod:Bar(spellId, 24)
 		mod:Bar(spellId, 10, L.burning_soul_bar)
 		if isOnMe then
 			mod:Bar(spellId, 10, L.burning_soul_self_bar)
@@ -116,7 +116,7 @@ do
 			coloredNames[i] = v
 			burningSoulList[i] = nil
 		end
-		mod:TargetMessage(spellId, coloredNames, "orange", "Alert", nil, nil, true)
+		mod:TargetMessageOld(spellId, coloredNames, "orange", "alert", nil, nil, true)
 		scheduled = nil
 	end
 
@@ -128,7 +128,6 @@ do
 	function mod:BurningSoul(args)
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
 			self:OpenProximity(args.spellId, 10)
 			isOnMe = true
 		end

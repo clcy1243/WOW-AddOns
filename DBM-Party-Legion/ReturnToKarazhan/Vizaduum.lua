@@ -1,21 +1,20 @@
 local mod	= DBM:NewMod(1838, "DBM-Party-Legion", 11, 860)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "heroic,mythic,challenge"
+
+mod:SetRevision("20240502130748")
 mod:SetCreatureID(114790)
 mod:SetEncounterID(2017)
-mod:SetZone()
 mod:SetUsedIcons(1, 2, 3)
 --mod:SetHotfixNoticeRev(14922)
 --mod.respawnTime = 30
-
-mod.noNormal = true
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 229151 229083",
-	"SPELL_CAST_SUCCESS 229610",
+	"SPELL_CAST_SUCCESS 229610 230084",
 	"SPELL_AURA_APPLIED 229159 229241",
 	"SPELL_AURA_REMOVED 229159",
 --	"SPELL_PERIODIC_DAMAGE",
@@ -34,10 +33,10 @@ local warnPhase3					= mod:NewPhaseAnnounce(3, 2)
 
 --ALL
 local specWarnChaoticShadows		= mod:NewSpecialWarningYou(229159, nil, nil, nil, 1, 2)
-local yellChaoticShadows			= mod:NewPosYell(229159, DBM_CORE_L.AUTO_YELL_CUSTOM_POSITION2)
+local yellChaoticShadows			= mod:NewShortPosYell(229159)
 local specWarnBurningBlast			= mod:NewSpecialWarningInterruptCount(229083, "HasInterrupt", nil, nil, 1, 2)
 --Phase 1
-local specWarnFelBeam				= mod:NewSpecialWarningRun(229242, nil, nil, nil, 1, 2)
+local specWarnFelBeam				= mod:NewSpecialWarningRun(229242, nil, nil, 2, 4, 2)
 local yellFelBeam					= mod:NewYell(229242)
 
 --ALL
@@ -49,11 +48,10 @@ local timerBombardmentCD			= mod:NewCDTimer(25, 229284, 229287, nil, nil, 3)
 
 --local berserkTimer					= mod:NewBerserkTimer(300)
 
-mod:AddSetIconOption("SetIconOnShadows", 229159, true, false, {1, 2, 3})
+mod:AddSetIconOption("SetIconOnShadows", 229159, true, 0, {1, 2, 3})
 mod:AddRangeFrameOption(6, 230066)
 --mod:AddInfoFrameOption(198108, false)
 
-mod.vb.phase = 1
 mod.vb.kickCount = 0
 local chaoticShadowsTargets = {}
 --local laserWarned = false--What was this for? need to finish this mod one day
@@ -64,7 +62,7 @@ local function breakShadows(self)
 end
 
 function mod:OnCombatStart(delay)
-	self.vb.phase = 1
+	self:SetStage(1)
 	self.vb.kickCount = 0
 	--laserWarned = false
 	table.wipe(chaoticShadowsTargets)
@@ -102,20 +100,20 @@ end
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 229610 then--Demonic Portal (both times or just once?)
-		self.vb.phase = self.vb.phase + 1
+		self:SetStage(0)
 		self.vb.kickCount = 0
 		--Cancel stuff
 		timerDisintegrateCD:Stop()
 		timerChaoticShadowsCD:Stop()
 		timerBombardmentCD:Stop()
-		if self.vb.phase == 2 then
+		if self:GetStage(2) then
 			warnPhase2:Show()
 			timerFelBeamCD:Stop()
 			--Variable based on how long it takesto engage boss
 			--timerDisintegrateCD:Start(15)--Cast when boss engaged
 			timerBombardmentCD:Start(41)
 			timerChaoticShadowsCD:Start(45)
-		elseif self.vb.phase == 3 then
+		elseif self:GetStage(3) then
 			warnPhase3:Show()
 			--Variable based on how long it takesto engage boss
 			timerChaoticShadowsCD:Start(41)
@@ -124,16 +122,15 @@ function mod:SPELL_CAST_SUCCESS(args)
 			end
 		end
 	elseif spellId == 230084 then--Stabilize Rift
-		DBM:Debug("THE RIFT")
+		DBM:Debug("THE RIFT")--Why is this here?
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 229159 then
-		local name = args.destName
-		if not tContains(chaoticShadowsTargets, name) then
-			chaoticShadowsTargets[#chaoticShadowsTargets+1] = name
+		if not tContains(chaoticShadowsTargets, args.destName) then
+			chaoticShadowsTargets[#chaoticShadowsTargets+1] = args.destName
 		end
 		local count = #chaoticShadowsTargets
 		self:Unschedule(breakShadows)
@@ -149,7 +146,7 @@ function mod:SPELL_AURA_APPLIED(args)
 			yellChaoticShadows:Yell(count, args.spellName, count)
 		end
 		if self.Options.SetIconOnShadows then
-			self:SetIcon(name, count)
+			self:SetIcon(args.destName, count)
 		end
 	elseif spellId == 229241 then
 		timerFelBeamCD:Start()
@@ -172,8 +169,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 229284 then--Bombardment (more reliable than auras, which can be fickle and apply/remove multiple times
 		timerBombardmentCD:Start()
 	end

@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(1904, "DBM-Party-Legion", 12, 900)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(119542)--119883 Fel Portal Guardian 118834
 mod:SetEncounterID(2053)
-mod:SetZone()
 --mod:SetHotfixNoticeRev(15186)
 --mod:SetUsedIcons(8)
 
@@ -25,13 +24,13 @@ local specWarnFelsoulCleave			= mod:NewSpecialWarningDodge(236543, "Tank", nil, 
 local specWarnChaoticEnergy			= mod:NewSpecialWarningMoveTo(234107, nil, nil, nil, 2, 2)
 local specWarnAdds					= mod:NewSpecialWarningAdds(200597, "-Healer", nil, nil, 1, 2)
 
-local timerFelsoulCleaveCD			= mod:NewCDTimer(20, 236543, nil, "Tank", nil, 5, nil, DBM_CORE_L.TANK_ICON)
+local timerFelsoulCleaveCD			= mod:NewCDTimer(20, 236543, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 local timerChaoticEnergyCD			= mod:NewCDTimer(30, 234107, nil, nil, nil, 2, nil, nil, nil, 1, 4)
 local timerApproachingDoom			= mod:NewCastTimer(20, 241622, nil, nil, nil, 1)
 
 mod:AddInfoFrameOption(238410, true)
 
-local shield = DBM:GetSpellInfo(238410)
+local shield = DBM:GetSpellName(238410)
 
 function mod:OnCombatStart(delay)
 	timerFelsoulCleaveCD:Start(8.2-delay)
@@ -79,8 +78,7 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 235822 or spellId == 235862 then--Start Wave 01/Start Wave 02
 		specWarnAdds:Show()
 		specWarnAdds:Play("killmob")

@@ -6,8 +6,8 @@
 local mod, CL = BigWigs:NewBoss("Reliquary of Souls", 564, 1587)
 if not mod then return end
 mod:RegisterEnableMob(23420, 23419, 23418) -- Essence of Anger, Essence of Desire, Essence of Suffering
-mod.engageId = 606
-mod.respawnTime = 11
+mod:SetEncounterID(606)
+mod:SetRespawnTime(11)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -38,7 +38,7 @@ function mod:GetOptions()
 
 		--[[ Essence of Suffering ]]--
 		41303, -- Soul Drain
-		41305, -- Frenzy
+		{41305, "CASTBAR"}, -- Frenzy
 		{41294, "ICON"}, -- Fixate
 
 		--[[ Essence of Desire ]]--
@@ -83,8 +83,8 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage()
-	wipe(playerList)
-	wipe(castCollector)
+	playerList = self:NewTargetList()
+	castCollector = {}
 	self:CDBar(41305, 48) -- Frenzy
 	self:CDBar(41303, 21.6) -- Soul Drain
 end
@@ -119,12 +119,12 @@ do
 					self:PrimaryIcon(41294) -- Fixate
 					self:StopBar(41305) -- Frenzy
 					self:StopBar(41303) -- Soul Drain
-					self:Bar("stages", 40, CL.intermission, 83601) -- spell_holy_borrowedtime / icon 237538
+					self:Bar("stages", 40, CL.intermission, "inv_misc_pocketwatch_01")
 				elseif msg == "Kill2" then
 					self:StopBar(41410) -- Deaden
 					self:StopBar(41431) -- Rune Shield
 					self:StopBar(L.zero_mana) -- Soul Drain
-					self:Bar("stages", 40, CL.intermission, 83601) -- spell_holy_borrowedtime / icon 237538
+					self:Bar("stages", 40, CL.intermission, "inv_misc_pocketwatch_01")
 				end
 			end
 		end
@@ -145,45 +145,45 @@ end
 function mod:SoulDrainApplied(args)
 	playerList[#playerList+1] = args.destName
 	if #playerList == 1 then
-		self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "yellow", "Alert")
+		self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, playerList, "yellow", "alert")
 	end
 end
 
 function mod:Frenzy(args)
-	self:Message(args.spellId, "orange", "Info")
+	self:MessageOld(args.spellId, "orange", "info")
 	self:CastBar(args.spellId, 8)
 end
 
 function mod:FrenzyRemoved(args)
-	self:Message(args.spellId, "green", "Info", CL.over:format(args.spellName))
+	self:MessageOld(args.spellId, "green", "info", CL.over:format(args.spellName))
 	self:Bar(args.spellId, 40.5)
 end
 
 function mod:Fixate(args)
-	self:TargetMessage(args.spellId, args.destName, "red", "Warning")
+	self:TargetMessageOld(args.spellId, args.destName, "red", "warning")
 	self:PrimaryIcon(args.spellId, args.destName)
 end
 
 --[[ Essence of Desire ]]--
 function mod:AuraOfDesire() -- Start of Stage 2
-	self:Message("zero_mana", "cyan", nil, L.desire_start, L.zero_mana_icon)
+	self:MessageOld("zero_mana", "cyan", nil, L.desire_start, L.zero_mana_icon)
 	self:Bar("zero_mana", 160, L.zero_mana, L.zero_mana_icon)
 	self:CDBar(41410, 27.6) -- Deaden
 	self:CDBar(41431, 13) -- Rune Shield
 end
 
 function mod:RuneShield(args)
-	self:Message(args.spellId, "orange", self:Dispeller("magic", true) and "Warning")
+	self:MessageOld(args.spellId, "orange", self:Dispeller("magic", true) and "warning")
 	self:Bar(args.spellId, 15.7)
 end
 
 function mod:Deaden(args)
-	self:Message(args.spellId, "red", self:Interrupter() and "Info", CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "red", self:Interrupter() and "info", CL.casting:format(args.spellName))
 	self:Bar(args.spellId, 31.5)
 end
 
 function mod:SpiritShock(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Alarm", nil, nil, self:Tank())
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "alarm", nil, nil, self:Tank())
 end
 
 --[[ Essence of Anger ]]--
@@ -199,7 +199,7 @@ end
 function mod:SpiteApplied(args)
 	playerList[#playerList+1] = args.destName
 	if #playerList == 1 then
-		self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "red", "Alert")
+		self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, playerList, "red", "alert")
 	end
 end
 

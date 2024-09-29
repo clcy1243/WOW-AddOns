@@ -1,11 +1,11 @@
-local mod	= DBM:NewMod(1763, "DBM-BrokenIsles", nil, 822)
+local mod	= DBM:NewMod(1763, "DBM-BrokenIsles", 1, 822)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145614")
+mod:SetRevision("20230124052137")
 mod:SetCreatureID(108678)
 mod:SetEncounterID(1888)
 mod:SetReCombatTime(20)
-mod:SetZone()
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 mod:RegisterCombat("combat")
 
@@ -16,11 +16,12 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_MISSED 215876"
 )
 
+--NANI? which breath is right event?
 local specWarnBreath			= mod:NewSpecialWarningSpell(215821, "Tank", nil, nil, 1, 2)
 local specWarnBurningEarth		= mod:NewSpecialWarningMove(215876, nil, nil, nil, 1, 2)
 local specWarnFear				= mod:NewSpecialWarningSpell(216044, nil, nil, nil, 2, 2)
 
-local timerBreathCD				= mod:NewCDTimer(18.4, 215821, nil, "Tank", 2, 5, nil, DBM_CORE_L.TANK_ICON)--18.4-23
+local timerBreathCD				= mod:NewCDTimer(18.4, 215821, nil, "Tank", 2, 5, nil, DBM_COMMON_L.TANK_ICON)--18.4-23
 local timerFearCD				= mod:NewCDTimer(34.3, 216044, nil, nil, nil, 1)--34.3-65
 
 --mod:AddReadyCheckOption(37460, false)
@@ -44,14 +45,14 @@ end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
-	if spellId == 215821 then
-		specWarnBreath:Show()
-		specWarnBreath:Play("breathsoon")
-		timerBreathCD:Start()
-	elseif spellId == 216044 then
+	if spellId == 216044 then
 		specWarnFear:Show()
 		specWarnFear:Play("fearsoon")
 		timerFearCD:Start()
+--	elseif spellId == 215821 then
+--		specWarnBreath:Show()
+--		specWarnBreath:Play("breathsoon")
+--		timerBreathCD:Start()
 	end
 end
 

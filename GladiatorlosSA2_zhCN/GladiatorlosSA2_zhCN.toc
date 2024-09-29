@@ -1,9 +1,0 @@
-﻿## Interface: 80300
-## Title: GladiatorlosSA_zhCN(VV)
-## Title-zhCN:GSA2_VV语音包
-## Title-zhTW:GSA2_VV语音包
-## Notes: GSA plugin for Chinese voice set
-## Author: VV
-## Version: 8.3.1
-
-GladiatorlosSA2_zhCN.lua

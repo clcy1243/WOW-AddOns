@@ -1,21 +1,23 @@
-[![Build Status](https://travis-ci.org/DeadlyBossMods/DeadlyBossMods.svg?branch=master)](https://travis-ci.org/DeadlyBossMods/DeadlyBossMods)
+[![Build Status](https://github.com/DeadlyBossMods/DeadlyBossMods/workflows/CI/badge.svg)](https://github.com/DeadlyBossMods/DeadlyBossMods/actions?workflow=CI)
 [![DeadlyBossMods on Discord](https://img.shields.io/badge/discord-DeadlyBossMods-738bd7.svg?style=flat)](https://discord.gg/DeadlyBossMods) 
 
-[![Patreon](https://media.forgecdn.net/attachments/76/25/patreon-medium-button.png)](https://www.patreon.com/deadlybossmods)
+<p><img src="http://mysticalos.com/images/DBM/support_on_patreon.png" width="408" height="80" /></p>
+<p><a href="https://www.patreon.com/deadlybossmods">https://www.patreon.com/deadlybossmods</a></p>
 
 # Deadly Boss Mods
-### [Supporter Benefits](https://www.deadlybossmods.com/forum/viewtopic.php?f=7&t=428#p1180)
-### [Some basic DBM setup/advanced features guides](https://www.deadlybossmods.com/forum/viewforum.php?f=7)
+### [Supporter Benefits](https://github.com/DeadlyBossMods/DeadlyBossMods/wiki/DBM-Supporter-Benefits-Info)
+### [Some basic DBM setup/advanced features guides](https://github.com/DeadlyBossMods/DeadlyBossMods/wiki)
 
 ## Old Content mods are split into multiple packages
 Older content is split into multiple addons to reduce mod update size. These are often far less updated as DBM Core packages and are better as optional extra packages. You can get them here:
+* [Battle for Azeroth Mods](https://www.curseforge.com/wow/addons/deadly-boss-mods-dbm-bfa)
 * [Legion Raid Mods](https://curseforge.com/wow/addons/deadly-boss-mods-dbm-legion)
 * [Warlords of Draenor Raid Mods](https://curseforge.com/wow/addons/deadly-boss-mods-wod)
 * [Mists of Pandaria Raid Mods](https://curseforge.com/wow/addons/deadly-boss-mods-mop)
 * [Cataclysm Raid Mods](https://curseforge.com/wow/addons/deadly-boss-mods-cataclysm-mods)
 * [Wrath of the Lich King Raid Mods](https://curseforge.com/wow/addons/deadly-boss-mods-wotlk)
 * [Burning Cruisade and Vanilla Raid Mods](https://curseforge.com/wow/addons/dbm-bc)
-* [5 man Dungeon Mods](https://curseforge.com/wow/addons/deadly-boss-mods-dbm-dungeons)
+* [Dungeons, Delves, & Events Mods](https://curseforge.com/wow/addons/deadly-boss-mods-dbm-dungeons)
 
 ## Additional Mods
 * [Event Sound Pack](https://curseforge.com/wow/addons/deadly-boss-mods-dbm-event-sound-pack)
@@ -33,7 +35,6 @@ Older content is split into multiple addons to reduce mod update size. These are
 * [Countpack HoTS](https://curseforge.com/wow/addons/deadly-boss-mods-dbm-heroes-of-the-storm-hots)
 
 ## Voice Packs
-* [Voicepack VEM (English TTS Female)](https://curseforge.com/wow/addons/dbm-voicepack-vem)
 * [Voicepack Yike (Chinese TTS Female)](https://curseforge.com/wow/addons/dbm-voicepack-yike)
 * [Voicepack German (German Male)](http://curseforge.com/wow/addons/dbm-voicepack-german)
 * [Voicepack Mununyu (Korean Recorded Female)](https://www.curseforge.com/wow/addons/dbm-voicepack-mununyu)
@@ -45,8 +46,8 @@ Older content is split into multiple addons to reduce mod update size. These are
 * [Search for more](https://curseforge.com/wow/addons/search?search=dbm+voice)
 
 ## Getting too many updates of DBM per day?
-Multiple alpha versions can get pushed to Curse on an average day, these versions may contain important new features or bug fixes for the bleeding edge raid content... These versions are tagged as alpha, so they will not be downloaded by default. Set your Twitch client to update to alpha if you want these latest versions (but they may contain bugs, downloads tagged as "Beta" or "Release" are more stable and released less frequently)
-Right click on DBM itself in Twitch client addon list and set to preferred release type to control update frequency.
+Multiple alpha versions can get pushed to Curse/Wago on an average day, these versions may contain important new features or bug fixes for the bleeding edge raid content... These versions are tagged as alpha, so they will not be downloaded by default. Set your addon client to update to alpha if you want these latest versions (but they may contain bugs, downloads tagged as "Beta" or "Release" are more stable and released less frequently)
+Right click on DBM itself in addon client list and set to preferred release type to control update frequency.
 
 ## Features
 * Mods for raid, dungeon, special event and Brawlers Guild
@@ -62,7 +63,7 @@ Right click on DBM itself in Twitch client addon list and set to preferred relea
 * Special effects like the screen flash effect, huge warning messages and sounds will draw your attention to critical events with as much customizing of those flashes and sounds as possible to make them effective to your needs.
 * Support for SharedMedia, so you can use any texture for your bars and choose sounds from external sources more easily.
 * Best possible support for PTR/Beta encounter testing. DBM is only mod to provide cutting edge auto learning timers right in middle of your testing so you know what's coming and when, before anyone has ever even seen the fight before.
-* Support for [voice packs](https://curseforge.com/wow/addons/dbm-voicepack-vem) in many different supported languages. Every mod puts careful thought into what the best voice for an alert is that clearly and concisely advices action based on warning. No generic spell name TTS here. DBM voice packs will say something meaningful and not just make more noise for you to ignore.
+* Support for [voice packs](https://curseforge.com/wow/addons/dbm-voicepack-demo) in many different supported languages. Every mod puts careful thought into what the best voice for an alert is that clearly and concisely advices action based on warning. No generic spell name TTS here. DBM voice packs will say something meaningful and not just make more noise for you to ignore.
 * Any feature that makes sense to do so has good callbacks that WAs authors can use for best possible [WeakAuras](https://www.wowace.com/projects/weakauras-2) integration.
 
 ## Slash Commands

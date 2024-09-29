@@ -2,10 +2,13 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("The Crone", 532, 1556)
+local mod = BigWigs:NewBoss("The Crone", 532, -655)
 if not mod then return end
 --The Crone, Dorothee, Tito, Strawman, Tinhead, Roar
 mod:RegisterEnableMob(18168, 17535, 17548, 17543, 17547, 17546)
+if mod:Classic() then
+	mod:SetEncounterID(655)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -13,6 +16,8 @@ mod:RegisterEnableMob(18168, 17535, 17548, 17543, 17547, 17546)
 
 local L = mod:NewLocale("enUS", true)
 if L then
+	L.name = "The Crone"
+
 	L.engage_trigger = "^Oh Tito, we simply must find a way home!"
 
 	L.spawns = "Spawn Timers"
@@ -36,10 +41,14 @@ function mod:GetOptions()
 	}
 end
 
+function mod:OnRegister()
+	self.displayName = L.name
+end
+
 function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "ChainLightning", 32337)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 
 	self:Death("Win", 18168)
@@ -62,7 +71,7 @@ end
 --
 
 function mod:ChainLightning(args)
-	self:Message(args.spellId, "orange")
+	self:MessageOld(args.spellId, "orange")
 	self:Bar(args.spellId, 2, "<"..args.spellName..">")
 end
 

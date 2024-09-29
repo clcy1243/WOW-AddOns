@@ -1,15 +1,14 @@
 local mod	= DBM:NewMod("Nightbane", "DBM-Party-Legion", 11)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "mythic,challenge"
+
+mod:SetRevision("20240428124541")
 mod:SetCreatureID(114895)
 mod:SetEncounterID(2031)
-mod:SetZone()
 mod:SetUsedIcons(1)
 mod:SetHotfixNoticeRev(15430)
 mod.respawnTime = 25
-
-mod.onlyMythic = true--VERIFY how they actually do this
 
 mod:RegisterCombat("combat")
 
@@ -33,31 +32,30 @@ local warnPhase2					= mod:NewPhaseAnnounce(2, 2)
 local warnPhase3					= mod:NewPhaseAnnounce(3, 2)
 
 local specWarnReverbShadows			= mod:NewSpecialWarningInterruptCount(229307, "HasInterrupt", nil, nil, 1, 3)
-local specWarnCharredEarth			= mod:NewSpecialWarningMove(228808, nil, nil, nil, 1, 2)
+local specWarnCharredEarth			= mod:NewSpecialWarningGTFO(228808, nil, nil, nil, 1, 8)
 local specWarnIgniteSoul			= mod:NewSpecialWarningMoveTo(228796, nil, nil, nil, 3, 2)
 local yellIgniteSoul				= mod:NewShortFadesYell(228796)
 local specWarnFear					= mod:NewSpecialWarningSpell(228837, nil, nil, nil, 2, 2)
 
-local timerReverbShadowsCD			= mod:NewCDTimer(12, 229307, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)--12-16
+local timerReverbShadowsCD			= mod:NewCDTimer(12, 229307, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--12-16
 local timerBreathCD					= mod:NewCDTimer(23, 228785, nil, "Tank", nil, 5)--23-35
 local timerCharredEarthCD			= mod:NewCDTimer(20, 228806, nil, nil, nil, 3)--20-25
 local timerBurningBonesCD			= mod:NewCDTimer(18.3, 228829, nil, nil, nil, 3)--20-25
-local timerIgniteSoulCD				= mod:NewCDTimer(25, 228796, nil, nil, nil, 3, nil, DBM_CORE_L.DEADLY_ICON)
+local timerIgniteSoulCD				= mod:NewCDTimer(25, 228796, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
 
 local timerFearCD					= mod:NewCDTimer(43, 228837, nil, nil, nil, 2)--43-46
 
 --local berserkTimer				= mod:NewBerserkTimer(300)
 
-mod:AddSetIconOption("SetIconOnIgnite", 228796, true, false, {1})
+mod:AddSetIconOption("SetIconOnIgnite", 228796, true, 0, {1})
 mod:AddInfoFrameOption(228829, true)
 
-mod.vb.phase = 1
 mod.vb.interruptCount = 0
 
-local charredEarth, burningBones, filteredDebuff = DBM:GetSpellInfo(228808), DBM:GetSpellInfo(228829), DBM:GetSpellInfo(228796)
+local charredEarth, burningBones, filteredDebuff = DBM:GetSpellName(228808), DBM:GetSpellName(228829), DBM:GetSpellName(228796)
 
 function mod:OnCombatStart(delay)
-	self.vb.phase = 1
+	self:SetStage(1)
 	self.vb.interruptCount = 0
 	timerBreathCD:Start(8.5-delay)
 	timerCharredEarthCD:Start(15-delay)
@@ -79,7 +77,7 @@ end
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 228839 then--Phase 2 (can be detected earlier with yell, but this is better than localizing)
-		self.vb.phase = 2
+		self:SetStage(2)
 		warnPhase2:Show()
 		timerIgniteSoulCD:Stop()
 		timerBurningBonesCD:Stop()
@@ -147,7 +145,7 @@ end
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 228808 and destGUID == UnitGUID("player") and not DBM:UnitDebuff("player", filteredDebuff) and self:AntiSpam(2, 1) then
 		specWarnCharredEarth:Show()
-		specWarnCharredEarth:Play("runaway")
+		specWarnCharredEarth:Play("watchfeet")
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
@@ -155,7 +153,7 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 114903 then--Bonecurse
-		self.vb.phase = 3
+		self:SetStage(3)
 		self.vb.interruptCount = 0
 		warnPhase3:Show()
 		timerBreathCD:Start(12)
@@ -167,8 +165,7 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 228806 then--Charred Earth pre cast
 		timerCharredEarthCD:Start()
 	end

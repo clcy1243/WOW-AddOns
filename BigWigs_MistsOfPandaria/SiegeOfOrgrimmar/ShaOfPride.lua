@@ -82,8 +82,8 @@ end
 
 function mod:OnEngage()
 	swellingPrideCounter, titanCounter = 1, 1
-	wipe(titans)
-	wipe(auraOfPrideGroup)
+	titans = {}
+	auraOfPrideGroup = {}
 	auraOfPrideOnMe = nil
 	self:Bar(146595, 7) -- Titan Gift
 	self:Bar(144400, 77, CL.count:format(self:SpellName(144400), swellingPrideCounter)) -- Swelling Pride
@@ -91,13 +91,13 @@ function mod:OnEngage()
 	self:DelayedMessage(-8262, 55, "orange", CL.spawning:format(CL.big_add), 144379)
 	self:Bar(144800, 25, CL.small_adds)
 	self:Bar(144563, 52.5) -- Imprison
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
 	if self:Mythic() then
 		self:Bar(145215, 37.4) -- Banishment
 		wrChecker = nil
 	end
 	if not self:LFR() then
-		self:CDBar(144358, 11) -- Wounded Pride
+		self:Bar(144358, 11) -- Wounded Pride
 		self:Berserk(600)
 	end
 	self:OpenAltPower("altpower", 144343) -- Pride
@@ -114,12 +114,12 @@ do
 			mod:CancelTimer(wrChecker)
 			wrChecker = nil
 		else
-			mod:Message(spellId, "blue", nil, CL.no:format(spellName))
+			mod:MessageOld(spellId, "blue", nil, CL.no:format(spellName))
 		end
 	end
 	function mod:WeakenedResolveOver(args)
 		if self:Me(args.destGUID) and UnitAffectingCombat("player") then
-			self:Message(args.spellId, "blue", nil, CL.over:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", nil, CL.over:format(args.spellName))
 			wrChecker = self:ScheduleRepeatingTimer(warnWeakenedResolve, 6, args.spellId, args.spellName)
 		end
 	end
@@ -133,13 +133,13 @@ function mod:WeakenedResolveBegin(args)
 end
 
 do
-	local mobTbl, counter, UnitGUID = {}, 8, UnitGUID
+	local mobTbl, counter = {}, 8
 	local function CheckUnit(event, firedUnit)
 		local unit = firedUnit and firedUnit.."target" or "mouseover"
-		local guid = UnitGUID(unit)
+		local guid = mod:UnitGUID(unit)
 		if guid and not mobTbl[guid] and mod:MobId(guid) == 72569 then
 			mobTbl[guid] = true
-			SetRaidTarget(unit, counter)
+			mod:CustomIcon(false, unit, counter)
 			counter = counter - 1
 			if counter == 6 then
 				mod:UnregisterEvent("UPDATE_MOUSEOVER_UNIT")
@@ -150,7 +150,7 @@ do
 
 	local banishmentList, scheduled = mod:NewTargetList(), nil
 	local function warnBanishment(spellId)
-		mod:TargetMessage(spellId, banishmentList, "yellow")
+		mod:TargetMessageOld(spellId, banishmentList, "yellow")
 		scheduled = nil
 	end
 	function mod:Banishment(args)
@@ -159,7 +159,7 @@ do
 			scheduled = self:ScheduleTimer(warnBanishment, 0.2, args.spellId)
 
 			if self.db.profile.custom_off_fragment_mark then
-				wipe(mobTbl)
+				mobTbl = {}
 				counter = 8
 				self:RegisterEvent("UPDATE_MOUSEOVER_UNIT", CheckUnit)
 				self:RegisterEvent("UNIT_TARGET", CheckUnit)
@@ -170,9 +170,9 @@ end
 
 -- normal
 function mod:UnleashedStart(args)
-	self:Message(args.spellId, "cyan", "Info", "30% - ".. CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "cyan", "info", "30% - ".. CL.casting:format(args.spellName))
 	if not self:LFR() then
-		self:CDBar(144358, 11) -- Wounded Pride
+		self:Bar(144358, 11) -- Wounded Pride
 	end
 	self:StopBar(CL.count:format(self:SpellName(144400), swellingPrideCounter)) -- Swelling Pride
 	self:StopBar(144563) -- Imprison
@@ -184,7 +184,7 @@ end
 
 function mod:Unleashed() -- Final Gift
 	self:StopBar(146595) -- Gift of the Titans
-	self:Message(-8349, "cyan", "Info") -- Final Gift
+	self:MessageOld(-8349, "cyan", "info") -- Final Gift
 	self:Bar(144400, 74, CL.count:format(self:SpellName(144400), swellingPrideCounter)) -- Swelling Pride
 	self:Bar(-8262, 60, CL.big_add, 144379)
 	self:DelayedMessage(-8262, 55, "orange", CL.spawning:format(CL.big_add), 144379)
@@ -195,10 +195,10 @@ function mod:Unleashed() -- Final Gift
 	end
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unitId)
-	local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+function mod:UNIT_HEALTH(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp < 34 then -- 30%
-		self:Message(144832, "cyan", "Info", CL.soon:format(self:SpellName(144832))) -- Unleashed
+		self:MessageOld(144832, "cyan", "info", CL.soon:format(self:SpellName(144832))) -- Unleashed
 		self:UnregisterUnitEvent(event, "boss1")
 	end
 end
@@ -206,7 +206,7 @@ end
 do
 	local prisoned, scheduled = mod:NewTargetList(), nil
 	local function warnImprison()
-		mod:TargetMessage(144563, prisoned, "cyan")
+		mod:TargetMessageOld(144563, prisoned, "cyan")
 		scheduled = nil
 	end
 	function mod:ImprisonApplied(args)
@@ -218,11 +218,11 @@ do
 end
 
 function mod:Imprison(args)
-	self:Message(args.spellId, "cyan", nil, CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "cyan", nil, CL.casting:format(args.spellName))
 end
 
 function mod:SelfReflection(args)
-	self:Message(args.spellId, "red", nil, CL.small_adds)
+	self:MessageOld(args.spellId, "red", nil, CL.small_adds)
 end
 
 function mod:WoundedPride(args)
@@ -231,26 +231,26 @@ function mod:WoundedPride(args)
 	if notOnMe then
 		self:Flash(args.spellId)
 	end
-	self:TargetMessage(args.spellId, args.destName, "red", notOnMe and "Warning", nil, nil, true) -- play sound for the other tanks
-	self:CDBar(args.spellId, 30)
+	self:TargetMessageOld(args.spellId, args.destName, "red", notOnMe and "warning", nil, nil, true) -- play sound for the other tanks
+	self:Bar(args.spellId, 30)
 end
 
 function mod:MarkOfArrogance(args)
 	if self:Dispeller("magic", nil, args.spellId) then
-		self:Message(args.spellId, "red", "Alarm")
+		self:MessageOld(args.spellId, "red", "alarm")
 		self:Bar(args.spellId, 20)
 	end
 end
 
 function mod:AuraOfPrideRemoved(args)
 	self:CloseProximity(args.spellId)
-	wipe(auraOfPrideGroup)
+	auraOfPrideGroup = {}
 	auraOfPrideOnMe = nil
 end
 
 function mod:AuraOfPrideApplied(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Alert", CL.you:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alert", CL.you:format(args.spellName))
 		self:Flash(args.spellId)
 		self:OpenProximity(args.spellId, 5)
 		auraOfPrideOnMe = true
@@ -265,12 +265,12 @@ end
 do
 	local mindcontrolled, scheduled = mod:NewTargetList(), nil
 	local function warnOvercome()
-		mod:TargetMessage(-8270, mindcontrolled, "yellow")
+		mod:TargetMessageOld(-8270, mindcontrolled, "yellow")
 		scheduled = nil
 	end
 	function mod:SwellingPrideSuccess(args)
 		if not self:LFR() then
-			self:CDBar(144358, 10.5) -- Wounded Pride, 10-11.2
+			self:Bar(144358, 10.5) -- Wounded Pride, 10-11.2
 		end
 		if self:Mythic() then
 			self:Bar(145215, 37.4) -- Banishment
@@ -278,17 +278,17 @@ do
 		self:Bar(144563, 53) -- Imprison
 		self:Bar(-8262, 60, CL.big_add, 144379) -- when the add is actually up
 		self:DelayedMessage(-8262, 55, "orange", CL.soon:format(CL.big_add), 144379)
-		self:DelayedMessage(-8262, 60, "orange", CL.spawning:format(CL.big_add), 144379, self:Damager() and "Alert")
+		self:DelayedMessage(-8262, 60, "orange", CL.spawning:format(CL.big_add), 144379, self:Damager() and "alert")
 		self:Bar(144800, 25.6, CL.small_adds)
 
 		-- lets do some fancy stuff
 		local playerPower = UnitPower("player", 10)
 		local playerBursting = playerPower > 24 and playerPower < 50
 		if playerBursting then
-			self:Message(-8257, "blue", "Alarm", CL.underyou:format(self:SpellName(144911))) -- bursting pride
+			self:MessageOld(-8257, "blue", "alarm", CL.underyou:format(self:SpellName(144911))) -- bursting pride
 		elseif playerPower > 49 and playerPower < 75 then
 			local you = CL.you:format(self:SpellName(-8258))
-			self:Message(-8258, "blue", "Warning", ("%s (|cFF00FF00%s|r)"):format(you, L.projection_green_arrow), "Achievement_pvp_g_01.png") -- better fitting icon imo
+			self:MessageOld(-8258, "blue", "warning", ("%s (|cFF00FF00%s|r)"):format(you, L.projection_green_arrow), "Achievement_pvp_g_01.png") -- better fitting icon imo
 			self:Flash(-8258, "Achievement_pvp_g_01.png")
 			self:Bar(-8258, 6, you, "Achievement_pvp_g_01.png")
 		end
@@ -306,7 +306,7 @@ do
 end
 
 function mod:SwellingPride(args)
-	self:Message(args.spellId, "yellow", "Info", CL.count:format(args.spellName, swellingPrideCounter)) -- play sound so people can use personal CDs
+	self:MessageOld(args.spellId, "yellow", "info", CL.count:format(args.spellName, swellingPrideCounter)) -- play sound so people can use personal CDs
 	swellingPrideCounter = swellingPrideCounter + 1
 	self:Bar(args.spellId, 77, CL.count:format(args.spellName, swellingPrideCounter))
 end
@@ -319,14 +319,14 @@ do
 			mod:OpenProximity(146595, 8, titans, true)
 		end
 		titanCounter = 1
-		wipe(titans)
+		titans = {}
 	end
 	function mod:TitanGiftRemoved(args)
 		if self:Me(args.destGUID) then
 			self:CloseProximity(146595)
 		end
 		if self.db.profile.custom_off_titan_mark then
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
 	end
 	function mod:TitanGiftApplied(args)
@@ -334,10 +334,10 @@ do
 		if self:Me(args.destGUID) then
 			isOnMe = true
 			if prideExpires then -- Aura of Pride 5 yard aoe
-				self:Message(146595, "cyan", "Long", CL.you:format(("%s + %s"):format(args.spellName,auraOfPride)))
+				self:MessageOld(146595, "cyan", "long", CL.you:format(("%s + %s"):format(args.spellName,auraOfPride)))
 				self:Flash(146817) -- Aura of Pride flash
 			else
-				self:Message(146595, "green", "Long", CL.you:format(args.spellName))
+				self:MessageOld(146595, "green", "long", CL.you:format(args.spellName))
 			end
 		else
 			titans[#titans+1] = args.destName
@@ -347,9 +347,9 @@ do
 			if prideExpires then
 				local remaining = prideExpires-GetTime()
 				self:TargetBar(146595, remaining, args.destName, L.titan_pride)
-				self:ScheduleTimer(SetRaidTarget, remaining, args.destName, titanCounter)
+				self:ScheduleTimer("CustomIcon", remaining, false, args.destName, titanCounter)
 			else
-				SetRaidTarget(args.destName, titanCounter)
+				self:CustomIcon(false, args.destName, titanCounter)
 			end
 			titanCounter = titanCounter + 1
 		end

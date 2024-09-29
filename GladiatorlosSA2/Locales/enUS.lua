@@ -1,6 +1,39 @@
 ﻿local L = LibStub("AceLocale-3.0"):NewLocale("GladiatorlosSA", "enUS",true)
 if not L then return end
 
+local Colors = {
+    DeathKnight = "|cffC41F3B",
+    DemonHunter = "|cffA330C9",
+    Druid = "|cffFF7D0A",
+    Evoker = "|cff33937F",
+    Hunter = "|cffABD473",
+    Mage = "|cff69CCF0",
+    Monk = "|cFF00FF96",
+    Paladin = "|cffF58CBA",
+    Priest = "|cffFFFFFF",
+    Rogue = "|cffFFF569",
+    Shaman = "|cff0070da",
+    ShamanTotems = "|cff0070da",
+    Warlock = "|cff9482C9",
+    Warrior = "|cffC79C6E",
+}
+
+local Classes = {
+    DeathKnight = Colors.DeathKnight .. "Death Knight|r",
+    DemonHunter = Colors.DemonHunter .. "Demon Hunter|r",
+    Druid = Colors.Druid .. "Druid|r",
+    Evoker = Colors.Evoker .. "Evoker|r",
+    Hunter = Colors.Hunter .. "Hunter|r",
+    Mage = Colors.Mage .. "Mage|r",
+    Monk = Colors.Monk .. "Monk|r",
+    Paladin = Colors.Paladin .. "Paladin|r",
+    Priest = Colors.Priest .. "Priest|r",
+    Rogue = Colors.Rogue .. "Rogue|r",
+    Shaman = Colors.Shaman .. "Shaman|r",
+    Warlock = Colors.Warlock .. "Warlock|r",
+    Warrior = Colors.Warrior .. "Warrior|r",
+}
+
 L["Spell_CastSuccess"] = "On Successful Cast"
 L["Spell_CastStart"] = "On Beginning of Spell Cast"
 L["Spell_AuraApplied"] = "On Buff/Debuff Application"
@@ -42,7 +75,7 @@ L["Custom unit name"] = "Custom Unit Name"
 L["Dest unit"] = "Destination Unit"
 L["Dest type"] = "Destination Type"
 
-L["GladiatorlosSACredits"] = "Customizable PvP Announcer addon for vocalizing many important spells cast by your enemies.|n|n|cffFFF569Created by|r |cff9482C9Abatorlos|r |cffFFF569of Spinebreaker|r|n|cffFFF569Legion/BfA support by|r |cffC79C6EOrunno|r |cffFFF569of Moon Guard (With permission from zuhligan)|r|n|n|cffFFF569Special Thanks|r|n|cffA330C9superk521|r (Past Project Manager)|n|cffA330C9DuskAshes|r (Chinese Support)|n|cffA330C9N30Ex|r (Mists of Pandaria Support)|n|cffA330C9zuhligan|r (Warlords of Draenor & French Support)|n|cffA330C9jungwan2|r (Korean Support)|n|cffA330C9Mini_Dragon|r (Chinese support for WoD & Legion)|n|cffA330C9LordKuper|r (Russian support for Legion)|n|cffA330C9Tzanee - Wyrmrest Accord|r (Placeholder Voice Lines)|n|nAll feedback, questions, suggestions, and bug reports are welcome at the addon's page on Curse:|nhttps://wow.curseforge.com/projects/gladiatorlossa2"
+L["GladiatorlosSACredits"] = "Customizable PvP Announcer addon for vocalizing many important spells cast by your enemies.|n|n|cffFFF569Created by|r |cff9482C9Abatorlos|r |cffFFF569of Spinebreaker (past)|r|r|n|n|cffFFF569Special Thanks|r|n|cffA330C9superk521|r (Past Project Manager)|n|cffA330C9DuskAshes|r (Chinese Support)|n|cffA330C9N30Ex|r (Mists of Pandaria Support; Shadowlands voice recordings)|n|cffA330C9zuhligan|r (Warlords of Draenor & French Support)|n|cffA330C9jungwan2|r (Korean Support)|n|cffA330C9Mini_Dragon|r (Chinese support for WoD & Legion)|n|cffA330C9LordKuper|r (Russian support for Legion)|n|cffA330C9Tzanee - Wyrmrest Accord|r (Placeholder Voice Lines)|n|cffA330C9Gnulkion - Illidan|r (Alert only from opponent in duels feature)|n|nAll feedback, questions, suggestions, and bug reports are welcome at the addon's page on Curse:|nhttps://wow.curseforge.com/projects/gladiatorlossa2|nOR GitHub:|nhttps://github.com/Rhykes/GladiatorlosSA2"
 L["PVP Voice Alert"] = true
 L["Load Configuration"] = "<-- Load GSA2 Menus"
 L["Load Configuration Options"] = true
@@ -78,38 +111,39 @@ L["Disable Buff Down"] = "Buff Down"
 L["Check this will disable alert for buff removed from hostile targets"] = "Disable all alerts in Buff Down"
 L["Disable Spell Casting"] = "Spell Casting"
 L["Chech this will disable alert for spell being casted to friendly targets"] = "Disable all alerts in Spell Casting"
-L["Disable special abilities"] = "Special Abilities"
-L["Check this will disable alert for instant-cast important abilities"] = "Disable all alerts in Special Abilities"
+L["Disable special abilities"] = "Cast Success/Instants"
+L["Check this will disable alert for instant-cast important abilities"] = "Disable all alerts in Cast Success/Instants"
 L["Disable friendly interrupt"] = "Friendly Interrupts"
 L["Check this will disable alert for successfully-landed friendly interrupting abilities"] = "Disable the alert for successful interrupts done by you or your allies which lock the enemy out of casting.|n|n('Countered!')"
 L["Buff Applied"] = true
 L["Target and Focus Only"] = true
-L["Alert works only when your current target or focus gains the buff effect or use the ability"] = "If enabled, alerts will only happen if the ability is used on, or is cast by, your current target or focused target.|n|nThis option is separate for each category."
+L["Alert works only when your current target or focus gains the buff effect or use the ability"] = "If enabled, alerts will only happen if the ability is cast by your current target or focused target.|n|nThis option is separate for each category."
 L["Alert Drinking"] = true
 L["In arena, alert when enemy is drinking"] = "In arena, alert when enemy is drinking."
 L["PvP Trinketed Class"] = true
 L["Also announce class name with trinket alert when hostile targets use PvP trinket in arena"] = "In arenas, announces the class that used their Gladiator Medallion. (2 Minute Trinket)|r"
 L["General Abilities"] = true
-L["|cffFF7D0ADruid|r"] = true
-L["|cffF58CBAPaladin|r"] = true
-L["|cffFFF569Rogue|r"] = true
-L["|cffC79C6EWarrior|r"] = true
-L["|cffFFFFFFPriest|r"] = true
-L["|cff0070daShaman|r"] = true
-L["|cff0070daShaman (Totems)|r"] = true
-L["|cff69CCF0Mage|r"] = true
-L["|cffC41F3BDeath Knight|r"] = true
-L["|cffABD473Hunter|r"] = true
-L["|cFF00FF96Monk|r"] = true
-L["|cffA330C9Demon Hunter|r"] = true
-L["|cff9482C9Warlock|r"] = true
+L["Druid"] = Classes.Druid
+L["Paladin"] = Classes.Paladin
+L["Rogue"] = Classes.Rogue
+L["Warrior"] = Classes.Warrior
+L["Priest"] = Classes.Priest
+L["Shaman"] = Classes.Shaman
+L["ShamanTotems"] = Colors.ShamanTotems .. "Shaman (Totems)" .. "|r"
+L["Mage"] = Classes.Mage
+L["DeathKnight"] = Classes.DeathKnight
+L["Hunter"] = Classes.Hunter
+L["Monk"] = Classes.Monk
+L["DemonHunter"] = Classes.DemonHunter
+L["Warlock"] = Classes.Warlock
+L["Evoker"] = Classes.Evoker
 L["Buff Down"] = true
 L["Spell Casting"] = true
 L["BigHeal"] = "Big Heals"
-L["BigHeal_Desc"] = "Clarity of Will (Priest)|nHeal (Priest)|nPower Word: Radiance (Priest)|nHoly Light (|cffF58CBAPaladin|r)|nHealing Wave (|cff0070daShaman|r)|nSurging Mist |cFF00FF96(Monk)|r"
+L["BigHeal_Desc"] = "Nourish (" .. Classes.Druid .. ")|nHeal (" .. Classes.Priest .. ")|nPower Word: Radiance (" .. Classes.Priest .. ")|nHoly Light (" .. Classes.Paladin .. ")|nHealing Wave (" .. Classes.Shaman .. ")|nSurging Mist |cFF00FF96(" .. Classes.Monk ..")|r"
 L["Resurrection"] = true
 L["Resurrection_Desc"] = "All out-of-combat resurrection abilities."
-L["Special Abilities"] = true
+L["Special Abilities"] = "Cast Success/Instants"
 L["Friendly Interrupt"] = true
 L["Profiles"] = true
 
@@ -118,7 +152,7 @@ L["DisablePvPWorldQuests"] = "NYI"
 L["DisablePvPWorldQuestsDesc"] = "Disable all alerts in PvP World Quests"
 L["OperationMurlocFreedom"] = true
 
-L["EnemyInterrupts"] = "Interrupts (And Solar Beam, because it interrupts AND silences!)"
+L["EnemyInterrupts"] = "Interrupts"
 L["EnemyInterruptsDesc"] = "Enables or disables alerts for ALL enemy Interrupt and Silence abilities."
 
 L["Default / Female voice"] = "Default Voice"
@@ -147,16 +181,15 @@ L["Music"] = true
 L["Dialog"] = true
 
 L["DPSDispel"] = "Non-Magic Dispels"
-L["DPSDispel_Desc"] = "Generic alert for hybrid class dispels that do not remove Magic effects.|n|nRemove Corruption (|cffFF7D0ADruid|r)|nRemove Curse (|cff69CCF0Mage|r)|nDetox (|cFF00FF96Monk|r)|nCleanse Toxins (|cffF58CBAPaladin|r)|nCleansing Light |cffF58CBAPaladin|r)|nPurify Disease (Priest)|nCleanse Spirit (|cff0070daShaman|r)"
+L["DPSDispel_Desc"] = "Generic alert for hybrid class dispels that do not remove Magic effects.|n|nRemove Corruption (" .. Classes.Druid .. ")|nRemove Curse (" .. Classes.Mage ..")|nDetox (" .. Classes.Monk .. ")|nCleanse Toxins (" .. Classes.Paladin .. ")|nPurify Disease (" .. Classes.Priest ..")|nCleanse Spirit (" .. Classes.Shaman .. ")"
 L["HealerDispel"] = "Magic Dispels"
-L["HealerDispel_Desc"] = "Generic alert for healing class (AND WARLOCKS. >:| ) dispels that remove Magic effects.|n|nNature's Cure (|cffFF7D0ADruid|r)|nDetox (|cFF00FF96Monk|r)|nCleanse (|cffF58CBAPaladin|r)|nPurify (Priest)|nPurify Spirit (|cff0070daShaman|r)|nSinge Magic (|cff9482C9Warlock|r)"
+L["HealerDispel_Desc"] = "Generic alert for healing class (and warlocks) dispels that remove Magic effects.|n|nNature's Cure (" .. Classes.Druid .. ")|nDetox (" .. Classes.Monk .. ")|nCleanse (" .. Classes.Paladin .. ")|nPurify (" .. Classes.Priest .. ")|nPurify Spirit (" .. Classes.Shaman .. ")|nSinge Magic (" .. Classes.Warlock .. ")"
 L["CastingSuccess"] = "CC Cast Success"
-L["CastingSuccess_Desc"] = "Enables generic 'success' alert when a major enemy cast-time Crowd Control ability successfully finishes a cast.|n|nBe aware that this will announce even if the victim is unaffected, such as a target that is in a full Diminishing Return cycle.|n|n|cffC41F3BWARNING: ALL of the abilities below will announce their success if this is enabled, even if you have some of them disabled in Spell Casting.|r|n|nCyclone (|cffFF7D0ADruid|r)|nHibernate (|cffFF7D0ADruid|r)|nPolymorph (|cff69CCF0Mage|r)|nRing of Frost (|cff69CCF0Mage|r)|nRepentance (|cffF58CBAPaladin|r)|nMind Control (Priest)|nHex (|cff0070daShaman|r)|nFear (|cff9482C9Warlock|r)"
-
+L["CastingSuccess_Desc"] = "Enables generic 'success' alert when a major enemy cast-time Crowd Control ability is applied to an ally.|n|n|cffC41F3BWARNING: ALL of the abilities below will announce their success if this is enabled, even if you have some of them disabled in Spell Casting.|r|n|nCyclone (" .. Classes.Druid .. ")|nEntangling Roots (" .. Classes.Druid .. ")|nHibernate (" .. Classes.Druid .. ")|nMass Polymorph (" .. Classes.Mage .. ")|nSleepwalk (" .. Classes.Evoker .. ")|nScare Beast (" .. Classes.Hunter .. ")|nPolymorph (" .. Classes.Mage .. ")|nRing of Frost (" .. Classes.Mage .. ")|nRepentance (" .. Classes.Paladin .. ")|nSearing Glare (" ..Classes.Paladin .. ")|nMind Control (" .. Classes.Priest .. ")|nHex (" .. Classes.Shaman .. ")|nFear (" .. Classes.Warlock .. ")"
 L["DispelKickback"] = "Dispel Penalties"
 
 L["Purge"] = "Purges"
-L["PurgeDesc"] = "Generic alert for purges that remove magic effects from your team, excluding Arcane Torrent.|n|nConsume Magic (|cffA330C9Demon Hunter|r)|nDispel Magic (Priest)|nPurge (|cff0070daShaman|r)|nDevour Magic (|cff9482C9Warlock|r)"
+L["PurgeDesc"] = "Generic alert for purges that remove magic effects from your team, excluding Arcane Torrent.|n|nConsume Magic (" .. Classes.DemonHunter .. ")|nTranquilizing Shot (" .. Classes.Hunter ..")|nDispel Magic (" .. Classes.Priest ..")|nGreater Purge (" .. Classes.Shaman .. ")|nPurge (" .. Classes.Shaman .. ")|nDevour Magic (" .. Classes.Warlock .. ")"
 
 L["FriendlyInterrupted"] = "Ally Lockout Alert"
 L["FriendlyInterruptedDesc"] = "Disable the alert that occurs when an enemy successfully interrupts you or an ally which locks them out of casting.|n|n(Plays the Blizzard 'Quest Failed' sound effect.)"
@@ -173,4 +206,78 @@ L["TankTauntsON"] = "Intimidation"
 L["TankTauntsON_Desc"] = "Alerts the application of Intimidation: a damage amplifcation effect originating from tank specializations."
 
 L["Connected"] = "Connected Alerts"
-L["Connected_Desc"] = "Plays a simple 'Connected' alert when certain very powerful cast-time abilities successfully complete their cast.|n|nGreater Pyroblast (|cff69CCF0Mage|r)|nChaos Bolt (|cff9482C9Warlock|r)"
+L["Connected_Desc"] = "Plays a simple 'Connected' alert when certain very powerful cast-time abilities successfully complete their cast.|n|nThe Hunt (" .. Classes.DemonHunter ..")|nSniper Shot (" .. Classes.Hunter .. ")|nGreater Pyroblast (" .. Classes.Mage .. ")|nLight's Wrath (" .. Classes.Priest .. ")|nMind Games (" .. Classes.Priest ..")|nChaos Bolt (" ..Classes.Warlock ..")"
+
+L["CovenantAbilities"] = "Covenant Abilities"
+
+L["FrostDK"] = "Frost"
+L["BloodDK"] = "Blood"
+L["UnholyDK"] = "Unholy"
+
+L["HavocDH"] = "Havoc"
+L["VengeanceDH"] = "Vengeance"
+
+L["FeralDR"] = "Feral"
+L["BalanceDR"] = "Balance"
+L["RestorationDR"] = "Restoration"
+L["GuardianDR"] = "Guardian"
+
+L["DevastationEV"] = "Devastation" 
+L["PreservationEV"] = "Preservation" 
+L["AugmentationEV"] = "Augmentation"
+
+L["MarksmanshipHN"] = "Marksmanship"
+L["SurvivalHN"] = "Survival"
+L["BeastMasteryHN"] = "Beast Mastery"
+
+L["FrostMG"] = "Frost"
+L["FireMG"] = "Fire"
+L["ArcaneMG"] = "Arcane"
+
+L["MistweaverMN"] = "Mistweaver"
+L["WindwalkerMN"] = "Windwalker"
+L["BrewmasterMN"] = "Brewmaster"
+
+L["HolyPD"] = "Holy"
+L["RetributionPD"] = "Retribution"
+L["ProtectionPD"] = "Protection"
+
+L["HolyPR"] = "Holy"
+L["DisciplinePR"] = "Discipline"
+L["ShadowPR"] = "Shadow"
+
+L["OutlawRG"] = "Outlaw"
+L["AssassinationRG"] = "Assassination"
+L["SubtletyRG"] = "Subtlety"
+
+L["RestorationSH"] = "Restoration"
+L["EnhancementSH"] = "Enhancement"
+L["ElementalSH"] = "Elemental"
+
+L["DestructionWL"] = "Destruction"
+L["DemonologyWL"] = "Demonology"
+L["AfflictionWL"] = "Affliction"
+
+L["ArmsWR"] = "Arms"
+L["FuryWR"] = "Fury"
+L["ProtectionWR"] = "Protection"
+
+L["EXPAC_UnknownExpac"] = "Unknown Expansion"
+L["EXPAC_Classic"] = "Classic"
+L["EXPAC_TBC"] = "The Burning Crusade"
+L["EXPAC_WotLK"] = "Wrath of the Lich King"
+L["EXPAC_Cata"] = "Cataclysm"
+L["EXPAC_MoP"] = "Mists of Pandaria"
+L["EXPAC_WoD"] = "Warlords of Draenor"
+L["EXPAC_Legion"] = "Legion"
+L["EXPAC_BfA"] = "Battle for Azeroth"
+L["EXPAC_SL"] = "Shadowlands"
+L["EXPAC_DF"] = "Dragonflight"
+L["EXPAC_TWW"] = "The War Within"
+
+
+L["GladiatorlosSA2"] = true
+
+L["GSA_EXPERIMENTAL_BUILD"] = Colors.DeathKnight .. "This is an experimental build of GladiatorlosSA2 and has NOT been tested on TBC. Although I am confident that everything still works correctly, please reach out if you run into problems and downgrade to GSA2_TBC1.1 if necessary. This message will not be displayed again." .. "|r"
+
+L["RacialAbilities"] = "Racial Abilities"

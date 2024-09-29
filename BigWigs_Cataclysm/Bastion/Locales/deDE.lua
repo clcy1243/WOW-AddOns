@@ -1,6 +1,12 @@
 
-local L = BigWigs:NewBossLocale("Cho'gall", "deDE")
+local L = BigWigs:NewBossLocale("Halfus Wyrmbreaker", "deDE")
 if not L then return end
+if L then
+	L.strikes_message = "Stöße"
+	--L.freed_message = "%s freed %s"
+end
+
+L = BigWigs:NewBossLocale("Cho'gall", "deDE")
 if L then
 	L.orders = "Schatten- / Flammenbefehl"
 	L.orders_desc = "Warnt, wenn Cho'gall zwischen Befehle des Schattens und Flammenbefehl wechselt."
@@ -46,16 +52,6 @@ if L then
 	L.twilight_shift = "Verschiebung"
 end
 
-L = BigWigs:NewBossLocale("Halfus Wyrmbreaker", "deDE")
-if L then
-	L.strikes_message = "Stöße"
-
-	L.breath_message = "Atem kommt!"
-	L.breath_bar = "~Atem"
-
-	L.engage_yell = "Cho'gall wird eure Köpfe fordern! ALLE!"
-end
-
 L = BigWigs:NewBossLocale("Sinestra", "deDE")
 if L then
 	L.whelps = "Welpen"
@@ -75,8 +71,6 @@ end
 
 L = BigWigs:NewBossLocale("Ascendant Council", "deDE")
 if L then
-	L.static_overload_say = "Überladung"
-	L.gravity_core_say = "Gravitation"
 	L.health_report = "%s bei %d%%, Wechsel bald!"
 	L.switch = "Wechsel"
 	L.switch_desc = "Warnt, wenn die Bosse wechseln."

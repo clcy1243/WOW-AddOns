@@ -114,22 +114,35 @@ local _lastBankSlotId = nil
 local _bankOpen = false
 
 local function scanBag(bagId, isBank, bagTable, bagItemsWithCount)
-	local numSlots = GetContainerNumSlots(bagId)
-	local loc = ItemLocation.CreateEmpty()
-	for slotId = 1, numSlots do
-		local _, itemCount, _, _, _, _, itemLink = GetContainerItemInfo(bagId, slotId)
-		if itemLink ~= nil then
-			local itemData = Amr.Serializer.ParseItemLink(itemLink)
-			if itemData ~= nil then
 
-				-- see if this is an azerite item and read azerite power ids
+	local numSlots = C_Container.GetContainerNumSlots(bagId)
+	local loc = ItemLocation.CreateEmpty()
+	local item
+	for slotId = 1, numSlots do
+		local itemInfo = C_Container.GetContainerItemInfo(bagId, slotId)
+		if itemInfo then
+			local itemData = Amr.Serializer.ParseItemLink(itemInfo.hyperlink)
+			if itemData ~= nil then
+				item = Item:CreateFromBagAndSlot(bagId, slotId)
+
+				-- seems to be of the form Item-1147-0-4000000XXXXXXXXX, so we take just the last 9 digits
+				itemData.guid = item:GetItemGUID()
+				if itemData.guid and strlen(itemData.guid) > 9 then
+					itemData.guid = strsub(itemData.guid, -9)
+				end
+
 				loc:SetBagAndSlot(bagId, slotId)
+				itemData.warbound = C_Item.IsBoundToAccountUntilEquip(loc)
+				itemData.soulbound = C_Item.IsBound(loc)
+								
+				-- see if this is an azerite item and read azerite power ids
+				--[[loc:SetBagAndSlot(bagId, slotId)
 				if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
 					local powers = Amr.ReadAzeritePowers(loc)
 					if powers then
 						itemData.azerite = powers
 					end
-				end
+				end]]
 
 				if isBank then
 					_lastBankBagId = bagId
@@ -141,9 +154,9 @@ local function scanBag(bagId, isBank, bagTable, bagItemsWithCount)
 				-- all items and counts, used for e.g. shopping list and reagents, etc.
                 if bagItemsWithCount then
                 	if bagItemsWithCount[itemData.id] then
-                		bagItemsWithCount[itemData.id] = bagItemsWithCount[itemData.id] + itemCount
+                		bagItemsWithCount[itemData.id] = bagItemsWithCount[itemData.id] + itemInfo.stackCount
                 	else
-                		bagItemsWithCount[itemData.id] = itemCount
+                		bagItemsWithCount[itemData.id] = itemInfo.stackCount
                 	end
                 end
             end
@@ -164,8 +177,7 @@ local function scanBags()
 	local bagItems = {}
 	local itemsAndCounts = {}
 	
-	scanBag(BACKPACK_CONTAINER, false, bagItems, itemsAndCounts) -- backpack
-	for bagId = 1, NUM_BAG_SLOTS do
+	for bagId = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
 		scanBag(bagId, false, bagItems, itemsAndCounts)
 	end
 	
@@ -182,7 +194,12 @@ local function scanBank()
 	local bagList = {}
 	table.insert(bagList, BANK_CONTAINER)
 	table.insert(bagList, REAGENTBANK_CONTAINER)
-	for bagId = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+	table.insert(bagList, Enum.BagIndex.AccountBankTab_1)
+	table.insert(bagList, Enum.BagIndex.AccountBankTab_2)
+	table.insert(bagList, Enum.BagIndex.AccountBankTab_3)
+	table.insert(bagList, Enum.BagIndex.AccountBankTab_4)
+	table.insert(bagList, Enum.BagIndex.AccountBankTab_5)
+	for bagId = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
 		table.insert(bagList, bagId)
 	end
 
@@ -197,7 +214,7 @@ local function scanBank()
 	
 	-- see if the scan completed before the window closed, otherwise we don't overwrite with partial data
 	if _bankOpen and _lastBankBagId then
-		local itemLink = GetContainerItemLink(_lastBankBagId, _lastBankSlotId)
+		local itemLink = C_Container.GetContainerItemLink(_lastBankBagId, _lastBankSlotId)
 		if itemLink then --still open
             Amr.db.char.BankItems = bankItems
             Amr.db.char.BankItemsAndCounts = itemsAndCounts
@@ -216,14 +233,14 @@ end
 
 -- if a bank bag is updated while the bank is open, re-scan that bag
 local function onBankUpdated(bagID)
-	if _bankOpen and (bagID == BANK_CONTAINER or bagID == REAGENTBANK_CONTAINER or (bagID >= NUM_BAG_SLOTS + 1 and bagID <= NUM_BAG_SLOTS + NUM_BANKBAGSLOTS)) then
+	if _bankOpen and (bagID == BANK_CONTAINER or bagID == REAGENTBANK_CONTAINER or (bagID >= NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 and bagID <= NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS)) then
 		local bagItems = {}
 		local bagItemsAndCounts = {}
 		scanBag(bagID, true, bagItems, bagItemsAndCounts)
 
 		-- see if the scan completed before the window closed, otherwise we don't overwrite with partial data
 		if _bankOpen and _lastBankBagId == bagID then
-			local itemLink = GetContainerItemLink(_lastBankBagId, _lastBankSlotId)
+			local itemLink = C_Container.GetContainerItemLink(_lastBankBagId, _lastBankSlotId)
 			if itemLink then
 				Amr.db.char.BankItems[bagID] = bagItems
 				Amr.db.char.BankItemsAndCounts[bagID] = bagItemsAndCounts
@@ -259,6 +276,99 @@ local function scanVoid()
 end
 ]]
 
+local function scanGreatVault()
+
+	Amr.db.char.GreatVaultItems = {}
+
+	if not C_WeeklyRewards then return end
+
+	local vaultItems = {}
+	local activities = C_WeeklyRewards.GetActivities()
+	for i, activityInfo in ipairs(activities) do
+		if activityInfo and activityInfo.rewards then
+			for i, rewardInfo in ipairs(activityInfo.rewards) do
+				if rewardInfo.type == Enum.CachedRewardType.Item and not C_Item.IsItemKeystoneByID(rewardInfo.id) then
+					local itemLink = C_WeeklyRewards.GetItemHyperlink(rewardInfo.itemDBID)
+					if itemLink then
+						local itemData = Amr.Serializer.ParseItemLink(itemLink)
+						if itemData ~= nil then
+							table.insert(vaultItems, itemData)
+						end
+					end
+				end
+			end
+		end
+	end
+	Amr.db.char.GreatVaultItems = vaultItems
+end
+
+--[[
+local function scanSoulbinds()
+	if not C_Soulbinds then return end
+
+	-- get renown
+	if C_CovenantSanctumUI then
+		Amr.db.char.CovenantRenownLevel = C_CovenantSanctumUI.GetRenownLevel()
+	else
+		Amr.db.char.CovenantRenownLevel = 0
+	end
+
+	-- read which conduits this player has unlocked
+	Amr.db.char.UnlockedConduits = {}
+
+	for t = 0,2 do
+		local conduits = C_Soulbinds.GetConduitCollection(t)
+		for i, conduit in ipairs(conduits) do
+			table.insert(Amr.db.char.UnlockedConduits, { conduit.conduitID, conduit.conduitRank })
+		end
+	end
+
+	if not Amr.db.char.ActiveSoulbinds then
+		Amr.db.char.ActiveSoulbinds = {}
+	end
+
+	-- read the currently active soulbind for this spec
+	local specPos = GetSpecialization()	
+	if specPos and specPos >= 1 and specPos <= 4 then
+		Amr.db.char.ActiveSoulbinds[specPos] = C_Soulbinds.GetActiveSoulbindID() or 0
+	end
+
+	-- update soulbind tree info for all soulbinds
+	Amr.db.char.Soulbinds = {}
+	
+	for c, covenantId in ipairs(C_Covenants.GetCovenantIDs()) do
+		local covenantData = C_Covenants.GetCovenantData(covenantId)
+
+		if covenantData and covenantData.soulbindIDs then
+			for i, soulbindId in ipairs(covenantData.soulbindIDs) do
+				local soulbindData = soulbindId and C_Soulbinds.GetSoulbindData(soulbindId)
+				local nodes = {}
+				local unlockedTier = -1
+	
+				if soulbindData and soulbindData.tree and soulbindData.tree.nodes then
+					for i, node in ipairs(soulbindData.tree.nodes) do
+						if node.state == 3 then
+							nodes[node.row] = { soulbindId, node.row, node.column, node.conduitID, node.conduitRank }
+						end
+						if node.state > 0 then
+							unlockedTier = math.max(node.row, unlockedTier)
+						end
+					end
+				end
+	
+				Amr.db.char.Soulbinds[soulbindId] = {
+					UnlockedTier = unlockedTier,
+					Nodes = nodes
+				}
+	
+			end
+		end
+	end	
+
+end
+]]
+
+--[[
 local function scanEssences()
 	if not C_AzeriteEssence then return end
 
@@ -300,11 +410,139 @@ local function scanEssences()
 		end
 	end
 end
+]]
+
+local function readTalentConfig(configId)
+
+	--[[
+	local config = C_Traits.GetConfigInfo(configId)
+	if not config or config.type ~= Enum.TraitConfigType.Combat then return nil end
+	
+	local treeIds = config["treeIDs"]
+
+	-- at least for a while, scanning nodes would return subtrees not available to this spec, so we need to do a pre-scan for available subtrees
+	-- and use that to actively prune out bad subtrees... very gross	
+
+	local allowedSubtrees = {}
+	local activeSubtreeId = 0
+	for i = 1, #treeIds do
+    	for _, nodeId in pairs(C_Traits.GetTreeNodes(treeIds[i])) do
+			local node = C_Traits.GetNodeInfo(configId, nodeId)
+			if node.ID and node.isVisible and node.maxRanks > 0 and node.type == 3 then
+				-- this is the special node that picks your subtree, scan its entries to see which are allowed and also which is active
+				for e = 1, #node.entryIDs do
+					local entry = C_Traits.GetEntryInfo(configId, node.entryIDs[e])
+					allowedSubtrees[entry.subTreeID] = true
+					if node.activeEntry and node.activeEntry.entryID == node.entryIDs[e] then
+						activeSubtreeId = entry.subTreeID
+					end
+				end
+			end
+		end
+	end
+
+	-- NOTE: the below will also pick up ranks in inactive subtrees... kind of annoying, but that is how they remember your selections
+	--       when switching back and forth, and then the selected subtree implicitly disables the inactive tree
+	
+	local talMap = {}
+
+  	for i = 1, #treeIds do
+    	for _, nodeId in pairs(C_Traits.GetTreeNodes(treeIds[i])) do
+			local node = C_Traits.GetNodeInfo(configId, nodeId)
+			if node.ID and node.isVisible and node.maxRanks > 0 and (not node.subTreeID or allowedSubtrees[node.subTreeID]) then
+
+				-- need to check node type b/c blizz abandoned a few selection node entries in the data which still show up in a scan here... super annoying and gross
+				if #node.entryIDs > 1 and node.type == 2 then
+					talMap[node.ID] = {}
+					for e = 1, #node.entryIDs do
+						if node.activeEntry and node.entryIDs[e] == node.activeEntry.entryID then
+							table.insert(talMap[node.ID], node.activeRank)
+						else
+							table.insert(talMap[node.ID], 0)
+						end
+					end
+				elseif node.type ~= 3 then
+					-- we skip the fake-ish node that chooses the hero tree (type 3), we have pre-parsed it above
+					
+					if node.activeEntry and node.activeRank then
+						talMap[node.ID] = { node.activeRank }
+					else
+						talMap[node.ID] = { 0 }
+					end
+				end				
+			end
+
+			-- for reference if ever need it
+			--local activeEntryId = node.entryIDs[1]
+			--local entry = C_Traits.GetEntryInfo(configId, activeEntryId)
+			--local defnId = entry["definitionID"]
+			--local defn = C_Traits.GetDefinitionInfo(defnId)
+			--local spellId = defn["spellID"]
+			--local spellName = C_Spell.GetSpellName(spellId)
+			--if spellName == "Lightning Strikes" then
+			--	print(Amr:dump(node))							
+			--end
+
+		end
+	end
+
+	local tals = {}
+
+	-- sort by node ID
+	for nodeId, ranks in Amr.spairs(talMap) do
+		for i, rank in ipairs(ranks) do
+			table.insert(tals, rank)
+		end
+	end	
+	]]
+
+	local configData = Amr:GetTalentConfigData(configId)
+	if not configData then return nil end
+
+	local tals = {}
+
+	-- sort by node ID
+	for nodeId, nodeData in Amr.spairs(configData.nodes) do
+		for i, rank in ipairs(nodeData.ranks) do
+			table.insert(tals, rank)
+		end
+	end
+
+	return {
+		id = configId,
+		name = configData.name,
+		tals = table.concat(tals, "") .. "_" .. configData.activeSubtreeId
+	}
+end
+
+local function scanActiveTalents()
+
+	local specPos = GetSpecialization()	
+	if not specPos or specPos < 1 or specPos > 4 then return end
+
+	if not Amr.db.char.TalentConfigs.LastConfig then
+		Amr.db.char.TalentConfigs.LastConfig = {}
+	end
+
+	-- grab the currently active config for this spec and save it
+	local configId = C_ClassTalents.GetActiveConfigID()
+	if configId then
+		local parsedConfig = readTalentConfig(configId)
+		if parsedConfig then
+			Amr.db.char.TalentConfigs.LastConfig[specPos] = parsedConfig
+		end
+	end
+
+end
 
 local function scanTalents()	
+	
+	-- pre-dragonflight
+
 	local specPos = GetSpecialization()	
 	if not specPos or specPos < 1 or specPos > 4 then return end
 	
+	--[[	
 	local talentInfo = {}
     local maxTiers = 7
     for tier = 1, maxTiers do
@@ -326,6 +564,63 @@ local function scanTalents()
     end
 	
 	Amr.db.char.Talents[specPos] = str
+	]]
+
+	if not Amr.db.char.TalentConfigs.ConfigList then
+		Amr.db.char.TalentConfigs.ConfigList = {}
+	end
+
+	--local allConfigs = {}
+	local parsedConfig
+
+	--for specPos = 1, 4 do
+	local specId = GetSpecializationInfo(specPos)
+	if specId then
+		local specList = {}
+		Amr.db.char.TalentConfigs.ConfigList[Amr.SpecIds[specId]] = specList
+		--allConfigs[Amr.SpecIds[specId]] = specList
+		for i, configId in ipairs(C_ClassTalents.GetConfigIDsBySpecID(specId)) do	
+			parsedConfig = readTalentConfig(configId)
+			if parsedConfig then
+				table.insert(specList, parsedConfig)
+			end
+		end
+	end
+	--end
+
+	-- refresh entire list of configs each time we scan
+	--Amr.db.char.TalentConfigs.ConfigList = allConfigs
+
+	-- also get currently active talents
+	scanActiveTalents()
+
+	--[[
+	if not Amr.db.char.TalentConfigs.LastConfig then
+		Amr.db.char.TalentConfigs.LastConfig = {}
+	end
+
+	-- grab the currently active config for this spec and save it too
+	local configId = C_ClassTalents.GetActiveConfigID()
+	if configId then
+		parsedConfig = readTalentConfig(configId)
+		if parsedConfig then
+			Amr.db.char.TalentConfigs.LastConfig[specPos] = parsedConfig
+		end
+	end
+	]]
+end
+
+local function scanHighestItemLevels()
+
+	local lvls = {}
+
+	for k,v in pairs(Enum.ItemRedundancySlot) do
+		local chr, acct = C_ItemUpgrade.GetHighWatermarkForSlot(v)
+		lvls[v] = {chr, acct}
+		--print(k .. " " .. v .. " " .. chr .. " " .. acct)
+	end	
+
+	Amr.db.char.HighestItemLevels = lvls	
 end
 
 -- Returns a data object containing all information about the current player needed for an export:
@@ -339,20 +634,39 @@ function Amr:ExportCharacter()
 	local spec = GetSpecialization()	
 	Amr.db.char.Equipped[spec] = data.Equipped[spec]
 
+	-- scan highest ilvls in each slot used for determining upgrade discounts
+	scanHighestItemLevels()
+
 	-- scan current inventory just before export so that it is always fresh
 	scanBags()
 	
 	-- scan current spec's talents just before exporting
 	scanTalents()
 
+	-- scan all soulbinds just before exporting
+	--scanSoulbinds()
+
 	-- scan current spec's essences just before exporting
-	scanEssences()
+	--scanEssences()
 	
-	data.Talents = Amr.db.char.Talents	
-	data.UnlockedEssences = Amr.db.char.UnlockedEssences
-	data.Essences = Amr.db.char.Essences
+	-- scan the great vault for potential rewards this week
+	scanGreatVault()
+
+	data.HighestItemLevels = Amr.db.char.HighestItemLevels
+
+	data.SavedTalentConfigs = Amr.db.char.TalentConfigs.ConfigList
+	data.LastTalentConfig = Amr.db.char.TalentConfigs.LastConfig
+
+	--data.Talents = Amr.db.char.Talents
+	--data.CovenantRenownLevel = Amr.db.char.CovenantRenownLevel
+	--data.UnlockedConduits = Amr.db.char.UnlockedConduits
+	--data.ActiveSoulbinds = Amr.db.char.ActiveSoulbinds
+	--data.Soulbinds = Amr.db.char.Soulbinds
+	--data.UnlockedEssences = Amr.db.char.UnlockedEssences
+	--data.Essences = Amr.db.char.Essences
 	data.Equipped = Amr.db.char.Equipped	
 	data.BagItems = Amr.db.char.BagItems
+	data.GreatVaultItems = Amr.db.char.GreatVaultItems
 
 	-- flatten bank data (which is stored by bag for more efficient updating)
 	data.BankItems = {}
@@ -383,8 +697,15 @@ Amr:AddEventHandler("BAG_UPDATE", onBankUpdated)
 --Amr:AddEventHandler("VOID_STORAGE_DEPOSIT_UPDATE", scanVoid)
 --Amr:AddEventHandler("VOID_STORAGE_UPDATE", scanVoid)
 
-Amr:AddEventHandler("PLAYER_TALENT_UPDATE", scanTalents)
+--Amr:AddEventHandler("PLAYER_TALENT_UPDATE", scanTalents)
+Amr:AddEventHandler("TRAIT_CONFIG_UPDATED", scanTalents)
 
-if C_AzeriteEssence then
-	Amr:AddEventHandler("AZERITE_ESSENCE_UPDATE", scanEssences)
+--if C_AzeriteEssence then
+--	Amr:AddEventHandler("AZERITE_ESSENCE_UPDATE", scanEssences)
+--end
+
+--[[
+if C_Soulbinds then
+	Amr:AddEventHandler("SOULBIND_ACTIVATED", scanSoulbinds)
 end
+]]

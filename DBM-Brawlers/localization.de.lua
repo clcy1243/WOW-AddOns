@@ -1,10 +1,10 @@
-﻿if GetLocale() ~= "deDE" then return end
+if GetLocale() ~= "deDE" then return end
 local L
 
 --------------
 -- Brawlers --
 --------------
-L= DBM:GetModLocalization("Brawlers")
+L= DBM:GetModLocalization("BrawlersGeneral")
 
 L:SetGeneralLocalization({
 	name = "Kampfgilde: Einstellungen"

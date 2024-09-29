@@ -5,8 +5,14 @@
 local mod, CL = BigWigs:NewBoss("Doom Lord Kazzak", -100)
 if not mod then return end
 mod:RegisterEnableMob(18728)
+mod:SetAllowWin(true) -- No journal ID
 mod.worldBoss = 18728
-mod.otherMenu = -101
+if mod:Classic() then
+	mod.mapId = 1944
+	mod.otherMenu = -1945
+else
+	mod.otherMenu = -101
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -14,6 +20,8 @@ mod.otherMenu = -101
 
 local L = mod:NewLocale("enUS", true)
 if L then
+	L.name = "Doom Lord Kazzak"
+
 	L.engage_trigger1 = "The Legion will conquer all!"
 	L.engage_trigger2 = "All mortals will perish!"
 
@@ -34,18 +42,22 @@ function mod:GetOptions()
 	return {{32960, "FLASH"}, 21063, "berserk"}
 end
 
+function mod:OnRegister()
+	self.displayName = L.name
+end
+
 function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "Mark", 32960)
 	self:Log("SPELL_AURA_APPLIED", "Twisted", 21063)
 	self:Log("SPELL_AURA_APPLIED", "Frenzy", 32964)
 
-	self:Yell("Engage", L["engage_trigger1"], L["engage_trigger2"])
+	self:BossYell("Engage", L["engage_trigger1"], L["engage_trigger2"])
 
 	self:Death("Win", 18728)
 end
 
 function mod:OnEngage()
-	self:Message("berserk", "yellow", nil, L["enrage_warning1"]:format(self.displayName), false)
+	self:MessageOld("berserk", "yellow", nil, L["enrage_warning1"]:format(self.displayName), false)
 	self:DelayedMessage("berserk", 49, "orange", L["enrage_warning2"])
 	self:Bar("berserk", 60, L["enrage_bar"], 32964)
 end
@@ -56,17 +68,17 @@ end
 
 function mod:Mark(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Alarm", CL["you"]:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alarm", CL["you"]:format(args.spellName))
 		self:Flash(args.spellId)
 	end
 end
 
 function mod:Twisted(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 end
 
 function mod:Frenzy(args)
-	self:Message("berserk", "red", "Alert", L["enrage_message"], args.spellId)
+	self:MessageOld("berserk", "red", "alert", L["enrage_message"], args.spellId)
 	self:DelayedMessage("berserk", 10, "green", L["enrage_finished"])
 	self:Bar("berserk", 10, L["enraged_bar"], args.spellId)
 	self:DelayedMessage("berserk", 49, "orange", L["enrage_warning2"])

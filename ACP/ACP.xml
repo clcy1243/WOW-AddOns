@@ -175,7 +175,7 @@
             <!--</OnClick>-->
         <!--</Scripts>-->
     <!--</Button>-->
-    <Frame name="ACP_AddonList" hidden="true" toplevel="true" enableMouse="true" moveable="true" enableKeyboard="false">
+    <Frame name="ACP_AddonList" hidden="true" toplevel="true" enableMouse="true" movable="true" enableKeyboard="false">
         <Size>
             <AbsDimension x="640" y="512"/>
         </Size>
@@ -204,6 +204,7 @@
                 </Layers>
                 <Scripts>
                     <OnShow>
+						local IsAddonVersionCheckEnabled = C_AddOns and C_AddOns.IsAddonVersionCheckEnabled or IsAddonVersionCheckEnabled
                         if ( IsAddonVersionCheckEnabled() ) then
                             self:SetChecked(false);
                         else
@@ -211,6 +212,7 @@
                         end
                     </OnShow>
                     <OnClick>
+						local SetAddonVersionCheck = C_AddOns and C_AddOns.SetAddonVersionCheck or SetAddonVersionCheck
                         if (self:GetChecked()) then
                             SetAddonVersionCheck(false);
                         else
@@ -275,6 +277,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
+						local EnableAllAddOns = C_AddOns and C_AddOns.EnableAllAddOns or EnableAllAddOns
                         EnableAllAddOns()
                         ACP:AddonList_OnShow(self)
                     </OnClick>

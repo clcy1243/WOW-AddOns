@@ -1,9 +1,12 @@
 local mod	= DBM:NewMod(1140, "DBM-Party-WoD", 6, 537)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20230504231118")
 mod:SetCreatureID(75452)
 mod:SetEncounterID(1679)
+mod.sendMainBossGUID = true
 
 mod:RegisterCombat("combat")
 
@@ -21,28 +24,33 @@ mod:RegisterEventsInCombat(
 --Inhale and submerge timers iffy. Based on data, it's possible they share a CD and which one he uses is random of two.
 --With that working theory, it's possible to add a 28-30 second timer for it maybe.
 --However, being a 5 man boss. Plus not knowing for certain, not worth the time right now.
+--[[
+(ability.id = 154175 or ability.id = 165578) and type = "begincast"
+ or ability.id = 153804
+ or type = "dungeonencounterstart" or type = "dungeonencounterend"
+--]]
 local warnBodySlam				= mod:NewTargetAnnounce(154175, 4)
 local warnCorpseBreath			= mod:NewSpellAnnounce(165578, 2)
 local warnSubmerge				= mod:NewSpellAnnounce(177694, 1)
 local warnInhaleEnd				= mod:NewEndAnnounce(153804, 1)
 
 local specWarnBodySlam			= mod:NewSpecialWarningDodge(154175, nil, nil, nil, 2, 2)
-local specWarnInhale			= mod:NewSpecialWarningRun(153804, nil, nil, 2, 4, 2)
+local specWarnInhale			= mod:NewSpecialWarningRun(153804, nil, nil, 2, 4, 12)
 local specWarnNecroticPitch		= mod:NewSpecialWarningMove(153692, nil, nil, nil, 1, 8)
 
-local timerBodySlamCD			= mod:NewCDSourceTimer(30, 154175, nil, nil, nil, 3)
-local timerInhaleCD				= mod:NewCDTimer(35, 153804, nil, nil, nil, 6, nil, DBM_CORE_L.DEADLY_ICON)
-local timerInhale				= mod:NewBuffActiveTimer(9, 153804, nil, nil, nil, 6, nil, DBM_CORE_L.DEADLY_ICON)
+local timerBodySlamCD			= mod:NewCDSourceTimer(23, 154175, nil, nil, nil, 3)--34
+local timerInhaleCD				= mod:NewCDTimer(22.1, 153804, nil, nil, nil, 6, nil, DBM_COMMON_L.DEADLY_ICON)
+local timerInhale				= mod:NewBuffActiveTimer(9, 153804, nil, nil, nil, 6, nil, DBM_COMMON_L.DEADLY_ICON)
 local timerCorpseBreathCD		= mod:NewCDTimer(28, 165578, nil, false, nil, 5)--32-37 Variation, also not that important so off by default since there will already be up to 3 smash timers
-local timerSubmergeCD			= mod:NewCDTimer(80, 177694, nil, nil, nil, 6)
+--local timerSubmergeCD			= mod:NewCDTimer(80, 177694, nil, nil, nil, 6)
 
 mod.vb.inhaleActive = false
 
 function mod:OnCombatStart(delay)
 	self.vb.inhaleActive = false
-	timerBodySlamCD:Start(15-delay, UnitName("boss1") or BOSS, UnitGUID("boss1"))
-	timerInhaleCD:Start(29-delay)
-	timerSubmergeCD:Start(-delay)
+	timerBodySlamCD:Start(15-delay, UnitName("boss1") or BOSS, UnitGUID("boss1"))--17?
+--	timerInhaleCD:Start(15-delay)--it's like 15-60 variation, disabling for now
+--	timerSubmergeCD:Start(-delay)
 end
 
 function mod:SPELL_CAST_START(args)
@@ -54,7 +62,7 @@ function mod:SPELL_CAST_START(args)
 			specWarnBodySlam:Play("watchstep")
 		end
 		if args:GetSrcCreatureID() == 75452 then--Source is Bonemaw, not one of his adds
-			timerBodySlamCD:Start(30, args.sourceName, args.sourceGUID)
+			timerBodySlamCD:Start(28, args.sourceName, args.sourceGUID)
 		else
 			timerBodySlamCD:Start(14, args.sourceName, args.sourceGUID)--little guys use it more often.
 		end
@@ -82,15 +90,15 @@ end
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 76057 then--Carrion Centipede
-		timerBodySlamCD:Cancel(args.destName, args.destGUID)
+		timerBodySlamCD:Stop(args.destName, args.destGUID)
 	end
 end
 
 function mod:RAID_BOSS_EMOTE(msg)
-	if msg:find("spell:153804") then--Slightly faster than combat log
+	if msg:find("spell:153804") then--Slightly faster than combat log (~2)
 		self.vb.inhaleActive = true
 		specWarnInhale:Show()
-		specWarnInhale:Play("153804")
+		specWarnInhale:Play("inhalegetinpuddle")
 		timerInhaleCD:Start()
 	end
 end
@@ -98,13 +106,16 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 177694 then
 		warnSubmerge:Show()
-		timerInhaleCD:Start()
-		timerSubmergeCD:Start()
+		timerInhaleCD:Stop()
+		local name, guid = UnitName(uId), UnitGUID(uId)
+		timerBodySlamCD:Stop(name, guid)
+		timerInhaleCD:Start(17.8)
+--		timerSubmergeCD:Start()
 	end
 end
 
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
-	if spellId == 153692 and not self.vb.inhaleActive and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
+	if spellId == 153692 and not self.vb.inhaleActive and destGUID == UnitGUID("player") and self:AntiSpam(3, 1) then
 		specWarnNecroticPitch:Show()
 		specWarnNecroticPitch:Play("watchfeet")
 	end

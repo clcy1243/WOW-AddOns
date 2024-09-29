@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(605, "DBM-Party-WotLK", 7, 277)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(27975)
-mod:SetEncounterID(565, 566, 1996)
-mod:SetZone()
+mod:SetEncounterID(1996)
 
 mod:RegisterCombat("combat")
 
@@ -20,12 +19,12 @@ local warningStorm		= mod:NewSpellAnnounce(50752, 2)
 
 local specWarnSorrow	= mod:NewSpecialWarningMoveTo(50760, nil, nil, nil, 2, 2)
 
-local timerWoe			= mod:NewTargetTimer(10, 50761, nil, "Healer", nil, 5, nil, DBM_CORE_L.HEALER_ICON..DBM_CORE_L.MAGIC_ICON)
+local timerWoe			= mod:NewTargetTimer(10, 50761, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON..DBM_COMMON_L.MAGIC_ICON)
 local timerStormCD		= mod:NewCDTimer(20, 50752, nil, nil, nil, 3)
 local timerSorrowCD		= mod:NewCDTimer(30, 50760, nil, nil, nil, 2)
 local timerAchieve		= mod:NewAchievementTimer(60, 1866)
 
-local stormName = DBM:GetSpellInfo(50752)
+local stormName = DBM:GetSpellName(50752)
 
 function mod:OnCombatStart(delay)
 	if not self:IsDifficulty("normal5") then

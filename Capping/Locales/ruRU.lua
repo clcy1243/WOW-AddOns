@@ -9,7 +9,6 @@ L.flagRespawns = "Появление Флагов"
 
 L.takenTheFlagTrigger = "^(.+) захватывает флаг!"
 L.hasTakenTheTrigger = "захватил"
-L.upgradeToTrigger = "Улучшено до" -- тут еще вопрос (!) проверить на проде // spellcheck on live
 L.droppedTrigger = "уронил"
 L.capturedTheTrigger = "захватил"
 
@@ -26,6 +25,8 @@ L.balinda = "Балинда" -- Капитан Балинда Каменный �
 L.ivus = "Ивус" -- Ивус Лесной Властелин
 L.lokholar = "Локолар" -- Локолар Владыка Льда
 L.handIn = "|cFF33FF99Capping|r: Автоматическая сдача квестовых предметов." -- проверить на проде // spellcheck on live
+L.anchorTooltip = "|cffeda55fПравый клик|r открыть настройки"
+--L.anchorTooltipNote = "Open the options and lock the bars to hide this moving anchor."
 
 --- Alliance IoC Workshop yells:
 --Гном-механик кричит: Я уже почти закончил! Только не подпускай ко мне Орду – в инженерной школе не учат махать мечом!
@@ -56,3 +57,15 @@ L.mainEntrance = "Главный вход"
 L.westTower = "Западная башня"
 L.southTower = "Южная башня"
 L.eastTower = "Восточная башня"
+
+-- Ashran
+--L.hordeGuardian = "Horde Guardian"
+--L.allianceGuardian = "Alliance Guardian"
+L.kronus = "Крон"
+L.fangraal = "Фанграал"
+
+-- Arena
+--L.arenaStartTrigger = "The Arena battle has begun!" -- Needs to match the in game text exactly
+--L.arenaStart60s = "One minute until the Arena battle begins!" -- Needs to match the in game text exactly
+--L.arenaStart30s = "Thirty seconds until the Arena battle begins!" -- Needs to match the in game text exactly
+--L.arenaStart15s = "Fifteen seconds until the Arena battle begins!" -- Needs to match the in game text exactly

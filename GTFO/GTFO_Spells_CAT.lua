@@ -5,7 +5,7 @@
 GTFO Spell List - Cataclysm (New areas)
 ]]--
 
-if (not GTFO.ClassicMode) then
+if (not (GTFO.ClassicMode or GTFO.BurningCrusadeMode or GTFO.WrathMode)) then
 
 GTFO.SpellID["76628"] = {
 	--desc = "Lava Drool (Blackrock Caverns)";
@@ -61,6 +61,32 @@ GTFO.SpellID["84945"] = {
 GTFO.SpellID["91491"] = {
 	--desc = "Earth Shards (Throne of the Tides, Heroic)";
 	sound = 1;
+};
+
+GTFO.SpellID["428404"] = {
+	--desc = "Blotting Darkness (Throne of the Tides, M+)";
+	sound = 1;
+};
+
+GTFO.SpellID["426688"] = {
+	--desc = "Volatile Acid (Naz'jar Ravager, Throne of the Tides, M+)";
+	sound = 1;
+};
+
+GTFO.SpellID["428294"] = {
+	--desc = "Trident Flurry (Naz'jar Honor Guard, Throne of the Tides, M+)";
+	sound = 1;
+};
+
+GTFO.SpellID["427559"] = {
+	--desc = "Bubbling Ooze (Commander Ulthok, Throne of the Tides, M+)";
+	sound = 1;
+};
+
+GTFO.SpellID["75993"] = {
+	--desc = "Lightning Surge (Naz'jar Tempest Witch, Throne of the Tides, M+)";
+	negatingDebuffSpellID = 75992; -- Lightning Surge
+	soundChallenge = 4;
 };
 
 GTFO.SpellID["76230"] = {
@@ -218,6 +244,11 @@ GTFO.SpellID["88171"] = {
 GTFO.SpellID["92773"] = {
 	--desc = "Hurricane (Turbulent Squall, Vortex Pinnacle Heroic)";
 	sound = 2;
+};
+
+GTFO.SpellID["88963"] = {
+  --desc = "Lightning Lash (Minister of Air, Vortex Pinnacle)";
+  sound = 1;
 };
 
 GTFO.SpellID["87660"] = {
@@ -1326,12 +1357,17 @@ GTFO.SpellID["92468"] = {
 };
 
 GTFO.SpellID["92987"] = {
-	--desc = "Dark Sludge (Maloriak, BWD 10H)";
+	--desc = "Dark Sludge (Maloriak, BWD 10H Old)";
 	sound = 1;
 };
 
 GTFO.SpellID["92988"] = {
-	--desc = "Dark Sludge (Maloriak, BWD 25H)";
+	--desc = "Dark Sludge (Maloriak, BWD 25H Old)";
+	sound = 1;
+};
+
+GTFO.SpellID["92930"] = {
+	--desc = "Dark Sludge (Maloriak, BWD New)";
 	sound = 1;
 };
 
@@ -1864,11 +1900,17 @@ GTFO.SpellID["96711"] = {
 GTFO.SpellID["43114"] = {
 	--desc = "Fire Wall (Jan'alai, ZA)";
 	sound = 1;
+	applicationOnly = true;
 };
 
 GTFO.SpellID["97645"] = {
 	--desc = "Feather Cyclone (Daakara, ZG)";
 	sound = 1;
+};
+
+GTFO.SpellID["43217"] = {
+  --desc = "Burn (Daakara, ZA)";
+  sound = 1;
 };
 
 GTFO.SpellID["97644"] = {
@@ -2682,6 +2724,44 @@ GTFO.SpellID["110095"] = {
 GTFO.SpellID["108787"] = {
 	--desc = "Parasitic Backlash (Deathwing, DS H)";
 	sound = 4;
+};
+
+--- *******************
+--- * Grim Batol (M+) *
+--- *******************
+
+GTFO.SpellID["451614"] = {
+  --desc = "Twilight Ember (Twilight Destroyer)";
+  sound = 1;
+};
+
+GTFO.SpellID["448953"] = {
+  --desc = "Rumbling Earth (General Umbriss)";
+  ignoreApplication = true;
+  sound = 1;
+};
+
+GTFO.SpellID["449536"] = {
+  --desc = "Molten Pool (Forgemaster Throngus)";
+  ignoreApplication = true;
+  sound = 1;
+};
+
+GTFO.SpellID["462220"] = {
+  --desc = "Blazing Shadowflame (Twilight Flamerender)";
+  ignoreApplication = true;
+  sound = 1;
+};
+
+GTFO.SpellID["456773"] = {
+  --desc = "Twilight Wind (Valiona)";
+  ignoreApplication = true;
+  sound = 1;
+};
+
+GTFO.SpellID["461513"] = {
+  --desc = "Shadow Gale (Erudax)";
+  sound = 1;
 };
 
 end

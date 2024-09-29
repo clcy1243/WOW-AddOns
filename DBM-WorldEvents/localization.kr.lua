@@ -22,7 +22,7 @@ L:SetTimerLocalization{
 }
 
 L:SetOptionLocalization({
-	TrioActiveTimer		= "각 보스 활성화 타이머 바 보기"
+	TrioActiveTimer		= "연금술사 삼인방 활성화 타이머 바 보기"
 })
 
 L:SetMiscLocalization({
@@ -40,14 +40,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization{
-	SubmergTimer	= "잠복",
+	SubmergeTimer	= "잠복",
 	EmergeTimer		= "등장"
 }
 
 L:SetOptionLocalization({
 	Emerged			= "등장 경고 보기",
 	specWarnAttack	= "아훈 약화 특별 경고 보기",
-	SubmergTimer	= "잠복 타이머 바 보기",
+	SubmergeTimer	= "잠복 타이머 바 보기",
 	EmergeTimer		= "등장 타이머 바 보기"
 })
 
@@ -146,6 +146,18 @@ L:SetMiscLocalization({
 	MassiveWave		= "좀비의 총공격이 시작됐습니다!"
 })
 
+-- Quest
+L = DBM:GetModLocalization("EscortQuests")
+
+L:SetGeneralLocalization{
+	name = "퀘스트",
+}
+
+L:SetOptionLocalization{
+	Timers = "몇가지 호위 퀘스트의 타이머 바 보기"
+}
+
+
 --------------------------
 --  Demonic Invasions  --
 --------------------------
@@ -222,4 +234,184 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	warnSplittingBlow			= "$spell:98951 위치 경고 보기",
 	warnEngulfingFlame			= "$spell:99171 위치 경고 보기"
+})
+
+----------------------------------
+--  Azeroth Event World Bosses  --
+----------------------------------
+
+-- Lord Kazzak (Badlands)
+L = DBM:GetModLocalization("KazzakClassic")
+
+L:SetGeneralLocalization{
+	name = "군주 카자크"
+}
+
+L:SetMiscLocalization({
+	Pull		= "불타는 군단과 킬제덴을 위하여!"
+})
+
+-- Azuregos (Azshara)
+L = DBM:GetModLocalization("Azuregos")
+
+L:SetGeneralLocalization{
+	name = "아주어고스"
+}
+
+L:SetMiscLocalization({
+	Pull		= "여기는 내가 지킨다. 어느 누구도 비전술의 신비를 건드리지 못할 것이다."
+})
+
+-- Taerar (Ashenvale)
+L = DBM:GetModLocalization("Taerar")
+
+L:SetGeneralLocalization{
+	name = "타에라"
+}
+
+L:SetMiscLocalization({
+	Pull		= "평화란 부질없는 꿈일 뿐! 이 세상은 악몽이 지배할 것이다!"
+})
+
+-- Ysondre (Feralas)
+L = DBM:GetModLocalization("Ysondre")
+
+L:SetGeneralLocalization{
+	name = "이손드레"
+}
+
+L:SetMiscLocalization({
+	Pull		= "생명의 끈이 끊어졌다! 꿈꾸는 자들이 복수하는 것이 틀림없다!"
+})
+
+-- Lethon (Hinterlands)
+L = DBM:GetModLocalization("Lethon")
+
+L:SetGeneralLocalization{
+	name = "레손"
+}
+
+-- Emeriss (Duskwood)
+L = DBM:GetModLocalization("Emeriss")
+
+L:SetGeneralLocalization{
+	name = "에메리스"
+}
+
+L:SetMiscLocalization({
+	Pull		= "희망은 영혼의 병! 이 땅은 말라 죽을 것이다!"
+})
+
+-- Doomwalker (Tanaris)
+L = DBM:GetModLocalization("DoomwalkerEvent")
+
+L:SetGeneralLocalization{
+	name = "파멸의 절단기 (이벤트)"
+}
+
+-- Archavon (???)
+L = DBM:GetModLocalization("ArchavonEvent")
+
+L:SetGeneralLocalization{
+	name = "아카본 (이벤트)"
+}
+
+-- Sha of Anger (???)
+L = DBM:GetModLocalization("ShaofAngerEvent")
+
+L:SetGeneralLocalization{
+	name = "분노의 샤 (이벤트)"
+}
+
+--------------------------
+--  Blastenheimer 5000  --
+--------------------------
+L = DBM:GetModLocalization("Cannon")
+
+L:SetGeneralLocalization({
+	name = "인간 대포알"
+})
+
+L = DBM:GetModLocalization("CannonClassic")
+
+L:SetGeneralLocalization({
+	name = "인간 대포알"
+})
+-------------
+--  Gnoll  --
+-------------
+L = DBM:GetModLocalization("Gnoll")
+
+L:SetGeneralLocalization({
+	name = "놀 때려잡기"
+})
+
+L:SetWarningLocalization({
+	warnGameOverQuest	= "게임 종료. 획득 점수 %d 점, 이 게임의 최대 점수 : %d 점",
+	warnGameOverNoQuest	= "게임 종료. 이 게임의 최대 점수 : %d 점",
+	warnGnoll			= "놀 등장",
+	warnHogger			= "들창코 놀 등장",
+	specWarnHogger		= "들창코 놀 등장!"
+})
+
+L:SetOptionLocalization({
+	warnGameOver	= "진행 게임의 최대 점수 알림 보기",
+	warnGnoll		= "놀 등장 알림 보기",
+	warnHogger		= "들창코 놀 등장 알림 보기",
+	specWarnHogger	= "들창코 놀 등장 특별 경고 보기"
+})
+
+------------------------
+--  Shooting Gallery  --
+------------------------
+L = DBM:GetModLocalization("Shot")
+
+L:SetGeneralLocalization({
+	name = "사격 연습장"
+})
+
+L:SetOptionLocalization({
+	SetBubbles	= "$spell:101871 중일때 대화 말풍선을 숨김<br/>(전투 종료 후 원상태로 복구됨)"
+})
+
+----------------------
+--  Tonk Challenge  --
+----------------------
+L = DBM:GetModLocalization("Tonks")
+
+L:SetGeneralLocalization({
+	name = "통통 전차 게임"
+})
+
+---------------------------
+--  Fire Ring Challenge  --
+---------------------------
+L = DBM:GetModLocalization("Rings")
+
+L:SetGeneralLocalization({
+	name = "불새의 도전"
+})
+
+
+-----------------------
+--  Darkmoon Rabbit  --
+-----------------------
+L = DBM:GetModLocalization("Rabbit")
+
+L:SetGeneralLocalization({
+	name = "다크문 토끼"
+})
+
+-------------------------
+--  Darkmoon Moonfang  --
+-------------------------
+L = DBM:GetModLocalization("Moonfang")
+
+L:SetGeneralLocalization({
+	name = "달송곳니"
+})
+
+L:SetWarningLocalization({
+	specWarnCallPack		= "무리 소환 - 40미터 이상 떨어지세요!",
+	specWarnMoonfangCurse	= "달송곳니의 저주 - 10미터 이상 떨어지세요!"
 })

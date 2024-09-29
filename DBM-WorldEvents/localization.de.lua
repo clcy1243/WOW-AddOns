@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "deDE" then return end
+if GetLocale() ~= "deDE" then return end
 local L
 
 ------------
@@ -40,14 +40,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization{
-	SubmergTimer	= "Abtauchen",
+	SubmergeTimer	= "Abtauchen",
 	EmergeTimer		= "Auftauchen"
 }
 
 L:SetOptionLocalization({
 	Emerged			= "Zeige Warnung, wenn Ahune auftaucht",
 	specWarnAttack	= "Spezialwarnung, wenn Ahune verwundbar wird",
-	SubmergTimer	= "Zeige Zeit bis Abtauchen",
+	SubmergeTimer	= "Zeige Zeit bis Abtauchen",
 	EmergeTimer		= "Zeige Zeit bis Auftauchen"
 })
 
@@ -185,4 +185,168 @@ L = DBM:GetModLocalization("CataEvent")
 
 L:SetGeneralLocalization({
 	name = "MoA: Cataclysm"
+})
+
+-- Lord Kazzak (Badlands)
+L = DBM:GetModLocalization("KazzakClassic")
+
+----------------------------------
+--  Azeroth Event World Bosses  --
+----------------------------------
+
+L:SetGeneralLocalization{
+	name = "Lord Kazzak"
+}
+
+L:SetMiscLocalization({
+	Pull		= "Für die Legion! Für Kil'jaeden!"
+})
+
+-- Azuregos (Azshara)
+L = DBM:GetModLocalization("Azuregos")
+
+L:SetGeneralLocalization{
+	name = "Azuregos"
+}
+
+L:SetMiscLocalization({
+	Pull		= "Dieser Ort steht unter meinem Schutz. Die Mysterien des Arkanen werden unberührt bleiben."
+})
+
+-- Taerar (Ashenvale)
+L = DBM:GetModLocalization("Taerar")
+
+L:SetGeneralLocalization{
+	name = "Taerar"
+}
+
+L:SetMiscLocalization({
+	Pull		= "Frieden ist nur ein flüchtiger Traum! Möge der Alptraum herrschen!"
+})
+
+-- Ysondre (Feralas)
+L = DBM:GetModLocalization("Ysondre")
+
+L:SetGeneralLocalization{
+	name = "Ysondre"
+}
+
+L:SetMiscLocalization({
+	Pull		= "Die Fäden des Lebens wurden durchtrennt! Die Träumer müssen gerächt werden."
+})
+
+-- Lethon (Hinterlands)
+L = DBM:GetModLocalization("Lethon")
+
+L:SetGeneralLocalization{
+	name = "Lethon"
+}
+
+L:SetMiscLocalization({
+--	Pull		= "Ich spüre die Schatten in Euren Herzen. Die Verdammten werden niemals ruhen!"
+})
+
+-- Emeriss (Duskwood)
+L = DBM:GetModLocalization("Emeriss")
+
+L:SetGeneralLocalization{
+	name = "Smariss"
+}
+
+L:SetMiscLocalization({
+	Pull		= "Hoffnung ist ein Gebrechen der Seele! Dieses Land wird verdorren und vergehen!"
+})
+
+--------------------------
+--  Blastenheimer 5000  --
+--------------------------
+L = DBM:GetModLocalization("Cannon")
+
+L:SetGeneralLocalization({
+	name = "Kanonendonner"
+})
+
+L = DBM:GetModLocalization("CannonClassic")
+
+L:SetGeneralLocalization({
+	name = "Kanonendonner"
+})
+
+
+-------------
+--  Gnoll  --
+-------------
+L = DBM:GetModLocalization("Gnoll")
+
+L:SetGeneralLocalization({
+	name = "Hau-den-Gnoll"
+})
+
+L:SetWarningLocalization({
+	warnGameOverQuest	= "Es wurden %d von insgesamt %d erreichbaren Punkten erzielt.",
+	warnGameOverNoQuest	= "Spielende. Es waren insgesamt %d Punkte erreichbar.",
+	warnGnoll			= "Gnoll erschienen",
+	warnHogger			= "Hogger erschienen",
+	specWarnHogger		= "Hogger erschienen!"
+})
+
+L:SetOptionLocalization({
+	warnGameOver	= "Verkünde nach dem Spielende die insgesamt erreichbaren Punkte",
+	warnGnoll		= "Zeige Warnung, wenn ein Gnoll erscheint",
+	warnHogger		= "Zeige Warnung, wenn ein Hogger erscheint",
+	specWarnHogger	= "Spezialwarnung, wenn ein Hogger erscheint"
+})
+
+------------------------
+--  Shooting Gallery  --
+------------------------
+L = DBM:GetModLocalization("Shot")
+
+L:SetGeneralLocalization({
+	name = "Schießbude"
+})
+
+L:SetOptionLocalization({
+	SetBubbles			= "Automatische Deaktivierung der 'Sprechblasen' während $spell:101871<br/>(wird nach dem Spielende auf die vorherige Einstellung zurückgesetzt)"
+})
+
+----------------------
+--  Tonk Challenge  --
+----------------------
+L = DBM:GetModLocalization("Tonks")
+
+L:SetGeneralLocalization({
+	name = "Panzergeneral"
+})
+
+---------------------------
+--  Fire Ring Challenge  --
+---------------------------
+L = DBM:GetModLocalization("Rings")
+
+L:SetGeneralLocalization({
+	name = "Herausforderung des Feuervogels"
+})
+
+-----------------------
+--  Darkmoon Rabbit  --
+-----------------------
+L = DBM:GetModLocalization("Rabbit")
+
+L:SetGeneralLocalization({
+	name = "Dunkelmond-Kaninchen"
+})
+
+-------------------------
+--  Darkmoon Moonfang  --
+-------------------------
+L = DBM:GetModLocalization("Moonfang")
+
+L:SetGeneralLocalization({
+	name = "Mondfang"
+})
+
+L:SetWarningLocalization({
+	specWarnCallPack		= "Rudelruf - Lauf mehr als 40 Meter von Mondfang weg!",
+	specWarnMoonfangCurse	= "Mondfangs Fluch - Lauf mehr als 10 Meter von Mondfang weg!"
 })

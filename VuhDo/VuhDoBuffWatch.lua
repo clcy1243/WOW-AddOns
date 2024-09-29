@@ -29,6 +29,26 @@ VUHDO_BUFF_ORDER = { };
 local sEmpty = { };
 local sCooldownAliases = { };
 
+-- Backdrops
+BACKDROP_VUHDO_BUFF_SWATCH_PANEL_8_8_0000 = {
+	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", 
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileSize = 8,
+	edgeSize = 8,
+};
+
+BACKDROP_COLOR_VUHDO_BUFF_SWATCH_PANEL = CreateColor(0, 0, 0);
+
+BACKDROP_VUHDO_BUFF_WATCH_MAIN_FRAME_16_16_5555 = {
+	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", 
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileSize = 16,
+	edgeSize = 16,
+	insets = {  left = 5, right = 5, top = 5, bottom = 5 },
+};
+
 
 
 
@@ -47,13 +67,12 @@ local GetTotemInfo = GetTotemInfo;
 local table = table;
 local strsub = strsub;
 local GetTime = GetTime;
-local GetSpellCooldown = GetSpellCooldown;
-local GetSpellBookItemName = GetSpellBookItemName;
-local GetSpellInfo = GetSpellInfo;
+local GetSpellCooldown = GetSpellCooldown or VUHDO_getSpellCooldown;
+local GetSpellInfo = GetSpellInfo or VUHDO_getSpellInfo;
 local InCombatLockdown = InCombatLockdown;
 local GetWeaponEnchantInfo = GetWeaponEnchantInfo;
 local UnitOnTaxi = UnitOnTaxi;
-local IsSpellInRange = IsSpellInRange;
+local IsSpellInRange = IsSpellInRange or VUHDO_isSpellInRange;
 local GetShapeshiftFormInfo = GetShapeshiftFormInfo;
 
 local tonumber = tonumber;
@@ -127,7 +146,7 @@ end
 
 
 local function VUHDO_getWeaponEnchantMacroText(anEnchantName, aTargetType)
-	return format("/use [@none] %s\n/use %d\n/click StaticPopup1Button1",
+	return format("/use [@none] %s\n/use %d\n/click StaticPopup1Button1 LeftButton",
 		anEnchantName, VUHDO_BUFF_TARGET_ENCHANT == aTargetType and 16 or 17);
 end
 
@@ -176,7 +195,8 @@ end
 
 --
 function VUHDO_buffSelectDropdownOnLoad()
-	UIDropDownMenu_Initialize(VuhDoBuffSelectDropdown, VUHDO_buffSelectDropdown_Initialize, "MENU", 1);
+	UIDropDownMenu_SetInitializeFunction(VuhDoBuffSelectDropdown, VUHDO_buffSelectDropdown_Initialize);
+	UIDropDownMenu_SetDisplayMode(VuhDoBuffSelectDropdown, "MENU");
 end
 
 
@@ -372,22 +392,25 @@ function VUHDO_initBuffsFromSpellBook()
 	for _, tCateg in pairs(VUHDO_getPlayerClassBuffs()) do
 		for _, tCategSpells in pairs(tCateg) do
 			tParentSpellName = tCategSpells[1];
-			_, tSpellId = GetSpellBookItemInfo(tParentSpellName);
-			if tSpellId then
-				tChildSpellName, _, tIcon, _, _, _, tSpellId = GetSpellInfo(tParentSpellName);
-				VUHDO_BUFFS[tChildSpellName] = {
-					["icon"] = tIcon,
-					["id"] = tSpellId
-				};
 
-				if tChildSpellName ~= tParentSpellName then
-					VUHDO_BUFFS[tParentSpellName] = {
+			if VUHDO_isSpellKnown(tParentSpellName) then
+				tChildSpellName, _, tIcon, _, _, _, tSpellId = GetSpellInfo(tParentSpellName);
+
+				if tChildSpellName then
+					VUHDO_BUFFS[tChildSpellName] = {
 						["icon"] = tIcon,
 						["id"] = tSpellId
 					};
-				end
 
-				VUHDO_CLASS_BUFFS_BY_TARGET_TYPE[tCategSpells[2]][tParentSpellName] = true;
+					if tChildSpellName ~= tParentSpellName then
+						VUHDO_BUFFS[tParentSpellName] = {
+							["icon"] = tIcon,
+							["id"] = tSpellId
+						};
+					end
+
+					VUHDO_CLASS_BUFFS_BY_TARGET_TYPE[tCategSpells[2]][tParentSpellName] = true;
+				end
 			end
 		end
 	end
@@ -663,7 +686,7 @@ local function VUHDO_getMissingBuffsForCode(aTargetCode, aBuffInfo, aCategSpec)
 			return VUHDO_PLAYER_GROUP, sEmpty, "player", 0, "player", sEmpty, sEmpty, 0;
 
 		elseif VUHDO_BUFF_TARGET_ENCHANT_OFF == tTargetType then
-			_, _, _, tHasEnchant, tEnchantDuration = GetWeaponEnchantInfo();
+			_, _, _, _, tHasEnchant, tEnchantDuration = GetWeaponEnchantInfo();
 
 			if tHasEnchant and (not sGermanOrEnglish or strfind(aBuffInfo[1], VUHDO_getWeaponEnchantName(17), 1, true)) then
 				return sEmpty, sEmpty, "player", tEnchantDuration * 0.001, "player", VUHDO_PLAYER_GROUP, sEmpty, 0;
@@ -857,7 +880,7 @@ function VUHDO_updateBuffSwatch(aSwatch)
 
 	if not InCombatLockdown() then
 		aSwatch:SetAttribute("lowtarget", tLowestUnit);
-		aSwatch:SetAttribute("goodtarget", tGoodTarget);
+		aSwatch:SetAttribute("goodtarget", tVariant[2] == VUHDO_BUFF_TARGET_SELF and "player" or tGoodTarget);
 	end
 
 	VUHDO_NUM_LOWS[tSwatchName] = #(tLowGroup or sEmpty) + #(tMissGroup or sEmpty);
@@ -883,7 +906,8 @@ function VUHDO_updateBuffPanel()
 
 	for tUnit, tInfo in pairs(VUHDO_RAID) do
 		if tOldMissBuffs[tUnit] ~= tInfo["missbuff"] then
-			tInfo["debuff"], tInfo["debuffName"] = VUHDO_determineDebuff(tUnit);
+			tInfo["debuff"], tInfo["debuffName"] = VUHDO_getDeterminedDebuffInfo(tUnit, true);
+
 			VUHDO_updateHealthBarsFor(tUnit, VUHDO_UPDATE_DEBUFF);
 		end
 	end

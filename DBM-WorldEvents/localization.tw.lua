@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "zhTW" then return end
+if GetLocale() ~= "zhTW" then return end
 local L
 
 ------------
@@ -40,14 +40,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	SubmergTimer		= "隱沒",
+	SubmergeTimer		= "隱沒",
 	EmergeTimer			= "現身"
 })
 
 L:SetOptionLocalization({
 	Emerged				= "當艾胡恩現身時顯示警告",
 	specWarnAttack		= "當艾胡恩變得脆弱時顯示特別警告",
-	SubmergTimer		= "為隱沒顯示計時器",
+	SubmergeTimer		= "為隱沒顯示計時器",
 	EmergeTimer			= "為現身顯示計時器"
 })
 
@@ -185,4 +185,163 @@ L = DBM:GetModLocalization("CataEvent")
 
 L:SetGeneralLocalization({
 	name = "MoA: Cataclysm"
+})
+
+----------------------------------
+--  Azeroth Event World Bosses  --
+----------------------------------
+
+-- Lord Kazzak (Badlands)
+L = DBM:GetModLocalization("KazzakClassic")
+
+L:SetGeneralLocalization{
+	name = "卡札克領主"
+}
+
+L:SetMiscLocalization({
+	Pull		= "為了軍團!為了基爾加德!"
+})
+
+-- Azuregos (Azshara)
+L = DBM:GetModLocalization("Azuregos")
+
+L:SetGeneralLocalization{
+	name = "艾索雷苟斯"
+}
+
+L:SetMiscLocalization({
+	Pull		= "我保護著這個地方。神秘的秘法不能受到褻瀆。"
+})
+
+-- Taerar (Ashenvale)
+L = DBM:GetModLocalization("Taerar")
+
+L:SetGeneralLocalization{
+	name = "泰拉爾"
+}
+
+L:SetMiscLocalization({
+	Pull		= "和平不過是短暫的夢想!讓夢魘統治整個世界吧!"
+})
+
+-- Ysondre (Feralas)
+L = DBM:GetModLocalization("Ysondre")
+
+L:SetGeneralLocalization{
+	name = "伊索德雷"
+}
+
+L:SetMiscLocalization({
+	Pull		= "生命的希冀已被切斷!夢遊者要展開報復!"
+})
+
+-- Lethon (Hinterlands)
+L = DBM:GetModLocalization("Lethon")
+
+L:SetGeneralLocalization{
+	name = "雷索"
+}
+
+-- Emeriss (Duskwood)
+L = DBM:GetModLocalization("Emeriss")
+
+L:SetGeneralLocalization{
+	name = "艾莫莉絲"
+}
+
+L:SetMiscLocalization({
+	Pull		= "希望是靈魂染上的疾病!這片土地應該枯竭，從此死氣騰騰!"
+})
+
+--------------------------
+--  Blastenheimer 5000  --
+--------------------------
+L = DBM:GetModLocalization("Cannon")
+
+L:SetGeneralLocalization({
+	name = "5000型超級大砲"
+})
+
+L = DBM:GetModLocalization("CannonClassic")
+
+L:SetGeneralLocalization({
+	name = "5000型超級大砲"
+})
+
+-------------
+--  Gnoll  --
+-------------
+L = DBM:GetModLocalization("Gnoll")
+
+L:SetGeneralLocalization({
+	name = "痛扁豺狼人"
+})
+
+L:SetWarningLocalization({
+	warnGameOverQuest	= "獲得%d點，此次最多可能取得%d點。",
+	warnGameOverNoQuest	= "此次遊戲最多可能取得%d點。",
+	warnGnoll			= "豺狼人出現",
+	warnHogger			= "霍格出現",
+	specWarnHogger		= "霍格出現!"
+})
+
+L:SetOptionLocalization({
+	warnGameOver	= "當遊戲結束時顯示最多可能取得的點數",
+	warnGnoll		= "為豺狼人出現顯示警告",
+	warnHogger		= "為霍格出現顯示警告",
+	specWarnHogger	= "為霍格出現顯示特別警告"
+})
+
+------------------------
+--  Shooting Gallery  --
+------------------------
+L = DBM:GetModLocalization("Shot")
+
+L:SetGeneralLocalization({
+	name = "打靶場"
+})
+
+L:SetOptionLocalization({
+	SetBubbles			= "自動地為$spell:101871關閉對話氣泡功能<br/>(當遊戲結束後還原功能)"
+})
+
+----------------------
+--  Tonk Challenge  --
+----------------------
+L = DBM:GetModLocalization("Tonks")
+
+L:SetGeneralLocalization({
+	name = "坦克大戰"
+})
+
+---------------------------
+--  Fire Ring Challenge  --
+---------------------------
+L = DBM:GetModLocalization("Rings")
+
+L:SetGeneralLocalization({
+	name = "火鳥的挑戰"
+})
+
+-----------------------
+--  Darkmoon Rabbit  --
+-----------------------
+L = DBM:GetModLocalization("Rabbit")
+
+L:SetGeneralLocalization({
+	name = "暗月小兔"
+})
+
+-----------------------
+--  Darkmoon Moonfang  --
+-----------------------
+L = DBM:GetModLocalization("Moonfang")
+
+L:SetGeneralLocalization({
+	name = "月牙"
+})
+
+L:SetWarningLocalization({
+	specWarnCallPack		= "呼叫狼群 - 跑離月牙超過40碼!",
+	specWarnMoonfangCurse	= "月牙的詛咒- 跑離月牙超過10碼!"
 })

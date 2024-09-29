@@ -1,5 +1,5 @@
 
-local L = BigWigs:NewBossLocale("Al'Akir", "esES") or BigWigs:NewBossLocale("Al'Akir", "esMX")
+local L = BigWigs:NewBossLocale("Al'Akir", "esES")
 if not L then return end
 if L then
 	L.stormling = "Tormentillas"
@@ -10,16 +10,14 @@ if L then
 	L.feedback_message = "%dx Rebote"
 end
 
-L = BigWigs:NewBossLocale("Conclave of Wind", "esES") or BigWigs:NewBossLocale("Conclave of Wind", "esMX")
+L = BigWigs:NewBossLocale("Conclave of Wind", "esES")
 if L then
 	L.gather_strength = "%s empieza a extraer fuerza"
 
-	L.storm_shield_desc = "Escudo de absorción"
+	L["93059_desc"] = "Escudo de absorción"
 
 	L.full_power = "Poder Máximo"
 	L.full_power_desc = "Avisa cuando los jefes alcanzan Poder Máximo y empiezan a lanzar las abilidades especiales."
 	L.gather_strength_emote = "¡%s empieza a extraer fuerza de los señores del viento que quedan!"
-
-	L.wind_chill = "¡%sx Viento escalofriante en TI!"
 end
 

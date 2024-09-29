@@ -1,7 +1,9 @@
 # BigWigs [Mists of Pandaria]
 
-## [v8.0.4](https://github.com/BigWigsMods/BigWigs_MistsOfPandaria/tree/v8.0.4) (2018-07-28)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_MistsOfPandaria/compare/v8.0.3...v8.0.4)
+## [v11.0.0](https://github.com/BigWigsMods/BigWigs_MistsOfPandaria/tree/v11.0.0) (2024-08-19)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_MistsOfPandaria/compare/v10.2.10...v11.0.0) [Previous Releases](https://github.com/BigWigsMods/BigWigs_MistsOfPandaria/releases)
 
-- ThroneOfThunder/Jinrokh: Add a comment regarding 138375 no longer existing.  
-- ThroneOfThunder/IronQon: Update UnitDebuff usage.  
+- Fix some double win events  
+- Pandaria/Nalak: Fix a spell found error, closes #31  
+- Define X-BigWigs-Minimum  
+- ThroneOfThunder/Primordius: Remove event that isn't needed  

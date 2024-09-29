@@ -3,7 +3,6 @@ local _;
 VUHDO_COMBO_MAX_ENTRIES = 10000;
 
 local floor = floor;
-local mod = mod;
 local tonumber = tonumber;
 local strsub = strsub;
 local pairs = pairs;
@@ -12,11 +11,12 @@ local GetLocale = GetLocale;
 local InCombatLockdown = InCombatLockdown;
 local UnitExists = UnitExists;
 local sIsNotInChina = GetLocale() ~= "zhCN" and GetLocale() ~= "zhTW" and GetLocale() ~= "koKR";
-local sIsManaBar;
-local sIsSideBarLeft;
-local sIsSideBarRight;
+local sIsManaBar = { };
+local sIsSideBarLeft = { };
+local sIsSideBarRight = { };
 local sShowPanels;
 local sIsHideEmptyAndClickThrough;
+local sIsPartyFrameHooked;
 local sEmpty = { };
 
 local tEmptyColor = { };
@@ -34,6 +34,7 @@ local VUHDO_CONFIG = { };
 local VUHDO_PANEL_SETUP = { };
 local VUHDO_USER_CLASS_COLORS = { };
 function VUHDO_guiToolboxInitLocalOverrides()
+
 	--VUHDO_getNumbersFromString = _G["VUHDO_getNumbersFromString"];
 
 	VUHDO_CONFIG = _G["VUHDO_CONFIG"];
@@ -45,13 +46,17 @@ function VUHDO_guiToolboxInitLocalOverrides()
 	VUHDO_getHealthBarText = _G["VUHDO_getHealthBarText"];
 	VUHDO_getUnitButtonsSafe = _G["VUHDO_getUnitButtonsSafe"];
 
-	sIsManaBar = VUHDO_INDICATOR_CONFIG["BOUQUETS"]["MANA_BAR"] ~= "";
-	sIsSideBarLeft = VUHDO_INDICATOR_CONFIG["BOUQUETS"]["SIDE_LEFT"] ~= "";
-	sIsSideBarRight = VUHDO_INDICATOR_CONFIG["BOUQUETS"]["SIDE_RIGHT"] ~= "";
+	for tPanelNum = 1, 10 do -- VUHDO_MAX_PANELS
+		sIsManaBar[tPanelNum] = VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["MANA_BAR"] ~= "";
+		sIsSideBarLeft[tPanelNum] = VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["SIDE_LEFT"] ~= "";
+		sIsSideBarRight[tPanelNum] = VUHDO_INDICATOR_CONFIG[tPanelNum]["BOUQUETS"]["SIDE_RIGHT"] ~= "";
+	end
+
 	sShowPanels = VUHDO_CONFIG["SHOW_PANELS"];
 	sIsHideEmptyAndClickThrough = VUHDO_CONFIG["HIDE_EMPTY_BUTTONS"]
 		and VUHDO_CONFIG["HIDE_EMPTY_PANELS"]
 		and VUHDO_CONFIG["LOCK_CLICKS_THROUGH"];
+
 end
 ------------------------------------------------------------------------
 
@@ -71,15 +76,21 @@ local function VUHDO_hasPanelVisibleButtons(aPanelNum)
 	if not sShowPanels or not VUHDO_IS_SHOWN_BY_GROUP then
 		return false;
 
-	elseif not sIsHideEmptyAndClickThrough or VUHDO_isConfigPanelShowing() then
+	elseif not sIsHideEmptyAndClickThrough or VUHDO_isConfigPanelShowing() or VUHDO_isConfigDemoUsers() then
 		return true;
 
 	else
 		for _, tButton in pairs(VUHDO_getPanelButtons(aPanelNum)) do
 			tUnit = tButton:GetAttribute("unit");
-			if not tUnit then return false;
-			elseif UnitExists(tUnit) then return true; end
+			
+			if not tUnit then
+				return false;
+			elseif UnitExists(tUnit) then
+				return true;
+			end
 		end
+
+		return false;
 	end
 end
 
@@ -204,7 +215,9 @@ end
 
 --
 function VUHDO_getManaBarHeight(aPanelNum)
-	return sIsManaBar and VUHDO_PANEL_SETUP[aPanelNum]["SCALING"]["manaBarHeight"] or 0;
+
+	return sIsManaBar[aPanelNum] and VUHDO_PANEL_SETUP[aPanelNum]["SCALING"]["manaBarHeight"] or 0;
+
 end
 local VUHDO_getManaBarHeight = VUHDO_getManaBarHeight;
 
@@ -219,14 +232,18 @@ end
 
 --
 function VUHDO_getSideBarWidthLeft(aPanelNum)
-	return sIsSideBarLeft and VUHDO_PANEL_SETUP[aPanelNum]["SCALING"]["sideLeftWidth"] or 0;
+
+	return sIsSideBarLeft[aPanelNum] and VUHDO_PANEL_SETUP[aPanelNum]["SCALING"]["sideLeftWidth"] or 0;
+
 end
 
 
 
 --
 function VUHDO_getSideBarWidthRight(aPanelNum)
-	return sIsSideBarRight and VUHDO_PANEL_SETUP[aPanelNum]["SCALING"]["sideRightWidth"] or 0;
+
+	return sIsSideBarRight[aPanelNum] and VUHDO_PANEL_SETUP[aPanelNum]["SCALING"]["sideRightWidth"] or 0;
+
 end
 
 
@@ -255,6 +272,10 @@ function VUHDO_getDiffColor(aBaseColor, aModColor)
 	if aModColor["useOpacity"] then
 		aBaseColor["useOpacity"] = true;
 		aBaseColor["O"], aBaseColor["TO"] = aModColor["O"], aModColor["TO"];
+	end
+
+	if aModColor["useClassColor"] then
+		aBaseColor["useClassColor"] = true;
 	end
 
 	return aBaseColor;
@@ -332,6 +353,7 @@ local VUHDO_BLIZZ_EVENTS = {
 	"READY_CHECK_CONFIRM",
 	"READY_CHECK_FINISHED",
 	"RUNE_POWER_UPDATE",
+	"SPELLS_CHANGED",
 	"UI_SCALE_CHANGED",
 	"UNIT_AURA",
 	"UNIT_CLASSIFICATION_CHANGED",
@@ -346,8 +368,7 @@ local VUHDO_BLIZZ_EVENTS = {
 	"UNIT_FACTION",
 	"UNIT_FLAGS",
 	"UNIT_HEAL_PREDICTION",
---	"UNIT_HEALTH",
-	"UNIT_HEALTH_FREQUENT",
+	"UNIT_HEALTH",
 	"UNIT_LEVEL",
 	"UNIT_MAXHEALTH",
 	"UNIT_MAXPOWER",
@@ -379,8 +400,7 @@ local VUHDO_FIX_EVENTS = {
 	"UNIT_AURA",
 	"UNIT_COMBAT",
 	"UNIT_HEAL_PREDICTION",
---	"UNIT_HEALTH",
-	"UNIT_HEALTH_FREQUENT",
+	"UNIT_HEALTH",
 	"UNIT_MAXHEALTH",
 	"UNIT_MAXPOWER",
 	"UNIT_PET",
@@ -391,11 +411,49 @@ local VUHDO_FIX_EVENTS = {
 
 
 
-
+--
 local sEventsPerFrame = {};
+local sFrameHideParents = {};
+local sFrameOrigParents = {};
 
 
 
+--
+local function VUHDO_hideFrame(aFrame)
+
+	if not sFrameHideParents[aFrame] then
+		local tFrameParent = CreateFrame("Frame");
+		tFrameParent:Hide();
+
+		sFrameHideParents[aFrame] = tFrameParent;
+	end
+
+	if not sFrameOrigParents[aFrame] then
+		sFrameOrigParents[aFrame] = aFrame:GetParent();
+		aFrame:SetParent(sFrameHideParents[aFrame]);
+	end
+
+end
+
+
+
+--
+local function VUHDO_showFrame(aFrame)
+
+	if sFrameOrigParents[aFrame] then
+		aFrame:SetParent(sFrameOrigParents[aFrame]);
+		aFrame:Show();
+
+		sFrameOrigParents[aFrame] = nil;
+	else
+		aFrame:Show();
+	end
+
+end
+
+
+
+--
 local function VUHDO_unregisterAndSaveEvents(anIsHide, ...)
 	local tFrame;
 	for tCnt = 1, select('#', ...) do
@@ -414,12 +472,13 @@ local function VUHDO_unregisterAndSaveEvents(anIsHide, ...)
 			end
 
 			tFrame:UnregisterAllEvents();
-			if anIsHide then tFrame:Hide(); end
+
+			if anIsHide then
+				VUHDO_hideFrame(tFrame);
+			end
 		end
 	end
 end
-
-
 
 
 
@@ -442,7 +501,9 @@ local function VUHDO_registerOriginalEvents(anIsShow, ...)
 				tFrame:RegisterAllEvents();
 			end
 
-			if anIsShow then tFrame:Show(); end
+			if anIsShow then 
+				VUHDO_showFrame(tFrame);
+			end
 		end
 	end
 end
@@ -451,14 +512,14 @@ end
 
 --
 local function VUHDO_hideBlizzRaid()
-	VUHDO_unregisterAndSaveEvents(true, CompactRaidFrameContainer);
+	VUHDO_unregisterAndSaveEvents(true, CompactRaidFrameManager.container);
 end
 
 
 
 --
 local function VUHDO_showBlizzRaid()
-	VUHDO_registerOriginalEvents(VUHDO_GROUP_TYPE_SOLO ~= VUHDO_getCurrentGroupType(), CompactRaidFrameContainer);
+	VUHDO_registerOriginalEvents(VUHDO_GROUP_TYPE_SOLO ~= VUHDO_getCurrentGroupType(), CompactRaidFrameManager.container);
 end
 
 
@@ -486,30 +547,50 @@ end
 
 
 --
-local function VUHDO_hideBlizzParty()
-	HIDE_PARTY_INTERFACE = "1";
+local function VUHDO_updateBlizzPartyFrames()
 
-	hooksecurefunc("ShowPartyFrame",
-		function()
-			if not InCombatLockdown() then
-				for tCnt = 1, 4 do
-					_G["PartyMemberFrame" .. tCnt]:Hide();
-				end
-			end
-		end
-	);
-
-	local tPartyFrame;
-	for tCnt = 1, 4 do
-		tPartyFrame = _G["PartyMemberFrame" .. tCnt];
-		VUHDO_unregisterAndSaveEvents(false,
-			tPartyFrame, _G["PartyMemberFrame" .. tCnt .. "HealthBar"], _G["PartyMemberFrame" .. tCnt .. "ManaBar"]
-		);
-		tPartyFrame:Hide();
+	if InCombatLockdown() then
+		return;
 	end
 
-	if (CompactPartyFrame ~= nil and CompactPartyFrame:IsVisible()) then
-		VUHDO_unregisterAndSaveEvents(true, CompactPartyFrame);
+	if VUHDO_CONFIG["BLIZZ_UI_HIDE_PARTY"] == 3 then
+		_G["PartyFrame"]:HidePartyFrames();
+	elseif VUHDO_CONFIG["BLIZZ_UI_HIDE_PARTY"] == 1 then
+		for tPartyMemberFrame in _G["PartyFrame"].PartyMemberFramePool:EnumerateActive() do
+			tPartyMemberFrame:Show();
+			tPartyMemberFrame:UpdateMember();
+		end
+
+		_G["PartyFrame"]:UpdatePartyMemberBackground();
+		_G["PartyFrame"]:Layout();
+	end
+
+end
+
+
+
+--
+local function VUHDO_hideBlizzParty()
+	if not EditModeManagerFrame:UseRaidStylePartyFrames() then
+		local tPartyFrame = _G["PartyFrame"];
+
+		if not sIsPartyFrameHooked then
+			hooksecurefunc(tPartyFrame, "UpdatePartyFrames", VUHDO_updateBlizzPartyFrames);
+
+			sIsPartyFrameHooked = true;
+		end
+
+		for tPartyMemberFrame in tPartyFrame.PartyMemberFramePool:EnumerateActive() do
+			VUHDO_unregisterAndSaveEvents(false, tPartyMemberFrame, tPartyMemberFrame.HealthBar, tPartyMemberFrame.ManaBar);
+
+			if tPartyMemberFrame.layoutIndex > 0 and UnitExists("party" .. tPartyMemberFrame.layoutIndex) then
+				VUHDO_hideFrame(tPartyMemberFrame);
+			end
+		end
+	else
+		if (CompactPartyFrame ~= nil and CompactPartyFrame:IsVisible()) then
+			VUHDO_unregisterAndSaveEvents(true, CompactPartyFrame);
+		end
 	end
 end
 
@@ -517,29 +598,24 @@ end
 
 --
 local function VUHDO_showBlizzParty()
-	if VUHDO_GROUP_TYPE_PARTY ~= VUHDO_getCurrentGroupType() then return; end
+	if VUHDO_GROUP_TYPE_PARTY ~= VUHDO_getCurrentGroupType() then 
+		return;
+	end
 
-	if tonumber(GetCVar("useCompactPartyFrames")) == 0 then
-		HIDE_PARTY_INTERFACE = "0";
+	if not EditModeManagerFrame:UseRaidStylePartyFrames() then
+		local tPartyFrame = _G["PartyFrame"];
 
-		hooksecurefunc("ShowPartyFrame",
-			function()
-				if not InCombatLockdown() then
-					for tCnt = 1, 4 do
-						_G["PartyMemberFrame" .. tCnt]:Show();
-					end
-				end
-			end
-		);
+		if not sIsPartyFrameHooked then
+			hooksecurefunc(tPartyFrame, "UpdatePartyFrames", VUHDO_updateBlizzPartyFrames);
 
-		local tPartyFrame;
-		for tCnt = 1, 4 do
-			tPartyFrame = _G["PartyMemberFrame" .. tCnt];
-			VUHDO_registerOriginalEvents(false,
-				tPartyFrame, _G["PartyMemberFrame" .. tCnt .. "HealthBar"], _G["PartyMemberFrame" .. tCnt .. "ManaBar"]);
+			sIsPartyFrameHooked = true;
+		end
 
-			if (UnitExists("party" .. tCnt)) then
-				tPartyFrame:Show();
+		for tPartyMemberFrame in tPartyFrame.PartyMemberFramePool:EnumerateActive() do
+			VUHDO_registerOriginalEvents(false, tPartyMemberFrame, tPartyMemberFrame.HealthBar, tPartyMemberFrame.ManaBar);
+
+			if tPartyMemberFrame.layoutIndex > 0 and UnitExists("party" .. tPartyMemberFrame.layoutIndex) then
+				VUHDO_showFrame(tPartyMemberFrame);
 			end
 		end
 	else
@@ -560,10 +636,10 @@ end
 --
 local function VUHDO_showBlizzPlayer()
 	VUHDO_registerOriginalEvents(false, PlayerFrame, PlayerFrameHealthBar, PlayerFrameManaBar);
-	PlayerFrame:Show();
+	VUHDO_showFrame(PlayerFrame);
+
 	if "DEATHKNIGHT" == VUHDO_PLAYER_CLASS then
-		VUHDO_registerOriginalEvents(RuneFrame);
-		RuneFrame:Show();
+		VUHDO_registerOriginalEvents(true, RuneFrame);
 	end
 end
 
@@ -572,7 +648,8 @@ end
 --
 local function VUHDO_hideBlizzTarget()
 	VUHDO_unregisterAndSaveEvents(true, TargetFrame, TargetFrameToT, FocusFrameToT);
-	VUHDO_unregisterAndSaveEvents(false, TargetFrameHealthBar, TargetFrameManaBar);
+	VUHDO_unregisterAndSaveEvents(false, TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar, TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar);
+
 	ComboFrame:ClearAllPoints();
 end
 
@@ -580,7 +657,9 @@ end
 
 --
 local function VUHDO_showBlizzTarget()
-	VUHDO_registerOriginalEvents(false, TargetFrame, TargetFrameHealthBar, TargetFrameManaBar, TargetFrameToT, FocusFrameToT);
+	VUHDO_registerOriginalEvents(true, TargetFrame, TargetFrameToT, FocusFrameToT);
+	VUHDO_registerOriginalEvents(false, TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar, TargetFrame.TargetFrameContent.TargetFrameContentMain.ManaBar);
+
 	ComboFrame:SetPoint("TOPRIGHT", "TargetFrame", "TOPRIGHT", -44, -9);
 end
 
@@ -602,13 +681,15 @@ end
 --
 local function VUHDO_hideBlizzFocus()
 	VUHDO_unregisterAndSaveEvents(true, FocusFrame);
+	VUHDO_unregisterAndSaveEvents(false, FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar, FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar);
 end
 
 
 
 --
 local function VUHDO_showBlizzFocus()
-	VUHDO_registerOriginalEvents(false, FocusFrame);
+	VUHDO_registerOriginalEvents(true, FocusFrame);
+	VUHDO_registerOriginalEvents(false, FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar, FocusFrame.TargetFrameContent.TargetFrameContentMain.ManaBar);
 end
 
 
@@ -679,7 +760,7 @@ end
 
 --
 function VUHDO_lnfPatchFont(aComponent, aLabelName)
-	if not sIsNotInChina then _G[aComponent:GetName() .. aLabelName]:SetFont(VUHDO_OPTIONS_FONT_NAME, 12); end
+	if not sIsNotInChina then _G[aComponent:GetName() .. aLabelName]:SetFont(VUHDO_OPTIONS_FONT_NAME, 12, ""); end
 end
 
 
@@ -707,18 +788,21 @@ function VUHDO_fixFrameLevels(anIsForceUpdateChildren, aFrame, aBaseLevel, ...)
 	local tChild = select(tCnt, ...);
 	aFrame:SetFrameLevel(aBaseLevel);
 	while tChild do -- Layer components seem to have no name, important for HoT icons.
-		if tChild:GetName() then
-			tOurLevel = aBaseLevel + 1 + (tChild["addLevel"] or 0);
+		if tChild.IsForbidden and not tChild:IsForbidden() then
+			if tChild.GetName and tChild:GetName() then
+				tOurLevel = aBaseLevel + 1 + (tChild["addLevel"] or 0);
 
-			if not tChild["vfl"] then
-				tChild:SetFrameStrata(aFrame:GetFrameStrata());
-				tChild:SetFrameLevel(tOurLevel);
-				tChild["vfl"] = true;
-				VUHDO_fixFrameLevels(anIsForceUpdateChildren, tChild, tOurLevel, tChild:GetChildren());
-			elseif(anIsForceUpdateChildren) then
-				VUHDO_fixFrameLevels(true, tChild, tOurLevel, tChild:GetChildren());
+				if not tChild["vfl"] then
+					if not VUHDO_isConfigPanelShowing() then
+						tChild:SetFrameStrata(aFrame:GetFrameStrata());
+					end
+					tChild:SetFrameLevel(tOurLevel);
+					tChild["vfl"] = true;
+					VUHDO_fixFrameLevels(anIsForceUpdateChildren, tChild, tOurLevel, tChild:GetChildren());
+				elseif(anIsForceUpdateChildren) then
+					VUHDO_fixFrameLevels(true, tChild, tOurLevel, tChild:GetChildren());
+				end
 			end
-
 		end
 		tCnt = tCnt + 1;
 		tChild = select(tCnt, ...);
@@ -747,7 +831,7 @@ function VUHDO_customizeIconText(aParent, aHeight, aLabel, aSetup)
 		aLabel:SetShadowColor(0, 0, 0, tShadowAlpha);
 	end
 
-	aLabel:SetFont(aSetup["FONT"], tFactor * aSetup["SCALE"], tOutline);
+	aLabel:SetFont(aSetup["FONT"], tFactor * aSetup["SCALE"], tOutline or "");
 	
 	aLabel:SetShadowOffset(1, -1);
 
@@ -769,6 +853,44 @@ function VUHDO_setupAllButtonsUnitWatch(anIsRegister)
 			UnregisterUnitWatch(tButton)
 		end
 	end
+end
+
+
+
+--
+local function VUHDO_clamp(aValue, aMin, aMax)
+
+	return math.min(math.max(aValue, aMin), aMax);
+
+end
+
+
+
+--
+function VUHDO_clampColor(aR, aG, aB, aO)
+
+	return aR and VUHDO_clamp(aR, 0, 1), aG and VUHDO_clamp(aG, 0, 1), aB and VUHDO_clamp(aB, 0, 1), aO and VUHDO_clamp(aO, 0, 1);
+
+end
+
+
+
+--
+local tOpacity;
+function VUHDO_backColorWithFallback(aColor)
+	
+	if aColor and aColor["useOpacity"] and aColor["O"] then
+		tOpacity = aColor["O"];
+	else
+		tOpacity = 1;
+	end
+
+	if aColor and aColor["useBackground"] and aColor["R"] and aColor["G"] and aColor["B"] then
+		return aColor["R"], aColor["G"], aColor["B"], tOpacity;
+	else
+		return 1, 1, 1, tOpacity;
+	end
+
 end
 
 
@@ -886,8 +1008,15 @@ end
 
 
 --
-function VUHDO_indicatorTextCallback(aBarNum, aUnit, aPanelNum, aProviderName, aText, aValue)
+local tPanelNum;
+function VUHDO_indicatorTextCallback(aBarNum, aUnit, aProviderName, aText, aValue, anIndicatorName)
+
 	for _, tButton in pairs(VUHDO_getUnitButtonsSafe(aUnit)) do
-		VUHDO_getHealthBarText(tButton, aBarNum):SetText(aText);
+		tPanelNum = VUHDO_BUTTON_CACHE[tButton];
+
+		if VUHDO_INDICATOR_CONFIG[tPanelNum]["TEXT_INDICATORS"][anIndicatorName]["TEXT_PROVIDER"] == aProviderName then
+			VUHDO_getHealthBarText(tButton, aBarNum):SetText(aText);
+		end
 	end
+
 end

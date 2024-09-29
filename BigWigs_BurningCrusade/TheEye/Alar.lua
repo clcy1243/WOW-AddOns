@@ -5,6 +5,13 @@
 local mod, CL = BigWigs:NewBoss("Al'ar", 550, 1573)
 if not mod then return end
 mod:RegisterEnableMob(19514)
+if mod:Classic() then
+	mod:SetEncounterID(730)
+end
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local first = nil
 
@@ -40,12 +47,12 @@ end
 
 function mod:FlamePatch(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Alarm", CL["underyou"]:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alarm", CL["underyou"]:format(args.spellName))
 	end
 end
 
 function mod:Armor(args)
-	self:TargetMessage(args.spellId, args.destName, "red", "Long")
+	self:TargetMessageOld(args.spellId, args.destName, "red", "long")
 	self:TargetBar(args.spellId, 60, args.destName)
 	self:PrimaryIcon(args.spellId, args.destName)
 end
@@ -58,7 +65,7 @@ do
 			if not first then
 				first = true
 			else
-				self:Message(35181, "orange", "Alert")
+				self:MessageOld(35181, "orange", "alert")
 			end
 			self:DelayedMessage(35181, 47, "red", CL["soon"]:format(diveBomb))
 			self:CDBar(35181, 52)

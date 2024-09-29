@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod("CoENTrash", "DBM-Party-Legion", 12)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20240808043723")
 --mod:SetModelID(47785)
-mod:SetZone()
 
 mod.isTrashMod = true
+mod.isTrashModBossFightAllowed = true
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 239232 237391 238543 236737 242724 242760 239320 239266",
@@ -31,7 +31,7 @@ local specWarnVenomStorm		= mod:NewSpecialWarningDodge(239266, nil, nil, nil, 1,
 
 function mod:FelStrikeTarget(targetname, uId)
 	if not targetname then
-		warnFelStrike:Show(DBM_CORE_L.UNKNOWN)
+		warnFelStrike:Show(DBM_COMMON_L.UNKNOWN)
 		return
 	end
 	if self:AntiSpam(2, targetname) then--In case two enemies target same target
@@ -86,8 +86,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_START(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_START(uId, _, spellId)
 	if spellId == 238653 then
 		self:SendSync("ShadowWave")
 	end

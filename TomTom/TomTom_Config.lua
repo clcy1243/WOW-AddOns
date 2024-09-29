@@ -1,3 +1,5 @@
+local addonName, addon = ...
+
 local L = TomTomLocals
 
 local function createconfig()
@@ -36,8 +38,8 @@ local function createconfig()
 			TomTom:ShowHideWorldCoords()
 		elseif ns == "arrow" then
 			TomTom:ShowHideCrazyArrow()
-        elseif ns == "poi" and (not TomTom.CLASSIC) then
-            TomTom:EnableDisablePOIIntegration()
+		elseif ns == "poi" and TomTom.WOW_MAINLINE then
+			TomTom:EnableDisablePOIIntegration()
 		elseif opt == "otherzone" then
 			TomTom:ReloadWaypoints()
 		elseif info.arg == "minimap.enable" or info.arg == "worldmap.enable" then
@@ -306,9 +308,24 @@ local function createconfig()
 						width = "double",
 						arg = "arrow.showdistance",
 					},
+					distanceUnits = {
+						order = 3,
+						type = "select",
+						name = L["Distance unit to use"],
+						desc = L["Configures which unit (yards, metrics, auto) to show distances in"],
+						width = "double",
+						values = {
+							["auto"] = "Automatic (yards for US, metric elsewhere)",
+							["yards"] = "Show the distance in yards",
+							["meters"] = "Show the distance in meters",
+							["humanyards"] = "Show distance in miles and yards",
+							["humanmeters"] = "Show distance in km and meters",
+						},
+						arg = "arrow.distanceUnits",
+					},
 					scale = {
 						type = "range",
-						order = 3,
+						order = 4,
 						name = L["Scale"],
 						desc = L["This setting allows you to change the scale of the waypoint arrow, making it larger or smaller"],
 						min = 0, max = 3, step = 0.05,
@@ -316,7 +333,7 @@ local function createconfig()
 					},
 					alpha = {
 						type = "range",
-						order = 4,
+						order = 5,
 						name = L["Alpha"],
 						desc = L["This setting allows you to change the opacity of the waypoint arrow, making it transparent or opaque"],
 						min = 0.1, max = 1.0, step = 0.05,
@@ -324,7 +341,7 @@ local function createconfig()
 					},
 					title_width = {
 						type = "range",
-						order = 5,
+						order = 6,
 						name = L["Title Width"],
 						desc = L["This setting allows you to specify the maximum width of the title text.  Any titles that are longer than this width (in game pixels) will be wrapped to the next line."],
 						min = 0, max = 500, step = 1,
@@ -332,7 +349,7 @@ local function createconfig()
 					},
 					title_height = {
 						type = "range",
-						order = 6,
+						order = 7,
 						name = L["Title Height"],
 						desc = L["This setting allows you to specify the maximum height of the title text.  Any titles that are longer than this height (in game pixels) will be truncated."],
 						min = 0, max = 300, step = 1,
@@ -340,7 +357,7 @@ local function createconfig()
 					},
 					title_scale = {
 						type = "range",
-						order = 7,
+						order = 8,
 						name = L["Title Scale"],
 						desc = L["This setting allows you to specify the scale of the title text."],
 						min = 0, max = 3, step = 0.05,
@@ -348,14 +365,14 @@ local function createconfig()
 					},
 					title_alpha = {
 						type = "range",
-						order = 8,
+						order = 9,
 						name = L["Title Alpha"],
 						desc = L["This setting allows you to change the opacity of the title text, making it transparent or opaque"],
 						min = 0, max = 1.0, step = 0.05,
 						arg = "arrow.title_alpha",
 					},
 					reset_position = {
-						order = 9,
+						order = 10,
 						type = "execute",
 						name = L["Reset Position"],
 						desc = L["Resets the position of the waypoint arrow if its been dragged off screen"],
@@ -473,12 +490,12 @@ local function createconfig()
 				name = L["Minimap Icon"],
 				desc = L["This setting allows you to select the default icon for the minimap"],
 				values = {
-					["Interface\\AddOns\\TomTom\\Images\\GoldGreenDot"] = "Old Gold Green Dot",
-					["Interface\\AddOns\\TomTom\\Images\\GoldBlueDotNew"] = "New Gold Blue Dot",
-					["Interface\\AddOns\\TomTom\\Images\\GoldGreenDotNew"] = "New Gold Green Dot",
-					["Interface\\AddOns\\TomTom\\Images\\GoldPurpleDotNew"] = "New Gold Purple Dot",
-					["Interface\\AddOns\\TomTom\\Images\\GoldRedDotNew"] = "New Gold Red Dot",
-					["Interface\\AddOns\\TomTom\\Images\\PurpleRing"] = "New Purple Ring",
+					["Interface\\AddOns\\TomTom\\Images\\GoldGreenDot"] = L["Old Gold Green Dot"],
+					["Interface\\AddOns\\TomTom\\Images\\GoldBlueDotNew"] = L["New Gold Blue Dot"],
+					["Interface\\AddOns\\TomTom\\Images\\GoldGreenDotNew"] = L["New Gold Green Dot"],
+					["Interface\\AddOns\\TomTom\\Images\\GoldPurpleDotNew"] = L["New Gold Purple Dot"],
+					["Interface\\AddOns\\TomTom\\Images\\GoldRedDotNew"] = L["New Gold Red Dot"],
+					["Interface\\AddOns\\TomTom\\Images\\PurpleRing"] = L["New Purple Ring"],
 				},
 				arg = "minimap.default_icon",
 			},
@@ -577,7 +594,7 @@ local function createconfig()
 						type = "range",
 						name = L["Player coordinate offset"],
 						desc = L["Coordinates can be slid from the default location, to accomodate other addons.  This setting allows you to control that offset"],
-						min = -16, max = 48, step = 1,
+						min = -16, max = 256, step = 1,
 						arg = "mapcoords.playeroffset",
 					},
 				},
@@ -608,7 +625,7 @@ local function createconfig()
 						type = "range",
 						name = L["Cursor coordinate offset"],
 						desc = L["Coordinates can be slid from the default location, to accomodate other addons.  This setting allows you to control that offset"],
-						min = -32, max = 64, step = 1,
+						min = -32, max = 128, step = 1,
 						arg = "mapcoords.cursoroffset",
 					},
 				},
@@ -633,12 +650,12 @@ local function createconfig()
 						name = L["World Map Icon"],
 						desc = L["This setting allows you to select the default icon for the world map"],
 						values = {
-							["Interface\\AddOns\\TomTom\\Images\\GoldGreenDot"] = "Old Gold Green Dot",
-							["Interface\\AddOns\\TomTom\\Images\\GoldBlueDotNew"] = "New Gold Blue Dot",
-							["Interface\\AddOns\\TomTom\\Images\\GoldGreenDotNew"] = "New Gold Green Dot",
-							["Interface\\AddOns\\TomTom\\Images\\GoldPurpleDotNew"] = "New Gold Purple Dot",
-							["Interface\\AddOns\\TomTom\\Images\\GoldRedDotNew"] = "New Gold Red Dot",
-							["Interface\\AddOns\\TomTom\\Images\\PurpleRing"] = "New Purple Ring",
+							["Interface\\AddOns\\TomTom\\Images\\GoldGreenDot"] = L["Old Gold Green Dot"],
+							["Interface\\AddOns\\TomTom\\Images\\GoldBlueDotNew"] = L["New Gold Blue Dot"],
+							["Interface\\AddOns\\TomTom\\Images\\GoldGreenDotNew"] = L["New Gold Green Dot"],
+							["Interface\\AddOns\\TomTom\\Images\\GoldPurpleDotNew"] = L["New Gold Purple Dot"],
+							["Interface\\AddOns\\TomTom\\Images\\GoldRedDotNew"] = L["New Gold Red Dot"],
+							["Interface\\AddOns\\TomTom\\Images\\PurpleRing"] = L["New Purple Ring"],
 						},
 						arg = "worldmap.default_icon",
 					},
@@ -896,7 +913,7 @@ local function createBlizzOptions()
 	dialog:AddToBlizOptions("TomTom-Feeds", options.args.feeds.name, "TomTom")
 
 	-- POI Options
-	if not TomTom.CLASSIC then
+	if TomTom.WOW_MAINLINE then
 		config:RegisterOptionsTable("TomTom-POI", options.args.poi)
 		dialog:AddToBlizOptions("TomTom-POI", options.args.poi.name, "TomTom")
 	end
@@ -911,24 +928,42 @@ local function createBlizzOptions()
 	return blizzPanel
 end
 
-SLASH_TOMTOM1 = "/tomtom"
+local aboutOptions = {
+	type = "group",
+	args = {
+		version = {
+			order = 1,
+			type = "description",
+			name = function() return "Version: TomTom-".. addon.version end,
+
+		}
+	},
+}
+
 local blizzPanel
-SlashCmdList["TOMTOM"] = function(msg)
+function addon:CreateConfigPanels()
+	config:RegisterOptionsTable("TomTom", aboutOptions)
+	local aboutFrame = dialog:AddToBlizOptions("TomTom", "TomTom")
 	if not registered then
 		blizzPanel = createBlizzOptions()
 		registered = true
 	end
-
-	InterfaceOptionsFrame_OpenToCategory("TomTom")
-	InterfaceOptionsFrame_OpenToCategory("TomTom")
 end
 
-local hijackFrame = CreateFrame("Frame", nil, InterfaceOptionsFrame)
-hijackFrame:SetScript("OnShow", function(self)
-	if not registered then
-		blizzPanel = createBlizzOptions()
-		registered = true
+SLASH_TOMTOM1 = "/tomtom"
+SlashCmdList["TOMTOM"] = function(msg)
+	local tokens = {}
+	for token in msg:gmatch("%S+") do table.insert(tokens, token) end
+
+	if tokens[1] and tokens[1]:lower() == "help" then
+		TomTom.slashCommandUsage()
+		return
 	end
 
-	self:SetScript("OnShow", nil)
-end)
+	if Settings then
+		Settings.OpenToCategory("TomTom")
+	elseif InterfaceOptionsFrame_OpenToCategory then
+		InterfaceOptionsFrame_OpenToCategory("TomTom")
+		InterfaceOptionsFrame_OpenToCategory("TomTom")
+	end
+end

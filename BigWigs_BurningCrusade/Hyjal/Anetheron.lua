@@ -5,6 +5,9 @@
 local mod, CL = BigWigs:NewBoss("Anetheron", 534, 1578)
 if not mod then return end
 mod:RegisterEnableMob(17808)
+if mod:Classic() then
+	mod:SetEncounterID(619)
+end
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -12,16 +15,24 @@ mod:RegisterEnableMob(17808)
 
 function mod:GetOptions()
 	return {
-		{31299, "ICON"}, 31306, "berserk"
+		31298, -- Sleep
+		{31299, "ICON"}, -- Inferno
+		31306, -- Swarm
+		"berserk"
 	}
 end
 
 function mod:OnBossEnable()
+	self:Log("SPELL_CAST_SUCCESS", "Sleep", 31298)
 	self:Log("SPELL_CAST_SUCCESS", "Swarm", 31306)
 	self:Log("SPELL_CAST_START", "Inferno", 31299)
 
-	self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
+	if self:Classic() then
+		self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
+		self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
+	else
+		self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
+	end
 	self:Death("Win", 17808)
 end
 
@@ -33,8 +44,13 @@ end
 -- Event Handlers
 --
 
+function mod:Sleep(args)
+	self:MessageOld(args.spellId, "orange", "alert")
+	self:CDBar(args.spellId, 19.5) -- 19.5~45s No idea what causes it to hold it so long.
+end
+
 function mod:Swarm(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:CDBar(args.spellId, 11)
 end
 
@@ -42,9 +58,9 @@ do
 	local function infernoCheck(sGUID, spellId)
 		local mobId = mod:GetUnitIdByGUID(sGUID)
 		if mobId then
-			local target = UnitName(mobId.."target")
+			local target = mod:UnitName(mobId.."target")
 			if not target then return end
-			mod:TargetMessage(spellId, target, "red", "Alert")
+			mod:TargetMessageOld(spellId, target, "red", "alert")
 			mod:PrimaryIcon(spellId, target)
 			mod:ScheduleTimer("PrimaryIcon", 5, spellId)
 		end

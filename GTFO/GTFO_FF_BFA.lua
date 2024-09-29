@@ -5,7 +5,7 @@
 GTFO Friendly Fire List - Battle for Azeroth
 ]]--
 
-if (not GTFO.ClassicMode) then
+if (GTFO.RetailMode) then
 
 -- **********************
 -- * Battle for Azeroth *

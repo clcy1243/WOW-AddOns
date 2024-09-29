@@ -1,22 +1,47 @@
-# [2.17.8](https://github.com/WeakAuras/WeakAuras2/tree/2.17.8) (2020-06-16)
+# [5.17.1](https://github.com/WeakAuras/WeakAuras2/tree/5.17.1) (2024-09-07)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.17.7...2.17.8)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/5.17.0...5.17.1)
 
 ## Highlights
 
- - bug fixes 
+ - The options now have a "Thanks" button where we list all our supporters, thanks for being awesome!
+- Fixed a bug with cooldown tracking
+- Item Count triggers can now use reagent/account bank API 
 
 ## Commits
 
-InfusOnWoW (1):
+InfusOnWoW (7):
 
-- Revert even more spell checker changes
+- Ensure that talent data is up to date on initial login
+- Fix Lua Error in Cooldown Tracking
+- Item Count: Add support for reagent/account bank api (#5389)
+- Update Discord List
+- Options: Add a Thanks button
+- Update Atlas File List from wago.tools
+- Update Atlas File List from wago.tools
 
-Stanzilla (1):
+Jon (1):
 
-- Update README.md
+- Fix percent progress validation and parsing (#5381)
 
-mrbuds (1):
+Stanzilla (2):
 
-- Add missing CLEU subevent prefix, fixes #2224
+- Update WeakAurasModelPaths from wago.tools
+- Update WeakAurasModelPaths from wago.tools
+
+dependabot[bot] (1):
+
+- Bump cbrgm/mastodon-github-action from 2.1.5 to 2.1.8
+
+emptyrivers (2):
+
+- fux a small mem leak as user edits custom code
+- close a hole in the sandbox
+
+mrbuds (4):
+
+- fix (#5390)
+- fix keys with wrong type after export from wago
+- Fix data for auras with holes in multiEntry fields
+- Removing an element of a multyEntry field could leave an empty space in the list, fix #5361
 

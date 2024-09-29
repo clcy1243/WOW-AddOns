@@ -59,22 +59,22 @@ end
 function mod:MarkBoss(event, unit, guid)
 	local mobId = self:MobId(guid)
 	if mobId == 102075 then
-		SetRaidTarget(unit, 8)
+		self:CustomIcon(false, unit, 8)
 		self:UnregisterTargetEvents()
 	end
 end
 
 function mod:More(args)
-	self:Message(args.spellId, "cyan", "Info", 74511, args.spellId) -- 74511 = Summon Clone
+	self:MessageOld(args.spellId, "cyan", "info", 74511, args.spellId) -- 74511 = Summon Clone
 	self:CDBar(args.spellId, 30, 74511, args.spellId) -- 30.6-31.0
 end
 
 function mod:NightshiftedBolts(args)
-	self:Message(args.spellId, "yellow", "Alarm")
+	self:MessageOld(args.spellId, "yellow", "alarm")
 	self:CDBar(args.spellId, 31.5)
 end
 
 function mod:Resonance(args)
-	self:Message(args.spellId, "orange", "Alert")
+	self:MessageOld(args.spellId, "orange", "alert")
 	self:CDBar(args.spellId, 31)
 end

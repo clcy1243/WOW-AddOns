@@ -76,7 +76,7 @@ end
 --
 
 function mod:Assault(args)
-	self:Message(-4159, "orange")
+	self:MessageOld(-4159, "orange")
 	self:CDBar(-4159, 15)
 	self:Bar(-4159, 5, "<"..args.spellName..">")
 end
@@ -84,8 +84,8 @@ end
 function mod:FrostFlakeApplied(args)
 	self:PrimaryIcon(args.spellId, args.destName)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Long", CL["you"]:format(args.spellName))
-		self:Say(args.spellId)
+		self:MessageOld(args.spellId, "blue", "long", CL["you"]:format(args.spellName))
+		self:Say(args.spellId, nil, nil, "Frostflake")
 		self:Flash(args.spellId)
 		self:OpenProximity(args.spellId, 10)
 	end
@@ -100,27 +100,27 @@ end
 
 function mod:WaterShield(args)
 	self:StopBar(-4159) -- Focused Assault
-	self:Message(args.spellId, "yellow", nil, L["lightning_next"])
+	self:MessageOld(args.spellId, "yellow", nil, L["lightning_next"])
 	nextPhase = L["ice_next"]
 	nextPhaseIcon = 105256
 end
 
 function mod:FrozenTempest(args)
 	self:StopBar(-4159) -- Focused Assault
-	self:Message(args.spellId, "yellow", nil, L["ice_next"])
+	self:MessageOld(args.spellId, "yellow", nil, L["ice_next"])
 	nextPhase = L["lightning_next"]
 	nextPhaseIcon = 105409
 end
 
 function mod:Feedback(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:Bar(args.spellId, 15)
 	self:Bar("nextphase", 63, nextPhase, nextPhaseIcon)
 	self:Bar(-4159, 20) -- Focused Assault
 end
 
 function mod:IceTombStart(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:Bar(args.spellId, 8)
 	self:Flash(args.spellId)
 end
@@ -128,7 +128,7 @@ end
 do
 	local scheduled = nil
 	local function iceTomb()
-		mod:TargetMessage(104448, playerTbl, "red")
+		mod:TargetMessageOld(104448, playerTbl, "red")
 		scheduled = nil
 	end
 	function mod:IceTombApplied(args)
@@ -143,7 +143,7 @@ end
 do
 	local scheduled = nil
 	local function iceLance()
-		mod:TargetMessage(105316, playerTbl, "orange", "Info") -- Ice Lance
+		mod:TargetMessageOld(105316, playerTbl, "orange", "info") -- Ice Lance
 		scheduled = nil
 	end
 	function mod:IceLanceApplied(args)

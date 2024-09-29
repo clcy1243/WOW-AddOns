@@ -5,8 +5,8 @@
 local mod, CL = BigWigs:NewBoss("Thorim", 603, 1645)
 if not mod then return end
 mod:RegisterEnableMob(32865)
-mod.engageId = 1141
-mod.respawnTime = 32
+mod:SetEncounterID(mod:Classic() and 752 or 1141)
+mod:SetRespawnTime(32)
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -17,7 +17,7 @@ if L then
 	L.phase2_trigger = "Interlopers! You mortals who dare to interfere with my sport will pay.... Wait--you..."
 	L.phase3_trigger = "Impertinent whelps, you dare challenge me atop my pedestal? I will crush you myself!"
 
-	L.hardmode = "Hard mode timer"
+	L.hardmode = "Hard mode"
 	L.hardmode_desc = "Show timer for when you have to reach Thorim in order to enter hard mode in phase 3."
 	L.hardmode_warning = "Hard mode expires"
 
@@ -73,6 +73,7 @@ function mod:OnBossEnable()
 
 	self:Log("SPELL_AURA_APPLIED", "HardModeTimerBegins", 62507) -- Touch of Dominion, Sif spawns and begins the cast
 	self:Log("SPELL_AURA_REMOVED", "HardModeTimerExpires", 62507) -- Touch of Dominion, Sif despawns
+	self:Log("SPELL_AURA_APPLIED", "NormalModeApplied", 62565) -- Touch of Dominion, Sif applies the debuff to Thorim, weakening him, enabling normal mode
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
 end
 
@@ -90,23 +91,23 @@ end
 --
 
 function mod:RunicBarrier(args)
-	self:Message(args.spellId, "orange", "Alarm", L.barrier_message)
+	self:MessageOld(args.spellId, "orange", "alarm", L.barrier_message)
 	self:Bar(args.spellId, 20)
 end
 
 function mod:LightningChargeApplied(args) -- Lightning Charge on Thorim
 	local amount = args.amount or 1
-	self:Message(args.spellId, "yellow", nil, L.charge_message:format(amount))
+	self:MessageOld(args.spellId, "yellow", nil, L.charge_message:format(amount))
 	self:Bar(args.spellId, 15, L.charge_bar:format(amount+1))
 end
 
 function mod:Stormhammer(args)
-	self:TargetMessage(args.spellId, args.destName, "orange")
+	self:TargetMessageOld(args.spellId, args.destName, "orange")
 	self:Bar(args.spellId, 16)
 end
 
 function mod:UnbalancingStrike(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 	self:TargetBar(args.spellId, 15, args.destName)
 end
 
@@ -115,11 +116,11 @@ function mod:UnbalancingStrikeCast(args)
 end
 
 function mod:RunicFortification(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 end
 
 function mod:ChargeOrb(args)
-	self:Message(args.spellId, "orange")
+	self:MessageOld(args.spellId, "orange")
 	self:Bar(args.spellId, 15)
 end
 
@@ -130,7 +131,7 @@ do
 			local t = GetTime()
 			if t-prev > 5 then
 				prev = t
-				self:Message(args.spellId, "blue", "Info", CL.you:format(args.spellName))
+				self:MessageOld(args.spellId, "blue", "info", CL.you:format(args.spellName))
 				self:Flash(args.spellId)
 			end
 		end
@@ -138,14 +139,14 @@ do
 end
 
 function mod:Impale(args)
-	self:TargetMessage(62331, args.destName, "red")
+	self:TargetMessageOld(62331, args.destName, "red")
 end
 
 function mod:RuneDetonation(args)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId, 40332) -- 40332 = "Bomb"
+		self:Say(args.spellId, CL.bomb, nil, "Bomb")
 	end
-	self:TargetMessage(args.spellId, args.destName, "red")
+	self:TargetMessageOld(args.spellId, args.destName, "red")
 	self:TargetBar(args.spellId, 4, args.destName)
 	self:PrimaryIcon(args.spellId, args.destName)
 end
@@ -157,27 +158,30 @@ end
 
 function mod:HardModeTimerBegins()
 	-- Restart the bar for accuracy
-	self:Bar("hardmode", 105, L.hardmode, 27578) -- ability_warrior_battleshout / Battle Shout / icon 132333
+	self:Bar("hardmode", self:Classic() and 150 or 105, L.hardmode, 27578) -- ability_warrior_battleshout / Battle Shout / icon 132333
 end
 
-function mod:HardModeTimerExpires()
-	if self:BarTimeLeft(L.hardmode) == 0 then
-		self:Message("hardmode", "cyan", nil, L.hardmode_warning, false)
-	else
-		self:Message("hardmode", "cyan", nil, -17610, false) -- -17610 = "Hard Mode"
+do
+	local scheduled = nil
+
+	function mod:HardModeTimerExpires()
+		scheduled = self:ScheduleTimer("Message", 1, "hardmode", "cyan", CL.hard, false)
+	end
+
+	function mod:NormalModeApplied()
+		if scheduled then
+			self:CancelTimer(scheduled)
+			scheduled = nil
+		end
+		self:Message("hardmode", "cyan", L.hardmode_warning, false)
 	end
 end
 
 function mod:StageTwo()
-	-- Cancel scheduled berserk
-	for k,v in next, self.scheduledMessages do
-		self:CancelTimer(v)
-		self.scheduledMessages[k] = nil
-	end
-
+	self:StopBerserk(self:SpellName(26662)) -- Berserk
 	self:StopBar(L["hardmode"])
-	self:Message("stages", "yellow", nil, CL.stage:format(2), false)
-	self:OpenProximity("proximity", 5)
+	self:MessageOld("stages", "yellow", nil, CL.stage:format(2), false)
+	self:OpenProximity("proximity", self:Classic() and 10 or 5)
 	self:Berserk(312, true) -- Berserk again with new timer and no engage message
 end
 

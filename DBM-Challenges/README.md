@@ -1,7 +1,8 @@
-[![Build Status](https://travis-ci.org/DeadlyBossMods/DBM-Challenges.svg?branch=master)](https://travis-ci.org/DeadlyBossMods/DBM-Challenges)
+[![Build Status](https://github.com/DeadlyBossMods/DBM-Challenges/workflows/CI/badge.svg)](https://github.com/DeadlyBossMods/DBM-Challenges/actions?workflow=CI)
 [![DeadlyBossMods on Discord](https://img.shields.io/badge/discord-DeadlyBossMods-738bd7.svg?style=flat)](https://discord.gg/DeadlyBossMods) 
 
-[![Patreon](https://media.forgecdn.net/attachments/76/25/patreon-medium-button.png)](https://www.patreon.com/deadlybossmods)
+<p><img src="http://mysticalos.com/images/DBM/support_on_patreon.png" width="408" height="80" /></p>
+<p><a href="https://www.patreon.com/deadlybossmods">https://www.patreon.com/deadlybossmods</a></p>
 
 Deadly Boss Mods: Challenges
 ============================
@@ -12,7 +13,7 @@ This extra mod for Deadly Boss Mods (DBM) adds support for challenging scenario 
 
 Features:
 * Helpful combat warnings & timers for all of the Proving Grounds challenges added in Mists of Pandaria and beyond.
-* Helpful combat warnings & timers for Legion's Broken Shore scenario quests offered by Mage Tower in patch 7.2
+* Helpful combat warnings & timers for Legion's Broken Shore scenario quests offered by Mage Tower in patch 7.2 (and 9.1.5+)
 * Helpful combat warnings & Timers for Battle for Azeroth N'Zoth Vision scenarios added in patch 8.3
 * Helpful combat warnings & Timers for Shadowlands Torghast scenario added in patch 9.0
 * All warnings are configurable through DBM GUI
@@ -29,4 +30,5 @@ Notes
 -----
 **TODO:**
 * Possibly localize in more languages.
-* Continue to improve N'Zoth Visions scenarios with more warnings and improved timers
+* Continue to improve Torghast with more warnings and improved timers
+* Continue to improve mage tower mods

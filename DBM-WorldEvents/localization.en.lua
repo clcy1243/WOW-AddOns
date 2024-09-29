@@ -39,14 +39,14 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization{
-	SubmergTimer	= "Submerge",
+	SubmergeTimer	= "Submerge",
 	EmergeTimer		= "Emerge"
 }
 
 L:SetOptionLocalization({
 	Emerged			= "Show warning when Ahune emerges",
 	specWarnAttack	= "Show special warning when Ahune becomes vulnerable",
-	SubmergTimer	= "Show timer for submerge",
+	SubmergeTimer	= "Show timer for submerge",
 	EmergeTimer		= "Show timer for emerge"
 })
 
@@ -145,6 +145,17 @@ L:SetMiscLocalization({
 	MassiveWave		= "A Massive Wave of Zombies is Approaching!"
 })
 
+-- Quest
+L = DBM:GetModLocalization("EscortQuests")
+
+L:SetGeneralLocalization{
+	name = "Escort Quests",
+}
+
+L:SetOptionLocalization{
+	Timers = "Show timers for some escort quests"
+}
+
 --------------------------
 --  Demonic Invasions  --
 --------------------------
@@ -221,4 +232,193 @@ L:SetWarningLocalization({
 L:SetOptionLocalization({
 	warnSplittingBlow			= "Show location warnings for $spell:98951",
 	warnEngulfingFlame			= "Show location warnings for $spell:99171"
+})
+
+----------------------------------
+--  Azeroth Event World Bosses  --
+----------------------------------
+
+-- Lord Kazzak (Badlands)
+L = DBM:GetModLocalization("KazzakClassic")
+
+L:SetGeneralLocalization{
+	name = "Lord Kazzak"
+}
+
+L:SetMiscLocalization({
+	Pull		= "For the Legion! For Kil'Jaeden!"
+})
+
+-- Azuregos (Azshara)
+L = DBM:GetModLocalization("Azuregos")
+
+L:SetGeneralLocalization{
+	name = "Azuregos"
+}
+
+L:SetMiscLocalization({
+	Pull		= "This place is under my protection. The mysteries of the arcane shall remain inviolate."
+})
+
+-- Taerar (Ashenvale)
+L = DBM:GetModLocalization("Taerar")
+
+L:SetGeneralLocalization{
+	name = "Taerar"
+}
+
+L:SetMiscLocalization({
+	Pull		= "Peace is but a fleeting dream! Let the NIGHTMARE reign!"
+})
+
+-- Ysondre (Feralas)
+L = DBM:GetModLocalization("Ysondre")
+
+L:SetGeneralLocalization{
+	name = "Ysondre"
+}
+
+L:SetMiscLocalization({
+	Pull		= "The strands of LIFE have been severed! The Dreamers must be avenged!"
+})
+
+-- Lethon (Hinterlands)
+L = DBM:GetModLocalization("Lethon")
+
+L:SetGeneralLocalization{
+	name = "Lethon"
+}
+
+L:SetMiscLocalization({
+--	Pull		= "The strands of LIFE have been severed! The Dreamers must be avenged!"--Does not have one :\
+})
+
+-- Emeriss (Duskwood)
+L = DBM:GetModLocalization("Emeriss")
+
+L:SetGeneralLocalization{
+	name = "Emeriss"
+}
+
+L:SetMiscLocalization({
+	Pull		= "Hope is a DISEASE of the soul! This land shall wither and die!"
+})
+
+-- Doomwalker (Tanaris)
+L = DBM:GetModLocalization("DoomwalkerEvent")
+
+L:SetGeneralLocalization{
+	name = "Doomwalker (Event)"
+}
+
+-- Archavon (???)
+L = DBM:GetModLocalization("ArchavonEvent")
+
+L:SetGeneralLocalization{
+	name = "Archavon (Event)"
+}
+
+-- Sha of Anger (???)
+L = DBM:GetModLocalization("ShaofAngerEvent")
+
+L:SetGeneralLocalization{
+	name = "Sha of Anger (Event)"
+}
+
+--------------------------
+--  Blastenheimer 5000  --
+--------------------------
+L = DBM:GetModLocalization("Cannon")
+
+L:SetGeneralLocalization({
+	name = "Blastenheimer 5000"
+})
+
+L = DBM:GetModLocalization("CannonClassic")
+
+L:SetGeneralLocalization({
+	name = "Blastenheimer 5000"
+})
+
+-------------
+--  Gnoll  --
+-------------
+L = DBM:GetModLocalization("Gnoll")
+
+L:SetGeneralLocalization({
+	name = "Whack-a-Gnoll"
+})
+
+L:SetWarningLocalization({
+	warnGameOverQuest	= "Earned %d out of %d possible points spawned",
+	warnGameOverNoQuest	= "Game ended with a total of %d possible points spawned",
+	warnGnoll			= "Gnoll spawned",
+	warnHogger			= "Hogger spawned",
+	specWarnHogger		= "Hogger spawned!"
+})
+
+L:SetOptionLocalization({
+	warnGameOver	= "Announce total possible points when game ends",
+	warnGnoll		= "Announce when a Gnoll spawns",
+	warnHogger		= "Announce when a Hogger spawns",
+	specWarnHogger	= "Show special warning when a Hogger spawns"
+})
+
+------------------------
+--  Shooting Gallery  --
+------------------------
+L = DBM:GetModLocalization("Shot")
+
+L:SetGeneralLocalization({
+	name = "Shooting Gallery"
+})
+
+L:SetOptionLocalization({
+	SetBubbles			= "Automatically disable chat bubbles during $spell:101871<br/>(restores them when game ends)"
+})
+
+----------------------
+--  Tonk Challenge  --
+----------------------
+L = DBM:GetModLocalization("Tonks")
+
+L:SetGeneralLocalization({
+	name = "Tonk Challenge"
+})
+
+---------------------------
+--  Fire Ring Challenge  --
+---------------------------
+L = DBM:GetModLocalization("Rings")
+
+L:SetGeneralLocalization({
+	name = "Fire Ring Challenge"
+})
+
+-----------------------
+--  Darkmoon Rabbit  --
+-----------------------
+L = DBM:GetModLocalization("Rabbit")
+
+L:SetGeneralLocalization({
+	name = "Darkmoon Rabbit"
+})
+
+-------------------------
+--  Darkmoon Moonfang  --
+-------------------------
+L = DBM:GetModLocalization("Moonfang")
+
+L:SetGeneralLocalization({
+	name = "Moonfang"
+})
+
+L:SetWarningLocalization({
+	specWarnCallPack		= "Call the Pack - Run > 40 yards from Moonfang!",
+	specWarnMoonfangCurse	= "Moonfang's Curse - Run > 10 yards from Moonfang!"
+})
+
+L:SetOptionLocalization({
+	specWarnCallPack		= DBM_CORE_L.AUTO_SPEC_WARN_OPTIONS.run:format(144602),
+	specWarnMoonfangCurse	= DBM_CORE_L.AUTO_SPEC_WARN_OPTIONS.run:format(144590)
 })

@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "zhCN" then
+if GetLocale() ~= "zhCN" then
 	return
 end
 local L
@@ -30,7 +30,3 @@ L:SetOptionLocalization({
 -- Nalak, The Storm Lord --
 ---------------------------
 L = DBM:GetModLocalization(814)
-
-L:SetOptionLocalization({
-	RangeFrame	= "距离监视（10码）：$spell:136340"
-})

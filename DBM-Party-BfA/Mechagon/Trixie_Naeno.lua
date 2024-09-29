@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(2360, "DBM-Party-BfA", 11, 1178)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200602212246")
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(153755, 150712)
 mod:SetEncounterID(2312)
-mod:SetZone()
 mod:SetBossHPInfoToHighest()
 
 mod:RegisterCombat("combat")
@@ -19,31 +18,31 @@ mod:RegisterEventsInCombat(
 --[[
 (ability.id = 298669 or ability.id = 302682 or ability.id = 298897 or ability.id = 298940 or ability.id = 298946 or ability.id = 298651 or ability.id = 299164 or ability.id = 298571 or ability.id = 298898) and type = "begincast"
 --]]
+--Trixie
+mod:AddTimerLine(DBM:EJ_GetSectionInfo(20200))
 local warnMegaTaze					= mod:NewTargetNoFilterAnnounce(302682, 3)
 local warnJumpStart					= mod:NewSpellAnnounce(298897, 3)
---Naeno Megacrash
-local warnRoadkill					= mod:NewSpellAnnounce(298946, 3)
-local warnBurnout					= mod:NewSpellAnnounce(298571, 3)
 
---Trixie "The Tech" Tazer
 local specWarnTaze					= mod:NewSpecialWarningInterrupt(298669, false, nil, 2, 1, 2)
 local specWarnMegaTaze				= mod:NewSpecialWarningMoveTo(302682, nil, nil, nil, 3, 2)
 local yellMegaTaze					= mod:NewYell(302682)
+
+local timerMegaTazeCD				= mod:NewCDTimer(40.1, 302682, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
 --Naeno Megacrash
+mod:AddTimerLine(DBM:EJ_GetSectionInfo(20203))
+local warnRoadkill					= mod:NewSpellAnnounce(298946, 3)
+local warnBurnout					= mod:NewSpellAnnounce(298571, 3)
+
 local specWarnBoltBuster			= mod:NewSpecialWarningDodge(298940, "Tank", nil, nil, 1, 2)
 local specWarnPedaltotheMetal		= mod:NewSpecialWarningDodge(298651, nil, nil, nil, 2, 2)
---local specWarnGTFO				= mod:NewSpecialWarningGTFO(238028, nil, nil, nil, 1, 8)
 
---Trixie "The Tech" Tazer
-local timerMegaTazeCD				= mod:NewCDTimer(40.1, 302682, nil, nil, nil, 3, nil, DBM_CORE_L.DEADLY_ICON)
---Naeno Megacrash
 local timerRoadKillCD				= mod:NewCDTimer(27, 298946, nil, nil, nil, 3)
-local timerBoltBusterCD				= mod:NewCDTimer(18.2, 298940, nil, "Tank", nil, 5, nil, DBM_CORE_L.TANK_ICON)
-local timerPedaltotheMetalCD		= mod:NewCDTimer(60, 298651, nil, nil, nil, 3)
+local timerBoltBusterCD				= mod:NewCDTimer(18.2, 298940, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
+--local timerPedaltotheMetalCD		= mod:NewCDTimer(60, 298651, nil, nil, nil, 3)
 
 mod.vb.MetalCast = 0
 
-local SmokeBombName = DBM:GetSpellInfo(298573)
+local SmokeBombName = DBM:GetSpellName(298573)
 
 function mod:MegaTazeTarget(targetname)
 	if not targetname then return end
@@ -60,7 +59,7 @@ end
 
 function mod:OnCombatStart(delay)
 	self.vb.MetalCast = 0
-	timerPedaltotheMetalCD:Start(4.4)
+--	timerPedaltotheMetalCD:Start(4.4)
 	timerMegaTazeCD:Start(25.5-delay)
 	timerBoltBusterCD:Start(36.4-delay)
 	timerRoadKillCD:Start(31.6-delay)
@@ -93,11 +92,11 @@ function mod:SPELL_CAST_START(args)
 		specWarnPedaltotheMetal:Play("chargemove")
 		--"Pedal to the Metal-298651-npc:153756 = pull:14.8, 60.7", -- [36]
 		--"Pedal to the Metal-299164-npc:153756 = pull:4.4, 61.5", -- [37]
-		if self.vb.MetalCast % 2 == 0 then
-			timerPedaltotheMetalCD:Start(50)--51.1, but small sample so 50 used
-		else
-			timerPedaltotheMetalCD:Start(9.6)
-		end
+--		if self.vb.MetalCast % 2 == 0 then
+--			timerPedaltotheMetalCD:Start(50)--51.1, but small sample so 50 used
+--		else
+--			timerPedaltotheMetalCD:Start(9.6)
+--		end
 	elseif spellId == 298571 then
 		warnBurnout:Show()
 	end
@@ -107,7 +106,7 @@ end
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
 	if cid == 153755 then--Naeno
-		timerPedaltotheMetalCD:Stop()
+--		timerPedaltotheMetalCD:Stop()
 		timerRoadKillCD:Stop()
 		timerBoltBusterCD:Stop()
 	elseif cid == 150712 then--Trixie

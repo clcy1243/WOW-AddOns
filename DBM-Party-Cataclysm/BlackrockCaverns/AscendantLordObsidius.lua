@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(109, "DBM-Party-Cataclysm", 1, 66)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "normal,heroic,timewalker"
+
+mod:SetRevision("20240428124541")
 mod:SetCreatureID(39705)
 mod:SetEncounterID(1036)
-mod:SetZone()
 mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
@@ -18,10 +19,10 @@ mod:RegisterEventsInCombat(
 local warnTransformation	= mod:NewSpellAnnounce(76200, 3)
 local warnCorrupion			= mod:NewTargetNoFilterAnnounce(76188, 2, nil, "Healer", 2)
 
-local timerCorruption		= mod:NewTargetTimer(12, 76188, nil, "Healer", nil, 5, nil, DBM_CORE_L.HEALER_ICON..DBM_CORE_L.MAGIC_ICON)
-local timerVeil				= mod:NewTargetTimer(4, 76189, nil, "Healer", nil, 5, nil, DBM_CORE_L.HEALER_ICON)
+local timerCorruption		= mod:NewTargetTimer(12, 76188, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON..DBM_COMMON_L.MAGIC_ICON)
+local timerVeil				= mod:NewTargetTimer(4, 76189, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
 
-mod:AddSetIconOption("SetIconOnBoss", 76242, true, false, {8})
+mod:AddSetIconOption("SetIconOnBoss", 76242, true, 0, {8})
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 76200 then

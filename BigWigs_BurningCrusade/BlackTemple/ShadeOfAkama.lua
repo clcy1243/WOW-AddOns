@@ -6,8 +6,8 @@
 local mod, CL = BigWigs:NewBoss("Shade of Akama", 564, 1584)
 if not mod then return end
 mod:RegisterEnableMob(23191, 22841) -- Akama, Shade of Akama
-mod.engageId = 603
-mod.respawnTime = 120
+mod:SetEncounterID(603)
+mod:SetRespawnTime(120)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -42,25 +42,30 @@ function mod:GetOptions()
 end
 
 function mod:VerifyEnable(unit, mobId)
-	if mobId == 22841 or UnitHealth(unit) == UnitHealthMax(unit) then -- Enable if shade, or if Akama at 100% hp
+	if self:Classic() then
+		return false -- XXX fixme on classic
+	end
+	if mobId == 22841 or self:GetHealth(unit) == 100 then -- Enable if shade, or if Akama at 100% hp
 		return true
 	end
 end
 
 function mod:OnBossEnable()
-	self:Log("SPELL_AURA_REMOVED", "StealthRemoved", 34189)
-	self:RegisterMessage("BigWigs_BossComm")
+	if not self:Classic() then
+		self:Log("SPELL_AURA_REMOVED", "StealthRemoved", 34189)
+		self:RegisterMessage("BigWigs_BossComm")
 
-	self:Log("SPELL_AURA_APPLIED", "RainOfFireDamage", 42023)
-	self:Log("SPELL_PERIODIC_DAMAGE", "RainOfFireDamage", 42023)
-	self:Log("SPELL_PERIODIC_MISSED", "RainOfFireDamage", 42023)
+		self:Log("SPELL_AURA_APPLIED", "RainOfFireDamage", 42023)
+		self:Log("SPELL_PERIODIC_DAMAGE", "RainOfFireDamage", 42023)
+		self:Log("SPELL_PERIODIC_MISSED", "RainOfFireDamage", 42023)
 
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
-	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
+		self:RegisterEvent("CHAT_MSG_MONSTER_YELL")
+	end
 end
 
 function mod:OnEngage()
-	self:Message("stages", "cyan", "Info", L.engaged, false)
+	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
+	self:MessageOld("stages", "cyan", "info", L.engaged, false)
 	self:Bar("stages", 13, L.defender, 159241) -- ability_parry / icon 132269
 	self:ScheduleTimer("Bar", 13, "stages", 32, L.defender, 159241)
 	defender = self:ScheduleTimer("RepeaterDefender", 45)
@@ -84,7 +89,7 @@ function mod:StealthRemoved(args)
 end
 
 function mod:BigWigs_BossComm(_, msg)
-	if msg == "Akama" and not self.isEngaged then
+	if msg == "Akama" and not self:IsEngaged() then
 		self:Engage()
 	end
 end
@@ -115,13 +120,13 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 1.5 then
 			prev = t
-			self:Message(args.spellId, "blue", "Alert", CL.you:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alert", CL.you:format(args.spellName))
 		end
 	end
 end
 
 function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
-	if self:MobId(UnitGUID("boss1")) == 22841 then -- Shade of Akama
+	if self:MobId(self:UnitGUID("boss1")) == 22841 then -- Shade of Akama
 		self:CancelTimer(defender)
 		self:CancelTimer(sorcerer)
 		self:CancelTimer(right)
@@ -132,7 +137,7 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 		self:StopBar(L.sorcerer)
 		self:StopBar(L.adds_right)
 		self:StopBar(L.adds_left)
-		self:Message("stages", "cyan", "Info", CL.stage:format(2), false)
+		self:MessageOld("stages", "cyan", "info", CL.stage:format(2), false)
 	end
 end
 

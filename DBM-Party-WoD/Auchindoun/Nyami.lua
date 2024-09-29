@@ -1,10 +1,11 @@
 local mod	= DBM:NewMod(1186, "DBM-Party-WoD", 1, 547)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20220920232426")
 mod:SetCreatureID(76177)
 mod:SetEncounterID(1685)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -16,12 +17,12 @@ mod:RegisterEventsInCombat(
 --TODO, soul vessel is probably wrong now.
 --Even on CM, fights too short to get a good soulvessel timer. Still need better logs
 
-local specWarnSWP				= mod:NewSpecialWarningDispel(154477, "Healer", nil, nil, 1, 2)
+local specWarnSWP				= mod:NewSpecialWarningDispel(154477, "RemoveMagic", nil, 2, 1, 2)
 local specWarnSoulVessel		= mod:NewSpecialWarningSpell(155327, nil, nil, nil, 2, 2)
 local specWarnSoulVesselEnd		= mod:NewSpecialWarningEnd(155327, nil, nil, nil, 1, 2)
 local specWarnTornSpirits		= mod:NewSpecialWarningSwitch(153991, "-Healer", nil, nil, 1, 2)
 
-local timerSoulVessel			= mod:NewBuffActiveTimer(11.5, 155327, nil, nil, nil, 2, nil, DBM_CORE_L.DEADLY_ICON)
+local timerSoulVessel			= mod:NewBuffActiveTimer(11.5, 155327, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON)
 local timerSoulVesselCD			= mod:NewCDTimer(51.5, 155327, nil, nil, nil, 6)
 local timerTornSpiritsCD		= mod:NewCDTimer(25.5, 153991, nil, nil, nil, 1)
 
@@ -30,7 +31,7 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 154477 and args:IsDestTypePlayer() and self:CheckDispelFilter() then
+	if args.spellId == 154477 and args:IsDestTypePlayer() and self:CheckDispelFilter("magic") then
 		specWarnSWP:Show(args.destName)
 		specWarnSWP:Play("dispelnow")
 	end

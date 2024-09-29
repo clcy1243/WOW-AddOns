@@ -16,14 +16,16 @@
 	</Button>
 
 	<Frame name="WowLuaOpenDropDown" inherits="UIDropDownMenuTemplate" frameStrata="FULLSCREEN_DIALOG">
-		<Scripts>
-			<OnLoad>
-				WowLua:OpenDropDownOnLoad(self)
-			</OnLoad>
-		</Scripts>
+	</Frame>
+
+	<Frame name="WowLuaConfigDropDown" inherits="UIDropDownMenuTemplate" frameStrata="FULLSCREEN_DIALOG">
 	</Frame>
 
     <Font name="WowLuaMonoFont" font="Interface\AddOns\WowLua\fonts\VeraMono.ttf">
+		<FontHeight val="14"/>
+    </Font>
+
+    <Font name="WowLuaMonoFontSpaced" font="Interface\AddOns\WowLua\fonts\VeraMono.ttf" spacing="0">
 		<FontHeight val="14"/>
     </Font>
 
@@ -166,7 +168,7 @@
 			<Button name="WowLuaButton_Close" inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
-						<Offset x="5" y="-10"/>
+						<Offset x="2" y="-15"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -450,7 +452,7 @@
 				</Layers>
 				<!-- Basically copy/pasted from MacroFrame -->
 				<ScrollChild>
-					<EditBox name="WowLuaFrameLineNumEditBox" multiLine="true" maxLines="9999" letters="4096" nonspacewrap="true" spacing="1" autoFocus="false">
+					<EditBox name="WowLuaFrameLineNumEditBox" multiLine="true" letters="4096" autoFocus="false">
 						<Size>
 							<AbsDimension x="100" y="100"/>
 						</Size>
@@ -465,7 +467,7 @@
 								self:ClearFocus()
 							</OnEditFocusGained>
 						</Scripts>
-                        <FontString inherits="WowLuaMonoFont"/>
+                        <FontString inherits="WowLuaMonoFontSpaced" maxLines="9999" nonspacewrap="true"/>
 					</EditBox>
 				</ScrollChild>
 			</ScrollFrame>
@@ -492,7 +494,7 @@
 					</OnLoad>
 				</Scripts>
 				<ScrollChild>
-					<EditBox name="WowLuaFrameEditBox" multiLine="true" nonspacewrap="true" spacing="1" autoFocus="false">
+					<EditBox name="WowLuaFrameEditBox" multiLine="true" autoFocus="false">
 						<Size>
 							<AbsDimension x="100" y="100"/>
 						</Size>
@@ -505,8 +507,6 @@
 						<Layers>
 							<Layer level="BACKGROUND">
 								<FontString name="$parentLineTest" inherits="WowLuaMonoFont" hidden="true">
-									<Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
-									<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"/>
 								</FontString>
 							</Layer>
 						</Layers>
@@ -533,7 +533,7 @@
 								ScrollingEdit_OnUpdate(self, elapsed, WowLuaFrameEditScrollFrame)
 							</OnUpdate>
 						</Scripts>
-                        <FontString inherits="WowLuaMonoFont"/>
+                        <FontString inherits="WowLuaMonoFontSpaced" nonspacewrap="true"/>
 					</EditBox>
 				</ScrollChild>
 			</ScrollFrame>
@@ -583,7 +583,7 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<EditBox name="$parentEditBox" letters="4096" nonspacewrap="true" spacing="1" historyLines="100" autoFocus="false">
+					<EditBox name="$parentEditBox" letters="4096" historyLines="100" autoFocus="false">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentPrompt" relativePoint="TOPRIGHT">
 								<Offset x="5" y="0"/>
@@ -606,11 +606,11 @@
 								self:AddHistoryLine(text);
 							</OnEnterPressed>
 						</Scripts>
-                        <FontString inherits="WowLuaMonoFont"/>
+                        <FontString inherits="WowLuaMonoFont" nonspacewrap="true" spacing="1"/>
 					</EditBox>
 				</Frames>
 			</Frame>
-			<ScrollingMessageFrame name="$parentOutput" maxLines="9999" fade="false" enableMouse="true">
+			<ScrollingMessageFrame name="$parentOutput" enableMouse="true">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="WowLuaFrameResizeBar" relativePoint="BOTTOMLEFT">
 						<Offset x="5" y="2"/>
@@ -656,9 +656,9 @@
 						( IsControlKeyDown() and "page" ) or "line";
 						WowLua:ScrollingMessageFrameScroll(self, direction, type);
 					</OnMouseWheel>
-					<OnMessageScrollChanged>
+					<!-- <OnMessageScrollChanged>
 						WowLua:UpdateScrollingMessageFrame(self);
-					</OnMessageScrollChanged>
+					</OnMessageScrollChanged> -->
 					<OnShow>
 						WowLua:UpdateScrollingMessageFrame(self);
 					</OnShow>
@@ -666,7 +666,7 @@
                         WowLuaFrameCommandEditBox:SetFocus()
                     </OnMouseDown>
                     <OnLoad>
-                        self:SetFont([[Interface\AddOns\WowLua\fonts\VeraMono.ttf]], 14)
+                        self:SetFont([[Interface\AddOns\WowLua\fonts\VeraMono.ttf]], 14, "")
                         self:SetJustifyH("LEFT")
                         self:SetFading(False)
                     </OnLoad>

@@ -1,12 +1,11 @@
 local mod	= DBM:NewMod(1501, "DBM-Party-Legion", 6, 726)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190625143517")
+mod.statTypes = "heroic,mythic,challenge"
+
+mod:SetRevision("20230307064655")
 mod:SetCreatureID(98208)
 mod:SetEncounterID(1829)
-mod:SetZone()
-
-mod.noNormal = true
 
 mod:RegisterCombat("combat")
 
@@ -25,7 +24,7 @@ local warnTimeLock					= mod:NewTargetAnnounce(203957, 4)
 local warnUnstableMana				= mod:NewTargetAnnounce(203176, 2)
 
 local specWarnTimeSplit				= mod:NewSpecialWarningMove(203833, nil, nil, nil, 1, 2)
-local specWarnForceBomb				= mod:NewSpecialWarningSpell(202974, nil, nil, nil, 2, 2)
+local specWarnForceBomb				= mod:NewSpecialWarningSpell(202974, nil, nil, nil, 2, 12)
 local specWarnBlast					= mod:NewSpecialWarningInterruptCount(203176, "HasInterrupt", nil, 2, 1, 2)
 local specWarnBlastStacks			= mod:NewSpecialWarningDispel(203176, "MagicDispeller")
 local specWarnTimeLock				= mod:NewSpecialWarningInterrupt(203957, "HasInterrupt", nil, 2, 1, 2)
@@ -39,6 +38,33 @@ mod.vb.interruptCount = 0
 function mod:OnCombatStart(delay)
 	self.vb.interruptCount = 0
 	timerForceBombD:Start(16.7-delay)
+end
+
+function mod:SPELL_CAST_START(args)
+	local spellId = args.spellId
+	if spellId == 202974 then
+		specWarnForceBomb:Show()
+		specWarnForceBomb:Play("forcenovacoming")
+		timerForceBombD:Start()
+	elseif spellId == 203882 then
+		timerForceBombD:Cancel()
+		timerEvent:Start()
+	elseif spellId == 203176 then
+		if self.vb.interruptCount == 3 then self.vb.interruptCount = 0 end
+		self.vb.interruptCount = self.vb.interruptCount + 1
+		local kickCount = self.vb.interruptCount
+		specWarnBlast:Show(args.sourceName, kickCount)
+		--Takes 3 to block all casts, it only takes 2 in a row to break his stacks though.
+		--3 count still makes sense for 2 though because you know which cast to skip to maintain order. Kick 1-2, skip 3, easy
+		--A group with only one interruptor won't be able to prevent his stacks and need to use dispels on boss instead
+		if kickCount == 1 then
+			specWarnBlast:Play("kick1r")
+		elseif kickCount == 2 then
+			specWarnBlast:Play("kick2r")
+		elseif kickCount == 3 then
+			specWarnBlast:Play("kick3r")
+		end
+	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
@@ -72,33 +98,6 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 	end
 end
 
-function mod:SPELL_CAST_START(args)
-	local spellId = args.spellId
-	if spellId == 202974 then
-		specWarnForceBomb:Show()
-		specWarnForceBomb:Play("157349")
-		timerForceBombD:Start()
-	elseif spellId == 203882 then
-		timerForceBombD:Cancel()
-		timerEvent:Start()
-	elseif spellId == 203176 then
-		if self.vb.interruptCount == 3 then self.vb.interruptCount = 0 end
-		self.vb.interruptCount = self.vb.interruptCount + 1
-		local kickCount = self.vb.interruptCount
-		specWarnBlast:Show(args.sourceName, kickCount)
-		--Takes 3 to block all casts, it only takes 2 in a row to break his stacks though.
-		--3 count still makes sense for 2 though because you know which cast to skip to maintain order. Kick 1-2, skip 3, easy
-		--A group with only one interruptor won't be able to prevent his stacks and need to use dispels on boss instead
-		if kickCount == 1 then
-			specWarnBlast:Play("kick1r")
-		elseif kickCount == 2 then
-			specWarnBlast:Play("kick2r")
-		elseif kickCount == 3 then
-			specWarnBlast:Play("kick3r")
-		end
-	end
-end
-
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 203833 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
 		specWarnTimeSplit:Show()
@@ -107,8 +106,7 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 147995 then--Interrupt Channeling
 		self.vb.interruptCount = 0
 		timerEvent:Cancel()

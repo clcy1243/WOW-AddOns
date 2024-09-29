@@ -100,7 +100,7 @@ function mod:OnEngage()
 	shadowEscapeCount = 0
 	nextPhase, nextPhaseSoon = 70, 75.5
 	eyeTarget = nil
-	wipe(windTargets)
+	windTargets = {}
 
 	if not self:LFR() then
 		self:Berserk(self:Heroic() and 540 or 480)
@@ -112,7 +112,7 @@ function mod:OnEngage()
 	self:CDBar(182200, self:Easy() and 6.3 or 5.5) -- Fel Chakram
 	self:CDBar(181956, self:Easy() and 21 or 17) -- Phantasmal Winds
 	self:CDBar(182323, self:Easy() and 34 or 25) -- Phantasmal Wounds
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
 end
 
 --------------------------------------------------------------------------------
@@ -137,16 +137,16 @@ end
 
 function mod:EyeOfAnzu(args)
 	eyeTarget = args.destGUID
-	--self:TargetMessage(args.spellId, args.destName, "green") -- XXX info display instead?
-	if self:Me(eyeTarget) then
-		self:TargetMessage(args.spellId, args.destName, "blue", #windTargets > 0 and "Warning" or "Info")
+	--self:TargetMessageOld(args.spellId, args.destName, "green") -- XXX info display instead?
+	if self:Me(args.destGUID) then
+		self:TargetMessageOld(args.spellId, args.destName, "blue", #windTargets > 0 and "warning" or "info")
 		self:Flash(args.spellId)
 	end
 end
 
 do
 	local function printTarget(self, name)
-		self:TargetMessage(185345, name, "red", "Long") -- Warning is used in Eye+Winds events, so Long here to be distinct
+		self:TargetMessageOld(185345, name, "red", "long") -- Warning is used in Eye+Winds events, so Long here to be distinct
 	end
 	function mod:ShadowRiposte(args)
 		if self:MobId(args.sourceGUID) == 90316 then -- prevent Dark Simulacrum from messing with the cd
@@ -157,16 +157,16 @@ do
 end
 
 function mod:PhantasmalWinds(args)
-	wipe(windTargets)
+	windTargets = {}
 end
 
 do
 	local isOnMe = nil
 	local function warn(self)
 		if isOnMe then
-			self:TargetMessage(181956, isOnMe, "blue" , "Alarm")
+			self:TargetMessageOld(181956, isOnMe, "blue" , "alarm")
 		else
-			self:Message(181956, "yellow", self:UnitBuff("player", self:SpellName(179202)) and "Warning") -- Warning if you have the Eye
+			self:MessageOld(181956, "yellow", self:UnitBuff("player", self:SpellName(179202)) and "warning") -- Warning if you have the Eye
 		end
 		isOnMe = nil
 	end
@@ -180,16 +180,16 @@ do
 			isOnMe = args.destName
 		end
 		if self:GetOption("custom_off_wind_marker") then
-			SetRaidTarget(args.destName, #windTargets)
+			self:CustomIcon(false, args.destName, #windTargets)
 		end
 	end
 end
 
 function mod:PhantasmalWindsRemoved(args)
 	if self:GetOption("custom_off_wind_marker") then
-		SetRaidTarget(args.destName, 0)
+		self:CustomIcon(false, args.destName)
 	end
-	tDeleteItem(windTargets, args.destName)
+	self:DeleteFromTable(windTargets, args.destName)
 end
 
 do
@@ -198,7 +198,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 then
 			prev = t
-			self:Message(182323, "orange")
+			self:MessageOld(182323, "orange")
 			self:CDBar(182323, self:Easy() and 40 or 33)
 		end
 	end
@@ -207,7 +207,7 @@ end
 function mod:PhantasmalCorruption(args)
 	if args.destGUID ~= eyeTarget then
 		self:TargetBar(181824, 10, args.destName)
-		self:TargetMessage(181824, args.destName, "orange", "Warning", nil, nil, true)
+		self:TargetMessageOld(181824, args.destName, "orange", "warning", nil, nil, true)
 		if self:Me(args.destGUID) then
 			self:Say(181824)
 			self:OpenProximity(181824, 15) -- Range discovered from LFR testing
@@ -224,7 +224,7 @@ function mod:PhantasmalCorruptionRemoved(args)
 end
 
 function mod:FelBomb(args)
-	self:TargetMessage(args.spellId, args.destName, "red", self:Dispeller("magic") and "Alert")
+	self:TargetMessageOld(args.spellId, args.destName, "red", self:Dispeller("magic") and "alert")
 	if self:Me(args.destGUID) then
 		self:Say(args.spellId)
 	end
@@ -232,20 +232,20 @@ function mod:FelBomb(args)
 end
 
 function mod:FocusedBlast(args)
-	self:Message(args.spellId, "red", nil, CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "red", nil, CL.casting:format(args.spellName))
 	self:Bar(args.spellId, 12)
-	self:DelayedMessage(args.spellId, 9, "red", CL.incoming:format(args.spellName), nil, "Long")
+	self:DelayedMessage(args.spellId, 9, "red", CL.incoming:format(args.spellName), nil, "long")
 	self:ScheduleTimer("Flash", 9, args.spellId)
 end
 
 function mod:FelConduit(args)
-	self:Message(181827, "orange", "Alert")
+	self:MessageOld(181827, "orange", "alert")
 	self:CDBar(181827, self:Easy() and 19.3 or 15.9)
 end
 
 function mod:RAID_BOSS_WHISPER(_, msg)
 	if msg:find(182582) then -- Fel Incineration
-		self:Message(182582, "blue", "Alarm", CL.you:format(self:SpellName(182582)))
+		self:MessageOld(182582, "blue", "alarm", CL.you:format(self:SpellName(182582)))
 		self:Say(182582)
 	end
 end
@@ -255,7 +255,7 @@ do
 	function mod:FelChakram(args)
 		list[#list+1] = args.destName
 		if #list == 1 then
-			self:ScheduleTimer("TargetMessage", 0.3, 182200, list, "yellow", "Alert")
+			self:ScheduleTimer("TargetMessageOld", 0.3, 182200, list, "yellow", "alert")
 			self:CDBar(182200, 34)
 		end
 		if self:Me(args.destGUID) then
@@ -267,7 +267,7 @@ end
 
 function mod:DarkBindingsCast()
 	bindingsRemoved = 0
-	self:Message(185510, "orange", "Info", CL.casting:format(self:SpellName(185510))) -- Dark Bindings, actual cast is called "Chains of Despair"
+	self:MessageOld(185510, "orange", "info", CL.casting:format(self:SpellName(185510))) -- Dark Bindings, actual cast is called "Chains of Despair"
 	self:Bar(185510, 30)
 end
 
@@ -276,23 +276,23 @@ do
 	function mod:DarkBindings(args)
 		list[#list+1] = args.destName
 		if #list == 1 then
-			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, list, "yellow")
+			self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, list, "yellow")
 		end
 		if self:Me(args.destGUID) then
 			self:Say(args.spellId)
 		end
 		if self:GetOption("custom_off_binding_marker") then
-			SetRaidTarget(args.destName, #list)
+			self:CustomIcon(false, args.destName, #list)
 		end
 	end
 
 	function mod:DarkBindingsRemoved(args)
 		bindingsRemoved = bindingsRemoved + 1
 		if self:GetOption("custom_off_binding_marker") then
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
 		if bindingsRemoved % 2 == 0 then -- 2 events per pair of bindings removed (player a and player b)
-			self:Message(args.spellId, "cyan", nil, L.bindings_removed:format(bindingsRemoved/2))
+			self:MessageOld(args.spellId, "cyan", nil, L.bindings_removed:format(bindingsRemoved/2))
 		end
 	end
 end
@@ -308,7 +308,7 @@ function mod:Stage2() -- Shadow Escape
 	self:StopBar(182323) -- Phantasmal Wounds
 	shadowEscapeCount = shadowEscapeCount + 1
 
-	self:Message("stages", "cyan", "Info", ("%d%% - %s"):format(nextPhase, CL.phase:format(2)), false)
+	self:MessageOld("stages", "cyan", "info", ("%d%% - %s"):format(nextPhase, CL.phase:format(2)), false)
 	nextPhase = nextPhase - 25
 	self:ScheduleTimer("Stage1", self:Easy() and 50 or 40) -- event for when Iskar is attackable again?
 	self:Bar("stages", self:Easy() and 50 or 40, CL.phase:format(1), "achievement_boss_hellfire_felarakkoa")
@@ -327,7 +327,7 @@ end
 
 function mod:Stage1() -- Shadow Escape over
 	self:StopBar(181912) -- Focused Blast
-	self:Message("stages", "cyan", "Info", CL.phase:format(1), false)
+	self:MessageOld("stages", "cyan", "info", CL.phase:format(1), false)
 	if self:Mythic() then
 		self:CDBar(185345, remainingRiposte) -- Shadow Riposte
 	end
@@ -342,19 +342,19 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 1.5 then
 			prev = t
-			self:Message(182582, "blue", "Alert", CL.underyou:format(args.spellName))
+			self:MessageOld(182582, "blue", "alert", CL.underyou:format(args.spellName))
 		end
 	end
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp < nextPhaseSoon then
 		nextPhaseSoon = nextPhaseSoon - 25
 		if nextPhaseSoon < 20 then
 			self:UnregisterUnitEvent(event, unit)
 		end
-		self:Message("stages", "cyan", nil, CL.soon:format(CL.phase:format(2)), false)
+		self:MessageOld("stages", "cyan", nil, CL.soon:format(CL.phase:format(2)), false)
 	end
 end
 

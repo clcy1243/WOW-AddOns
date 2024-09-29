@@ -57,7 +57,7 @@ function mod:Hate(args)
 		self:Bar(104936, 8) -- Skewer
 	end
 	self:Bar(args.spellId, 20)
-	self:TargetMessage(args.spellId, args.destName, "red")
+	self:TargetMessageOld(args.spellId, args.destName, "red")
 end
 
 function mod:Skewer(args)
@@ -66,12 +66,12 @@ function mod:Skewer(args)
 		self:Bar(105067, 8) -- Seething Hate
 	end
 	self:Bar(args.spellId, 20)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 end
 
 function mod:BladeDance(args)
 	danceCount = danceCount + 1
-	self:Message(args.spellId, "orange", "Info", L["dance_message"]:format(danceCount))
+	self:MessageOld(args.spellId, "orange", "info", L["dance_message"]:format(danceCount))
 	self:Bar(args.spellId, 4, CL["cast"]:format(args.spellName))
 	if danceCount == 1 then
 		firstAbility = nil

@@ -12,7 +12,7 @@ mod.engageId = 1623
 -- Locals
 --
 
-local UnitHealth, UnitHealthMax, UnitPower, GetTime = UnitHealth, UnitHealthMax, UnitPower, GetTime
+local UnitPower, GetTime = UnitPower, GetTime
 local markableMobs = {}
 local marksUsed = {}
 local markTimer = nil
@@ -69,6 +69,9 @@ if L then
 	L.custom_off_minion_marker = "Minion marker"
 	L.custom_off_minion_marker_desc = "To help separate Empowered Whirling Corruption adds, mark them with {rt1}{rt2}{rt3}{rt4}{rt5}{rt6}{rt7}, requires promoted or leader."
 	L.custom_off_minion_marker_icon = 1
+
+	L.warmup_yell_chat_trigger1 = "It is not too late, Garrosh" -- It is not too late, Garrosh. Lay down the mantle of Warchief. We can end this here, now, with no more bloodshed."
+	L.warmup_yell_chat_trigger2 = "Do you remember nothing of Honor" -- Ha! Do you remember nothing of Honor? Of glory on the battlefield?  You who would parlay with the humans, who allowed warlocks to practice their dark magics right under our feet.  You are weak.
 end
 L = mod:GetLocale()
 
@@ -86,7 +89,7 @@ function mod:GetOptions()
 		"custom_off_minion_marker",
 		{147209, "FLASH", "ICON", "SAY"}, 147235, "bombardment", {147665, "FLASH", "ICON"}, {"clump_check", "FLASH", "PROXIMITY"}, "manifest_rage", -- phase 4
 		{144758, "SAY", "FLASH", "ICON"},
-		"stages", "berserk",
+		"stages", "warmup", "berserk",
 	}, {
 		[-8298] = -8288, -- phase 1
 		[-8294] = -8294, -- Farseer
@@ -100,11 +103,14 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
+	self:BossYell("Warmup", L.warmup_yell_chat_trigger1)
+	self:BossYell("WarmupBackup", L.warmup_yell_chat_trigger2)
+
 	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", nil, "boss1", "boss2", "boss3")
 	self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "IronStarRolling", "boss1", "boss2", "boss3")
 
 	-- Phase 4
-	self:Yell("Phase3End", L.phase_3_end_trigger)
+	self:BossYell("Phase3End", L.phase_3_end_trigger)
 	self:Emote("ClumpFailIronStarSpawn", "147047")
 	self:Log("SPELL_CAST_START", "ManifestRage", 147011)
 	self:Log("SPELL_AURA_APPLIED", "IronStarFixateApplied", 147665)
@@ -130,7 +136,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "AddMarkedMob", 144584) -- Chain Lightning
 	self:Log("SPELL_CAST_START", "ChainHeal", 144583)
 	self:Log("SPELL_CAST_SUCCESS", "PowerIronStar", 144616)
-	self:Yell("Farseer", L.farseer_trigger)
+	self:BossYell("Farseer", L.farseer_trigger)
 	self:Emote("SiegeEngineer", "144616")
 	self:Log("SPELL_CAST_SUCCESS", "Desecrate", 144748, 144749)
 
@@ -154,13 +160,21 @@ function mod:OnEngage(diff)
 	mcCounter = 1
 	phase = 1
 	bombardmentCounter, maliceCounter = 1, 1
-	wipe(markableMobs)
-	wipe(marksUsed)
+	markableMobs = {}
+	marksUsed = {}
 	markTimer = nil
 	if self.db.profile.custom_off_shaman_marker then
 		self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 	end
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1", "boss2", "boss3")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1", "boss2", "boss3")
+end
+
+function mod:Warmup()
+	self:Bar("warmup", 122, CL.active, "achievement_boss_garrosh")
+end
+
+function mod:WarmupBackup()
+	self:Bar("warmup", {110, 122}, CL.active, "achievement_boss_garrosh")
 end
 
 --------------------------------------------------------------------------------
@@ -190,7 +204,7 @@ do
 end
 
 function mod:ManifestRage(args)
-	self:Message("manifest_rage", "red", "Warning", 147011, 147011)
+	self:MessageOld("manifest_rage", "red", "warning", 147011, 147011)
 end
 
 function mod:Phase3End()
@@ -205,7 +219,7 @@ function mod:Phase3End()
 end
 
 function mod:ClumpFailIronStarSpawn()
-	self:Message("clump_check", "red", "Long", L.clump_check_warning, 147126)
+	self:MessageOld("clump_check", "red", "long", L.clump_check_warning, 147126)
 	self:Flash("clump_check", 147126)
 end
 
@@ -213,7 +227,7 @@ do
 	local prev = 0
 	function mod:MaliciousBlastApplied(args)
 		if self:Me(args.destGUID) then
-			self:Message(args.spellId, "blue", "Alert", CL.you:format(CL.count:format(args.spellName, args.amount or 1)))
+			self:MessageOld(args.spellId, "blue", "alert", CL.you:format(CL.count:format(args.spellName, args.amount or 1)))
 			self:Bar(args.spellId, 2) -- Next tick
 		end
 
@@ -231,11 +245,11 @@ end
 
 function mod:MaliceApplied(args)
 	self:SecondaryIcon(args.spellId, args.destName)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Alarm")
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "alarm")
 	self:TargetBar(args.spellId, 14, args.destName)
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Malice")
 	end
 	maliceCounter = maliceCounter + 1
 	self:Bar(args.spellId, 30, CL.count:format(args.spellName, maliceCounter))
@@ -247,7 +261,7 @@ end
 
 function mod:IronStarFixateApplied(args)
 	self:PrimaryIcon(args.spellId, args.destName)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Warning")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "warning")
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
 	end
@@ -256,7 +270,7 @@ end
 do
 	local bombardmentTimers = { 55, 40, 40, 25, 25, 15 }
 	function mod:Bombardment(args)
-		self:Message("bombardment", "yellow", nil, CL.count:format(L.bombardment, bombardmentCounter), args.spellId)
+		self:MessageOld("bombardment", "yellow", nil, CL.count:format(L.bombardment, bombardmentCounter), args.spellId)
 		self:Bar("bombardment", bombardmentTimers[bombardmentCounter] or 15, CL.count:format(L.bombardment, bombardmentCounter+1), args.spellId)
 		bombardmentCounter = bombardmentCounter + 1
 		self:Bar("bombardment", 13, CL.casting:format(args.spellName), args.spellId)
@@ -270,14 +284,14 @@ end
 function mod:GrippingDespair(args)
 	local amount = args.amount or 1
 	-- force Gripping Despair text to keep it short
-	self:StackMessage(145183, args.destName, amount, "yellow", amount > 2 and not self:Me(args.destGUID) and "Warning")
+	self:StackMessageOld(145183, args.destName, amount, "yellow", amount > 2 and not self:Me(args.destGUID) and "warning")
 	if args.spellId == 145195 then -- Empowered (Explosive Despair)
 		self:TargetBar(-8325, 10, args.destName)
 	end
 end
 
 function mod:MindControl(args)
-	self:Message(145065, "orange", "Alert", 67229, 145065) -- 67229 = "Mind Control"
+	self:MessageOld(145065, "orange", "alert", 67229, 145065) -- 67229 = "Mind Control"
 	if phase == 3 then
 		self:Bar(145065, (mcCounter == 1) and 35 or 42, 67229, 145065) -- 67229 = "Mind Control"
 	elseif mcCounter < 3 then -- Only enough time for 3 in phase 2 between each intermission
@@ -288,14 +302,14 @@ end
 
 -- Phase 1
 function mod:Warsong(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:Bar(args.spellId, 42)
 end
 
 do
 	local waveTimers = { 43, 45 }
 	function mod:NewWave()
-		self:Message(-8292, "yellow", nil, nil, 144582)
+		self:MessageOld(-8292, "yellow", nil, nil, 144582)
 		self:Bar(-8292, waveTimers[waveCounter] or 40, nil, 144582)
 		waveTimer = self:ScheduleTimer("NewWave", waveTimers[waveCounter] or 40)
 		waveCounter = waveCounter + 1
@@ -307,7 +321,7 @@ do
 	local function setMark(unit, guid)
 		for mark = 1, 7 do
 			if not marksUsed[mark] then
-				SetRaidTarget(unit, mark)
+				mod:CustomIcon(false, unit, mark)
 				markableMobs[guid] = "marked"
 				marksUsed[mark] = guid
 				return
@@ -334,7 +348,7 @@ do
 	end
 
 	function mod:UPDATE_MOUSEOVER_UNIT()
-		local guid = UnitGUID("mouseover")
+		local guid = self:UnitGUID("mouseover")
 		if guid and markableMobs[guid] == true then
 			setMark("mouseover", guid)
 		end
@@ -358,22 +372,22 @@ do
 	end
 	function mod:WhirlingCorruption(args)
 		self:Flash(144985)
-		self:Message(144985, "red", "Long", CL.count:format(args.spellName, whirlingCounter))
+		self:MessageOld(144985, "red", "long", CL.count:format(args.spellName, whirlingCounter))
 		whirlingCounter = whirlingCounter + 1
 		if phase == 2 then
 			if whirlingCounter < 4 then -- Only enough time for 3 in phase 2 between each intermission
 				self:Bar(144985, 50, CL.count:format(self:SpellName(144985), whirlingCounter))
 			end
 			if desecrateCounter == 3 and whirlingCounter == 3 then -- Whirling arrived first, delay Desecrate to the end of the cast
-				self:CDBar(144758, 8.5) -- Desecrate, delayed by Whirling: 2.5s cast and 6s channel = 8.5s
+				self:Bar(144758, 8.5) -- Desecrate, delayed by Whirling: 2.5s cast and 6s channel = 8.5s
 			end
 		else
 			self:Bar(144985, 50, CL.count:format(self:SpellName(144985), whirlingCounter))
 		end
 
 		if args.spellId == 145037 and self.db.profile.custom_off_minion_marker then
-			wipe(markableMobs)
-			wipe(marksUsed)
+			markableMobs = {}
+			marksUsed = {}
 			self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 			if not markTimer then
 				markTimer = self:ScheduleRepeatingTimer(markMobs, 0.1)
@@ -394,8 +408,8 @@ do
 end
 
 function mod:ChainHeal(args)
-	if UnitGUID("focus") == args.sourceGUID then
-		self:Message("chain_heal", "blue", "Alert", L.chain_heal_message, args.spellId)
+	if self:UnitGUID("focus") == args.sourceGUID then
+		self:MessageOld("chain_heal", "blue", "alert", L.chain_heal_message, args.spellId)
 	end
 end
 
@@ -403,7 +417,7 @@ do
 	local farseerTimers = { 50, 50, 40 } -- XXX need more data
 	-- cat Transcriptor.lua | sed "s/\t//g" | cut -d ' ' -f 2-300 | grep -E "(YELL].*Farseers)|(DED.*144489)|(DED.*144866)"
 	function mod:Farseer()
-		self:Message(-8294, "orange", self:Damager() and "Alert", nil, 144584)
+		self:MessageOld(-8294, "orange", self:Damager() and "alert", nil, 144584)
 		self:Bar(-8294, farseerTimers[farseerCounter] or 40, nil, 144584) -- chain lightning icon cuz that is some shaman spell
 		farseerCounter = farseerCounter + 1
 	end
@@ -412,7 +426,7 @@ end
 do
 	local dead = 0
 	function mod:SiegeEngineer()
-		self:Message(-8298, "yellow", nil, nil, 144616)
+		self:MessageOld(-8298, "yellow", nil, nil, 144616)
 		self:Bar(-8298, engineerCounter == 1 and 45 or 40, nil, 144616)
 		engineerCounter = engineerCounter + 1
 		dead = 0
@@ -431,7 +445,7 @@ end
 
 function mod:IronStarRolling(_, _, _, spellId)
 	if spellId == 144616 then -- Power Iron Star
-		self:Message(spellId, "red", nil, L.ironstar_rolling)
+		self:MessageOld(spellId, "red", nil, L.ironstar_rolling)
 		self:Bar("ironstar_impact", 9, 144653) -- Iron Star Impact
 	end
 end
@@ -448,9 +462,9 @@ do
 		end
 		-- this is so people know they'll take extra damage
 		if #hopeList > 0 then
-			mod:TargetMessage(144945, hopeList, "yellow", "Warning", CL.count:format(mod:SpellName(29125), #hopeList), 149004) -- maybe add it's own option key? 29125 spell called "Hopeless"
+			mod:TargetMessageOld(144945, hopeList, "yellow", "warning", CL.count:format(mod:SpellName(29125), #hopeList), 149004) -- maybe add it's own option key? 29125 spell called "Hopeless"
 		else
-			mod:Message(144945, "yellow", nil, CL.count:format(mod:SpellName(29125), 0), 149004)
+			mod:MessageOld(144945, "yellow", nil, CL.count:format(mod:SpellName(29125), 0), 149004)
 		end
 		hopeTimer = nil
 	end
@@ -461,7 +475,7 @@ do
 	end
 	function mod:YShaarjsProtection(args)
 		if self:MobId(args.destGUID) == 71865 then
-			self:Message(args.spellId, "green", "Long", CL.over:format(args.spellName))
+			self:MessageOld(args.spellId, "green", "long", CL.over:format(args.spellName))
 			if not self:LFR() then
 				hopeTimer = self:ScheduleTimer(announceHopeless, 6)
 			end
@@ -475,7 +489,7 @@ do
 
 	local annihilateCounter = 1
 	function mod:Annihilate(args)
-		self:Message(args.spellId, "yellow", nil, CL.casting:format(CL.count:format(args.spellName, annihilateCounter)))
+		self:MessageOld(args.spellId, "yellow", nil, CL.casting:format(CL.count:format(args.spellName, annihilateCounter)))
 		annihilateCounter = annihilateCounter + 1
 	end
 
@@ -496,7 +510,7 @@ do
 			self:StopBar(144758) -- Desecrate
 			self:StopBar(67229) -- Mind Control
 			self:StopBar(CL.count:format(self:SpellName(144985), whirlingCounter)) -- Whirling Corruption
-			self:Message(-8305, "cyan", nil, CL.intermission, "SPELL_HOLY_PRAYEROFSHADOWPROTECTION")
+			self:MessageOld(-8305, "cyan", nil, CL.intermission, "SPELL_HOLY_PRAYEROFSHADOWPROTECTION")
 			self:Bar(-8305, 210, CL.intermission, "SPELL_HOLY_PRAYEROFSHADOWPROTECTION")
 			self:Bar(-8305, 62, CL.over:format(CL.intermission), "SPELL_HOLY_PRAYEROFSHADOWPROTECTION")
 			whirlingCounter = 1
@@ -512,11 +526,11 @@ do
 					self:Bar(145065, 15, 67229, 145065) -- Mind Control
 				end
 				self:Bar(144985, 30, CL.count:format(self:SpellName(144985), whirlingCounter)) -- Whirling Corruption
-				self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1", "boss2", "boss3")
+				self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1", "boss2", "boss3")
 				-- warn for empowered abilities
 				local power = UnitPower("boss1")
 				while power >= warnPower do -- can he hit 100 energy before p3? that would be some shenanigans
-					self:DelayedMessage("stages", 2, "yellow", L.empowered_message:format(abilities[warnPower]), false, "Info")
+					self:DelayedMessage("stages", 2, "yellow", L.empowered_message:format(abilities[warnPower]), false, "info")
 					warnPower = warnPower + 25
 				end
 			else -- first time, don't start timers yet
@@ -528,16 +542,16 @@ do
 			phase = 3
 			mcCounter = 1
 			desecrateCounter = 1
-			self:Message("stages", "cyan", nil, CL.phase:format(phase), false)
+			self:MessageOld("stages", "cyan", nil, CL.phase:format(phase), false)
 			self:StopBar(CL.intermission)
 			self:Bar(144985, 45, CL.count:format(self:SpellName(144985), whirlingCounter)) -- Whirling Corruption
 			if not self:Solo() then
 				self:Bar(145065, 29, 67229, 145065) -- Mind Control
 			end
-			self:CDBar(144758, 20) -- Desecrate
+			self:Bar(144758, 20) -- Desecrate
 		elseif spellId == 146984 then -- phase 4 Enter Realm of Garrosh
 			phase = 4
-			self:Message("stages", "cyan", nil, CL.phase:format(phase), false)
+			self:MessageOld("stages", "cyan", nil, CL.phase:format(phase), false)
 			self:StopBar(CL.intermission)
 			self:StopBar(CL.count:format(self:SpellName(144985), whirlingCounter)) -- Whirling Corruption
 			self:StopBar(144758) -- Desecrate
@@ -552,11 +566,11 @@ do
 end
 
 -- General
-function mod:UNIT_HEALTH_FREQUENT(event, unitId)
-	if self:MobId(UnitGUID(unitId)) ~= 71865 then return end
-	local hp = UnitHealth(unitId) / UnitHealthMax(unitId) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) ~= 71865 then return end
+	local hp = self:GetHealth(unit)
 	if hp < 16 then -- 10%
-		self:Message("stages", "cyan", "Info", CL.soon:format(CL.phase:format(phase+1)), false)
+		self:MessageOld("stages", "cyan", "info", CL.soon:format(CL.phase:format(phase+1)), false)
 		self:UnregisterUnitEvent(event, "boss1", "boss2", "boss3")
 	end
 end
@@ -567,9 +581,9 @@ do
 		self:ScheduleTimer("SecondaryIcon", 7, 144758)
 		if self:Me(guid) then
 			self:Flash(144758)
-			self:Say(144758)
+			self:Say(144758, nil, nil, "Desecrate")
 		end
-		self:TargetMessage(144758, name, "orange", "Alarm")
+		self:TargetMessageOld(144758, name, "orange", "alarm")
 	end
 
 	function mod:Desecrate(args)
@@ -588,7 +602,7 @@ do
 			cd = desecrateCounter == 1 and 34 or 25
 		end
 		if cd > 0 then
-			self:CDBar(144758, cd)
+			self:Bar(144758, cd)
 		end
 		desecrateCounter = desecrateCounter + 1
 	end

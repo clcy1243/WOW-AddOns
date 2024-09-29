@@ -1,8 +1,8 @@
-﻿if GetLocale() ~= "deDE" then return end
+if GetLocale() ~= "deDE" then return end
 local L
 
 -- Lord Kazzak (Badlands)
-L = DBM:GetModLocalization("KazzakClassic")
+L = DBM:GetModLocalization("KazzakClassicVanilla")
 
 L:SetGeneralLocalization{
 	name = "Lord Kazzak"
@@ -13,7 +13,7 @@ L:SetMiscLocalization({
 })
 
 -- Azuregos (Azshara)
-L = DBM:GetModLocalization("Azuregos")
+L = DBM:GetModLocalization("AzuregosVanilla")
 
 L:SetGeneralLocalization{
 	name = "Azuregos"
@@ -24,45 +24,45 @@ L:SetMiscLocalization({
 })
 
 -- Taerar (Ashenvale)
-L = DBM:GetModLocalization("Taerar")
+L = DBM:GetModLocalization("TaerarVanilla")
 
 L:SetGeneralLocalization{
 	name = "Taerar"
 }
 
 L:SetMiscLocalization({
-	Pull		= "Frieden ist nur ein flüchtiger Traum! Möge der Alptraum herrschen!"
+	Pull		= "Frieden ist nur ein flüchtiger Traum! Von nun an herrscht der ALPTRAUM!"
 })
 
 -- Ysondre (Feralas)
-L = DBM:GetModLocalization("Ysondre")
+L = DBM:GetModLocalization("YsondreVanilla")
 
 L:SetGeneralLocalization{
 	name = "Ysondre"
 }
 
 L:SetMiscLocalization({
-	Pull		= "Die Fäden des Lebens wurden durchtrennt! Die Träumer müssen gerächt werden."
+	Pull		= "Die Fäden des LEBENS wurden durchtrennt! Die Träumer müssen gerächt werden!"
 })
 
 -- Lethon (Hinterlands)
-L = DBM:GetModLocalization("Lethon")
+L = DBM:GetModLocalization("LethonVanilla")
 
 L:SetGeneralLocalization{
 	name = "Lethon"
 }
 
 L:SetMiscLocalization({
---	Pull		= "Ich spüre die Schatten in Euren Herzen. Die Verdammten werden niemals ruhen!"
+	Pull		= "Ich fühle die SCHATTEN in Euren Herzen. Niemals darf das Böse Ruhe finden!"
 })
 
 -- Emeriss (Duskwood)
-L = DBM:GetModLocalization("Emeriss")
+L = DBM:GetModLocalization("EmerissVanilla")
 
 L:SetGeneralLocalization{
-	name = "Smariss"
+	name = "Emeriss"
 }
 
 L:SetMiscLocalization({
-	Pull		= "Hoffnung ist ein Gebrechen der Seele! Dieses Land wird verdorren und vergehen!"
+	Pull		= "Die Hoffnung ist eine KRANKHEIT der Seele. Dieses Land wird verdorren und sterben!"
 })

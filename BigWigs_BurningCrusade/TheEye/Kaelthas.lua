@@ -6,6 +6,13 @@ local mod = BigWigs:NewBoss("Kael'thas Sunstrider", 550, 1576)
 if not mod then return end
 --Kael'thas Sunstrider, Thaladred the Darkener, Master Engineer Telonicus, Grand Astromancer Capernian, Lord Sanguinar
 mod:RegisterEnableMob(19622, 20064, 20063, 20062, 20060)
+if mod:Classic() then
+	mod:SetEncounterID(733)
+end
+
+--------------------------------------------------------------------------------
+-- Locals
+--
 
 local MCd = mod:NewTargetList()
 local phase = 1
@@ -93,7 +100,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "Phoenix", 36723)
 	self:Log("SPELL_CAST_START", "GravityLapse", 35941)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:Emote("Pyro", L["pyro_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 
@@ -106,7 +113,7 @@ end
 
 function mod:OnEngage()
 	self:Bar("phase", 32, L["thaladred"], "Spell_Shadow_Charm")
-	self:Message("phase", "green", nil, L["engage_message"], false)
+	self:MessageOld("phase", "green", nil, L["engage_message"], false)
 	phase = 1
 end
 
@@ -115,13 +122,13 @@ end
 --
 
 function mod:Conflag(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow")
 	self:TargetBar(args.spellId, 10, args.destName)
 end
 
 function mod:Toy(args)
 	if phase < 3 then
-		self:TargetMessage(args.spellId, args.destName, "yellow")
+		self:TargetMessageOld(args.spellId, args.destName, "yellow")
 		self:TargetBar(args.spellId, 60, args.destName)
 	end
 end
@@ -133,7 +140,7 @@ end
 do
 	local scheduled = nil
 	local function mcWarn(spellId)
-		mod:TargetMessage("mc", MCd, "red", "Alert", spellId)
+		mod:TargetMessageOld("mc", MCd, "red", "alert", spellId)
 		scheduled = nil
 	end
 	function mod:MC(args)
@@ -146,7 +153,7 @@ do
 end
 
 function mod:FearCast(args)
-	self:Message(args.spellId, "orange", nil, L["fear_soon_message"])
+	self:MessageOld(args.spellId, "orange", nil, L["fear_soon_message"])
 end
 
 do
@@ -155,37 +162,37 @@ do
 		local time = GetTime()
 		if (time - last) > 5 then
 			last = time
-			self:Message(args.spellId, "yellow", nil, L["fear_message"])
+			self:MessageOld(args.spellId, "yellow", nil, L["fear_message"])
 			self:Bar(args.spellId, 30, L["fear_bar"])
 		end
 	end
 end
 
 function mod:Phoenix()
-	self:Message("rebirth", "orange", nil, L["rebirth"])
+	self:MessageOld("rebirth", "orange", nil, L["rebirth"])
 	self:Bar("rebirth", 45, L["rebirth_bar"], "Spell_Fire_Burnout")
 	self:DelayedMessage("rebirth", 40, "yellow", L["rebirth_warning"])
 end
 
 function mod:GravityLapse(args)
-	self:Message("phase", "red", nil, args.spellId)
+	self:MessageOld("phase", "red", nil, args.spellId)
 	self:Bar("phase", 90, args.spellId)
 end
 
 function mod:AddDeaths(args)
-	self:Message("phase", "yellow", nil, L["dead_message"]:format(args.destName), false)
+	self:MessageOld("phase", "yellow", nil, L["dead_message"]:format(args.destName), false)
 end
 
 function mod:Pyro()
 	self:Bar("pyro", 60, L["pyro"], "Spell_Fire_Fireball02")
-	self:Message("pyro", "green", nil, L["pyro_message"])
+	self:MessageOld("pyro", "green", nil, L["pyro_message"])
 	self:DelayedMessage("pyro", 55, "yellow", L["pyro_warning"])
 end
 
 function mod:CHAT_MSG_MONSTER_EMOTE(_, msg, _, _, _, player)
 	if msg:find(L["gaze_trigger"]) then
 		self:TargetBar("gaze", 9, player, L["gaze"], "Spell_Shadow_EvilEye")
-		self:TargetMessage("gaze", player, "red", nil, L["gaze"], "Spell_Shadow_EvilEye")
+		self:TargetMessageOld("gaze", player, "red", nil, L["gaze"], "Spell_Shadow_EvilEye")
 		self:PrimaryIcon("gaze", player)
 		self.gazePlayer = player
 	end
@@ -193,9 +200,9 @@ end
 
 function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 	if msg == L["thaladred_inc_trigger"] then
-		self:Message("phase", "green", nil, L["thaladred"], false)
+		self:MessageOld("phase", "green", nil, L["thaladred"], false)
 	elseif msg == L["sanguinar_inc_trigger"] then
-		self:Message("phase", "green", nil, L["sanguinar"], false)
+		self:MessageOld("phase", "green", nil, L["sanguinar"], false)
 		self:Bar("phase", 13, L["sanguinar"], "Spell_Shadow_Charm")
 		self:PrimaryIcon("gaze")
 		if self.gazePlayer then
@@ -203,26 +210,26 @@ function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 			self.gazePlayer = nil
 		end
 	elseif msg == L["capernian_inc_trigger"] then
-		self:Message("phase", "green", nil, L["capernian"], false)
+		self:MessageOld("phase", "green", nil, L["capernian"], false)
 		self:Bar("phase", 7, L["capernian"], "Spell_Shadow_Charm")
 		self:OpenProximity("proximity", 10)
 		self:StopBar(L["fear_bar"])
 	elseif msg == L["telonicus_inc_trigger"] then
-		self:Message("phase", "green", nil, L["telonicus"], false)
+		self:MessageOld("phase", "green", nil, L["telonicus"], false)
 		self:Bar("phase", 8, L["telonicus"], "Spell_Shadow_Charm")
 		self:CloseProximity()
 	elseif msg == L["weapons_inc_trigger"] then
 		phase = 2
-		self:Message("phase", "green", nil, L["weapons_inc_message"], false)
+		self:MessageOld("phase", "green", nil, L["weapons_inc_message"], false)
 		self:Bar("phase", 105, L["revive_bar"], "Spell_Holy_ReviveChampion")
 		self:DelayedMessage("phase", 100, "yellow", L["revive_warning"])
 	elseif msg == L["phase3_trigger"] then
 		phase = 3
-		self:Message("phase", "green", nil, L["phase3_message"], false)
-		self:Bar("phase", 180, L["phase4_bar"], "Spell_ChargePositive")
+		self:MessageOld("phase", "green", nil, L["phase3_message"], false)
+		self:Bar("phase", self:Classic() and 120 or 180, L["phase4_bar"], "Spell_ChargePositive")
 	elseif msg == L["phase4_trigger"] then
 		phase = 4
-		self:Message("phase", "green", nil, L["phase4_message"], false)
+		self:MessageOld("phase", "green", nil, L["phase4_message"], false)
 		self:Bar("pyro", 60, L["pyro"], "Spell_Fire_Fireball02")
 		self:DelayedMessage("pyro", 55, "yellow", L["pyro_warning"])
 		self:StopBar(L["phase4_bar"])
@@ -230,7 +237,7 @@ function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 		phase = 5
 		self:CancelDelayedMessage(L["pyro_warning"])
 		self:StopBar(L["pyro"])
-		self:Message("phase", "yellow", nil, L["flying_message"], false)
+		self:MessageOld("phase", "yellow", nil, L["flying_message"], false)
 		self:Bar("phase", 60, 35941) -- Gravity Lapse
 	end
 end

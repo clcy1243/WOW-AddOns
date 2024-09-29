@@ -1,6 +1,12 @@
 
-local L = BigWigs:NewBossLocale("Cho'gall", "itIT")
+local L = BigWigs:NewBossLocale("Halfus Wyrmbreaker", "itIT")
 if not L then return end
+if L then
+	L.strikes_message = "Assalti"
+	--L.freed_message = "%s freed %s"
+end
+
+L = BigWigs:NewBossLocale("Cho'gall", "itIT")
 if L then
 	L.orders = "Cambio Postura"
 	L.orders_desc = "Avvisi per il cambio di postura di Cho'Gall tra le fasi Ordini Fiammeggianti/dell'Ombra."
@@ -42,19 +48,8 @@ if L then
 	L.engulfingmagic_say = "Inondamento"
 
 	L.valiona_trigger = "Theralion, inonderò la sala di fiamme, impedisci che fuggano!"
-	L.win_trigger = "Almeno... Theralion muore con me..."
 
 	L.twilight_shift = "Cambio"
-end
-
-L = BigWigs:NewBossLocale("Halfus Wyrmbreaker", "itIT")
-if L then
-	L.strikes_message = "Assalti"
-
-	L.breath_message = "Soffio tra poco!"
-	L.breath_bar = "~Soffio"
-
-	L.engage_yell = "Cho'gall avrà le vostre teste tutte"
 end
 
 L = BigWigs:NewBossLocale("Sinestra", "itIT")
@@ -76,8 +71,6 @@ end
 
 L = BigWigs:NewBossLocale("Ascendant Council", "itIT")
 if L then
-	L.static_overload_say = "Tuonofolgore"
-	L.gravity_core_say = "Gravità"
 	L.health_report = "%s al %d%%, cambio di fase tra poco!"
 	L.switch = "Cambio"
 	L.switch_desc = "Avvisi per il cambio di boss."

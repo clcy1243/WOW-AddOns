@@ -121,8 +121,8 @@ function mod:OnEngage()
 	portalsClosed = 0
 	phase = 1
 	curseCount = 1
-	wipe(markOfDoomTargets)
-	wipe(wrathOfGuldanTargets)
+	markOfDoomTargets = {}
+	wrathOfGuldanTargets = {}
 	markOfDoomOnMe = nil
 	wrathOfGuldanOnMe = nil
 	if self:Mythic() then -- non-mythic starts after the portals close
@@ -164,7 +164,7 @@ function mod:CurseOfTheLegionSuccess(args)
 end
 
 function mod:CurseOfTheLegion(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Alarm", CL.count:format(args.spellName, curseCount-1))
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "alarm", CL.count:format(args.spellName, curseCount-1))
 	self:TargetBar(args.spellId, 20, args.destName)
 	self:PrimaryIcon(args.spellId, args.destName)
 	if self:Me(args.destGUID) then
@@ -176,15 +176,18 @@ end
 function mod:CurseOfTheLegionRemoved(args)
 	self:StopBar(args.spellName, args.destName)
 	self:PrimaryIcon(args.spellId)
-	self:Message(args.spellId, "red", "Warning", CL.spawned:format(self:SpellName(-11813))) -- Doom Lord
+	self:MessageOld(args.spellId, "red", "warning", CL.spawned:format(self:SpellName(-11813))) -- Doom Lord
 	self:Bar(181099, 12) -- Mark of Doom
 end
 
 do
 	local list, timer = mod:NewTargetList(), nil
+	local function wipe()
+		list = mod:NewTargetList()
+	end
 	function mod:MarkOfDoomCast(args)
-		wipe(list)
-		self:Message(args.spellId, "yellow", "Info", CL.casting:format(args.spellName))
+		wipe()
+		self:MessageOld(args.spellId, "yellow", "info", CL.casting:format(args.spellName))
 		self:CDBar(args.spellId, 30)
 	end
 
@@ -193,7 +196,7 @@ do
 		local count = #list
 
 		if count == 1 then
-			timer = self:ScheduleTimer("TargetMessage", 2, args.spellId, list, "yellow", "Alarm")
+			timer = self:ScheduleTimer("TargetMessageOld", 2, args.spellId, list, "yellow", "alarm")
 		end
 
 		if self:Me(args.destGUID) then
@@ -201,20 +204,20 @@ do
 			timer = nil
 			markOfDoomOnMe = self:Mythic() and CL.count_icon:format(self:SpellName(28836), count, count) or CL.count:format(self:SpellName(28836), count) -- 28836 = "Mark"
 			self:Say(args.spellId, self:Mythic() and CL.count_rticon:format(self:SpellName(28836), count, count) or CL.count:format(self:SpellName(28836), count))
-			self:TargetMessage(args.spellId, args.destName, "blue", "Alarm", markOfDoomOnMe)
+			self:TargetMessageOld(args.spellId, args.destName, "blue", "alarm", markOfDoomOnMe)
 			self:TargetBar(args.spellId, 15, args.destName, markOfDoomOnMe)
 			self:Flash(args.spellId)
-			self:ScheduleTimer(wipe, 1, list)
+			self:ScheduleTimer(wipe, 1)
 		end
 
 		if count == 3 and timer then -- After the :Me check as we might be the last player
 			self:CancelTimer(timer)
 			timer = nil
-			self:TargetMessage(args.spellId, list, "yellow", "Alarm")
+			self:TargetMessageOld(args.spellId, list, "yellow", "alarm")
 		end
 
 		if self:GetOption("custom_off_doom_marker") and self:Mythic() then
-			SetRaidTarget(args.destName, count)
+			self:CustomIcon(false, args.destName, count)
 		end
 
 		if not tContains(markOfDoomTargets, args.destName) then
@@ -232,10 +235,10 @@ function mod:MarkOfDoomRemoved(args)
 		self:CloseProximity(args.spellId)
 	end
 
-	tDeleteItem(markOfDoomTargets, args.destName)
+	self:DeleteFromTable(markOfDoomTargets, args.destName)
 
 	if self:GetOption("custom_off_doom_marker") and self:Mythic() then
-		SetRaidTarget(args.destName, 0)
+		self:CustomIcon(false, args.destName)
 	end
 
 	if #markOfDoomTargets == 0 then
@@ -247,12 +250,12 @@ end
 
 function mod:DoomSpike(args)
 	if args.amount % 3 == 0 then
-		self:StackMessage(args.spellId, args.destName, args.amount, "orange")
+		self:StackMessageOld(args.spellId, args.destName, args.amount, "orange")
 	end
 end
 
 function mod:ShadowBoltVolley(args)
-	self:Message(args.spellId, "green", nil, CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "green", nil, CL.casting:format(args.spellName))
 end
 
 function mod:FelImplosion(args)
@@ -271,12 +274,15 @@ end
 
 do
 	local list, timer = mod:NewTargetList(), nil
+	local function wipe()
+		list = mod:NewTargetList()
+	end
 	function mod:WrathOfGuldan(args)
 		list[#list + 1] = args.destName
 		local count = #list
 		local reverseCount = 9-count
 		if count == 1 then
-			timer = self:ScheduleTimer("TargetMessage", 1, args.spellId, list, "yellow", "Alarm")
+			timer = self:ScheduleTimer("TargetMessageOld", 1, args.spellId, list, "yellow", "alarm")
 		end
 
 		if self:Me(args.destGUID) then
@@ -284,19 +290,19 @@ do
 			self:CancelTimer(timer)
 			timer = nil
 			self:Say(args.spellId, CL.count_rticon:format(self:SpellName(170963), count, reverseCount)) -- 170963 = "Wrath"
-			self:TargetMessage(args.spellId, args.destName, "blue", "Alarm", CL.count_icon:format(self:SpellName(170963), count, reverseCount))
+			self:TargetMessageOld(args.spellId, args.destName, "blue", "alarm", CL.count_icon:format(self:SpellName(170963), count, reverseCount))
 			self:Flash(args.spellId)
-			self:ScheduleTimer(wipe, 1, list)
+			self:ScheduleTimer(wipe, 1)
 		end
 
 		if count == 5 and timer then -- After the :Me check as we might be the last player
 			self:CancelTimer(timer)
 			timer = nil
-			self:TargetMessage(args.spellId, list, "yellow", "Alarm")
+			self:TargetMessageOld(args.spellId, list, "yellow", "alarm")
 		end
 
 		if self:GetOption("custom_off_wrath_marker") then
-			SetRaidTarget(args.destName, reverseCount)
+			self:CustomIcon(false, args.destName, reverseCount)
 		end
 
 		if not tContains(wrathOfGuldanTargets, args.destName) then
@@ -313,10 +319,10 @@ function mod:WrathOfGuldanRemoved(args)
 		self:CloseProximity(args.spellId)
 	end
 
-	tDeleteItem(wrathOfGuldanTargets, args.destName)
+	self:DeleteFromTable(wrathOfGuldanTargets, args.destName)
 
 	if self:GetOption("custom_off_wrath_marker") then
-		SetRaidTarget(args.destName, 0)
+		self:CustomIcon(false, args.destName)
 	end
 
 	if #wrathOfGuldanTargets == 0 then
@@ -329,29 +335,29 @@ end
 function mod:GrippingShadows(args)
 	if self:Me(args.destGUID) then
 		if not args.amount then
-			self:Message(args.spellId, "blue", "Long", CL.you:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "long", CL.you:format(args.spellName))
 		elseif args.amount > 5 and ((self:Tank() and args.amount % 4 == 2) or (not self:Tank() and args.amount % 2 == 0)) then
 			-- Say at 6 stacks and every 2 stacks (4 stacks for tanks)
 			self:Say(args.spellId, CL.count:format(args.spellName, args.amount))
-			self:Message(args.spellId, "blue", nil, CL.you:format(CL.count:format(args.spellName, args.amount)))
+			self:MessageOld(args.spellId, "blue", nil, CL.you:format(CL.count:format(args.spellName, args.amount)))
 		end
 	end
 end
 
 function mod:GlaiveThrust(args)
-	self:Message(181354, "orange", "Warning", args.spellName)
+	self:MessageOld(181354, "orange", "warning", args.spellName)
 end
 
 function mod:MassiveBlast(args)
-	self:TargetMessage(181359, args.destName, "orange", nil, args.spellName)
+	self:TargetMessageOld(181359, args.destName, "orange", nil, args.spellName)
 end
 
 do
 	local list, isOnMe, timer = {}, nil, nil
 	function mod:MannorothsGazeCast(args)
 		timer, isOnMe = nil, nil
-		wipe(list)
-		self:Message(181597, "yellow", "Info", CL.casting:format(args.spellName))
+		list = {}
+		self:MessageOld(181597, "yellow", "info", CL.casting:format(args.spellName))
 		self:Bar(181597, 47, args.spellName)
 	end
 
@@ -363,15 +369,15 @@ do
 			if target == isOnMe then
 				local gaze = L.gaze:format(i)
 				self:Say(181597, gaze)
-				self:TargetMessage(181597, target, "blue", "Alarm", gaze)
+				self:TargetMessageOld(181597, target, "blue", "alarm", gaze)
 			end
 			if self:GetOption("custom_off_gaze_marker") then
-				SetRaidTarget(target, i)
+				self:CustomIcon(false, target, i)
 			end
 			list[i] = self:ColorName(target)
 		end
 		if not isOnMe then
-			self:TargetMessage(181597, list, "yellow")
+			self:TargetMessageOld(181597, list, "yellow")
 		end
 	end
 
@@ -391,13 +397,13 @@ do
 
 	function mod:MannorothsGazeRemoved(args)
 		if self:GetOption("custom_off_gaze_marker") then
-			SetRaidTarget(args.destName, 0)
+			self:CustomIcon(false, args.destName)
 		end
 	end
 end
 
 function mod:Shadowforce(args)
-	self:Message(181799, "red", "Long", CL.casting:format(args.spellName))
+	self:MessageOld(181799, "red", "long", CL.casting:format(args.spellName))
 	self:CDBar(181799, 52, args.spellName)
 end
 
@@ -409,26 +415,26 @@ end
 
 function mod:Felseeker(args)
 	if args.spellId == 181793 then
-		self:Message(181735, "green", "Alert", L.felseeker_message:format(args.spellName, 1, 10))
+		self:MessageOld(181735, "green", "alert", L.felseeker_message:format(args.spellName, 1, 10))
 	elseif args.spellId == 181792 then
-		self:Message(181735, "green", "Alert", L.felseeker_message:format(args.spellName, 2, 20))
+		self:MessageOld(181735, "green", "alert", L.felseeker_message:format(args.spellName, 2, 20))
 	elseif args.spellId == 181738 then
-		self:Message(181735, "green", "Alert", L.felseeker_message:format(args.spellName, 3, 30))
+		self:MessageOld(181735, "green", "alert", L.felseeker_message:format(args.spellName, 3, 30))
 	end
 end
 
 function mod:EmpoweredFelseeker(args)
 	if args.spellId == 182077 then
-		self:Message(181735, "green", "Alert", L.felseeker_message:format(args.spellName, 1, 10))
+		self:MessageOld(181735, "green", "alert", L.felseeker_message:format(args.spellName, 1, 10))
 	elseif args.spellId == 182076 then
-		self:Message(181735, "green", "Alert", L.felseeker_message:format(args.spellName, 2, 20))
+		self:MessageOld(181735, "green", "alert", L.felseeker_message:format(args.spellName, 2, 20))
 	elseif args.spellId == 182040 then
-		self:Message(181735, "green", "Alert", L.felseeker_message:format(args.spellName, 3, 30))
+		self:MessageOld(181735, "green", "alert", L.felseeker_message:format(args.spellName, 3, 30))
 	end
 end
 
 function mod:FelHellstorm(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:CDBar(args.spellId, 36)
 end
 
@@ -438,7 +444,7 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 1.5 then
 			prev = t
-			self:Message(args.spellId, "blue", "Alert", CL.you:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alert", CL.you:format(args.spellName))
 		end
 	end
 end
@@ -447,9 +453,9 @@ end
 
 function mod:P1PortalClosed(args)
 	portalsClosed = portalsClosed + 1
-	self:Message("stages", "cyan", nil, L[tostring(args.spellId)], false)
+	self:MessageOld("stages", "cyan", nil, L[tostring(args.spellId)], false)
 	if portalsClosed == 3 then
-		self:ScheduleTimer("Message", 1, "stages", "cyan", "Info", CL.stage:format(2), false)
+		self:ScheduleTimer("MessageOld", 1, "stages", "cyan", "info", CL.stage:format(2), false)
 		phase = 2
 		if not self:Mythic() then -- already starting mythic timers on :OnEnage()
 			self:CDBar(181557, 33) -- Fel Hellstorm
@@ -479,7 +485,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 
 	elseif spellId == 182263 then -- P3 Transform
 		-- ~7s before: CHAT_MSG_MONSTER_YELL#Fear not, Mannoroth. The fel gift empowers you... Make them suffer!#Gul'dan
-		self:Message("stages", "cyan", "Info", CL.stage:format(3), false)
+		self:MessageOld("stages", "cyan", "info", CL.stage:format(3), false)
 		phase = 3
 		self:CDBar(181557, 22) -- Fel Hellstorm
 		self:CDBar(181799, 26.5) -- Shadowforce, 26.5-31
@@ -492,7 +498,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 
 	elseif spellId == 185690 then -- P4 Transform
 		-- ~8s before: CHAT_MSG_MONSTER_YELL#These mortals cannot be this strong. Gul'dan, do something!#Mannoroth
-		self:Message("stages", "cyan", "Info", CL.stage:format(4), false)
+		self:MessageOld("stages", "cyan", "info", CL.stage:format(4), false)
 		phase = 4
 		self:StopBar(181557) -- Fel Hellstorm
 		self:StopBar(181597) -- Mannoroth's Gaze

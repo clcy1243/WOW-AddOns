@@ -1,9 +1,11 @@
 # BigWigs [Legion]
 
-## [v8.0.2](https://github.com/BigWigsMods/BigWigs_Legion/tree/v8.0.2) (2018-09-16)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Legion/compare/v8.0.1...v8.0.2)
+## [v11.0.0](https://github.com/BigWigsMods/BigWigs_Legion/tree/v11.0.0) (2024-09-21)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Legion/compare/v10.2.2...v11.0.0) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Legion/releases)
 
-- Antorus/Worldbreaker: Fix a PersonalMessage call.  
-- Fix various option flags.  
-- Update API usage.  
-- update zhCN. (#2)  
+- Cleanups  
+- Cleanups  
+- Locale cleanup  
+- bump toc  
+- Define X-BigWigs-Minimum  
+- bump toc  

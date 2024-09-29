@@ -188,6 +188,58 @@ IPUIInstanceMapDB = {
 
 	[1180]={"Ny'alotha, The Waking City", 2, 120, 8},
 
+    --[[ Shadowlands ]]--
+
+    [1182]={"The Necrotic Wake", 1, 60, 9},
+    [1186]={"Spires of Ascension", 1, 60, 9},
+    [1183]={"Plaguefall", 1, 60, 9},
+    [1187]={"Theater of Pain", 1, 60, 9},
+    [1184]={"Mists of Tirna Scithe", 1, 60, 9},
+    [1188]={"De Other Side", 1, 60, 9},
+
+    [1185]={"Halls of Atonement", 1, 60, 9},
+    [1189]={"Sanguine Depths", 1, 60, 9},
+
+    [1190]={"Castle Nathria", 2, 60, 9},
+
+	[1193]={"Sanctum of Domination", 2, 60, 9},
+	[1194]={"Tazavesh, the Veiled Market", 1, 60, 9},
+	[1195]={"Sepulcher of the First Ones", 2, 60, 9},
+	
+	-- [[ Dragonflight ]] --
+
+	[1204]={"Halls of Infusion", 1, 70, 10},
+	[1203]={"The Azure Vault", 1, 70, 10},
+	
+	[1201]={"Algeth'ar Academy", 1, 70, 10},
+	
+	[1197]={"Uldaman: Legacy of Tyr", 1, 70, 10},
+	[1196]={"Brackenhide Hollow", 1, 70, 10},
+	[1199]={"Neltharus", 1, 70, 10},
+	[1202]={"Ruby Life Pools", 1, 70, 10},
+	
+	[1198]={"The Nokhud Offensive", 1, 70, 10},
+	[1209]={"Dawn of the Infinite", 1, 70, 10},
+
+	[1200]={"Vault of the Incarnates", 2, 70, 10},
+	[1208]={"Aberrus, the Shadowed Crucible", 2, 70, 10},
+	[1207]={"Amirdrassil, the Dream's Hope", 2, 70, 10},
+	
+	-- [[ The War Within ]] --
+
+	[1272]={"Cinderbrew Meadery", 1, 80, 11},
+	[1268]={"The Rookery", 1, 80, 11},
+	
+	[1269]={"The Stonevault", 1, 80, 11},
+	[1210]={"Darkflame Cleft", 1, 80, 11},
+	
+	[1270]={"The Dawnbreaker", 1, 80, 11},
+	[1267]={"Priory of the Sacred Flame", 1, 80, 11},
+	
+	[1271]={"Ara-Kara, City of Echoes", 1, 80, 11},
+	[1274]={"City of Threads", 1, 80, 11},
+	[1273]={"Nerub-ar Palace", 2, 80, 11},
+
 }
 
 IPUIInstanceFactionSpecificDB = {

@@ -2,21 +2,18 @@ local ADDON_NAME, Addon = ...
 local ThreatPlates = Addon.ThreatPlates
 
 local ART_PATH = ThreatPlates.Art
-local MEDIA_PATH = ThreatPlates.Media
 local EMPTY_TEXTURE = ART_PATH.."Empty"
 
 -------------------------------------------------------------------------------------
 -- Style: Text-Only for Headline-View
 -------------------------------------------------------------------------------------
 
-local function Create(self,name)
-  local db = self.db.profile.settings
-  local dbprofile = self.db.profile
+local function Create(name)
+  local dbprofile = Addon.db.profile
+  local db = dbprofile.settings
   local theme = {
 
     frame = {
-      width = db.frame.width,
-      height = db.frame.height,
       x = db.frame.x,
       y = db.frame.y,
       anchor = "CENTER",
@@ -31,6 +28,14 @@ local function Create(self,name)
       y = 0,
       anchor = "CENTER",
       show = false,
+    },
+
+    healthbarFriendly = {
+      height = 10,
+      width = 120,
+      x = 0,
+      y = 0,
+      anchor = "CENTER",
     },
 
     healthborder = {
@@ -69,8 +74,8 @@ local function Create(self,name)
     },
 
     castbar = {
-      texture = ThreatPlates.Media:Fetch('statusbar', db.castbar.texture),
-      backdrop = (db.castbar.ShowInHeadlineView and ThreatPlates.Media:Fetch('statusbar', db.castbar.backdrop, true)) or EMPTY_TEXTURE,
+      texture = Addon.LibSharedMedia:Fetch('statusbar', db.castbar.texture),
+      backdrop = (db.castbar.ShowInHeadlineView and Addon.LibSharedMedia:Fetch('statusbar', db.castbar.backdrop, true)) or EMPTY_TEXTURE,
       width = db.castbar.width,
       height = db.castbar.height,
       x = db.castbar.x_hv,
@@ -91,7 +96,7 @@ local function Create(self,name)
     },
 
     name = {
-      typeface = MEDIA_PATH:Fetch('font', db.name.typeface),
+      typeface = Addon.LibSharedMedia:Fetch('font', db.name.typeface),
       size = dbprofile.HeadlineView.name.size,
       width = db.name.width, -- use same as for healthbar view
       height = db.name.height, -- use same as for healthbar view
@@ -106,7 +111,7 @@ local function Create(self,name)
     },
 
     level = {
-      typeface = MEDIA_PATH:Fetch('font', db.level.typeface),
+      typeface = Addon.LibSharedMedia:Fetch('font', db.level.typeface),
       size = db.level.size,
       width = db.level.width,
       height = db.level.height,
@@ -120,7 +125,7 @@ local function Create(self,name)
     },
 
     customtext = {
-      typeface = MEDIA_PATH:Fetch('font', db.name.typeface),
+      typeface = Addon.LibSharedMedia:Fetch('font', db.name.typeface),
       size = dbprofile.HeadlineView.customtext.size,
       width = db.customtext.width, -- use same as for healthbar view
       height = db.customtext.height, -- use same as for healthbar view
@@ -135,7 +140,7 @@ local function Create(self,name)
     },
 
     spelltext = {
-      typeface = ThreatPlates.Media:Fetch('font', db.spelltext.typeface),
+      typeface = Addon.LibSharedMedia:Fetch('font', db.spelltext.typeface),
       size = db.spelltext.size,
       width = db.spelltext.width,
       height = db.spelltext.height,

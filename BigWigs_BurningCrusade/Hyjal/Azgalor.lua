@@ -5,6 +5,9 @@
 local mod, CL = BigWigs:NewBoss("Azgalor", 534, 1580)
 if not mod then return end
 mod:RegisterEnableMob(17842)
+if mod:Classic() then
+	mod:SetEncounterID(621)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -32,9 +35,12 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "Howl", 31344)
 	self:Log("SPELL_AURA_APPLIED", "Doom", 31347)
 
-	self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-
+	if self:Classic() then
+		self:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage")
+		self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
+	else
+		self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
+	end
 	self:Death("Win", 17842)
 end
 
@@ -48,18 +54,18 @@ end
 
 function mod:RainOfFire(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "orange", "Alarm", CL["you"]:format(args.spellName))
+		self:MessageOld(args.spellId, "orange", "alarm", CL["you"]:format(args.spellName))
 	end
 end
 
 function mod:Howl(args)
-	self:Message(args.spellId, "red", nil, L["howl_message"])
+	self:MessageOld(args.spellId, "red", nil, L["howl_message"])
 	self:Bar(args.spellId, 16, L["howl_bar"])
 	self:DelayedMessage(args.spellId, 15, "red", CL["soon"]:format(L["howl_message"]))
 end
 
 function mod:Doom(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Alert")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "alert")
 	self:TargetBar(args.spellId, 19, args.destName)
 	self:PrimaryIcon(args.spellId, args.destName)
 	if self:Me(args.destGUID) then

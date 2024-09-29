@@ -2,15 +2,16 @@ local L = BigWigs:NewBossLocale("Razorgore the Untamed", "koKR")
 if not L then return end
 if L then
 	L.start_trigger = "침입자들이 들어왔다! 어떤 희생이 있더라도 알을 반드시 수호하라!"
-	L.start_message = "폭군 서슬송곳니 전투 시작"
-	L.start_soon = "몹 소환 5초전!"
-	L.start_mob = "몹 소환"
 
 	L.eggs = "알 개수 알림 미사용"
-	L.eggs_desc = "남은 알 개수 알림 미사용"
-	L.eggs_message = "%d/30 알을 파괴하였습니다."
+	L.eggs_desc = "남은 알 개수 알림 미사용."
+	L.eggs_message = "%d/30 알을 파괴하였습니다"
+end
 
-	L.phase2_message = "모든 알이 파괴되었습니다, 서슬송곳니가 풀려납니다." -- CHECK
+L = BigWigs:NewBossLocale("Vaelastrasz the Corrupt", "koKR")
+if L then
+	--L.warmup_trigger = "Too late, friends!"
+	--L.tank_bomb = "Tank Bomb"
 end
 
 L = BigWigs:NewBossLocale("Chromaggus", "koKR")
@@ -20,25 +21,24 @@ if L then
 
 	--L.debuffs_message = "3/5 debuffs, carefull!"
 	--L.debuffs_warning = "4/5 debuffs, %s on 5th!"
+	L.bronze = "청동"
+
+	L.vulnerability = "약화 속성 경고"
+	L.vulnerability_desc = "약화 속성 변경에 대한 경고."
+	L.vulnerability_message = "새로운 취약 속성: %s"
+	L.detect_magic_missing = "마법 감지 is missing from Chromaggus"
+	L.detect_magic_warning = "A Mage must cast \124cff71d5ff\124Hspell:2855:0\124h[마법 감지]\124h\124r on Chromaggus for vulnerability warnings to work."
 end
 
-L = BigWigs:NewBossLocale("Nefarian ", "koKR")
+L = BigWigs:NewBossLocale("Nefarian Classic", "koKR")
 if L then
-	L.landing_soon_trigger = "적들의 사기가 떨어지고 있다"
-	L.landing_trigger = "불타라! 활활!"
-	L.zerg_trigger = "말도 안 돼! 일어나라!"
+	--L.engage_yell_trigger = "Let the games begin"
+	L.stage3_yell_trigger = "말도 안 돼! 일어나라!"
 
-	L.triggershamans = "주술사"
-	L.triggerwarlock = "흑마법사여, 네가 이해하지도 못하는"
-	L.triggerhunter = "그 장난감"
-	L.triggermage = "네가 마법사냐?"
-	--L.triggerdeathknight = "Death Knights"
-	--L.triggermonk = "Monks"
-
-	L.landing_soon_warning = "네파리안이 10초 후 착지합니다!"
-	L.landing_warning = "네파리안이 착지했습니다!"
-	L.zerg_warning = "해골 등장!"
-	L.classcall_warning = "곧 직업이 지목됩니다!"
+	L.shaman_class_call_yell_trigger = "주술사"
+	--L.deathknight_class_call_yell_trigger = "Death Knights"
+	--L.monk_class_call_yell_trigger = "Monks"
+	L.hunter_class_call_yell_trigger = "그 장난감"
 
 	L.warnshaman = "주술사 - 토템 파괴!"
 	L.warndruid = "드루이드 - 강제 표범 변신!"
@@ -53,12 +53,20 @@ if L then
 	--L.warnmonk = "Monks - Stuck Rolling"
 	--L.warndemonhunter = "Demon Hunters - Blinded"
 
-	L.classcall_bar = "직업 지목"
-
-	L.classcall = "직업 지목 경고"
+	L.classcall = "직업 지목"
 	L.classcall_desc = "직업 지목에 대한 경고"
 
-	L.otherwarn = "기타 경고"
-	L.otherwarn_desc = "착지와 소환에 대한 경고"
+	--L.add = "Drakonid deaths"
+	--L.add_desc = "Announce the number of adds killed in stage 1 before Nefarian lands."
 end
 
+L = BigWigs:NewBossLocale("Blackwing Lair Trash", "koKR")
+if L then
+	L.wyrmguard_overseer = "죽음의발톱 고룡수호병 / 죽음의발톱 감독관" -- NPC 12460 / 12461
+
+	--L.target_vulnerability = "Target Vulnerability Warnings"
+	--L.target_vulnerability_desc = "When your target is a Death Talon Wyrmguard or a Death Talon Overseer, show a warning for what vulnerability it has."
+	--L.target_vulnerability_message = "Target Vulnerability: %s"
+	L.detect_magic_missing_message = "마법 감지 is missing from your target"
+	L.detect_magic_warning = "A Mage must cast \124cff71d5ff\124Hspell:2855:0\124h[마법 감지]\124h\124r on your target for vulnerability warnings to work."
+end

@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "ruRU" then return end
+if GetLocale() ~= "ruRU" then return end
 local L
 
 --------------------------
@@ -11,42 +11,77 @@ L:SetGeneralLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerInvite = "%s"
+	TimerCap		= "%s",
+	TimerInvite		= "%s",
+	TimerWin		= "Победа в", -- May need verification for a more accurate translation
+	TimerStart		= "Начиная с", -- May need verification for a more accurate translation
+	TimerShadow		= "Сумеречное зрение"
 })
 
 L:SetOptionLocalization({
 	ColorByClass		= "Показывать имена цветом класса в таблице очков",
 	TimerInvite			= "Отсчет времени до входа на поле боя",
 	AutoSpirit			= "Автоматически покидать тело",
-	HideBossEmoteFrame	= "Скрыть фрейм эмоций рейдового босса"
+	HideBossEmoteFrame	= "Скрыть фрейм эмоций рейдового босса",
+	ShowBasesToWin		= "Показать базы, необходимые для победы",
+	TimerCap			= "Показать таймер захвата",
+	TimerStart			= "Показать таймер до начала состязания",
+	TimerWin			= "Показать таймер выигрыша",
+	ShowRelativeGameTime	= "Заполнение таймера выигрыша относительно времени начала БГ (если отключено, полоса всегда выглядит заполненной)"
 })
 
 L:SetMiscLocalization({
-	BgStart60	= "Битва начнется через 1 минуту.",
-	BgStart30	= "Битва начнется через 30 секунд. Приготовиться!",
-	ArenaInvite	= "Приглашение на Арену"
+	BgStart120          = "Битва начнется через 2 минуты.",
+	BgStart60			= "Битва начнется через 1 минуту.",
+	BgStart30			= "Битва начнется через 30 секунд. Приготовиться!",
+	ArenaStart60		= "Одна минута до начала боя на Арене!",
+	ArenaStart30		= "Тридцать секунд до начала боя на Арене!",
+	ArenaStart15		= "Пятнадцать секунд до начала боя на Арене!",
+	ArenaInvite			= "Приглашение на Арену",
+	BasesToWin			= "Базы, необходимые для победы: %d",
+	WinBarText			= "%s выигрывает",
+	BasesToWinHeader	= "DBM-PvP",
+	ExprFlagPickUp		= "(.+) несет флаг (%w+)!",
+	ExprFlagCaptured	= "(.+) захватывает флаг (%w+)!",
+	ExprFlagReturn		= "(.+) возвращает на базу флаг (%w+)!",
+	Vulnerable1			= "Персонажи, несущие флаг, стали более уязвимы!",
+	Vulnerable2			= "Персонажи, несущие флаг, стали еще более уязвимы!",
+	-- Alterac/IsleOfConquest bosses
+	InfoFrameHeader		= "Здоровье босса",
+	HordeBoss			= "Босс Орды",
+	AllianceBoss		= "Босс Альянса",
+	Galvangar			= "Капитан Гальвангар",
+	Balinda				= "Капитан Балинда Каменный Очаг",
+	Ivus				= "Ивус Лесной Властелин",
+	Lokholar			= "Локолар Владыка Льда",
+	RunestoneBoss		= "Рунический камень",
+	GlaiveBoss			= "Глефа",
+	ResearchBoss		= "Исследование",
+	MoonwellBoss		= "Лунный колодец",
+	ShredderBoss		= "Шреддер",
+	CatapultBoss		= "Катапульта",
+	LumberBoss			= "Древесина",
+	BonfireBoss			= "Большой костер",
+	-- Ashran bosses
+	Tremblade			= "Верховный маршал Тремблейд",
+	Volrath				= "Верховный полководец Волрат",
+	Fangraal			= "Фанграал",
+	Kronus				= "Крон",
+	-- Health sync frame
+	Stale               = "(несвежий) "
 })
 
---------------
---  Arenas  --
---------------
-L = DBM:GetModLocalization("Arenas")
-
-L:SetGeneralLocalization({
-	name = "Арены"
-})
+----------------------
+--  Seething Shore  --
+----------------------
+L = DBM:GetModLocalization("z1803")
 
 L:SetTimerLocalization({
-	TimerShadow	= "Сумеречное зрение"
+	TimerSpawn		= "%s"
 })
 
 L:SetOptionLocalization({
-	TimerShadow	= "Отсчет времени до сумеречного зрения"
-})
-
-L:SetMiscLocalization({
-	Start15	= "Пятнадцать секунд до начала боя на арене!",
-	highmaulArena	= "The battle for supremacy begins in 30 seconds!"
+	TimerSpawn	= "Показать таймер появления Азерита"
 })
 
 ----------------------
@@ -54,110 +89,23 @@ L:SetMiscLocalization({
 ----------------------
 L = DBM:GetModLocalization("z30")
 
-L:SetTimerLocalization({
-	TimerTower	= "%s",
-	TimerGY		= "%s"
+L:SetOptionLocalization({
+	AutoTurnIn	= "Автоматическая сдача заданий",
+	TimerBoss	= "Показать оставшийся таймер босса"
 })
 
+L:SetMiscLocalization({
+	BossHorde	= "WHO DARES SUMMON LOKHOLAR?",
+	BossAlly	= "Wicked, wicked, mortals! The forest weeps. The elements recoil at the destruction. Ivus must purge you from this world!"
+})
+
+--------------
+--  Ashran  --
+--------------
+L = DBM:GetModLocalization("z1191")
+
 L:SetOptionLocalization({
-	TimerTower	= "Отсчет времени до захвата башен",
-	TimerGY		= "Отсчет времени до захвата кладбищ",
 	AutoTurnIn	= "Автоматическая сдача заданий"
-})
-
---------------------
---  Arathi Basin  --
---------------------
-L = DBM:GetModLocalization("z529")
-
-L:SetTimerLocalization({
-	TimerCap	= "%s"
-})
-
-L:SetOptionLocalization({
-	TimerWin				= "Отсчет времени до победы",
-	TimerCap				= "Отсчет времени до захвата",
-	ShowAbEstimatedPoints	= "Отображать предполагаемое кол-во очков, оставшееся до победы/поражения",
-	ShowAbBasesToWin		= "Отображать кол-во баз, необходимое для победы"
-})
-
-L:SetMiscLocalization({
-	ScoreExpr	= "(%d+)/1500",
-	WinBarText	= "%s побеждает",
-	BasesToWin	= "Баз для победы: %d"
-})
-
----------------------
---  Deepwind Gorge --
----------------------
-L = DBM:GetModLocalization("z1105")
-
-L:SetTimerLocalization({
-	TimerCap	= "%s"
-})
-
-L:SetOptionLocalization({
-	TimerCap	= "Show capture timer",
-	TimerWin	= "Show win timer"
-})
-
-L:SetMiscLocalization({
-	ScoreExpr	= "(%d+)/1500",
-	WinBarText	= "%s wins"
-})
-
-------------------------
---  Eye of the Storm  --
-------------------------
-L = DBM:GetModLocalization("z566")
-
-L:SetTimerLocalization({
-	TimerFlag	= "Восстановление флага"
-})
-
-L:SetOptionLocalization({
-	TimerWin		= "Отсчет времени до победы",
-	TimerFlag		= "Отсчет времени до восстановления флага",
-	ShowPointFrame	= "Отображать флагоносца и предполагаемые очки"
-})
-
-L:SetMiscLocalization({
-	ScoreExpr		= "(%d+)/1500",
-	WinBarText		= "%s побеждает",
-	Flag			= "Flag",
-	FlagReset		= "Флаг возвращен на базу.",
-	FlagTaken		= "(.+) захватывает флаг!",
-	FlagCaptured	= "(.+) захватил флаг!",
-	FlagDropped		= "Флаг уронили!"
-})
-
----------------------
---  Warsong Gulch  --
----------------------
-L = DBM:GetModLocalization("z489")
-
-L:SetTimerLocalization({
-	TimerStart	= "Битва начнется через",
-	TimerFlag	= "Восстановление флага"
-})
-
-L:SetOptionLocalization({
-	TimerStart					= "Отсчет времени до начала битвы",
-	TimerFlag					= "Отсчет времени до восстановления флага",
-	ShowFlagCarrier				= "Показывать флагоносца",
-	ShowFlagCarrierErrorNote	= "Сообщение об ошибке выбора флагоносца в режиме боя"
-})
-
-L:SetMiscLocalization({
-	InfoErrorText		= "Функция выбора флагоносца будет восстановлена после выхода из режима боя.",
-	ExprFlagPickUp		= "(.+) несет флаг (%w+)!",
-	ExprFlagCaptured	= "(.+) захватывает флаг (%w+)!",
-	ExprFlagReturn		= "(.+) возвращает на базу флаг (%w+)!",
-	FlagAlliance		= "Флаг Альянса: ",
-	FlagHorde			= "Флаг Орды: ",
-	FlagBase			= "База",
-	Vulnerable1			= "Персонажи, несущие флаг, стали более уязвимы!",
-	Vulnerable2			= "Персонажи, несущие флаг, стали еще более уязвимы!"
 })
 
 ------------------------
@@ -171,12 +119,10 @@ L:SetWarningLocalization({
 })
 
 L:SetTimerLocalization({
-	TimerPOI			= "%s",
 	TimerSiegeEngine	= "Осадная машина готова"
 })
 
 L:SetOptionLocalization({
-	TimerPOI			= "Отсчет времени до захвата",
 	TimerSiegeEngine	= "Отсчет времени до создания Осадной машины",
 	WarnSiegeEngine		= "Предупреждение, когда создание Осадной машины завершено",
 	WarnSiegeEngineSoon	= "Предупреждение, когда создание Осадной машины почти завершено",
@@ -184,67 +130,16 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	GatesHealthFrame		= "Поврежденые ворота",
+	GatesHealthFrame		= "Поврежденные ворота",
 	SiegeEngine				= "Осадная машина",
-	GoblinStartAlliance		= "See those seaforium bombs? Use them on the gates while I repair the siege engine!",
+	GoblinStartAlliance		= "Видите эти взрывчатые бомбы? Используйте их на воротах, пока я ремонтирую осадную машину!",
 	GoblinStartHorde		= "Я буду работать над осадной машиной, я ты меня прикрывай. Вот, можешь пользоваться этими сефориевыми бомбами, если тебе надо взорвать ворота.",
-	GoblinHalfwayAlliance	= "I'm halfway there! Keep the Horde away from here. They don't teach fighting in engineering school!",
-	GoblinHalfwayHorde		= "I'm about halfway done! Keep the Alliance away - fighting's not in my contract!",
-	GoblinFinishedAlliance	= "My finest work so far! This siege engine is ready for action!",
-	GoblinFinishedHorde		= "The siege engine is ready to roll!",
-	GoblinBrokenAlliance	= "It's broken already?! No worries. It's nothing I can't fix.",
-	GoblinBrokenHorde		= "It's broken again?! I'll fix it... just don't expect the warranty to cover this"
-})
-
-------------------
---  Twin Peaks  --
-------------------
-L = DBM:GetModLocalization("z726")
-
-L:SetTimerLocalization({
-	TimerStart	= "Битва начнется через",
-	TimerFlag	= "Восстановление флага"
-})
-
-L:SetOptionLocalization({
-	TimerStart					= "Отсчет времени до начала битвы",
-	TimerFlag					= "Отсчет времени до восстановления флага",
-	ShowFlagCarrier				= "Показывать флагоносца",
-	ShowFlagCarrierErrorNote	= "Сообщение об ошибке выбора флагоносца в режиме боя"
-})
-
-L:SetMiscLocalization({
-	InfoErrorText		= "Функция выбора флагоносца будет восстановлена после выхода из режима боя.",
-	ExprFlagPickUp		= "(.+) несет флаг (%w+)!",
-	ExprFlagCaptured	= "(.+) захватывает флаг (%w+)!",
-	ExprFlagReturn		= "(.+) возвращает на базу флаг (%w+)!",
-	FlagAlliance		= "Флаг Альянса: ",
-	FlagHorde			= "Флаг Орды: ",
-	FlagBase			= "База",
-	Vulnerable1			= "Персонажи, несущие флаг, стали более уязвимы!",
-	Vulnerable2			= "Персонажи, несущие флаг, стали еще более уязвимы!"
-})
-
-------------------------------
---  The Battle for Gilneas  --
-------------------------------
-L = DBM:GetModLocalization("z761")
-
-L:SetTimerLocalization({
-	TimerCap	= "%s"
-})
-
-L:SetOptionLocalization({
-	TimerWin					= "Отсчет времени до победы",
-	TimerCap					= "Отсчет времени до захвата",
-	ShowGilneasEstimatedPoints	= "Отображать предполагаемое кол-во очков, оставшееся до победы/поражения",
-	ShowGilneasBasesToWin		= "Отображать кол-во баз, необходимое для победы"
-})
-
-L:SetMiscLocalization({
-	ScoreExpr	= "(%d+)/1500",
-	WinBarText	= "%s побеждает",
-	BasesToWin	= "Баз для победы: %d"
+	GoblinHalfwayAlliance	= "Я на полпути! Держите Орду подальше отсюда. В инженерном училище не учат боевым действиям!",
+	GoblinHalfwayHorde		= "Я примерно на полпути! Держите Альянс подальше - драки не в моем контракте!",
+	GoblinFinishedAlliance	= "Моя лучшая работа на данный момент! Эта осадная машина готова к действию!",
+	GoblinFinishedHorde		= "Осадная машина готова к работе!",
+	GoblinBrokenAlliance	= "Он уже сломан?! Не стоит беспокоиться. Я ничего не могу исправить.",
+	GoblinBrokenHorde		= "Опять сломано?! Я исправлю это ... только не ожидайте, что гарантия покроет это."
 })
 
 -------------------------
@@ -253,15 +148,19 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("z727")
 
 L:SetTimerLocalization({
-	TimerCart	= "Восстановление вагонетки"
+	TimerRespawn	= "Восстановление вагонетки",
+	TimerCart		= "%s"
 })
 
 L:SetOptionLocalization({
-	TimerCart	= "Отсчет времени до восстановления вагонетки"
+	TimerRespawn	= "Отсчет времени до восстановления вагонетки",
+	TimerCart		= "Таймер захвата повозки"
 })
 
 L:SetMiscLocalization({
-	Capture		= "захвачена"
+	Capture	= "захвачена",
+	Arrived	= "прибыл",
+	Begun	= "начался"
 })
 
 -------------------------
@@ -270,15 +169,36 @@ L:SetMiscLocalization({
 L = DBM:GetModLocalization("z998")
 
 L:SetOptionLocalization({
-	TimerWin					= "Отсчет времени до победы",
-	ShowKotmoguEstimatedPoints	= "Отображать предполагаемое кол-во очков, оставшееся до победы/поражения",
-	ShowKotmoguOrbsToWin		= "Отображать кол-во сфер, необходимое для победы"
+	ShowOrbCarriers	= "Показать носителя сферы"
 })
 
 L:SetMiscLocalization({
 	OrbTaken	= "(%S+) захватывает (%S+) сферу!",
-	OrbReturn	= "(%S+) сфера возвращена!",
-	ScoreExpr	= "(%d+)/1500",
-	WinBarText	= "Предположительно %s побеждает",
-	OrbsToWin	= "Сфер для победы: %d"
+	OrbReturn	= "(%S+) сфера возвращена!"
+})
+
+----------------
+--  Ashenvale --
+----------------
+L = DBM:GetModLocalization("m1440")
+
+L:SetOptionLocalization({
+	EstimatedStartTimer = "Показывать таймер времени начала события",
+	HealthFrame         = "Показывать инфофрейм со здоровьем босса. Это работает за счет синхронизации здоровья в Вашем рейде и через чат 'криков' с другими рейдами. Это означает, что данная функция работает только в том случае, если есть хотя бы несколько рейдов, распределенных по боссам с установленным DBM-PvP."
+})
+
+L:SetTimerLocalization({
+	EstimatedStart = "Начало события"
+})
+
+-----------------
+--  Blood Moon --
+-----------------
+L = DBM:GetModLocalization("m1434")
+
+L:SetMiscLocalization({
+	ParseTimeFromWidget = "(%d+)",
+	ResTimerSelf = "Показывать таймер воскрешения для Вас.",
+	ResTimerParty = "Показывать таймер воскрешения для членов Вашей группы.",
+	ResTimerPartyClassColors = "Использовать цвета классов для таймеров воскрешения членов группы."
 })

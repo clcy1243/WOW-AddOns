@@ -8,10 +8,8 @@ local ThreatPlates = Addon.ThreatPlates
 -- Lua APIs
 
 -- WoW APIs
-local UnitExists = UnitExists
 
 -- ThreatPlates APIs
-local TidyPlatesThreat = TidyPlatesThreat
 local GetThreatSituation = Addon.GetThreatSituation
 
 ---------------------------------------------------------------------------------------------------
@@ -19,12 +17,12 @@ local GetThreatSituation = Addon.GetThreatSituation
 ---------------------------------------------------------------------------------------------------
 
 local function TransparencySituational(unit)
-	local db = TidyPlatesThreat.db.profile.nameplate
+	local db = Addon.db.profile.nameplate
 
 	-- Do checks for situational transparency settings:
 	if unit.isMarked and db.toggle.MarkedA then
 		return db.alpha.Marked
-	elseif unit.isMouseover and not unit.isTarget and db.toggle.MouseoverUnitAlpha then
+	elseif unit.isMouseover and not Addon.UnitIsTarget(unit.unitid) and db.toggle.MouseoverUnitAlpha then
 		return db.alpha.MouseoverUnit
 	elseif unit.isCasting then
 		local unit_friendly = (unit.reaction == "FRIENDLY")
@@ -40,7 +38,7 @@ end
 
 local function TransparencyGeneral(unit)
   -- Target always has priority
-  if not unit.isTarget then
+  if not Addon.UnitIsTarget(unit.unitid) then
     -- Do checks for situational transparency settings:
     local tranparency = TransparencySituational(unit)
     if tranparency then
@@ -49,13 +47,14 @@ local function TransparencyGeneral(unit)
   end
 
 	-- Do checks for target settings:
-	local db = TidyPlatesThreat.db.profile.nameplate
+	local db = Addon.db.profile.nameplate
 
   local target_alpha
-	if UnitExists("target") then
-    if unit.isTarget and db.toggle.TargetA then
+	if Addon.TargetUnitExists() then
+		local unit_is_target = Addon.UnitIsTarget(unit.unitid)
+    if unit_is_target and db.toggle.TargetA then
       target_alpha = db.alpha.Target
-    elseif not unit.isTarget and db.toggle.NonTargetA then
+    elseif not unit_is_target and db.toggle.NonTargetA then
       target_alpha = db.alpha.NonTarget
     end
 	elseif db.toggle.NoTargetA then
@@ -76,7 +75,7 @@ local function TransparencyGeneral(unit)
 end
 
 local function TransparencyThreat(unit, style)
-	local db = TidyPlatesThreat.db.profile.threat
+	local db = Addon.db.profile.threat
 
 	if not db.useAlpha then
 		return TransparencyGeneral(unit)
@@ -122,7 +121,7 @@ local function AlphaUniqueNameOnly(unit)
 	local unique_setting = unit.CustomPlateSettings
 
   if unique_setting.overrideAlpha then
-    local db = TidyPlatesThreat.db.profile.HeadlineView
+    local db = Addon.db.profile.HeadlineView
     if db.useAlpha then
 			return AlphaNormal(unit)
     end
@@ -140,7 +139,7 @@ local function TransparencyEmpty(unit)
 end
 
 local function TransparencyNameOnly(unit)
-	local db = TidyPlatesThreat.db.profile.HeadlineView
+	local db = Addon.db.profile.HeadlineView
 
 	if db.useAlpha then
     return AlphaNormal(unit)
@@ -162,7 +161,12 @@ local ALPHA_FUNCTIONS = {
 }
 
 function Addon:GetAlpha(unit)
-  return ALPHA_FUNCTIONS[unit.style](unit, unit.style)
+	local alpha = ALPHA_FUNCTIONS[unit.style](unit, unit.style)
+	if alpha < 0 then
+		alpha = 0
+	elseif alpha > 1 then
+		alpha = 1
+	end
+
+  return alpha
 end
-
-

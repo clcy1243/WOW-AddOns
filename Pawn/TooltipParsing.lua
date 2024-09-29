@@ -1,8 +1,8 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2020 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2024 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
--- 
+--
 -- Tooltip parsing strings
 ------------------------------------------------------------
 
@@ -11,8 +11,14 @@ local L = PawnLocal.TooltipParsing
 
 if PawnLocal.ThousandsSeparator == "NBSP" then PawnLocal.ThousandsSeparator = "\194\160" end
 local Key, Value
+local NumberExpandedPattern = "(-?[%%d%%., ]+)"
+if LARGE_NUMBER_SEPERATOR == "-" then
+	-- French Cataclysm Classic uses a hyphen as the thousands separator, which is insane. We only include that as a valid component
+	-- of a number in this specific case to limit the risk to other versions.
+	NumberExpandedPattern = "(-?[%%d%%., %-]+)"
+end
 for Key, Value in pairs(L) do
-	L[Key] = gsub(gsub(Value, "#", "(-?[%%d%%.,\194\160 ]+)"), "NBSP", "\194\160")
+	L[Key] = gsub(Value, "#", NumberExpandedPattern)
 end
 
 ------------------------------------------------------------
@@ -54,8 +60,8 @@ PawnSeparatorIgnorePrefixes =
 -- them through the normal gauntlet of expressions.
 PawnNormalizationRegexes =
 {
-	{"^\|c........(.+)$", "%1"}, -- "|cFF 0FF 0Heroic" --> "Heroic"
-	{"^([%w%s%.]+) %+(%d+)$", "+%2 %1"}, -- "Stamina +5" --> "+5 Stamina"
+	{"^|c........(.+)$", "%1"}, -- "|cFF 0FF 0Heroic" --> "Heroic"
+	{"^([%w%s%.]+) %+(%d+)%%?$", "+%2 %1"}, -- "Stamina +5" --> "+5 Stamina"
 	{L.NormalizationEnchant, "%1"}, -- "Enchanted: +50 Strength" --> "+50 Strength" (ENCHANTED_TOOLTIP_LINE)
 }
 
@@ -138,6 +144,11 @@ PawnRegexes =
 	{PawnGameConstant(INVTYPE_LEGS)}, -- Legs
 	{PawnGameConstant(INVTYPE_FINGER)}, -- Finger
 	{PawnGameConstant(INVTYPE_TRINKET)}, -- Trinket
+	{PawnGameConstant(INVTYPE_RELIC or "UNUSED")}, -- Relic
+	{PawnGameConstant(MAJOR_GLYPH)}, -- Major Glyph
+	{PawnGameConstant(MINOR_GLYPH)}, -- Minor Glyph
+	{PawnGameConstant(PRIME_GLYPH)}, -- Prime Glyph
+	{PawnGameConstant(REFORGED or "UNUSED")}, -- Reforged
 	{PawnGameConstant(MOUNT)}, -- Cenarion War Hippogryph
 	{PawnGameConstantIgnoredPlaceholder(ITEM_CLASSES_ALLOWED)}, -- Classes:
 	{PawnGameConstantIgnoredPlaceholder(ITEM_RACES_ALLOWED)}, -- Races:
@@ -150,7 +161,8 @@ PawnRegexes =
 	{L.TemporaryBuffSeconds}, -- Temporary item buff
 	{L.TemporaryBuffMinutes}, -- Temporary item buff
 	{PawnGameConstantIgnoredPlaceholder(ENCHANT_ITEM_REQ_SKILL)}, -- Seen on the enchanter-only ring enchantments when you're not an enchanter, and socketed jewelcrafter-only BoP gems
-	
+	{L.Corruption}, -- /pawn compare item:172198::::::::120:262::3:1:3524
+
 	-- ========================================
 	-- Strings that represent statistics that Pawn cares about
 	-- ========================================
@@ -165,7 +177,7 @@ PawnRegexes =
 	{PawnGameConstant(INVTYPE_WEAPONOFFHAND), "IsOffHand", 1, PawnMultipleStatsFixed}, -- Off Hand
 	{PawnGameConstant(INVTYPE_HOLDABLE), "IsFrill", 1, PawnMultipleStatsFixed}, -- Held In Off-Hand
 	{L.WeaponDamage, "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- Standard weapon (heirlooms can have decimal points in their damage values)
-	{L.WeaponDamageExact, "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Weapons with no damage range: Crossbow of the Albatross
+	{L.WeaponDamageExact, "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Weapons with no damage range: Crossbow of the Albatross or Fine Light Crossbow, /pawn compare 15808
 	{L.WeaponDamageFire, "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- /pawn compare 19367
 	{L.WeaponDamageFireExact, "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 1, PawnMultipleStatsExtract}, -- Wand
 	{L.WeaponDamageShadow, "MinDamage", 1, PawnMultipleStatsExtract, "MaxDamage", 2, PawnMultipleStatsExtract}, -- /pawn compare 18301
@@ -190,34 +202,79 @@ PawnRegexes =
 	{L.EnchantmentTitaniumWeaponChain, "HasteRating", 28, PawnMultipleStatsFixed}, -- Weapon enchantment; also reduces disarm duration (may be obsolete?)
 	{L.EnchantmentPyriumWeaponChain, "HasteRating", 8, PawnMultipleStatsFixed}, -- Weapon enchantment; also reduces disarm duration
 	{L.EnchantmentLivingSteelWeaponChain, "CritRating", 13, PawnMultipleStatsFixed}, -- Weapon enchantment; also reduces disarm duration
-	{L.Dodge, "DodgeRating"}, -- /pawn compare item:789::::::1754
+	{L.Dodge, "DodgeRating"}, -- /pawn compare item:789::::::1754, or Classic arcanum and enchantment: /pawn compare item:19386:2622 /pawn compare item:21693:2545
 	{L.Dodge2, "DodgeRating"}, -- unused in English
-	{L.DodgePercent, "DodgeRating"}, -- /pawn compare 11755
+	{L.Dodge3, "DodgeRating"}, -- unused in English
+	{L.DodgePercent, "DodgeRating"}, -- Classic, /pawn compare 11755
+	{L.DodgeRating, "DodgeRating"}, -- Burning Crusade Classic, /pawn compare 11755
+	{L.DodgeRating2, "DodgeRating"}, -- Burning Crusade Classic, /pawn compare 29323
+	{L.DodgeRatingShort, "DodgeRating"}, -- Burning Crusade Classic, /pawn compare item:789::::::1754
 	{L.Parry, "ParryRating"},
 	{L.Parry2, "ParryRating"}, -- unused in English
-	{L.DefenseSkill, "DefenseRating"}, -- /pawn compare 19867
-	{L.DefenseSkillSimple, "DefenseRating"}, -- /pawn compare item:789::::::89
-	{L.BlockPercent, "BlockRating"}, -- /pawn compare 18499
-	{L.Block, "BlockValue"}, -- /pawn compare 18499
-	{L.BlockValue, "BlockValue"}, -- /pawn compare 18499
+	{L.ParryPercent, "ParryRating"}, -- Classic, /pawn compare 19351
+	{L.ParryRating, "ParryRating"}, -- Burning Crusade Classic, /pawn compare 19351
+	{L.ParryRatingShort, "ParryRating"}, -- Burning Crusade Classic, /pawn compare 24036
+	{L.DefenseRating, "DefenseRating"}, -- Burning Crusade, /pawn compare 19867
+	{L.DefenseRating2, "DefenseRating"}, -- Burning Crusade esMX or deDE, /pawn compare 29171
+	{L.DefenseRatingSimple, "DefenseRating"}, -- Burning Crusade, /pawn compare item:789::::::89
+	{L.DefenseSkill, "DefenseRating"}, -- Classic, /pawn compare 19867
+	{L.DefenseSkillSimple, "DefenseRating"}, -- Classic, /pawn compare item:789::::::89
+	{L.BlockPercent, "BlockRating"}, -- Classic, /pawn compare 18499
+	{L.BlockRating, "BlockRating"}, -- Burning Crusade, /pawn compare 18499
+	{L.BlockRating2, "BlockRating"}, -- Burning Crusade, /pawn compare 29323
+	{L.Block, "BlockValue"}, -- Classic, /pawn compare 18499
+	{L.BlockValue, "BlockValue"}, -- Classic, /pawn compare 18499
 	{L.Dps}, -- Ignore this; DPS is calculated manually
 	{L.DpsAdd, "Dps"},
 	{L.EnchantmentFieryWeapon, "Dps", 4, PawnMultipleStatsFixed}, -- weapon enchantment
 	{L.Crit, "CritRating"},
 	{L.Crit2, "CritRating"},
-	{L.CritPercent, "CritRating"}, -- /pawn compare 15062
+	{L.CritPercent, "CritRating"}, -- Classic, /pawn compare 15062
+	{L.CritPercentCombined, "CritRating", 1, PawnMultipleStatsExtract, "SpellCritRating", 1, PawnMultipleStatsExtract}, -- Classic Season of Discovery, /pawn compare 216621
+	{L.CritRating, "CritRating"}, -- Burning Crusade, /pawn compare 15062
+	{L.CritRating2, "CritRating"}, -- Burning Crusade, /pawn compare 30710
+	{L.CritRating3, "CritRating"}, -- Burning Crusade, /pawn compare 28796
+	{L.CritRatingShort, "CritRating"}, -- Burning Crusade, /pawn compare item:789::::::78
 	{L.ScopeCrit, "CritRating"},
 	{L.ScopeRangedCrit, "CritRating"}, -- Heartseeker Scope
-	{L.SpellCrit, "SpellCritRating"}, -- /pawn compare 16947
-	{L.Hit, "HitRating"}, -- /pawn compare 16947
+	{L.SpellCrit, "SpellCritRating"}, -- Classic, /pawn compare 16947
+	{L.SpellCritRating, "SpellCritRating"}, -- Burning Crusade, /pawn compare 16947
+	{L.SpellCritRating2, "SpellCritRating"}, -- Burning Crusade, /pawn compare 24256
+	{L.SpellCritRatingShort, "SpellCritRating"}, -- Burning Crusade, https://tbc.wowhead.com/item=24050/gleaming-dawnstone
+	{L.SpellCritRatingShort2, "SpellCritRating"}, -- Burning Crusade, /pawn compare 29317 (socket bonus)
+	{L.Hit, "HitRating"}, -- Classic, /pawn compare 16947
 	{L.Hit2, "HitRating"}, -- unused in English
+	{L.HitPercentCombined, "HitRating", 1, PawnMultipleStatsExtract, "SpellHitRating", 1, PawnMultipleStatsExtract}, -- Classic Season of Discovery, /pawn compare 213312
+	{L.HitRating, "HitRating"}, -- Burning Crusade, /pawn compare 28182
+	{L.HitRating2, "HitRating"}, -- Burning Crusade, /pawn compare 18500
+	{L.HitRating3, "HitRating"}, -- Burning Crusade in Spanish, /pawn compare 32570
+	{L.HitRatingShort, "HitRating"}, -- Burning Crusade, https://tbc.wowhead.com/item=24051/rigid-dawnstone
 	{L.SpellHit, "SpellHitRating"}, -- /pawn compare 16795
-	{L.Resilience, "Stamina"}, -- Mystic Dawnstone
-	{L.Resilience2, "Stamina"}, -- unused in English
+	{L.SpellHitRating, "SpellHitRating"}, -- Burning Crusade, /pawn compare 16795
+	{L.SpellHitRating2, "SpellHitRating"}, -- Burning Crusade, /pawn compare 24266
+	{L.SpellHitRatingShort, "SpellHitRating"}, -- Burning Crusade, https://tbc.wowhead.com/item=31861/great-dawnstone
+	{L.ExpertiseRating, "ExpertiseRating"}, -- Burning Crusade, /pawn compare 19351
+	{L.ExpertiseRatingShort, "ExpertiseRating"}, -- Wrath, Precise Bloodstone
+	{L.ArmorPenetration, "ArmorPenetration"},
+	{L.ArmorPenetrationRating, "ArmorPenetration"}, -- Burning Crusade, /pawn compare 34703
+	{L.ArmorPenetrationRating2, "ArmorPenetration"}, -- Burning Crusade, /pawn compare 41592 or 42642 or 44303 depending on locale
+	{L.ArmorPenetrationShort, "ArmorPenetration"}, -- Wrath, Fractured Scarlet Ruby
+	{L.Resilience, "ResilienceRating"}, -- Mystic Dawnstone
+	{L.Resilience2, "ResilienceRating"}, -- unused in English
+	{L.ResilienceRating, "ResilienceRating"}, -- /pawn compare 29181
+	{L.ResilienceRatingShort, "ResilienceRating"}, -- Burning Crusade, https://tbc.wowhead.com/item=24053/mystic-dawnstone
 	{L.PvPPower, "Stamina"}, -- Stormy Chalcedony
 	{L.EnchantmentCounterweight, "HasteRating"}, -- won't work on classic since the live string includes the word "haste" and it's worded differently in classic
 	{L.Haste, "HasteRating"}, -- Leggings of the Betrayed
 	{L.Haste2, "HasteRating"}, -- unused in English
+	{L.HasteRating, "HasteRating"}, -- Burning Crusade, /pawn compare 32570
+	{L.HasteRating2, "HasteRating"}, -- Burning Crusade esES, /pawn compare 32570
+	{L.HasteRatingShort, "HasteRating"}, -- Wrath, Quick Sun Crystal / Burning Crusade, random-stat items only
+	{L.SpellHasteRating, "SpellHasteRating"}, -- /pawn compare 34360
+	{L.SpellHasteRatingShort, "SpellHasteRating"}, -- https://tbc.wowhead.com/item=35315/quick-dawnstone
+	{L.SpellPenetration, "SpellPenetration"}, -- Burning Crusade, /pawn compare 21563
+	{L.SpellPenetrationClassic, "SpellPenetration"}, -- Classic (pre-TBC), /pawn compare 21338
+	{L.SpellPenetrationShort, "SpellPenetration"}, -- Burning Crusade, https://tbc.wowhead.com/item=24039/stormy-star-of-elune
 	{L.Mastery, "MasteryRating"}, -- Zen Dream Emerald
 	{L.Mastery2, "MasteryRating"}, -- unused in English
 	{L.Versatility, "Versatility"}, -- http://wod.wowhead.com/item=100945
@@ -227,14 +284,22 @@ PawnRegexes =
 	{L.MovementSpeed, "MovementSpeed"}, -- http://wod.wowhead.com/item=100945
 	{L.Ap, "Ap"}, -- /pawn compare item:789::::::1547
 	{L.Ap2, "Ap"}, -- /pawn compare 15062
-	{L.Rap, "Rap"}, -- /pawn compare 18473
-	{L.FeralAp, "FeralAp"}, -- /pawn compare 22988
+	{L.Ap3, "Ap"}, -- /pawn compare 18821
+	{L.Rap, "Rap"}, -- Classic, /pawn compare 18473
+	{L.Rap2, "Rap"}, -- Burning Crusade and Wrath Classic, /pawn compare 18713
+	{L.FeralAp, "FeralAp"}, -- Classic, /pawn compare 22988
+	{L.FeralApMoonkin, "FeralAp"}, -- Burning Crusade, /pawn compare 22988
+	{L.FeralApWrath}, -- Wrath, /pawn compare 22988 (in Wrath it only appears on druid items and is not a real stat, but it shouldn't get an orange diamond)
 	{L.Mp5, "Mp5"}, -- /pawn compare 22988
 	{L.Mp52, "Mp5"}, -- /pawn compare item:789::::::2074
+	{L.Mp53, "Mp5"}, -- Burning Crusade, socket bonus on /pawn compare 34360
+	{L.Mp54, "Mp5"}, -- Burning Crusade, /script PawnUIGetAllTextForItem("item:24057") and /pawn compare 28522
+	{L.Mp55, "Mp5"}, -- Burning Crusade, /pawn compare 28304
 	{L.Hp5, "Hp5"}, -- (on live, we used to count 1 HP5 = 3 Stamina)
 	{L.Hp52, "Hp5"}, -- Demon's Blood
-	{L.Hp53, "Hp5"}, -- Aquamarine Signet of Regeneration
+	{L.Hp53, "Hp5"}, -- Aquamarine Signet of Regeneration or /pawn compare item:789::::::2110
 	{L.Hp54, "Hp5"}, -- Lifestone
+	{L.Hp55, "Hp5"}, -- /pawn compare item:789::::::-28
 	{L.EnchantmentHealth, "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +100 health head/leg enchantment (counting 1 HP = 1/12.5 Stamina)
 	{L.EnchantmentHealth2, "Stamina", 1/12.5, PawnSingleStatMultiplier}, -- +150 health enchantment (counting 1 HP = 1/12.5 Stamina)
 	{L.Armor, "Armor"}, -- normal armor and cloak armor enchantments
@@ -245,26 +310,49 @@ PawnRegexes =
 	{L.FrostResist, "FrostResist"}, -- /pawn compare 12609
 	{L.ShadowResist, "ShadowResist"}, -- /pawn compare 12609
 	{L.ArcaneResist, "ArcaneResist"}, -- /pawn compare 12609
-	{L.SpellDamage, "SpellDamage", 1, PawnMultipleStatsExtract, "Healing", 1, PawnMultipleStatsExtract},
+	{L.SpellDamage, "SpellDamage", 1, PawnMultipleStatsExtract, "Healing", 1, PawnMultipleStatsExtract}, -- /pawn compare item:20686::::::2159 ("of Sorcery" on Classic)
 	{L.SpellDamage2, "SpellDamage", 1, PawnMultipleStatsExtract, "Healing", 1, PawnMultipleStatsExtract}, -- /pawn compare 16947
 	{L.SpellDamage3, "SpellDamage", 1, PawnMultipleStatsExtract, "Healing", 1, PawnMultipleStatsExtract}, -- French on Classic uses two different wordings:  /pawn compare 20641 vs. /pawn compare 10041
+	{L.SpellDamage4, "SpellDamage", 1, PawnMultipleStatsExtract, "Healing", 1, PawnMultipleStatsExtract}, -- Simplified Chinese on Classic uses many different wordings:  /pawn compare 16923 vs. /pawn compare 18608
+	{L.SpellDamage5, "SpellDamage", 1, PawnMultipleStatsExtract, "Healing", 1, PawnMultipleStatsExtract}, -- Burning Crusade, /pawn compare item:789::::::-36
+	{L.SpellDamage6, "SpellDamage", 1, PawnMultipleStatsExtract, "Healing", 1, PawnMultipleStatsExtract}, -- Burning Crusade, /pawn compare 33467
+	{L.SpellDamageAndHealing, "Healing", 1, PawnMultipleStatsExtract, "SpellDamage", 2, PawnMultipleStatsExtract}, -- Burning Crusade, /pawn compare 34360
+	{L.SpellDamageAndHealing2, "Healing", 1, PawnMultipleStatsExtract, "SpellDamage", 2, PawnMultipleStatsExtract}, -- Burning Crusade, /pawn compare 28304
+	{L.SpellDamageAndHealingEnchant, "Healing", 1, PawnMultipleStatsExtract, "SpellDamage", 2, PawnMultipleStatsExtract}, -- Burning Crusade, /script PawnUIGetAllTextForItem("item:16943:2566") (matches Short in some locales; don't double-dip)
+	{L.SpellDamageAndHealingShort, "Healing", 1, PawnMultipleStatsExtract, "SpellDamage", 2, PawnMultipleStatsExtract}, -- Burning Crusade, /pawn compare item:789::::::2041
+	{L.SpellDamageAndHealingShort2, "Healing", 1, PawnMultipleStatsExtract, "SpellDamage", 2, PawnMultipleStatsExtract}, -- Burning Crusade, /script PawnUIGetAllTextForItem("item:24060")
 	{L.FireSpellDamage, "FireSpellDamage"}, -- /pawn compare item:789::::::1878
 	{L.FireSpellDamage2, "FireSpellDamage"}, -- /pawn compare 944
+	{L.FireSpellDamage3, "FireSpellDamage"}, -- /pawn compare item:789::::::-22
 	{L.ShadowSpellDamage, "ShadowSpellDamage"}, -- /pawn compare item:789::::::1841
 	{L.ShadowSpellDamage2, "ShadowSpellDamage"}, -- /pawn compare 1980
+	{L.ShadowSpellDamage3, "ShadowSpellDamage"}, -- /pawn compare 19133, zhCN Classic only
+	{L.ShadowSpellDamage4, "ShadowSpellDamage"}, -- /pawn compare item:789::::::-25
 	{L.NatureSpellDamage, "NatureSpellDamage"}, -- /pawn compare item:789::::::1997
 	{L.NatureSpellDamage2, "NatureSpellDamage"}, -- /pawn compare 18829
+	{L.NatureSpellDamage3, "NatureSpellDamage"}, -- /pawn compare item:789::::::-24
 	{L.ArcaneSpellDamage, "ArcaneSpellDamage"}, -- /pawn compare item:789::::::1801
 	{L.ArcaneSpellDamage2, "ArcaneSpellDamage"}, -- /pawn compare 19308
+	{L.ArcaneSpellDamage3, "ArcaneSpellDamage"}, -- /pawn compare item:789::::::-21
 	{L.FrostSpellDamage, "FrostSpellDamage"}, -- /pawn compare item:789::::::1954
 	{L.FrostSpellDamage2, "FrostSpellDamage"}, -- /pawn compare 944
+	{L.FrostSpellDamage3, "FrostSpellDamage"}, -- /pawn compare item:789::::::-23
 	{L.HolySpellDamage, "HolySpellDamage"},
 	{L.HolySpellDamage2, "HolySpellDamage"}, -- /pawn compare 20504
+	{L.HolySpellDamage3, "HolySpellDamage"}, -- /pawn compare 30642
 	{L.Healing, "Healing"}, -- /pawn compare item:789::::::2028
 	{L.Healing2, "Healing"}, -- /pawn compare 16947
-	{L.SpellPower, "SpellDamage", 1, PawnMultipleStatsExtract, "Healing", 1, PawnMultipleStatsExtract}, -- enchantments
+	{L.Healing3, "Healing"}, -- Burning Crusade, /pawn compare item:789::::::-38
+	{L.SpellPower, "SpellPower"}, -- /pawn tooltip 39998
+	{L.SpellPower2, "SpellPower"}, -- /pawn compare 40585
+	{L.SpellPower3, "SpellPower"}, -- /pawn compare item:20686::::::2159
+	{PawnGameConstant(EMPTY_SOCKET_RED), "RedSocket", 1, PawnMultipleStatsFixed},
+	{PawnGameConstant(EMPTY_SOCKET_YELLOW), "YellowSocket", 1, PawnMultipleStatsFixed},
+	{PawnGameConstant(EMPTY_SOCKET_BLUE), "BlueSocket", 1, PawnMultipleStatsFixed},
+	{PawnGameConstant(EMPTY_SOCKET_META), "MetaSocket", 1, PawnMultipleStatsFixed},
+	{PawnGameConstant(EMPTY_SOCKET_COGWHEEL), "CogwheelSocket", 1, PawnMultipleStatsFixed},
 	{PawnGameConstant(EMPTY_SOCKET_PRISMATIC), "PrismaticSocket", 1, PawnMultipleStatsFixed},
-	{L.Corruption, "Corruption"}, -- /pawn compare item:172198::::::::120:262::3:1:3524
+	{PawnGameConstant(EMPTY_SOCKET_DOMINATION or "UNUSED")}, -- domination sockets are now ignored
 
 	-- In WoW Classic, crossbows, guns, and wands don't show "Ranged" and instead show the weapon type on the left.
 	{L.Bow, "IsBow", 1, PawnMultipleStatsFixed, "IsRanged", 1, PawnMultipleStatsFixed},
@@ -279,6 +367,7 @@ PawnRegexes =
 	{'^"'}, -- Flavor text
 	{PawnGameConstantIgnoredPlaceholder(ITEM_MIN_LEVEL)}, -- "Requires Level XX"... but "Requires level XX to YY" we DO care about.
 	{PawnGameConstantIgnoredPlaceholder(ITEM_REQ_SKILL)}, -- "Requires SKILL (XX)"
+	{PROFESSIONS_CRAFTING_QUALITY and PawnGameConstantIgnoredPlaceholder(PROFESSIONS_CRAFTING_QUALITY) or "^UNUSED$"}, -- "Quality: <icon>"
 	{L.Requires2}, -- unused in English
 }
 
@@ -297,6 +386,7 @@ PawnRightHandRegexes =
 	{L.Gun, "IsGun", 1, PawnMultipleStatsFixed},
 	{L.Mace, "IsMace", 1, PawnMultipleStatsFixed},
 	{L.Polearm, "IsPolearm", 1, PawnMultipleStatsFixed},
+	{INVTYPE_RELIC, "IsRelic", 1, PawnMultipleStatsFixed},
 	{L.Staff, "IsStaff", 1, PawnMultipleStatsFixed},
 	{L.Sword, "IsSword", 1, PawnMultipleStatsFixed},
 	{L.Warglaives, "IsWarglaive", 1, PawnMultipleStatsFixed},
@@ -307,3 +397,22 @@ PawnRightHandRegexes =
 	{L.Plate, "IsPlate", 1, PawnMultipleStatsFixed},
 	{L.Shield, "IsShield", 1, PawnMultipleStatsFixed},
 }
+
+-- Each language has some regexes that aren't necessary for that particular language. For performance, let's remove those from the table right now.
+-- TODO: For even more of a performance boost, filter out every regex that produces a stat that doesn't exist on the current version of the game.
+local FilteredRegexes = {}
+local _, Regex, LastRegex
+local KeptCount, RemovedCount = 0, 0
+for _, Regex in pairs(PawnRegexes) do
+	if Regex[1] == "" or Regex[1] == "^UNUSED$" then
+		RemovedCount = RemovedCount + 1
+	elseif Regex[1] == nil then
+		VgerCore.Fail("Localization error in regex table for " .. tostring(Regex[2]) .. " AFTER \"" .. VgerCore.Color.Blue .. PawnEscapeString(tostring(LastRegex)) .. "|r\".")
+	else
+		tinsert(FilteredRegexes, Regex)
+		KeptCount = KeptCount + 1
+		LastRegex = Regex[1]
+	end
+end
+PawnRegexes = FilteredRegexes
+--VgerCore.Message("Performance boost: removed " .. RemovedCount .. " regexes (" .. floor(100 * RemovedCount / (RemovedCount + KeptCount)) .. "%)")

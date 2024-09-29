@@ -277,6 +277,7 @@ end
 local tButtonX;
 local tButtonY;
 local tHots;
+local tHotslots;
 local tScaling;
 local tGridColumn;
 local tNumBars;
@@ -286,8 +287,8 @@ function VUHDO_getHealButtonPosHor(aPlaceNum, aRowNo, aPanelNum)
 	tButtonX = VUHDO_getColumnPos(aPlaceNum, aPanelNum) + VUHDO_getColumnOffset(aRowNo, aPanelNum);
 	tButtonY = VUHDO_getRowPos(aPlaceNum, aPanelNum, aRowNo);
 
-	if VUHDO_INDICATOR_CONFIG["BOUQUETS"]["THREAT_BAR"] ~= "" then
-		tButtonY = tButtonY + VUHDO_INDICATOR_CONFIG["CUSTOM"]["THREAT_BAR"]["HEIGHT"];
+	if VUHDO_INDICATOR_CONFIG[aPanelNum]["BOUQUETS"]["THREAT_BAR"] ~= "" then
+		tButtonY = tButtonY + VUHDO_INDICATOR_CONFIG[aPanelNum]["CUSTOM"]["THREAT_BAR"]["HEIGHT"];
 	end
 
 

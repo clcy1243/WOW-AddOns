@@ -2,13 +2,14 @@
 ..\FrameXML\UI.xsd">
 
 <Script file="Kurinnaxx.lua"/>
-<Script file="GeneralRajaxx.lua"/>
+<Script file="Rajaxx.lua"/>
 <Script file="Moam.lua"/>
 <Script file="Buru.lua"/>
 <Script file="Ayamiss.lua"/>
 <Script file="Ossirian.lua"/>
 <Script file="Trash.lua"/>
 
+<Include file="Locales\locales.xml"/>
 <Include file="Options\options.xml"/>
 
 </Ui>

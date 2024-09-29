@@ -35,7 +35,6 @@
 WowLua.indent = {}
 
 local lib = WowLua.indent
-lib.revision = revision
 
 local stringlen = string.len
 local stringformat = string.format
@@ -45,6 +44,8 @@ local stringbyte = string.byte
 local stringchar = string.char
 local stringrep = string.rep
 local stringgsub = string.gsub
+
+local defaultTabWidth = 2
 
 local workingTable = {}
 local workingTable2 = {}

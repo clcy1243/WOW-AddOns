@@ -13,7 +13,7 @@ mod:RegisterEnableMob(124625)
 
 function mod:GetOptions()
 	return {
-		{247549, "EMPHASIZE"}, -- Beguiling Charm
+		{247549, "CASTBAR", "EMPHASIZE"}, -- Beguiling Charm
 		247604, -- Fel Lash
 		247517, -- Heart Breaker
 		{247544, "TANK"}, -- Sadist
@@ -42,13 +42,13 @@ end
 --
 
 function mod:BeguilingCharm(args)
-	self:Message(args.spellId, "orange", "Warning")
+	self:MessageOld(args.spellId, "orange", "warning")
 	self:CDBar(args.spellId, 37.5)
 	self:CastBar(args.spellId, 4.5)
 end
 
 function mod:FelLash(args)
-	self:Message(args.spellId, "yellow", "Alarm")
+	self:MessageOld(args.spellId, "yellow", "alarm")
 	self:CDBar(args.spellId, 32)
 end
 
@@ -58,14 +58,14 @@ end
 
 function mod:HeartBreakerApplied(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(args.spellId, args.destName, "blue", "Info")
+		self:TargetMessageOld(args.spellId, args.destName, "blue", "info")
 	end
 end
 
 function mod:Sadist(args)
 	local amount = args.amount or 1
 	if amount % 2 == 0 then
-		self:StackMessage(args.spellId, args.destName, amount, "orange", amount > 5 and "Alert")
+		self:StackMessageOld(args.spellId, args.destName, amount, "orange", amount > 5 and "alert")
 	end
 end
 

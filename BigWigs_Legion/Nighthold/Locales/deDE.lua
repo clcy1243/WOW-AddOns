@@ -74,6 +74,7 @@ if L then
 
 	L.empowered = "(A) %s" -- (E) Eye of Gul'dan
 	L.gains = "Gul'dan erhält %s"
+	--L.p2_start = "You failed, heroes! The ritual is upon us! But first, I'll indulge myself a bit... and finish you!"
 	L.p4_mythic_start_yell = "Zeit, die Seele des Dämonenjägers seinem Körper zurückzugeben... und der Legion einen Wirt zu nehmen!"
 
 	L.nightorb_desc = "Beschwört eine Nachtkugel, beim Töten dieser Kugel erscheint eine Zeitzone."
@@ -108,7 +109,7 @@ if L then
 	L.defender = "Astralverteidiger"
 	L.weaver = "Weber der Dämmerwache"
 	L.archmage = "Erzmagierin der Shal'dorei"
-	L.manasaber = "Zahmer Manasäbler"
+	L.manasaber = "Gezähmter Manasäbler"
 	L.naturalist = "Naturalist der Shal'dorei"
 
 	--[[ Aluriel to Krosus ]]--

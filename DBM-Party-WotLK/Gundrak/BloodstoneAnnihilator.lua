@@ -1,11 +1,14 @@
 local mod	= DBM:NewMod(593, "DBM-Party-WotLK", 5, 274)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
-mod:SetCreatureID(29307)
-mod:SetEncounterID(385, 386, 1983)
---mod:SetZone()
+if not mod:IsClassic() then
+	mod.statTypes = "normal,heroic,timewalker"
+end
 
+mod:SetRevision("20230311193122")
+mod:SetCreatureID(29307)
+mod:SetEncounterID(1983)
+--
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
@@ -13,10 +16,10 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_DAMAGE 59451"
 )
 
-local warningElemental		= mod:NewSpellAnnounce("ej6421", 3, 54850)
-local warningStone			= mod:NewSpellAnnounce("ej6418", 3, 54878)
+local warningStone			= mod:NewSpellAnnounce(54878, 3)
+local warningElemental		= mod:NewSpellAnnounce(54850, 3)
 
-local specWarnPurpleShit	= mod:NewSpecialWarningMove(59451, nil, nil, nil, 1, 2)
+local specWarnPurpleShit	= mod:NewSpecialWarningGTFO(59451, nil, nil, nil, 1, 8)
 
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 54850 then
@@ -26,9 +29,9 @@ function mod:SPELL_CAST_START(args)
 	end
 end
 
-function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 59451 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) and not self:IsTrivial(85) then
-		specWarnPurpleShit:Show()
-		specWarnPurpleShit:Play("runaway")
+function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, spellName)
+	if spellId == 59451 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) and not self:IsTrivial() then
+		specWarnPurpleShit:Show(spellName)
+		specWarnPurpleShit:Play("watchfeet")
 	end
 end

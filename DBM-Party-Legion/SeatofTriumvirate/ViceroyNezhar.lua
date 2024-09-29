@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(1981, "DBM-Party-Legion", 13, 945)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145746")
+mod:SetRevision("20230708234551")
 mod:SetCreatureID(124874)
 mod:SetEncounterID(2067)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -20,7 +19,7 @@ mod:RegisterEventsInCombat(
 --TODO, special warning to switch to tentacles once know for sure how to tell empowered apart from non empowered?
 --TODO, More work on guard timers, with an english log that's actually captured properly (stared and stopped between pulls)
 local warnEternalTwilight				= mod:NewCastAnnounce(248736, 4)
-local warnAddsLeft						= mod:NewAddsLeftAnnounce("ej16424", 2)
+local warnAddsLeft						= mod:NewAddsLeftAnnounce(-16424, 2)
 local warnTentacles						= mod:NewSpellAnnounce(244769, 2)
 
 local specWarnHowlingDark				= mod:NewSpecialWarningInterrupt(244751, "HasInterrupt", nil, nil, 1, 2)
@@ -28,9 +27,9 @@ local specWarnEntropicForce				= mod:NewSpecialWarningSpell(246324, nil, nil, ni
 local specWarnAdds						= mod:NewSpecialWarningAdds(249336, "-Healer", nil, nil, 1, 2)
 
 local timerUmbralTentaclesCD			= mod:NewCDTimer(30.4, 244769, nil, nil, nil, 1)
-local timerHowlingDarkCD				= mod:NewCDTimer(28.0, 244751, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
+local timerHowlingDarkCD				= mod:NewCDTimer(28.0, 244751, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 local timerEntropicForceCD				= mod:NewCDTimer(28.0, 246324, nil, nil, nil, 2)--28-38
-local timerEternalTwilight				= mod:NewCastTimer(10, 248736, nil, nil, nil, 2, nil, DBM_CORE_L.DEADLY_ICON, nil, 2, 4)
+local timerEternalTwilight				= mod:NewCastTimer(10, 248736, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, nil, 2, 4)
 local timerAddsCD						= mod:NewAddsTimer(61.9, 249336, nil, "-Healer")
 
 mod.vb.guardsActive = 0
@@ -85,8 +84,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, bfaSpellId, _, legacySpellId)
-	local spellId = legacySpellId or bfaSpellId
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, spellId)
 	if spellId == 245038 then
 		warnTentacles:Show()
 		timerUmbralTentaclesCD:Start()

@@ -1,4 +1,3 @@
-
 local L = BigWigs:NewBossLocale("Auriaya", "zhCN")
 if not L then return end
 if L then
@@ -48,6 +47,10 @@ end
 
 L = BigWigs:NewBossLocale("The Iron Council", "zhCN")
 if L then
+	L.stormcaller_brundir = "唤雷者布隆迪尔"
+	L.steelbreaker = "断钢者"
+	L.runemaster_molgeim = "符文大师莫尔基姆"
+
 	L.summoning_message = "闪电元素即将出现！"
 
 	L.chased_other = "闪电之藤：>%s<！"
@@ -81,11 +84,7 @@ if L then
 	L.phase4_trigger = "^初步测试阶段完成。"
 	L.phase_bar = "<阶段：%d>"
 
-	L.hardmode = "困难模式计时器"
-	L.hardmode_desc = "显示困难模式计时器。"
 	L.hardmode_trigger = "^嘿，你们为什么要这么做啊？"
-	L.hardmode_message = "已开启困难模式！"
-	L.hardmode_warning = "困难模式结束！"
 
 	L.plasma_warning = "正在施放 等离子冲击！"
 	L.plasma_soon = "即将 等离子冲击！"
@@ -145,7 +144,7 @@ if L then
 	L.vapor = "萨隆邪铁蒸汽"
 	L.vapor_desc = "当萨隆邪铁蒸汽出现时发出警报。"
 	L.vapor_message = "萨隆邪铁蒸汽：>%d<！"
-	L.vapor_bar = "<萨隆邪铁蒸汽：%d/6>"
+	L.vapor_bar = "萨隆邪铁蒸汽"
 	L.vapor_trigger = "一团萨隆邪铁蒸汽在附近聚集起来！"
 
 	L.vaporstack = "萨隆邪铁蒸汽堆叠"
@@ -159,7 +158,6 @@ end
 
 L = BigWigs:NewBossLocale("XT-002 Deconstructor", "zhCN")
 if L then
-	L.gravitybomb_other = "重力炸弹"
 	L.lightbomb_other = "灼热之光"
 end
 
@@ -185,12 +183,12 @@ if L then
 	L.madness_warning = "10秒后，疯狂诱导！"
 	L.malady_message = "心灵疾病" -- short for Malady of the Mind (63830)
 
-	L.tentacle = "粉碎触须"
-	L.tentacle_desc = "当粉碎触须出现时发出警报。"
-	L.tentacle_message = "粉碎触须：>%d<！"
+	L.tentacle = "重压触须"
+	L.tentacle_desc = "当重压触须出现时发出警报。"
+	L.tentacle_message = "重压触须：>%d<！"
 
-	--L.small_tentacles = "Small Tentacles"
-	--L.small_tentacles_desc = "Warn for Corruptor Tentacle and Constrictor Tentacle spawns."
+	L.small_tentacles = "小型触须"
+	L.small_tentacles_desc = "警告腐蚀触须和缠绕触须的刷新时间。"
 
 	L.link_warning = ">你< 心智链接！"
 

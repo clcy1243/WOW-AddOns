@@ -5,7 +5,7 @@
 GTFO Fail List - Warlords of Draenor
 ]]--
 
-if (not GTFO.ClassicMode) then
+if (GTFO.RetailMode) then
 
 -- ***********
 -- * Draenor *
@@ -364,6 +364,18 @@ GTFO.SpellID["164618"] = {
 -- * Grimrail Depot *
 -- ******************
 
+GTFO.SpellID["164170"] = {
+  --desc = "Dash (Grimrail Overseer)";
+  sound = 3;
+  tankSound = 0;
+};
+
+GTFO.SpellID["161089"] = {
+  --desc = "Mad Dash (Borka the Brute)";
+  sound = 3;
+  tankSound = 0;
+};
+
 GTFO.SpellID["162513"] = {
 	--desc = "VX18-B Target Eliminator (Railmaster Rocketspark)";
 	sound = 3;
@@ -389,9 +401,24 @@ GTFO.SpellID["162057"] = {
 	sound = 3;
 };
 
+GTFO.SpellID["160963"] = {
+  --desc = "Blackrock Mortar (Grom'kar Boomer)";
+  sound = 3;
+};
+
+GTFO.SpellID["161289"] = {
+  --desc = "Falling Off the Grimrail";
+  sound = 3;
+};
+
 -- **************
 -- * Iron Docks *
 -- **************
+
+GTFO.SpellID["172631"] = {
+	--desc = "Knocked Down";
+	sound = 3;
+};
 
 GTFO.SpellID["163668"] = {
 	--desc = "Flaming Slash (Makogg Emberblade)";
@@ -498,14 +525,14 @@ GTFO.SpellID["165093"] = {
 	tankSound = 0;
 };
 
-GTFO.SpellID["164294"] = {
+GTFO.SpellID["174921"] = {
 	--desc = "Noxious Eruption (Twisted Abomination)";
 	sound = 3;
 };
 
-GTFO.SpellID["169445"] = {
-	--desc = "Noxious Eruption (Twisted Abomination)";
-	sound = 3;
+GTFO.SpellID["177734"] = {
+  --desc = "Agitated Water (Enchanted Waters)";
+  sound = 3;
 };
 
 GTFO.SpellID["175997"] = {

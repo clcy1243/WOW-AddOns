@@ -1,10 +1,9 @@
 local mod	= DBM:NewMod(1469, "DBM-Party-Legion", 10, 707)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190417010024")
+mod:SetRevision("20230814220424")
 mod:SetCreatureID(95887)
 mod:SetEncounterID(1817)
-mod:SetZone()
 
 mod:RegisterCombat("combat")
 
@@ -18,9 +17,9 @@ mod:RegisterEventsInCombat(
 local warnGaze						= mod:NewSpellAnnounce(194942, 2)
 
 local specWarnFocused				= mod:NewSpecialWarningSpell(194289, nil, nil, nil, 2, 2)
-local specWarnGazeGTFO				= mod:NewSpecialWarningMove(194945, nil, nil, nil, 1, 2)
+local specWarnGazeGTFO				= mod:NewSpecialWarningGTFO(194945, nil, nil, nil, 1, 8)
 
-local timerGazeCD					= mod:NewCDTimer(19.4, 194942, nil, nil, nil, 3)
+local timerGazeCD					= mod:NewCDTimer(15.8, 194942, nil, nil, nil, 3)
 
 function mod:OnCombatStart(delay)
 	timerGazeCD:Start(11.8-delay)
@@ -41,7 +40,7 @@ end
 function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 194945 and destGUID == UnitGUID("player") and self:AntiSpam(2, 1) then
 		specWarnGazeGTFO:Show()
-		specWarnGazeGTFO:Play("runaway")
+		specWarnGazeGTFO:Play("watchfeet")
 	end
 end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE

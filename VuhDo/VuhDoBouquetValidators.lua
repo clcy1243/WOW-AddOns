@@ -7,25 +7,13 @@ VUHDO_BOUQUET_CUSTOM_TYPE_HOLY_POWER = 6;
 VUHDO_BOUQUET_CUSTOM_TYPE_SECONDS = 7;
 VUHDO_BOUQUET_CUSTOM_TYPE_STACKS = 8;
 VUHDO_BOUQUET_CUSTOM_TYPE_CUSTOM_FLAG = 9;
+VUHDO_BOUQUET_CUSTOM_TYPE_SPELL_TRACE = 10;
 
 VUHDO_FORCE_RESET = false;
 
 local floor = floor;
 local select = select;
-local twipe = table.wipe;
-local GetRaidTargetIndex = GetRaidTargetIndex;
-local UnitPower = UnitPower;
-local UnitPowerMax = UnitPowerMax;
-local UnitIsFriend = UnitIsFriend;
-local UnitIsEnemy = UnitIsEnemy;
-local UnitIsDeadOrGhost = UnitIsDeadOrGhost;
-local UnitIsPlayer = UnitIsPlayer;
-local UnitIsTapped = UnitIsTapped;
-local UnitIsTappedByPlayer = UnitIsTappedByPlayer;
-local GetTexCoordsForRole = GetTexCoordsForRole;
-local UnitIsPVP = UnitIsPVP;
-local UnitFactionGroup = UnitFactionGroup;
-local UnitHasIncomingResurrection = UnitHasIncomingResurrection;
+local GetTexCoordsForRole = GetTexCoordsForRole or VUHDO_getTexCoordsForRole;
 local _;
 
 local VUHDO_RAID = { };
@@ -37,9 +25,7 @@ local VUHDO_getChosenDebuffInfo;
 local VUHDO_getCurrentPlayerTarget;
 local VUHDO_getCurrentPlayerFocus;
 local VUHDO_getCurrentMouseOver;
-local VUHDO_getDistanceBetween;
 local VUHDO_isUnitSwiftmendable;
-local VUHDO_getNumInUnitCluster;
 local VUHDO_getIsInHiglightCluster;
 local VUHDO_getDebuffColor;
 local VUHDO_getIsCurrentBouquetActive;
@@ -52,15 +38,10 @@ local VUHDO_getSpellTraceTrailOfLightForUnit;
 local VUHDO_getAoeAdviceForUnit;
 local VUHDO_getCurrentBouquetTimer;
 local VUHDO_getRaidTargetIconTexture;
-local VUHDO_shouldDisplayArrow;
-local VUHDO_getUnitDirection;
-local VUHDO_getCellForDirection;
-local VUHDO_getRedGreenForDistance;
-local VUHDO_getTexCoordsForCell;
 local VUHDO_getUnitGroupPrivileges;
 local VUHDO_getLatestCustomDebuff;
+local VUHDO_getUnitOverallShieldRemain;
 
-local sIsInverted;
 local sBarColors;
 local sIsDistance;
 
@@ -69,6 +50,7 @@ local sIsDistance;
 
 
 function VUHDO_bouquetValidatorsInitLocalOverrides()
+
 	VUHDO_RAID = _G["VUHDO_RAID"];
 	VUHDO_USER_CLASS_COLORS = _G["VUHDO_USER_CLASS_COLORS"];
 	VUHDO_PANEL_SETUP = _G["VUHDO_PANEL_SETUP"];
@@ -78,9 +60,7 @@ function VUHDO_bouquetValidatorsInitLocalOverrides()
 	VUHDO_getCurrentPlayerTarget = _G["VUHDO_getCurrentPlayerTarget"];
 	VUHDO_getCurrentPlayerFocus = _G["VUHDO_getCurrentPlayerFocus"];
 	VUHDO_getCurrentMouseOver = _G["VUHDO_getCurrentMouseOver"];
-	VUHDO_getDistanceBetween = _G["VUHDO_getDistanceBetween"];
 	VUHDO_isUnitSwiftmendable = _G["VUHDO_isUnitSwiftmendable"];
-	VUHDO_getNumInUnitCluster = _G["VUHDO_getNumInUnitCluster"];
 	VUHDO_getIsInHiglightCluster = _G["VUHDO_getIsInHiglightCluster"];
 	VUHDO_getDebuffColor = _G["VUHDO_getDebuffColor"];
 	VUHDO_getCurrentBouquetColor = _G["VUHDO_getCurrentBouquetColor"];
@@ -93,17 +73,13 @@ function VUHDO_bouquetValidatorsInitLocalOverrides()
 	VUHDO_getAoeAdviceForUnit = _G["VUHDO_getAoeAdviceForUnit"];
 	VUHDO_getCurrentBouquetTimer = _G["VUHDO_getCurrentBouquetTimer"];
 	VUHDO_getRaidTargetIconTexture = _G["VUHDO_getRaidTargetIconTexture"];
-	VUHDO_shouldDisplayArrow = _G["VUHDO_shouldDisplayArrow"];
-	VUHDO_getUnitDirection = _G["VUHDO_getUnitDirection"];
-	VUHDO_getCellForDirection = _G["VUHDO_getCellForDirection"];
-	VUHDO_getRedGreenForDistance = _G["VUHDO_getRedGreenForDistance"];
-	VUHDO_getTexCoordsForCell = _G["VUHDO_getTexCoordsForCell"];
 	VUHDO_getUnitGroupPrivileges = _G["VUHDO_getUnitGroupPrivileges"];
 	VUHDO_getLatestCustomDebuff = _G["VUHDO_getLatestCustomDebuff"];
+	VUHDO_getUnitOverallShieldRemain = _G["VUHDO_getUnitOverallShieldRemain"];
 
-	sIsInverted = VUHDO_INDICATOR_CONFIG["CUSTOM"]["HEALTH_BAR"]["invertGrowth"];
 	sBarColors = VUHDO_PANEL_SETUP["BAR_COLORS"];
 	sIsDistance = VUHDO_CONFIG["DIRECTION"]["isDistanceText"];
+
 end
 
 
@@ -129,6 +105,7 @@ local VUHDO_CHARGE_COLORS = {
 --
 local tInfo;
 local function VUHDO_spellTraceValidator(anInfo, _)
+
 	tInfo = VUHDO_getSpellTraceForUnit(anInfo["unit"]);
 
 	if tInfo then
@@ -136,6 +113,57 @@ local function VUHDO_spellTraceValidator(anInfo, _)
 	else
 		return false, nil, -1, -1, -1;
 	end
+
+end
+
+
+
+--
+local tInfo;
+local function VUHDO_spellTraceIncomingValidator(anInfo, _)
+
+	tInfo = VUHDO_getSpellTraceIncomingForUnit(anInfo["unit"]);
+
+	if tInfo then
+		return true, tInfo["icon"], -1, -1, -1;
+	else
+		return false, nil, -1, -1, -1;
+	end
+
+end
+
+
+
+--
+local tInfo;
+local function VUHDO_spellTraceHealValidator(anInfo, _)
+
+	tInfo = VUHDO_getSpellTraceHealForUnit(anInfo["unit"]);
+
+	if tInfo then
+		return true, tInfo["icon"], -1, -1, -1;
+	else
+		return false, nil, -1, -1, -1;
+	end
+
+end
+
+
+
+--
+local tInfo;
+local function VUHDO_spellTraceSingleValidator(anInfo, aCustom)
+
+	if aCustom and aCustom["custom"] and aCustom["custom"]["spellTrace"] and aCustom["custom"]["spellTrace"] ~= "" then
+		tInfo = VUHDO_getSpellTraceForUnit(anInfo["unit"], aCustom["custom"]["spellTrace"]);
+
+		if tInfo then
+			return true, tInfo["icon"], -1, -1, -1;
+		end
+	end
+
+	return false, nil, -1, -1, -1;
+
 end
 
 
@@ -143,6 +171,7 @@ end
 --
 local tInfo;
 local function VUHDO_trailOfLightValidator(anInfo, _)
+
 	tInfo = VUHDO_getSpellTraceTrailOfLightForUnit(anInfo["unit"]);
 
 	if tInfo then
@@ -150,6 +179,16 @@ local function VUHDO_trailOfLightValidator(anInfo, _)
 	else
 		return false, nil, -1, -1, -1;
 	end
+
+end
+
+
+
+--
+local function VUHDO_trailOfLightNextValidator(anInfo, _)
+
+	return VUHDO_isSpellTraceTrailOfLightNextUnit(anInfo["unit"]), nil, -1, -1, -1;
+
 end
 
 
@@ -205,7 +244,7 @@ end
 
 --
 local function VUHDO_isPhasedValidator(anInfo, _)
-	if UnitIsWarModePhased(anInfo["unit"]) or not UnitInPhase(anInfo["unit"]) then
+	if VUHDO_unitPhaseReason(anInfo["unit"]) then
 		return true, "Interface\\TargetingFrame\\UI-PhasingIcon", 
 			-1, -1, -1, nil, nil, 0.15625, 0.84375, 0.15625, 0.84375;
 	else
@@ -217,21 +256,25 @@ end
 
 --
 local function VUHDO_isWarModePhasedValidator(anInfo, _)
-	if UnitIsWarModePhased(anInfo["unit"]) then
+
+	local tPhaseReason = VUHDO_unitPhaseReason(anInfo["unit"]);
+
+	if tPhaseReason and tPhaseReason == Enum.PhaseReason.WarMode then
 		return true, "Interface\\TargetingFrame\\UI-PhasingIcon", 
 			-1, -1, -1, nil, nil, 0.15625, 0.84375, 0.15625, 0.84375;
 	else
 		return false, nil, -1, -1, -1;
 	end
+
 end
 
 
 
 --
 local tDistance;
-local function VUHDO_inYardsRangeValidator(anInfo, someCustom)
+local function VUHDO_inYardsRangeValidator(anInfo, aSomeCustom)
 	tDistance = VUHDO_getDistanceBetween("player", anInfo["unit"]);
-	return tDistance and (tDistance <= someCustom["custom"][1]), nil, -1, -1, -1;
+	return tDistance and (tDistance <= aSomeCustom["custom"][1]), nil, -1, -1, -1;
 end
 
 
@@ -257,7 +300,7 @@ local tDebuffInfo;
 local function VUHDO_debuffMagicValidator(anInfo, _)
 	tDebuffInfo = VUHDO_getUnitDebuffSchoolInfos(anInfo["unit"], VUHDO_DEBUFF_TYPE_MAGIC);
 	if tDebuffInfo[2] then
-		return true, tDebuffInfo[1], tDebuffInfo[2], tDebuffInfo[3], tDebuffInfo[4];
+		return true, tDebuffInfo[1], floor(tDebuffInfo[2] - GetTime()), tDebuffInfo[3], tDebuffInfo[4];
 	else
 		return false, nil, -1, -1, -1;
 	end
@@ -270,7 +313,7 @@ local tDebuffInfo;
 local function VUHDO_debuffDiseaseValidator(anInfo, _)
 	tDebuffInfo = VUHDO_getUnitDebuffSchoolInfos(anInfo["unit"], VUHDO_DEBUFF_TYPE_DISEASE);
 	if tDebuffInfo[2] then
-		return true, tDebuffInfo[1], tDebuffInfo[2], tDebuffInfo[3], tDebuffInfo[4];
+		return true, tDebuffInfo[1], floor(tDebuffInfo[2] - GetTime()), tDebuffInfo[3], tDebuffInfo[4];
 	else
 		return false, nil, -1, -1, -1;
 	end
@@ -283,7 +326,7 @@ local tDebuffInfo;
 local function VUHDO_debuffPoisonValidator(anInfo, _)
 	tDebuffInfo = VUHDO_getUnitDebuffSchoolInfos(anInfo["unit"], VUHDO_DEBUFF_TYPE_POISON);
 	if tDebuffInfo[2] then
-		return true, tDebuffInfo[1], tDebuffInfo[2], tDebuffInfo[3], tDebuffInfo[4];
+		return true, tDebuffInfo[1], floor(tDebuffInfo[2] - GetTime()), tDebuffInfo[3], tDebuffInfo[4];
 	else
 		return false, nil, -1, -1, -1;
 	end
@@ -296,11 +339,28 @@ local tDebuffInfo;
 local function VUHDO_debuffCurseValidator(anInfo, _)
 	tDebuffInfo = VUHDO_getUnitDebuffSchoolInfos(anInfo["unit"], VUHDO_DEBUFF_TYPE_CURSE);
 	if tDebuffInfo[2] then
-		return true, tDebuffInfo[1], tDebuffInfo[2], tDebuffInfo[3], tDebuffInfo[4];
+		return true, tDebuffInfo[1], floor(tDebuffInfo[2] - GetTime()), tDebuffInfo[3], tDebuffInfo[4];
 	else
 		return false, nil, -1, -1, -1;
 	end
 end
+
+
+
+--
+local tDebuffInfo;
+local function VUHDO_debuffBleedValidator(anInfo, _)
+
+	tDebuffInfo = VUHDO_getUnitDebuffSchoolInfos(anInfo["unit"], VUHDO_DEBUFF_TYPE_BLEED);
+
+	if tDebuffInfo[2] then
+		return true, tDebuffInfo[1], floor(tDebuffInfo[2] - GetTime()), tDebuffInfo[3], tDebuffInfo[4];
+	else
+		return false, nil, -1, -1, -1;
+	end
+
+end
+
 
 
 -- return tIsActive, tIcon, tTimer, tCounter, tDuration, tColor, tTimer2, clipLeft, clipRight, clipTop, clipBottom
@@ -308,9 +368,9 @@ local tDebuffInfo;
 local function VUHDO_debuffBarColorValidator(anInfo, _)
 	if anInfo["charmed"] then
 		return true, nil, -1, -1, -1, VUHDO_getDebuffColor(anInfo);
-	elseif 0 ~= anInfo["debuff"] then -- VUHDO_DEBUFF_TYPE_NONE
+	elseif anInfo["debuff"] and anInfo["debuff"] > 0 then -- VUHDO_DEBUFF_TYPE_NONE
 		tDebuffInfo = VUHDO_getChosenDebuffInfo(anInfo["unit"]);
-		return true, tDebuffInfo[1], -1, tDebuffInfo[2], -1, VUHDO_getDebuffColor(anInfo);
+		return true, tDebuffInfo[1], -1, tDebuffInfo[3], -1, VUHDO_getDebuffColor(anInfo);
 	else
 		return false, nil, -1, -1, -1;
 	end
@@ -391,68 +451,68 @@ end
 
 
 --
-local function VUHDO_healthBelowValidator(anInfo, someCustom)
+local function VUHDO_healthBelowValidator(anInfo, aSomeCustom)
 	if anInfo["healthmax"] > 0 then
-		return 100 * anInfo["health"] / anInfo["healthmax"] < someCustom["custom"][1],
+		return 100 * anInfo["health"] / anInfo["healthmax"] < aSomeCustom["custom"][1],
 			nil, -1, -1, -1;
 	else
-		return false, nil, tPower, -1, -1;
+		return false, nil, -1, -1, -1;
 	end
 end
 
 
 
 --
-local function VUHDO_healthAboveValidator(anInfo, someCustom)
+local function VUHDO_healthAboveValidator(anInfo, aSomeCustom)
 	if anInfo["healthmax"] > 0 then
-		return 100 * anInfo["health"] / anInfo["healthmax"] >= someCustom["custom"][1],
+		return 100 * anInfo["health"] / anInfo["healthmax"] >= aSomeCustom["custom"][1],
 			nil, -1, -1, -1;
 	else
-		return false, nil, tPower, -1, -1;
+		return false, nil, -1, -1, -1;
 	end
 end
 
 
 
 --
-local function VUHDO_healthBelowAbsValidator(anInfo, someCustom)
-	return anInfo["health"] * 0.001 < someCustom["custom"][1], nil, -1, -1, -1;
+local function VUHDO_healthBelowAbsValidator(anInfo, aSomeCustom)
+	return anInfo["health"] * 0.001 < aSomeCustom["custom"][1], nil, -1, -1, -1;
 end
 
 
 
 --
-local function VUHDO_healthAboveAbsValidator(anInfo, someCustom)
-	return anInfo["health"] * 0.001 >= someCustom["custom"][1], nil, -1, -1, -1;
+local function VUHDO_healthAboveAbsValidator(anInfo, aSomeCustom)
+	return anInfo["health"] * 0.001 >= aSomeCustom["custom"][1], nil, -1, -1, -1;
 end
 
 
 
 --
-local function VUHDO_manaBelowValidator(anInfo, someCustom)
+local function VUHDO_manaBelowValidator(anInfo, aSomeCustom)
 	if anInfo["powermax"] > 0 then
-		return anInfo["powertype"] == 0 and 100 * anInfo["power"] / anInfo["powermax"] < someCustom["custom"][1],
+		return anInfo["powertype"] == 0 and 100 * anInfo["power"] / anInfo["powermax"] < aSomeCustom["custom"][1],
 			nil, -1, -1, -1;
 	else
-		return false, nil, tPower, -1, -1;
+		return false, nil, -1, -1, -1;
 	end
 end
 
 
 
 --
-local function VUHDO_threatAboveValidator(anInfo, someCustom)
-	return anInfo["threatPerc"] > someCustom["custom"][1], nil, -1, -1, -1;
+local function VUHDO_threatAboveValidator(anInfo, aSomeCustom)
+	return anInfo["threatPerc"] > aSomeCustom["custom"][1], nil, -1, -1, -1;
 end
 
 
 
 --
 local tPerc;
-local function VUHDO_alternatePowersAboveValidator(anInfo, someCustom)
+local function VUHDO_alternatePowersAboveValidator(anInfo, aSomeCustom)
 	if anInfo["connected"] and anInfo["isAltPower"] and not anInfo["dead"] then
 		tPerc = 100 * (UnitPower(anInfo["unit"], ALTERNATE_POWER_INDEX) or 0) / (UnitPowerMax(anInfo["unit"], ALTERNATE_POWER_INDEX) or 100);
-		return tPerc > someCustom["custom"][1], nil, -1, -1, -1;
+		return tPerc > aSomeCustom["custom"][1], nil, -1, -1, -1;
 	else
 		return false, nil, -1, -1, -1;
 	end
@@ -463,10 +523,10 @@ end
 
 --
 local tPower;
-local function VUHDO_holyPowersEqualsValidator(anInfo, someCustom)
+local function VUHDO_holyPowersEqualsValidator(anInfo, aSomeCustom)
 	if anInfo["connected"] and not anInfo["dead"] then
 		tPower = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_HOLY_POWER);
-		if tPower == someCustom["custom"][1] then
+		if tPower == aSomeCustom["custom"][1] then
 			return true, nil, tPower, -1, UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_HOLY_POWER);
 		else
 			return false, nil, -1, -1, -1;
@@ -479,10 +539,10 @@ end
 
 
 --
-local function VUHDO_chiEqualsValidator(anInfo, someCustom)
+local function VUHDO_chiEqualsValidator(anInfo, aSomeCustom)
 	if anInfo["connected"] and not anInfo["dead"] then
 		tPower = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_CHI);
-		if tPower == someCustom["custom"][1] then
+		if tPower == aSomeCustom["custom"][1] then
 			return true, nil, tPower, -1, UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_CHI);
 		else
 			return false, nil, -1, -1, -1;
@@ -495,10 +555,10 @@ end
 
 
 --
-local function VUHDO_comboPointsEqualsValidator(anInfo, someCustom)
+local function VUHDO_comboPointsEqualsValidator(anInfo, aSomeCustom)
 	if anInfo["connected"] and not anInfo["dead"] then
 		tPower = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_COMBO_POINTS);
-		if tPower == someCustom["custom"][1] then
+		if tPower == aSomeCustom["custom"][1] then
 			return true, nil, tPower, -1, UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_COMBO_POINTS);
 		else
 			return false, nil, -1, -1, -1;
@@ -511,10 +571,10 @@ end
 
 
 --
-local function VUHDO_soulShardsEqualsValidator(anInfo, someCustom)
+local function VUHDO_soulShardsEqualsValidator(anInfo, aSomeCustom)
 	if anInfo["connected"] and not anInfo["dead"] then
 		tPower = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_SOUL_SHARDS);
-		if tPower == someCustom["custom"][1] then
+		if tPower == aSomeCustom["custom"][1] then
 			return true, nil, tPower, -1, UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_SOUL_SHARDS);
 		else
 			return false, nil, -1, -1, -1;
@@ -528,7 +588,7 @@ end
 
 --
 local tIsRuneReady;
-local function VUHDO_runesEqualsValidator(anInfo, someCustom)
+local function VUHDO_runesEqualsValidator(anInfo, aSomeCustom)
 	if anInfo["unit"] ~= "player" then
 		return false, nil, -1, -1, -1;
 	elseif anInfo["connected"] and not anInfo["dead"] then
@@ -540,7 +600,7 @@ local function VUHDO_runesEqualsValidator(anInfo, someCustom)
 			tPower = tPower + (tIsRuneReady and 1 or 0);
 		end
 
-		if tPower == someCustom["custom"][1] then
+		if tPower == aSomeCustom["custom"][1] then
 			return true, nil, tPower, -1, UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_RUNES);
 		else
 			return false, nil, -1, -1, -1;
@@ -553,10 +613,10 @@ end
 
 
 --
-local function VUHDO_arcaneChargesEqualsValidator(anInfo, someCustom)
+local function VUHDO_arcaneChargesEqualsValidator(anInfo, aSomeCustom)
 	if anInfo["connected"] and not anInfo["dead"] then
 		tPower = UnitPower(anInfo["unit"], VUHDO_UNIT_POWER_ARCANE_CHARGES);
-		if tPower == someCustom["custom"][1] then
+		if tPower == aSomeCustom["custom"][1] then
 			return true, nil, tPower, -1, UnitPowerMax(anInfo["unit"], VUHDO_UNIT_POWER_ARCANE_CHARGES);
 		else
 			return false, nil, -1, -1, -1;
@@ -569,9 +629,9 @@ end
 
 
 --
-local function VUHDO_durationAboveValidator(anInfo, someCustom)
+local function VUHDO_durationAboveValidator(anInfo, aSomeCustom)
 	if VUHDO_getIsCurrentBouquetActive() then
-		return VUHDO_getCurrentBouquetTimer() > someCustom["custom"][1], nil, -1, -1, -1;
+		return VUHDO_getCurrentBouquetTimer() > aSomeCustom["custom"][1], nil, -1, -1, -1;
 	else
 		return false, nil, -1, -1, -1;
 	end
@@ -580,9 +640,9 @@ end
 
 
 --
-local function VUHDO_durationBelowValidator(anInfo, someCustom)
+local function VUHDO_durationBelowValidator(anInfo, aSomeCustom)
 	if VUHDO_getIsCurrentBouquetActive() then
-		return VUHDO_getCurrentBouquetTimer() < someCustom["custom"][1], nil, -1, -1, -1;
+		return VUHDO_getCurrentBouquetTimer() < aSomeCustom["custom"][1], nil, -1, -1, -1;
 	else
 		return false, nil, -1, -1, -1;
 	end
@@ -592,9 +652,9 @@ end
 
 --
 local tNumInCluster;
-local function VUHDO_numInClusterValidator(anInfo, someCustom)
+local function VUHDO_numInClusterValidator(anInfo, aSomeCustom)
 	tNumInCluster = VUHDO_getNumInUnitCluster(anInfo["unit"]);
-	return tNumInCluster >= someCustom["custom"][1], nil, -1, tNumInCluster, -1;
+	return tNumInCluster >= aSomeCustom["custom"][1], nil, -1, tNumInCluster, -1;
 end
 
 
@@ -670,10 +730,10 @@ end
 
 --
 local tStacks;
-local function VUHDO_stacksValidator(anInfo, someCustom)
+local function VUHDO_stacksValidator(anInfo, aSomeCustom)
 	tStacks = VUHDO_getCurrentBouquetStacks() or 0;
 
-	if tStacks > someCustom["custom"][1] then
+	if tStacks > aSomeCustom["custom"][1] then
 		return true, nil, -1, -1, -1;
 	else
 		return false, nil, -1, -1, -1;
@@ -684,7 +744,7 @@ end
 
 --
 local tIndex, tFactor, tColor, tUnit;
-local function VUHDO_emergencyColorValidator(anInfo, someCustom)
+local function VUHDO_emergencyColorValidator(anInfo, aSomeCustom)
 	if not VUHDO_FORCE_RESET then
 		tUnit = anInfo["unit"];
 
@@ -698,7 +758,7 @@ local function VUHDO_emergencyColorValidator(anInfo, someCustom)
 		if tIndex then
 			tFactor = 1 / tIndex;
 
-			tColor = VUHDO_copyColor(someCustom["color"]);
+			tColor = VUHDO_copyColor(aSomeCustom["color"]);
 			tColor["R"], tColor["G"], tColor["B"] = (tColor["R"] or 0) * tFactor, (tColor["G"] or 0) * tFactor, (tColor["B"] or 0) * tFactor;
 			return true, nil, -1, -1, -1, tColor;
 		end
@@ -710,7 +770,7 @@ end
 
 
 --
-local function VUHDO_resurrectionValidator(anInfo, someCustom)
+local function VUHDO_resurrectionValidator(anInfo, aSomeCustom)
 	return anInfo["dead"] and UnitHasIncomingResurrection(anInfo["unit"]), "Interface\\RaidFrame\\Raid-Icon-Rez", -1, -1, -1;
 end
 
@@ -719,15 +779,10 @@ end
 -- return tIsActive, tIcon, tTimer, tCounter, tDuration, tColor, tTimer2, clipLeft, clipRight, clipTop, clipBottom
 
 --
-local tHealth, tHealthMax;
 local function VUHDO_statusHealthValidator(anInfo, _)
-	if sIsInverted then
-		return true, nil, anInfo["health"] + VUHDO_getIncHealOnUnit(anInfo["unit"]), -1,
-			anInfo["healthmax"], nil, anInfo["health"];
-	else
-		return true, nil, anInfo["health"], -1,
-			anInfo["healthmax"], nil, anInfo["health"];
-	end
+
+	return true, nil, anInfo["health"], -1, anInfo["healthmax"], nil, anInfo["health"];
+
 end
 
 
@@ -744,6 +799,14 @@ end
 local function VUHDO_statusManaHealerOnlyValidator(anInfo, _)
 	return (anInfo["powertype"] == 0 and anInfo["role"] == VUHDO_ID_RANGED_HEAL), nil, anInfo["power"], -1,
 		anInfo["powermax"], VUHDO_copyColor(VUHDO_POWER_TYPE_COLORS[0]);
+end
+
+
+
+--
+local function VUHDO_statusPowerTankOnlyValidator(anInfo, _)
+	return (anInfo["powertype"] ~= 0 and anInfo["role"] == VUHDO_ID_MELEE_TANK), nil, anInfo["power"], -1,
+		anInfo["powermax"], VUHDO_copyColor(VUHDO_POWER_TYPE_COLORS[anInfo["powertype"] or 0]);
 end
 
 
@@ -818,6 +881,19 @@ local function VUHDO_statusFullIfActiveValidator(_, _)
 	else
 		return false, nil, -1, -1, -1;
 	end
+end
+
+
+
+--
+local function VUHDO_statusHealthIfActiveValidator(anInfo, _)
+
+	if VUHDO_getIsCurrentBouquetActive() then
+		return true, nil, anInfo["health"], -1, anInfo["healthmax"], VUHDO_getCurrentBouquetColor(), anInfo["health"];
+	else
+		return false, nil, -1, -1, -1;
+	end
+
 end
 
 
@@ -1073,6 +1149,16 @@ local function VUHDO_pvpIconValidator(anInfo, _)
 	end
 end
 
+--
+local function VUHDO_friendValidator(anInfo, _)
+  return UnitIsFriend("player", anInfo["unit"]), nil, -1, -1, -1;
+end
+
+--
+local function VUHDO_foeValidator(anInfo, _)
+  return not UnitIsFriend("player", anInfo["unit"]), nil, -1, -1, -1;
+end
+
 
 
 --
@@ -1081,7 +1167,7 @@ local tDirection;
 local tColor = { ["useBackground"] = true, ["noStacksColor"] = true };
 local tDefaultColor = { ["R"] = 1, ["G"] = 0.4, ["B"] = 0.4, ["O"] = 1, ["useBackground"] = true, ["useSlotColor"] = true }
 local tDistance;
-local function VUHDO_directionArrowValidator(anInfo, someInfos)
+local function VUHDO_directionArrowValidator(anInfo, _)
 	tUnit = anInfo["unit"];
 
 	if not VUHDO_shouldDisplayArrow(tUnit) then
@@ -1160,6 +1246,7 @@ local VUHDO_BLOCKED_FUNCTIONS = {
 	setfenv = true,
 	loadstring = true,
 	pcall = true,
+	xpcall = true,
 	-- blocked WoW API
 	SendMail = true,
 	SetTradeMoney = true,
@@ -1172,7 +1259,44 @@ local VUHDO_BLOCKED_FUNCTIONS = {
 	RunScript = true,
 	AcceptTrade = true,
 	SetSendMailMoney = true,
-	EditMacro = true
+	EditMacro = true,
+	DevTools_DumpCommand = true,
+	hash_SlashCmdList = true,
+	RegisterNewSlashCommand = true,
+	CreateMacro = true,
+	SetBindingMacro = true,
+	GuildDisband = true,
+	GuildUninvite = true,
+	securecall = true,
+	DeleteCursorItem = true,
+	ChatEdit_SendText = true,
+	ChatEdit_ActivateChat = true,
+	ChatEdit_ParseText = true,
+	ChatEdit_OnEnterPressed = true,
+	GetButtonMetatable = true,
+	GetEditBoxMetatable = true,
+	GetFontStringMetatable = true,
+	GetFrameMetatable = true
+};
+
+local VUHDO_BLOCKED_TABLES = {
+	SlashCmdList = true,
+	SendMailMailButton = true,
+	SendMailMoneyGold = true,
+	MailFrameTab2 = true,
+	BankFrame = true,
+	TradeFrame = true,
+	GuildBankFrame = true,
+	MailFrame = true,
+	C_GMTicketInfo = true,
+	WeakAurasSaved = true,
+	WeakAurasOptions = true,
+	WeakAurasOptionsSaved = true,
+	PlaterDB = true,
+	_detalhes_global = true,
+	_detalhes = true,
+	DEFAULT_CHAT_FRAME = true,
+	ChatFrame1 = true
 };
 
 
@@ -1185,20 +1309,32 @@ end
 
 
 local env_getglobal;
-local exec_env = setmetatable({}, { __index =
-	function(t, k)
-		if k == "_G" then
-			return t
-		elseif k == "getglobal" then
-			return env_getglobal
-		elseif VUHDO_BLOCKED_FUNCTIONS[k] then
-			return VUHDO_blockedFunction
-		elseif VUHDO_OVERRIDE_FUNCTIONS[k] then
-			return VUHDO_OVERRIDE_FUNCTIONS[k]
-		else
-			return _G[k]
-		end
-	end
+local exec_env = setmetatable({}, { 
+	__index =
+		function(t, k)
+			if k == "_G" then
+				return t
+			elseif k == "getglobal" then
+				return env_getglobal
+			elseif VUHDO_BLOCKED_FUNCTIONS[k] then
+				VUHDO_blockedFunction()
+
+				return function() end
+			elseif VUHDO_BLOCKED_TABLES[k] then 
+				VUHDO_blockedFunction()
+
+				return {}
+			elseif VUHDO_OVERRIDE_FUNCTIONS[k] then
+				return VUHDO_OVERRIDE_FUNCTIONS[k]
+			else
+				return _G[k]
+			end
+		end, 
+	__newindex = 
+		function(t, k, v) 
+			VUHDO_blockedFunction()
+		end,
+	__metatable = false
 });
 
 
@@ -1291,10 +1427,40 @@ end
 
 
 --
+local tActiveAuras;
+local function VUHDO_activeAurasCountValidator(anInfo, _)
+
+	tActiveAuras = VUHDO_getCurrentBouquetActiveAuras(anInfo["unit"]) or 0;
+	return tActiveAuras > 0, nil, -1, tActiveAuras, -1;
+
+end
+
+
+
+--
 local tShieldLeft, tHealthMax;
 local function VUHDO_statusShieldFromHealthValidator(anInfo, _)
 	tHealthMax = anInfo["healthmax"];
 	tShieldLeft = VUHDO_getUnitOverallShieldRemain(anInfo["unit"]);
+	return true, nil, tShieldLeft < tHealthMax and tShieldLeft or tHealthMax, -1, tHealthMax;
+end
+
+
+
+--
+local tShieldLeft;
+local function VUHDO_healAbsorbCountValidator(anInfo, _)
+	tShieldLeft = UnitGetTotalHealAbsorbs(anInfo["unit"]) or 0;
+	return tShieldLeft >= 1000, nil, -1, floor(tShieldLeft * 0.001 + 0.5), -1;
+end
+
+
+
+--
+local tShieldLeft, tHealthMax;
+local function VUHDO_statusHealAbsorbFromHealthValidator(anInfo, _)
+	tHealthMax = anInfo["healthmax"];
+	tShieldLeft = UnitGetTotalHealAbsorbs(anInfo["unit"]) or 0;
 	return true, nil, tShieldLeft < tHealthMax and tShieldLeft or tHealthMax, -1, tHealthMax;
 end
 
@@ -1408,6 +1574,13 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 	["DEBUFF_CURSE"] = {
 		["displayName"] = VUHDO_I18N_BOUQUET_DEBUFF_CURSE,
 		["validator"] = VUHDO_debuffCurseValidator,
+		["updateCyclic"] = true,
+		["interests"] = { VUHDO_UPDATE_DEBUFF },
+	},
+
+	["DEBUFF_BLEED"] = {
+		["displayName"] = VUHDO_I18N_BOUQUET_DEBUFF_BLEED,
+		["validator"] = VUHDO_debuffBleedValidator,
 		["updateCyclic"] = true,
 		["interests"] = { VUHDO_UPDATE_DEBUFF },
 	},
@@ -1631,7 +1804,7 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 		["displayName"] = VUHDO_I18N_BOUQUET_STATUS_HEALTH,
 		["validator"] = VUHDO_statusHealthValidator,
 		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_STATUSBAR,
-		["interests"] = { VUHDO_UPDATE_HEALTH, VUHDO_UPDATE_HEALTH_MAX, VUHDO_UPDATE_INC },
+		["interests"] = { VUHDO_UPDATE_HEALTH, VUHDO_UPDATE_HEALTH_MAX, VUHDO_UPDATE_INC, VUHDO_UPDATE_SHIELD },
 	},
 
 	["STATUS_MANA"] = {
@@ -1648,6 +1821,14 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_STATUSBAR,
 		["no_color"] = true,
 		["interests"] = { VUHDO_UPDATE_MANA, VUHDO_UPDATE_DC },
+	},
+
+	["STATUS_POWER_TANK_ONLY"] = {
+		["displayName"] = VUHDO_I18N_BOUQUET_STATUS_POWER_TANK_ONLY,
+		["validator"] = VUHDO_statusPowerTankOnlyValidator,
+		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_STATUSBAR,
+		["no_color"] = true,
+		["interests"] = { VUHDO_UPDATE_OTHER_POWERS, VUHDO_UPDATE_DC },
 	},
 
 	["STATUS_OTHER_POWERS"] = {
@@ -1705,6 +1886,13 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 		["validator"] = VUHDO_statusFullIfActiveValidator,
 		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_STATUSBAR,
 		["interests"] = { },
+	},
+
+	["STATUS_HEALTH_ACTIVE"] = {
+		["displayName"] = VUHDO_I18N_BOUQUET_STATUS_HEALTH_IF_ACTIVE,
+		["validator"] = VUHDO_statusHealthIfActiveValidator,
+		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_STATUSBAR,
+		["interests"] = { VUHDO_UPDATE_HEALTH, VUHDO_UPDATE_HEALTH_MAX, VUHDO_UPDATE_INC, VUHDO_UPDATE_SHIELD },
 	},
 
 	["STATUS_CC_ACTIVE"] = {
@@ -1857,9 +2045,34 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 		["interests"] = { VUHDO_UPDATE_SPELL_TRACE },
 	},
 
+	["SPELL_TRACE_INCOMING"] = {
+		["displayName"] = VUHDO_I18N_SPELL_TRACE_INCOMING,
+		["validator"] = VUHDO_spellTraceIncomingValidator,
+		["interests"] = { VUHDO_UPDATE_SPELL_TRACE },
+	},
+
+	["SPELL_TRACE_HEAL"] = {
+		["displayName"] = VUHDO_I18N_SPELL_TRACE_HEAL,
+		["validator"] = VUHDO_spellTraceHealValidator,
+		["interests"] = { VUHDO_UPDATE_SPELL_TRACE },
+	},
+
+	["SPELL_TRACE_SINGLE"] = {
+		["displayName"] = VUHDO_I18N_SPELL_TRACE_SINGLE,
+		["validator"] = VUHDO_spellTraceSingleValidator,
+		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_SPELL_TRACE,
+		["interests"] = { VUHDO_UPDATE_SPELL_TRACE },
+	},
+
 	["TRAIL_OF_LIGHT"] = {
 		["displayName"] = VUHDO_I18N_TRAIL_OF_LIGHT,
 		["validator"] = VUHDO_trailOfLightValidator,
+		["interests"] = { VUHDO_UPDATE_SPELL_TRACE },
+	},
+
+	["TRAIL_OF_LIGHT_NEXT"] = {
+		["displayName"] = VUHDO_I18N_TRAIL_OF_LIGHT_NEXT,
+		["validator"] = VUHDO_trailOfLightNextValidator,
 		["interests"] = { VUHDO_UPDATE_SPELL_TRACE },
 	},
 
@@ -1893,6 +2106,18 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 		["interests"] = { VUHDO_UPDATE_MINOR_FLAGS },
 	},
 
+	["FRIEND"] = {
+		["displayName"] = VUHDO_I18N_FRIEND_STATUS,
+		["validator"] = VUHDO_friendValidator,
+		["interests"] = { },
+	},
+
+	["FOE"] = {
+		["displayName"] = VUHDO_I18N_FOE_STATUS,
+		["validator"] = VUHDO_foeValidator,
+		["interests"] = { },
+	},
+
 	["OVERFLOW_COUNTER"] = {
 		["displayName"] = VUHDO_I18N_DEF_COUNTER_OVERFLOW_ABSORB,
 		["validator"] = VUHDO_overflowCountValidator,
@@ -1905,6 +2130,13 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 		["interests"] = { VUHDO_UPDATE_SHIELD },
 	},
 
+	["ACTIVE_AURAS_COUNTER"] = {
+		["displayName"] = VUHDO_I18N_DEF_COUNTER_ACTIVE_AURAS,
+		["validator"] = VUHDO_activeAurasCountValidator,
+		["updateCyclic"] = true,
+		["interests"] = { },
+	},
+
 	["SHIELD_STATUS"] = {
 		["displayName"] = VUHDO_I18N_DEF_STATUS_SHIELD,
 		["validator"] = VUHDO_statusShieldFromHealthValidator,
@@ -1915,6 +2147,19 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 	["SHIELD_OVERSHIELD"] = {
 		["displayName"] = VUHDO_I18N_DEF_STATUS_OVERSHIELDED,
 		["validator"] = VUHDO_statusShieldOvershieldValidator,
+		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_STATUSBAR,
+		["interests"] = { VUHDO_UPDATE_SHIELD },
+	},
+
+	["HEAL_ABSORB_COUNTER"] = {
+		["displayName"] = VUHDO_I18N_DEF_COUNTER_HEAL_ABSORB,
+		["validator"] = VUHDO_healAbsorbCountValidator,
+		["interests"] = { VUHDO_UPDATE_SHIELD },
+	},
+
+	["HEAL_ABSORB_STATUS"] = {
+		["displayName"] = VUHDO_I18N_DEF_STATUS_HEAL_ABSORB,
+		["validator"] = VUHDO_statusHealAbsorbFromHealthValidator,
 		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_STATUSBAR,
 		["interests"] = { VUHDO_UPDATE_SHIELD },
 	},
@@ -1938,7 +2183,7 @@ VUHDO_BOUQUET_BUFFS_SPECIAL = {
 		["validator"] = VUHDO_customFlagValidator, 
 		["custom_type"] = VUHDO_BOUQUET_CUSTOM_TYPE_CUSTOM_FLAG,
 		["updateCyclic"] = true,
-		["interests"] = { VUHDO_UPDATE_INC, VUHDO_UPDATE_HEALTH, VUHDO_UPDATE_RANGE, VUHDO_UPDATE_HEALTH_MAX, VUHDO_UPDATE_ALIVE, VUHDO_UPDATE_NUM_CLUSTER }, --ignoring some for now (eg. VUHDO_UPDATE_MANA, VUHDO_UPDATE_DC, etc.)
+		["interests"] = { VUHDO_UPDATE_HEALTH, VUHDO_UPDATE_HEALTH_MAX, VUHDO_UPDATE_RANGE, VUHDO_UPDATE_ALIVE }, --ignoring some for now (eg. VUHDO_UPDATE_INC, VUHDO_UPDATE_NUM_CLUSTER, VUHDO_UPDATE_MANA, VUHDO_UPDATE_DC, etc.)
 	},
 
 };

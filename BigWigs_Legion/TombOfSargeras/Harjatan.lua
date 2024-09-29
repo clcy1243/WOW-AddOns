@@ -39,14 +39,14 @@ function mod:GetOptions()
 		{231998, "TANK"}, -- Jagged Abrasion
 		231854, -- Unchecked Rage
 		232192, -- Commanding Roar
-		232061, -- Draw In
+		{232061, "CASTBAR"}, -- Draw In
 		233429, -- Frigid Blows
 		232174, -- Frosty Discharge
 		{231729, "SAY", "FLASH"}, -- Aqueous Burst
 		231768, -- Drenching Waters
 		{234128, "SAY", "FLASH"}, -- Driven Assault
 		"custom_on_fixate_plates",
-		240319, -- Hatching
+		{240319, "CASTBAR"}, -- Hatching
 		{241600, "SAY", "FLASH"}, -- Sickly Fixate
 		"berserk",
 	},{
@@ -119,7 +119,7 @@ end
 
 function mod:drawInCheck(self)
 	if skipDrawIn then
-		self:Message(232061, "orange", "Alarm", CL.interrupted:format(self:SpellName(232061))) -- Draw In Interrupted
+		self:MessageOld(232061, "orange", "alarm", CL.interrupted:format(self:SpellName(232061))) -- Draw In Interrupted
 		nextDrawIn = GetTime() + 58
 		self:CDBar(232061, 58) -- Draw In
 		self:ScheduleTimer("drawInCheck", 58, self)
@@ -128,7 +128,7 @@ end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 232192 then -- Commanding Roar
-		self:Message(spellId, "red", "Alert")
+		self:MessageOld(spellId, "red", "alert")
 		roarCounter = roarCounter + 1
 		if (nextDrawIn > GetTime() + 32.8) or skipDrawIn then
 			self:Bar(spellId, 32.8)
@@ -138,7 +138,7 @@ end
 
 function mod:RAID_BOSS_WHISPER(event, msg)
 	if msg:find("240319", nil, true) then -- Hatching
-		self:Message(240319, "red", "Warning")
+		self:MessageOld(240319, "red", "warning")
 		self:CastBar(240319, 22)
 		if (nextDrawIn > GetTime() + 40) or skipDrawIn then
 			self:Bar(240319, 40)
@@ -153,18 +153,18 @@ do
 		local t = GetTime()
 		if self:Me(args.destGUID) and t-prev > 1.5 then
 			prev = t
-			self:Message(args.spellId, "blue", "Alert", CL.underyou:format(args.spellName))
+			self:MessageOld(args.spellId, "blue", "alert", CL.underyou:format(args.spellName))
 		end
 	end
 end
 
 function mod:JaggedAbrasion(args)
 	local amount = args.amount or 1
-	self:StackMessage(args.spellId, args.destName, amount, "orange", amount > 4 and "Warning") -- Swap on 4~5
+	self:StackMessageOld(args.spellId, args.destName, amount, "orange", amount > 4 and "warning") -- Swap on 4~5
 end
 
 function mod:UncheckedRage(args)
-	self:Message(args.spellId, "orange", "Warning")
+	self:MessageOld(args.spellId, "orange", "warning")
 	rageCounter = rageCounter + 1
 	if (nextDrawIn > GetTime() + 20.5) or skipDrawIn then
 		self:Bar(args.spellId, 20.5)
@@ -172,21 +172,21 @@ function mod:UncheckedRage(args)
 end
 
 function mod:DrawIn(args)
-	self:Message(args.spellId, "red", "Alert", CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "red", "alert", CL.casting:format(args.spellName))
 	self:CastBar(args.spellId, 10)
 end
 
 function mod:FrigidBlows(args)
 	local amount = args.amount or 1
 	if amount < 5 or amount % 5 == 0 then -- Every 5 stacks or when below 5.
-		self:StackMessage(args.spellId, args.destName, amount, "orange", amount < 4 and "Alarm") -- Add sound on last 3 stacks as pre-warning that the phase is ending
+		self:StackMessageOld(args.spellId, args.destName, amount, "orange", amount < 4 and "alarm") -- Add sound on last 3 stacks as pre-warning that the phase is ending
 	end
 end
 
 function mod:FrostyDischarge(args)
 	roarCounter = 1
 	rageCounter = 1
-	self:Message(args.spellId, "orange", "Warning", args.spellName)
+	self:MessageOld(args.spellId, "orange", "warning", args.spellName)
 	self:CDBar(232192, 17) -- Commanding Roar
 	self:CDBar(231854, 21.4) -- Unchecked Rage
 	if self:Mythic() then
@@ -201,13 +201,13 @@ do
 	function mod:AqueousBurst(args)
 		if self:Me(args.destGUID) then
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Aqueous Burst")
 		end
 
 		playerList[#playerList+1] = args.destName
 
 		if #playerList == 1 then
-			self:ScheduleTimer("TargetMessage", 0.3, args.spellId, playerList, "red", "Alarm")
+			self:ScheduleTimer("TargetMessageOld", 0.3, args.spellId, playerList, "red", "alarm")
 		end
 	end
 end
@@ -219,7 +219,7 @@ end
 function mod:DrivenAssault(args)
 	if self:Me(args.destGUID) then
 		self:Flash(234128)
-		self:Say(234128)
+		self:Say(234128, nil, nil, "Driven Assault")
 		if self:GetOption("custom_on_fixate_plates") then
 			self:AddPlateIcon(234128, args.sourceGUID, 10) -- Show the target that is fixating on you more clear
 		end
@@ -235,7 +235,7 @@ end
 function mod:SicklyFixate(args)
 	if self:Me(args.destGUID) then
 		self:Flash(args.spellId)
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Sickly Fixate")
 		if self:GetOption("custom_on_fixate_plates") then
 			self:AddPlateIcon(args.spellId, args.sourceGUID, 10) -- Show the target that is fixating on you more clear
 		end

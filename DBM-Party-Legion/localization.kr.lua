@@ -65,6 +65,9 @@ L:SetGeneralLocalization({
 	name =	"어둠심장 숲 일반몹"
 })
 
+L:SetMiscLocalization({
+	GlaidalisRP	= "타락한 자들아... 너희 피에서 악몽의 냄새가 난다. 이 숲에서 꺼지지 않으면, 자연의 분노를 맛보게 되리라!"
+})
 
 -----------------------
 -- <<<Eye of Azshara>>> --
@@ -132,7 +135,8 @@ L= DBM:GetModLocalization(1487)
 L= DBM:GetModLocalization(1488)
 
 L:SetMiscLocalization({
-	SkovaldRP		= "안 돼! 나도 내 가치를 증명했다, 오딘. 나는 신왕 스코발드다! 나의 아이기스에 어찌 감히 필멸자가 손을 댄단 말이냐!"
+	SkovaldRP		= "안 돼! 나도 내 가치를 증명했다, 오딘. 나는 신왕 스코발드다! 나의 아이기스에 어찌 감히 필멸자가 손을 댄단 말이냐!",
+	SkovaldRPTwo	= "이 가짜 용사들이 아이기스를 포기하지 않는다면... 목숨을 포기해야 할 거다!"
 })
 
 -----------------------
@@ -140,8 +144,17 @@ L:SetMiscLocalization({
 -----------------------
 L= DBM:GetModLocalization(1489)
 
+L:SetOptionLocalization({
+	RuneBehavior		= "룬 낙인때 보스 모드 작동 방식을 설정합니다.",
+	Icon				= "룬 색과 일치하는 공격대 징표 기반 음성 경고 제공 (징표 기둥 사용)",
+	Entrance			= "입구가 남쪽 옥좌가 북쪽인 동서남북 음성 경고 제공",
+	Minimap				= "미니맵 기준으로 옥좌가 남쪽 입구가 북쪽인 동서남북 음성 경고 제공",
+	Generic				= "당신이 대상입니다 음성 알림만 제공합니다. 방향 지시는 하지 않습니다"--Default
+})
+
 L:SetMiscLocalization({
-	tempestModeMessage		=	"폭풍우 시퀀스 아님: %s. 8초 후 다시 검사합니다."
+	tempestModeMessage		=	"폭풍우 시퀀스 아님: %s. 8초 후 다시 검사합니다.",
+	OdynRP					= "정말 놀랍군! 발라리아르의 힘에 견줄 만큼 강력한 자를 보게 될 줄은 몰랐거늘, 이렇게 너희가 나타나다니."
 })
 
 -----------------------
@@ -244,6 +257,10 @@ L= DBM:GetModLocalization(1719)
 -----------------------
 L= DBM:GetModLocalization(1720)
 
+L:SetMiscLocalization({
+	MelRP		= "벌써 떠나셔야 합니까, 대마법학자님?"
+})
+
 -----------------------
 --Court of Stars Trash
 -----------------------
@@ -254,73 +271,50 @@ L:SetGeneralLocalization({
 })
 
 L:SetOptionLocalization({
-	SpyHelper	= "첩자 색출 도우미"
+	warnAvailableItems	= "파티에 주변의 버프 오브젝트 알림",
+	SpyHelper			= "첩자 색출을 위해 수다쟁이 호사가 NPC에게 말을 걸면 대화 내용을 자동으로 감지하여 정보 창에 표시 (다른 DBM/BW 사용자와 동기화)",
+	SpyHelperClose2			= "0.3초 후 대화창 자동 닫기 (다른 모드나 WA가 대화 내역을 감지할 시간을 주기 위한 지연)",
+	SendToChat2			= "대화창에도 힌트 알려주기 (위의 설정을 켜야 작동)"
 })
 
 L:SetMiscLocalization({
-	Gloves1		= "그 첩자는 항상 장갑을 낀다고 하더군요.",
-	Gloves2		= "제가 듣기로는, 그 첩자는 항상 신경 써서 손을 가린다고 합니다.",
-	Gloves3		= "그 첩자는 항상 장갑을 낀다고 들었습니다.",
-	Gloves4		= "그 첩자는 손에 있는 선명한 흉터를 가리려고 장갑을 낀다고 합니다.",
-	NoGloves1	= "그 첩자는 장갑을 끼는 일이 없다고 하더군요.",
-	NoGloves2	= "안쪽 방에서 장갑 한 켤레를 발견했습니다. 첩자는 분명히 이 주변에 장갑을 끼지 않은 사람중 하나일 거에요.",
-	NoGloves3	= "그 첩자는 장갑을 끼는 걸 싫어한다고 들었습니다.",
-	NoGloves4	= "그 첩자는 장갑을 끼지 않는답니다. 위급한 순간에 걸리적거려서 그렇겠지요.",
-	Cape1		= "그 첩자가 망토를 걸친 모습을 봤다는 사람이 있었습니다.",
-	Cape2		= "그 첩자는 망토를 즐겨 입는다고 들었습니다.",
-	NoCape1		= "그 첩자는 망토를 싫어해서 절대로 입지 않는다고 합니다.",
-	NoCape2		= "제가 듣기로는 그 첩자가 궁전에 망토를 벗어두고 여기 왔다고 합니다.",
-	LightVest1	= "그자는 첩자인데도 밝은색 조끼를 즐겨 입는다고 합니다.",
-	LightVest2	= "오늘 밤 파티에 그 첩자는 밝은색 조끼를 입고 올 거라는 말을 들었습니다.",
-	LightVest3	= "사람들이 그러는데, 오늘 밤 그 첩자는 어두운 색 조끼를 입지 않았다고 합니다.",
-	DarkVest1	= "그 첩자는 분명 어두운 옷을 선호합니다.",
-	DarkVest2	= "오늘 밤 그 첩자는 어둡고 짙은 색의 조끼를 입었다고 합니다.",
-	DarkVest3	= "그 첩자는 어두운 색 조끼를 즐겨 입어요... 밤과 같은 색이죠.",
-	DarkVest4	= "소문에 그 첩자는 눈에 띄지 않으려고 밝은색 옷은 피한다더군요.",
-	Female1		= "첩자가 나타났다고 합니다. 그 여자는 아주 미인이라고도 하더군요.",
-	Female2		= "어떤 여자가 귀족 지구에 관해 계속 묻고 다닌다고 하던데...",
-	Female3		= "그 불청객은 남자가 아니라는 말을 들었습니다.",
-	Female4		= "아까 한 방문객이 그녀와 엘리산드가 함께 도착하는 걸 보았답니다.",
-	Male1		= "첩자가 여성이 아니라는 얘기를 들었습니다.",
-	Male2		= "첩자가 나타났다고 합니다. 그 남자는 대단히 호감형이라고도 하더군요.",
-	Male3		= "한 남자가 대마법학자와 나란히 저택에 들어오는 걸 봤다는 얘기가 있더군요.",
-	Male4		= "한 연주자가 말하길, 그 남자가 끊임없이 그 지구에 관한 질문을 늘어놨다고 합니다.",
-	ShortSleeve1= "그 첩자는 팔을 빠르게 움직이려고 짧은 소매 옷만 고집한다고 합니다.",
-	ShortSleeve2= "그 첩자는 소매가 긴 옷을 입는 걸 정말 싫어한다고 합니다.",
-	ShortSleeve3= "제 친구가 그 첩자가 입은 옷을 봤는데, 긴 소매는 아니었다는군요!",
-	ShortSleeve4= "그 첩자는 시원한 걸 좋아해서 오늘 밤 짧은 소매를 입고 왔다고 들었습니다.",
-	LongSleeve1 = "오늘 밤 첩자는 긴 소매 옷을 입었다고 하더군요.",
-	LongSleeve2 = "오늘 밤 그 첩자는 소매가 긴 옷을 입었다고 들었어요.",
-	LongSleeve3 = "초저녁에 첩자를 언뜻 보았는데... 긴 소매 옷을 입었던 것 같습니다.",
-	LongSleeve4 = "제 친구 말로는, 첩자가 긴 소매 옷을 입었다고 합니다.",
-	Potions1	= "그 첩자는 물약을 가지고 다닌데요. 이유가 뭘까요?",
-	Potions2	= "이 얘기를 깜빡할 뻔했네요... 그 첩자는 연금술사로 가장해 허리띠에 물약을 달고 다닌다고 합니다.",
-	Potions3	= "그 첩자는 허리띠에 물약을 매달고 있을 게 분명합니다. 있는 게 분명해요.",
-	Potions4	= "그 첩자는 만약을 대비해... 물약 몇 개를 가져왔다고 합니다.",
-	NoPotions1	= "그 첩자는 물약을 가지고 다니지 않는다고 합니다.",
-	NoPotions2	= "한 연주자가 그 첩자가 마지막 물약을 버리는 걸 봤다고 합니다. 그러니 더는 물약이 없겠죠.",
-	Book1		= "그 첩자의 허리띠 주머니에는 비밀이 잔뜩 적힌 책이 담겨 있다고 합니다.",
-	Book2		= "소문을 들어 보니, 그 첩자는 독서를 좋아해서 항상 책을 가지고 다닌다고 합니다.",
-	Pouch1		= "그 첩자는 마법의 주머니를 항상 가지고 다닌다고 들었습니다.",
-	Pouch2		= "제 친구가 말하길, 그 첩자는 금을 너무 좋아해서 허리띠 주머니에도 금이 가득 들어 있다고 합니다.",
-	Pouch3		= "그 첩자는 어찌나 사치스러운지 허리띠에 달린 주머니에 금화를 잔뜩 넣어서 다닌다고 합니다.",
-	Pouch4		= "그 첩자는 허리띠 주머니도 휘황찬란한 자수로 꾸며져 있다고 합니다.",
-	Found		= "자, 너무 그렇게 다그치지 마십시오",
+	Found			= "자, 너무 그렇게 다그치지 마십시오",
+	--Add translationss, but keep english termss for cross language groups since these post to chat
+	--Format "localized / english"
+	CluesFound				= "단서 발견: %d/5",
+	ClueShort				= "단서 %d/5: %s",
+	Gloves					= "장갑 / gloves",
+	NoGloves				= "장갑 없음 / no gloves",
+	Cape					= "망토 / cape",
+	Nocape					= "망토 없음 / no cape",
+	LightVest				= "밝은색 조끼 / light vest",
+	DarkVest				= "어두운색 조끼 / dark vest",
+	Female					= "여자 / female",
+	Male					= "남자 / male",
+	ShortSleeve				= "짧은 소매 / short sleeve",
+	LongSleeve				= "긴 소매 / long sleeve",
+	Potions					= "물약 / potions",
+	NoPotions				= "물약 없음 / no potions",
+	Book					= "책 / book",
+	Pouch					= "주머니 / pouch",
+
+	SpyFoundP 				= "첩자 발견",
+	SpyFound 				= "%s|1이;가; 첩자를 발견했습니다",
+	SpyGoingAway				= "첩자 색출 도우미는 10.0.7 패치에서 너프로 없어질 예정입니다. 이 던전에 대한 블리자드의 의도는 악마 사냥꾼을 활용하거나 보이스챗으로 협력해서 찾으라는 것입니다",
+	--Profession				 stuff
+	Nightshade					= "밤그늘 간식",
+	UmbralBloom					= "그림자 꽃",
+	InfernalTome				= "지옥불 고서",
+	MagicalLantern				= "마법 초롱",
+	StarlightRoseBrew			= "별빛 장미 차",
+	WaterloggedScroll			= "물에 젖은 두루마리",
+	DiscardedJunk				= "버려진 쓰레기",
+	BazaarGoods					= "장터 물품",
+	WoundedNightborneCivilian	= "부상당한 나이트본 주민",
+	LifesizedNightborneStatue	= "실물 크기의 나이트본 석상",
 	--
-	Gloves		= "장갑",
-	NoGloves	= "장갑 없음",
-	Cape		= "망토",
-	Nocape		= "망토 없음",
-	LightVest	= "밝은색 조끼",
-	DarkVest	= "어두운색 조끼",
-	Female		= "여자",
-	Male		= "남자",
-	ShortSleeve = "짧은 소매",
-	LongSleeve	= "긴 소매",
-	Potions		= "물약",
-	NoPotions	= "물약 없음",
-	Book		= "책",
-	Pouch		= "주머니"
+	Available					= "%s|cffffffff%s|r 있음",
+	UsableBy					= "%s|1이;가; 사용 가능"
 })
 
 
@@ -603,4 +597,3 @@ L = DBM:GetModLocalization("SoTTrash")
 L:SetGeneralLocalization({
 	name =	"삼두정의 권좌 일반몹"
 })
-

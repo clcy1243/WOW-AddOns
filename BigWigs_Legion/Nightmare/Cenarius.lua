@@ -79,10 +79,10 @@ function mod:GetOptions()
 		wispMarker,
 
 		--[[ Nightmare Treant ]]--
-		226821, -- Desiccating Stomp
+		{226821, "CASTBAR"}, -- Desiccating Stomp
 
 		--[[ Rotten Drake ]]--
-		{211192, "SAY"}, -- Rotten Breath
+		{211192, "CASTBAR", "SAY"}, -- Rotten Breath
 		"custom_off_multiple_breath_bar",
 
 		--[[ Twisted Sister ]]--
@@ -152,8 +152,8 @@ function mod:OnEngage()
 	if self:Mythic() then
 		self:CDBar(213162, 30) -- Nightmare Blast
 	end
-	wipe(mobCollector)
-	wipe(nightmareStacks)
+	mobCollector = {}
+	nightmareStacks = {}
 	mobTable = {
 		[105468] = {}, -- Nightmare Ancient
 		[105494] = {}, -- Rotten Drake
@@ -167,14 +167,14 @@ function mod:OnEngage()
 	drakeDeaths = 0
 
 	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
-	wipe(wispMarked)
+	wispMarked = {}
 	wispMarks = { [8] = true, [7] = true, [6] = true, [5] = true, [4] = true }
 	self:OpenInfo(210279, self:SpellName(210279)) -- Creeping Nightmares
 end
 
 function mod:OnBossDisable()
-	wipe(wispMarked)
-	wipe(mobCollector)
+	wispMarked = {}
+	mobCollector = {}
 end
 
 --------------------------------------------------------------------------------
@@ -212,7 +212,7 @@ function mod:WispMark(event, unit, guid)
 	if self:MobId(guid) == 106659 and UnitIsEnemy("player", unit) and not wispMarked[guid] then
 		local icon = next(wispMarks)
 		if icon then -- At least one icon unused
-			SetRaidTarget(unit, icon)
+			self:CustomIcon(false, unit, icon)
 			wispMarks[icon] = nil -- Mark is no longer available
 			wispMarked[guid] = icon -- Save the wisp we marked and the icon we marked it with
 		end
@@ -229,14 +229,14 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 	if spellId == 210290 then -- Nightmare Brambles
 		self:Bar(spellId, phase == 2 and 20 or 30) -- at some point starts casting with 15sec-20sec cd
-		local targetGUID = UnitGUID("boss1target") -- selects target 2sec prior to the cast
+		local targetGUID = self:UnitGUID("boss1target") -- selects target 2sec prior to the cast
 		if targetGUID then
 			if self:Me(targetGUID) then
 				self:Flash(spellId)
 				self:Say(spellId, L.bramblesSay:format(self:UnitName("player")), true)
-				self:Message(spellId, "orange", "Alarm", CL.near:format(self:SpellName(spellId)))
+				self:MessageOld(spellId, "orange", "alarm", CL.near:format(self:SpellName(spellId)))
 			else
-				self:Message(spellId, "orange", "Alarm")
+				self:MessageOld(spellId, "orange", "alarm")
 			end
 		end
 	elseif spellId == 217368 then -- Phase 2
@@ -247,9 +247,9 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 		self:Bar(210290, 13) -- Nightmare Brambles
 		self:Bar(214529, 23) -- Spear Of Nightmares
 		self:Bar(214505, 35) -- Entangling Nightmares
-		self:Message("stages", "cyan", "Long", CL.stage:format(2), false)
+		self:MessageOld("stages", "cyan", "long", CL.stage:format(2), false)
 	elseif spellId == 214876 then -- Beasts of Nightmare
-		self:Message(spellId, "red", "Alert", CL.incoming:format(self:SpellName(spellId)))
+		self:MessageOld(spellId, "red", "alert", CL.incoming:format(self:SpellName(spellId)))
 		self:Bar(spellId, 30.3)
 	end
 end
@@ -261,7 +261,7 @@ do
 		if self:Me(args.destGUID) then
 			local amount = args.amount or 1
 			if amount > 15 and amount % 4 == 0 then
-				self:StackMessage(args.spellId, args.destName, amount, "orange", "Warning")
+				self:StackMessageOld(args.spellId, args.destName, amount, "orange", "warning")
 			end
 		end
 		local t = GetTime()
@@ -275,17 +275,17 @@ end
 function mod:CreepingNightmaresRemoved(args)
 	nightmareStacks[args.destName] = nil
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "green", "Info", CL.removed:format(args.spellName))
+		self:MessageOld(args.spellId, "green", "info", CL.removed:format(args.spellName))
 	end
 end
 
 function mod:NightmareBlast(args)
-	self:Message(args.spellId, "orange", "Alert", CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "orange", "alert", CL.casting:format(args.spellName))
 	self:CDBar(args.spellId, 32)
 end
 
 function mod:ForcesOfNightmare(args)
-	self:Message(args.spellId, "orange", nil, CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "orange", nil, CL.casting:format(args.spellName))
 	forcesOfNightmareCount = forcesOfNightmareCount + 1
 	self:Bar(210346, 6) -- Dread Thorns
 	self:Bar(212681, 11) -- Cleansed Ground
@@ -307,13 +307,13 @@ do
 	function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 		for i = 1, 5 do
 			local unit = ("boss%d"):format(i)
-			local guid = UnitGUID(unit)
+			local guid = self:UnitGUID(unit)
 			if guid and not mobCollector[guid] and UnitIsEnemy("player", unit) then
 				mobCollector[guid] = true
 				local mobId = self:MobId(guid)
 				local id = adds[mobId]
 				if id then
-					self:Message(212726, "cyan", "Info", CL.count:format(self:SpellName(id), getMobNumber(mobId, guid)), false)
+					self:MessageOld(212726, "cyan", "info", CL.count:format(self:SpellName(id), getMobNumber(mobId, guid)), false)
 				end
 				if mobId == 105468 then -- Nightmare Ancient
 					self:Bar(226821, 20, CL.count:format(self:SpellName(226821), getMobNumber(mobId, guid))) -- Desiccating Stomp
@@ -333,19 +333,19 @@ do
 end
 
 function mod:DreadThorns(args)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Alarm")
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "alarm")
 	self:Bar(args.spellId, 45, CL.on:format(args.spellName, args.destName))
 end
 
 function mod:DreadThornsRemoved(args)
-	self:Message(args.spellId, "green", "Info", CL.removed:format(args.spellName))
+	self:MessageOld(args.spellId, "green", "info", CL.removed:format(args.spellName))
 	if phase == 1 then
 		self:CDBar(args.spellId, 32.7)
 	end
 end
 
 function mod:EntanglingNightmares(args)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Alarm")
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "alarm")
 	self:CDBar(args.spellId, 51)
 end
 
@@ -355,17 +355,17 @@ function mod:CorruptAlliesOfNature(args)
 	local t = GetTime()
 	if t-prev > 10 then
 		prev = t
-		self:Message(args.spellId, "yellow", "Info", CL.other:format(args.spellName, args.destName))
+		self:MessageOld(args.spellId, "yellow", "info", CL.other:format(args.spellName, args.destName))
 	end
 end
 
 function mod:SpearOfNightmaresCast(args)
-	self:Message(args.spellId, "orange", nil, CL.casting:format(args.spellName))
+	self:MessageOld(args.spellId, "orange", nil, CL.casting:format(args.spellName))
 end
 
 function mod:SpearOfNightmares(args)
 	local amount = args.amount or 1
-	self:StackMessage(args.spellId, args.destName, amount, "orange", self:Tank() and "Warning")
+	self:StackMessageOld(args.spellId, args.destName, amount, "orange", self:Tank() and "warning")
 	self:Bar(args.spellId, 15.7)
 end
 
@@ -375,7 +375,7 @@ do
 
 	local function checkForCleansedGround(self, spellId, spellName)
 		if self:UnitDebuff("player", spellName) then
-			self:Message(spellId, "green", "Alert", CL.underyou:format(spellName))
+			self:MessageOld(spellId, "green", "alert", CL.underyou:format(spellName))
 			cleansedGroundCheck = self:ScheduleTimer(checkForCleansedGround, 1, self, spellId, spellName)
 		end
 	end
@@ -400,7 +400,7 @@ do
 	local prev = 0
 	function mod:DesiccatingStomp(args)
 		self:StopBar(CL.count:format(args.spellName, getMobNumber(105468, args.sourceGUID))) -- Desiccating Stomp
-		self:Message(226821, "orange", "Long", CL.casting:format(args.spellName))
+		self:MessageOld(226821, "orange", "long", CL.casting:format(args.spellName))
 		local t = GetTime()
 		if t-prev > 4 then
 			prev = t
@@ -422,24 +422,24 @@ end
 
 function mod:BreathTarget(event, unit) -- They love to drop their target after casting
 	local target = unit.."target"
-	local guid = UnitGUID(target)
-	if not guid or UnitDetailedThreatSituation(target, unit) ~= false or self:MobId(guid) ~= 1 then return end
+	local guid = self:UnitGUID(target)
+	if not guid or self:Tanking(unit, target) or self:MobId(guid) ~= 1 then return end
 
 	if self:Me(guid) then
-		self:Say(211192)
+		self:Say(211192, nil, nil, "Rotten Breath")
 	end
-	self:TargetMessage(211192, self:UnitName(target), "yellow", "Alert", nil, nil, true)
+	self:TargetMessageOld(211192, self:UnitName(target), "yellow", "alert", nil, nil, true)
 end
 
 --[[ Twisted Sister ]]--
 function mod:TwistedTouchOfLife(args)
 	local spellText = CL.count:format(args.spellName, getMobNumber(105495, args.sourceGUID))
-	self:Message(args.spellId, "red", self:Interrupter() and "Alarm", CL.casting:format(spellText))
+	self:MessageOld(args.spellId, "red", self:Interrupter() and "alarm", CL.casting:format(spellText))
 	self:Bar(args.spellId, self:Mythic() and 11 or 15.5, spellText)
 end
 
 function mod:TwistedTouchOfLifeApplied(args)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Alarm", nil, nil, self:Dispeller("magic", true, args.spellId))
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "alarm", nil, nil, self:Dispeller("magic", true, args.spellId))
 end
 
 do
@@ -448,17 +448,17 @@ do
 
 	local function warn(self, spellId, spellName, guid)
 		if not isOnMe then
-			self:Message(spellId, "red", "Alert", CL.count:format(spellName, getMobNumber(105495, guid)))
+			self:MessageOld(spellId, "red", "alert", CL.count:format(spellName, getMobNumber(105495, guid)))
 		end
 		scheduled = nil
 	end
 
 	function mod:ScornedTouch(args)
 		if self:Me(args.destGUID) then
-			self:TargetMessage(args.spellId, args.destName, "blue", "Alert")
+			self:TargetMessageOld(args.spellId, args.destName, "blue", "alert")
 			isOnMe = true
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Scorned Touch")
 			local _, _, _, expires = self:UnitDebuff("player", args.spellName)
 			local t = expires - GetTime()
 			self:TargetBar(args.spellId, t, args.destName)
@@ -485,7 +485,7 @@ do
 			self:CloseProximity(args.spellId)
 		end
 
-		tDeleteItem(proxList, args.destName)
+		self:DeleteFromTable(proxList, args.destName)
 
 		if not isOnMe then -- Don't change proximity if it's on you and expired on someone else
 			if #proxList == 0 then
@@ -499,7 +499,7 @@ end
 
 function mod:UnboundTouch(args)
 	if self:Me(args.destGUID) then
-		self:TargetMessage(args.spellId, args.destName, "blue", "Alert")
-		self:Say(args.spellId)
+		self:TargetMessageOld(args.spellId, args.destName, "blue", "alert")
+		self:Say(args.spellId, nil, nil, "Unbound Touch")
 	end
 end

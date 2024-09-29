@@ -1,4 +1,5 @@
 local L = BigWigs:NewBossLocale("Anub'arak", "zhTW")
+if not L then return end
 if L then
 	L.engage_message = "阿努巴拉克進入戰鬥，80秒後，鑽地！"
 	L.engage_trigger = "這裡將會是你們的墳墓!"
@@ -13,8 +14,6 @@ if L then
 	L.nerubian_burrower = "更多增援！"
 
 	L.shadow_soon = "約5秒後，暗影打擊！"
-
-	L.chase = "追擊"
 end
 
 L = BigWigs:NewBossLocale("The Beasts of Northrend", "zhTW")
@@ -26,10 +25,13 @@ if L then
 	L.icehowl_trigger = "下一場參賽者的出場連空氣都會為之凝結:冰嚎!戰個你死我活吧，勇士們!"
 	L.boss_incoming = "即將%s！"
 
+	L.gormok = "『穿刺者』戈莫克"
+	L.jormungars = "酸喉與懼鱗"
+	L.icehowl = "冰嚎"
+
 	-- Gormok
 	L.snobold = "極地狗頭人奴僕"
 	L.snobold_desc = "當出現極地狗頭人奴僕時發出警報。"
-	L.snobold_message = "極地狗頭人奴僕！"
 
 	-- Jormungars
 	L.submerge = "隱沒"

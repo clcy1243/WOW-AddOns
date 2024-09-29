@@ -2,10 +2,11 @@ local mod	= DBM:NewMod(176, "DBM-Party-Cataclysm", 11, 76)
 local L		= mod:GetLocalizedStrings()
 local Ohgan	= DBM:EJ_GetSectionInfo(2615)
 
-mod:SetRevision("20200524145746")
+mod.statTypes = "heroic,timewalker"
+
+mod:SetRevision("20240428124541")
 mod:SetCreatureID(52151)
 mod:SetEncounterID(1179)
-mod:SetZone()
 mod:SetUsedIcons(8)
 
 mod:RegisterCombat("combat")
@@ -17,7 +18,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_HEAL 96724",
 	"UNIT_DIED"
 )
-mod.onlyHeroic = true
 
 local warnDecapitate		= mod:NewTargetAnnounce(96684, 2)
 local warnBloodletting		= mod:NewTargetAnnounce(96776, 3)
@@ -28,14 +28,14 @@ local warnRevive 			= mod:NewAnnounce("WarnRevive", 2, 96484, false)
 local specWarnSlam			= mod:NewSpecialWarningDodge(96740, nil, nil, nil, 1, 2)
 local specWarnOhgan			= mod:NewSpecialWarning("SpecWarnOhgan", nil, nil, nil, 1, 2)
 
-local timerSummonOhgan		= mod:NewNextTimer(20, 96717, nil, nil, nil, 1, nil, DBM_CORE_L.DAMAGE_ICON)--Engage only
-local timerResOhgan			= mod:NewCDTimer(40, 96724, nil, nil, nil, 1, nil, DBM_CORE_L.DAMAGE_ICON)--rez cd
+local timerSummonOhgan		= mod:NewNextTimer(20, 96717, nil, nil, nil, 1, nil, DBM_COMMON_L.DAMAGE_ICON)--Engage only
+local timerResOhgan			= mod:NewCDTimer(40, 96724, nil, nil, nil, 1, nil, DBM_COMMON_L.DAMAGE_ICON)--rez cd
 local timerDecapitate		= mod:NewNextTimer(35, 96684, nil, nil, nil, 3)
-local timerBloodletting		= mod:NewTargetTimer(10, 96776, nil, nil, nil, 5, nil, DBM_CORE_L.HEALER_ICON)
+local timerBloodletting		= mod:NewTargetTimer(10, 96776, nil, nil, nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
 local timerBloodlettingCD	= mod:NewCDTimer(25, 96776, nil, nil, nil, 3)
 local timerOhgan			= mod:NewCastTimer(2.5, 96724, nil, nil, nil, 1)
 
-mod:AddSetIconOption("SetIconOnOhgan", 96717, false, true, {8})
+mod:AddSetIconOption("SetIconOnOhgan", 96717, false, 5, {8})
 
 mod.vb.reviveCounter = 8
 mod.vb.ohganDiedOnce = false
@@ -82,7 +82,7 @@ function mod:SPELL_HEAL(_, _, _, _, destGUID, _, _, _, spellId)
 		specWarnOhgan:Show()
 		specWarnOhgan:Play("bigmob")
 		if self.Options.SetIconOnOhgan then
-			self:ScanForMobs(destGUID, 0, 8, 1, 0.1, 10, "SetIconOnOhgan")
+			self:ScanForMobs(destGUID, 0, 8, 1, nil, 10, "SetIconOnOhgan")
 		end
 	end
 end

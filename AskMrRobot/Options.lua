@@ -7,6 +7,7 @@ local _chkAutoGear
 local _chkJunk
 local _chkAh
 local _chkEm
+local _chkTal
 local _txtScale
 
 local function onTextboxEnter(widget)
@@ -115,9 +116,12 @@ function Amr:RenderTabOptions(container)
 	
 	_chkEm, desc = createCheck(container, "disableEm", L.OptionsDisableEmName, L.OptionsDisableEmDesc)
 	_chkEm:SetPoint("TOPLEFT", desc2.frame, "BOTTOMLEFT", -24, -20)
-	
-	_txtScale, desc2 = createSmallTextbox(container, "uiScale", L.OptionsUiScaleName, L.OptionsUiScaleDesc)
-	_txtScale:SetPoint("TOPLEFT", desc.frame, "BOTTOMLEFT", -43, -20)
+
+	_chkTal, desc2 = createCheck(container, "disableTal", L.OptionsDisableTalName, L.OptionsDisableTalDesc)
+	_chkTal:SetPoint("TOPLEFT", desc.frame, "BOTTOMLEFT", -24, -20)
+
+	_txtScale, desc = createSmallTextbox(container, "uiScale", L.OptionsUiScaleName, L.OptionsUiScaleDesc)
+	_txtScale:SetPoint("TOPLEFT", desc2.frame, "BOTTOMLEFT", -43, -20)
 	
 	-- initialize state of controls
 	Amr:RefreshOptionsUi()
@@ -129,31 +133,48 @@ function Amr:ReleaseTabOptions()
 	_chkJunk = nil
 	_chkAh = nil
 	_chkEm = nil
+	_chkTal = nil
 	_txtScale = nil
+end
+
+-- sometimes the game doesn't repaint checkboxes when it should... doing this forces it to do so
+local function setCheckboxChecked(chk, val)
+	chk:SetChecked(val)
+	chk:SetChecked(not val)
+	chk:SetChecked(val)
 end
 
 function Amr:RefreshOptionsUi()
 
 	if _chkMinimap then
+		--setCheckboxChecked(_chkMinimap, self.db.profile.minimap.hide)
 		_chkMinimap:SetChecked(self.db.profile.minimap.hide)
 	end
 	
 	if _chkAutoGear then
+		--setCheckboxChecked(_chkAutoGear, self.db.profile.options.autoGear)
 		_chkAutoGear:SetChecked(self.db.profile.options.autoGear)
 	end
 
 	if _chkJunk then
+		--setCheckboxChecked(_chkJunk, self.db.profile.options.junkVendor)
 		_chkJunk:SetChecked(self.db.profile.options.junkVendor)
 	end
 
 	if _chkAh then
+		--setCheckboxChecked(_chkAh, self.db.profile.options.shopAh)
 		_chkAh:SetChecked(self.db.profile.options.shopAh)
 	end
 	
 	if _chkEm then
+		--setCheckboxChecked(_chkEm, self.db.profile.options.disableEm)
 		_chkEm:SetChecked(self.db.profile.options.disableEm)
 	end
 	
+	if _chkTal then
+		--setCheckboxChecked(_chkTal, self.db.profile.options.disableEm)
+		_chkTal:SetChecked(self.db.profile.options.disableTal)
+	end	
 	if _txtScale then
 		_txtScale:SetText(self.db.profile.options.uiScale)
 		_txtScale:ClearFocus()

@@ -37,6 +37,13 @@ local _amrLDB = LibStub("LibDataBroker-1.1"):NewDataObject(Amr.ADDON_NAME, {
 })
 local _icon = LibStub("LibDBIcon-1.0")
 
+function AskMrRobot_AddonCompartmentFunc(self, button)
+	if button == "LeftButton" then
+		Amr:Toggle()
+	elseif button == "RightButton" then
+		Amr:EquipGearSet()
+	end
+end
 
 -- initialize the database
 local function initializeDb()
@@ -45,17 +52,22 @@ local function initializeDb()
 		char = {
 			LastVersion = 0,           -- used to clean out old stuff	
 			FirstUse = true,           -- true if this is first time use, gets cleared after seeing the export help splash window
-			Talents = {},              -- for each spec, selected talents
-			Essences = {},             -- for each spec, selected essences
-			UnlockedEssences = {},     -- unlocked essences for this character
+			--Talents = {},              -- for each spec, selected talents
+			--Soulbinds = {},            -- selected nodes in each soulbind tree for this character
+			--ActiveSoulbinds = {},      -- for each spec, active soulbind
+			--UnlockedConduits = {},     -- unlocked conduits for this character
+			--CovenantRenownLevel = 0,   -- current covenant renown level
+			TalentConfigs = {},        -- new talent configs since dragonflight
 			Equipped = {},             -- for each spec, slot id to item info
 			BagItems = {},             -- list of item info for bags
 			BankItems = {},            -- list of item info for bank
 			BagItemsAndCounts = {},    -- used mainly for the shopping list
-			BankItemsAndCounts = {},   -- used mainly for the shopping list			
+			BankItemsAndCounts = {},   -- used mainly for the shopping list		
+			GreatVaultItems = {},      -- available weekly rewards from the great vault	
 			GearSetups = {},           -- imported gear sets
 			JunkData = {},             -- imported data about items that can be vendored/scrapped/disenchanted
 			ExtraEnchantData = {},     -- enchant id to enchant display information and material information
+			HighestItemLevels = {},    -- highest item levels for determining upgrade discounts
 			Logging = {                -- character logging settings
 				Enabled = false,       -- whether logging is currently on or not
 				LastZone = nil,        -- last zone the player was in
@@ -75,6 +87,7 @@ local function initializeDb()
 				junkVendor = false,    -- auto-show junk list at vendor/scrapper
 				shopAh = false,        -- auto-show shopping list at AH
 				disableEm = false,     -- disable auto-creation of equipment manager sets
+				disableTal = false,    -- disable automatically setting talents/soulbind
 				uiScale = 1            -- custom scale for AMR UI
 			},
 			Logging = {                -- global logging settings
@@ -137,10 +150,25 @@ local function initializeDb()
 		Amr.db.char.GearSetups = {}
 	end
 
+	-- upgrade old talent info to new format
+	if Amr.db.char.Talents then
+		Amr.db.char.Talents = nil
+	end
+
+	if not Amr.db.char.TalentConfigs then
+		Amr.db.char.TalentConfigs = {}
+	end
+	
 	if Amr.db.global.Shopping then
 		Amr.db.global.Shopping = nil
 	end
-	
+
+	-- change default value for talent swapping setting
+	if not Amr.db.profile.options.talVer or Amr.db.profile.options.talVer < 1 then
+		Amr.db.profile.options.talVer = 1
+		Amr.db.profile.options.disableTal = true
+	end
+
 	Amr.db.RegisterCallback(Amr, "OnProfileChanged", "RefreshConfig")
 	Amr.db.RegisterCallback(Amr, "OnProfileCopied", "RefreshConfig")
 	Amr.db.RegisterCallback(Amr, "OnProfileReset", "RefreshConfig")
@@ -164,7 +192,7 @@ local _pendingInit = false
 -- upgrade some stuff from old to new formats
 local function upgradeFromOld()
 
-	local currentVersion = tonumber(GetAddOnMetadata(Amr.ADDON_NAME, "Version"))
+	local currentVersion = tonumber(C_AddOns.GetAddOnMetadata(Amr.ADDON_NAME, "Version"))
 	if Amr.db.char.LastVersion < 65 then
 
 		if not Amr.db.profile.options.disableEm then
@@ -255,6 +283,7 @@ local _slashMethods = {
 	show      = "Show",
 	toggle    = "Toggle",
 	equip     = "EquipGearSet",
+	del       = "DeleteGearSet",
 	version   = "PrintVersions",
 	junk      = "ShowJunkWindow",
 	--wipe      = "Wipe",
@@ -347,7 +376,7 @@ local function sendVersionInfo()
 	
     local realm = GetRealmName()
     local name = UnitName("player")
-	local ver = GetAddOnMetadata(Amr.ADDON_NAME, "Version")
+	local ver = C_AddOns.GetAddOnMetadata(Amr.ADDON_NAME, "Version")
 	
 	local msg = string.format("%s\n%s\n%s\n%s", Amr.MessageTypes.Version, realm, name, ver)
 	Amr:SendAmrCommMessage(msg)
@@ -598,13 +627,108 @@ function Amr:IsUnique(bagId, slotId)
 end
 ]]
 
+-- helper to parse the talent data into a consistent format that represents what is actually available to this player
+function Amr:GetTalentConfigData(configId)
+
+	local config = C_Traits.GetConfigInfo(configId)
+	if not config or config.type ~= Enum.TraitConfigType.Combat then return nil end
+	
+	local treeIds = config["treeIDs"]
+
+	-- at least for a while, scanning nodes would return subtrees not available to this spec, so we need to do a pre-scan for available subtrees
+	-- and use that to actively prune out bad subtrees... very gross	
+
+	local allowedSubtrees = {}
+	local heroTreeNodeId = 0
+	local activeSubtreeId = 0
+	for i = 1, #treeIds do
+    	for _, nodeId in pairs(C_Traits.GetTreeNodes(treeIds[i])) do
+			local node = C_Traits.GetNodeInfo(configId, nodeId)
+			if node.ID and node.isVisible and node.maxRanks > 0 and node.type == 3 then
+				-- this is the special node that picks your subtree, scan its entries to see which are allowed and also which is active
+				heroTreeNodeId = node.ID
+				for e = 1, #node.entryIDs do
+					local entry = C_Traits.GetEntryInfo(configId, node.entryIDs[e])
+					allowedSubtrees[entry.subTreeID] = true
+					if node.activeEntry and node.activeEntry.entryID == node.entryIDs[e] then
+						activeSubtreeId = entry.subTreeID
+					end
+				end
+				break
+			end
+		end
+	end
+
+	-- NOTE: the below will also pick up ranks in inactive subtrees... kind of annoying, but that is how they remember your selections
+	--       when switching back and forth, and then the selected subtree implicitly disables the inactive tree
+	
+	local talMap = {}
+
+  	for i = 1, #treeIds do
+    	for _, nodeId in pairs(C_Traits.GetTreeNodes(treeIds[i])) do
+			local node = C_Traits.GetNodeInfo(configId, nodeId)
+			if node.ID and node.isVisible and node.maxRanks > 0 and (not node.subTreeID or allowedSubtrees[node.subTreeID]) and node.type ~= 3 then
+				local nodeData = {
+					id = node.ID,
+					ranks = {}
+				}
+				talMap[node.ID] = nodeData
+
+				-- need to check node type b/c blizz abandoned a few selection node entries in the data which still show up in a scan here... super annoying and gross
+				if #node.entryIDs > 1 and node.type == 2 then
+					nodeData.entryIds = node.entryIDs
+					
+					for e = 1, #node.entryIDs do
+						if node.activeEntry and node.entryIDs[e] == node.activeEntry.entryID then
+							table.insert(nodeData.ranks, node.activeRank)
+						else
+							table.insert(nodeData.ranks, 0)
+						end
+					end
+
+				else
+					-- single choice node, ignore all but the 1st entry, anything else is bad/abandoned data
+					nodeData.entryIds = { node.entryIDs[1] }
+
+					if node.activeEntry and node.activeRank then
+						table.insert(nodeData.ranks, node.activeRank)
+					else
+						table.insert(nodeData.ranks, 0)
+					end
+				end
+			end
+
+			-- for reference if ever need it
+			--[[
+			local activeEntryId = node.entryIDs[1]
+			local entry = C_Traits.GetEntryInfo(configId, activeEntryId)
+			local defnId = entry["definitionID"]
+			local defn = C_Traits.GetDefinitionInfo(defnId)
+			local spellId = defn["spellID"]
+			local spellName = C_Spell.GetSpellName(spellId)
+			if spellName == "Lightning Strikes" then
+				print(Amr:dump(node))							
+			end]]
+
+		end
+	end	
+
+	return {
+		id = configId,
+		name = config.name,
+		heroTreeNodeId = heroTreeNodeId,
+		activeSubtreeId = activeSubtreeId,
+		treeIds = treeIds,
+		nodes = talMap
+	}
+end
 
 ----------------------------------------------------------------------------------------
 -- Inter-Addon Communication
 ----------------------------------------------------------------------------------------
 function Amr:SendAmrCommMessage(message, channel)
 	-- prepend version to all messages
-	local v = GetAddOnMetadata(Amr.ADDON_NAME, "Version")
+	local v = C_AddOns.GetAddOnMetadata(Amr.ADDON_NAME, "Version")
 	message = v .. "\r" .. message
 	
 	Amr:SendCommMessage(Amr.ChatPrefix, message, channel or (IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and "INSTANCE_CHAT" or "RAID"))
@@ -706,6 +830,8 @@ function Amr:dump(o)
 	end
 end
 
+
 function Amr:Test()
+	
 	
 end

@@ -21,13 +21,12 @@ plugin.defaultDB = {
 -- Locals
 --
 
-local SendChatMessage, GetTime = BigWigsLoader.SendChatMessage, GetTime
+local Ambiguate, SendChatMessage, GetTime = BigWigsLoader.Ambiguate, BigWigsLoader.SendChatMessage, GetTime
 local L = BigWigsAPI:GetLocale("BigWigs: Plugins")
 plugin.displayName = L.autoReply
 local curDiff = 0
 local curModule = nil
 local throttle, throttleBN, friendlies = {}, {}, {}
-local hogger = EJ_GetEncounterInfo(464)
 local healthPools, healthPoolNames = {}, {}
 local timer = nil
 
@@ -37,15 +36,17 @@ local timer = nil
 
 do
 	local disabled = function() return plugin.db.profile.disabled end
+	local bossText = BigWigsAPI:GetLocale("BigWigs: Common").boss
+	local heroicText = BigWigsAPI:GetLocale("BigWigs").heroic
 	local modeTbl = {
 		type = "select",
 		name = L.responseType,
 		order = 1,
 		values = {
 			L.autoReplyBasic,
-			L.autoReplyNormal:format(hogger),
-			L.autoReplyAdvanced:format(hogger, GetDifficultyInfo(2), 12, 20),
-			L.autoReplyExtreme:format(hogger, GetDifficultyInfo(2), 12, 20, L.healthFormat:format(hogger, 42)),
+			L.autoReplyNormal:format(bossText),
+			L.autoReplyAdvanced:format(bossText, heroicText, 12, 20),
+			L.autoReplyExtreme:format(bossText, heroicText, 12, 20, L.healthFormat:format(bossText, 42)),
 		},
 		width = "full",
 		style = "radio",
@@ -57,18 +58,19 @@ do
 		values = {
 			L.none,
 			L.autoReplyLeftCombatBasic,
-			"|cFF00FF00".. L.autoReplyLeftCombatNormalWin:format(hogger) .."|r   |cFFFF0000".. L.autoReplyLeftCombatNormalWipe:format(hogger) .. "|r",
-			"|cFF00FF00".. L.autoReplyLeftCombatAdvancedWin:format(hogger, 1, 20) .."|r   |cFFFF0000".. L.autoReplyLeftCombatAdvancedWipe:format(hogger, L.healthFormat:format(hogger, 0.1)) .."|r",
+			"|cFF00FF00".. L.autoReplyLeftCombatNormalWin:format(bossText) .."|r   |cFFFF0000".. L.autoReplyLeftCombatNormalWipe:format(bossText) .. "|r",
+			"|cFF00FF00".. L.autoReplyLeftCombatAdvancedWin:format(bossText, 1, 20) .."|r   |cFFFF0000".. L.autoReplyLeftCombatAdvancedWipe:format(bossText, L.healthFormat:format(bossText, 0.1)) .."|r",
 		},
 		width = "full",
 		style = "radio",
 	}
 
 	plugin.pluginOptions = {
-		name = L.autoReply,
+		name = "|TInterface\\AddOns\\BigWigs\\Media\\Icons\\Menus\\AutoReply:20|t ".. L.autoReply,
 		desc = L.autoReplyDesc,
 		type = "group",
 		childGroups = "tab",
+		order = 9,
 		get = function(info)
 			return plugin.db.profile[info[#info]]
 		end,
@@ -112,19 +114,56 @@ end
 -- Initialization
 --
 
-function plugin:OnPluginEnable()
-	self:RegisterMessage("BigWigs_OnBossEngage")
-	self:RegisterMessage("BigWigs_OnBossWin")
-	self:RegisterMessage("BigWigs_OnBossWipe", "BigWigs_OnBossWin")
+do
+	local function updateProfile()
+		local db = plugin.db.profile
+
+		for k, v in next, db do
+			local defaultType = type(plugin.defaultDB[k])
+			if defaultType == "nil" then
+				db[k] = nil
+			elseif type(v) ~= defaultType then
+				db[k] = plugin.defaultDB[k]
+			end
+		end
+
+		if db.mode < 1 or db.mode > 4 then
+			db.mode = plugin.defaultDB.mode
+		end
+		if db.modeOther < 1 or db.modeOther > 4 then
+			db.modeOther = plugin.defaultDB.modeOther
+		end
+		if db.exitCombat < 1 or db.exitCombat > 4 then
+			db.exitCombat = plugin.defaultDB.exitCombat
+		end
+		if db.exitCombatOther < 1 or db.exitCombatOther > 4 then
+			db.exitCombatOther = plugin.defaultDB.exitCombatOther
+		end
+	end
+
+	function plugin:OnPluginEnable()
+		self:RegisterMessage("BigWigs_OnBossEngage")
+		self:RegisterMessage("BigWigs_OnBossWin", "WinOrWipe")
+		self:RegisterMessage("BigWigs_OnBossWipe", "WinOrWipe")
+		self:RegisterMessage("BigWigs_OnBossDisable")
+		self:RegisterMessage("BigWigs_ProfileUpdate", updateProfile)
+		updateProfile()
+	end
+end
+
+function plugin:OnPluginDisable()
+	curModule = nil
+	throttle, throttleBN, friendlies = {}, {}, {}
+	healthPools, healthPoolNames = {}, {}
 end
 
 -------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function plugin:BigWigs_OnBossEngage(event, module, difficulty)
-	if not self.db.profile.disabled and module and module.journalId and not module.worldBoss then
-		curDiff = difficulty
+function plugin:BigWigs_OnBossEngage(event, module)
+	if not self.db.profile.disabled and module and (module:GetJournalID() or module:GetAllowWin()) and not module.worldBoss then
+		curDiff = module:Difficulty()
 		curModule = module
 		throttle, throttleBN, friendlies = {}, {}, {}
 		self:RegisterEvent("CHAT_MSG_WHISPER")
@@ -135,15 +174,11 @@ end
 do
 	local function CreateAdvancedFinalReply(win)
 		if win then
-			local _, _, _, instanceId = UnitPosition("player")
 			local playersTotal, playersAlive = 0, 0
 			for unit in curModule:IterateGroup() do
-				local _, _, _, tarInstanceId = UnitPosition(unit)
-				if tarInstanceId == instanceId then
-					playersTotal = playersTotal + 1
-					if not UnitIsDeadOrGhost(unit) then
-						playersAlive = playersAlive + 1
-					end
+				playersTotal = playersTotal + 1
+				if not curModule:UnitIsDeadOrGhost(unit) then
+					playersAlive = playersAlive + 1
 				end
 			end
 			return L.autoReplyLeftCombatAdvancedWin:format(curModule.displayName, playersAlive, playersTotal)
@@ -164,8 +199,8 @@ do
 		end
 	end
 
-	function plugin:BigWigs_OnBossWin(event, module)
-		if not self.db.profile.disabled and module and module.journalId and not module.worldBoss then
+	function plugin:WinOrWipe(event, module)
+		if not self.db.profile.disabled and module and module == curModule then
 			curDiff = 0
 			self:UnregisterEvent("CHAT_MSG_WHISPER")
 			self:UnregisterEvent("CHAT_MSG_BN_WHISPER")
@@ -219,12 +254,25 @@ do
 			curModule = nil
 		end
 	end
+
+	function plugin:BigWigs_OnBossDisable(event, module) -- Manual disable or reboot of the boss module
+		if not self.db.profile.disabled and module and module == curModule then
+			curDiff = 0
+			self:UnregisterEvent("CHAT_MSG_WHISPER")
+			self:UnregisterEvent("CHAT_MSG_BN_WHISPER")
+			if timer then
+				self:CancelTimer(timer)
+				timer = nil
+			end
+			curModule = nil
+		end
+	end
 end
 
 do
 	local units = {"boss1", "boss2", "boss3", "boss4", "boss5"}
 
-	local UnitHealth, UnitHealthMax, UnitName, IsEncounterInProgress = UnitHealth, UnitHealthMax, UnitName, IsEncounterInProgress
+	local UnitHealth, UnitHealthMax, IsEncounterInProgress = UnitHealth, UnitHealthMax, IsEncounterInProgress
 	local function StoreHealth()
 		if IsEncounterInProgress() then
 			for i = 1, 5 do
@@ -234,7 +282,7 @@ do
 					local maxHealth = UnitHealthMax(unit)
 					local health = rawHealth / maxHealth
 					healthPools[i] = health
-					healthPoolNames[i] = UnitName(unit)
+					healthPoolNames[i] = plugin:UnitName(unit)
 				elseif healthPools[i] then
 					healthPools[i] = nil
 					healthPoolNames[i] = nil
@@ -247,36 +295,28 @@ do
 		if mode == 2 then
 			return L.autoReplyNormal:format(curModule.displayName) -- In combat with encounterName
 		elseif mode == 3 then
-			local _, _, _, instanceId = UnitPosition("player")
 			local playersTotal, playersAlive = 0, 0
 			for unit in curModule:IterateGroup() do
-				local _, _, _, tarInstanceId = UnitPosition(unit)
-				if tarInstanceId == instanceId then
-					playersTotal = playersTotal + 1
-					if not UnitIsDeadOrGhost(unit) then
-						playersAlive = playersAlive + 1
-					end
+				playersTotal = playersTotal + 1
+				if not curModule:UnitIsDeadOrGhost(unit) then
+					playersAlive = playersAlive + 1
 				end
 			end
 			-- In combat with encounterName, difficulty, playersAlive
-			return L.autoReplyAdvanced:format(curModule.displayName, GetDifficultyInfo(curDiff), playersAlive, playersTotal)
+			return L.autoReplyAdvanced:format(curModule.displayName, GetDifficultyInfo(curDiff) or "??", playersAlive, playersTotal)
 		elseif mode == 4 then
-			local _, _, _, instanceId = UnitPosition("player")
 			local playersTotal, playersAlive = 0, 0
 			for unit in curModule:IterateGroup() do
-				local _, _, _, tarInstanceId = UnitPosition(unit)
-				if tarInstanceId == instanceId then
-					playersTotal = playersTotal + 1
-					if not UnitIsDeadOrGhost(unit) then
-						playersAlive = playersAlive + 1
-					end
+				playersTotal = playersTotal + 1
+				if not curModule:UnitIsDeadOrGhost(unit) then
+					playersAlive = playersAlive + 1
 				end
 			end
 			local totalHp = ""
 			for i = 1, 5 do
 				local unit = units[i]
 				local hp = UnitHealth(unit)
-				local name = UnitName(unit)
+				local name = plugin:UnitName(unit)
 				if hp > 0 then
 					hp = hp / UnitHealthMax(unit)
 					if totalHp == "" then
@@ -287,7 +327,7 @@ do
 				end
 			end
 			-- In combat with encounterName, difficulty, playersAlive, bossHealth
-			return L.autoReplyExtreme:format(curModule.displayName, GetDifficultyInfo(curDiff), playersAlive, playersTotal, totalHp)
+			return L.autoReplyExtreme:format(curModule.displayName, GetDifficultyInfo(curDiff) or "??", playersAlive, playersTotal, totalHp)
 		else
 			return L.autoReplyBasic -- In combat
 		end
@@ -296,7 +336,14 @@ do
 	function plugin:CHAT_MSG_WHISPER(event, _, sender, _, _, _, flag, _, _, _, _, _, guid)
 		if curDiff > 0 and flag ~= "GM" and flag ~= "DEV" then
 			local trimmedPlayer = Ambiguate(sender, "none")
-			if not UnitInRaid(trimmedPlayer) and not UnitInParty(trimmedPlayer) and (not throttle[sender] or GetTime() - throttle[sender] > 30) then
+			if UnitInRaid(trimmedPlayer) or UnitInParty(trimmedPlayer) then -- Player is in our group
+				local _, _, _, myInstanceId = UnitPosition("player")
+				local _, _, _, tarInstanceId = UnitPosition(trimmedPlayer)
+				if myInstanceId == tarInstanceId then -- Player is also in our instance
+					return
+				end
+			end
+			if not throttle[sender] or (GetTime() - throttle[sender]) > 30 then
 				throttle[sender] = GetTime()
 				local isBnetFriend = C_BattleNet.GetGameAccountInfoByGUID(guid)
 				local msg
@@ -319,20 +366,26 @@ do
 
 	function plugin:CHAT_MSG_BN_WHISPER(event, _, playerName, _, _, _, _, _, _, _, _, _, _, bnSenderID)
 		if curDiff > 0 and not BNIsSelf(bnSenderID) then
-			if not throttleBN[bnSenderID] or GetTime() - throttleBN[bnSenderID] > 30 then
+			if not throttleBN[bnSenderID] or (GetTime() - throttleBN[bnSenderID]) > 30 then
 				throttleBN[bnSenderID] = GetTime()
 				local index = BNGetFriendIndex(bnSenderID)
 				local gameAccs = C_BattleNet.GetFriendNumGameAccounts(index)
 				for i=1, gameAccs do
 					local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(index, i)
-					-- Play on retail and get a whisper from Classic, seems to lack realmName, WoW 8.3
-					if gameAccountInfo.clientProgram == "WoW" and gameAccountInfo.realmName and gameAccountInfo.characterName then
-						local player = gameAccountInfo.characterName
-						if gameAccountInfo.realmName ~= GetRealmName() then
-							player = player .. "-" .. gameAccountInfo.realmName
+					local player = gameAccountInfo.characterName
+					local realmName = gameAccountInfo.realmName -- Short name "ServerOne"
+					local realmDisplayName = gameAccountInfo.realmDisplayName -- Full name "Server One"
+					if gameAccountInfo.clientProgram == "WoW" and gameAccountInfo.wowProjectID == 1 and realmName and realmDisplayName and player then
+						if realmDisplayName ~= GetRealmName() then
+							player = player .. "-" .. realmName
 						end
-						if UnitInRaid(player) or UnitInParty(player) then
-							return
+						if UnitInRaid(player) or UnitInParty(player) then -- Player is in our group
+							local _, _, _, myInstanceId = UnitPosition("player")
+							local _, _, _, tarInstanceId = UnitPosition(player)
+							if myInstanceId == tarInstanceId then -- Player is also in our instance
+								throttleBN[bnSenderID] = nil
+								return
+							end
 						end
 					end
 				end

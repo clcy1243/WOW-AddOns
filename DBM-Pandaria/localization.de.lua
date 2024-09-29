@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "deDE" then
+if GetLocale() ~= "deDE" then
 	return
 end
 local L
@@ -7,10 +7,6 @@ local L
 -- Sha of Anger --
 -----------------------
 L = DBM:GetModLocalization(691)
-
-L:SetOptionLocalization({
-	RangeFrame	= "Zeige dynamisches Abstandsfenster (5m) basierend auf Spieler-Debuffs für $spell:119622"
-})
 
 L:SetMiscLocalization({
 	Pull	= "Ja... JA! Nutzt Eure Wut aus! Streckt mich nieder!"

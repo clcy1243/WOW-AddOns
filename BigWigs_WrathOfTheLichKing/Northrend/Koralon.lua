@@ -5,6 +5,8 @@
 local mod, CL = BigWigs:NewBoss("Koralon the Flame Watcher", 624, 1599)
 if not mod then return end
 mod:RegisterEnableMob(35013)
+-- mod:SetEncounterID(1128)
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {66725, {66684, "FLASH"}, 66665}
 
 --------------------------------------------------------------------------------
@@ -49,20 +51,20 @@ end
 --
 
 function mod:Fists(args)
-	self:Message(args.spellId, "yellow")
+	self:MessageOld(args.spellId, "yellow")
 	self:Bar(args.spellId, 15)
 	self:Bar(args.spellId, 47)
 end
 
 function mod:Cinder(args)
 	if self:Me(args.destGUID) then
-		self:Message(args.spellId, "blue", "Alarm", CL["you"]:format(args.spellName))
+		self:MessageOld(args.spellId, "blue", "alarm", CL["you"]:format(args.spellName))
 		self:Flash(args.spellId)
 	end
 end
 
 function mod:Breath(args)
-	self:Message(args.spellId, "green")
+	self:MessageOld(args.spellId, "green")
 	count = count + 1
 	self:Bar(args.spellId, 45, L["breath_bar"]:format(count))
 	self:DelayedMessage(args.spellId, 40, "yellow", L["breath_message"]:format(count))

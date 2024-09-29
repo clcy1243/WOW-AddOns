@@ -5,6 +5,8 @@
 local mod, CL = BigWigs:NewBoss("Blood Prince Council", 631, 1632)
 if not mod then return end
 mod:RegisterEnableMob(37970, 37972, 37973) -- Prince Valanar, Prince Keleseth, Prince Taldaram
+-- mod:SetEncounterID(1095)
+-- mod:SetRespawnTime(30)
 mod.toggleOptions = {{72040, "ICON", "FLASH"}, 72039, {72037, "SAY", "FLASH"}, 72999, 70981, 72052, {"iconprince", "ICON"}, "berserk", "proximity"}
 mod.optionHeaders = {
 	[72040] = "Taldaram",
@@ -12,6 +14,7 @@ mod.optionHeaders = {
 	[72999] = "heroic",
 	[70981] = "general",
 }
+mod:SetStage(1)
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -40,7 +43,7 @@ L = mod:GetLocale()
 --
 
 function mod:OnBossEnable()
-	self:Log("SPELL_AURA_APPLIED_DOSE", "Prison", 72999)
+	self:Log("SPELL_AURA_APPLIED_DOSE", "ShadowPrison", 72999)
 	self:Log("SPELL_AURA_APPLIED", "Switch", 70981, 70982, 70952, 70983, 70934, 71582, 71596)
 	self:Log("SPELL_CAST_START", "EmpoweredShock", 72039)
 	self:Log("SPELL_SUMMON", "RegularShock", 72037)
@@ -54,6 +57,7 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage()
+	self:SetStage(1)
 	self:CDBar(70981, 45, L["switch_bar"])
 	self:CDBar(72037, 20, L["shock_bar"])
 	self:Berserk(600)
@@ -64,49 +68,55 @@ end
 --
 
 function mod:Bomb(args)
-	self:Message(72052, "yellow", "Alert")
+	self:MessageOld(args.spellId, "yellow", "alert")
 end
 
-function mod:Prison(args)
+function mod:ShadowPrison(args)
 	if args.amount > 2 and self:Me(args.destGUID) then
-		self:Message(72999, "blue", nil, L["prison_message"]:format(args.amount))
+		self:StackMessage(args.spellId, "blue", args.destName, args.amount, 3)
 	end
 end
 
 function mod:Switch(args)
-	self:Message(70981, "green", "Info", L["switch_message"]:format(args.destName))
-	self:CDBar(70981, 45, L["switch_bar"])
-	self:StopBar(L["empowered_flames"])
-	for i = 1, 3 do
-		local bossId = ("boss%d"):format(i)
-		if UnitGUID(bossId) == args.destGUID then
-			self:PrimaryIcon("iconprince", bossId)
-			break
+	if self:IsEngaged() then -- Triggers on respawn
+		self:MessageOld(70981, "green", "info", L["switch_message"]:format(args.destName))
+		self:CDBar(70981, 45, L["switch_bar"])
+		self:StopBar(L["empowered_flames"])
+		-- Set stage depending on active boss
+		local guid = self:MobId(args.destGUID)
+		if guid == 37970 then -- Prince Valanar
+			self:SetStage(1)
+		elseif guid == 37972 then -- Prince Keleseth
+			self:SetStage(2)
+		elseif guid == 37973 then -- Prince Taldaram
+			self:SetStage(3)
+		end
+		local boss = self:GetUnitIdByGUID(args.destGUID)
+		if boss then
+			self:PrimaryIcon("iconprince", boss)
 		end
 	end
 end
 
-function mod:EmpoweredShock(_, spellId)
-	self:Message(72039, "red", "Long", L["empowered_shock_message"])
+function mod:EmpoweredShock(args)
+	self:MessageOld(args.spellId, "red", "long", L["empowered_shock_message"])
 	self:OpenProximity("proximity", 15)
 	self:ScheduleTimer("CloseProximity", 5)
-	self:CDBar(72039, 16, L["shock_bar"])
+	self:CDBar(args.spellId, 16, L["shock_bar"])
 end
 
-function mod:RegularShock()
-	for i = 1, 3 do
-		local boss = ("boss%d"):format(i)
-		if self:MobId(UnitGUID(boss)) == 37970 then
-			local bossTarget = boss.."target"
-			if UnitExists(bossTarget) then
-				if UnitIsUnit("player", bossTarget) then
-					self:Flash(72037)
-					self:Say(72037)
-				end
-				self:TargetMessage(72037, self:UnitName(bossTarget), "orange", nil, L["regular_shock_message"])
-				self:CDBar(72037, 16, L["shock_bar"])
+function mod:RegularShock(args)
+	local boss = self:GetUnitIdByGUID(37970)
+	if boss then
+		local bossTarget = boss.."target"
+		local target = self:UnitName(bossTarget)
+		if target then
+			if self:Me(self:UnitGUID(bossTarget)) then
+				self:Flash(args.spellId)
+				self:Say(args.spellId, nil, nil, "Shock Vortex")
 			end
-			break
+			self:TargetMessageOld(args.spellId, target, "orange", nil, L["regular_shock_message"])
+			self:CDBar(args.spellId, 16, L["shock_bar"])
 		end
 	end
 end
@@ -115,7 +125,7 @@ function mod:EmpoweredFlame(msg, _, _, _, player)
 	if UnitIsUnit(player, "player") then
 		self:Flash(72040)
 	end
-	self:TargetMessage(72040, player, "orange", "Long", L["empowered_flames"])
+	self:TargetMessageOld(72040, player, "orange", "long", L["empowered_flames"])
 	self:SecondaryIcon(72040, player)
 	self:CDBar(72040, 20, L["empowered_flames"])
 end

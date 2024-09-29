@@ -22,14 +22,12 @@ local comboSpells = {}
 local comboCastEnd = 0
 local currentCombo = nil
 local comboSpellLookup = {
-	[245458] = {color = "|cff00fff9", castTime = mod:Easy() and 3.5 or 2.75}, -- Foe Breaker
-	[245463] = {color = "|cffffff00", castTime = mod:Easy() and 3.5 or 2.75}, -- Flame Rend
-	[245301] = {color = "|cffffa000", castTime = 6}, -- Searing Tempest
+	[245458] = {color = "|cff00fff9", icon = 135811, castTime = mod:Easy() and 3.5 or 2.75}, -- Foe Breaker
+	[245463] = {color = "|cffffff00", icon = 460698, castTime = mod:Easy() and 3.5 or 2.75}, -- Flame Rend
+	[245301] = {color = "|cffffa000", icon = 135826, castTime = 6}, -- Searing Tempest
 }
-for id,_ in pairs(comboSpellLookup) do
+for id in pairs(comboSpellLookup) do
 	comboSpellLookup[id].name = mod:SpellName(id)
-	local _, _, icon = GetSpellInfo(id)
-	comboSpellLookup[id].icon = icon
 end
 
 local blazeTick = 1
@@ -76,12 +74,12 @@ function mod:GetOptions()
 
 		--[[ Stage One: Wrath of Aggramar ]]--
 		{245990, "TANK"}, -- Taeshalach's Reach
-		{245994, "SAY", "FLASH", "PROXIMITY"}, -- Scorching Blaze
+		{245994, "SAY", "PROXIMITY"}, -- Scorching Blaze
 		{244693, "SAY"}, -- Wake of Flame
 		{244688, "INFOBOX"}, -- Taeshalach Technique
 		245458, -- Foe Breaker
 		245463, -- Flame Rend
-		245301, -- Searing Tempest
+		{245301, "CASTBAR"}, -- Searing Tempest
 
 		--[[ Stage Two: Champion of Sargeras ]]--
 		245983, -- Flare
@@ -92,7 +90,7 @@ function mod:GetOptions()
 		--[[ Mythic ]]--
 		{254452, "SAY", "FLASH", "PROXIMITY"}, -- Ravenous Blaze
 		255058, -- Empowered Flame Rend
-		255061 -- Empowered Searing Tempest
+		{255061, "CASTBAR"} -- Empowered Searing Tempest
 	},{
 		["stages"] = "general",
 		[245990] = -15794, -- Stage One: Wrath of Aggramar
@@ -102,8 +100,8 @@ function mod:GetOptions()
 	}
 end
 
-function mod:VerifyEnable()
-	return BigWigsLoader.GetBestMapForUnit("player") == 917 -- Floor 9, The World Soul
+function mod:VerifyEnable(_, _, mapArtID)
+	return mapArtID == 917 -- Floor 9, The World Soul
 end
 
 function mod:OnBossEnable()
@@ -139,18 +137,18 @@ function mod:OnEngage()
 	comboTime = GetTime() + 35
 	foeBreakerCount = 1
 	flameRendCount = 1
-	wipe(comboSpells)
+	comboSpells = {}
 	comboSpellLookup[245458].castTime = self:Easy() and 3.5 or 2.75 -- Foe Breaker
 	comboSpellLookup[245463].castTime = self:Easy() and 3.5 or 2.75 -- Flame Rend
 
 	blazeTick = 1
 	blazeOnMe = false
 	intermission = false
-	wipe(blazeProxList)
+	blazeProxList = {}
 
-	wipe(mobCollector)
-	wipe(waveCollector)
-	wipe(waveTimeCollector)
+	mobCollector = {}
+	waveCollector = {}
+	waveTimeCollector = {}
 	wave = 0
 	currentEmberWave = 1
 
@@ -164,7 +162,7 @@ function mod:OnEngage()
 	self:Bar(244688, self:Mythic() and 14.5 or 35) -- Taeshalach Technique
 
 	nextIntermissionSoonWarning = self:LFR() and 62 or 82 -- happens at 60% on LFR, 80% on other difficulties
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "boss1")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
 end
 
 --------------------------------------------------------------------------------
@@ -240,10 +238,10 @@ local function updateProximity(self)
 	end
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	local hp = self:GetHealth(unit)
 	if hp < nextIntermissionSoonWarning then
-		self:Message("stages", "green", nil, CL.soon:format(CL.intermission), false)
+		self:MessageOld("stages", "green", nil, CL.soon:format(CL.intermission), false)
 		nextIntermissionSoonWarning = self:Mythic() and nextIntermissionSoonWarning - 45 or nextIntermissionSoonWarning - 40
 		if nextIntermissionSoonWarning < 35 then
 			self:UnregisterUnitEvent(event, unit)
@@ -267,7 +265,7 @@ function mod:BlazingEruption(args) -- Add Death/Raid Explosion
 	end
 
 	if waveEmberCounter > 0 then
-		self:Message("track_ember", "cyan", "Info", CL.mob_remaining:format(self:SpellName(-16686), waveEmberCounter), false)
+		self:MessageOld("track_ember", "cyan", "info", CL.mob_remaining:format(self:SpellName(-16686), waveEmberCounter), false)
 		if self:GetOption("custom_off_ember_marker") then
 			for key,guid in pairs(emberAddMarks) do -- Remove icon from used list
 				if guid == args.sourceGUID then
@@ -276,14 +274,14 @@ function mod:BlazingEruption(args) -- Add Death/Raid Explosion
 			end
 		end
 	else
-		self:Message("track_ember", "cyan", "Info", L.wave_cleared:format(currentEmberWave), false)
+		self:MessageOld("track_ember", "cyan", "info", L.wave_cleared:format(currentEmberWave), false)
 		self:StopBar(CL.count:format(self:SpellName(245911), currentEmberWave)) -- Wrought in Flame (x)
 		if not self:Mythic() or not waveTimeCollector[currentEmberWave+1] then -- No more waves
 			self:UnregisterTargetEvents()
 		else
 			local emberTimer = floor(waveTimeCollector[currentEmberWave+1] - GetTime())
 			self:CDBar(245911, emberTimer, CL.count:format(self:SpellName(245911), currentEmberWave+1)) -- Wrought in Flame (x)
-			wipe(emberAddMarks)
+			emberAddMarks = {}
 		end
 		currentEmberWave = currentEmberWave + 1
 	end
@@ -292,25 +290,25 @@ end
 function mod:EmberDeath(args)
 	waveEmberCounter = waveEmberCounter - 1
 	if waveEmberCounter > 0 then
-		self:Message("track_ember", "cyan", "Info", CL.mob_remaining:format(self:SpellName(-16686), waveEmberCounter), false)
+		self:MessageOld("track_ember", "cyan", "info", CL.mob_remaining:format(self:SpellName(-16686), waveEmberCounter), false)
 		if self:GetOption("custom_off_ember_marker") then -- Remove icon from used list
 			for key,guid in pairs(emberAddMarks) do
-				if guid == args.sourceGUID then
+				if guid == args.destGUID then
 					emberAddMarks[key] = nil
 				end
 			end
 		end
 	else
-		self:Message("track_ember", "cyan", "Info", L.wave_cleared:format(currentEmberWave), false)
+		self:MessageOld("track_ember", "cyan", "info", L.wave_cleared:format(currentEmberWave), false)
 		self:StopBar(CL.count:format(self:SpellName(245911), currentEmberWave)) -- Wrought in Flame (x)
 		self:UnregisterTargetEvents()
-		wipe(emberAddMarks)
+		emberAddMarks = {}
 	end
 end
 
 do
 	function mod:EmberAddScanner(_, unit)
-		local guid = UnitGUID(unit)
+		local guid = self:UnitGUID(unit)
 		local mobID = self:MobId(guid)
 		if mobID == 122532 and not mobCollector[guid] then
 			mobCollector[guid] = wave -- store which wave the add is from incase it dies early
@@ -320,8 +318,8 @@ do
 			if mobID == 122532 and waveCollector[currentEmberWave] then
 				if waveCollector[currentEmberWave][guid] then
 					for i = 1, 5 do -- Use only 5 marks, leaving 6, 7, 8 for raid use purposes
-						if not emberAddMarks[i] and not GetRaidTargetIndex(unit) then -- Don't re-mark the same add and re-use marks
-							SetRaidTarget(unit, i)
+						if not emberAddMarks[i] and not self:GetIcon(unit) then -- Don't re-mark the same add and re-use marks
+							self:CustomIcon(false, unit, i)
 							emberAddMarks[i] = guid
 							break
 						end
@@ -337,7 +335,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 		techniqueStarted = true
 		foeBreakerCount = 1
 		flameRendCount = 1
-		wipe(comboSpells)
+		comboSpells = {}
 		currentCombo = nil
 		comboTime = GetTime() + 60.8
 		self:Bar(spellId, 60.8)
@@ -367,12 +365,12 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, _, _, spellId)
 			end
 		end
 	elseif spellId == 245983 then -- Flare
-		self:Message(spellId, "red", "Warning")
+		self:MessageOld(spellId, "red", "warning")
 		if comboTime > GetTime() + 15.8 and not self:Mythic() then
 			self:Bar(spellId, 15.8)
 		end
 	elseif spellId == 246037 then -- Empowered Flare
-		self:Message(spellId, "red", "Warning")
+		self:MessageOld(spellId, "red", "warning")
 		if self:Mythic() then -- Start tracking new ember wave (mythic)
 			wave = wave + 1
 			waveCollector[wave] = {}
@@ -395,14 +393,14 @@ end
 function mod:TaeshalachsReach(args)
 	local amount = args.amount or 1
 	if amount % 3 == 0 or amount > 7 then
-		self:StackMessage(args.spellId, args.destName, amount, "purple", amount > 7 and "Alarm") -- Swap on 8+
+		self:StackMessageOld(args.spellId, args.destName, amount, "purple", amount > 7 and "alarm") -- Swap on 8+
 	end
 end
 
 do
 	local function warn()
 		if not blazeOnMe then
-			mod:Message(245994, "red") -- Scorching Blaze
+			mod:MessageOld(245994, "red") -- Scorching Blaze
 		end
 	end
 
@@ -410,9 +408,9 @@ do
 		blazeProxList[#blazeProxList+1] = args.destName
 		if self:Me(args.destGUID) then
 			blazeOnMe = true
-			self:PlaySound(args.spellId, "Warning")
-			self:TargetMessage2(args.spellId, "red", args.destName)
-			self:Say(args.spellId)
+			self:PlaySound(args.spellId, "warning")
+			self:TargetMessage(args.spellId, "red", args.destName)
+			self:Say(args.spellId, nil, nil, "Scorching Blaze")
 		end
 		if #blazeProxList == 1 then
 			self:SimpleTimer(warn, 0.3)
@@ -427,17 +425,17 @@ do
 		if self:Me(args.destGUID) then
 			blazeOnMe = false
 		end
-		tDeleteItem(blazeProxList, args.destName)
+		self:DeleteFromTable(blazeProxList, args.destName)
 		updateProximity(self)
 	end
 end
 
 do
 	local function printTarget(self, name, guid)
-		self:PlaySound(244693, "Alert", nil, name)
-		self:TargetMessage2(244693, "yellow", name)
+		self:PlaySound(244693, "alert", nil, name)
+		self:TargetMessage(244693, "yellow", name)
 		if self:Me(guid) then
-			self:Say(244693)
+			self:Say(244693, nil, nil, "Wake of Flame")
 		end
 	end
 	function mod:WakeofFlame(args)
@@ -450,7 +448,7 @@ do
 end
 
 function mod:FoeBreaker(args)
-	self:Message(245458, "yellow", "Alert", CL.count:format(args.spellName, foeBreakerCount))
+	self:MessageOld(245458, "yellow", "alert", CL.count:format(args.spellName, foeBreakerCount))
 	foeBreakerCount = foeBreakerCount + 1
 	comboSpells[#comboSpells+1] = 245458
 	comboCastEnd = GetTime() + (self:Easy() and 3.5 or 2.75)
@@ -466,7 +464,7 @@ function mod:FoeBreakerSuccess()
 end
 
 function mod:FlameRend(args)
-	self:Message(args.spellId, "red", "Alarm", CL.count:format(args.spellName, flameRendCount))
+	self:MessageOld(args.spellId, "red", "alarm", CL.count:format(args.spellName, flameRendCount))
 	flameRendCount = flameRendCount + 1
 	comboSpells[#comboSpells+1] = 245463
 	comboCastEnd = GetTime() + (self:Easy() and 3.5 or 2.75)
@@ -484,7 +482,7 @@ function mod:FlameRendSuccess()
 end
 
 function mod:SearingTempest(args)
-	self:Message(args.spellId, "orange", "Warning")
+	self:MessageOld(args.spellId, "orange", "warning")
 	self:CastBar(args.spellId, 6)
 	comboSpells[#comboSpells+1] = 245301
 	comboCastEnd = GetTime() + 6
@@ -501,7 +499,7 @@ function mod:CorruptAegis()
 	intermission = true
 	techniqueStarted = nil -- End current technique
 	self:CloseInfo(244688)
-	self:Message("stages", "cyan", "Long", CL.intermission, false)
+	self:MessageOld("stages", "cyan", "long", CL.intermission, false)
 	self:StopBar(245994) -- Scorching Blaze
 	self:StopBar(244693) -- Wake of Flame
 	self:StopBar(244688) -- Taeshalach Technique
@@ -512,10 +510,10 @@ function mod:CorruptAegis()
 
 
 	-- Reset all saved variables
-	wipe(mobCollector)
-	wipe(waveCollector)
-	wipe(waveTimeCollector)
-	wipe(emberAddMarks)
+	mobCollector = {}
+	waveCollector = {}
+	waveTimeCollector = {}
+	emberAddMarks = {}
 	currentEmberWave = 1
 	waveEmberCounter = self:Mythic() and 10 or 6
 	wave = 1
@@ -533,7 +531,7 @@ function mod:CorruptAegisRemoved()
 	stage = stage + 1
 	intermission = false
 	comboTime = GetTime() + 37.5
-	self:Message("stages", "cyan", "Long", CL.stage:format(stage), false)
+	self:MessageOld("stages", "cyan", "long", CL.stage:format(stage), false)
 
 	if self:Mythic() then
 		self:Bar(254452, 23) -- Ravenous Blaze
@@ -564,12 +562,12 @@ do
 		if self:Me(args.destGUID) then
 			blazeOnMe = true
 			self:Flash(args.spellId)
-			self:Say(args.spellId)
-			self:PlaySound(args.spellId, "Warning")
+			self:Say(args.spellId, nil, nil, "Ravenous Blaze")
+			self:PlaySound(args.spellId, "warning")
 		end
 		playerList[#playerList+1] = args.destName
 		blazeProxList[#blazeProxList+1] = args.destName
-		self:TargetsMessage(args.spellId, "red", playerList, 5)
+		self:TargetsMessageOld(args.spellId, "red", playerList, 5)
 		if #playerList == 1 then
 			local cooldown = stage == 1 and 23.1 or 60.1 -- this cooldown should only trigger in stage 1+
 			if comboTime > GetTime() + cooldown then
@@ -585,7 +583,7 @@ do
 		if self:Me(args.destGUID) then
 			blazeOnMe = false
 		end
-		tDeleteItem(blazeProxList, args.destName)
+		self:DeleteFromTable(blazeProxList, args.destName)
 		updateProximity(self)
 	end
 end

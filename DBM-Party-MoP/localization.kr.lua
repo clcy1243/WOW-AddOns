@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "koKR" then return end
+if GetLocale() ~= "koKR" then return end
 local L
 
 -----------------------
@@ -18,6 +18,11 @@ L:SetWarningLocalization({
 	SpecWarnIntensity	= "%s : %s (%d)"
 })
 
+L:SetMiscLocalization({
+	Event1	= "아, 아직 끝나지 않았네. 내가 보기엔 아직 야운골의 시험이 남았네. 내가 실마리를 주지...",
+	Event2	= "오, 내 생각이 맞다면, 짜오 선시커의 전설이 우리 눈앞에서 펼쳐지는 것 같군."
+})
+
 -----------------------
 -- Liu Flameheart --
 -----------------------
@@ -27,6 +32,15 @@ L= DBM:GetModLocalization(658)
 -- Sha of Doubt --
 -----------------------
 L= DBM:GetModLocalization(335)
+
+-------------
+--  Temple of the Jade Serpent Trash  --
+-------------
+L = DBM:GetModLocalization("JadeTempleTrash")
+
+L:SetGeneralLocalization({
+	name =	"옥룡사 일반몹"
+})
 
 -----------------------
 -- <<<Stormstout Brewery>>> --
@@ -139,9 +153,6 @@ L= DBM:GetModLocalization(708)
 
 L:SetMiscLocalization({
 	Pull		= "만회, 아니, 증명해라. 침입자들을 처치해라. 놈들의 머리를 바치는 부족은 내 총애를 얻을 것이다!",
-	Kuai		= "구르단 부족이 폐하와 권력에 굶주린 너희 애송이들에게 보여주마. 왜 우리가 폐하를 보좌해야 하는지!",
-	Ming		= "하르닥 부족이 왜 모구 최고의 부족인지 보여주마!",
-	Haiyan		= "왜 카게쉬 부족이 왕을 보좌할 만한 힘을 가진 유일한 부족인지 보여주겠다!",
 	Defeat		= "누가 우리 전당에 외부인을 들였지? 하르닥과 카게쉬 부족 놈들이나 이런 배신을 저지를 것이다!"
 })
 

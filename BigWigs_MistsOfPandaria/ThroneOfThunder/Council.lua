@@ -102,8 +102,8 @@ function mod:OnEngage()
 	if not self:LFR() then
 		self:OpenProximity("proximity", 7) -- for Quicksand
 	end
-	self:CDBar("priestess_adds", 27, L["priestess_adds_message"], L.priestess_adds_icon)
-	self:CDBar(-7062, 7) -- Quicksand
+	self:Bar("priestess_adds", 27, L["priestess_adds_message"], L.priestess_adds_icon)
+	self:Bar(-7062, 7) -- Quicksand
 	self:Bar(136990, 9.7) -- Frostbite -- might be 7.5?
 	frostBiteStart, bitingColdStart = nil, nil
 	sandGuyDead = nil
@@ -116,7 +116,7 @@ end
 -- High Priestess Mar'li
 
 function mod:MarkedSoul(args)
-	self:TargetMessage(137350, args.destName, "orange", "Alert", fixated)
+	self:TargetMessageOld(137350, args.destName, "orange", "alert", fixated)
 	self:TargetBar(137350, 20, args.destName, fixated)
 	if self:Me(args.destGUID) then
 		self:Flash(137350)
@@ -131,7 +131,7 @@ function mod:BlessedLoaSpirit(args)
 	local lowest, lowestHP = "", 1
 	for i=1,5 do
 		local boss = ("boss%d"):format(i)
-		local mobId = self:MobId(UnitGUID(boss))
+		local mobId = self:MobId(self:UnitGUID(boss))
 		if mobId == 69134 or mobId == 69078 or mobId == 69131 then -- Kazra'jin, Sandcrawler, Frost King
 			local hp = UnitHealth(boss) / UnitHealthMax(boss)
 			if hp > 0 and hp < lowestHP then
@@ -140,54 +140,51 @@ function mod:BlessedLoaSpirit(args)
 			end
 		end
 	end
-	self:Message(args.spellId, "yellow", nil, CL["other"]:format(fixated, UnitName(lowest) or "???"))
+	self:MessageOld(args.spellId, "yellow", nil, CL["other"]:format(fixated, self:UnitName(lowest) or "???"))
 	self:Bar(args.spellId, 20, CL["other"]:format(fixated, args.spellName))
 end
 
 function mod:BlessedGift(args)
 	if not self:LFR() then
-		self:Message("priestess_adds", "red", "Alarm", L["priestess_heal"]:format(args.destName), args.spellId)
+		self:MessageOld("priestess_adds", "red", "alarm", L["priestess_heal"]:format(args.destName), args.spellId)
 	end
 	self:StopBar(CL["other"]:format(fixated, self:SpellName(137203)))
 end
 
 function mod:PriestessAdds(args)
-	self:Message("priestess_adds", "red", "Alarm", args.spellId)
-	self:CDBar("priestess_adds", 33, L["priestess_adds_message"], L.priestess_adds_icon)
+	self:MessageOld("priestess_adds", "red", "alarm", args.spellId)
+	self:Bar("priestess_adds", 33, L["priestess_adds_message"], L.priestess_adds_icon)
 end
 
 -- Sul the Sandcrawler
 
 function mod:Sandstorm(args)
 	self:Bar(args.spellId, 38)
-	self:Message(args.spellId, "orange", "Alert")
+	self:MessageOld(args.spellId, "orange", "alert")
 end
 
-do
-	local mastersCall = select(2, UnitClass("player")) == "HUNTER" and mod:SpellName(53271)
-	function mod:Entrapped(args)
-		if self:Me(args.destGUID) then
-			self:Flash(136857)
-			self:Message(136857, "blue", "Info")
-		elseif self:Dispeller("magic", nil, 136857) or (mastersCall and GetSpellCooldown(mastersCall) == 0) then -- Master's Call works on it, too
-			self:TargetMessage(136857, args.destName, "yellow", nil, nil, nil, true)
-		end
+function mod:Entrapped(args)
+	if self:Me(args.destGUID) then
+		self:Flash(136857)
+		self:MessageOld(136857, "blue", "info")
+	elseif self:Dispeller("magic", nil, 136857) then
+		self:TargetMessageOld(136857, args.destName, "yellow", nil, nil, nil, true)
 	end
 end
 
 function mod:Ensnared(args)
 	if self:Me(args.destGUID) then
-		self:Message(136878, "yellow", nil, CL["count"]:format(args.spellName, args.amount or 1))
+		self:MessageOld(136878, "yellow", nil, CL["count"]:format(args.spellName, args.amount or 1))
 	end
 end
 
 function mod:Quicksand(args)
-	self:CDBar(-7062, 33, args.spellId)
+	self:Bar(-7062, 33, args.spellId)
 end
 
 function mod:QuicksandApplied(args)
 	if self:Me(args.destGUID) then
-		self:Message(-7062, "blue", "Info", CL["underyou"]:format(args.spellName))
+		self:MessageOld(-7062, "blue", "info", CL["underyou"]:format(args.spellName))
 		self:Flash(-7062)
 	end
 end
@@ -207,7 +204,7 @@ do
 		local t = GetTime()
 		if t-prev > 2 then
 			prev = t
-			self:Message(137122, "blue", "Info", CL["underyou"]:format(args.spellName))
+			self:MessageOld(137122, "blue", "info", CL["underyou"]:format(args.spellName))
 			self:Flash(137122)
 		end
 	end
@@ -235,7 +232,7 @@ do
 		end
 		if unit == "player" and not hasChilledToTheBone and self:UnitDebuff(unit, chilledToTheBone) then
 			hasChilledToTheBone = true
-			self:Message(137085, "blue", "Info") -- run away little girl!
+			self:MessageOld(137085, "blue", "info") -- run away little girl!
 			self:Flash(137085)
 			self:ScheduleTimer(reset, 15, true) -- minimum of 16s before you can get it again
 		end
@@ -243,7 +240,7 @@ do
 
 	function mod:FrostbiteApplied(args)
 		-- We only use Icon on Biting cold, so people know that if someone has icon over their head, you need to stay away
-		self:TargetMessage(136990, args.destName, "green", "Info")
+		self:TargetMessageOld(136990, args.destName, "green", "info")
 		self:Bar(136990, 45)
 		frostBiteStart = GetTime()
 		if self:Heroic() then
@@ -263,11 +260,11 @@ do
 end
 
 function mod:BitingColdApplied(args)
-	self:TargetMessage(args.spellId, args.destName, "orange", "Alert")
+	self:TargetMessageOld(args.spellId, args.destName, "orange", "alert")
 	self:Bar(args.spellId, 45)
 	self:SecondaryIcon(args.spellId, args.destName)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Biting Cold")
 		if sandGuyDead then
 			self:OpenProximity(args.spellId, 4)
 		end
@@ -286,25 +283,25 @@ end
 
 -- Tank alerts so you know when you should be watching for stacks (if you're not avoiding hits, it can stack really fast)
 function mod:FrigidAssaultStart(args)
-	self:Message(-7054, "yellow", "Warning", args.spellName)
+	self:MessageOld(-7054, "yellow", "warning", args.spellName)
 	self:Bar(-7054, 30)
 end
 
 function mod:FrigidAssault(args)
 	if args.amount % 5 == 0 or args.amount > 10 then -- don't spam on low stacks, but spam close to 15 (spam so hard)
-		self:StackMessage(-7054, args.destName, args.amount, "orange", "Info", L["assault_message"])
+		self:StackMessageOld(-7054, args.destName, args.amount, "orange", "info", L["assault_message"])
 	end
 end
 
 function mod:FrigidAssaultStun(args)
-	self:Message(-7054, "red", "Warning", L["assault_stun"])
+	self:MessageOld(-7054, "red", "warning", L["assault_stun"])
 end
 
 -- General
 
 function mod:ShadowedSoul(args)
-	if self:Me(args.destGUID) and self:UnitDebuff("player", self:SpellName(137641)) and args.amount > 9 then -- Soul Fragment on, aka gaining more stacks, 10 stacks = 20% extra damage taken
-		self:Message(args.spellId, "blue", "Info", CL["count"]:format(args.spellName, args.amount))
+	if self:Me(args.destGUID) and self:UnitDebuff("player", self:SpellName(137641), 137641) and args.amount > 9 then -- Soul Fragment on, aka gaining more stacks, 10 stacks = 20% extra damage taken
+		self:MessageOld(args.spellId, "blue", "info", CL["count"]:format(args.spellName, args.amount))
 	end
 end
 
@@ -316,7 +313,7 @@ do
 		local unitId
 		for i=1,5 do
 			local boss = ("boss%d"):format(i)
-			if UnitGUID(boss) == guid then
+			if mod:UnitGUID(boss) == guid then
 				unitId = boss
 				break
 			end
@@ -328,7 +325,7 @@ do
 		if percHPToGo < 1 then return end
 
 		if percHPToGo < lastPercHPToGo then
-			mod:Message(136442, "red", "Alert", L["hp_to_go_fullpower"]:format(percHPToGo))
+			mod:MessageOld(136442, "red", "alert", L["hp_to_go_fullpower"]:format(percHPToGo))
 		end
 		mod:ScheduleTimer(warnFullPower, 3, guid, percHPToGo)
 	end
@@ -342,23 +339,23 @@ do
 		local power = UnitPower(unitId)
 		if power > 32 and prevPower == 0 then
 			prevPower = 33
-			self:Message(136442, "yellow", nil, L["hp_to_go_power"]:format(percHPToGo, power))
+			self:MessageOld(136442, "yellow", nil, L["hp_to_go_power"]:format(percHPToGo, power))
 		elseif power > 49 and prevPower == 33 then
 			prevPower = 50
-			self:Message(136442, "yellow", nil, L["hp_to_go_power"]:format(percHPToGo, power))
+			self:MessageOld(136442, "yellow", nil, L["hp_to_go_power"]:format(percHPToGo, power))
 		elseif power > 69 and prevPower == 50 then
 			prevPower = 70
-			self:Message(136442, "orange", nil, L["hp_to_go_power"]:format(percHPToGo, power))
+			self:MessageOld(136442, "orange", nil, L["hp_to_go_power"]:format(percHPToGo, power))
 		elseif power > 79 and prevPower == 70 then
 			prevPower = 80
-			self:Message(136442, "red", nil, L["hp_to_go_power"]:format(percHPToGo, power))
+			self:MessageOld(136442, "red", nil, L["hp_to_go_power"]:format(percHPToGo, power))
 		elseif power > 89 and prevPower == 80 then
 			prevPower = 90
-			self:Message(136442, "red", nil, L["hp_to_go_power"]:format(percHPToGo, power))
+			self:MessageOld(136442, "red", nil, L["hp_to_go_power"]:format(percHPToGo, power))
 		elseif power > 99 and prevPower == 90 then
 			prevPower = 100
-			self:Message(136442, "red", "Alert", L["hp_to_go_fullpower"]:format(percHPToGo))
-			self:ScheduleTimer(warnFullPower, 3, UnitGUID(unitId), percHPToGo)
+			self:MessageOld(136442, "red", "alert", L["hp_to_go_fullpower"]:format(percHPToGo))
+			self:ScheduleTimer(warnFullPower, 3, self:UnitGUID(unitId), percHPToGo)
 		end
 	end
 
@@ -369,12 +366,12 @@ do
 		local lingeringCount = 0
 		for i=1,5 do
 			local boss = ("boss%d"):format(i)
-			if UnitGUID(boss) == args.destGUID then
-				local _, stack = self:UnitBuff(boss, self:SpellName(136467))
+			if self:UnitGUID(boss) == args.destGUID then
+				local _, stack = self:UnitBuff(boss, self:SpellName(136467), 136467) -- Lingering Presence
 				lingeringCount = stack or 0
 				posessHPStart = UnitHealth(boss)
 				if self.db.profile.custom_on_markpossessed then
-					SetRaidTarget(boss, 8)
+					self:CustomIcon(false, boss, 8)
 				end
 				break
 			end
@@ -383,14 +380,14 @@ do
 		local baseTime = self:Difficulty() == 3 and 76 or 66 -- 66 (76 in 10m) seconds till full power without any lingering presences stacks
 		local regenMultiplier = self:Heroic() and 15 or self:LFR() and 5 or 10
 		local duration = baseTime * (100 - lingeringCount * regenMultiplier) / 100
-		self:Message(args.spellId, "cyan", "Long", CL["other"]:format(args.spellName, args.destName))
+		self:MessageOld(args.spellId, "cyan", "long", CL["other"]:format(args.spellName, args.destName))
 		self:Bar(args.spellId, duration, L["full_power"])
 
 		local mobId = self:MobId(args.destGUID)
 		if mobId == 69131 then -- Frost King
 			self:StopBar(136992) -- Biting Cold
 			if bitingColdStart then
-				self:CDBar(136990, 45 - (GetTime() - bitingColdStart)) -- Frostbite -- CD bar because of Possessed buff travel time
+				self:Bar(136990, 45 - (GetTime() - bitingColdStart)) -- Frostbite -- CD bar because of Possessed buff travel time
 			end
 		end
 	end
@@ -401,8 +398,8 @@ do
 		if self.db.profile.custom_on_markpossessed then
 			for i=1,5 do
 				local boss = ("boss%d"):format(i)
-				if UnitGUID(boss) == args.destGUID then
-					SetRaidTarget(boss, 0) -- clear the icon because posses have travel time, so people know when something is no longer possessed
+				if self:UnitGUID(boss) == args.destGUID then
+					self:CustomIcon(false, boss) -- clear the icon because posses have travel time, so people know when something is no longer possessed
 				end
 			end
 		end

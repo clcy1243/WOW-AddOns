@@ -1,4 +1,883 @@
 ﻿------------------------------------------------------
+12.0.9 (2024-07-18)
+------------------------------------------------------
+* Fixed list of Shaman totems for TWW - added Totem of Wrath and Stone Bulwark Totem and removed non-existent totems [GH-550].
+* Fixed a bug that prevented totems with a spell rank from being recognised correctly in WoW Classic.
+
+------------------------------------------------------
+12.0.8 (2024-07-15)
+------------------------------------------------------
+* Fixed Lua errors caused by bugfixes for API changes in WoW Mainline Patch 11.0.2 not working in WoW Classic.
+* Fixed a error bug when loading LibDogTag for custom status text due to API changes in Patch 11.0.2 [GH-549].
+
+------------------------------------------------------
+12.0.7 (2024-07-15)
+------------------------------------------------------
+* Fixed a Lua bug with configuration mode for castbars and BossMods widget due to API changes in Patch 11.0.2 [GH-314].
+
+------------------------------------------------------
+12.0.6 (2024-07-14)
+------------------------------------------------------
+* Fixed a Lua bug in Stealth widget due to API changes in Patch 11.0.2 [GH-544].
+
+------------------------------------------------------
+12.0.5 (2024-07-14)
+------------------------------------------------------
+* Fixed a Lua bug that occurred because tank detection for WoW Classic was enabled for Paladins on WoW Mainline [GH-543].
+
+------------------------------------------------------
+12.0.4 (2024-07-14)
+------------------------------------------------------
+* Fixed a bug that prevented CVars from being reset to their default value in General - Blizzard Settings.
+* Fixed a bug that prevented rogues with Just a Flesh Wund rune from being recognised as tanks in WoW Classic SoD.
+* Fixed some bugs due to API changes in Patch 11.0.2. 
+* Updated TOC version for Patch 11.0.2 for WoW Mainline.
+
+------------------------------------------------------
+12.0.3 (2024-07-29)
+------------------------------------------------------
+* Fixed a bug caused by incorrectly defined internal variables that affected other addons (e.g. the size of WeakAuras icons) [GH-538, comment #7371].
+
+------------------------------------------------------
+12.0.2 (2024-07-28)
+------------------------------------------------------
+* Removed a fix for hiding Blizzard nameplates that was added as a workaround when nameplate unit frames were protected from combat in TWW Beta.
+* Fixed a Lua bug with the Social widget that occurred when guild roster data was not available locally [GH-536].
+
+------------------------------------------------------
+12.0.1 (2024-07-25)
+------------------------------------------------------
+* Fixed a bug that prevented combo points from being displayed on rogues in WoW Classic [comment #7369, GH-535].
+* Fixed a bug that prevented the size of the healthbar from being changed in WoW Classic [comment #7375].
+* Updated TOC version for Classic Patch 1.15.3.
+
+------------------------------------------------------
+12.0.0 - Release for The War Within Pre-Patch (2024-07-23)
+------------------------------------------------------
+* Updated Threat Plates for The War Within pre-patch [GH-524, GH-525].
+* Added Bad Manner (Hunter, Pet) as a CC aura to the Auras widget [GH-531].
+* Added an option to change friendly and enemy healthbar sizes independently from each other (Retail Wow) [GH-459].
+* Updated integrated libraries (LibSharedMedia-3.0 v10.2.3, LibDualSpec-1.0 v1.24.0).
+
+------------------------------------------------------
+11.2.13 (2024-06-29)
+------------------------------------------------------
+* Added a delay when updating several CVars for soft targeting as they no longer can be changed in combat [Comment #7346].
+
+------------------------------------------------------
+11.2.12 (2024-06-06)
+------------------------------------------------------
+* Fixed a Lua error with Auras widget that occurred when switching icon styles because an invalid default value was used for vertical alignment of duration and stack text [Comment #7324, #7325].
+* Fixed a Lua error that could occur in rare cases when leveling up.
+* Updated integrated libraries (Ace3 Release-r1341, LibCustomGlow v1.0.3-12-g78aa5cd-alpha).
+
+------------------------------------------------------
+11.2.11 (2024-05-17)
+------------------------------------------------------
+* Fixed a Lua error with Auras widget that occurred when a Priest uses Mindcontrol on another player [GH-520].
+* Improved visual representation of interact icon for target units.
+
+------------------------------------------------------
+11.2.10 (2024-05-15)
+------------------------------------------------------
+* Added missing default settings for target style for soft friend and interact target.
+* Fixed a bug that prevented the scaling and transparency from being applied to mousover units [GH-519].
+
+------------------------------------------------------
+11.2.9 (2024-05-14)
+------------------------------------------------------
+* Fixed a bug with the calculation of the clickable area of Threat Plates. Now, the clickable area of Threat Plates and Blizzard nameplates is the same if their healthbar size is the same. This also ensures that the stacking and overlapping behavior is the same for Threat Plates and Blizzard nameplates [GH-465, GH-495].
+* Fixed a bug with target highlight that occurred when the highlight style was changed with no active target, resulting in the highlight texture not being updated [GH-515].
+* Fixed a Lua error that occurred when switching active specialization on a Deathknight [GH-518]. 
+* Updated localizations.
+
+------------------------------------------------------
+11.2.8 (2024-05-10)
+------------------------------------------------------
+* Fixed a bug with Boss Mods widget that occurred because a deprecated value for vertical alignment of text was used [Comment #7295].
+* Fixed a bug with off-tank detection in Cata Classic that occurred because the wrong API for raid roles was used. 
+* Updated TOC version for Patch 10.2.7 for WoW Mainline.
+* Upgrade integrated libraries (Ace3 Release-r1341).
+
+------------------------------------------------------
+11.2.7 (2024-05-07)
+------------------------------------------------------
+* Fixed a bug that resulted in setting ShowOnlyNammes not being saved after reloading the UI or logging out [GH-517].
+
+------------------------------------------------------
+11.2.6 (2024-05-04)
+------------------------------------------------------
+* Fixed a bug that resulted in Blizzard nameplates and Threat Plates being shown at the same time and overlapping each other [GH-516].
+
+------------------------------------------------------
+11.2.5 (2024-05-04)
+------------------------------------------------------
+* Fixed a bug with Focus widget that caused the highlight color to not be applied [Comment #7280].
+* Improved layering of target and focus highlight to that target highlight covers focus highlight when shown on the same unit.
+
+------------------------------------------------------
+11.2.4 (2024-05-04)
+------------------------------------------------------
+* Fixed an incompatibility with BigDebuffs where BigDebuffs' icons where not shown (because of a side-effect with other addons). You also need to update BigDebuffs for the bugfix to take effect. [Comment #7274].
+
+------------------------------------------------------
+11.2.3 (2024-05-02)
+------------------------------------------------------
+* Fixed a Lua error in Combo Points widget on Deathknights as the Rune API from Classic was used on Mainline [Comment #7270].
+* Fixed a bug in Target Art widget where the highlight texture was shown behind the healthbar when Stripes style was selected [Comment #7269].
+
+------------------------------------------------------
+11.2.2 (2024-05-01)
+------------------------------------------------------
+* Adjusted default settings for interact icon so that it is shown above the nameplate.
+* Fixed a bug where the vertical alignment for the cast target text was not migrated properly [Comment #7266].
+
+------------------------------------------------------
+11.2.1 (2024-05-01)
+------------------------------------------------------
+* Fixed a Lua error that occurred when a custom nameplate with Cast trigger was applied [GH-514].
+
+------------------------------------------------------
+11.2.0 (2024-04-30)
+------------------------------------------------------
+* Added support for WoW Cataclysm Classic.
+* Added support for automatic soft-targeting added with Dragonflight [Issue #608, Comment #6706].
+* Added support for nameplate widgets, e.g., arrival timers or progress bars for special units (see General - Blizzard Settings - Widgets) [GH-420, GH-449, GH-506, Issue #392, Comment #6691, #6721, #6947, #7090].
+* Added support for friendly units to Arena widget [GH-401, Issue #614, #262, Comment #6813].
+* Added separate options to enable nameplates and headline view for all minion types (totems, guardians, and pets together).
+* Added support for the minimap addon compartment.
+* Improved handling of nameplates for game objects (like herbs or portals) when soft-targeting is enabled [GH-431].
+* Custom color for Name text now also supports transparency [Comment #6829]. 
+* Updated the logo for Threat Plates which is now also shown as icon in the addon list.
+* Upgrade integrated libraries (Ace3 r1328-alpha, LibDualSpec v1.22.4, LibCustomGlow v1.0.3-1-g6261295-alpha, CallbackHandler v1.0.9).
+
+------------------------------------------------------
+11.1.42 (2024-04-01)
+------------------------------------------------------
+* Fixed wrong aura ID for Landslide (Evoker) so that it is shown as CC aura [Comment #7238].
+
+------------------------------------------------------
+11.1.41 (2024-03-22)
+------------------------------------------------------
+* Updated TOC version for Patch 10.2.6 for WoW Mainline.
+
+------------------------------------------------------
+11.1.40 (2024-03-08)
+------------------------------------------------------
+* Changed icons for configuration mode of Boss Mods widget to icons that are also available in WoW Classic.
+* Removed LibClassicCasterino as cast information is provided by the WoW API since WoW Classic Patch 1.15.0.
+* Fixed a Lua error in Boss Mods widget that occurred when configuration mode was enabled on units without a nameplate [Comment #7223].
+
+------------------------------------------------------
+11.1.39 (2024-02-26)
+------------------------------------------------------
+* Upgraded integrated library Ace3 r1320 to fix an issue with the color picker [Comment #7208]. 
+
+------------------------------------------------------
+11.1.38 (2024-02-09)
+------------------------------------------------------
+* Aura for Polymorph (Duck, Mage), and Polymorph (Mawrat, Mage) are now correctly recognized as crowd-control auras [GH-499].
+* Fixed a bug with abbreviation for unit names now for all localizations where initials where shown as empty squares when UTF-8 fonts were used.
+* Fixed a bug with tank role detection for Rogues - a wrong spell ID for Just a Flesh Wound was used [Comment #7166].
+* Fixed a bug with player castbars not being shown since since WoW Classic Patch 1.15.0 [GH-493, Comment #7194].
+* Removed LibClassicDurations as aura durations are provided by the WoW API since WoW Classic Patch 1.15.0 [GH-430].
+* Updated TOC version for Classic Patch 1.15.1.
+
+------------------------------------------------------
+11.1.37 (2024-01-28)
+------------------------------------------------------
+* Fixed a Lua error with Auras widget that occurred in arenas when auras had no duration time [GH-497].
+* Updated TOC version for Patch 10.2.5 for WoW Mainline.
+
+------------------------------------------------------
+11.1.36 (2023-12-22)
+------------------------------------------------------
+* Added Shamans, Warlocks, and Rogues to automatic role detection based on active runes for WoW Classic Season of Discovery [Comment #7146].
+
+------------------------------------------------------
+11.1.35 (2023-12-11)
+------------------------------------------------------
+* Fixed a bug with abbreviation for unit names where initials where shown as empty squares when UTF-8 fonts were used [GH-489].
+
+------------------------------------------------------
+11.1.34 (2023-12-08)
+------------------------------------------------------
+* Fixed a bug with tank role detection for Paladins in Patch 1.50 (Season of Discovery) as the aura Righteous Fury was not detected properly [Comment #7125].
+
+------------------------------------------------------
+11.1.33 (2023-12-01)
+------------------------------------------------------
+* Updated TOC version for Classic Patch 1.15.0.
+
+------------------------------------------------------
+11.1.32 (2023-11-27)
+------------------------------------------------------
+* Fixed a bug with Arena widget where the arena number was not updated or shown at all after the last update [GH-486].
+
+------------------------------------------------------
+11.1.31 (2023-11-26)
+------------------------------------------------------
+* Improved code for updating nameplates in arenas and battleground, e.g., after a new round in solo shuffles starts.
+* Nameplates for interactable, but dead units now automatically switch to headline view (to hide the empty healthbar) [Comment #7100, GH-485].
+
+------------------------------------------------------
+11.1.30 (2023-11-09)
+------------------------------------------------------
+* Updated TOC version for Patch 10.2.0 for WoW Mainline.
+
+------------------------------------------------------
+11.1.29 (2023-10-03)
+------------------------------------------------------
+* Fixed a Lua error in Classic that occurred when entering battlegrounds as an API function was used that is not available in Classic [Comment #7041].
+
+------------------------------------------------------
+11.1.28 (2023-09-15)
+------------------------------------------------------
+* Fixed a Lua error in Wrath Classic that occurred when entering battlegrounds as an API function was used that is not available in Wrath Classic [GH-474].
+
+------------------------------------------------------
+11.1.27 (2023-09-06)
+------------------------------------------------------
+* Fixed a bug in solo shuffle where nameplate colors where not updated correctly when a new match started [GH-472].
+* Updated TOC version for Patch 10.1.7 for WoW Mainline.
+
+------------------------------------------------------
+11.1.26 (2023-08-27)
+------------------------------------------------------
+* Fixed a bug where status text did not show the NPC's role when colorblind accessibility features were enabled [GH-473].
+* Fixed a bug where aura tooltips were not shown correctly for all aura types in WoW (Wrath) Classic [GH-470].
+* Updated TOC version for Classic Patch 1.14.4.
+
+------------------------------------------------------
+11.1.25 (2023-07-15)
+------------------------------------------------------
+* Fixed a Lua error that occurred when the font of the Blizzard nameplate's name was changed, but no flags (like Outline) were used [GH-464].
+* Updated TOC version for Wrath Classic Patch 3.4.2.
+
+------------------------------------------------------
+11.1.24 (2023-07-12)
+------------------------------------------------------
+* Updated for Patch 10.1.5 for WoW Mainline.
+* Upgrade integrated libraries (Ace3 r1309).
+
+------------------------------------------------------
+11.1.23 (2023-06-24)
+------------------------------------------------------
+* Fixed a Lua error that occurred when guide/newcomer icons were shown after enabling the guide mentoring system [GH-457].
+
+------------------------------------------------------
+11.1.22 (2023-05-21)
+------------------------------------------------------
+* Added Axe Toss (Warlock) to Auras widget as CC aura [GH-456].
+* Fixed a Lua error related to nameplate visibility introduced with the bugfix for mind-control of Priests [GH-455].
+
+------------------------------------------------------
+11.1.21 (2023-05-19)
+------------------------------------------------------
+* Fixed a Lua error that occurred in solo shuffle when a new round was started and pets were present in the arena [GH-454].
+
+------------------------------------------------------
+11.1.20 (2023-05-18)
+------------------------------------------------------
+* Fixed a bug where nameplates were not shown correctly as Threat Plates or Blizzard default nameplates when the player or other units were mind-controlled by a Priest [GH-402, Issue #610, #597].
+
+------------------------------------------------------
+11.1.19 (2023-05-03)
+------------------------------------------------------
+* Updated TOC version and API for Patch 10.1 for WoW Mainline.
+
+------------------------------------------------------
+11.1.18 (2023-04-16)
+------------------------------------------------------
+* Fixed a Lua error that occurred when the mouseover highlight was updated on a nameplate without a valid unit [GH-443].
+* Fixed a bug where one space was replaced with two spaces in names when transliteration of cyrillic letters was enabled [GH-444].
+* Fixed a bug with HealerTracker where all Shaman specializations where shown as healer [Comment #6951].
+* Improved showing/hiding interaction between Threat Plates and WoW default nameplates [this might fix GH-402].
+
+------------------------------------------------------
+11.1.17 (2023-03-22)
+------------------------------------------------------
+* Updated TOC version for Patch 10.0.7 for WoW Mainline.
+
+------------------------------------------------------
+11.1.16 (2023-03-17)
+------------------------------------------------------
+* Fixed a Lua error with custom styles with Cast trigger [Comment #6867].
+* Added Hungering Cold (Deathknight) to Auras widget as CC aura for Wrath Classic [Comment #6925].
+
+------------------------------------------------------
+11.1.15 (2023-02-26)
+------------------------------------------------------
+* Healer Tracker no longer is disabled in arenas and open-world [Issue #622].
+* Enabled spec-based profiles for Wrath Classic [Comment #6903].
+* Upgrade integrated libraries (LibDualSpec v1.22.0).
+
+------------------------------------------------------
+11.1.14 (2023-02-10)
+------------------------------------------------------
+* Updated Healer Tracker widget to support Preservation Evoker [GH-378].
+* Re-worked Healer Tracker widget to better identify healers by spells they use in Retail and Classic.
+
+------------------------------------------------------
+11.1.13 (2023-01-29)
+------------------------------------------------------
+* Fixed a bug were Threat Plates was shown as out-of-date because of wrong interface version used in TOC file for Retail [Comment #6858].
+
+------------------------------------------------------
+11.1.12 (2023-01-28)
+------------------------------------------------------
+* Added a fix for friendly nameplates Name Only mode not working in raids and dungeons for Patch 10.0.5 [Comment #6840]. For the fix to be applied, you first have to enable Name Only mode in the options under General - Blizzard Settings - Names.
+
+------------------------------------------------------
+11.1.11 (2023-01-25)
+------------------------------------------------------
+* Updated TOC version for WoW Patch 10.0.5.
+
+------------------------------------------------------
+11.1.10 (2023-01-24)
+------------------------------------------------------
+* Fixed a bug in the option dialog where unavailable options where shown in Classic WoW.
+* Updated TOC version for Wrath Classic Patch 3.4.1.
+
+------------------------------------------------------
+11.1.9 (2023-01-10)
+------------------------------------------------------
+* Fixed a Lua error in Combo Points widget for Deathknights that occurred because of a typo [GH-379].
+
+------------------------------------------------------
+11.1.8 (2023-01-08)
+------------------------------------------------------
+* Added Freeze (Mage Water Elemental) to Auras widget as CC aura for Wrath Classic.
+* Fixed a bug in Solo Shuffle where arena numbers were not shown correctly [Issue #581, #600, GH-370, Comment #6550, #6709, #6719, #6758].
+* Fixed a bug where empowered spell casts from Evoker where not shown on the nameplate castbar [Issue #606].
+* Fixed a bug with Deathknight runes showing wrong cooldown times that occurred when the player died [GH-374].
+* Fixed a Lua error that could occur when scanning an invalid tooltip, e.g., for quest information [Issue #609].
+
+------------------------------------------------------
+11.1.7 (2022-12-28)
+------------------------------------------------------
+* Fixed a bug with several Shaman totem icons not being shown on totem nameplates [Issue #601].
+
+------------------------------------------------------
+11.1.6 (2022-12-22)
+------------------------------------------------------
+* Removed a debug message from Auras widget [GH-372].
+
+------------------------------------------------------
+11.1.5 (2022-12-22)
+------------------------------------------------------
+* Added Psychic Horror (Priest) and Freezing Arrow (Hunter) to Auras widget as CC aura for Wrath Classic.
+* Fixed a bug where the icon for Earthgrab Totem was not shown [Commen #6705].
+
+------------------------------------------------------
+11.1.4 (2022-11-28)
+------------------------------------------------------
+* Added Shield Charge (Warrior) to Auras widget as CC aura.
+* Upgrade integrated libraries (LibCustomGlow v1.0.3-7-gd830e93).
+
+------------------------------------------------------
+11.1.3 (2022-11-28)
+------------------------------------------------------
+* Fixed a Lua error with tooltip scanning for unit roles, levels or guilds that occurred when there was no valid tooltip data [Issue #596].
+
+------------------------------------------------------
+11.1.2 (2022-11-26)
+------------------------------------------------------
+* Fixed a Lua error that could occur when numeric aura sorting (e.g., by duration or time left) was enabled [Comment #6629, #Issue 591].
+* Added Hex, Earthbind Totem, and Earthgrab Totem (Shaman) to Auras widget as CC aura for Wrath Classic.
+* Fixed a bug with tooltip scanning (e.g., for Quest widget) which resulted in the same line showing multiple times in the tooltip [GH-368, Issue #593].
+* Fixed a bug with Combo Points widget where Evoker essence was not being updated properly when not target was selected.
+* Updated tooltip code to new API introduced with Patch 10.0.2.
+* Removed Threat Plates welcome message at login [Comment #6655].
+* Upgrade integrated libraries (LibSharedMedia v10.0.1, Ace3 vr1297-alpha, LibCustomGlow v1.0.3-5-ge685cd9-alpha).
+
+------------------------------------------------------
+11.1.1 (2022-11-16)
+------------------------------------------------------
+* Fixed a bug with Combo Points widget where the widget was hidden after opening the options dialog.
+* Added Crest class icon for Evoker.
+
+------------------------------------------------------
+11.1.0 (2022-11-14)
+------------------------------------------------------
+* Added support for new Evoker class. 
+* Updated class icons - added Evoker class, added new styles for all classes, and increased the resolution of class icons.
+* Fixed a Lua error in the options that occurred when resetting reaction colors to default values.
+* Fixed a Lua error that occurred when using Priest's Mindcontrol in PvP [GH-364, Issue #584, #586, #587].
+
+------------------------------------------------------
+11.0.6 (2022-11-04)
+------------------------------------------------------
+* Fixed a bug with custom styles for nameplates where the nameplate style wasn't correctly reset after a trigger was no longer active (e.g., after the aura triggering the style expired).
+* Upgrade integrated libraries (LibSharedMedia v10.0.0, LibCustomGlow 1.0.3-4-g357b944) [Comment #6591].
+
+------------------------------------------------------
+11.0.5 (2022-11-02)
+------------------------------------------------------
+* Added support for new Evoker class. 
+* Updated class icons - added Evoker class, added new styles for all classes, and increased the resolution of class icons.
+
+------------------------------------------------------
+11.0.4 (2022-09-x)
+------------------------------------------------------
+* Disabled optimized aura processing (introduced with 11.0.0) as auras were not shown reliably and aura frames were not anchored correctly sometimes (until these bugs are fixed).
+
+------------------------------------------------------
+11.0.4 (2022-10-31)
+------------------------------------------------------
+* Added Maim (Druid) to Auras widget as CC aura for Wrath Classic.
+* Fixed a Lua error when a nameplate was shown for a non-existing unit (e.g., Ring of Transference in Oribos) [Issue #575].
+
+------------------------------------------------------
+11.0.3 (2022-10-27)
+------------------------------------------------------
+* Fixed a bug that occurred when the target highlight color alpha was set below 0,7 as the Dragonflight API is more strict with valid transparency values [Issue #573].
+
+------------------------------------------------------
+11.0.2 (2022-10-27)
+------------------------------------------------------
+* Fixed a bug that occurred when the target transparency for a nameplate was greater than 100% or less than 0% as the Dragonflight API is more strict with valid transparency values [Issue #571, Comment #6532, #6536].
+* Fixed a bug that occurred when a Rogue has seven combo points (after picking talents Deeper Stratagem and Devious Stratagem) [Comment #6529].
+
+------------------------------------------------------
+11.0.1 (2022-10-26)
+------------------------------------------------------
+* Fixed a bug with Auras widget where auras were not shown consistently when "Swap Area By Reaction" was enabled [Comment #6522].
+* Fixed a bug with quest indicators not being shown as the color of quest titles in tooltips was changed in Dragonflight [Comment #6523].
+* Fixed a bug with configuration mode for Auras widget not showing any demo auras.
+* Fixed a Lua error with Auras widget when aura area anchoring was changed so that aura areas where temporarily anchored to each other in a cyclic way.
+
+------------------------------------------------------
+11.0.0 - Release for Dragonflight Pre-Patch (2022-10-26)
+------------------------------------------------------
+* Updated Threat Plates for Dragonflight Pre-Patch and updated nameplate code due to changes to WoW API.
+* Fixed a Lua error with threat textures that could occur in Classic when stance dancing as a tank [Issue #568].
+
+------------------------------------------------------
+10.5.6 (2022-10-19)
+------------------------------------------------------
+* Added Rank 2 of Silenced effect of Counterspell (Mage) to Auras widget as CC aura for Wrath Classic [Comment #6416].
+
+------------------------------------------------------
+10.5.5 (2022-10-16)
+------------------------------------------------------
+* Fixed a bug with totems of rank 10 not being recognized as totems [Comment #6491].
+
+------------------------------------------------------
+10.5.4 (2022-10-07)
+------------------------------------------------------
+* Added Shockwave (Warrior) to Auras widget as CC aura for Wrath Classic [Comment #6468].
+* Fixed a bug with configuration mode for clickable area where the the clickable area highlight showed an incorrect size [Issue #561].
+
+------------------------------------------------------
+10.5.3 (2022-10-01)
+------------------------------------------------------
+* Added the root effect of Binding Shot (Hunter) to Auras widget as CC aura [Comment #6416].
+* Fixed CC aura id for Clash (Brewmaster Monk) in Auras widget [Comment #6408].
+* Fixed a bug with threat values not being scaled correctly in TBC and Wrath Classic WoW [GH-346, Issue #521].
+
+------------------------------------------------------
+10.5.2 (2022-09-09)
+------------------------------------------------------
+* Off-tank detection in Wrath Classic now uses the MAINTANK role flag in raids instead of the role from LFG (consistent with Classic and TBC Classic).
+
+------------------------------------------------------
+10.5.1 (2022-09-04)
+------------------------------------------------------
+* Added support for Death Knight tanks [GH-348] - thanks to dh-harald.
+* Fixed several bugs in Combo Points widget introduced when adding support for Death Knight's death runes for Wrath Classic [Comment #6367, #6386].
+
+------------------------------------------------------
+10.5.0 (2022-09-03)
+------------------------------------------------------
+* Added basic support for WoW Wrath of the Lich King Classic.
+* Added support for Death Knight's death runes in Wrath Classic.
+* Added Infernal Awakening (Destruction Warlock), Clash (Brewmaster Monk), and Deep Freeze (Frost Mage) to Auras widget as CC aura [Comment #6324, #6335].
+* Removed welcome back message that is shown after every login [Comment #6325].
+* Fixed a bug in Combo Points widget where Animacharge color selector was shown for all specializations/classes.
+* Fixed a bug in name font customization for Classic where a UI reload was necessary to level text and elite icon.
+* Upgrade integrated libraries (LibSharedMedia v9.2.7).
+
+------------------------------------------------------
+10.4.2 (2022-08-19)
+------------------------------------------------------
+* Threat values will no longer be hidden for custom style nameplates.
+* Fixed a Lua error with aura trigger for custom styles that could occur when the nameplate style was reset after a triggering aura expired.
+* Fixed some bugs with logging messages and verbose mode.
+* Updated localizations.
+
+------------------------------------------------------
+10.4.1 (2022-07-05)
+------------------------------------------------------
+* Changed default for "Players in Instances" (under Blizzard Settings - Names) to disabled so that player names no longer are shown automatically in instances [Comment #6271].
+
+------------------------------------------------------
+10.4.0 (2022-07-01)
+------------------------------------------------------
+* Added a feature to change the name font of Blizzard nameplates and hide the healthbar (to only show unit names), e.g., while in instances.
+* Added an option to show title and realm in a player's name [Comment #3952, #1995, #4164, #6140, TPC#496, Issue #312, #423].
+* Added an option to show target of target with or without enclosing brackets [Issue #543, IM].
+* Added an option to also use NPC IDs in unit (formerly name) triggers for custom styles [Comment #6207].
+* Added additional icons as indicator for elite and rare mobs [GH-330, IM] (thanks to lizardo221).
+* Added Venthry Covenant Ability Agent of Chaos to the Auras widget as CC aura [Issue #548].
+* Fixed a bug where Frostbite was not classified as CC aura [Issue #547].
+* Integrated new UNIT_AURA processing optimizations to improve unit aura processing in encounters where many nameplates are on screen at once [Comment #6114]. 
+* Upgrade integrated libraries (Ace3 r1259).
+
+------------------------------------------------------
+10.3.8 (2022-06-01)
+------------------------------------------------------
+* Fixed a bug with Threat Plates overwriting the Profiles page of other addons when adding the import/export section (thanks to WoWUIDev Discord!).
+* Updated TOC version for Patch 9.2.5.
+
+------------------------------------------------------
+10.3.7 (2022-05-18)
+------------------------------------------------------
+* Fixed a bug where totems were not recognized as totems for some localizations [Comment #6200].
+* Added Kul Tiran Racial Trait Haymaker to the Auras widget as CC aura [Issue #545].
+
+------------------------------------------------------
+10.3.6 (2022-05-08)
+------------------------------------------------------
+* Added options to configure in detail when to show the threat value (e.g., when a pet is active) [Comment #6154, Issue #536]. 
+* Fixed a bug where players or non-totem player-controlled units were shown as totems if their name was the same as a player totem's name [Comment #6146].
+* Fixed a bug where changing the colum and row limits of aura areas only took effect after reloading the UI [Comment #6169].
+* Fixed a bug with Lightning Lasso from Shamans not being recognized as CC aura [Comment #6182, Issue #541].
+
+------------------------------------------------------
+10.3.5 (2022-04-22)
+------------------------------------------------------
+* Disabled some threat value types when not in a group as their value is constant in this case and does not provide any valuable information.
+* Updated TOC version for Classic Patch 1.14.3.
+
+------------------------------------------------------
+10.3.4 (2022-03-28)
+------------------------------------------------------
+* Fixed a Lua error when a numeric CVar has an invalid, i.e., non-numeric, value. In this case, the default value of the CVar will now be used to prevent the Lua error.
+* Updated TOC version for TBC Classic Patch 2.5.4.
+------------------------------------------------------
+
+10.3.3 (2022-03-12)
+------------------------------------------------------
+* Fixed a bug with an outdated cast target being shown when a nameplate was re-used on a casting unit.
+* Added an option to ignore PvP status when coloring player units by reaction. Also, PvP status is ignored for coloring in arenas and battlegrounds [Comment #5996, #6059, Issue #526, #525].
+* Updated Shaman totems - added Static Field Totem [Comment #6065].
+
+------------------------------------------------------
+10.3.2 (2022-02-27)
+------------------------------------------------------
+* Fixed a Lua error with Scaled and Raw Percentage threat value the occurred when in combat with units, but not being on their threat table [Comment #6019]. 
+
+------------------------------------------------------
+10.3.1 (2022-02-25)
+------------------------------------------------------
+* Fixed a bug with CCs not being shown when debuffs are not enabled [Comment #5983].
+* Fixed a Lua error when aura areas where anchored to each other in a cyclic way [Issue #520].
+
+------------------------------------------------------
+10.3.0 (2022-02-23)
+------------------------------------------------------
+* Appearance and layout for buffs, debuffs, and crowd control can now be configured indivually for Auras widget [Comment #1302, #1246, #1830, #1883, #3886, #4167, #4637, #4760, #4960, #5034, #5131, #5346, #5418, #5448, #5562, #5793, TPC#754, Issue #465, IM].
+* Player units are now colored based on their PvP flag similar to WoW default nameplates [Comment #5829].
+* Extended threat percentage to show raw or scaled threat percentage or the threat difference (value or percentage) to the second player in the mob's threat table [Issue GitHub#285].
+* The cast target's name will now be shown in class color if the target is a player [Issue #419, #465, Comment #4799, #504, #5445, #5491].
+* Added an option to show threat value only when in groups [Comment #4835].
+* Added an option to abbreviate unit names in healthbar view [GH-284, GH-270].
+* Added an option to transliterate cyrillic letters in unit names and status texts [GH-300].
+* Added an option limit text length and/or wrap text for cast target and target of target names [Comment #5070, #4816], 
+* Added an option to show target of target only when it's not the player [Comment #4844].
+* Added an option to enable Aura trigger for custom styles only for your own auras [Comment #4941, PM].
+* Fixed a bug where the chat command for enabling scripting was not working and as well as the error messsage for unknown commands was not properly shown.
+* Upgrade integrated libraries (LibClassicDurations v20210426, LibDualSpec v1.20).
+
+------------------------------------------------------
+10.2.14 (2021-11-17)
+------------------------------------------------------
+* Updated Shaman totems - added Vesper Totem from Kyrian Covenant [GH-313].
+
+------------------------------------------------------
+10.2.13 (2021-11-01)
+------------------------------------------------------
+* Updated TOC version for Classic Patch 1.14.0.
+* Updated integrated libraries to Ace3 r1252 to fix a Lua error related to a change in the WoW Interface Options API [GH-309, GH-310].
+
+------------------------------------------------------
+10.2.12 (2021-10-23)
+------------------------------------------------------
+* Fixed a Lua error that occurred sometimes when friendly pets/totems/guardians turn neutral, e.g. when losing or giving up control over them [Issue #511].
+* Updated TOC version for TBC Classic Patch 2.5.2.
+
+------------------------------------------------------
+10.2.11 (2021-07-10)
+------------------------------------------------------
+* Fixed a Lua error that occurred because of incorrectly initialized Localization [Comment #5837].
+
+------------------------------------------------------
+10.2.10 (2021-07-08)
+------------------------------------------------------
+* Added support for anima-charged combo points from new covenant legendary "Resouding Clarity" [Issue #508, Comment #5813, #5821].
+* Fixed a Lua error that occurred when player totems turn into neutral totems (e.g., when the player is mind-controlled) [Issue #506, Comment #5814].
+
+------------------------------------------------------
+10.2.9 (2021-07-28)
+------------------------------------------------------
+* Fixed a lag/freeze issue when switching talents or specs that happened when the options dialog was opened at least once [Comment #5764].
+
+------------------------------------------------------
+10.2.8 (2021-07-24)
+------------------------------------------------------
+* Fixed a bug with Combo Points widget in TBC Classic where the first combo point after a target switch was not shown immediately [Comment #5757].
+
+------------------------------------------------------
+10.2.7 (2021-07-21)
+------------------------------------------------------
+* Fixed a bug with unit visibility not being applied correctly [Comment #5768, #5765].
+* Fixed a bug where hostile and neutral units where colored in the wrong color [Comment #5755, #5756, #5763, #5770, Issue #501].
+
+------------------------------------------------------
+10.2.6 (2021-07-18)
+------------------------------------------------------
+* Fixed an inconsistency with nameplate visibility where the target unit's nameplate was shown with Blizzard default nameplates, but not with Threat Plates [Issue #494].
+* Fixed a bug with friendly and enemy players reaction in sanctuary areas in WoW Classic [Issue #42, Comment #5730].
+* Stun from weapons Deep Thunder and Stormherald as well as Feral Charge Effect are now recognized as crowd-control aura [IM, Comment #5746].
+
+------------------------------------------------------
+10.2.5 (2021-07-02)
+------------------------------------------------------
+* Fixed a Lua error that occurred when the personal nameplate was enabled and the player entered combat [Issue #495, Comment #5709, #5704].
+* Fixed a typo in TOC file which caused the addon version not being set correctly. 
+
+------------------------------------------------------
+10.2.4 (2021-06-29)
+------------------------------------------------------
+* Fixed a bug where health information on healthbar and status text was not updated immediately (only after targeting the unit) [GH-290, Comment #5581, #5588, #5648, #5651, IM]
+* Fixed a bug in Classic and TPC Classic where combo points from the previous target where shown on the new target when switching targets [Comment #5688].
+* Added Freezing Trap Effect from Hunter's Freezing Trap to the Auras widget as CC aura [Comment #756, #5694].
+* Updated localizations (GH-291).
+
+------------------------------------------------------
+10.2.3 (2021-06-12)
+------------------------------------------------------
+* Fixed a bug in WoW Classic and TBC Classic where non-target units were not visible when occlusion detection was enabled and a target was selected (related to newly introduced CVar nameplateNotSelectedAlpha) [Comment #5623]. Occlusion detection does not work when a target is selected in Classic, see https://github.com/Stanzilla/WoWUIBugs/issues/134.
+
+------------------------------------------------------
+10.2.2 (2021-05-27)
+------------------------------------------------------
+* Fixed a bug with tank role detection for Paladins as it was not active in the TBC version [Issue #493].
+
+------------------------------------------------------
+10.2.1 (2021-05-25)
+------------------------------------------------------
+* Fixed a bug with delayed health update in the TBC Classic Version because of a change in how health update events were processed [Comment TPC#742, #5992, Issue #490].
+* Fixed a bug with crowd-control auras being shown as debuff (e.g., with wrong size) [Comment #5589, TPC#744].
+
+------------------------------------------------------
+10.2.0 (2021-05-17)
+------------------------------------------------------
+* Added basic support for WoW TBC Classic.
+* Custom styles for nameplates are now automatically migrated to the new format. Unmodified legacy custom styles are removed as part of this migration. To add them back either use the command "/tptp legacy-custom-styles" or import them from here https://github.com/Backupiseasy/ThreatPlates/wiki/Custom-Styles-for-Nameplates.
+* Added support for game-type specific TOC files.
+
+------------------------------------------------------
+10.1.8
+------------------------------------------------------
+* Fixed a bug in WoW Classic where threat on mobs was not determined based on the mob's threat table.
+* Updated integrated libraries (LibClassicCasterino r37).
+
+------------------------------------------------------
+10.1.7
+------------------------------------------------------
+* Removed option Automation - Small Blizzard Nameplates as - with its current implementation - it also reduces the clickable area of enemy nameplates in instances. Currently, I don't know any better way to implement this feature [Issue GitHub#281].
+* Fixed a Lua error that occurred sometimes when friendly pets turn into neutral pets when losing or giving up control over them (e.g., in quests) [Issue #480, TPC#40].
+* Fixed a bug with tank role detection for Paladins as the aura Righteous Fury was not detected properly [Issue TPC#41].
+* Fixed a bug with Healer Tracker where the position settings for headline view where not applied [GitHub #283].
+* Aura for Turn Evil (Paladin) is now correctly recognized as crowd-control aura [Issue #485].
+* Upgrade integrated libraries (LibClassicDurations v1.69a).
+
+------------------------------------------------------
+10.1.6
+------------------------------------------------------
+* Aura for Howl of Terror (Warlock) is now correctly recognized as crowd-control aura [Comment #5507].
+* Fixed a bug with aura durations not being shown when a newer version of LibClassicDurations was available than the embedded one [Comment #5538, #5540].
+
+------------------------------------------------------
+10.1.5
+------------------------------------------------------
+* Fixed a bug where stealth detection auras where not properly detected in Stealth widget [Comment #5464].
+* Libraries LibDogTag and LibDogTag-Unit must now be installed separately! They are no longer embedded into Threat Plates. Both addons are now only loaded when custom status text is actually used. This avoids a Lua error in LDT that occurred even when custom status text was not used [Issue #478, TPC#39, GitHub #267, Comment #5490].
+* Updated TOC version for Patch 9.0.5.
+
+------------------------------------------------------
+10.1.4
+------------------------------------------------------
+* Removed the workaround for LibDogTag-Unit-3.0 to support nameplates as v90000.3 does support nameplates now out of the box [GitHub #264].
+
+------------------------------------------------------
+10.1.3
+------------------------------------------------------
+* Fixed a bug with Aura and Spell trigger for custom styles for nameplates not working when using IDs [GitHub #265].
+* Fixed a Lua error that occurred when enabling/disabling transparency for occluded units because of a stack overflow [Comment #5436].
+
+------------------------------------------------------
+10.1.2
+------------------------------------------------------
+* Fixed a bug where an incorrect custom text could be shown when NONE was selected [Comment #5419].
+* Fixed a bug with LibDogTag integration that caused other addons using LibDogTag to no longer work correctly (still a workaround) [GitHub #265, Comment #5423, #5419].
+
+------------------------------------------------------
+10.1.1
+------------------------------------------------------
+* Fixed a Lua error with nameplate integration into LibDogTag [Comment #5415, TPC#701].
+
+------------------------------------------------------
+10.1.0
+------------------------------------------------------
+* Added support for custom status texts using LibDogTag, e.g., use "[PercentHP]" to show health percentage with one decimal (91.2%) [Comment #4776, #827, #3825, #5282, Issue #283].
+* Added support for spec-based profiles which allows you to select and automatically activate a profile based on your active specialization [Comment #899, #4278, #5290, E-Mail].
+* Restricted automation features Small Blizzard Nameplates and Hide Friendly Nameplates to dungeons and raids only (no longer arenas) [IM].
+* Enabled custom styles for nameplates to override the settings under General - Hidden Nameplates (e.g., to show a Guardian unit with a custom style while Guardian units are hidden in general) [Pull Request #253].
+* Increased the maximum scale values to 500% (by entering the value directly into the input field) [Issue #468].
+* Added a feature to hide units of type Guardian [Pull Request #253].
+* Added an option to disable the warning that is shown when another nameplate addons is enabled besides Threat Plates [Comment #4273, #5379, IM].
+* Added a chat command to switch the current profile [Comment #4689, #5382].
+* Fixed a bug where Blizzard default nameplates were not enabled or disabled properly when switching profiles.
+* Upgrade integrated libraries (LibSharedMedia v9.0.0, AceGUI-3.0-SharedMediaWidgets r65-release, LibClassicCasterino r36).
+
+------------------------------------------------------
+10.0.9
+------------------------------------------------------
+* Fixed a Lua error for Auras widget when the aura icon was disabled in bar mode [Issue GitHub #247].
+* Fixed a bug with Name trigger for custom styles for nameplates where units with the character "-" in their name could not be added [Issue GitHub #250].
+* Updated Shaman totems - added Windfury Totem [Comment #5218].
+
+------------------------------------------------------
+10.0.8
+------------------------------------------------------
+* Added support for Kyrian rogue spell Echoing Reprimand to Combo Points widget [Comment #5088, #5092, #5123, #5141, #5097, #5176, #5175, Issue #455].
+* Fixed a Lua error with the castbar when the WoW API does return incomplete information [Comment #5167].-
+* Fixed a Lua error that occurred when occlusion transparency was enabled and a special nameplate was shown [Issue GitHub #249, Issue #449].
+* Fixed a bug in the Combo Points widget where the anima-charged combo point (Kyrian rogue spell Echoing Reprimand) was not shown in all situations [IM].
+* Fixed a bug in Quest widget where the quest progress was not updated properly when in a group [Comment #5097, #5122, #5066].
+* Fixed Curse references for Classic version in TOC file [Comment TPC#697].
+* Updated list of stealth-detecting mobs.
+* Updated TOC version for WoW Classic.
+
+------------------------------------------------------
+10.0.7
+------------------------------------------------------
+* Fixed a bug with Quest widget not showing the correct quest status [Issue #450, Comment #5065].
+* Updated list of stealth-detecting mobs.
+
+------------------------------------------------------
+10.0.6
+------------------------------------------------------
+* Fixed a bug where the reaction color of unfriendly, non-attackable hostile units was not correct (red instead of brown).
+* Added support for special-purpose nameplates used for some quests in Shadowlands [Comment #5049, #5052, #5054, #5039, Issue #447].
+* Improved coloring of non-attackable, unfriendly units (brown healthbars).
+* Fixed a bug in Quest widget where quest information was not correctly detected from tooltips.
+* Fixed some missing translations.
+
+------------------------------------------------------
+10.0.5
+------------------------------------------------------
+* Fixed a Lua error with Quest widget that could occur when the a (delayed) quest log update was processed for a quest no longer existing.
+* Shaman's Prime Earth Elemental is now recognized as off-tank [Issue #445].
+* Fixed a Lua error in Social widget related to Battle.net friend list updates [Comment TPC#687].
+* Updated TOC version.
+
+------------------------------------------------------
+10.0.4
+------------------------------------------------------
+* Fixed a bug in Combo Points widget where Death Knight runes where not shown in the correct color when style Blizzard was used [Comment #4894, #4954, PM, Issue #440].
+* Fixed a bug with threat percentage text where the alignment was incorrect when a nameplate was initially shown [Comment #4983].
+* Fixed a bug with Social widget where Battle.net Friends were not correctly recognized in Classic WoW.
+* Upgrade integrated libraries (LibCustomGlow v1.0.3-1-g6261295-alpha) [Comment #4873].
+
+------------------------------------------------------
+10.0.3
+------------------------------------------------------
+* Fixed a bug with custom styles for nameplates where the custom style icon was not enabled/disabled for friendly or enemy units correctly.
+* Fixed a Lua error that occurred with SpartanUI when checking if SpartanUI nameplates are enabled [Issue #437, #436, #431, Comment #4931].
+
+------------------------------------------------------
+10.0.2
+------------------------------------------------------
+* Fixed a bug with delayed health update in the Classic Version because of a change in how health update events were processed [Comment TPC#658, TPC#661, TPC#668, TPC#670, #4880].
+* Fixed a Lua error with Quest widget that could occur when the a (delayed) quest log update was processed for a quest no longer existing [Issue #236, Comment #4876, #4875].
+
+------------------------------------------------------
+10.0.1
+------------------------------------------------------
+* Fixed a Lua error when migrating deprecated default nameplates to the new format.
+* Fixed a Lua error that occurred when Blizzard default plates were shown (e.g., for friendly units when entering an instance in a group) [Issue #429].
+* Fixed a Lua error that occurred when CVar NamePlateVerticalScale was changed will in combat [Issue #430].
+
+------------------------------------------------------
+10.0.0 - Release for Shadowlands Pre-Patch
+------------------------------------------------------
+* Updated Threat Plates for Shadowlands Pre-Patch and updated nameplate code due to changes to WoW API.
+* Updated integrated libraries to Ace3 r1241.
+
+------------------------------------------------------
+9.3.3
+------------------------------------------------------
+* Fixed a bug with settings migration in the Classic version which resulted in settings being overwritten with default values [Comment TPC#631, TPC#650].
+* Fixed a bug with custom styles for nameplates where the Button highlight glow was shown under the healthbar, not above it [Comment #4845].
+* Fixed a bug with the Focus Highlight where the Stripes texture was not shown reliably [Comment #4832].
+* Fixed a graphical bug with Target/Focus highlight borders Glow and Threat Glow when used with small healthbar heights (< 9) [IM].
+
+------------------------------------------------------
+9.3.2
+------------------------------------------------------
+* Fixed a Lua error in Combo Points widget because of an API call not supported in WoW Classic [Issue TPC#38, Comment TPC#640].
+
+------------------------------------------------------
+9.3.1
+------------------------------------------------------
+* The display of the unit that is currently being targeted is now off by default.
+* Fixed a bug with the mouseover highlight shown on the wrong layer (above elite/skull icon) [Comment #4796].
+* Fixed a bug with the mouseover highlight not shown in headline view.
+* Fixed a bug where enabling/disabling the display of the unit that is currently being targeted did not take effect immediately.
+* Fixed a bug where combo points were not shown for Windwalker Monks, Arcane Mages and Retribution Paladins [Issue #425, Comment #4819].
+
+------------------------------------------------------
+9.3.0
+------------------------------------------------------
+* Consolidated Retail and Classic version of Threat Plates into one single sourcecode version.
+* Added a new widget to show the experience bar of certain follower [Comment #3775, #3728, #4190, #4402, #4447, #4699, Issue GitHub #202].
+* Added an option to show the castbar above or below the healthbar [Comment #4486, #4461, #4631, Issue TPC#32, PM].
+* Added an option to show the current target's name on the castbar [Comment #4474, #4495, #4616].
+* Added a striped overlay texture to Target/Focus Highlight widget [Comment #4458].
+* Added a feature to show the name of the unit that is currently targeted on the nameplate [Issue TPC#15, Comment TPC#446, #TPC579].
+* Added an option to show the current amount of threat as a percentage [Comment TPC#540, TPC#533, E-Mail].
+* Added options to enable/disable custom styles for nameplates based based on being inside or outside of instances [Issue #363, #185].
+* Added an option to duplicate existing custom styles for nameplates [Comment TPC#562].
+* Improved importing profiles and custom styles for nameplates - now also exports from older Threat Plates versions can be imported.
+* Updated the icon for Blizzard Battle.net Friends in the Social widget.
+* Fixed a bug where enabling/disabling widgets only took effect after reloading the UI.
+* Fixed a bug with Focus widget where an incorrect artwork was shown when switching between healthbar and headline view.
+* Fixed a bug with custom styles for nameplates where the icon was not shown when the appearance (scaling, transparency, ...) was disabled.
+* Fixed a bug with custom styles for nameplates where styles where not enabled/disabled for friendly or enemy units correctly.
+* Fixed a bug where nameplates with a custom style were not updated after a settings change.
+* Fixed a bug with Name trigger for custom styles for nameplates where units with the character "." in their name could not be added.
+* Fixed a bug with mouseover highlight not shown on the current target unit when target highlight was disabled.
+* Fixed a bug where the the glow effect on custom styles for nameplates with Cast trigger was not shown [Comment #4675].
+* Fixed a bug where multiple, overlapping glow effects where shown on a custom style nameplate [Comment #4675].
+* Fixed a bug where automatic icon for custom styles for nameplates was not shown correctly because of delayed portrait updates.
+* Fixed a bug with widgets being initialized and updated properly when switching between Blizzard nameplates and Threat Plates (without reloading the UI).
+* Fixed a bug with the clickable area being to small when small Blizzard nameplates and Healthbar Sync were enabled [Comment #4548].
+* Reworked layering of all graphical elements as part of the castbar over healthbar feature integration.
+* Renamed filter modes for Auras widget to None, Allow, and Block.
+* Upgrade integrated libraries (LibClassicCasterino rev. 33, LibClassicDurations v.1.64, LibDeflate v1.0.2, LibSharedMedia v.8.2.0-r113)
+* Updated localizations for German, Traditional Chinese, Spanish, and Latin American Spanish (thanks to sugymaylis for the Spanish translations).
+
+------------------------------------------------------
+9.2.4
+------------------------------------------------------
+* Fixed a bug with the check for illegal characters in a Name trigger for custom nameplate styles [Comment #4585].
+* Added a new mob that can detect stealth to the Stealth widget.
+
+------------------------------------------------------
 9.2.3
 ------------------------------------------------------
 * Removed Thunderstruck (PvP talent) from crowd-control auras list as its uptime is too high. It's shown as a normal debuff now [Comment #4568].
@@ -118,7 +997,7 @@
 * Fixed a Lua error when changing certain settings related to the healthbar size in combat. This settings can only be changed out of combat now.
 * Fixed a bug in Auras widget where some debuffs were displayed twice when changing the aura type filter for crowd-control auras (e.g., from All to Blizzard) in the options.
 
-﻿------------------------------------------------------
+------------------------------------------------------
 9.1.10
 ------------------------------------------------------
 * Fixed a bug with Combo Points widget not properly being shown on the target unit's nameplate after entering a timewalking dungeon [Comment #1994].
@@ -133,7 +1012,7 @@
 ------------------------------------------------------
 9.1.8
 ------------------------------------------------------
-* Fixed a Lua error that occured when target highlight for healthbar and headline view were disabled while having an active target.
+* Fixed a Lua error that occurred when target highlight for healthbar and headline view were disabled while having an active target.
 * Fixed a bug with the target highlight texture which was not resized when certain name and/or status text settings were changed.
 * Fixed a bug with health-based coloring where the high health color was not displayed correctly for certain colors (e.g., purple).
 * Updated localizations for deDE and zhTW (Traditional Chinese, thanks to gaspy10).
@@ -146,7 +1025,7 @@
 ------------------------------------------------------
 9.1.6
 ------------------------------------------------------
-* Fixed a Lua error that occured when migrating deprecated settings of the Combo Points widget [Comment #1956].
+* Fixed a Lua error that occurred when migrating deprecated settings of the Combo Points widget [Comment #1956].
 * Adjusted Threat Plates' general nameplate settings to be in line with the corresponding WoW settings.
 
 ------------------------------------------------------
@@ -157,14 +1036,14 @@
 * Added an option to the Boss Mods widget to show tracking lines between player and active nameplate auras.
 * Improved offtank detection of the threat system (thanks to cremor for reporting the issue and helping fixing it) [Issue #331].
 
-﻿------------------------------------------------------
+------------------------------------------------------
 9.1.4
 ------------------------------------------------------
 * Added an option to Auras widget to highlight auras that can be stolen or purged [PR #100, Comment #1707, #1251, #1405, Issue #338].
 * Added some new mobs that can detect stealth to the Stealth widget.
 * Fixed a bug with Warning Glow for Threat not working when threat system as enabled, but threat coloring was disabled [Comment #1888].
 
-﻿------------------------------------------------------
+------------------------------------------------------
 9.1.3
 ------------------------------------------------------
 * Added heuristic threat detection to show threat feedback on mobs that do not have a threat table, especially in instances (e.g., snake adds on Merektha in Temple of Sethraliss or reaping mobs) [Comment #1790, #1811, E-Mail Request, Issue #331].
@@ -178,21 +1057,21 @@
 * Fixed a bug with the spell text not truncated correctly when too long, but wrapped into multiple lines.
 * Fixed a bug in Resources widget where the resource bar was shown for friendly players although only enabled for enemy players.
 
-﻿------------------------------------------------------
+------------------------------------------------------
 9.1.2
 ------------------------------------------------------
 * Fixed a bug with Combo Points widget that prevented the widget from working in arenas and battlegrounds [#Comment 1795].
 * Fixed a Lua error with Combo Points widget when talent Ascension (6 Chi) was used by Monks [Issue #325].
 * Removed information popup about new look and feel when using the addon the first time.
 
-﻿------------------------------------------------------
+------------------------------------------------------
 9.1.1
 ------------------------------------------------------
 * Fixed a Lua error with Combo Points widget resulting from a wrong migration of combo point widget settings [Comment #1764].
 * Fixed a Lua error that occurred when switching profiles because of a wrong widget initialization.
-* Removed a debug print message from Arena widget [Comment #1765].
+* Removed a Addon.Logging.Debug print message from Arena widget [Comment #1765].
 
-﻿------------------------------------------------------
+------------------------------------------------------
 9.1.0
 ------------------------------------------------------
 * Combo Points widget now has different styles (Squares, Orbs, Blizzard) and colors combo points depending on the current number of combo points [Issue #145, Comment #843, Comment #927, Comment #1028, Comment #1029, #1723, Issue #217, E-Mail Requests].
@@ -215,7 +1094,7 @@
 * Optimized code for widgets that are only displayed on the target unit (Combo Points, Resource).
 * Changed default settings for Auras and Combo Points widget for better, non-overlapping positioning.
 * Changed default setting for castbar offset to no offset (0/0).
-* Monk's Black Ox Statue and Druid's Force of Nature Treants are now correctly recognized as off-tank [Issue #270, Comment #1318, #1420, E-Mail, PR #85]  - Thanks to dlwyatt for implementing.
+* Monk's Black Ox Statue and Druid's Force of Nature Treants are now correctly recognized as off-tank [Issue #270, Comment #1318, #1420, E-Mail, PR #85] - Thanks to dlwyatt for implementing.
 * Fixed a bug with nameplate layering where nameplates where shown above unit frames [Comment #1086, #1124, Issue #215].
 * Fixed a bug where changes to text alignment (e.g., for name or status text) were not applied until the text was changed.
 * Fixed a bug where Warning Glow for Threat Only ignored the setting "Only on Attacked Units" for tapped and disconnected units.
@@ -223,7 +1102,7 @@
 * Fixed a bug with interrupted message on castbar where the interruptor's name was not colored in class color and the realm information was not removed when not in a group [Comment #1727].
 * Updated localization for enUS, deDE and zhTW (Traditional Chinese, thanks to gaspy10).
 
-﻿------------------------------------------------------
+------------------------------------------------------
 9.0.20
 ------------------------------------------------------
 * Aura for Asphyxiate (Frost and Unholy Death Knight) is now correctly recognized as crowd-control aura [Pull Request #103, thanks to xeropresence].
@@ -234,11 +1113,11 @@
 * Aura for Imprison (Demon Hunter) is now correctly recognized as crowd-control auras when the PvP talent Detainment was selected [Comment #1602].
 * Auras for Sin and Punishment (Priest) and Unstable Affliction silence effect (Warlock) are now correctly recognized as crowd-control auras.
 
-﻿------------------------------------------------------
+------------------------------------------------------
 9.0.18
 ------------------------------------------------------
 * All auras for Demon Hunter, Rogues, Hunter, Death Knight, Paladin, Priest, Shaman, Monk, and Druid are now correctly recognized as crowd-control auras [Comment #1560, #1556, #1541].
-* Fixed a Lua error that occured when a unit got a nameplate and was target marked at the same time [Issue #304].
+* Fixed a Lua error that occurred when a unit got a nameplate and was target marked at the same time [Issue #304].
 
 ------------------------------------------------------
 9.0.17
@@ -300,7 +1179,7 @@
 * Fixed a bug with Totem nameplates that prevented scaling and transparency settings from being applied [Issue #222].
 * Fixed a bug with "Show Blizzard Nameplates for Friendly Units" where friendly nameplates were not shown with the correct style after switching profiles.
 * Fixed a bug with Auras widget where filter mode Whitelist did not work for buffs unless keywords "All" or "My" were used [Issue #221].
-* Fixed a Lua error that occured when switching profiles from a profile with Auras widget disabled to a profile with Auras widget enabled.
+* Fixed a Lua error that occurred when switching profiles from a profile with Auras widget disabled to a profile with Auras widget enabled.
 * Fixed a bug in Social widget where the friends indicator was not shown.
 * Updated shaman totems - added Tremor Totem, removed Windfury Totem.
 
@@ -350,14 +1229,14 @@
 ------------------------------------------------------
 * Added a warning message at login if SpartanUI with its new nameplates is enabled together with Threat Plates as there will be two nameplates show for every unit [Issue #205].
 * Changed interrupt information on target castbar to show only interruptors name without realm [Issue #196].
-* Fixed a Lua error with Combo Points widget that occured when switching the active spec.
+* Fixed a Lua error with Combo Points widget that occurred when switching the active spec.
 
 ------------------------------------------------------
 9.0.2
 ------------------------------------------------------
-* Fixed a Lua error that occured when certain Auras widget settings where migrated when updating from Threat Plates version 8.x [Issue #201, Comment #963, Comment #957].
+* Fixed a Lua error that occurred when certain Auras widget settings where migrated when updating from Threat Plates version 8.x [Issue #201, Comment #963, Comment #957].
 * Fixed a Lua error with custom nameplates when headline view and custom transparency were enabled [Issue #202].
-* Fixed a Lua error with Auras widget that occured when switching to a new target unit.
+* Fixed a Lua error with Auras widget that occurred when switching to a new target unit.
 * Fixed a bug where the castbar was not shown immediately for units that were already casting when their nameplate was shown.
 * Updated integrated libraries to LibSharedMedia-3.0 8.0.1.
 
@@ -406,7 +1285,7 @@
 ------------------------------------------------------
 8.7.2
 ------------------------------------------------------
-* Extended the combo points widget to show also soul shards for warlocks [Issue #158,  Comment #819].
+* Extended the combo points widget to show also soul shards for warlocks [Issue #158, Comment #819].
 * Fixed a bug with the icon for friends and guild members still being shown although disabled.
 * Again, fixed a bug with custom nameplates which were only loaded after the options dialog was opened [Comment #837].
 * Fixed a bug with threat textures not being shown when bar style was used.
@@ -503,7 +1382,7 @@
 ------------------------------------------------------
 8.5.4 (works with TidyPlates 6.18.11)
 ------------------------------------------------------
-* Fixed a bug with layering of the target highlight (e.g.,  threat glow covered the target highlight) [Comment #568, email].
+* Fixed a bug with layering of the target highlight (e.g., threat glow covered the target highlight) [Comment #568, email].
 * Fixed a bug where changes to the placement of several icons were not applied until reloading the UI.
 * Fixed a bug in the options dialog where preview images where not updated after changing the active profile.
 * Changed defaults for Target and No Target scale again to more reasonable values.
@@ -534,7 +1413,7 @@
 * Added a feature to display absorbs at the healthbar of nameplates [Comment #479].
 * Added an option to hide friendly nameplates while in combat (Nameplate Settings - Visibility - Hide Nameplates) [Comment #478].
 * Added an option to force headline view on friendly nameplates while in combat (Nameplate Settings - Headline View - Force View By Status) [email request].
-* Added new spells from Argus mobs to stealth widget ("Demonic Senses", "One With the Void", "Weapon Scope")  .
+* Added new spells from Argus mobs to stealth widget ("Demonic Senses", "One With the Void", "Weapon Scope").
 * Added an option to force headline view for non-attackable enemy units (hostile, neutral) [Ticket #132].
 * Added a (non-configurable) reaction color for unfriendly, non-attackable hostile units (orange/brown, used in the Argus introduction quests).
 * Fixed a bug in custom nameplates that resulted in a Lua error when using "Restore Defaults".
@@ -599,7 +1478,7 @@
 * Added a new widget for showing the resource or power of target units (mana, rage, or alternate power for bosses) [Request from WowInterface].
 * Added an option to enable clickthrough for friendly and enemy nameplates [Comment #370, #375].
 * Added an option to change scaling and opacity (alpha) for casting, mouseover and target units [Comment #363].
-* Added option to show or hide mini (minor) mobs  (with own scale and opacity).
+* Added option to show or hide mini (minor) mobs (with own scale and opacity).
 * Added Earthbind totem which was added in patch 7.1 and fixed bug with Earthquake totem using incorrect spell ID. Also, totems in the options dialog are now sorted by type and name.
 * Added an option to hide the hatched overlay on the castbar for uninterruptable casts [Ticket #122, Comment #381].
 * Added an option to social widget to color the healthbar of friends' and guildmates' nameplates in a custom color.
@@ -631,8 +1510,8 @@
 ------------------------------------------------------
 * Updated addon metadata to be compatible with patch 7.2.
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
-  * Changing certain settings in the option dialog may require a /reload for the settings to fully take effect.
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Changing certain settings in the option dialog may require a /reload for the settings to fully take effect.
 
 ------------------------------------------------------
 8.3.3 (works with TidyPlates 6.18.11)
@@ -647,8 +1526,8 @@
 * Fixed a bug with in healthbar coloring of nameplates where class colors were used even if disabled in the options.
 * Added updated localizations for koKR (Korean) and zhCN (Simplified Chinese).
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
-  * Changing certain settings in the option dialog may require a /reload for the settings to fully take effect.
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Changing certain settings in the option dialog may require a /reload for the settings to fully take effect.
 
 ------------------------------------------------------
 8.3.1 (works with TidyPlates 6.18.11)
@@ -659,8 +1538,8 @@
 * Enabled localizations for koKR (Korean) and zhCN (Simplified Chinese) - big thanks to yuk6196 and y123ao6 for their translations.
 * Changed default for verbose mode to disabled.
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
-  * Changing certain settings in the option dialog may require a /reload for the settings to fully take effect.
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Changing certain settings in the option dialog may require a /reload for the settings to fully take effect.
 
 ------------------------------------------------------
 8.3.0 (works with TidyPlates 6.18.11)
@@ -678,8 +1557,8 @@
 * Fixed a bug in the options dialog where default settings for spec roles where incorrect for newly created profiles.
 * Fixed a memory leak which reduced frame rate heavily after changing certain options.
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
-  * Changing certain settings in the option dialog may require a /reload for the settings to fully take effect.
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Changing certain settings in the option dialog may require a /reload for the settings to fully take effect.
 
 ------------------------------------------------------
 8.2.5 (works with TidyPlates 6.18.11)
@@ -691,7 +1570,7 @@
 * Added an option to disable quest widget only on attacked mobs.
 * Added another detection spell to stealth widget.
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
 
 ------------------------------------------------------
 8.2.4 (works with TidyPlates 6.18.10)
@@ -699,7 +1578,7 @@
 * Fixed coloring of tapped units without custom colors enabled
 * Changed default colors for health bar custom colors from white to Blizzard defaults
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
 
 ------------------------------------------------------
 8.2.3 (works with TidyPlates 6.18.10)
@@ -709,7 +1588,7 @@
 * Aura filtering now also possible by aura ID (add aura ID as you would add a spell name)
 * Fixed a bug with target nameplate not always being show on top
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
 
 ------------------------------------------------------
 8.2.2 (works with TidyPlates 6.18.9)
@@ -717,7 +1596,7 @@
 * Fixed a Lua error in combo point widget
 * Disabled version check for TidyPlates version until working properly
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
 
 ------------------------------------------------------
 8.2.1 (works with TidyPlates 6.18.9)
@@ -725,7 +1604,7 @@
 * Added a check if Threat Plates is compatible with the installed version of TidyPlates
 * Optimized widget handling
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
 
 ------------------------------------------------------
 8.2.0 (works with TidyPlates 6.18.8)
@@ -737,7 +1616,7 @@
 * Fixed a bug in auras widget that prevented filtering based on aura type
 * Disabled Healer Tracker widget as it's currently not working at all
 * Known issues:
-  * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
+ * Switching between Threat Plates and other themes may require /reload for the new theme to work correctly
 
 ------------------------------------------------------
 8.1.4 (works with TidyPlates 6.18.6)
@@ -770,9 +1649,9 @@
 ------------------------------------------------------
 * Updated addon for Legion (7.0.3): added the demonhunter class, updated several spells (e.g., shaman totems), updated dual spec options, and lots of bug fixes
 * Added a new feature: Headline View (Text-Only) as known from TidyPlates
-  - TidyPlatesHub must be enabled for this to work; configure it via TidyPlatesHub profiles
-  - Basic configuration options are available, see Nameplate Settings - Headline View (subtext settings are derived from nametext settings)
-  - All Threat Plate widgets are disabled (auras, combo points, ...) - doesn't make much sense enabling them in this mode
+ - TidyPlatesHub must be enabled for this to work; configure it via TidyPlatesHub profiles
+ - Basic configuration options are available, see Nameplate Settings - Headline View (subtext settings are derived from nametext settings)
+ - All Threat Plate widgets are disabled (auras, combo points, ...) - doesn't make much sense enabling them in this mode
 * Added a new feature to enable automatic role detection based on the currently active spec (see options, Threat System, Spec Roles)
 * Castbar border can now be set to Default or Thin (like healthbar border)
 * Improverd layering of Threat Plates widgets and target name plate (which is often overlapped by other plates)
@@ -820,7 +1699,7 @@
 8.004-Alpha (works with TidyPlates 6.18.Beta20)
 ------------------------------------------------------
 * Implemented a new alpha feature (see About dialog): Headline View (Text-Only) as known from TidyPlates - TidyPlatesHub must be enabled for this to work; configure it via TidyPlatesHub profiles
-* Added four missing PVP totems (no totems should be missing now) and switched to  different colors for totem types (e.g.  PvP, Talents, ...)
+* Added four missing PVP totems (no totems should be missing now) and switched to different colors for totem types (e.g. PvP, Talents, ...)
 * Added transparent class icon for Demonhunter and special icons (red glowing border) for totem icons
 * Added an option to disable the cooldown spiral on auras (requires reload UI)
 * Castbar border can now be set to Default or Thin (like healthbar border)
@@ -834,8 +1713,8 @@
 ------------------------------------------------------
 8.002-Alpha
 ------------------------------------------------------
-* Added demonhunter class  (icons, tank tag)
+* Added demonhunter class (icons, tank tag)
 * Updated shaman totem list (icons and IDs) and rogue spell Anticipation
 * Fixed HP bar colouring with NPCs (probably still buggy)
 * Adjusted dual spec to new model in Legion
-* Changed spec option dialog to show actual  spec names for configuration
+* Changed spec option dialog to show actual spec names for configuration

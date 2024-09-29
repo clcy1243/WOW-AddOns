@@ -1,10 +1,10 @@
-local mod	= DBM:NewMod(2157, "DBM-Party-BfA", 8, 1001)
+local mod	= DBM:NewMod(2157, "DBM-Party-BfA", 8, 1022)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200528135243")
+mod:SetRevision("20240426175442")
 mod:SetCreatureID(131318)
 mod:SetEncounterID(2111)
-mod:SetZone()
+mod.sendMainBossGUID = true
 
 mod:RegisterCombat("combat")
 
@@ -19,22 +19,22 @@ local specWarnSanguineFeast			= mod:NewSpecialWarningDodge(264757, nil, nil, nil
 --local specWarnGTFO				= mod:NewSpecialWarningGTFO(238028, nil, nil, nil, 1, 8)
 
 --TODO: Use NewNextSourceTimer to split adds from boss
-local timerBloodBoltCD				= mod:NewCDTimer(6.1, 260879, nil, nil, nil, 4, nil, DBM_CORE_L.INTERRUPT_ICON)
+local timerBloodBoltCD				= mod:NewCDTimer(6.1, 260879, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
 local timerCreepingRotCD			= mod:NewNextTimer(15.8, 260894, nil, nil, nil, 3)
-local timerSanguineFeastCD			= mod:NewNextTimer(30, 264757, nil, nil, nil, 3, nil, DBM_CORE_L.HEROIC_ICON)
-local timerBloodMirrorCD			= mod:NewCDTimer(47.4, 264603, nil, nil, nil, 1, nil, DBM_CORE_L.DAMAGE_ICON)--47.4-49.8
+local timerSanguineFeastCD			= mod:NewNextTimer(30, 264757, nil, nil, nil, 3, nil, DBM_COMMON_L.HEROIC_ICON)
+local timerBloodMirrorCD			= mod:NewCDTimer(47.4, 264603, nil, nil, nil, 1, nil, DBM_COMMON_L.DAMAGE_ICON)--47.4-49.8
 
 mod:AddInfoFrameOption(260685, "Healer")
 
 function mod:OnCombatStart(delay)
 	--timerBloodBoltCD:Start(1-delay)--Instantly
-	timerCreepingRotCD:Start(12.2-delay)
+	timerCreepingRotCD:Start(10.8-delay)
 	timerBloodMirrorCD:Start(15.8-delay)
 	if not self:IsNormal() then--Exclude normal, but allow heroic/mythic/mythic+
 		timerSanguineFeastCD:Start(6.8-delay)
 	end
 	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(260685))
+		DBM.InfoFrame:SetHeader(DBM:GetSpellName(260685))
 		DBM.InfoFrame:Show(5, "playerdebuffstacks", 260685, 1)
 	end
 end

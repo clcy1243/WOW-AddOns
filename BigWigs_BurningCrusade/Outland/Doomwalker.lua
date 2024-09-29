@@ -5,8 +5,14 @@
 local mod, CL = BigWigs:NewBoss("Doomwalker", -104)
 if not mod then return end
 mod:RegisterEnableMob(17711)
+mod:SetAllowWin(true) -- No journal ID
 mod.worldBoss = 17711
-mod.otherMenu = -101
+if mod:Classic() then
+	mod.mapId = 1948
+	mod.otherMenu = -1945
+else
+	mod.otherMenu = -101
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -14,6 +20,8 @@ mod.otherMenu = -101
 
 local L = mod:NewLocale("enUS", true)
 if L then
+	L.name = "Doomwalker"
+
 	L.engage_trigger = "Do not proceed. You will be eliminated."
 	L.engage_message = "Doomwalker engaged, Earthquake in ~30sec!"
 
@@ -37,20 +45,24 @@ function mod:GetOptions()
 	}
 end
 
+function mod:OnRegister()
+	self.displayName = L.name
+end
+
 function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Overrun", 32637)
 	self:Log("SPELL_CAST_SUCCESS", "Earthquake", 32686)
 	self:Log("SPELL_AURA_APPLIED", "Frenzy", 33653)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:Death("Win", 17711)
 end
 
 function mod:OnEngage()
-	self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", nil, "target", "focus")
+	self:RegisterUnitEvent("UNIT_HEALTH", nil, "target", "focus")
 	self:OpenProximity("proximity", 10)
 
-	self:Message("earthquake", "yellow", nil, L["engage_message"], false)
+	self:MessageOld("earthquake", "yellow", nil, L["engage_message"], false)
 	self:CDBar("earthquake", 30, 32686)
 
 	self:CDBar("overrun", 26, 32637)
@@ -67,7 +79,7 @@ do
 		local t = GetTime()
 		if (t-prev) > 20 then
 			prev = t
-			self:Message("overrun", "red", nil, args.spellId)
+			self:MessageOld("overrun", "red", nil, args.spellId)
 			self:CDBar("overrun", 30, args.spellId)
 			self:DelayedMessage("overrun", 28, "yellow", CL["soon"]:format(args.spellName))
 		end
@@ -75,20 +87,20 @@ do
 end
 
 function mod:Earthquake(args)
-	self:Message("earthquake", "red", nil, args.spellId)
+	self:MessageOld("earthquake", "red", nil, args.spellId)
 	self:DelayedMessage("overrun", 65, "yellow", CL["soon"]:format(args.spellName))
 	self:CDBar("earthquake", 70, args.spellId)
 end
 
 function mod:Frenzy(args)
-	self:Message(args.spellId, "red", "Alarm", "20% - "..args.spellName)
+	self:MessageOld(args.spellId, "red", "alarm", "20% - "..args.spellName)
 end
 
-function mod:UNIT_HEALTH_FREQUENT(event, unit)
-	if self:MobId(UnitGUID(unit)) == 17711 then
-		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+function mod:UNIT_HEALTH(event, unit)
+	if self:MobId(self:UnitGUID(unit)) == 17711 then
+		local hp = self:GetHealth(unit)
 		if hp > 20 and hp < 27 then
-			self:Message(33653, "orange", nil, CL["soon"]:format(self:SpellName(33653)), false) -- Frenzy
+			self:MessageOld(33653, "orange", nil, CL["soon"]:format(self:SpellName(33653)), false) -- Frenzy
 			self:UnregisterUnitEvent(event, "target", "focus")
 		end
 	end

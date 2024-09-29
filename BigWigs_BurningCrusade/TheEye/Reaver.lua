@@ -5,6 +5,9 @@
 local mod = BigWigs:NewBoss("Void Reaver", 550, 1574)
 if not mod then return end
 mod:RegisterEnableMob(19516)
+if mod:Classic() then
+	mod:SetEncounterID(731)
+end
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -31,7 +34,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "Pounding", 34162)
 	self:Log("SPELL_CAST_SUCCESS", "Orb", 34172)
 
-	self:Yell("Engage", L["engage_trigger"])
+	self:BossYell("Engage", L["engage_trigger"])
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
 
 	self:Death("Win", 19516)
@@ -46,7 +49,7 @@ end
 --
 
 function mod:KnockAway(args)
-	self:TargetMessage(args.spellId, args.destName, "green", "Alarm")
+	self:TargetMessageOld(args.spellId, args.destName, "green", "alarm")
 	self:CDBar(args.spellId, 20)
 end
 
@@ -55,10 +58,10 @@ function mod:Pounding(args)
 end
 
 function mod:Orb(args)
-	self:TargetMessage(args.spellId, args.destName, "yellow", "Alert")
+	self:TargetMessageOld(args.spellId, args.destName, "yellow", "alert")
 	self:PrimaryIcon(args.spellId, args.destName)
 	if self:Me(args.destGUID) then
-		self:Say(args.spellId)
+		self:Say(args.spellId, nil, nil, "Arcane Orb")
 	end
 end
 

@@ -1,11 +1,11 @@
-local mod	= DBM:NewMod(1789, "DBM-BrokenIsles", nil, 822)
+local mod	= DBM:NewMod(1789, "DBM-BrokenIsles", 1, 822)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20200524145614")
+mod:SetRevision("20220116041824")
 mod:SetCreatureID(110378)
 mod:SetEncounterID(1949)
 mod:SetReCombatTime(20)
-mod:SetZone()
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 mod:RegisterCombat("combat")
 
@@ -34,7 +34,7 @@ mod:AddReadyCheckOption(43448, false)
 
 function mod:AvaTarget(targetname, uId)
 	if not targetname then
-		warnAvalanche:Show(DBM_CORE_L.UNKNOWN)
+		warnAvalanche:Show(DBM_COMMON_L.UNKNOWN)
 		return
 	end
 	if targetname == UnitName("player") then
