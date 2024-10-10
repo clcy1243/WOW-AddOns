@@ -121,24 +121,24 @@ local function defaultcvar()
     --[[ 在介面選項裡可以勾選"啟用大型名條"來使用預設的樣式 ]] --
 
     -- 姓名板職業染色，1開
-    SetCVar("ShowClassColorInNameplate", 1)
+    -- SetCVar("ShowClassColorInNameplate", 1)
     -- 在名條下顯示施法條，1開
-    SetCVar("showVKeyCastbar", 1)
+    -- SetCVar("showVKeyCastbar", 1)
     -- 只在當前目標的名條下顯示施法條，0關
-    SetCVar("showVKeyCastbarOnlyOnTarget", 0)
+    -- SetCVar("showVKeyCastbarOnlyOnTarget", 0)
     -- 在名條下的施法條顯示法術名稱，1開
-    SetCVar("showVKeyCastbarSpellName", 1)
+    -- SetCVar("showVKeyCastbarSpellName", 1)
     -- 非當前目標的名條透明度
-    SetCVar("nameplateMinAlpha", 0.8)
+    -- SetCVar("nameplateMinAlpha", 0.8)
     -- 7.1新加的，開啟友方血條時一併開啟友方npc姓名板
-    SetCVar("nameplateShowFriendlyNPCs", 1)
+    -- SetCVar("nameplateShowFriendlyNPCs", 1)
 
     -- 名條寬高設定：預設是1，啟用大型名條後，預設是是1.39寬2.7高
     -- 數值可以自訂，如下例：改成1寬3高
-    SetCVar("NamePlateHorizontalScale", 1)
-    SetCVar("NamePlateVerticalScale", 3)
+    -- SetCVar("NamePlateHorizontalScale", 1)
+    -- SetCVar("NamePlateVerticalScale", 3)
     -- 顯示名條的最遠距離：legion默認是60，以前是40；60太遠了，容易干擾畫面。建議遠程職業設定為你的最遠射程+5碼
-    SetCVar("nameplateMaxDistance", 50)
+    -- SetCVar("nameplateMaxDistance", 50)
     -- tab最近的目標
     SetCVar("Targetnearestuseold", 1)
     --[[ 視個人需求使用 ]] --
@@ -153,19 +153,19 @@ local function defaultcvar()
     --[[ 玩家自身姓名板 ]] --
 
     -- 只能固定垂直方向的位置，當視角拉近時還是會水平偏移，預設topinset是0.5，bottominset是0.2(應該，我沒dump過)
-    SetCVar("nameplateSelfTopInset", .7)
-    SetCVar("nameplateSelfBottomInset", .3)
+    -- SetCVar("nameplateSelfTopInset", .7)
+    -- SetCVar("nameplateSelfBottomInset", .3)
     -- 縮放，默認是1
-    SetCVar("nameplateSelfScale", 1)
+    -- SetCVar("nameplateSelfScale", 1)
     --[[ 名條縮放 ]] --
 
     -- 不讓名條隨距離而變小，預設minscale是0.8
-    SetCVar("namePlateMinScale", 1)
-    SetCVar("namePlateMaxScale", 1)
+    -- SetCVar("namePlateMinScale", 1)
+    -- SetCVar("namePlateMaxScale", 1)
     -- 如果要調整姓名板的全局縮放
-    SetCVar("nameplateSelectedScale", 1)
+    -- SetCVar("nameplateSelectedScale", 1)
     -- 重要NPC的名條縮放
-    SetCVar("nameplateLargerScale", 1)
+    -- SetCVar("nameplateLargerScale", 1)
 
     -- 要在遊戲裡更改戰鬥文字的CVar，必需處於非戰鬥狀態，並於更改後/Reload重載介面！
     --[[ 浮動樣式 ]] --

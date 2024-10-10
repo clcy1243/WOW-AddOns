@@ -1081,6 +1081,7 @@ function addon:UpdateGlobalButtonClicks()
     end
 end
 
+
 -- Update both registered clicks, and ensure that mousewheel events are enabled
 -- on the frame.
 function addon:UpdateRegisteredClicks(button)
@@ -1106,15 +1107,16 @@ function addon:UpdateRegisteredClicks(button)
     end
 
     for name, button in pairs(self.hccframes) do
-       if not self:IsFrameBlacklisted(button) then
+        if not self:IsFrameBlacklisted(button) then
             button:RegisterForClicks(direction)
-           button:EnableMouseWheel(true)
-       end
+            button:EnableMouseWheel(true)
+        end
     end
 
     -- Update the global button in case settings have changed
     addon:UpdateGlobalButtonClicks()
 end
+
 
 -- Handler function for message indicating that a change as occurred
 -- with the configured bindings. This is the only place that the

@@ -12,7 +12,7 @@ local strfind = string.find
 -- Generate our version variables
 --
 
-local BIGWIGS_VERSION = 364
+local BIGWIGS_VERSION = 365
 local BIGWIGS_RELEASE_STRING, BIGWIGS_VERSION_STRING
 local versionQueryString, versionResponseString = "Q^%d^%s^%d^%s", "V^%d^%s^%d^%s"
 local customGuildName = false
@@ -39,7 +39,7 @@ do
 	local ALPHA = "ALPHA"
 
 	local releaseType
-	local myGitHash = "5dc674d" -- The ZIP packager will replace this with the Git hash.
+	local myGitHash = "ef30ef9" -- The ZIP packager will replace this with the Git hash.
 	local releaseString
 	--[=[@alpha@
 	-- The following code will only be present in alpha ZIPs.
@@ -92,7 +92,7 @@ local tooltipFunctions = {}
 local next, tonumber, type, strsplit, strsub = next, tonumber, type, strsplit, string.sub
 local SendAddonMessage, RegisterAddonMessagePrefix, CTimerAfter, CTimerNewTicker = C_ChatInfo.SendAddonMessage, C_ChatInfo.RegisterAddonMessagePrefix, C_Timer.After, C_Timer.NewTicker
 local GetInstanceInfo, GetBestMapForUnit, GetMapInfo = GetInstanceInfo, C_Map.GetBestMapForUnit, C_Map.GetMapInfo
-local Ambiguate, UnitName, UnitGUID = Ambiguate, UnitName, UnitGUID
+local Ambiguate, UnitName, UnitGUID = Ambiguate, UnitNameUnmodified or UnitName, UnitGUID
 local debugstack, print = debugstack, print
 local myLocale = GetLocale()
 
@@ -117,6 +117,7 @@ public.RegisterAddonMessagePrefix = RegisterAddonMessagePrefix
 public.SendAddonMessage = SendAddonMessage
 public.SetRaidTarget = SetRaidTarget
 public.SendChatMessage = SendChatMessage
+public.UnitCanAttack = UnitCanAttack
 public.UnitDetailedThreatSituation = UnitDetailedThreatSituation
 public.UnitThreatSituation = UnitThreatSituation
 public.UnitGUID = UnitGUID
@@ -125,6 +126,7 @@ public.UnitHealthMax = UnitHealthMax
 public.UnitIsDeadOrGhost = UnitIsDeadOrGhost
 public.UnitName = UnitName
 public.UnitSex = UnitSex
+public.UnitTokenFromGUID = UnitTokenFromGUID
 public.isTestBuild = GetCurrentRegion() == 72 -- PTR/beta
 do
 	local _, _, _, build = GetBuildInfo()
@@ -1112,12 +1114,12 @@ function mod:ADDON_LOADED(addon)
 	self:BigWigs_CoreOptionToggled(nil, "fakeDBMVersion", self.isFakingDBM)
 
 	local num = tonumber(C_CVar.GetCVar("Sound_NumChannels")) or 0
-	if num < 64 then
-		C_CVar.SetCVar("Sound_NumChannels", "64") -- Blizzard keeps screwing with addon sound priority so we force this minimum
+	if num < 90 then
+		C_CVar.SetCVar("Sound_NumChannels", "90") -- 64 is the default, enforce a little higher as a minimum to prevent sound clipping issues with addons
 	end
 	num = tonumber(C_CVar.GetCVar("Sound_MaxCacheSizeInBytes")) or 0
-	if num < 67108864 then
-		C_CVar.SetCVar("Sound_MaxCacheSizeInBytes", "67108864") -- Set the cache to the "Small (64MB)" setting as a minimum
+	if num < 134217728 then
+		C_CVar.SetCVar("Sound_MaxCacheSizeInBytes", "134217728") -- "Large (128MB)" is the default, enforce it as a minimum
 	end
 
 	--bwFrame:UnregisterEvent("ADDON_LOADED")
@@ -1354,7 +1356,7 @@ do
 		--zhTW = "Traditional Chinese (zhTW)",
 		itIT = "Italian (itIT)",
 		--koKR = "Korean (koKR)",
-		esES = "Spanish (esES)",
+		--esES = "Spanish (esES)",
 		esMX = "Spanish (esMX)",
 		--deDE = "German (deDE)",
 		ptBR = "Portuguese (ptBR)",
@@ -1365,7 +1367,7 @@ do
 		[3207] = locales.ptBR, [3208] = locales.ptBR, [3209] = locales.ptBR, [3210] = locales.ptBR, [3234] = locales.ptBR, -- ptBR
 		[1425] = locales.esMX, [1427] = locales.esMX, [1428] = locales.esMX, -- esMX
 		[1309] = locales.itIT, [1316] = locales.itIT, -- itIT
-		[1378] = locales.esES, [1379] = locales.esES, [1380] = locales.esES, [1381] = locales.esES, [1382] = locales.esES, [1383] = locales.esES, -- esES
+		--[1378] = locales.esES, [1379] = locales.esES, [1380] = locales.esES, [1381] = locales.esES, [1382] = locales.esES, [1383] = locales.esES, -- esES
 	}
 	local language = locales[myLocale]
 	local realmLanguage = realms[GetRealmID()]
@@ -1466,8 +1468,8 @@ end
 --
 
 do
-	local DBMdotRevision = "20240927002422" -- The changing version of the local client, changes with every new zip using the project-date-integer packager replacement.
-	local DBMdotDisplayVersion = "11.0.17" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration.
+	local DBMdotRevision = "20240928073327" -- The changing version of the local client, changes with every new zip using the project-date-integer packager replacement.
+	local DBMdotDisplayVersion = "11.0.19" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration.
 	local DBMdotReleaseRevision = "20240926000000" -- Hardcoded time, manually changed every release, they use it to track the highest release version, a new DBM release is the only time it will change.
 	local protocol = 3
 	local versionPrefix = "V"

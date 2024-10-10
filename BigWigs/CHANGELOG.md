@@ -1,8 +1,9 @@
 # BigWigs
 
-## [v364](https://github.com/BigWigsMods/BigWigs/tree/v364) (2024-09-27)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v363.2...v364) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
+## [v365.3](https://github.com/BigWigsMods/BigWigs/tree/v365.3) (2024-10-06)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v365.2...v365.3) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
 
-- bump version  
-- Plugins/Nameplates: Make sure cooldowns of your target always show on top of other cooldowns  
-- Update deDE (#1855)  
+- Plugins/Nameplates: Remove unused support for hide on expire, cleanups  
+- NerubarPalace/Kyveza: Add a message when daggers are over and increase the Eternal Night castbar until the full room hits.  
+- NerubarPalace/TheBloodboundHorror: Add a castbar for Goresplatter/Run Away  
+- NerubarPalace/Ulgrax: Set Brutal Crush as Tank only (Fixes #1844)  
