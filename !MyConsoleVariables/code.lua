@@ -166,9 +166,11 @@ local function defaultcvar()
     -- SetCVar("nameplateSelectedScale", 1)
     -- 重要NPC的名條縮放
     -- SetCVar("nameplateLargerScale", 1)
+    SetCVar("nameplateOverlapV", 0.45)
 
     -- 要在遊戲裡更改戰鬥文字的CVar，必需處於非戰鬥狀態，並於更改後/Reload重載介面！
     --[[ 浮動樣式 ]] --
+
 
     -- 新的浮動戰鬥文字運動方式，1往上2往下3弧形
     SetCVar("floatingCombatTextFloatMode", 1)
