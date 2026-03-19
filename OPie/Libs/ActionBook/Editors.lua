@@ -14,8 +14,6 @@ local RegisterSimpleOptionsPanel do
 		local p = f:GetParent()
 		if p and type(p.OnActionChanged) == "function" then
 			p:OnActionChanged(curHandle)
-		elseif p and type(p.SaveAction) == "function" then -- DEPRECATED [2303]
-			p:SaveAction()
 		end
 	end
 	local function updateCheckButtonHitRect(self)
@@ -26,9 +24,9 @@ local RegisterSimpleOptionsPanel do
 		local e = CreateFrame("CheckButton", nil, f, MODERN and "UICheckButtonTemplate" or "InterfaceOptionsCheckButtonTemplate")
 		if MODERN then
 			e:SetSize(24, 24)
-			e.Text:SetPoint("LEFT", e, "RIGHT", 2, 1)
-			e.Text:SetFontObject(GameFontHighlightLeft)
 		end
+		e.Text:SetPoint("LEFT", e, "RIGHT", MODERN and 2 or 0, 1)
+		e.Text:SetFontObject(GameFontHighlightLeft)
 		hooksecurefunc(e.Text, "SetText", updateCheckButtonHitRect)
 		e:SetMotionScriptsWhileDisabled(1)
 		e:SetScript("OnClick", callSave)

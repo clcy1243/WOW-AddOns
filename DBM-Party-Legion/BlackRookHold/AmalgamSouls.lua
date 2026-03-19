@@ -1,7 +1,10 @@
 local mod	= DBM:NewMod(1518, "DBM-Party-Legion", 1, 740)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240714045506")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(98542)
 mod:SetEncounterID(1832)
 mod:SetHotfixNoticeRev(20231027000000)
@@ -87,11 +90,11 @@ end
 function mod:OnCombatEnd(wipe, secondRun)
 	if not wipe and not secondRun then
 		local BRHTrash = DBM:GetModByName("BRHTrash")
-		BRHTrash:StartFirstRP()
+		if BRHTrash then
+			BRHTrash:StartFirstRP()
+		end
 	end
---	if self.Options.RangeFrame then
---		DBM.RangeCheck:Hide()
---	end
+
 end
 
 function mod:SPELL_CAST_START(args)

@@ -13,7 +13,8 @@ do
 	TIMERS_SPECIAL_EVENTS = addonTbl.TIMERS_SPECIAL_EVENTS or {} -- TimersSpecialEvents.lua
 	TIMERS_SPECIAL_EVENTS_DATA = addonTbl.TIMERS_SPECIAL_EVENTS_DATA or {} -- TimersSpecialEvents.lua
 	TIMERS_BLOCKLIST = addonTbl.TIMERS_BLOCKLIST or {} -- TimersBlocklist.lua
-	RETAIL = addonTbl.retail or false
+	RETAIL = addonTbl.retail or false -- Init.lua
+	Transcriptor.INSTANCES = addonTbl.INSTANCES or {} -- Instances.lua
 end
 
 local logName = nil
@@ -43,37 +44,45 @@ local inEncounter, blockingRelease, limitingRes = false, false, false
 local mineOrPartyOrRaid = 7 -- COMBATLOG_OBJECT_AFFILIATION_MINE + COMBATLOG_OBJECT_AFFILIATION_PARTY + COMBATLOG_OBJECT_AFFILIATION_RAID
 
 local band = bit.band
-local tinsert, tsort, twipe, tconcat = table.insert, table.sort, table.wipe, table.concat
+local tinsert, tsort, twipe, tconcat, tContains = table.insert, table.sort, table.wipe, table.concat, tContains
 local format, find, strjoin, strsplit, gsub, strmatch = string.format, string.find, string.join, string.split, string.gsub, string.match
 local tostring, tostringall, date = tostring, tostringall, date
-local type, next, print = type, next, print
+local type, next = type, next
 local debugprofilestop = debugprofilestop
 
 local C_Scenario, C_DeathInfo_GetSelfResurrectOptions, Enum = C_Scenario, C_DeathInfo.GetSelfResurrectOptions, Enum
 local IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease = IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease
 local UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo = UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo
-local UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification = UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification
-local UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth = UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth
+local UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification, ShowBossFrameWhenUninteractable = UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification, ShowBossFrameWhenUninteractable
+local UnitPower, UnitPowerMax, UnitPowerType, UnitHealth, UnitHealthMax = UnitPower, UnitPowerMax, UnitPowerType, UnitHealth, UnitHealthMax
 local UnitLevel, UnitCreatureType, UnitPercentHealthFromGUID, UnitTokenFromGUID = UnitLevel, UnitCreatureType, UnitPercentHealthFromGUID, UnitTokenFromGUID
-local GetInstanceInfo, IsAltKeyDown = GetInstanceInfo, IsAltKeyDown
+local GetInstanceInfo = GetInstanceInfo
 local GetZoneText, GetRealZoneText, GetSubZoneText = GetZoneText, GetRealZoneText, GetSubZoneText
 local GetSpellName = C_Spell and C_Spell.GetSpellName or GetSpellInfo
 local GetBestMapForUnit = C_Map.GetBestMapForUnit
 local C_GossipInfo_GetOptions = C_GossipInfo.GetOptions
+local issecretvalue = issecretvalue or function() return false end
+local mapvalues = mapvalues
+local function ReplaceSecrets(value) if issecretvalue(value) then return "<secret>" else return value end end
 
 if not UnitTokenFromGUID then -- XXX not on classic yet
 	UnitTokenFromGUID = function() return end
 end
 
+local TSPrint
 do
-	local origPrint = print
-	function print(msg, ...)
-		return origPrint(format("|cFF33FF99Transcriptor|r: %s", tostring(msg)), tostringall(...))
+	local print = print
+	function TSPrint(msg, ...)
+		print(format("|cFF33FF99Transcriptor|r: %s", tostring(msg)), tostringall(...))
 	end
+end
 
-	local origUnitName = UnitName
-	function UnitName(unit)
-		local name, server = origUnitName(unit)
+local TSUnitName
+do
+	local UnitNameUnmodified = UnitNameUnmodified
+	function TSUnitName(unit)
+		local name, server = UnitNameUnmodified(unit)
+		if issecretvalue(name) then return "<secret>" end
 		if not name then
 			return "??"
 		elseif server and server ~= "" then
@@ -153,7 +162,7 @@ function GetMapArtID(name)
 		if fetchedTbl and fetchedTbl.name then
 			local lowerFetchedName = fetchedTbl.name:lower()
 			if find(lowerFetchedName, name, nil, true) then
-				print(fetchedTbl.name..": "..i)
+				TSPrint(fetchedTbl.name..": "..i)
 			end
 		end
 	end
@@ -164,7 +173,7 @@ function GetInstanceID(name)
 		local fetchedName = GetRealZoneText(i)
 		local lowerFetchedName = fetchedName:lower()
 		if find(lowerFetchedName, name, nil, true) then
-			print(fetchedName..": "..i)
+			TSPrint(fetchedName..": "..i)
 		end
 	end
 end
@@ -176,12 +185,12 @@ function GetBossID(name)
 			if fetchedName then
 				local lowerFetchedName = fetchedName:lower()
 				if find(lowerFetchedName, name, nil, true) then
-					print(fetchedName..": "..i)
+					TSPrint(fetchedName..": "..i)
 				end
 			end
 		end
 	else
-		print("Cannot use GetBossID(name) when the EJ_GetEncounterInfo namespace doesn't exist.")
+		TSPrint("Cannot use GetBossID(name) when the EJ_GetEncounterInfo namespace doesn't exist.")
 	end
 end
 function GetSectionID(name)
@@ -193,12 +202,12 @@ function GetSectionID(name)
 				local fetchedName = tbl.title
 				local lowerFetchedName = fetchedName:lower()
 				if find(lowerFetchedName, name, nil, true) then
-					print(fetchedName..": "..i)
+					TSPrint(fetchedName..": "..i)
 				end
 			end
 		end
 	else
-		print("Cannot use GetSectionID(name) when the C_EncounterJournal namespace doesn't exist.")
+		TSPrint("Cannot use GetSectionID(name) when the C_EncounterJournal namespace doesn't exist.")
 	end
 end
 
@@ -251,8 +260,8 @@ do
 	end
 
 	local function GetLogSpells(slashCommandText)
-		if InCombatLockdown() or UnitAffectingCombat("player") or IsFalling() then print("You cannot do that in combat.") return end
-		if slashCommandText == "logflags" then TranscriptIgnore.logFlags = true print("Player flags will be added to all future logs.") return end
+		if InCombatLockdown() or UnitAffectingCombat("player") or IsFalling() then TSPrint("You cannot do that in combat.") return end
+		if slashCommandText == "logflags" then TranscriptIgnore.logFlags = true TSPrint("Player flags will be added to all future logs.") return end
 
 		local total, totalSorted = {}, {}
 		local auraTbl, castTbl, summonTbl, extraAttacksTbl, empowerTbl, healTbl, energizeTbl, spellDmgTbl = {}, {}, {}, {}, {}, {}, {}, {}
@@ -560,7 +569,7 @@ do
 		L["|cff696969Idle|r"] = "|cff696969空闲|r"
 		L["|cffeda55fClick|r to start or stop transcribing. |cffeda55fRight-Click|r to configure events. |cffeda55fAlt-Middle Click|r to clear all stored transcripts."] = "|cffeda55f点击|r开始/停止记录战斗."
 		L["|cffFF0000Recording|r"] = "|cffFF0000记录中|r"
-		--L["|cFFFFD200Transcriptor|r - Disabled Events"] = "|cFFFFD200Transcriptor|r - Disabled Events"
+		L["|cFFFFD200Transcriptor|r - Disabled Events"] = "|cFFFFD200Transcriptor|r - 已禁用事件"
 	elseif locale == "koKR" then
 		L["Remember to stop and start Transcriptor between each wipe or boss kill to get the best logs."] = "최상의 기록을 얻으려면 전멸이나 우두머리 처치 후에 Transcriptor를 중지하고 시작하는 걸 기억하세요."
 		L["You are already logging an encounter."] = "이미 우두머리 전투를 기록 중입니다."
@@ -750,22 +759,18 @@ do
 			hiddenAuraPermList[spellId] = true
 		end
 
-		local npcId = MobId(sourceGUID)
-
 		if badEvents[event] or
-		   badNPCs[npcId] or -- Filter NPCs that are friendly summons but aren't flagged as guardians or as being in the group (COMBATLOG_OBJECT_AFFILIATION_OUTSIDER)
-		   (event == "UNIT_DIED" and band(destFlags, mineOrPartyOrRaid) ~= 0 and band(destFlags, guardian) == guardian) or -- Filter guardian deaths only, player deaths can explain debuff removal
-		   (sourceName and badPlayerEvents[event] and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
-		   (sourceName and badPlayerFilteredEvents[event] and PLAYER_SPELL_BLOCKLIST[spellId] and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
-		   (spellId == 22568 and event == "SPELL_DRAIN" and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or -- Feral Druid casting Ferocious Bite
-		   (spellId == 81782 and not sourceName and band(destFlags, mineOrPartyOrRaid) ~= 0) or -- Power Word: Barrier on players has a nil source
-		   (spellId == 145629 and not sourceName and band(destFlags, mineOrPartyOrRaid) ~= 0) -- Anti-Magic Zone on players has a nil source
+			(sourceName and badPlayerFilteredEvents[event] and (PLAYER_SPELL_BLOCKLIST[spellId] or not RETAIL) and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
+			(sourceName and badPlayerEvents[event] and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or
+			(event == "UNIT_DIED" and band(destFlags, mineOrPartyOrRaid) ~= 0 and band(destFlags, guardian) == guardian) or -- Filter guardian deaths only, player deaths can explain debuff removal
+			(spellId == 22568 and event == "SPELL_DRAIN" and band(sourceFlags, mineOrPartyOrRaid) ~= 0) or -- Feral Druid casting Ferocious Bite
+			(spellId == 81782 and not sourceName and band(destFlags, mineOrPartyOrRaid) ~= 0) or -- Power Word: Barrier on players has a nil source
+			(spellId == 145629 and not sourceName and band(destFlags, mineOrPartyOrRaid) ~= 0) -- Anti-Magic Zone on players has a nil source
 		then
 			return
 		else
-			--if (sourceName and badPlayerFilteredEvents[event] and PLAYER_SPELL_BLOCKLIST[spellId] and band(sourceFlags, mineOrPartyOrRaid) == 0) then
-			--	print("Transcriptor:", sourceName..":"..npcId, "used spell", spellName..":"..spellId, "in event", event, "but isn't in our group.")
-			--end
+			local npcId = MobId(sourceGUID)
+			if badNPCs[npcId] then return end -- Filter NPCs that are friendly summons but aren't flagged as guardians or as being in the group (COMBATLOG_OBJECT_AFFILIATION_OUTSIDER)
 
 			if event == "SPELL_CAST_SUCCESS" and (not sourceName or (band(sourceFlags, mineOrPartyOrRaid) == 0 and not find(sourceGUID, "Player", nil, true))) then
 				if not compareSuccess then compareSuccess = {} end
@@ -983,7 +988,17 @@ do
 				if (event == "SPELL_CAST_START" or event == "SPELL_CAST_SUCCESS") and sourceName and sourceGUID then
 					local unit = UnitTokenFromGUID(sourceGUID)
 					if unit then
-						local hp = UnitPercentHealthFromGUID(sourceGUID)
+						local hp
+						if UnitPercentHealthFromGUID then
+							hp = UnitPercentHealthFromGUID(sourceGUID)
+						else
+							local maxHP = UnitHealthMax(unit)
+							if maxHP == 0 then
+								hp = 0
+							else
+								hp = UnitHealth(unit) / maxHP
+							end
+						end
 						local maxPower = UnitPowerMax(unit)
 						local power = maxPower == 0 and maxPower or (UnitPower(unit) / maxPower * 100)
 						sourceName = format("%s(%.1f%%-%.1f%%)", sourceName, hp*100, power)
@@ -1034,7 +1049,8 @@ do
 			return true
 		elseif wantedUnits[unit] and not UnitIsUnit("player", unit) and not UnitInRaid(unit) and not UnitInParty(unit) then
 			for k in next, bossUnits do
-				if UnitIsUnit(unit, k) then -- Reject if the unit is also a boss unit
+				local isBossUnit = UnitIsUnit(unit, k)
+				if not issecretvalue(isBossUnit) and isBossUnit then -- Reject if the unit is also a boss unit
 					return false
 				end
 			end
@@ -1043,18 +1059,18 @@ do
 	end
 
 	function sh.UNIT_SPELLCAST_STOP(unit, castId, spellId, ...)
-		if safeUnit(unit) then
+		if not issecretvalue(spellId) and safeUnit(unit) then
 			local maxHP = UnitHealthMax(unit)
 			local maxPower = UnitPowerMax(unit)
 			local hp = maxHP == 0 and maxHP or (UnitHealth(unit) / maxHP * 100)
 			local power = maxPower == 0 and maxPower or (UnitPower(unit) / maxPower * 100)
-			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- [[%s]]", UnitName(unit), hp, power, UnitName(unit.."target"), GetSpellName(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
+			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- [[%s]]", TSUnitName(unit), hp, power, TSUnitName(unit.."target"), GetSpellName(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
 		end
 	end
 	sh.UNIT_SPELLCAST_CHANNEL_STOP = sh.UNIT_SPELLCAST_STOP
 
 	function sh.UNIT_SPELLCAST_INTERRUPTED(unit, castId, spellId, ...)
-		if safeUnit(unit) then
+		if not issecretvalue(spellId) and safeUnit(unit) then
 			if TIMERS_SPECIAL_EVENTS.UNIT_SPELLCAST_INTERRUPTED[spellId] then
 				local name = TIMERS_SPECIAL_EVENTS.UNIT_SPELLCAST_INTERRUPTED[spellId][MobId(UnitGUID(unit))]
 				if name then
@@ -1066,12 +1082,13 @@ do
 			local maxPower = UnitPowerMax(unit)
 			local hp = maxHP == 0 and maxHP or (UnitHealth(unit) / maxHP * 100)
 			local power = maxPower == 0 and maxPower or (UnitPower(unit) / maxPower * 100)
-			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- [[%s]]", UnitName(unit), hp, power, UnitName(unit.."target"), GetSpellName(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
+			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- [[%s]]", TSUnitName(unit), hp, power, TSUnitName(unit.."target"), GetSpellName(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
 		end
 	end
 
 	local prevCast = nil
 	function sh.UNIT_SPELLCAST_SUCCEEDED(unit, castId, spellId, ...)
+		if issecretvalue(spellId) then return end
 		if safeUnit(unit) then
 			if castId ~= prevCast then
 				prevCast = castId
@@ -1100,19 +1117,19 @@ do
 			local maxPower = UnitPowerMax(unit)
 			local hp = maxHP == 0 and maxHP or (UnitHealth(unit) / maxHP * 100)
 			local power = maxPower == 0 and maxPower or (UnitPower(unit) / maxPower * 100)
-			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- [[%s]]", UnitName(unit), hp, power, UnitName(unit.."target"), GetSpellName(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
+			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- [[%s]]", TSUnitName(unit), hp, power, TSUnitName(unit.."target"), GetSpellName(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
 		elseif groupList[unit] and not PLAYER_SPELL_BLOCKLIST[spellId] then
 			if not playerSpellCollector[spellId] then
-				playerSpellCollector[spellId] = strjoin("#", tostringall(spellId, GetSpellName(spellId), unit, UnitName(unit)))
+				playerSpellCollector[spellId] = strjoin("#", tostringall(spellId, GetSpellName(spellId), unit, TSUnitName(unit)))
 			end
 			if castId ~= prevCast then
 				prevCast = castId
-				return format("PLAYER_SPELL{%s} -%s- [[%s]]", UnitName(unit), GetSpellName(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
+				return format("PLAYER_SPELL{%s} -%s- [[%s]]", TSUnitName(unit), GetSpellName(spellId), strjoin(":", tostringall(unit, castId, spellId, ...)))
 			end
 		end
 	end
 	function sh.UNIT_SPELLCAST_START(unit, castId, spellId, ...)
-		if safeUnit(unit) then
+		if not issecretvalue(spellId) and safeUnit(unit) then
 			local _, _, _, startTime, endTime = UnitCastingInfo(unit)
 			local time = ((endTime or 0) - (startTime or 0)) / 1000
 
@@ -1120,11 +1137,11 @@ do
 			local maxPower = UnitPowerMax(unit)
 			local hp = maxHP == 0 and maxHP or (UnitHealth(unit) / maxHP * 100)
 			local power = maxPower == 0 and maxPower or (UnitPower(unit) / maxPower * 100)
-			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- %ss [[%s]]", UnitName(unit), hp, power, UnitName(unit.."target"), GetSpellName(spellId), time, strjoin(":", tostringall(unit, castId, spellId, ...)))
+			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- %ss [[%s]]", TSUnitName(unit), hp, power, TSUnitName(unit.."target"), GetSpellName(spellId), time, strjoin(":", tostringall(unit, castId, spellId, ...)))
 		end
 	end
 	function sh.UNIT_SPELLCAST_CHANNEL_START(unit, castId, spellId, ...)
-		if safeUnit(unit) then
+		if not issecretvalue(spellId) and safeUnit(unit) then
 			local _, _, _, startTime, endTime = UnitChannelInfo(unit)
 			local time = ((endTime or 0) - (startTime or 0)) / 1000
 
@@ -1132,13 +1149,17 @@ do
 			local maxPower = UnitPowerMax(unit)
 			local hp = maxHP == 0 and maxHP or (UnitHealth(unit) / maxHP * 100)
 			local power = maxPower == 0 and maxPower or (UnitPower(unit) / maxPower * 100)
-			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- %ss [[%s]]", UnitName(unit), hp, power, UnitName(unit.."target"), GetSpellName(spellId), time, strjoin(":", tostringall(unit, castId, spellId, ...)))
+			return format("%s(%.1f%%-%.1f%%){Target:%s} -%s- %ss [[%s]]", TSUnitName(unit), hp, power, TSUnitName(unit.."target"), GetSpellName(spellId), time, strjoin(":", tostringall(unit, castId, spellId, ...)))
 		end
 	end
 
 	function sh.UNIT_TARGET(unit)
-		if safeUnit(unit) then
-			return format("%s#%s#Target: %s#TargetOfTarget: %s", unit, tostring(UnitName(unit)), tostring(UnitName(unit.."target")), tostring(UnitName(unit.."targettarget")))
+		if not issecretvalue(unit) and safeUnit(unit) then
+			if mapvalues then
+				return format("%s#%s#Target: %s#TargetOfTarget: %s", unit, tostringall(mapvalues(ReplaceSecrets, TSUnitName(unit), TSUnitName(unit.."target"), TSUnitName(unit.."targettarget"))))
+			else
+				return format("%s#%s#Target: %s#TargetOfTarget: %s", unit, tostring(TSUnitName(unit)), tostring(TSUnitName(unit.."target")), tostring(TSUnitName(unit.."targettarget")))
+			end
 		end
 	end
 end
@@ -1152,24 +1173,25 @@ function sh.PLAYER_TARGET_CHANGED()
 		local classification = UnitClassification("target") or "nil"
 		local creatureType = UnitCreatureType("target") or "nil"
 		local typeclass = classification == "normal" and creatureType or (classification.." "..creatureType)
-		local name = UnitName("target")
-		return (format("%s %s (%s) - %s # %s", tostring(level), tostring(reaction), tostring(typeclass), tostring(name), tostring(guid)))
+		local name = TSUnitName("target")
+		if mapvalues then
+			return (format("%s %s (%s) - %s # %s", tostringall(mapvalues(ReplaceSecrets, level, reaction, typeclass, name, guid))))
+		else
+			return (format("%s %s (%s) - %s # %s", tostring(level), tostring(reaction), tostring(typeclass), tostring(name), tostring(guid)))
+		end
 	end
 end
 
-function sh.INSTANCE_ENCOUNTER_ENGAGE_UNIT(...)
-	return strjoin("#", tostringall("Fake Args:",
-		"boss1", UnitCanAttack("player", "boss1"), UnitExists("boss1"), UnitIsVisible("boss1"), UnitName("boss1"), UnitGUID("boss1"), UnitClassification("boss1"), UnitHealth("boss1"),
-		"boss2", UnitCanAttack("player", "boss2"), UnitExists("boss2"), UnitIsVisible("boss2"), UnitName("boss2"), UnitGUID("boss2"), UnitClassification("boss2"), UnitHealth("boss2"),
-		"boss3", UnitCanAttack("player", "boss3"), UnitExists("boss3"), UnitIsVisible("boss3"), UnitName("boss3"), UnitGUID("boss3"), UnitClassification("boss3"), UnitHealth("boss3"),
-		"boss4", UnitCanAttack("player", "boss4"), UnitExists("boss4"), UnitIsVisible("boss4"), UnitName("boss4"), UnitGUID("boss4"), UnitClassification("boss4"), UnitHealth("boss4"),
-		"boss5", UnitCanAttack("player", "boss5"), UnitExists("boss5"), UnitIsVisible("boss5"), UnitName("boss5"), UnitGUID("boss5"), UnitClassification("boss5"), UnitHealth("boss5"),
-		"Real Args:", ...)
-	)
-end
-
 function sh.UNIT_TARGETABLE_CHANGED(unit)
-	return format("-%s- [CanAttack:%s#Exists:%s#IsVisible:%s#Name:%s#GUID:%s#Classification:%s#Health:%s]", tostringall(unit, UnitCanAttack("player", unit), UnitExists(unit), UnitIsVisible(unit), UnitName(unit), UnitGUID(unit), UnitClassification(unit), (UnitHealth(unit))))
+	if not issecretvalue(unit) then
+		if mapvalues then
+			return format("-%s- [CanAttack:%s#Exists:%s#IsVisible:%s#Name:%s#GUID:%s#Classification:%s#Health:%s]", tostringall(unit, mapvalues(ReplaceSecrets, UnitCanAttack("player", unit), UnitExists(unit), UnitIsVisible(unit), TSUnitName(unit), UnitGUID(unit), UnitClassification(unit), (UnitHealth(unit)))))
+		else
+			return format("-%s- [CanAttack:%s#Exists:%s#IsVisible:%s#Name:%s#GUID:%s#Classification:%s#Health:%s]", tostringall(unit, UnitCanAttack("player", unit), UnitExists(unit), UnitIsVisible(unit), TSUnitName(unit), UnitGUID(unit), UnitClassification(unit), (UnitHealth(unit))))
+		end
+	else
+		return "<secret>"
+	end
 end
 
 do
@@ -1182,10 +1204,12 @@ do
 	}
 	function sh.UNIT_POWER_UPDATE(unit, typeName)
 		if not allowedPowerUnits[unit] then return end
+		local currentPower =  UnitPower(unit)
+		if issecretvalue(currentPower) then return end
 		local powerType = format("TYPE:%s/%d", typeName, UnitPowerType(unit))
-		local mainPower = format("MAIN:%d/%d", UnitPower(unit), UnitPowerMax(unit))
+		local mainPower = format("MAIN:%d/%d", currentPower, UnitPowerMax(unit))
 		local altPower = format("ALT:%d/%d", UnitPower(unit, 10), UnitPowerMax(unit, 10))
-		return strjoin("#", unit, UnitName(unit), powerType, mainPower, altPower)
+		return strjoin("#", unit, TSUnitName(unit), powerType, mainPower, altPower)
 	end
 end
 
@@ -1281,12 +1305,16 @@ function sh.CINEMATIC_START(...)
 end
 
 function sh.CHAT_MSG_ADDON(prefix, msg, channel, sender)
-	if prefix == "Transcriptor" and (channel == "RAID" or channel == "PARTY" or channel == "INSTANCE_CHAT") then
+	if not issecretvalue(msg) and prefix == "Transcriptor" and (channel == "RAID" or channel == "PARTY" or channel == "INSTANCE_CHAT") then
 		return strjoin("#", "RAID_BOSS_WHISPER_SYNC", msg, sender)
 	end
 end
 
 function sh.CHAT_MSG_RAID_BOSS_EMOTE(msg, npcName, ...)
+	if issecretvalue(msg) then
+		return strjoin("#", tostringall(mapvalues(ReplaceSecrets, msg, npcName, ...)))
+	end
+
 	local id = strmatch(msg, "|Hspell:([^|]+)|h")
 	if id then
 		local spellId = tonumber(id)
@@ -1306,52 +1334,212 @@ function sh.CHAT_MSG_RAID_BOSS_EMOTE(msg, npcName, ...)
 	return strjoin("#", msg, npcName, tostringall(...))
 end
 
-do
-	local UnitAura = C_UnitAuras and C_UnitAuras.GetAuraDataByIndex or UnitAura
-	function sh.UNIT_AURA(unit)
-		for i = 1, 100 do
-			local name, _, _, _, duration, _, _, _, _, spellId, _, isBossAura = UnitAura(unit, i, "HARMFUL")
-			if type(name) == "table" then
-				duration = name.duration
-				spellId = name.spellId
-				isBossAura = name.isBossAura
-				name = name.name
-			end
+function sh.CHAT_MSG_RAID_BOSS_WHISPER(...)
+	if mapvalues then
+		return strjoin("#", tostringall(mapvalues(ReplaceSecrets, ...)))
+	else
+		return strjoin("#", tostringall(...))
+	end
+end
 
-			if not spellId then
-				break
-			elseif not hiddenAuraEngageList[spellId] and not hiddenUnitAuraCollector[spellId] and not PLAYER_SPELL_BLOCKLIST[spellId] then
-				if UnitIsVisible(unit) then
-					if isBossAura then
-						hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("BOSS_DEBUFF", spellId, name, duration, unit, UnitName(unit)))
+function sh.CHAT_MSG_MONSTER_YELL(...)
+	if mapvalues then
+		return strjoin("#", tostringall(mapvalues(ReplaceSecrets, ...)))
+	else
+		return strjoin("#", tostringall(...))
+	end
+end
+sh.CHAT_MSG_MONSTER_EMOTE = sh.CHAT_MSG_MONSTER_YELL
+sh.CHAT_MSG_MONSTER_SAY = sh.CHAT_MSG_MONSTER_YELL
+sh.CHAT_MSG_MONSTER_WHISPER = sh.CHAT_MSG_MONSTER_YELL
+
+do
+	local events = {}
+	do
+		local codes = {
+			[0] = "Active",
+			[1] = "Paused",
+			[2] = "Finished",
+			[3] = "Canceled",
+		}
+
+		do
+			local entriesInTable = {
+				"id",
+				"source",
+				"spellName",
+				"spellID",
+				"iconFileID",
+				"duration",
+				"maxQueueDuration",
+				"icons",
+				"severity",
+				"isApproximate",
+			}
+			local entriesToBlock = {
+				color = true,
+			}
+			function sh.ENCOUNTER_TIMELINE_EVENT_ADDED(eventInfo)
+				if eventInfo.source ~= 0 then return end -- Enum.EncounterTimelineEventSource.Encounter
+				events[eventInfo.id] = true
+				local msgTable = {}
+
+				local state = C_EncounterTimeline.GetEventState(eventInfo.id)
+				msgTable[1] = ("State: %d (%s)"):format(state, codes[state])
+
+				for i = 1, #entriesInTable do
+					local entry = entriesInTable[i]
+					local value = eventInfo[entry]
+					if not issecretvalue(value) then
+						if value then
+							msgTable[#msgTable+1] = entry
+							msgTable[#msgTable+1] = tostring(value)
+						end
 					else
-						hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall(spellId, name, duration, unit, UnitName(unit)))
+						msgTable[#msgTable+1] = entry
+						msgTable[#msgTable+1] = "<secret>"
 					end
-				else -- If it's not visible it may not show up in CLEU, use this as an indicator of a false positive
-					hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("UNIT_NOT_VISIBLE", spellId, name, duration, unit, UnitName(unit)))
+				end
+				for k,v in next, eventInfo do
+					if not tContains(entriesInTable, k) and not entriesToBlock[k] then
+						if not issecretvalue(v) then
+							msgTable[#msgTable+1] = k
+							msgTable[#msgTable+1] = tostring(v)
+						else
+							msgTable[#msgTable+1] = k
+							msgTable[#msgTable+1] = "<secret>"
+						end
+					end
+				end
+				local msg = tconcat(msgTable, "#")
+				return msg
+			end
+		end
+
+		function sh.ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(eventID)
+			if events[eventID] then
+				local newState = C_EncounterTimeline.GetEventState(eventID)
+				local text = ("State: %d (%s)"):format(newState, codes[newState])
+				return strjoin("#", eventID, text)
+			end
+		end
+	end
+
+	function sh.ENCOUNTER_TIMELINE_EVENT_REMOVED(eventID)
+		if events[eventID] then
+			events[eventID] = nil
+			return strjoin("#", eventID)
+		end
+	end
+end
+
+do
+	local entriesInTable = {
+		"text",
+		"casterGUID",
+		"casterName",
+		"targetGUID",
+		"targetName",
+		"iconFileID",
+		"tooltipSpellID",
+		"isDeadly",
+		"duration",
+		"severity",
+		"shouldPlaySound",
+		"shouldShowChatMessage",
+		"shouldShowWarning",
+	}
+	local entriesToBlock = {
+		color = true,
+	}
+	function sh.ENCOUNTER_WARNING(encounterWarningInfo)
+		local msgTable = {}
+		for i = 1, #entriesInTable do
+			local entry = entriesInTable[i]
+			local value = encounterWarningInfo[entry]
+			if not issecretvalue(value) then
+				if value then
+					msgTable[#msgTable+1] = entry
+					msgTable[#msgTable+1] = tostring(value)
+				end
+			else
+				msgTable[#msgTable+1] = entry
+				msgTable[#msgTable+1] = "<secret>"
+			end
+		end
+		for k,v in next, encounterWarningInfo do
+			if not tContains(entriesInTable, k) and not entriesToBlock[k] then
+				if not issecretvalue(v) then
+					msgTable[#msgTable+1] = k
+					msgTable[#msgTable+1] = tostring(v)
+				else
+					msgTable[#msgTable+1] = k
+					msgTable[#msgTable+1] = "<secret>"
 				end
 			end
 		end
-		for i = 1, 100 do
-			local name, _, _, _, duration, _, _, _, _, spellId, _, isBossAura = UnitAura(unit, i, "HELPFUL")
-			if type(name) == "table" then
-				duration = name.duration
-				spellId = name.spellId
-				isBossAura = name.isBossAura
-				name = name.name
-			end
+		local msg = tconcat(msgTable, "#")
+		return msg
+	end
+end
 
-			if not spellId then
-				break
-			elseif not hiddenAuraEngageList[spellId] and not hiddenUnitAuraCollector[spellId] and not PLAYER_SPELL_BLOCKLIST[spellId] then
-				if UnitIsVisible(unit) then
-					if isBossAura then
-						hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("BOSS_BUFF", spellId, name, duration, unit, UnitName(unit)))
-					else
-						hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall(spellId, name, duration, unit, UnitName(unit)))
+do
+	local GetAuraDataByIndex = C_UnitAuras.GetAuraDataByIndex
+	function sh.UNIT_AURA(unit, updateInfo)
+		if not updateInfo or updateInfo.isFullUpdate then
+			for i = 1, 100 do
+				local auraTbl = GetAuraDataByIndex(unit, i, "HARMFUL")
+				if not auraTbl then
+					break
+				else
+					local spellId = auraTbl.spellId
+					if not hiddenAuraEngageList[spellId] and not hiddenUnitAuraCollector[spellId] and not hiddenAuraPermList[spellId] and not PLAYER_SPELL_BLOCKLIST[spellId] then
+						if UnitIsVisible(unit) then
+							if auraTbl.isBossAura then
+								hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("BOSS_DEBUFF", spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+							else
+								hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall(spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+							end
+						else -- If it's not visible it may not show up in CLEU, use this as an indicator of a false positive
+							hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("UNIT_NOT_VISIBLE", spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+						end
 					end
-				else -- If it's not visible it may not show up in CLEU, use this as an indicator of a false positive
-					hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("UNIT_NOT_VISIBLE", spellId, name, duration, unit, UnitName(unit)))
+				end
+			end
+			for i = 1, 100 do
+				local auraTbl = GetAuraDataByIndex(unit, i, "HELPFUL")
+				if not auraTbl then
+					break
+				else
+					local spellId = auraTbl.spellId
+					if not hiddenAuraEngageList[spellId] and not hiddenUnitAuraCollector[spellId] and not hiddenAuraPermList[spellId] and not PLAYER_SPELL_BLOCKLIST[spellId] then
+						if UnitIsVisible(unit) then
+							if auraTbl.isBossAura then
+								hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("BOSS_BUFF", spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+							else
+								hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall(spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+							end
+						else -- If it's not visible it may not show up in CLEU, use this as an indicator of a false positive
+							hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("UNIT_NOT_VISIBLE", spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+						end
+					end
+				end
+			end
+		elseif updateInfo.addedAuras then
+			for i = 1, #updateInfo.addedAuras do
+				local auraTbl = updateInfo.addedAuras[i]
+				local spellId = auraTbl.spellId
+
+				if not hiddenAuraEngageList[spellId] and not hiddenUnitAuraCollector[spellId] and not hiddenAuraPermList[spellId] and not PLAYER_SPELL_BLOCKLIST[spellId] then
+					if UnitIsVisible(unit) then
+						if auraTbl.isBossAura then
+							hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("BOSS_BUFF", spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+						else
+							hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall(spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+						end
+					else -- If it's not visible it may not show up in CLEU, use this as an indicator of a false positive
+						hiddenUnitAuraCollector[spellId] = strjoin("#", tostringall("UNIT_NOT_VISIBLE", spellId, auraTbl.name, auraTbl.duration, unit, TSUnitName(unit)))
+					end
 				end
 			end
 		end
@@ -1360,32 +1548,33 @@ end
 
 function sh.NAME_PLATE_UNIT_ADDED(unit)
 	local guid = UnitGUID(unit)
-	if not collectNameplates[guid] then
+	if not issecretvalue(guid) and not collectNameplates[guid] then
 		collectNameplates[guid] = true
-		local name = UnitName(unit)
+		local name = TSUnitName(unit)
 		return strjoin("#", name, guid)
 	end
 end
 
 function sh.GOSSIP_SHOW()
 	local guid = UnitGUID("npc")
-	if guid then
-		local gossipOptions = C_GossipInfo_GetOptions()
-		if gossipOptions[1] then
-			local gossipTbl = {}
-			for i = 1, #gossipOptions do
-				gossipTbl[i] = strjoin(":", gossipOptions[i].gossipOptionID or "nil", gossipOptions[i].name or "")
-			end
-			return strjoin("#", guid, tconcat(gossipTbl, ","))
+	local gossipOptions = C_GossipInfo_GetOptions()
+	if gossipOptions[1] then
+		local gossipTbl = {}
+		for i = 1, #gossipOptions do
+			gossipTbl[i] = strjoin(":", gossipOptions[i].gossipOptionID or "nil", gossipOptions[i].name or "")
 		end
+		return strjoin("#", "GUID", ReplaceSecrets(guid), tconcat(gossipTbl, ","))
 	end
 end
 
 local wowEvents = {
 	-- Raids
 	"CHAT_MSG_ADDON",
+	"ENCOUNTER_TIMELINE_EVENT_ADDED",
+	"ENCOUNTER_TIMELINE_EVENT_REMOVED",
+	"ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED",
+	"ENCOUNTER_WARNING",
 	"CHAT_MSG_RAID_WARNING",
-	"COMBAT_LOG_EVENT_UNFILTERED",
 	"PLAYER_REGEN_DISABLED",
 	"PLAYER_REGEN_ENABLED",
 	"CHAT_MSG_MONSTER_EMOTE",
@@ -1405,7 +1594,6 @@ local wowEvents = {
 	"UNIT_SPELLCAST_CHANNEL_STOP",
 	"UNIT_POWER_UPDATE",
 	"UPDATE_UI_WIDGET",
-	"UNIT_AURA",
 	"UNIT_TARGET",
 	"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
 	"UNIT_TARGETABLE_CHANGED",
@@ -1431,6 +1619,10 @@ local wowEvents = {
 	"CHAT_MSG_BG_SYSTEM_NEUTRAL",
 	"ARENA_OPPONENT_UPDATE",
 }
+if not C_Secrets then
+	wowEvents[#wowEvents+1] = "COMBAT_LOG_EVENT_UNFILTERED"
+	wowEvents[#wowEvents+1] = "UNIT_AURA"
+end
 
 local eventCategories = {
 	PLAYER_REGEN_DISABLED = "COMBAT",
@@ -1438,6 +1630,10 @@ local eventCategories = {
 	ENCOUNTER_START = "COMBAT",
 	ENCOUNTER_END = "COMBAT",
 	BOSS_KILL = "COMBAT",
+	ENCOUNTER_TIMELINE_EVENT_ADDED = "ENCOUNTER",
+	ENCOUNTER_TIMELINE_EVENT_REMOVED = "ENCOUNTER",
+	ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED = "ENCOUNTER",
+	ENCOUNTER_WARNING = "ENCOUNTER",
 	INSTANCE_ENCOUNTER_ENGAGE_UNIT = "COMBAT",
 	UNIT_TARGETABLE_CHANGED = "COMBAT",
 	CHAT_MSG_MONSTER_EMOTE = "MONSTER",
@@ -1492,8 +1688,16 @@ local eventCategories = {
 	BigWigs_ClearNameplate = "BigWigs",
 	DBM_Announce = "DBM",
 	DBM_Debug = "DBM",
-	DBM_TimerStart = "DBM",
+	DBM_TimerBegin = "DBM",
 	DBM_TimerStop = "DBM",
+	DBM_TimerUpdate = "DBM",
+	DBM_TimerPause = "DBM",
+	DBM_TimerResume = "DBM",
+	DBM_NameplateStart = "DBM",
+	DBM_NameplateStop = "DBM",
+	DBM_NameplatePause = "DBM",
+	DBM_NameplateResume = "DBM",
+	DBM_EnemyEngaged = "DBM",
 	PLAYER_TARGET_CHANGED = "NONE",
 	CHAT_MSG_ADDON = "NONE",
 	CHAT_MSG_RAID_WARNING = "NONE",
@@ -1529,59 +1733,121 @@ local bwEvents = {
 local dbmEvents = {
 	"DBM_Announce",
 	"DBM_Debug",
-	"DBM_TimerStart",
+	"DBM_TimerBegin",
 	"DBM_TimerStop",
+	"DBM_TimerUpdate",
+	"DBM_TimerPause",
+	"DBM_TimerResume",
+	"DBM_NameplateStart",
+	"DBM_NameplateStop",
+	"DBM_NameplatePause",
+	"DBM_NameplateResume",
+	"DBM_EnemyEngaged",
 }
+local eventHandler
+do
+	local bossUnits = {
+		"boss1", "boss2", "boss3", "boss4", "boss5",
+		"boss6", "boss7", "boss8", "boss9", "boss10",
+		"boss11", "boss12", "boss13", "boss14", "boss15",
+		"arena1", "arena2", "arena3", "arena4", "arena5",
+	}
 
-local function eventHandler(_, event, ...)
-	if TranscriptIgnore[event] then return end
-	local line
-	if sh[event] then
-		line = sh[event](...)
-	else
-		line = strjoin("#", tostringall(...))
-	end
-	if not line then return end
-	local stop = debugprofilestop() / 1000
-	local t = stop - logStartTime
-	local time = date("%H:%M:%S")
-	-- We only have CLEU in the total log, it's way too much information to log twice.
-	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s", t, time, line)
-	elseif event == "ENCOUNTER_START" then
-		local text = format("<%.2f %s> [%s] %s", t, time, event, line)
-		currentLog.total[#currentLog.total+1] = text
-		local cat = eventCategories[event] or event
-		if cat ~= "NONE" then
-			if type(currentLog[cat]) ~= "table" then currentLog[cat] = {} end
-			tinsert(currentLog[cat], text)
+	function eventHandler(_, event, ...)
+		if TranscriptIgnore[event] then return end
+		local line
+		if sh[event] then
+			line = sh[event](...)
+		else
+			line = strjoin("#", tostringall(...))
 		end
-
-		local instanceInfoLine = strjoin("#", tostringall(GetInstanceInfo()))
-		currentLog.total[#currentLog.total+1] = format("<%.2f %s> [GetInstanceInfo()] %s", t, time, instanceInfoLine)
-
-		local UnitPosition, UnitClass = UnitPosition, UnitClass
-		local _, _, _, myInstance = UnitPosition("player")
-		for unit in Transcriptor:IterateGroup() do
-			local _, _, _, tarInstanceId = UnitPosition(unit)
-			if tarInstanceId == myInstance then
-				local _, class = UnitClass(unit)
-				local name = UnitName(unit)
-				local specId, role, position, talents = nil, nil, nil, nil
-				if playerSpecList[name] then
-					specId, role, position, talents = playerSpecList[name][1], playerSpecList[name][2], playerSpecList[name][3], playerSpecList[name][4]
-				end
-				local playerInfoLine = strjoin("#", tostringall(name, class, UnitGUID(unit), specId, role, position, talents))
-				currentLog.total[#currentLog.total+1] = format("<%.2f %s> [%s] %s", t, time, "PLAYER_INFO", playerInfoLine)
+		if not line then return end
+		local stop = debugprofilestop() / 1000
+		local t = stop - logStartTime
+		local time = date("%H:%M:%S")
+		-- We only have CLEU in the total log, it's way too much information to log twice.
+		if event == "COMBAT_LOG_EVENT_UNFILTERED" then
+			currentLog.total[#currentLog.total+1] = format("<%.2f %s> [CLEU] %s", t, time, line)
+		elseif event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then
+			local text = format("<%.2f %s> [%s] %s", t, time, event, line)
+			currentLog.total[#currentLog.total+1] = text
+			local cat = eventCategories[event] or event
+			if cat ~= "NONE" then
+				if type(currentLog[cat]) ~= "table" then currentLog[cat] = {} end
+				tinsert(currentLog[cat], text)
 			end
-		end
-	else
-		local text = format("<%.2f %s> [%s] %s", t, time, event, line)
-		currentLog.total[#currentLog.total+1] = text
-		local cat = eventCategories[event] or event
-		if cat ~= "NONE" then
-			if type(currentLog[cat]) ~= "table" then currentLog[cat] = {} end
-			tinsert(currentLog[cat], text)
+
+			local hasBosses = false
+			for i = 1, #bossUnits do
+				local unit = bossUnits[i]
+				local guid = UnitGUID(unit)
+				if guid then
+					hasBosses = true
+					if mapvalues then
+						local info = strjoin("#", tostringall(mapvalues(ReplaceSecrets,
+							"Name", TSUnitName(unit),
+							"GUID", guid,
+							"Health", UnitHealth(unit),
+							"MaxHealth", UnitHealthMax(unit),
+							"Exists", UnitExists(unit),
+							"Visible", UnitIsVisible(unit),
+							"CanAttack", UnitCanAttack("player", unit),
+							"ShowUninteractable", ShowBossFrameWhenUninteractable(unit))
+						))
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IEEU %s] %s", t, time, unit, info)
+					else
+						local info = strjoin("#", tostringall(
+							"Name", TSUnitName(unit),
+							"GUID", guid,
+							"Health", UnitHealth(unit),
+							"MaxHealth", UnitHealthMax(unit),
+							"Exists", UnitExists(unit),
+							"Visible", UnitIsVisible(unit),
+							"CanAttack", UnitCanAttack("player", unit),
+							"ShowUninteractable", ShowBossFrameWhenUninteractable(unit))
+						)
+						currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IEEU %s] %s", t, time, unit, info)
+					end
+				end
+			end
+			if not hasBosses then
+				currentLog.total[#currentLog.total+1] = format("<%.2f %s> [IEEU] No bosses found", t, time)
+			end
+		elseif event == "ENCOUNTER_START" then
+			local text = format("<%.2f %s> [%s] %s", t, time, event, line)
+			currentLog.total[#currentLog.total+1] = text
+			local cat = eventCategories[event] or event
+			if cat ~= "NONE" then
+				if type(currentLog[cat]) ~= "table" then currentLog[cat] = {} end
+				tinsert(currentLog[cat], text)
+			end
+
+			local instanceInfoLine = strjoin("#", tostringall(GetInstanceInfo()))
+			currentLog.total[#currentLog.total+1] = format("<%.2f %s> [GetInstanceInfo()] %s", t, time, instanceInfoLine)
+
+			local UnitPosition, UnitClass = UnitPosition, UnitClass
+			local _, _, _, myInstance = UnitPosition("player")
+			for unit in Transcriptor:IterateGroup() do
+				local _, _, _, tarInstanceId = UnitPosition(unit)
+				if tarInstanceId == myInstance then
+					local _, class = UnitClass(unit)
+					local name = TSUnitName(unit)
+					local specId, role, position, talents = nil, nil, nil, nil
+					if playerSpecList[name] then
+						specId, role, position, talents = playerSpecList[name][1], playerSpecList[name][2], playerSpecList[name][3], playerSpecList[name][4]
+					end
+					local playerInfoLine = strjoin("#", tostringall(name, class, UnitGUID(unit), specId, role, position, talents))
+					currentLog.total[#currentLog.total+1] = format("<%.2f %s> [%s] %s", t, time, "PLAYER_INFO", playerInfoLine)
+				end
+			end
+		else
+			local text = format("<%.2f %s> [%s] %s", t, time, event, line)
+			currentLog.total[#currentLog.total+1] = text
+			local cat = eventCategories[event] or event
+			if cat ~= "NONE" then
+				if type(currentLog[cat]) ~= "table" then currentLog[cat] = {} end
+				tinsert(currentLog[cat], text)
+			end
 		end
 	end
 end
@@ -1668,10 +1934,24 @@ end
 -- Addon
 --
 
-local menu = {}
-local popupFrame = CreateFrame("Frame", "TranscriptorMenu", eventFrame, "UIDropDownMenuTemplate")
-local function openMenu(frame)
-	EasyMenu(menu, popupFrame, frame, 20, 4, "MENU")
+local setupMenu
+do
+	local function isSelected(v)
+		return TranscriptIgnore[v]
+	end
+	local function setSelected(v)
+		TranscriptIgnore[v] = not TranscriptIgnore[v] or nil
+	end
+	function setupMenu(_, root)
+		root:SetScrollMode(400)
+		root:CreateTitle(L["|cFFFFD200Transcriptor|r - Disabled Events"])
+		for _, v in ipairs(Transcriptor.events) do
+			root:CreateCheckbox(v, isSelected, setSelected, v)
+		end
+		root:CreateButton(CLOSE, function()
+			return 4 -- MenuResponse.CloseAll
+		end)
+	end
 end
 
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Transcriptor", {
@@ -1695,7 +1975,7 @@ local ldb = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Transcriptor"
 				Transcriptor:StopLog()
 			end
 		elseif button == "RightButton" then
-			openMenu(self)
+			MenuUtil.CreateContextMenu(self, setupMenu)
 		elseif button == "MiddleButton" and IsAltKeyDown() then
 			Transcriptor:ClearAll()
 		end
@@ -1705,13 +1985,6 @@ local ldb = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Transcriptor"
 Transcriptor.events = {}
 local function insertMenuItems(tbl)
 	for _, v in next, tbl do
-		tinsert(menu, {
-			text = v,
-			func = function() TranscriptIgnore[v] = not TranscriptIgnore[v] end,
-			checked = function() return TranscriptIgnore[v] end,
-			isNotRadio = true,
-			keepShownOnClick = 1,
-		})
 		tinsert(Transcriptor.events, v)
 	end
 end
@@ -1721,11 +1994,9 @@ init:SetScript("OnEvent", function(self, event)
 	if type(TranscriptDB) ~= "table" then TranscriptDB = {} end
 	if type(TranscriptIgnore) ~= "table" then TranscriptIgnore = {} end
 
-	tinsert(menu, { text = L["|cFFFFD200Transcriptor|r - Disabled Events"], fontObject = "GameTooltipHeader", notCheckable = 1 })
 	insertMenuItems(wowEvents)
 	if BigWigsLoader then insertMenuItems(bwEvents) end
 	if DBM then insertMenuItems(dbmEvents) end
-	tinsert(menu, { text = CLOSE, func = function() CloseDropDownMenus() end, notCheckable = 1 })
 
 	C_ChatInfo.RegisterAddonMessagePrefix("Transcriptor")
 
@@ -1746,7 +2017,7 @@ init:SetScript("OnEvent", function(self, event)
 
 	local LibSpec = LibStub and LibStub("LibSpecialization", true)
 	if LibSpec then
-		LibSpec:Register(Transcriptor, function(specId, role, position, playerName, talents)
+		LibSpec.RegisterGroup({}, function(specId, role, position, playerName, talents)
 			playerSpecList[playerName] = {specId, role, position, talents}
 		end)
 	end
@@ -1768,14 +2039,26 @@ init:RegisterEvent("PLAYER_LOGIN")
 local function BWEventHandler(event, module, ...)
 	if type(module) == "table" then
 		if module.baseName == "BigWigs_CommonAuras" then return end
-		eventHandler(eventFrame, event, module.moduleName, ...)
+		if mapvalues then
+			eventHandler(eventFrame, event, module.moduleName, mapvalues(ReplaceSecrets, ...))
+		else
+			eventHandler(eventFrame, event, module.moduleName, ...)
+		end
 	else
-		eventHandler(eventFrame, event, module, ...)
+		if mapvalues then
+			eventHandler(eventFrame, event, module, mapvalues(ReplaceSecrets, ...))
+		else
+			eventHandler(eventFrame, event, module, ...)
+		end
 	end
 end
 
 local function DBMEventHandler(...)
-	eventHandler(eventFrame, ...)
+	if mapvalues then
+		eventHandler(eventFrame, mapvalues(ReplaceSecrets, ...))
+	else
+		eventHandler(eventFrame, ...)
+	end
 end
 
 do
@@ -1811,7 +2094,8 @@ do
 		[5] = "10Heroic",
 		[6] = "25Heroic",
 		[7] = "25LFR",
-		[8] = "5Challenge",
+		[8] = "Mythic+",
+		[9] = "40Normal",
 		[14] = "Normal",
 		[15] = "Heroic",
 		[16] = "Mythic",
@@ -1821,16 +2105,25 @@ do
 		[23] = "5Mythic",
 		[24] = "5Timewalking",
 		[33] = "RaidTimewalking",
+		[148] = "20Normal",
+		[175] = "10Normal",
+		[176] = "25Normal",
+		[185] = "20SOD",
+		[186] = "40SOD",
+		[198] = "10SOD",
 		[205] = "Follower",
 		[208] = "Delve",
 		[216] = "Quest",
 		[220] = "Story",
+		[226] = "20SOD",
+		[244] = "25TitanReforged",
 	}
 	local wowVersion, buildRevision = GetBuildInfo() -- Note that both returns here are strings, not numbers.
-	local logNameFormat = "[%s]@[%s] - Zone:%d Difficulty:%d,%s Type:%s " .. format("Version: %s.%s", wowVersion, buildRevision)
+	local tsVersion = C_AddOns.GetAddOnMetadata("Transcriptor", "Version")
+	local logNameFormat = "[%s]@[%s] - Zone#%d (%s)#Difficulty#%d (%s)#Type#%s#WoWVer#%s.%s#TSVer#%s"
 	function Transcriptor:StartLog(silent)
 		if logging then
-			print(L["You are already logging an encounter."])
+			TSPrint(L["You are already logging an encounter."])
 		else
 			ldb.text = L["|cffFF0000Recording|r"]
 			ldb.icon = "Interface\\AddOns\\Transcriptor\\icon_on"
@@ -1847,9 +2140,12 @@ do
 				prevEncounterStart = nil
 			end
 			local _, instanceType, diff, _, _, _, _, instanceId = GetInstanceInfo()
-			local diffText = difficultyTbl[diff] or "None"
+			local diffText = difficultyTbl[diff] or "?"
 			local time = date("%H:%M:%S")
-			logName = format(logNameFormat, date("%Y-%m-%d"), time, instanceId or 0, diff, diffText, instanceType)
+			local today = date("%Y-%m-%d")
+			instanceId = instanceId or 0
+			local zoneName = GetRealZoneText(instanceId) or "?"
+			logName = format(logNameFormat, today, time, instanceId, zoneName, diff, diffText, instanceType, wowVersion, buildRevision, tsVersion)
 
 			if type(TranscriptDB[logName]) ~= "table" then TranscriptDB[logName] = {} end
 			if type(TranscriptIgnore) ~= "table" then TranscriptIgnore = {} end
@@ -1864,7 +2160,7 @@ do
 					if C_EventUtils.IsEventValid(event) then
 						eventFrame:RegisterEvent(event)
 					elseif RETAIL then
-						print("There's an invalid event in our event list: ".. event)
+						TSPrint("There's an invalid event in our event list: ".. event)
 					end
 				end
 			end
@@ -1893,26 +2189,26 @@ do
 
 			hiddenAuraEngageList = {}
 			do
-				local UnitAura = C_UnitAuras and C_UnitAuras.GetAuraDataByIndex or UnitAura
+				local GetAuraDataByIndex = C_UnitAuras.GetAuraDataByIndex
 				local UnitPosition = UnitPosition
 				local _, _, _, myInstance = UnitPosition("player")
 				for unit in Transcriptor:IterateGroup() do
 					local _, _, _, tarInstanceId = UnitPosition(unit)
 					if tarInstanceId == myInstance then
 						for i = 1, 100 do
-							local _, _, _, _, _, _, _, _, _, spellId = UnitAura(unit, i, "HELPFUL")
-							if not spellId then
+							local auraTbl = GetAuraDataByIndex(unit, i, "HELPFUL")
+							if not auraTbl then
 								break
-							elseif not hiddenAuraEngageList[spellId] then
-								hiddenAuraEngageList[spellId] = true
+							elseif not issecretvalue(auraTbl.spellId) and not hiddenAuraEngageList[auraTbl.spellId] then
+								hiddenAuraEngageList[auraTbl.spellId] = true
 							end
 						end
 						for i = 1, 100 do
-							local _, _, _, _, _, _, _, _, _, spellId = UnitAura(unit, i, "HARMFUL")
-							if not spellId then
+							local auraTbl = GetAuraDataByIndex(unit, i, "HARMFUL")
+							if not auraTbl then
 								break
-							elseif not hiddenAuraEngageList[spellId] then
-								hiddenAuraEngageList[spellId] = true
+							elseif not issecretvalue(auraTbl.spellId) and not hiddenAuraEngageList[auraTbl.spellId] then
+								hiddenAuraEngageList[auraTbl.spellId] = true
 							end
 						end
 					end
@@ -1921,8 +2217,8 @@ do
 
 			--Notify Log Start
 			if not silent then
-				print(L["Beginning Transcript: "]..logName)
-				print(L["Remember to stop and start Transcriptor between each wipe or boss kill to get the best logs."])
+				TSPrint(L["Beginning Transcript: "]..logName)
+				TSPrint(L["Remember to stop and start Transcriptor between each wipe or boss kill to get the best logs."])
 			end
 			return logName
 		end
@@ -1931,7 +2227,7 @@ end
 
 function Transcriptor:Clear(log)
 	if logging then
-		print(L["You can't clear your transcripts while logging an encounter."])
+		TSPrint(L["You can't clear your transcripts while logging an encounter."])
 	elseif TranscriptDB[log] then
 		TranscriptDB[log] = nil
 	end
@@ -1957,7 +2253,7 @@ end
 function Transcriptor:IsLogging() return logging end
 function Transcriptor:StopLog(silent)
 	if not logging then
-		print(L["You are not logging an encounter."])
+		TSPrint(L["You are not logging an encounter."])
 	else
 		ldb.text = L["|cff696969Idle|r"]
 		ldb.icon = "Interface\\AddOns\\Transcriptor\\icon_off"
@@ -1970,7 +2266,7 @@ function Transcriptor:StopLog(silent)
 				if C_EventUtils.IsEventValid(event) then
 					eventFrame:UnregisterEvent(event)
 				elseif RETAIL then
-					print("There's an invalid event in our event list: ".. event)
+					TSPrint("There's an invalid event in our event list: ".. event)
 				end
 			end
 		end
@@ -1985,8 +2281,8 @@ function Transcriptor:StopLog(silent)
 		end
 		--Notify Stop
 		if not silent then
-			print(L["Ending Transcript: "]..logName)
-			print(L["Logs will probably be saved to WoW\\WTF\\Account\\<name>\\SavedVariables\\Transcriptor.lua once you relog or reload the user interface."])
+			TSPrint(L["Ending Transcript: "]..logName)
+			TSPrint(L["Logs will probably be saved to WoW\\WTF\\Account\\<name>\\SavedVariables\\Transcriptor.lua once you relog or reload the user interface."])
 		end
 
 		if compareSuccess or compareStart or compareAuraApplied or compareUnitSuccess or compareEmotes then
@@ -2422,9 +2718,9 @@ end
 function Transcriptor:ClearAll()
 	if not logging then
 		TranscriptDB = {}
-		print(L["All transcripts cleared."])
+		TSPrint(L["All transcripts cleared."])
 	else
-		print(L["You can't clear your transcripts while logging an encounter."])
+		TSPrint(L["You can't clear your transcripts while logging an encounter."])
 	end
 end
 

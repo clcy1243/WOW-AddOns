@@ -1,4 +1,4 @@
-Get [VuhDo release v3.175](https://www.curseforge.com/wow/addons/vuhdo/download/5704709) now with support for The War Within pre-patch 11.0.2!
+Get [VuhDo release v3.191](https://www.curseforge.com/wow/addons/vuhdo/download/7037648) now with support for The War Within patch 11.2.0, Ghosts of K'aresh!
 
 To get started read the updated [guide over at Icy-Veins](https://www.icy-veins.com/forums/topic/11805-vuhdo-a-comprehensive-guide/).
 

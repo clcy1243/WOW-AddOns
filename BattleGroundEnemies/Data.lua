@@ -1,4 +1,7 @@
-local AddonName, Data = ...
+---@type string
+local AddonName = ...
+---@class Data
+local Data = select(2, ...)
 
 local L = Data.L
 local DRList = LibStub("DRList-1.0")
@@ -6,9 +9,10 @@ local DRList = LibStub("DRList-1.0")
 local table_insert = table.insert
 
 local GetClassInfo = GetClassInfo
-local GetNumSpecializationsForClassID = GetNumSpecializationsForClassID
+local GetNumSpecializationsForClassID = C_SpecializationInfo and C_SpecializationInfo.GetNumSpecializationsForClassID or GetNumSpecializationsForClassID
 local GetSpecializationInfoForClassID = GetSpecializationInfoForClassID
 local GetSpellInfo = GetSpellInfo
+local GetSpellName = C_Spell and C_Spell.GetSpellName or GetSpellName
 local C_Spell = C_Spell
 local GetSpellTexture = C_Spell and C_Spell.GetSpellTexture or GetSpellTexture
 
@@ -17,6 +21,8 @@ local IsClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 local IsTBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 local IsWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 
+
+Data.PlayerRoles = {"TANK", "HEALER", "DAMAGER"}
 
 Data.CyrillicToRomanian = { -- source Wikipedia: https://en.wikipedia.org/wiki/Romanization_of_Russian
 	["А"] = "a",
@@ -104,13 +110,13 @@ Data.DisplayType = {
 	Countdowntext = L.Countdowntext,
 }
 
-Data.DrCategorys = {
-	disorient = L.DR_Disorient,
-	incapacitate = L.DR_Incapacitate,
-	knockback = L.DR_Knockback,
-	silence  = L.DR_Silence,
-	stun = L.DR_Stun
-}
+-- Data.DrCategorys = {
+-- 	disorient = L.DR_Disorient,
+-- 	incapacitate = L.DR_Incapacitate,
+-- 	knockback = L.DR_Knockback,
+-- 	silence  = L.DR_Silence,
+-- 	stun = L.DR_Stun
+-- }
 
 Data.DebuffTypes = {
 	HELPFUL = {
@@ -161,8 +167,6 @@ Data.VerticalDirections = {
 }
 
 
-
-
 Data.Interruptdurations = {
 	[6552]	= 4,   -- [Warrior] Pummel
 	[96231]	= 4,  -- [Paladin] Rebuke
@@ -170,9 +174,9 @@ Data.Interruptdurations = {
 	[147362]= 3, -- [Hunter] Countershot
 	[187707]= 3, -- [Hunter] Muzzle
 	[1766]	= 5,   -- [Rogue] Kick
-	[183752]= 3, -- [DH] Consume Magic
-	[47528]	= 3,  -- [DK] Mind Freeze
-	[91802]	= 2,  -- [DK] Shambling Rush
+	[183752]= 3, -- [Demon Hunter] Consume Magic, Disrupt since  8.0.1
+	[47528]	= 3,  -- [Death Knight] Mind Freeze
+	[91802]	= 2,  -- [Death Knight] Shambling Rush
 	[57994]	= 3,  -- [Shaman] Wind Shear
 	[115781]= 6, -- [Warlock] Optical Blast
 	[19647]	= 6,  -- [Warlock] Spell Lock
@@ -183,6 +187,7 @@ Data.Interruptdurations = {
 	[116705]= 4, -- [Monk] Spear Hand Strike
 	[106839]= 4, -- [Feral] Skull Bash
 	[93985]	= 4,  -- [Feral] Skull Bash
+	[351338]= 4 -- [Evoker] Quell
 }
 
 -- for spellId, lockoutDuration in pairs(Data.Interruptdurations) do
@@ -736,6 +741,10 @@ Data.BattlegroundspezificBuffs = { --key = mapID, value = table with key = facti
 	[206] = {						-- Twin Peaks, used to be mapID 626 before BFA
 		[0] = 156621, 					-- Alliance Flag
 		[1] = 156618 					-- Horde Flag
+	},
+	[2345] = {						-- Deephaul Ravine added in Patch 11.0.2
+		[0] = 434339, 					-- Deephaul Crystal
+		[1] = 434339 					-- Deephaul Crystal
 	}
 }
 
@@ -807,10 +816,10 @@ Data.TrinketData = {
 if IsClassic then
 	--Classic: there are no spellIDs in the combat log in classic, only spellnames
 	Mixin(Data.TrinketData, {
-		[GetSpellInfo(23273)] = {spellId = 23273, cd = 300, itemID = 18856},	-- Immune Charm/Fear/Polymorph	Rogue, Warlock
-		[GetSpellInfo(23274)] = {spellId = 23274, cd = 300, itemID = 18856}, 	-- Immune Fear/Polymorph/Snare	Mage
-		[GetSpellInfo(23276)] = {spellId = 23276, cd = 300, itemID = 18856},	-- Immune Fear/Polymorph/Stun	Paladin, Priest
-		[GetSpellInfo(23227)] = {spellId = 23227, cd = 300, itemID = 18856}		-- Immune Charm/Fear/Stun		Druid
+		[GetSpellName(23273)] = {spellId = 23273, cd = 300, itemID = 18856},	-- Immune Charm/Fear/Polymorph	Rogue, Warlock
+		[GetSpellName(23274)] = {spellId = 23274, cd = 300, itemID = 18856}, 	-- Immune Fear/Polymorph/Snare	Mage
+		[GetSpellName(23276)] = {spellId = 23276, cd = 300, itemID = 18856},	-- Immune Fear/Polymorph/Stun	Paladin, Priest
+		[GetSpellName(23227)] = {spellId = 23227, cd = 300, itemID = 18856}		-- Immune Charm/Fear/Stun		Druid
 	})
 end
 
@@ -966,16 +975,8 @@ end
 Data.RacialNameToSpellIDs = {}
 Data.Racialnames = {}
 for spellId in pairs(Data.RacialSpellIDtoCooldown) do
-	local racialName
-	if C_Spell and C_Spell.GetSpellInfo then
-		local spellInfo = C_Spell.GetSpellInfo(spellId)
-		if spellInfo then
-			racialName = spellInfo.name
-		end
-	else
-		racialName = GetSpellInfo(spellId)
-	end
-	if racialName then
+	local racialName = GetSpellName(spellId)
+	if racialName and racialName ~= "" then
 		if not Data.RacialNameToSpellIDs[racialName] then
 			Data.RacialNameToSpellIDs[racialName] = {}
 			Data.Racialnames[racialName] = racialName
@@ -1043,11 +1044,7 @@ Data.RolesToSpec = {HEALER = {}, TANK = {}, DAMAGER = {}} --for Testmode only
 Data.ClassList = {} -- For TBCC Testmode only
 
 do
-	local roleNameToRoleNumber = {
-		["DAMAGER"] = 3,
-		["HEALER"] = 1,
-		["TANK"] = 2
-	}
+
 	local specIdToRessource = {
 		--Death Knight
 		[250] = "RUNIC_POWER",	--Blood
@@ -1120,26 +1117,26 @@ do
 
 
 	for classID = 1, GetNumClasses() do --example classes[EnglishClass][SpecName].
-		local _, classTag = GetClassInfo(classID)
-		if classTag then
-			Data.Classes[classTag] = {Ressource = ClassRessources[classTag]}-- for Classic, TBCC Wrath, and any other expansions without specs and some brawls
+		local _, classToken = GetClassInfo(classID)
+		if classToken then
+			Data.Classes[classToken] = {Ressource = ClassRessources[classToken]}-- for Classic, TBCC Wrath, and any other expansions without specs and some brawls
 
 			
-			if GetNumSpecializationsForClassID and GetSpecializationInfoByID then --HasSpeccs
+			if GetNumSpecializationsForClassID and GetSpecializationInfoByID and GetSpecialization then --HasSpeccs
 				for i = 1, GetNumSpecializationsForClassID(classID) do
 					local specID,maleSpecName,_,icon,role = GetSpecializationInfoForClassID(classID, i, 2) -- male version				
 
-					Data.Classes[classTag][maleSpecName] = {roleNumber = roleNameToRoleNumber[role], roleID = role, specID = specID, specIcon = icon, Ressource = specIdToRessource[specID]}
-					table.insert(Data.RolesToSpec[role], {classTag = classTag, specName = maleSpecName}) --for testmode
+					Data.Classes[classToken][maleSpecName] = {roleID = role, specID = specID, specIcon = icon, Ressource = specIdToRessource[specID]}
+					table.insert(Data.RolesToSpec[role], {classToken = classToken, specName = maleSpecName}) --for testmode
 
 					--if specName == "Танцующий с ветром" then specName = "Танцующая с ветром" end -- fix for russian bug, fix added on 2017.08.27
 					local specID,specName,_,icon,role = GetSpecializationInfoForClassID(classID, i, 3) -- female version
-					if not Data.Classes[classTag][specName] then --there is a female version of that specName
-						Data.Classes[classTag][specName] = Data.Classes[classTag][maleSpecName]
+					if not Data.Classes[classToken][specName] then --there is a female version of that specName
+						Data.Classes[classToken][specName] = Data.Classes[classToken][maleSpecName]
 					end
 				end
 			else
-				table.insert(Data.ClassList, classTag)
+				table.insert(Data.ClassList, classToken)
 			end
 		end
 	end

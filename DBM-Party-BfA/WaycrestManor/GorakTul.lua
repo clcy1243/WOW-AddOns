@@ -1,18 +1,22 @@
 local mod	= DBM:NewMod(2129, "DBM-Party-BfA", 10, 1021)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240417180519")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(131864)
 mod:SetEncounterID(2117)
 mod:SetHotfixNoticeRev(20231025000000)
 mod:SetMinSyncRevision(20231025000000)
+mod:SetZone(1862)
 --mod.respawnTime = 29
 mod.sendMainBossGUID = true
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 266225 266266 266181 268202",--266266
+	"SPELL_CAST_START 266225 266181 268202",--266266
 	"SPELL_CAST_SUCCESS 266198 266266",
 	"SPELL_AURA_APPLIED 268202"
 )
@@ -36,7 +40,6 @@ local timerDarkenedLightningCD		= mod:NewCDCountTimer(14.1, 266225, nil, nil, ni
 local timerSummonSlaverCD			= mod:NewCDCountTimer(16, 266266, nil, nil, nil, 1)--16-22
 local timerDreadEssenceCD			= mod:NewCDCountTimer(27.5, 266181, nil, nil, nil, 2)
 
-mod:AddRangeFrameOption(6, 266225)--Range guessed, can't find spell data for it
 
 mod.vb.darkenCount = 0
 mod.vb.slaverCount = 0
@@ -49,16 +52,8 @@ function mod:OnCombatStart(delay)
 	timerSummonSlaverCD:Start(4.1-delay, 1)--4-6
 	timerDarkenedLightningCD:Start(6.1-delay, 1)--6-8
 	timerDreadEssenceCD:Start(25-delay, 1)--25-27
-	if self.Options.RangeFrame then
-		DBM.RangeCheck:Show(6)
-	end
 end
 
-function mod:OnCombatEnd()
-	if self.Options.RangeFrame then
-		DBM.RangeCheck:Hide()
-	end
-end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId

@@ -9,15 +9,21 @@ mod:RegisterEnableMob(
 	15264, -- Anubisath Sentinel
 	15247, -- Qiraji Brainwasher
 	15246, -- Qiraji Mindslayer
+	234762, -- Qiraji Mindslayer (Season of Discovery)
 	15277, -- Anubisath Defender
+	234830, -- Anubisath Defender (Season of Discovery)
 	15240 -- Vekniss Hive Crawler
 )
+if mod:GetSeason() == 2 then
+	mod:RegisterEnableMob(15516, 15510, 15299) -- Sartura, Fankriss, Viscidus
+end
 
 --------------------------------------------------------------------------------
 -- Locals
 --
 
 local defendersAlive = 5
+local defenderBuffThrottle = {}
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -46,10 +52,13 @@ end
 
 function mod:GetOptions()
 	return {
+		-- Anubisath Sentinel
 		"target_buffs",
-		26565, -- Heal Brethren
+		{26565, "OFF"}, -- Heal Brethren
 		8599, -- Enrage
-		{26079, "ICON"}, -- Cause Insanity
+		-- Qiraji Brainwasher
+		{26079, "ICON", "SAY", "SAY_COUNTDOWN"}, -- Cause Insanity
+		-- Anubisath Defender
 		{26556, "SAY", "ME_ONLY_EMPHASIZE"}, -- Plague
 		8269, -- Frenzy / Enrage (different name on classic era)
 		26554, -- Thunderclap
@@ -59,6 +68,7 @@ function mod:GetOptions()
 		17430, -- Summon Anubisath Swarmguard
 		17431, -- Summon Anubisath Warrior
 		"stages",
+		-- Vekniss Hive Crawler
 		25051, -- Sunder Armor
 	},{
 		["target_buffs"] = L.sentinel,
@@ -70,9 +80,49 @@ function mod:GetOptions()
 	}
 end
 
+if mod:GetSeason() == 2 then
+	function mod:GetOptions()
+		return {
+			-- Anubisath Sentinel
+			"target_buffs",
+			{26565, "OFF"}, -- Heal Brethren
+			8599, -- Enrage
+			-- Qiraji Brainwasher
+			{26079, "ICON", "SAY", "SAY_COUNTDOWN"}, -- Cause Insanity
+			-- Anubisath Defender
+			{26556, "SAY", "ME_ONLY_EMPHASIZE"}, -- Plague
+			8269, -- Frenzy / Enrage (different name on classic era)
+			26554, -- Thunderclap
+			26558, -- Meteor
+			26555, -- Shadow Storm
+			{25698, "EMPHASIZE", "COUNTDOWN"}, -- Explode
+			17430, -- Summon Anubisath Swarmguard
+			17431, -- Summon Anubisath Warrior
+			"stages",
+			-- Vekniss Hive Crawler
+			25051, -- Sunder Armor
+			-- SoD hard mode abilities
+			{1214956, "OFF"}, -- Curse of Despair
+			1215421, -- Toxic Pool
+			{1215202, "ME_ONLY_EMPHASIZE"}, -- Noxious Burst
+		},{
+			["target_buffs"] = L.sentinel,
+			[26079] = L.brainwasher,
+			[26556] = L.defender,
+			[25051] = L.crawler,
+			[1214956] = CL.hard,
+		},{
+			[26079] = CL.mind_control, -- Cause Insanity (Mind Control)
+			[1214956] = CL.curse, -- Curse of Despair (Curse)
+			[1215421] = CL.underyou:format(mod:SpellName(1215421)), -- Toxic Pool (Toxic Pool under YOU)
+			[1215202] = CL.spread, -- Noxious Burst (Spread)
+		}
+	end
+end
+
 function mod:OnBossEnable()
 	defendersAlive = 5
-	self:RegisterMessage("BigWigs_OnBossEngage", "Disable")
+	defenderBuffThrottle = {}
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -85,6 +135,10 @@ function mod:OnBossEnable()
 
 	self:Log("SPELL_AURA_APPLIED", "CauseInsanityApplied", 26079)
 	self:Log("SPELL_AURA_REMOVED", "CauseInsanityRemoved", 26079)
+	if self:GetSeason() == 2 then
+		self:Log("SPELL_AURA_APPLIED", "CauseInsanityApplied", 474400)
+		self:Log("SPELL_AURA_REMOVED", "CauseInsanityRemoved", 474400)
+	end
 
 	self:Log("SPELL_AURA_APPLIED", "PlagueApplied", 26556)
 	self:Log("SPELL_AURA_REFRESH", "PlagueApplied", 26556)
@@ -105,11 +159,20 @@ function mod:OnBossEnable()
 
 	self:Log("SPELL_SUMMON", "SummonAnubisathSwarmguard", 17430)
 	self:Log("SPELL_SUMMON", "SummonAnubisathWarrior", 17431)
-	self:Death("DefenderKilled", 15277)
+	self:Death("DefenderKilled", 15277, 234830) -- Anubisath Defender, Anubisath Defender (Season of Discovery)
 
 	self:Log("SPELL_AURA_APPLIED", "SunderArmor", 25051)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "SunderArmor", 25051)
 	self:Log("SPELL_AURA_REMOVED", "SunderArmorRemoved", 25051)
+
+	if self:GetSeason() == 2 then
+		self:Log("SPELL_AURA_APPLIED", "CurseOfDespairApplied", 1214956)
+		self:Log("SPELL_PERIODIC_DAMAGE", "ToxicPoolDamage", 1215421) -- Purposely not using APPLIED so we don't trigger for people running over it
+		self:Log("SPELL_PERIODIC_MISSED", "ToxicPoolDamage", 1215421)
+		self:Log("SPELL_AURA_APPLIED", "NoxiousBurstApplied", 1215202)
+	else
+		self:RegisterMessage("BigWigs_OnBossEngage", "Disable")
+	end
 end
 
 --------------------------------------------------------------------------------
@@ -137,14 +200,15 @@ do
 		local guid = self:UnitGUID("target")
 		if guid ~= prevGUID then
 			local npcId = self:MobId(guid)
-			if npcId == 15264 or npcId == 15277 then -- Anubisath Sentinel, Anubisath Defender
-				if self:Vanilla() and not self:UnitDebuff("target", 2855) then
+			if npcId == 15264 or npcId == 15277 or npcId == 234830 then -- Anubisath Sentinel, Anubisath Defender, Anubisath Defender (Season of Discovery)
+				if self:Vanilla() and not self:GetPlayerAura(2855, "target") then
 					if not printed then
 						printed = true
 						BigWigs:Print(L.detect_magic_warning)
 					end
-					if GetTime() - prevMsg > 40 and self:GetHealth("target") > 5 then
-						prevMsg = GetTime()
+					local t = GetTime()
+					if t - prevMsg > 40 and self:GetHealth("target") > 5 then
+						prevMsg = t
 						local icon = self:GetIconTexture(self:GetIcon("target"))
 						if icon then
 							self:Message("target_buffs", "red", icon.. L.detect_magic_missing_message, 2855)
@@ -156,7 +220,7 @@ do
 				end
 				local total = {}
 				for buffId, message in next, buffList do
-					if self:UnitBuff("target", buffId) then
+					if self:GetPlayerAura(buffId, "target") then
 						prevGUID = guid
 						total[#total+1] = message
 					end
@@ -165,9 +229,14 @@ do
 					local msg = self:TableToString(total, #total)
 					local icon = self:GetIconTexture(self:GetIcon("target"))
 					if icon then
-						self:Message("target_buffs", "yellow", icon.. L.target_buffs_message:format(msg), false)
+						msg = icon.. L.target_buffs_message:format(msg)
 					else
-						self:Message("target_buffs", "yellow", L.target_buffs_message:format(msg), false)
+						msg = L.target_buffs_message:format(msg)
+					end
+					local t = GetTime()
+					if not defenderBuffThrottle[guid] or msg ~= defenderBuffThrottle[guid][1] or (t - defenderBuffThrottle[guid][2]) > 4 then
+						defenderBuffThrottle[guid] = {msg, t}
+						self:Message("target_buffs", "yellow", msg, false)
 					end
 				end
 			end
@@ -205,7 +274,7 @@ do
 end
 
 function mod:EnrageApplied(args)
-	if self:MobId(args.destGUID) == 15264 then -- Anubisath Sentinel
+	if args.destGUID == self:UnitGUID("target") and self:MobId(args.destGUID) == 15264 then -- Anubisath Sentinel
 		local icon = self:GetIconTexture(self:GetIcon(args.destRaidFlags))
 		if icon then
 			self:Message(args.spellId, "red", icon .. CL.percent:format(30, args.spellName))
@@ -221,16 +290,24 @@ do
 	local prevMindControl = nil
 	function mod:CauseInsanityApplied(args) -- Mind control
 		prevMindControl = args.destGUID
-		self:TargetMessage(args.spellId, "yellow", args.destName, CL.mind_control)
-		self:TargetBar(args.spellId, 10, args.destName, CL.mind_control_short)
-		self:PrimaryIcon(args.spellId, args.destName)
-		self:PlaySound(args.spellId, "alert", nil, args.destName)
+		local duration = args.spellId == 26079 and 10 or 6
+		self:TargetMessage(26079, "yellow", args.destName, CL.mind_control)
+		self:TargetBar(26079, duration, args.destName, CL.mind_control_short)
+		self:PrimaryIcon(26079, args.destName)
+		if self:Me(args.destGUID) then
+			self:Say(26079, CL.mind_control, nil, "Mind Control")
+			self:SayCountdown(26079, duration, 8, duration-2)
+		end
+		self:PlaySound(26079, "alert", nil, args.destName)
 	end
 	function mod:CauseInsanityRemoved(args)
 		self:StopBar(CL.mind_control_short, args.destName)
+		if self:Me(args.destGUID) then
+			self:CancelSayCountdown(26079)
+		end
 		if args.destGUID == prevMindControl then
 			prevMindControl = nil
-			self:PrimaryIcon(args.spellId)
+			self:PrimaryIcon(26079)
 		end
 	end
 end
@@ -287,8 +364,11 @@ do
 end
 
 function mod:FrenzyEnrage(args)
-	self:Message(args.spellId, "red")
-	self:PlaySound(args.spellId, "long")
+	local id = self:MobId(args.destGUID) -- Battleguard Sartura also gains this, lock to trash only
+	if id == 15277 or id == 234830 then -- Anubisath Defender, Anubisath Defender (Season of Discovery)
+		self:Message(args.spellId, "red")
+		self:PlaySound(args.spellId, "long")
+	end
 end
 
 function mod:ExplodeApplied(args)
@@ -311,7 +391,7 @@ end
 
 function mod:DefenderKilled()
 	defendersAlive = defendersAlive - 1
-	self:Message("stages", "cyan", CL.mob_remaining:format(L.defender, defendersAlive), false)
+	self:Message("stages", "cyan", CL.mob_remaining:format(L.defender, defendersAlive), false, nil, 5) -- Stay onscreen for 5s
 end
 
 --[[ Vekniss Hive Crawler ]]--
@@ -325,4 +405,35 @@ end
 
 function mod:SunderArmorRemoved(args)
 	self:StopBar(args.spellName, args.destName)
+end
+
+--[[ SoD hard mode abilities ]]--
+
+do
+	local prev = 0
+	function mod:CurseOfDespairApplied(args)
+		if args.time - prev > 10 then
+			prev = args.time
+			self:Message(args.spellId, "yellow", CL.on_group:format(CL.curse))
+			self:Bar(args.spellId, 30, CL.curse)
+		end
+	end
+end
+
+do
+	local prev = 0
+	function mod:ToxicPoolDamage(args)
+		if self:Me(args.destGUID) and args.time - prev > 4 then
+			prev = args.time
+			self:PersonalMessage(args.spellId, "underyou")
+			self:PlaySound(args.spellId, "underyou")
+		end
+	end
+end
+
+function mod:NoxiousBurstApplied(args)
+	if self:Me(args.destGUID) then
+		self:PersonalMessage(args.spellId, false, CL.spread)
+		self:PlaySound(args.spellId, "warning", nil, args.destName)
+	end
 end

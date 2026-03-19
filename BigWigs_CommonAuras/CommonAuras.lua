@@ -3,7 +3,7 @@
 -- Module Declaration
 --
 
-local mod, CL = BigWigs:NewPlugin("Common Auras")
+local mod, PL = BigWigs:NewPlugin("Common Auras")
 if not mod then return end
 local CAFrame = CreateFrame("Frame")
 
@@ -15,7 +15,7 @@ local CAFrame = CreateFrame("Frame")
 
 local addonName, L = ...
 
-local PL = BigWigsAPI:GetLocale("BigWigs: Plugins")
+local CL = BigWigsAPI:GetLocale("BigWigs: Common")
 function mod:GetLocale() return L end
 
 --------------------------------------------------------------------------------
@@ -41,7 +41,6 @@ local toggleOptions = {
 	-- Death Knight
 	51052, -- Anti-Magic Zone
 	108199, -- Gorefiend's Grasp
-	383269, -- Abomination Limb
 	-- Demon Hunter
 	196718, -- Darkness
 	-- Druid
@@ -208,11 +207,11 @@ local function GetOptions()
 	}
 
 	local function masterGet(info)
-		local key = info[#info-1]
+		local key = info.arg
 		return mod.db.profile[key] > 0
 	end
 	local function masterSet(info, value)
-		local key = info[#info-1]
+		local key = info.arg
 		if value then
 			mod.db.profile[key] = C.MESSAGE + C.BAR
 		else
@@ -221,12 +220,12 @@ local function GetOptions()
 	end
 
 	local function flagGet(info)
-		local key = info[#info-1]
+		local key = info.arg
 		local flag = C[info[#info]]
 		return bit_band(mod.db.profile[key], flag) == flag
 	end
 	local function flagSet(info, value)
-		local key = info[#info-1]
+		local key = info.arg
 		local flag = C[info[#info]]
 		if value then
 			mod.db.profile[key] = mod.db.profile[key] + flag
@@ -235,28 +234,28 @@ local function GetOptions()
 		end
 	end
 	local function hidden(info)
-		local key = info[#info-1]
+		local key = info.arg
 		return mod.db.profile[key] == 0
 	end
 
 	local cModule = BigWigs:GetPlugin("Colors")
 	local function barColorGet(info)
 		local option = info[#info]
-		local key = info[#info-1]
+		local key = info.arg
 		return cModule:GetColor(option, mod.name, key)
 	end
 	local function barColorSet(info, r, g, b, a)
 		local option = info[#info]
-		local key = info[#info-1]
+		local key = info.arg
 		cModule.db.profile[option][mod.name][key] = {r, g, b, a}
 	end
 	local function messageColorGet(info)
-		local key = info[#info-1]
+		local key = info.arg
 		local color = colors[key] or "blue"
 		return cModule:GetColor(color, mod.name, key)
 	end
 	local function messageColorSet(info, r, g, b)
-		local key = info[#info-1]
+		local key = info.arg
 		local color = colors[key] or "blue"
 		cModule.db.profile[color][mod.name][key] = {r, g, b, 1}
 	end
@@ -296,14 +295,16 @@ local function GetOptions()
 					image = GetSpellTexture(isSpell and key or L[key.."_icon"]),
 					get = masterGet,
 					set = masterSet,
-					order = 1,
 					width = "full",
+					order = 1,
+					arg = key,
 				},
 				sep1 = {
 					type = "header",
 					name = "",
-					order = 2,
 					hidden = hidden,
+					order = 2,
+					arg = key,
 				},
 				--
 				-- bitflag options here
@@ -311,56 +312,63 @@ local function GetOptions()
 				sep2 = {
 					type = "header",
 					name = PL.colors,
-					order = 20,
 					hidden = hidden,
+					order = 20,
+					arg = key,
 				},
 				messages = {
-					name = PL.messages,
 					type = "color",
+					name = PL.messages,
 					get = messageColorGet,
 					set = messageColorSet,
 					hidden = hidden,
 					order = 21,
+					arg = key,
 				},
 				barColor = {
-					name = PL.bars,
 					type = "color", hasAlpha = true,
+					name = PL.bars,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 22,
+					arg = key,
 				},
 				barEmphasized = {
-					name = PL.emphasizedBars,
 					type = "color", hasAlpha = true,
+					name = PL.emphasizedBars,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 23,
+					arg = key,
 				},
 				barBackground = {
-					name = L.barBackground,
 					type = "color", hasAlpha = true,
+					name = L.barBackground,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 24,
+					arg = key,
 				},
 				barText = {
-					name = L.barText,
 					type = "color", hasAlpha = true,
+					name = L.barText,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 25,
+					arg = key,
 				},
 				barTextShadow = {
-					name = L.barTextShadow,
 					type = "color", hasAlpha = true,
+					name = L.barTextShadow,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 26,
+					arg = key,
 				},
 			},
 		}
@@ -372,8 +380,9 @@ local function GetOptions()
 				get = flagGet,
 				set = flagSet,
 				hidden = hidden,
-				order = 10,
 				width = "full",
+				order = 10,
+				arg = key,
 			}
 		end
 		for i, flag in ipairs(bitflags) do
@@ -386,10 +395,11 @@ local function GetOptions()
 				set = flagSet,
 				hidden = hidden,
 				order = i + 10,
+				arg = key,
 			}
 		end
 
-		parentGroup.args[key] = group
+		parentGroup.args[tostring(key)] = group
 	end
 
 	options.args["Custom"] = {
@@ -402,32 +412,32 @@ local function GetOptions()
 				name = L.addSpell,
 				desc = L.addSpellDesc,
 				get = false,
-				set = function(info, value)
-					local info = GetSpellInfo(value)
-					if info then
-						mod.db.profile.custom[info.spellID] = {
+				set = function(_, value)
+					local tbl = GetSpellInfo(value)
+					if tbl then
+						mod.db.profile.custom[tbl.spellID] = {
 							event = "SPELL_CAST_SUCCESS",
 							format = "used_cast",
 							duration = 0,
 						}
-						mod.db.profile[info.spellID] = 0
+						mod.db.profile[tbl.spellID] = 0
 					end
 				end,
-				validate = function(info, value)
-					local info = GetSpellInfo(value)
-					if not info then
+				validate = function(_, value)
+					local tbl = GetSpellInfo(value)
+					if not tbl then
 						return ("%s: %s"):format(L.commonAuras, L.customErrorInvalid)
-					elseif mod.db.profile[info.spellID] then
+					elseif mod.db.profile[tbl.spellID] then
 						return ("%s: %s"):format(L.commonAuras, L.customErrorExists)
 					end
 					return true
 				end,
-				confirm = function(info, value)
-					local info = GetSpellInfo(value)
-					if not info then return false end
-					local desc = GetSpellDescription(info.spellID) or ""
+				confirm = function(_, value)
+					local tbl = GetSpellInfo(value)
+					if not tbl then return false end
+					local desc = GetSpellDescription(tbl.spellID) or ""
 					if desc ~= "" then desc = "\n" .. desc:gsub("%%", "%%%%") end
-					return ("%s\n\n|T%d:0|t|cffffd200%s|r (%d)%s"):format(L.customConfirmAdd, info.iconID, info.name, info.spellID, desc)
+					return ("%s\n\n|T%d:0|t|cffffd200%s|r (%d)%s"):format(L.customConfirmAdd, tbl.iconID, tbl.name, tbl.spellID, desc)
 				end,
 				order = 1,
 			},
@@ -447,17 +457,17 @@ local function GetOptions()
 	end)
 
 	local function customMasterSet(info, value)
-		local key = info[#info-1]
+		local key = info.arg
 		mod.db.profile[key] = value and C.MESSAGE or 0
 	end
 	local function customGet(info)
 		local option = info[#info]
-		local key = info[#info-1]
+		local key = info.arg
 		return mod.db.profile.custom[key][option]
 	end
 	local function customSet(info, value)
 		local option = info[#info]
-		local key = info[#info-1]
+		local key = info.arg
 		mod.db.profile.custom[key][option] = value
 	end
 
@@ -474,8 +484,8 @@ local function GetOptions()
 
 	for index, key in ipairs(customOptions) do
 		local group = {
-			name = " ",
 			type = "group",
+			name = " ",
 			inline = true,
 			order = index + 10,
 			args = {
@@ -486,8 +496,9 @@ local function GetOptions()
 					image = GetSpellTexture(key),
 					get = masterGet,
 					set = customMasterSet,
-					order = 1,
 					width = "full",
+					order = 1,
+					arg = key,
 				},
 				event = {
 					type = "select",
@@ -497,6 +508,7 @@ local function GetOptions()
 					set = customSet,
 					hidden = hidden,
 					order = 2,
+					arg = key,
 				},
 				duration = {
 					type = "range",
@@ -506,6 +518,7 @@ local function GetOptions()
 					set = customSet,
 					hidden = hidden,
 					order = 3,
+					arg = key,
 				},
 				format = {
 					type = "select",
@@ -515,12 +528,14 @@ local function GetOptions()
 					set = customSet,
 					hidden = hidden,
 					order = 4,
+					arg = key,
 				},
 				sep1 = {
 					type = "header",
 					name = "",
-					order = 10,
 					hidden = hidden,
+					order = 10,
+					arg = key,
 				},
 				--
 				-- bitflag options here
@@ -528,61 +543,67 @@ local function GetOptions()
 				sep2 = {
 					type = "header",
 					name = PL.colors,
-					order = 20,
 					hidden = hidden,
+					order = 20,
+					arg = key,
 				},
 				messages = {
-					name = PL.messages,
 					type = "color",
+					name = PL.messages,
 					get = messageColorGet,
 					set = messageColorSet,
 					hidden = hidden,
 					order = 21,
+					arg = key,
 				},
 				barColor = {
-					name = PL.bars,
 					type = "color", hasAlpha = true,
+					name = PL.bars,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 22,
+					arg = key,
 				},
 				barEmphasized = {
-					name = PL.emphasizedBars,
 					type = "color", hasAlpha = true,
+					name = PL.emphasizedBars,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 23,
+					arg = key,
 				},
 				barBackground = {
-					name = L.barBackground,
 					type = "color", hasAlpha = true,
+					name = L.barBackground,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 24,
+					arg = key,
 				},
 				barText = {
-					name = L.barText,
 					type = "color", hasAlpha = true,
+					name = L.barText,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 25,
+					arg = key,
 				},
 				barTextShadow = {
-					name = L.barTextShadow,
 					type = "color", hasAlpha = true,
+					name = L.barTextShadow,
 					get = barColorGet,
 					set = barColorSet,
 					hidden = hidden,
 					order = 26,
+					arg = key,
 				},
 				delete = {
 					type = "execute",
 					name = L.remove,
-					arg = key,
 					func = function(info)
 						local value = tonumber(info.arg)
 						mod.db.profile.custom[value] = nil
@@ -590,6 +611,7 @@ local function GetOptions()
 						GameTooltip:Hide()
 					end,
 					order = 30,
+					arg = key,
 				},
 			}
 		}
@@ -604,10 +626,11 @@ local function GetOptions()
 				set = flagSet,
 				hidden = hidden,
 				order = i + 10,
+				arg = key,
 			}
 		end
 
-		options.args["Custom"].args[key] = group
+		options.args["Custom"].args[tostring(key)] = group
 	end
 
 	return options
@@ -667,7 +690,6 @@ function mod:OnRegister()
 		[199448] = "BlessingOfSacrifice", -- Ultimate Sacrifice
 		[15286] = "VampiricEmbrace",
 		[108199] = "GorefiendsGrasp",
-		[383269] = "AbominationLimb",
 		[108281] = "AncestralGuidance",
 		[207399] = "AncestralProtectionTotem",
 		[16191] = "ManaTideTotem",
@@ -989,20 +1011,10 @@ end
 
 -- Death Knight
 
-function mod:AbominationLimb(_, spellId, nick, spellName)
-	message(spellId, L.used_cast:format(nick, spellName))
-	bar(spellId, 12, nick, spellName)
-end
-
 function mod:AntiMagicZone(_, spellId, nick, spellName)
 	message(spellId, L.used_cast:format(nick, spellName), nick)
-	bar(spellId, 8, nick, spellName)
+	bar(spellId, 6, nick, spellName)
 end
-
--- XXX Need to check if there's a good way to tell if it hit absorb max vs someone walking out
--- function mod:AntiMagicZoneOff(_, spellId, nick, spellName)
--- 	stopbar(spellName, nick)
--- end
 
 function mod:DancingRuneWeapon(_, spellId, nick, spellName)
 	message(spellId, L.used_cast:format(nick, spellName), nick)

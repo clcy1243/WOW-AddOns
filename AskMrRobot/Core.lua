@@ -68,6 +68,7 @@ local function initializeDb()
 			JunkData = {},             -- imported data about items that can be vendored/scrapped/disenchanted
 			ExtraEnchantData = {},     -- enchant id to enchant display information and material information
 			HighestItemLevels = {},    -- highest item levels for determining upgrade discounts
+			Achievements = {},         -- achievements of interest on this character
 			Logging = {                -- character logging settings
 				Enabled = false,       -- whether logging is currently on or not
 				LastZone = nil,        -- last zone the player was in
@@ -600,6 +601,35 @@ function Amr:IsTextInTooltip(tt, txt)
 end
 ]]
 
+function Amr:GetBankBagList(includeWarbank)
+
+	local bagList = {}
+	table.insert(bagList, Enum.BagIndex.CharacterBankTab_1)
+	table.insert(bagList, Enum.BagIndex.CharacterBankTab_2)
+	table.insert(bagList, Enum.BagIndex.CharacterBankTab_3)
+	table.insert(bagList, Enum.BagIndex.CharacterBankTab_4)
+	table.insert(bagList, Enum.BagIndex.CharacterBankTab_5)
+	table.insert(bagList, Enum.BagIndex.CharacterBankTab_6)
+	if includeWarbank then
+		table.insert(bagList, Enum.BagIndex.AccountBankTab_1)
+		table.insert(bagList, Enum.BagIndex.AccountBankTab_2)
+		table.insert(bagList, Enum.BagIndex.AccountBankTab_3)
+		table.insert(bagList, Enum.BagIndex.AccountBankTab_4)
+		table.insert(bagList, Enum.BagIndex.AccountBankTab_5)
+	end
+	return bagList
+end
+
+function Amr:IsBankBag(bagId, includeWarbank)
+	if bagId >= Enum.BagIndex.CharacterBankTab_1 and bagId <= Enum.BagIndex.CharacterBankTab_6 then
+		return true
+	end
+	if includeWarbank and bagId >= Enum.BagIndex.AccountBankTab_1 and bagId <= Enum.BagIndex.AccountBankTab_5 then
+		return true
+	end
+	return false
+end
+
 -- helper to determine if we can equip an item (it is soulbound)
 function Amr:CanEquip(bagId, slotId)
 	local item = Item:CreateFromBagAndSlot(bagId, slotId)
@@ -674,8 +704,23 @@ function Amr:GetTalentConfigData(configId)
 				}
 				talMap[node.ID] = nodeData
 
-				-- need to check node type b/c blizz abandoned a few selection node entries in the data which still show up in a scan here... super annoying and gross
-				if #node.entryIDs > 1 and node.type == 2 then
+				if bit.band(node.flags, 256) > 0 then
+					-- maybe not the best way to detect apex node... but works for now
+
+					nodeData.entryIds = node.entryIDs
+					nodeData.apex = true
+					
+					local spent = node.activeRank
+					for e = 1, #node.entryIDs do
+						local entry = C_Traits.GetEntryInfo(configId, node.entryIDs[e])
+						local entryRank = min(entry.maxRanks, spent)
+						table.insert(nodeData.ranks, entryRank)
+						spent = spent - entryRank
+					end
+
+				elseif #node.entryIDs > 1 and node.type == 2 then
+					-- need to check node type b/c blizz abandoned a few selection node entries in the data which still show up in a scan here... super annoying and gross
+				
 					nodeData.entryIds = node.entryIDs
 					
 					for e = 1, #node.entryIDs do
@@ -722,6 +767,7 @@ function Amr:GetTalentConfigData(configId)
 		nodes = talMap
 	}
 end
+
 
 ----------------------------------------------------------------------------------------
 -- Inter-Addon Communication
@@ -832,6 +878,5 @@ end
 
 
 function Amr:Test()
-	
-	
+
 end

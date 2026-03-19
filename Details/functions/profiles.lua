@@ -614,6 +614,8 @@ local default_profile = {
 		[1473] = {384/512, 448/512, 256/512, 320/512}, -- Augmentation
 	},
 
+	window2_data = {},
+
 	--class icons and colors
 	class_icons_small = [[Interface\AddOns\Details\images\classes_small]],
 	class_coords = {
@@ -853,6 +855,16 @@ local default_profile = {
 		},
 	},
 
+	righttext_simple_formatting = {
+		enabled = true,
+		format_tsp = "%s (%s, %s)",
+		format_ts = "%s (%s)",
+		format_tp = "%s (%s)",
+		use_alignment = false,
+		alignment_space = 60,
+		first_run = false,
+	},
+
 	death_log_colors = {
 		damage = "red",
 		heal = "green",
@@ -864,6 +876,9 @@ local default_profile = {
 
 	fade_speed = 0.15,
 	use_self_color = false,
+
+	damage_meter_type = 0,
+	damage_meter_position = {},
 
 	--minimap
 		minimap = {hide = false, radius = 160, minimapPos = 220, onclick_what_todo = 1, text_type = 1, text_format = 3},
@@ -1139,6 +1154,8 @@ local default_profile = {
 			tooltip_max_targets = 2,
 			tooltip_max_pets = 2,
 
+			grow_direction = "down",
+
 			--menus_bg_coords = {331/512, 63/512, 109/512, 143/512}, --with gradient on right side
 			menus_bg_coords = {0.309777336120606, 0.924000015258789, 0.213000011444092, 0.279000015258789},
 			menus_bg_color = {.8, .8, .8, 0.2},
@@ -1151,6 +1168,15 @@ local default_profile = {
 			line_height = 17,
 
 			show_border_shadow = true, --from spell tooltips from the main window
+
+			--apocalypse
+			show_header = true,
+			show_percent_column = true,
+			show_dps_column = true,
+			show_help = true,
+			show_help_count = 0, --when reaches MAX_TOOLTIP_HELP, set show_help to false
+			apocalypse_width = 300,
+			apocalypse_width_useline = false,
 		},
 
 	--new window system
@@ -1169,6 +1195,10 @@ local default_player_data = {
 			welcome_panel_pos = {},
 			last_coach_name = false,
 		},
+
+		arena_data_headers = {},
+		arena_data_compressed = {}, --store data for arena the character did
+		arena_data_index_selected = 1, --index of the arena data selected to be shown in the arena data panel
 
 		player_stats = {},
 
@@ -1351,6 +1381,10 @@ local default_player_data = {
 
 	--death panel buttons
 		on_death_menu = false,
+	--damage meter sessions
+		damage_meter_sessions = {},
+	--misc data about a session
+		damage_meter_session_info = {},
 }
 
 Details.default_player_data = default_player_data
@@ -1398,6 +1432,14 @@ local default_global_data = {
 		current_exp_raid_encounters = {},
 		encounter_journal_cache = {}, --store a dump of the encounter journal
 		installed_skins_cache = {},
+		last_10days_cache_cleanup = 0,
+		recent_players = {},
+
+		appocalypse_mode = 0,
+
+		slashk_dnd = false,
+		slashk_addon = "bigwigs",
+		slashk_addon_first = false,
 
 		auto_change_to_standard = true,
 
@@ -1408,6 +1450,8 @@ local default_global_data = {
 
 		boss_wipe_counter = {},
 		boss_wipe_min_time = 20, --minimum time to consider a wipe as a boss wipe
+
+		arena_debug = false,
 
 		user_is_patreon_supporter = false,
 
@@ -1446,6 +1490,11 @@ local default_global_data = {
 		all_switch_config = {
 			scale = 1,
 			font_size = 10,
+		},
+
+	--information about the transcriptor frame
+		transcriptor_frame = {
+			scale = 1,
 		},
 
 	--keystone window
@@ -1550,12 +1599,14 @@ local default_global_data = {
 		show_totalhitdamage_on_overkill = false,
 
 	--switch tables
+		switch_missing_type = 0,
 		switchSaved = {slots = 4, table = {
 			{["atributo"] = 1, ["sub_atributo"] = 1}, --damage done
 			{["atributo"] = 2, ["sub_atributo"] = 1}, --healing done
 			{["atributo"] = 1, ["sub_atributo"] = 6}, --enemies
 			{["atributo"] = 4, ["sub_atributo"] = 5}, --deaths
 		}},
+		switch_post_apoc = false,
 		report_pos = {1, 1},
 
 	--tutorial
@@ -1623,6 +1674,10 @@ local default_global_data = {
 			shield_overheal = false,
 			--compute the energy wasted by players when they current energy is equal to the maximum energy
 			energy_overflow = false,
+			--compute avoidance for tanks
+			tank_avoidance = false,
+			--compute resources
+			energy_resources = false,
 		},
 
 	--aura creation frame libwindow
@@ -1637,7 +1692,6 @@ local default_global_data = {
 		mythic_plus = {
 			merge_boss_trash = true,
 			boss_dedicated_segment = true,
-			make_overall_when_done = true,
 			make_overall_boss_only = false,
 			show_damage_graphic = true,
 
@@ -1852,7 +1906,7 @@ function Details:RestoreState_CurrentMythicDungeonRun()
 				Details:Msg("D! (debug) mythic dungeon state restored.")
 
 				C_Timer.After(2, function()
-					Details:SendEvent("COMBAT_MYTHICDUNGEON_START")
+					Details:SendEvent("COMBAT_MYTHICDUNGEON_CONTINUE")
 				end)
 				return
 			else
@@ -2060,7 +2114,6 @@ function Details:ImportProfile (profileString, newProfileName, bImportAutoRunCod
 		local mythicPlusSettings = Details.mythic_plus
 		mythicPlusSettings.merge_boss_trash = true
 		mythicPlusSettings.boss_dedicated_segment = true
-		mythicPlusSettings.make_overall_when_done = true
 		mythicPlusSettings.make_overall_boss_only = false
 		mythicPlusSettings.show_damage_graphic = true
 		mythicPlusSettings.reverse_death_log = false

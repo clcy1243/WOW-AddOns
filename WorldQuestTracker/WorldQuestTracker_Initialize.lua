@@ -1,5 +1,5 @@
 
-
+local VERSION = 553
 
 do
 	WQT_VERSION = 414
@@ -81,6 +81,7 @@ do
 
 	local default_config = {
 		profile = {
+			clicked_order_by_once = false,
 			ignore_maps = {
 				[1978] = false, --dragon isles
 			},
@@ -197,7 +198,7 @@ do
 			show_filter_button = true, --a
 			show_sort_button = false, --a
 			show_timeleft_button = true, --a
-			numerate_quests = true, --a
+			numerate_quests = true, --a enumerate
 			show_warband_rep_warning = true, --a
 			show_warband_rep_warning_color = "yellow",
 			show_warband_rep_warning_alpha = 0.834,
@@ -223,7 +224,7 @@ do
 			world_summary_alpha = 0.934, --parei fazendo a substituição dos valores hardcoded to these values, parei na criação da opção de mudar o alpha, parei procurando as funções que atualiza of frames com o novo alpha
 			worldmap_widget_alpha = 0.933,
 
-			hoverover_animations = true, --hover and shown slider animations
+			hoverover_animations = false, --hover and shown slider animations
 			anchor_options = {}, --store the anchor options of each anchor
 
 			filter_always_show_faction_objectives = true,
@@ -340,6 +341,7 @@ do
 	local WorldQuestTracker = DF:CreateAddOn("WorldQuestTrackerAddon", "WQTrackerDB", default_config)
 	WorldQuestTracker.__debug = false
 	WorldQuestTracker.MapChangedTime = time()-1
+	WorldQuestTracker.Version = VERSION
 
 	--create the group finder and rare finder frames
 	CreateFrame("frame", "WorldQuestTrackerFinderFrame", UIParent, "BackdropTemplate")
@@ -461,6 +463,12 @@ if (not GetFactionInfoByID) then
 			return
 		end
 
+		local majorFactionData = C_MajorFactions.GetMajorFactionData(id)
+		if (majorFactionData) then
+			local minValue, maxValue, currentValue = 0, majorFactionData.renownLevelThreshold, majorFactionData.renownReputationEarned
+			fD.nextReactionThreshold, fD.currentReactionThreshold = maxValue, currentValue
+		end
+
 		return fD.name, fD.description, fD.currentStanding, 0, fD.nextReactionThreshold, fD.currentReactionThreshold, fD.atWarWith, fD.canToggleAtWar, fD.isHeader, fD.isCollapsed, fD.isHeaderWithRep, fD.isWatched, fD.isChild, fD.factionID,	fD.hasBonusRepGain, false
 
 		--[=[]]
@@ -513,5 +521,6 @@ if (not GetQuestLogRewardCurrencyInfo) then
 else
 	WorldQuestTrackerAddon.GetQuestLogRewardCurrencyInfo = GetQuestLogRewardCurrencyInfo
 end
+
 
 --WorldQuestTrackerAddon.__debug = true

@@ -1,7 +1,9 @@
 local mod	= DBM:NewMod("d646", "DBM-Scenario-MoP")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240714050536")
+mod:SetRevision("20260315035327")
+mod:DisableHardcodedOptions()
+mod:SetZone(1130)
 
 mod:RegisterCombat("scenario", 1130)
 

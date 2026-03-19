@@ -10,9 +10,11 @@ else
 	mod.statTypes = "normal,heroic"
 end
 
-mod:SetRevision("20240615053330")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(40586)
 mod:SetEncounterID(1045)
+mod:SetZone(643)
 
 mod:RegisterCombat("combat")
 
@@ -52,7 +54,6 @@ if (wowToc >= 100200) then
 	local timerFocusedTempestCD							= mod:NewCDTimer(14.5, 428374, nil, nil, nil, 2, nil, DBM_COMMON_L.HEALER_ICON)--14.5-16.9
 	--local timerTridentFlurryCD							= mod:NewAITimer(49, 428293, nil, nil, nil, 3)
 
-	--mod:AddRangeFrameOption("5/6/10")
 	--mod:AddSetIconOption("SetIconOnSinSeeker", 335114, true, false, {1, 2, 3})
 
 	mod.vb.tempestCount = 0

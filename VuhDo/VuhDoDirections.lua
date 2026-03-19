@@ -13,7 +13,6 @@ local sScale;
 local VuhDoDirectionFrame;
 local VuhDoDirectionFrameArrow;
 local VuhDoDirectionFrameText;
-local VUHDO_setMapToCurrentZone;
 local VUHDO_getDistanceBetween;
 local VUHDO_getUnitDirection;
 
@@ -31,7 +30,6 @@ function VUHDO_directionsInitLocalOverrides()
 	VuhDoDirectionFrame = _G["VuhDoDirectionFrame"];
 	VuhDoDirectionFrameArrow = _G["VuhDoDirectionFrameArrow"];
 	VuhDoDirectionFrameText = _G["VuhDoDirectionFrameText"];
-	VUHDO_setMapToCurrentZone = _G["VUHDO_setMapToCurrentZone"];
 	VUHDO_getDistanceBetween = _G["VUHDO_getDistanceBetween"];
 	VUHDO_getUnitDirection = _G["VUHDO_getUnitDirection"];
 end
@@ -84,50 +82,91 @@ local VUHDO_getRedGreenForDistance = VUHDO_getRedGreenForDistance;
 local tInfo;
 local tIsInInstance;
 function VUHDO_shouldDisplayArrow(aUnit)
+
 	tIsInInstance, _ = IsInInstance();
 
 	if tIsInInstance then
-		return false;
+		return false, false;
 	end
 
 	tInfo = VUHDO_RAID[aUnit];
-	return not UnitIsUnit("player", aUnit)
-		and tInfo
-		and (not tInfo["range"] or sIsAlways)
-		and (not sIsDeadOnly or tInfo["dead"])
-		and tInfo["connected"]
-		and not tInfo["isPet"];
+
+	if not tInfo then
+		return false, false;
+	end
+
+	if UnitIsUnit("player", aUnit) then
+		return false, false;
+	end
+
+	if tInfo["isPet"] then
+		return false, false;
+	end
+
+	if not tInfo["connected"] then
+		return false, false;
+	end
+
+	if sIsDeadOnly and not tInfo["dead"] then
+		return false, false;
+	end
+
+	if sIsAlways then
+		return true, false;
+	end
+
+	if tInfo["hasSecretRange"] then
+		return true, true;
+	end
+
+	if not tInfo["range"] then
+		return true, false;
+	end
+
+	return false, false;
+
 end
 local VUHDO_shouldDisplayArrow = VUHDO_shouldDisplayArrow;
 
 
 
 --
+local tPanelNum;
 local tUnit;
+local tShouldShow;
+local tHasSecretRange;
 local tDirection;
 local tCell;
 local sLastCell = nil;
 local tButton = nil;
 local tHeight;
 local tDistance;
-local tHeight;
 local tDestR, tDestG;
 function VUHDO_updateDirectionFrame(aButton)
-	if aButton then tButton = aButton;
-	elseif not tButton then return; end
+
+	if aButton then
+		tButton = aButton;
+	elseif not tButton then
+		return;
+	end
 
 	tUnit = tButton:GetAttribute("unit");
 
-	if not VUHDO_shouldDisplayArrow(tUnit) then
+	tShouldShow, tHasSecretRange = VUHDO_shouldDisplayArrow(tUnit);
+
+	if not tShouldShow then
 		VuhDoDirectionFrame["shown"] = false;
 		VuhDoDirectionFrame:Hide();
+
 		return;
 	end
 
 	tDirection = VUHDO_getUnitDirection(tUnit);
+
 	if not tDirection then
 		VuhDoDirectionFrame["shown"] = false;
 		VuhDoDirectionFrame:Hide();
+
 		return;
 	end
 
@@ -159,10 +198,22 @@ function VUHDO_updateDirectionFrame(aButton)
 	if sOldButton ~= tButton then
 		sOldButton = tButton;
 		tHeight = tButton:GetHeight() * sScale * tButton:GetEffectiveScale();
-		VuhDoDirectionFrame:SetPoint("CENTER", tButton:GetName(), "CENTER", 0, 0);
-		VuhDoDirectionFrame:SetWidth(tHeight);
-		VuhDoDirectionFrame:SetHeight(tHeight);
+
+		VUHDO_PixelUtil.SetPoint(VuhDoDirectionFrame, "CENTER", tButton:GetName(), "CENTER", 0, 0);
+		VUHDO_PixelUtil.SetWidth(VuhDoDirectionFrame, tHeight);
+		VUHDO_PixelUtil.SetHeight(VuhDoDirectionFrame, tHeight);
+
+		tPanelNum = VUHDO_BUTTON_CACHE[tButton];
+		VuhDoDirectionFrameText:SetFont(VUHDO_getFont(VUHDO_PANEL_SETUP[tPanelNum]["HOTS"]["TIMER_TEXT"]["FONT"]), 6, "OUTLINE");
 	end
+
 	VuhDoDirectionFrame:Show();
 	VuhDoDirectionFrame["shown"] = true;
+
+	if tHasSecretRange then
+		VuhDoDirectionFrame:SetAlphaFromBoolean(VUHDO_RAID[tUnit]["range"], 0, 1);
+	else
+		VuhDoDirectionFrame:SetAlpha(1);
+	end
+
 end

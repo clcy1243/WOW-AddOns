@@ -1,10 +1,10 @@
-lightweight tag da9069a8940511552df3b03df9014d7409dc261c 4.0.26-release
-Author:	pereira-a <pereirasmandre@gmail.com>
-Date:	Sat Sep 14 13:05:31 2024 +0000
+tag cf87a0c194c85d93c961d1bd448305d0c5f747a3 4.0.28-release
+Author:	André Pereira <pereirasmandre@gmail.com>
+Date:	Fri Mar 6 18:22:07 2026 +0000
 
-commit da9069a8940511552df3b03df9014d7409dc261c
-Author: pereira-a <pereirasmandre@gmail.com>
-Date:   Sat Sep 14 13:05:31 2024 +0000
+commit e51de13f6c6e0ff847da710212871bb649c9d05f
+Author: André Pereira <pereirasmandre@gmail.com>
+Date:   Fri Mar 6 18:21:50 2026 +0000
 
-    110002
+    chore: bump interface version
 

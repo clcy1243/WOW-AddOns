@@ -1,7 +1,10 @@
+if DBM:IsPostMidnight() then return end
 local mod	= DBM:NewMod("SpiresofAscensionTrash", "DBM-Party-Shadowlands", 5)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240808043723")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
+mod:SetZone(2285)
 --mod:SetModelID(47785)
 
 mod.isTrashMod = true

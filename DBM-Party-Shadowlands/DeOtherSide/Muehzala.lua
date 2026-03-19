@@ -1,9 +1,11 @@
 local mod	= DBM:NewMod(2410, "DBM-Party-Shadowlands", 7, 1188)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240106080507")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(169769)
 mod:SetEncounterID(2396)
+mod:SetZone(2291)
 
 mod:RegisterCombat("combat")
 
@@ -39,7 +41,7 @@ local specWarnCosmicArtifice		= mod:NewSpecialWarningMoveAway(325725, nil, nil, 
 local yellCosmicArtifice			= mod:NewYell(325725)
 local yellCosmicArtificeFades		= mod:NewShortFadesYell(325725)
 local specWarnSoulcrusher			= mod:NewSpecialWarningDefensive(327646, nil, nil, nil, 2, 2)
-local specWarnDeathgate				= mod:NewSpecialWarningMoveTo(324698, nil, nil, nil, 3, 2)
+local specWarnShatterReality		= mod:NewSpecialWarningMoveTo(326171, nil, nil, nil, 3, 2)
 --local specWarnGTFO					= mod:NewSpecialWarningGTFO(257274, nil, nil, nil, 1, 8)
 --Stage 2: Shattered Reality
 
@@ -55,6 +57,8 @@ local timerCoalescing				= mod:NewCastTimer(25, 334970, nil, nil, nil, 6)
 --mod.vb.addsLeft = 3
 mod.vb.cosmicCount = 0
 mod.vb.soulCount = 0
+
+local deathGate = DBM:GetSpellName(324698)
 
 function mod:OnCombatStart(delay)
 	self.vb.cosmicCount = 0
@@ -88,8 +92,8 @@ function mod:SPELL_CAST_START(args)
 		timerSoulcrusherCD:Stop()
 		warnShatterReality:Show()
 		timerShatterReality:Start()
-		specWarnDeathgate:Schedule(4)
-		specWarnDeathgate:ScheduleVoice(4, "findshelter")
+		specWarnShatterReality:Schedule(4, deathGate)
+		specWarnShatterReality:ScheduleVoice(4, "findshelter")
 	end
 end
 

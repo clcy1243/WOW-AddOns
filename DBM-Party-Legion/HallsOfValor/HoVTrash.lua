@@ -1,7 +1,8 @@
 local mod	= DBM:NewMod("HoVTrash", "DBM-Party-Legion", 4)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240808043723")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 --mod:SetModelID(47785)
 mod:SetZone(1477)
 
@@ -9,50 +10,52 @@ mod.isTrashMod = true
 mod.isTrashModBossFightAllowed = true
 
 mod:RegisterEvents(
-	"SPELL_CAST_START 199805 192563 199726 191508 199210 198892 198934 215433 210875 192158 200901 198595 192288",
-	"SPELL_AURA_APPLIED 215430",
-	"SPELL_AURA_REMOVED 215430",
-	"UNIT_DIED",
+--	"SPELL_CAST_START 199805 192563 199726 191508 199210 198892 198934 215433 210875 192158 200901 198595 192288",
+--	"SPELL_AURA_APPLIED 215430",
+--	"SPELL_AURA_REMOVED 215430",
+--	"UNIT_DIED",
 	"GOSSIP_SHOW"
 )
 
 --TODO wicked dagger (199674)?
-local warnCrackle					= mod:NewTargetAnnounce(199805, 2)
-local warnCracklingStorm			= mod:NewTargetAnnounce(198892, 2)
-local warnThunderousBolt			= mod:NewCastAnnounce(198595, 3)
-local warnCleansingFlame			= mod:NewCastAnnounce(192563, 4)
-local warnHolyRadiance				= mod:NewCastAnnounce(215433, 3)
-local warnRuneOfHealing				= mod:NewCastAnnounce(198934, 3)
-
-local specWarnBlastofLight			= mod:NewSpecialWarningDodge(191508, nil, nil, nil, 2, 2)
-local specWarnPenetratingShot		= mod:NewSpecialWarningDodge(199210, nil, nil, nil, 2, 2)
-local specWarnChargePulse			= mod:NewSpecialWarningDodge(210875, nil, nil, nil, 2, 2)
-local specWarnSanctify				= mod:NewSpecialWarningDodge(192158, nil, nil, nil, 2, 5)
-local specWarnEyeofStorm			= mod:NewSpecialWarningMoveTo(200901, nil, nil, nil, 2, 2)
-local specWarnCrackle				= mod:NewSpecialWarningYou(199805, nil, nil, nil, 1, 2)
-local yellCrackle					= mod:NewShortYell(199805)
-local specWarnCracklingStorm		= mod:NewSpecialWarningYou(198892, nil, nil, nil, 1, 2)
-local yellCracklingStorm			= mod:NewShortYell(198892)
-local specWarnThunderstrike			= mod:NewSpecialWarningMoveAway(215430, nil, nil, nil, 1, 2)
-local yellThunderstrike				= mod:NewShortYell(215430)
-local specWarnThunderousBolt		= mod:NewSpecialWarningInterrupt(198595, "HasInterrupt", nil, nil, 1, 2)
-local specWarnHolyRadiance			= mod:NewSpecialWarningInterrupt(215433, "HasInterrupt", nil, nil, 1, 2)
-local specWarnRuneOfHealing			= mod:NewSpecialWarningInterrupt(198934, false, nil, nil, 1, 2)--Mob can be moved out of it so Holy more important spell to kick
-local specWarnCleansingFlame		= mod:NewSpecialWarningInterrupt(192563, "HasInterrupt", nil, nil, 1, 2)
-local specWarnUnrulyYell			= mod:NewSpecialWarningInterrupt(199726, "HasInterrupt", nil, nil, 1, 2)
-local specWarnSearingLight			= mod:NewSpecialWarningInterrupt(192288, "HasInterrupt", nil, nil, 1, 2)
-
-local timerThunderousBoltCD			= mod:NewCDNPTimer(4.8, 198595, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--6-7
-local timerRuneOfHealingCD			= mod:NewCDNPTimer(17, 198934, nil, "HasInterrupt", nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--17-18.2
-local timerHolyRadianceCD			= mod:NewCDNPTimer(18.1, 215433, nil, "HasInterrupt", nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--17-18.2
-local timerCleansingFlameCD			= mod:NewCDNPTimer(6.1, 192563, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--6-9
-local timerBlastofLightCD			= mod:NewCDNPTimer(18, 191508, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)--May be lower
-local timerEyeofStormCD				= mod:NewCDNPTimer(25, 200901, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON)
-local timerSanctifyCD				= mod:NewCDNPTimer(25, 192158, nil, nil, nil, 3)--25-30 based on searing light casts since searing light has 6sec ICD lockout
+--TODO, HIGH chance most nameplate timers are wrong in Legion Remix, if so they'll be disabled in remix with "not self:IsRemix()" checks
+--local warnCrackle					= mod:NewTargetAnnounce(199805, 2)
+--local warnCracklingStorm			= mod:NewTargetAnnounce(198892, 2)
+--local warnThunderousBolt			= mod:NewCastAnnounce(198595, 3)
+--local warnCleansingFlame			= mod:NewCastAnnounce(192563, 4)
+--local warnHolyRadiance				= mod:NewCastAnnounce(215433, 3)
+--local warnRuneOfHealing				= mod:NewCastAnnounce(198934, 3)
+--
+--local specWarnBlastofLight			= mod:NewSpecialWarningDodge(191508, nil, nil, nil, 2, 2)
+--local specWarnPenetratingShot		= mod:NewSpecialWarningDodge(199210, nil, nil, nil, 2, 2)
+--local specWarnChargePulse			= mod:NewSpecialWarningDodge(210875, nil, nil, nil, 2, 2)
+--local specWarnSanctify				= mod:NewSpecialWarningDodge(192158, nil, nil, nil, 2, 5)
+--local specWarnEyeofStorm			= mod:NewSpecialWarningMoveTo(200901, nil, nil, nil, 2, 2)
+--local specWarnCrackle				= mod:NewSpecialWarningYou(199805, nil, nil, nil, 1, 2)
+--local yellCrackle					= mod:NewShortYell(199805)
+--local specWarnCracklingStorm		= mod:NewSpecialWarningYou(198892, nil, nil, nil, 1, 2)
+--local yellCracklingStorm			= mod:NewShortYell(198892)
+--local specWarnThunderstrike			= mod:NewSpecialWarningMoveAway(215430, nil, nil, nil, 1, 2)
+--local yellThunderstrike				= mod:NewShortYell(215430)
+--local specWarnThunderousBolt		= mod:NewSpecialWarningInterrupt(198595, "HasInterrupt", nil, nil, 1, 2)
+--local specWarnHolyRadiance			= mod:NewSpecialWarningInterrupt(215433, "HasInterrupt", nil, nil, 1, 2)
+--local specWarnRuneOfHealing			= mod:NewSpecialWarningInterrupt(198934, false, nil, nil, 1, 2)--Mob can be moved out of it so Holy more important spell to kick
+--local specWarnCleansingFlame		= mod:NewSpecialWarningInterrupt(192563, "HasInterrupt", nil, nil, 1, 2)
+--local specWarnUnrulyYell			= mod:NewSpecialWarningInterrupt(199726, "HasInterrupt", nil, nil, 1, 2)
+--local specWarnSearingLight			= mod:NewSpecialWarningInterrupt(192288, "HasInterrupt", nil, nil, 1, 2)
+--
+--local timerThunderousBoltCD			= mod:NewCDNPTimer(4.8, 198595, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--6-7
+--local timerRuneOfHealingCD			= mod:NewCDNPTimer(17, 198934, nil, "HasInterrupt", nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--17-18.2
+--local timerHolyRadianceCD			= mod:NewCDNPTimer(18.1, 215433, nil, "HasInterrupt", nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--17-18.2
+--local timerCleansingFlameCD			= mod:NewCDNPTimer(6.1, 192563, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)--6-9
+--local timerBlastofLightCD			= mod:NewCDNPTimer(18, 191508, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)--May be lower
+--local timerEyeofStormCD				= mod:NewCDNPTimer(25, 200901, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON)
+--local timerSanctifyCD				= mod:NewCDNPTimer(25, 192158, nil, nil, nil, 3)--25-30 based on searing light casts since searing light has 6sec ICD lockout
 
 mod:AddGossipOption(true, "Encounter")
 --Antispam IDs for this mod: 1 run away, 2 dodge, 3 dispel, 4 incoming damage, 5 you/role, 6 generalized, 7 GTFO
 
+--[[
 local eyeShortName = DBM:GetSpellName(91320)--Inner Eye
 
 function mod:CrackleTarget(targetname, uId)
@@ -125,7 +128,7 @@ function mod:SPELL_CAST_START(args)
 		end
 		timerBlastofLightCD:Start(nil, args.sourceGUID)
 	elseif spellId == 198595 then
-		timerThunderousBoltCD:Start(nil, args.sourceGUID)
+		timerThunderousBoltCD:Start(self:IsRemix() and 3.6 or 4.8, args.sourceGUID)
 		if self.Options.SpecWarn198595interrupt and self:CheckInterruptFilter(args.sourceGUID, false, true) then
 			specWarnThunderousBolt:Show(args.sourceName)
 			specWarnThunderousBolt:Play("kickcast")
@@ -169,9 +172,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnThunderstrike:Show()
 			specWarnThunderstrike:Play("scatter")
 			yellThunderstrike:Yell()
-			if self.Options.RangeFrame then
-				DBM.RangeCheck:Show(6)
-			end
 		end
 	end
 end
@@ -179,11 +179,6 @@ end
 
 function mod:SPELL_AURA_REMOVED(args)
 	if not self.Options.Enabled then return end
-	if args.spellId == 215430 and args:IsPlayer() then
-		if self.Options.RangeFrame then
-			DBM.RangeCheck:Hide()
-		end
-	end
 end
 
 function mod:UNIT_DIED(args)
@@ -203,6 +198,7 @@ function mod:UNIT_DIED(args)
 		timerSanctifyCD:Stop(args.destGUID)
 	end
 end
+--]]
 
 function mod:GOSSIP_SHOW()
 	local gossipOptionID = self:GetGossipID()

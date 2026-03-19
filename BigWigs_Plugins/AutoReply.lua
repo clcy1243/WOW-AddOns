@@ -1,8 +1,10 @@
+if BigWigsLoader.isMidnight then return end -- XXX needs updating for 12.0
+
 -------------------------------------------------------------------------------
 -- Module Declaration
 --
 
-local plugin = BigWigs:NewPlugin("AutoReply")
+local plugin, L = BigWigs:NewPlugin("AutoReply")
 if not plugin then return end
 
 -------------------------------------------------------------------------------
@@ -22,7 +24,6 @@ plugin.defaultDB = {
 --
 
 local Ambiguate, SendChatMessage, GetTime = BigWigsLoader.Ambiguate, BigWigsLoader.SendChatMessage, GetTime
-local L = BigWigsAPI:GetLocale("BigWigs: Plugins")
 plugin.displayName = L.autoReply
 local curDiff = 0
 local curModule = nil
@@ -37,7 +38,7 @@ local timer = nil
 do
 	local disabled = function() return plugin.db.profile.disabled end
 	local bossText = BigWigsAPI:GetLocale("BigWigs: Common").boss
-	local heroicText = BigWigsAPI:GetLocale("BigWigs").heroic
+	local heroicText = L.heroic
 	local modeTbl = {
 		type = "select",
 		name = L.responseType,
@@ -70,7 +71,7 @@ do
 		desc = L.autoReplyDesc,
 		type = "group",
 		childGroups = "tab",
-		order = 9,
+		order = 16,
 		get = function(info)
 			return plugin.db.profile[info[#info]]
 		end,
@@ -272,7 +273,9 @@ end
 do
 	local units = {"boss1", "boss2", "boss3", "boss4", "boss5"}
 
-	local UnitHealth, UnitHealthMax, IsEncounterInProgress = UnitHealth, UnitHealthMax, IsEncounterInProgress
+	local UnitHealth, UnitHealthMax = UnitHealth, UnitHealthMax
+	local IsEncounterInProgress = C_InstanceEncounter and C_InstanceEncounter.IsEncounterInProgress or IsEncounterInProgress -- XXX 12.0 compat
+
 	local function StoreHealth()
 		if IsEncounterInProgress() then
 			for i = 1, 5 do
@@ -345,9 +348,8 @@ do
 			end
 			if not throttle[sender] or (GetTime() - throttle[sender]) > 30 then
 				throttle[sender] = GetTime()
-				local isBnetFriend = C_BattleNet.GetGameAccountInfoByGUID(guid)
 				local msg
-				if isBnetFriend or IsGuildMember(guid) or C_FriendList.IsFriend(guid) then
+				if C_BattleNet.GetGameAccountInfoByGUID(guid) or IsGuildMember(guid) or C_FriendList.IsFriend(guid) then
 					friendlies[sender] = true
 					msg = CreateResponse(self.db.profile.mode)
 					if not timer and self.db.profile.exitCombat == 4 then
@@ -364,6 +366,7 @@ do
 		end
 	end
 
+	local myClient = WOW_PROJECT_ID
 	function plugin:CHAT_MSG_BN_WHISPER(event, _, playerName, _, _, _, _, _, _, _, _, _, _, bnSenderID)
 		if curDiff > 0 and not BNIsSelf(bnSenderID) then
 			if not throttleBN[bnSenderID] or (GetTime() - throttleBN[bnSenderID]) > 30 then
@@ -372,19 +375,21 @@ do
 				local gameAccs = C_BattleNet.GetFriendNumGameAccounts(index)
 				for i=1, gameAccs do
 					local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(index, i)
-					local player = gameAccountInfo.characterName
-					local realmName = gameAccountInfo.realmName -- Short name "ServerOne"
-					local realmDisplayName = gameAccountInfo.realmDisplayName -- Full name "Server One"
-					if gameAccountInfo.clientProgram == "WoW" and gameAccountInfo.wowProjectID == 1 and realmName and realmDisplayName and player then
-						if realmDisplayName ~= GetRealmName() then
-							player = player .. "-" .. realmName
-						end
-						if UnitInRaid(player) or UnitInParty(player) then -- Player is in our group
-							local _, _, _, myInstanceId = UnitPosition("player")
-							local _, _, _, tarInstanceId = UnitPosition(player)
-							if myInstanceId == tarInstanceId then -- Player is also in our instance
-								throttleBN[bnSenderID] = nil
-								return
+					if gameAccountInfo.clientProgram == "WoW" and gameAccountInfo.wowProjectID == myClient and gameAccountInfo.isInCurrentRegion and gameAccountInfo.realmID > 0 then
+						local player = gameAccountInfo.characterName
+						local realmName = gameAccountInfo.realmName -- Short name "ServerOne"
+						local realmDisplayName = gameAccountInfo.realmDisplayName -- Full name "Server One"
+						if realmName and realmDisplayName and player then
+							if realmDisplayName ~= GetRealmName() then
+								player = player .. "-" .. realmName
+							end
+							if UnitInRaid(player) or UnitInParty(player) then -- Player is in our group
+								local _, _, _, myInstanceId = UnitPosition("player")
+								local _, _, _, tarInstanceId = UnitPosition(player)
+								if myInstanceId == tarInstanceId then -- Player is also in our instance
+									throttleBN[bnSenderID] = nil
+									return
+								end
 							end
 						end
 					end

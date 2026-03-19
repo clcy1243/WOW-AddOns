@@ -3,7 +3,8 @@ local L		= mod:GetLocalizedStrings()
 
 mod.statTypes = "normal,timewalker"
 
-mod:SetRevision("20240714045619")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(117230, 117484)--Tugar, Jormog
 mod:SetBossHPInfoToHighest()
 mod.soloChallenge = true
@@ -75,7 +76,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnFelBurst:Show()
 		specWarnFelBurst:Play("crowdcontrol")--CC based interrupts
 		local timer = felBurstTimers[felburstCount+1]
-		if timer then
+		if timer and timer > 0 then
 			timerFelBurstCD:Start(timer, felburstCount+1)
 		end
 	end

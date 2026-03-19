@@ -1,9 +1,13 @@
 local mod	= DBM:NewMod(2172, "DBM-Party-BfA", 3, 1041)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20231117105343")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(136160)
 mod:SetEncounterID(2143)
+mod:SetZone(1762)
 
 mod:RegisterCombat("combat")
 
@@ -85,9 +89,7 @@ end
 
 function mod:OnCombatEnd()
 	table.wipe(seenMobs)
---	if self.Options.RangeFrame then
---		DBM.RangeCheck:Hide()
---	end
+
 end
 
 function mod:SPELL_CAST_START(args)

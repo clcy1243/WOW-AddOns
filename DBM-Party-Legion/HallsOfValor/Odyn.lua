@@ -1,7 +1,8 @@
 local mod	= DBM:NewMod(1489, "DBM-Party-Legion", 4, 721)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240714045506")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(95676)
 mod:SetEncounterID(1809)
 mod:SetHotfixNoticeRev(20230306000000)
@@ -37,8 +38,8 @@ local specWarnRunicBrand			= mod:NewSpecialWarningMoveTo(197961, nil, nil, nil, 
 local specWarnAdd					= mod:NewSpecialWarningSwitch(201221, "-Healer", nil, nil, 1, 2)
 local specWarnSurge					= mod:NewSpecialWarningInterrupt(198750, "HasInterrupt", nil, nil, 1, 2)
 
-local timerRP						= mod:NewCombatTimer(28.5)
---local timerSpearCD					= mod:NewCDTimer(8, 198077, nil, nil, nil, 3)--More data needed
+local timerRP						= mod:NewRPTimer(28.5)--Timer for when dialog option appears. when triggered, he still has 3 seconds til entering combat
+--local timerSpearCD				= mod:NewCDTimer(8, 198077, nil, nil, nil, 3)--More data needed
 local timerTempestCD				= mod:NewCDCountTimer(56, 198263, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON)--More data needed
 local timerShatterSpearsCD			= mod:NewCDTimer(56, 198077, nil, nil, nil, 2)
 local timerRunicBrandCD				= mod:NewCDCountTimer(56, 197961, nil, nil, nil, 3)
@@ -116,7 +117,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 --		timerSpearCD:Start(18)
 		local nextCount = self.vb.brandCount+1
 --		local timer = brandTimers[nextCount]
---		if timer then
+--		if timer and timer > 0 then
 			timerRunicBrandCD:Start(nil, nextCount)
 --		end
 	end

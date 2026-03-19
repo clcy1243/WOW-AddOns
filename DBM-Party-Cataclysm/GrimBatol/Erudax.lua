@@ -1,24 +1,27 @@
 local mod	= DBM:NewMod(134, "DBM-Party-Cataclysm", 3, 71)
 local L		= mod:GetLocalizedStrings()
 
-if not mod:IsCata() then
+if mod:IsRetail() then
 	mod.statTypes = "normal,heroic,challenge,timewalker"
 	mod.upgradedMPlus = true
 else
 	mod.statTypes = "normal,heroic"
 end
 
-mod:SetRevision("20240922155203")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(40484)
 mod:SetEncounterID(1049)
 mod:SetHotfixNoticeRev(20240812000000)
 --mod:SetMinSyncRevision(20230929000000)
+mod:SetZone(670)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 75763 79467 449939 450077 450100",
-	"SPELL_AURA_APPLIED 75861 75792",
+	"SPELL_AURA_APPLIED 75861 75792 448057",
+	"SPELL_AURA_REMOVED 448057",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
@@ -31,21 +34,25 @@ local warnFeeble		= mod:NewTargetNoFilterAnnounce(75792, 3, nil, "Tank|Healer", 
 local warnUmbralMending	= mod:NewSpellAnnounce(75763, 4)
 
 local specWarnMending	= mod:NewSpecialWarningInterrupt(75763, nil, nil, nil, 1, 2)
-local specWarnGale		= mod:NewSpecialWarningCount(DBM:IsPostCata() and 449939 or 75664, nil, nil, nil, 2, 2)
+local specWarnGale		= mod:NewSpecialWarningCount(DBM:IsRetail() and 449939 or 75664, nil, nil, nil, 2, 2)
 local specWarnAdds		= mod:NewSpecialWarningAddsCount(75704, "Dps", nil, nil, 3, 2)
 
 local timerFeebleCD		= mod:NewCDCountTimer(26, 75792, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 local timerFeeble		= mod:NewTargetTimer(3, 75792, nil, "Tank|Healer", 2, 5)
-local timerGale			= mod:NewCastTimer(5, DBM:IsPostCata() and 449939 or 75664, nil, nil, nil, 2)
-local timerGaleCD		= mod:NewCDCountTimer(55, DBM:IsPostCata() and 449939 or 75664, nil, nil, nil, 2)
+local timerGale			= mod:NewCastTimer(5, DBM:IsRetail() and 449939 or 75664, nil, nil, nil, 2)
+local timerGaleCD		= mod:NewCDCountTimer(55, DBM:IsRetail() and 449939 or 75664, nil, nil, nil, 2)
 local timerAddsCD		= mod:NewCDCountTimer(54.5, 75704, nil, nil, nil, 1)
 --Add new stuff to non cata only
-local specWarnVoidSurge, specWarnCrush, timerVoidSurgeCD, timerCrushCD
+local warnAbyssal, specWarnAbyssal, specWarnVoidSurge, specWarnCrush, timerVoidSurgeCD, timerCrushCD, yellAbyssal, yellAbyssalFades
 if not mod:IsCata() then
+	warnAbyssal 		= mod:NewTargetNoFilterAnnounce(448057, 3)
+	specWarnAbyssal		= mod:NewSpecialWarningYou(448057, nil, nil, nil, 3, 2)
 	specWarnVoidSurge	= mod:NewSpecialWarningDodgeCount(450077, nil, nil, nil, 2, 2)
 	specWarnCrush		= mod:NewSpecialWarningDefensive(450100, nil, nil, nil, 2, 2)
 	timerVoidSurgeCD	= mod:NewCDCountTimer(50, 450077, nil, nil, nil, 3)
 	timerCrushCD		= mod:NewCDCountTimer(50, 450100, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
+	yellAbyssal			= mod:NewShortYell(448057, nil, nil, nil, "YELL")
+	yellAbyssalFades	= mod:NewShortFadesYell(448057)
 end
 
 mod.vb.feebleCount = 0--Used for void surge in TWW
@@ -111,6 +118,20 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			timerFeeble:Start(5, args.destName)
 		end
+	elseif spellId == 448057 then
+		warnAbyssal:CombinedShow(0.3, args.destName)
+		if args:IsPlayer() then
+			specWarnAbyssal:Show()
+			specWarnAbyssal:Play("scatter")
+			yellAbyssal:Yell()
+			yellAbyssalFades:Countdown(spellId)
+		end
+	end
+end
+
+function mod:SPELL_AURA_REMOVED(args)
+	if args.spellId == 448057 and args:IsPlayer() then
+		yellAbyssalFades:Cancel()
 	end
 end
 

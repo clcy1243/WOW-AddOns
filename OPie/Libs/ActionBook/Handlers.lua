@@ -3,16 +3,18 @@ if T.SkipLocalActionBook then return end
 if T.TenEnv then T.TenEnv() end
 
 local MODERN, CF_CLASSIC, CI_ERA = COMPAT >= 10e4 or nil, COMPAT < 10e4 or nil, COMPAT < 2e4 or nil
-local CF_WRATH, CF_CATA = COMPAT < 10e4 and COMPAT > 3e4 or nil, COMPAT < 10e4 and COMPAT > 4e4 or nil
-local MODERN_MOUNTS = MODERN or CF_WRATH
+local CF_WRATH, CF_CATA, CF_MISTS = COMPAT < 10e4 and COMPAT > 3e4 or nil, COMPAT < 10e4 and COMPAT > 4e4 or nil, COMPAT < 10e4 and COMPAT > 5e4 or nil
+local MODERN_MOUNTS, MODERN_BATTLEPETS = MODERN or CF_WRATH, MODERN or CF_MISTS
 local EV = T.Evie
 local AB = T.ActionBook:compatible(2,43)
 local RW = T.ActionBook:compatible("Rewire", 1,27)
 local KR = T.ActionBook:compatible("Kindred", 1,14)
-assert(EV and AB and RW and KR and 1, "Incompatible library bundle")
+local IM = T.ActionBook:compatible("Imp", 1,0)
+assert(EV and AB and RW and KR and IM and 1, "Incompatible library bundle")
 local L = T.ActionBook.L
 local FORCED_MOUNT_SPELLS = {}
 local spellFeedback, itemHint, toyHint, mountHint
+local RAND_MOUNT_SID = 150544
 
 local NormalizeInRange = {[0]=0, 1, [true]=1, [false]=0}
 local _, CLASS = UnitClass("player")
@@ -61,11 +63,70 @@ local function toCooldown(now, start, duration, enabled)
 	if start and start > now then
 		start = start - 2^32/1000
 	end
-	duration = duration or 0
+	duration, enabled = duration or 0, enabled and enabled ~= 0 and 1 or 0
 	return duration > 0 and enabled ~= 0 and start+duration-now or 0, duration, enabled
 end
 
-if MODERN_MOUNTS then -- mount: mount ID
+local spellPHS, actionPHS if MODERN then
+	local phSpell = {
+		count = C_Spell.GetSpellDisplayCount,
+		cooldownInfo = GetSpellCooldown,
+		cooldownDuration = C_Spell.GetSpellCooldownDuration,
+		chargeInfo = GetSpellCharges,
+		chargeDuration = C_Spell.GetSpellChargeDuration,
+	}
+	local phAction = {
+		count = C_ActionBar.GetActionDisplayCount,
+		cooldownInfo = GetActionCooldown,
+		cooldownDuration = C_ActionBar.GetActionCooldownDuration,
+		chargeInfo = GetActionCharges,
+		chargeDuration = C_ActionBar.GetActionChargeDuration,
+	}
+
+	spellPHS = AB:ReservePartialHintSuffix(phSpell)
+	actionPHS = AB:ReservePartialHintSuffix(phAction)
+end
+
+local function actionHint(slot)
+	local at, aid = GetActionInfo(slot)
+	if at == nil then
+		return false, 0, "Interface/Icons/inv_misc_questionmark", "", 0, 0, 0
+	end
+	local now, state = GetTime(), 0
+	local inRange, usable, nomana, hasRange = NormalizeInRange[IsActionInRange(slot)], IsUsableAction(slot)
+	inRange, hasRange = inRange ~= 0, inRange ~= nil
+	local skipCD, overCount, useChargeCooldown
+	local cdLeft, cdLength, enabled = GetActionCooldown(slot)
+	local count, charges, maxCharges, ccdStart, ccdLength
+	if MODERN and issecretvalue(cdLeft) then
+		skipCD, cdLeft, enabled, charges, maxCharges, ccdStart, ccdLength = 1, nil
+		state, cdLength = state + 524288, actionPHS + slot
+		overCount, count = C_ActionBar.GetActionDisplayCount(slot), 1
+	else
+		count, charges, maxCharges, ccdStart, ccdLength = GetActionCount(slot), GetActionCharges(slot)
+		cdLeft, cdLength, enabled = toCooldown(now, cdLeft, cdLength, enabled)
+		if charges and maxCharges and charges < maxCharges and cdLeft == 0 then
+			useChargeCooldown = 1
+		end
+	end
+	state = state + ((IsCurrentAction(slot) or enabled == 0) and 1 or 0)
+	      + (at == "spell" and IsSpellOverlayed(aid) and 2 or 0)
+	      + (nomana and 8 or 0) + (inRange and 0 or 16) + (charges and charges > 0 and 64 or 0) + (hasRange and 512 or 0)
+	      + (usable and 0 or 1024) + (enabled == 0 and 2048 or 0)
+	usable = not not (usable and inRange and (skipCD or cdLeft == 0 or enabled == 0 or charges > 0))
+	if useChargeCooldown then
+		cdLeft, cdLength = toCooldown(now, ccdStart, ccdLength, 1)
+	end
+	overCount = overCount or count <= 1 and charges or count
+	return usable, state, GetActionTexture(slot), GetActionText(slot) or (at == "spell" and GetSpellInfo(aid)), overCount, cdLeft, cdLength, callMethod.SetAction, slot
+end
+
+securecall(function() -- mount: mount ID
+	if not MODERN_MOUNTS then
+		function mountHint()
+		end
+		return
+	end
 	local function callSummonMount(mountID)
 		C_MountJournal.SummonByID(mountID)
 	end
@@ -101,8 +162,16 @@ if MODERN_MOUNTS then -- mount: mount ID
 	function mountHint(id)
 		local usable = (not (InCombatLockdown() or IsIndoors())) and HasFullControl() and not UnitIsDeadOrGhost("player")
 		local cname, sid, icon, active, usable2 = C_MountJournal.GetMountInfoByID(id)
-		local cdLeft, cdLength = toCooldown(GetTime(), GetSpellCooldown(sid))
-		return usable and cdLeft == 0 and usable2, active and 1 or 0, icon, cname, 0, cdLeft, cdLength, callMethod.SetMountBySpellID, sid
+		local state, skipCD, cdLeft, cdLength = (active and 1 or 0), nil, GetSpellCooldown(sid)
+		if MODERN and issecretvalue(cdLeft) then
+			if sid then
+				skipCD, cdLeft = 1
+				state, cdLength = state + 524288, spellPHS + sid
+			end
+		else
+			cdLeft, cdLength = toCooldown(GetTime(), cdLeft, cdLength)
+		end
+		return usable and (skipCD or cdLeft == 0) and usable2, state, icon, cname, 0, cdLeft, cdLength, callMethod.SetMountBySpellID, sid
 	end
 	local actionMap = {}
 	local function createMount(id)
@@ -112,31 +181,29 @@ if MODERN_MOUNTS then -- mount: mount ID
 		return actionMap[id]
 	end
 	local function describeMount(id)
-		local name, sid, icon, _4, _5, _6, _7, factionLocked, factionId = C_MountJournal.GetMountInfoByID(id)
+		local name, sid, icon, _4, _5, _6, _7, factionLocked, factionId, _, collected = C_MountJournal.GetMountInfoByID(id)
 		if name and factionLocked then
 			name = name .. (factionId == 0 and "|A:QuestPortraitIcon-Horde-small:14:14:0:-1|a" or "|A:QuestPortraitIcon-Alliance-small:15:13:-1:-1|a")
 		end
-		return L"Mount", name, icon, nil, callMethod.SetMountBySpellID, sid
+		local actionFlags = collected and not checkUsableMountID(id) and 1 or nil
+		return L"Mount", name, icon, nil, callMethod.SetMountBySpellID, sid, nil, actionFlags
 	end
 	AB:RegisterActionType("mount", createMount, describeMount, 1)
 	if MODERN then -- random
-		local mjID, rname, _, ricon = C_MountJournal.GetMountFromSpell(150544), GetSpellInfo(150544)
+		local mjID, rname, _, ricon = C_MountJournal.GetMountFromSpell(RAND_MOUNT_SID), GetSpellInfo(RAND_MOUNT_SID)
 		actionMap[0] = AB:CreateActionSlot(function()
-			return HasFullControl() and not IsIndoors(), IsMounted() and 1 or 0, ricon, rname, 0, 0, 0, callMethod.SetMountBySpellID, 150544
+			return HasFullControl() and not IsIndoors(), IsMounted() and 1 or 0, ricon, rname, 0, 0, 0, callMethod.SetMountBySpellID, RAND_MOUNT_SID
 		end, nil, summonAction(0))
-		FORCED_MOUNT_SPELLS[150544], actionMap[mjID or 0] = 0, 0
+		FORCED_MOUNT_SPELLS[RAND_MOUNT_SID], actionMap[mjID or 0] = 0, 0
 		RW:SetCastEscapeAction(rname, actionMap[0])
-		RW:SetCastEscapeAction("spell:150544", actionMap[0])
+		RW:SetCastEscapeAction("spell:" .. RAND_MOUNT_SID, actionMap[0])
 	end
 	local function mountSync()
 		AB:NotifyObservers("mount")
 	end
 	EV.NEW_MOUNT_ADDED, EV.PLAYER_ENTERING_WORLD, EV.COMPANION_LEARNED = mountSync, mountSync, mountSync
-else
-	function mountHint()
-	end
-end
-do -- spell: spell ID + mount spell ID
+end)
+securecall(function() -- spell: spell ID + mount spell ID
 	local actionMap, spellMap = {}, {}
 	local function isCurrentForm(q, qsid)
 		local id = GetShapeshiftForm()
@@ -202,26 +269,55 @@ do -- spell: spell ID + mount spell ID
 			return t[k]
 		end})
 	end
+	local iconOverrideHandlers = {}
+	local SBA_SPELL_ID = 1229376
 	local function spellHint(n, _modState, target)
 		if not n then return end
 		local sname, _, _, _, _, _, sid = GetSpellInfo(n)
+		local ncid = sid == SBA_SPELL_ID and MODERN and C_AssistedCombat.GetNextCastSpell(false)
+		if ncid then
+			sname, _, _, _, _, _, sid = GetSpellInfo(ncid)
+			n = sname
+		end
 		local mjID = sid and getSpellMountID(sid)
 		if mjID then return mountHint(mjID) end
 		if not sname then return end
-		local now, msid = GetTime(), spellMap[lowered[n]] or sid
+		local state, now, msid = 0, GetTime(), sid or spellMap[lowered[n]]
 		local inRange, usable, nomana, hasRange = NormalizeInRange[IsSpellInRange(sid and RUNE_BASESPELL_CACHE[sid] or n, target or "target")], IsUsableSpell(n)
 		inRange, hasRange = inRange ~= 0, inRange ~= nil
-		local cdLeft, cdLength, enabled = toCooldown(now, GetSpellCooldown(n))
-		local count, charges, maxCharges, ccdStart, ccdLength = GetSpellCount(n), GetSpellCharges(n)
-		local state = ((IsSelectedSpellBookItem(n) or IsCurrentSpell(n) or isCurrentForm(n, sid) or enabled == 0) and 1 or 0) +
-		              (MODERN and IsSpellOverlayed(msid or 0) and 2 or 0) + (nomana and 8 or 0) + (inRange and 0 or 16) + (charges and charges > 0 and 64 or 0) +
-		              (hasRange and 512 or 0) + (usable and 0 or 1024) + (enabled == 0 and 2048 or 0)
-		usable = not not (usable and inRange and (cdLeft == 0 or enabled == 0))
-		if charges and maxCharges and charges < maxCharges and cdLeft == 0 then
+		local skipCD, overCount, useChargeCooldown
+		local cdLeft, cdLength, enabled = GetSpellCooldown(n)
+		local count, charges, maxCharges, ccdStart, ccdLength
+		if MODERN and issecretvalue(cdLeft) then
+			skipCD, count, cdLeft, cdLength, enabled = 1, 1
+			if msid then
+				state, cdLength = 524288, spellPHS + msid
+				overCount = C_Spell.GetSpellDisplayCount(msid)
+			end
+		else
+			count, charges, maxCharges, ccdStart, ccdLength = GetSpellCount(n), GetSpellCharges(n)
+			cdLeft, cdLength, enabled = toCooldown(now, cdLeft, cdLength, enabled)
+			if charges and maxCharges and charges < maxCharges and cdLeft == 0 then
+				useChargeCooldown = 1
+			end
+		end
+		state = state + ((IsSelectedSpellBookItem(n) or IsCurrentSpell(n) or isCurrentForm(n, sid) or enabled == 0) and 1 or 0)
+		      + (MODERN and IsSpellOverlayed(msid or 0) and 2 or 0) + (nomana and 8 or 0) + (inRange and 0 or 16) + (charges and charges > 0 and 64 or 0)
+		      + (hasRange and 512 or 0) + (usable and 0 or 1024) + (enabled == 0 and 2048 or 0)
+		usable = not not (usable and inRange and (cdLeft == 0 or enabled == 0 or skipCD))
+		if useChargeCooldown then
 			cdLeft, cdLength = toCooldown(now, ccdStart, ccdLength, 1)
 		end
+		local ih, ico, ohUsable = iconOverrideHandlers[msid], nil
+		if ih then
+			ico, ohUsable = ih(msid, n)
+			if ohUsable ~= nil then
+				usable = ohUsable == true
+			end
+		end
 		local sbslot = msid and msid ~= 161691 and FindSpellBookSlotBySpellID(msid)
-		return usable, state, GetSpellTexture(n), sname or n, count <= 1 and charges or count, cdLeft, cdLength, sbslot and SetSpellBookItem or msid and SetSpellByID, sbslot or msid
+		overCount = overCount or count <= 1 and charges or count
+		return usable, state, ico or GetSpellTexture(n), sname, overCount, cdLeft, cdLength, sbslot and SetSpellBookItem or msid and SetSpellByID, sbslot or msid
 	end
 	function spellFeedback(sname, target, spellId)
 		spellMap[sname] = spellId or spellMap[sname] or getSpellIDFromName(sname)
@@ -260,7 +356,7 @@ do -- spell: spell ID + mount spell ID
 			if not actionMap[action] then
 				actionMap[action] = AB:CreateActionSlot(spellHint, action, "attribute", "type","spell", "spell",action, "checkselfcast",true, "checkfocuscast",true)
 			end
-			if type(action) == "string" and spellMap[action] ~= id then
+			if type(action) == "string" and spellMap[lowered[action]] ~= id then
 				spellMap[lowered[action]] = id
 			end
 		end
@@ -272,7 +368,7 @@ do -- spell: spell ID + mount spell ID
 		local _, castType = RW:IsSpellCastable(id, nil, laxRank)
 		if castType == "rune-ability-spell" then
 			_, icon2 = GetSpellTexture(id)
-		elseif name and castType ~= "forced-id-cast" then
+		elseif name and castType ~= "forced-id-cast"  and castType ~= "rewire-escape" then
 			local qRank = (MODERN or q == "list-query" or not laxRank) and rank or nil
 			rank, name2, _, icon2, _, _, _, sid2 = GetSpellSubtext(name, rank), GetSpellInfo(name, qRank)
 			if MODERN and sid2 and IsPassiveSpell(sid2) or RUNE_SPELLS[id] then
@@ -289,7 +385,7 @@ do -- spell: spell ID + mount spell ID
 		local gab = GetSpellInfo(161691)
 		actionMap[gab] = AB:CreateActionSlot(spellHint, gab, "conditional", "[outpost]", "attribute", "type","spell", "spell",gab)
 		spellMap[lowered[gab]] = 161691
-		actionMap[150544] = AB:GetActionSlot("mount", 0)
+		actionMap[RAND_MOUNT_SID] = AB:GetActionSlot("mount", 0)
 	end
 	
 	function EV.SPELLS_CHANGED()
@@ -301,9 +397,19 @@ do -- spell: spell ID + mount spell ID
 		end
 		AB:NotifyObservers("spell")
 	end
-end
-do -- item: items ID/inventory slot
+	function AB.HUM:SetSpellIconOverride(id, f)
+		if not (type(id) == "number" and (f == nil or type(f) == "function")) then
+			return error('SetSpellIconOverride: invalid arguments', 2)
+		end
+		iconOverrideHandlers[id] = f
+	end
+	function AB.HUM:GetNativeSpellFeedback(spell, target)
+		return spellHint(spell, nil, target)
+	end
+end)
+securecall(function() -- item: items ID/inventory slot
 	local actionMap, itemIdMap, LAST_EQUIP_SLOT = {}, {}, INVSLOT_LAST_EQUIPPED
+	local countOverrideHandlers = {}
 	local function containerTip(self, bagslot)
 		local slot = bagslot % 100
 		self:SetBagItem((bagslot-slot)/100, slot)
@@ -377,8 +483,17 @@ do -- item: items ID/inventory slot
 		local qual = MODERN and ident and (C_TradeSkillUI.GetItemReagentQualityByItemInfo(ident) or C_TradeSkillUI.GetItemCraftedQualityByItemInfo(ident))
 		qual = qual and qual > 0 and qual < 8 and (qual * 16384) or 0
 		local state = (C_Item.IsCurrentItem(ident) and 1 or 0) + (inRange and 0 or 16) + (slot and C_Item.IsEquippableItem(ident) and (bag and (purpose == "equip" and 128 or 0) or (slot and 256 or 0)) or 0) + (hasRange and 512 or 0) + (usable and 0 or 1024) + (enabled == 0 and 2048 or 0) + qual
-		return not not (usable and inRange and cdLeft == 0), state, icon or C_Item.GetItemIconByID(ident), name or ident, nCharge,
-			cdLeft, cdLength or 0, tip, tipArg
+		usable = not not (usable and inRange and cdLeft == 0)
+		icon = icon or C_Item.GetItemIconByID(ident)
+		local oh = countOverrideHandlers[iid]
+		if oh then
+			local ohCharge, ohUsable = oh(iid, nCharge)
+			nCharge = ohCharge or nCharge
+			if ohUsable == true or ohUsable == false then
+				usable = ohUsable
+			end
+		end
+		return usable, state, icon, name or ident, nCharge, cdLeft, cdLength or 0, tip, tipArg
 	end
 	local function createItem(id, flags)
 		local byName, forceShow, onlyEquipped
@@ -414,8 +529,45 @@ do -- item: items ID/inventory slot
 			return RW:GetCommandAction(SLASH_EQUIP1, item)
 		end
 	end)
-end
-do -- macrotext
+	function AB.HUM:SetItemCountOverride(id, f)
+		if not (type(id) == "number" and (f == nil or type(f) == "function")) then
+			error('SetItemCountOverride: invalid arguments', 2)
+		end
+		countOverrideHandlers[id] = f
+	end
+end)
+securecall(function() -- peq: slot token
+	local slots = {
+		head="HEADSLOT", neck="NECKSLOT", shoulders="SHOULDERSLOT", shirt="SHIRTSLOT", chest="CHESTSLOT",
+		waist="WAISTSLOT", legs="LEGSSLOT", feet="FEETSLOT", wrist="WRISTSLOT", hands="HANDSSLOT",
+		finger1="FINGER0SLOT", finger2="FINGER1SLOT", trinket1="TRINKET0SLOT", trinket2="TRINKET1SLOT",
+		back="BACKSLOT", tabard="TABARDSLOT",
+	}
+	for tk, sk in pairs(slots) do
+		local sn, suf, ok, slot = _G[sk], tk:match("%d+$"), pcall(GetInventorySlotInfo, sk)
+		slots[tk] = ok and slot and {sk, sn and suf and (sn .. " " .. suf) or sn or sk} or nil
+		if ok and slot then
+			RW:SetCastAlias(tk, tostring(slot), false)
+		end
+	end
+	local function describePlayerEquipmentSlot(tk)
+		local si = slots[tk]
+		if si then
+			local _, tex = GetInventorySlotInfo(si[1])
+			return L"Equipment Slot", si[2], tex
+		end
+	end
+	local function createPlayerEquipmentSlot(tk)
+		local si = slots[tk]
+		if si and not si[3] then
+			local slot = GetInventorySlotInfo(si[1])
+			si[3] = AB:CreateActionSlot(itemHint, slot, "conditional","[uslot:" .. tk .. "]", "attribute", "type","item", "item",slot)
+		end
+		return si and si[3]
+	end
+	AB:RegisterActionType("peq", createPlayerEquipmentSlot, describePlayerEquipmentSlot, 1)
+end)
+securecall(function() -- macrotext
 	local map = {}
 	local function macroHint(mtext, modLockState)
 		return RW:GetMacroAction(mtext, modLockState)
@@ -439,7 +591,7 @@ do -- macrotext
 	local function checkCountReturn(pri, ...)
 		if select("#", ...) > 0 then
 			local _, _, _, _, nc = ...
-			return nc == 0 and pri - 1 or pri, ...
+			return nc == 0 and pri - 5 or pri, ...
 		end
 	end
 	local function canUseViaSCUI(clause)
@@ -487,54 +639,94 @@ do -- macrotext
 			return RW:GetCommandAction("/use", clause, target)
 		end
 	end)
-	do -- /userandom
+	do -- /userandom + /qsequence
 		local f = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
 		f:SetFrameRef("RW", RW:seclib())
-		f:Execute("seed, t, RW = math.random(2^30), newtable(), self:GetFrameRef('RW'); self:SetAttribute('frameref-RW', nil)")
+		f:SetFrameRef("KR", KR:seclib())
+		f:Execute([[-- AB_userandom_init 
+			seed, crState, qsState = math.random(2^30), newtable(), newtable()
+			RW = self:GetFrameRef('RW'), self:SetAttribute('frameref-RW', nil)
+			KR = self:GetFrameRef('KR'), self:SetAttribute('frameref-KR', nil)
+		]])
 		f:SetAttribute("RunSlashCmd", [=[-- AB_userandom 
 			local cmd, v, target, s, q = ...
+			local isRand = cmd ~= "/qsequence"
+			local tv, i, vt, _ = (isRand and crState or qsState)[v]
 			if v == "" or not v then
 				return
-			elseif not t[v] then
-				local tv, tn = newtable(), 1
-				for f in v:gmatch("[^,]+") do
-					tv[tn], tn = f:match("^%s*(.-)%s*$"), tn + 1
+			elseif not tv then
+				local iv, tn, np = newtable(), 1, 1 --@init_clause_start
+				while np do
+					local sp, spc, ev, eo = np, np
+					repeat
+						sp, spc = spc, v:match("^%s*<[^<]->()%s*", sp)
+					until not spc
+					eo = sp > np and v:sub(np, sp-1):gsub("<(.-)>", "[%1]") or nil
+					ev, np = v:match("^%s*([^%s,][^,]*),?%s*()", sp)
+					ev = ev and ev:match("^%s*(.-)%s*$") or ""
+					if ev ~= "" then
+						iv[-tn], iv[tn], tn = eo, ev, tn + 1
+					end
 				end
-				t[v], tv[0] = tv, tv[1 + seed % #tv]
+				tv, (isRand and crState or qsState)[v], iv[0] = iv, iv, isRand and 1 + seed % #iv or 1 --@init_clause_end
 			end
-			v = t[v]
-			v, v[0] = v[0], v[math.random(#v)]
+			i = tv[0]
+			v, vt, tv[0] = tv[i], tv[-i], isRand and math.random(#tv) or (1 + i % #tv)
 			if v then
-				return RW:RunAttribute("RunSlashCmd", "/cast", v, target, "opt-into-cr-fallback")
+				if vt then
+					_, vt = KR:RunAttribute("EvaluateCmdOptions", vt)
+				end
+				return RW:RunAttribute("RunSlashCmd", "/cast", v, vt or target, isRand and "opt-into-cr-fallback")
 			end
 		]=])
+		local getNextCast do -- (kind, v, target) -> (v, target)
+			local senv = GetManagedEnvironment(f)
+			local uenv = setmetatable({qsState={}, crState={}, newtable=function() return {} end}, {__index=senv})
+			local initF = setfenv(loadstring("return function(isRand, v)\n" .. f:GetAttribute("RunSlashCmd"):match("[^\n]+@init_clause_start.-@init_clause_end") .. "\nreturn iv end"), {})
+			initF = setfenv(initF(), uenv)
+			function getNextCast(k, c, target)
+				local t1, ucache, tv, i, v, vt = senv[k][c], uenv[k]
+				tv = t1 or ucache[c] or initF(k == "crState", c)
+				if t1 then
+					ucache[c] = nil
+				end
+				i = tv[0]
+				v, vt = tv[i], tv[-i]
+				if vt then
+					_, vt = KR:EvaluateCmdOptions(vt)
+				end
+				return v, vt or target
+			end
+		end
 		RW:RegisterCommand(SLASH_USERANDOM1, true, true, f)
-		local secenv, ic = GetManagedEnvironment(f), {}
-		RW:SetCommandHint(SLASH_USERANDOM1, 50, function(_, _, clause, target)
-			if not clause or clause == "" then return end
-			local t1, t, n = secenv.t[clause]
-			t = t1 or ic[clause]
-			if t1 then
-				ic[clause] = nil
-			elseif not t then
-				t, n = {}, 1
-				for s in clause:gmatch("[^,]+") do
-					t[n], n = s, n + 1
-				end
-				ic[clause], t[0] = t, t[1 + secenv.seed % #t]
-			end
-			t = t[0]
-			if t then
-				local nextN = tonumber(t)
+		local function hintCastRandom(_, _, clause, target)
+			if (clause or "") == "" then return end
+			local v, vt = getNextCast("crState", clause, target)
+			if v then
+				local nextN = tonumber(v)
 				if nextN and nextN > 20 and C_Item.GetItemNameByID(nextN) then
-					t = "item:" .. t
+					v = "item:" .. v
 				end
-				return RW:GetCommandAction("/use", t, target, nil, "castrandom-fallback")
+				return RW:GetCommandAction("/use", v, vt or target, nil, "castrandom-fallback")
 			end
-		end)
+		end
+		local function hintQuickSequence(_slash, _unparsed, clause, target)
+			if (clause or "") == "" then return end
+			local v, vt = getNextCast("qsState", clause, target)
+			if v then
+				return RW:GetCommandAction("/cast", v, vt)
+			end
+		end
+		RW:SetCommandHint(SLASH_USERANDOM1, 50, hintCastRandom)
+		SLASH_ACTIONBOOK_QSEQUENCE1, SLASH_ACTIONBOOK_QSEQUENCE2 = "/qsequence", "/quicksequence"
+		RW:RegisterCommand(SLASH_ACTIONBOOK_QSEQUENCE1, true, true, f)
+		RW:AddCommandAliases(SLASH_ACTIONBOOK_QSEQUENCE1, SLASH_ACTIONBOOK_QSEQUENCE2)
+		RW:SetCommandHint(SLASH_ACTIONBOOK_QSEQUENCE1, 100, hintQuickSequence)
+		IM:AddTokenizableCommand("ACTIONBOOK_QSEQUENCE", SLASH_CASTRANDOM1)
+		SLASH_ACTIONBOOK_QSEQUENCE1, SLASH_ACTIONBOOK_QSEQUENCE2 = nil, nil
 	end
-end
-do -- macro: name
+end)
+securecall(function() -- macro: name
 	local map, sm = {}, {} do
 		local wmSynced, owner = true, RW:RegisterNamedMacroTextOwner("ab-macro-wrapper", 10)
 		local function syncWMacros()
@@ -591,10 +783,13 @@ do -- macro: name
 		return L"Macro", name, ico
 	end
 	AB:RegisterActionType("macro", createNamedMacro, describeMacro, 2)
-end
-if MODERN or CF_WRATH then -- battlepet: pet ID, species ID
+end)
+securecall(function() -- battlepet: pet ID, species ID
+	if not (MODERN_BATTLEPETS or CF_WRATH) then
+		return
+	end
 	local petAction, special = {}, {}
-	local BPET_ATYPE_NAME, SummonCompanion = not MODERN and COMPANIONS or L"Battle Pet"
+	local BPET_ATYPE_NAME, SummonCompanion = not MODERN_BATTLEPETS and COMPANIONS or L"Battle Pet"
 	local function SetBattlePetByID(self, id)
 		local sid, cname, lvl, _, _, _, _, name, _, ptype, _, _, desc, _, cb = C_PetJournal.GetPetInfoByPetID(id)
 		if not sid then return false end
@@ -609,8 +804,10 @@ if MODERN or CF_WRATH then -- battlepet: pet ID, species ID
 			self:AddLine(desc, nc.r, nc.g, nc.b, 1)
 		end
 	end
-	if CF_WRATH then
+	if not MODERN_BATTLEPETS then
 		SetBattlePetByID = callMethod.SetCompanionPet
+	end
+	if not MODERN then
 		function SummonCompanion(guid)
 			if C_PetJournal.IsCurrentlySummoned(guid) then
 				C_PetJournal.DismissSummonedPet(guid)
@@ -627,7 +824,7 @@ if MODERN or CF_WRATH then -- battlepet: pet ID, species ID
 		            + (enabled == 0 and 2048 or 0)
 		return sid and cdLeft == 0 and C_PetJournal.PetIsSummonable(pid), state, tex, cn or n or "", 0, cdLeft, cdLength, SetBattlePetByID, pid
 	end
-	if MODERN then -- random favorite pet
+	if MODERN_BATTLEPETS then -- random favorite pet
 		local rname, _, ricon = GetSpellInfo(243819)
 		local function randFaveHint()
 			return HasFullControl(), C_PetJournal.GetSummonedPetGUID() and 1 or 0, ricon, rname, 0, 0, 0, callMethod.SetSpellByID, 243819
@@ -668,7 +865,7 @@ if MODERN or CF_WRATH then -- battlepet: pet ID, species ID
 		if not petAction[pk] then
 			if MODERN then
 				petAction[pk] = AB:CreateActionSlot(battlepetHint, rpid, "macrotext", EMOTE143_CMD1 .. "\n" .. SLASH_SUMMON_BATTLE_PET1 .. " " .. rpid)
-			else -- no /summonbattlepet implementation as of 4.4.0
+			else -- no /summonbattlepet implementation in 4.4.0, 5.5.0
 				petAction[pk] = AB:CreateActionSlot(battlepetHint, rpid, "func", SummonCompanion, rpid)
 			end
 		end
@@ -690,8 +887,11 @@ if MODERN or CF_WRATH then -- battlepet: pet ID, species ID
 			end
 		end
 	end)
-end
-if MODERN or CF_WRATH then -- equipmentset: equipment sets by name
+end)
+securecall(function() -- equipmentset: equipment sets by name
+	if not (MODERN or CF_WRATH) then
+		return
+	end
 	local setMap = {}
 	local function resolveIcon(fid)
 		return type(fid) == "number" and fid or ("Interface/Icons/" .. (fid or "INV_Misc_QuestionMark"))
@@ -703,6 +903,12 @@ if MODERN or CF_WRATH then -- equipmentset: equipment sets by name
 			return total == equipped or (available > 0), active and 1 or 0, resolveIcon(icon), name, nil, 0, 0, callMethod.SetEquipmentSet, esid
 		end
 	end
+	local function wrapCommandHint(...)
+		local _, state = ...
+		if state then
+			return true, ...
+		end
+	end
 	function EV.EQUIPMENT_SETS_CHANGED()
 		AB:NotifyObservers("equipmentset")
 	end
@@ -710,7 +916,7 @@ if MODERN or CF_WRATH then -- equipmentset: equipment sets by name
 		return "attribute", "type","equipmentset", "equipmentset",name
 	end
 	local function equipSetActionSpec_SLASH(name)
-		-- [3.4.2] /equipset exists but SABT action type does not
+		-- [3.4.2] [4.4.1] /equipset exists but the SABT action type does not
 		return "macrotext", SLASH_EQUIP_SET1 .. " " .. name
 	end
 	equipSetActionSpec, equipSetActionSpec_SLASH = MODERN and equipSetActionSpec or equipSetActionSpec_SLASH, nil
@@ -730,12 +936,13 @@ if MODERN or CF_WRATH then -- equipmentset: equipment sets by name
 	AB:RegisterActionType("equipmentset", createEquipSet, describeEquipSet, 1)
 	RW:SetCommandHint(SLASH_EQUIP_SET1, 80, function(_, _, clause)
 		if clause and clause ~= "" then
-			return true, equipmentsetHint(clause)
+			return wrapCommandHint(equipmentsetHint(clause))
 		end
 	end)
-end
-do -- raidmark
+end)
+securecall(function() -- raidmark
 	local map, waitingToClearSelf = {}
+	local SABT_RAIDMARK = MODERN
 	local function CanChangeRaidTargets(unit)
 		return not not ((not IsInRaid() or UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) and not (unit and UnitIsPlayer(unit) and UnitIsEnemy("player", unit)))
 	end
@@ -744,7 +951,8 @@ do -- raidmark
 	end
 	local function raidmarkHint(i, _, target)
 		local target = target or "target"
-		return CanChangeRaidTargets(target), GetRaidTargetIndex(target) == i and 1 or 0, "Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i, _G["RAID_TARGET_" .. i], 0, 0, 0
+		local state = MODERN and 0 or GetRaidTargetIndex(target) == i and 1 or 0
+		return CanChangeRaidTargets(target), state, "Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i, _G["RAID_TARGET_" .. i], 0, 0, 0
 	end
 	local function removeHint()
 		return CanChangeRaidTargets(), 0, "Interface/Icons/INV_Gauntlets_02", REMOVE_WORLD_MARKERS, 0, 0, 0
@@ -758,7 +966,8 @@ do -- raidmark
 			return "remove"
 		end
 	end
-	map[0] = AB:CreateActionSlot(removeHint, nil, "func", function()
+	map[0] = SABT_RAIDMARK and AB:CreateActionSlot(removeHint, nil, "attribute", "type","raidtarget", "action","clear-all")
+	                        or AB:CreateActionSlot(removeHint, nil, "func", function()
 		if not CanChangeRaidTargets() then return end
 		local pt = GetRaidTargetIndex("player")
 		for i=8, 0, -1 do
@@ -767,9 +976,10 @@ do -- raidmark
 		if not (pt or waitingToClearSelf) and IsInGroup() then
 			waitingToClearSelf, EV.RAID_TARGET_UPDATE = 1, FinishClearRaidTargets
 		end
-	end)
+	end) or nil
 	for i=1,8 do
-		map[i] = AB:CreateActionSlot(raidmarkHint, i, "func", setRaidTarget, i)
+		map[i] = SABT_RAIDMARK and AB:CreateActionSlot(raidmarkHint, i, "attribute", "type","raidtarget", "marker",i)
+		                        or AB:CreateActionSlot(raidmarkHint, i, "func", setRaidTarget, i)
 	end
 	local function createRaidMark(id)
 		return map[id]
@@ -787,14 +997,20 @@ do -- raidmark
 			return true, raidmarkHint(clause, nil, target)
 		end
 	end)
-end
-if MODERN or CF_CATA then -- worldmarker
-	local NUM_WORLD_MARKERS = MODERN and 8 or 5
+end)
+securecall(function() -- worldmarker
+	if not (MODERN or CF_CATA) then
+		return
+	end
+	local NUM_WORLD_MARKERS = CF_CATA and NUM_WORLD_RAID_MARKERS_CATA == 5 and 5 or 8
 	local map, icons = {}, {[0]="Interface/Icons/INV_Misc_PunchCards_White",
 		"Interface/Icons/INV_Misc_QirajiCrystal_04","Interface/Icons/INV_Misc_QirajiCrystal_03",
 		"Interface/Icons/INV_Misc_QirajiCrystal_05","Interface/Icons/INV_Misc_QirajiCrystal_02",
-		"Interface/Icons/INV_Misc_QirajiCrystal_01","Interface/Icons/INV_Elemental_Primal_Fire",
-		"Interface/Icons/INV_jewelcrafting_taladiterecrystal","Interface/Icons/INV_jewelcrafting_taladitecrystal"}
+		"Interface/Icons/INV_Misc_QirajiCrystal_01",
+		MODERN and "Interface/Icons/INV_Elemental_Primal_Fire" or 'Interface/TargetingFrame/UI-RaidTargetingIcon_2',
+		MODERN and "Interface/Icons/INV_jewelcrafting_taladiterecrystal" or 'Interface/TargetingFrame/UI-RaidTargetingIcon_5',
+		MODERN and "Interface/Icons/INV_jewelcrafting_taladitecrystal" or 'Interface/TargetingFrame/UI-RaidTargetingIcon_8'
+	}
 	local function Tooltip_SetWorldMark(tip, i)
 		tip:SetText(i == 0 and REMOVE_WORLD_MARKERS or _G["WORLD_MARKER" .. i])
 		if not IsInGroup() then
@@ -825,55 +1041,60 @@ if MODERN or CF_CATA then -- worldmarker
 			return true, worldmarkHint(clause)
 		end
 	end)
-end
-do -- extrabutton
-	local slot = MODERN and (GetExtraBarIndex()*12 - 11)
+end)
+securecall(function() -- action
+	local amap = {}
+	local function createAction(id, _flags)
+		if type(id) ~= "number" or id < 0 or id % 1 ~= 0 then return end
+		local aid = amap[id]
+		if aid == nil then
+			aid = AB:CreateActionSlot(actionHint, id, "attribute", "type","action", "action",id)
+			amap[id] = aid
+		end
+		return aid
+	end
+	local function describeAction(id)
+		if type(id) ~= "number" or id < 0 or id % 1 ~= 0 then return end
+		return L"Action", id, GetActionTexture(id)
+	end
+	AB:RegisterActionType("action", createAction, describeAction, 2)
+end)
+securecall(function() -- extrabutton
+	local slot = (MODERN or CF_CATA) and GetExtraBarIndex and (GetExtraBarIndex()*12 - 11)
 	local function extrabuttonHint()
 		if not HasExtraActionBar() then
 			return false, 0, "Interface/Icons/temp", "", 0, 0, 0
 		end
-		local now, at, aid = GetTime(), GetActionInfo(slot)
-		local inRange, usable, nomana, hasRange = NormalizeInRange[IsActionInRange(slot)], IsUsableAction(slot)
-		inRange, hasRange = inRange ~= 0, inRange ~= nil
-		local cdLeft, cdLength, enabled = toCooldown(now, GetActionCooldown(slot))
-		local count, charges, maxCharges, ccdStart, ccdLength = GetActionCount(slot), GetActionCharges(slot)
-		local state = ((IsCurrentAction(slot) or enabled == 0) and 1 or 0) +
-		              (at == "spell" and IsSpellOverlayed(aid) and 2 or 0) +
-		              (nomana and 8 or 0) + (inRange and 0 or 16) + (charges and charges > 0 and 64 or 0) + (hasRange and 512 or 0) + (usable and 0 or 1024) + (enabled == 0 and 2048 or 0)
-		if charges and maxCharges and charges < maxCharges and cdLeft == 0 then
-			cdLeft, cdLength = toCooldown(now, ccdStart, ccdLength, 1)
-		end
-		usable = not not (usable and inRange and (cdLeft == 0 or enabled == 0 or charges > 0))
-		return usable, state, GetActionTexture(slot), GetActionText(slot) or (at == "spell" and GetSpellInfo(aid)), count <= 1 and charges or count, cdLeft, cdLength, callMethod.SetAction, slot
+		return actionHint(slot)
 	end
-	local aid = MODERN and AB:CreateActionSlot(extrabuttonHint, nil, "conditional", "[extrabar]", "attribute", "type","action", "action",slot)
-	local aid2 = MODERN and AB:CreateActionSlot(extrabuttonHint, nil, "attribute", "type","action", "action",slot)
+	local aid = slot and AB:CreateActionSlot(extrabuttonHint, nil, "conditional", "[extrabar]", "attribute", "type","action", "action",slot)
+	local aid2 = slot and AB:CreateActionSlot(extrabuttonHint, nil, "attribute", "type","action", "action",slot)
 	local function createExtraButton(id, flags)
 		local forceShow = flags == 1
 		return id == 1 and (forceShow and aid2 or aid) or nil
 	end
 	local function describeExtraButton(_id)
 		local name, tex = L"Extra Action Button", "Interface/Icons/Spell_Shadow_Teleport"
-		if MODERN and HasExtraActionBar() then
+		if slot and HasExtraActionBar() then
 			local at, aid = GetActionInfo(slot)
 			name, tex = GetActionText(slot) or (at == "spell" and GetSpellInfo(aid)) or name, GetActionTexture(slot) or tex
 		end
 		return L"Extra Action Button", name, tex
 	end
 	AB:RegisterActionType("extrabutton", createExtraButton, describeExtraButton, 2)
-	if MODERN then
+	if slot then
 		RW:SetClickHint("ExtraActionButton1", 95, function()
 			if HasExtraActionBar() then
 				return true, extrabuttonHint()
 			end
 		end)
 	end
-end
-do -- zoneability auto-collection
+end)
+securecall(function() -- zoneability auto-collection
 	local skipZoneAbilities = {
 		[436521]=1, [436524]=1, -- Pandaria remix: Extract Gem + Unraveling Sands
 	}
-	local col, tpos, colId = {__embed=true}, {}
+	local col, tpos, colId = MODERN and {__embed=true} or nil, {}
 	local function createZoneAbility(id)
 		return id == 0 and colId or nil
 	end
@@ -889,7 +1110,7 @@ do -- zoneability auto-collection
 			local asid = za[i].spellID
 			if asid and not (skipZoneAbilities[asid] or IsPassiveSpell(asid)) then
 				local tk, aid = "INTZAs" .. asid, AB:GetActionSlot("spell", asid)
-				if aid then
+				if aid and not ((tpos[tk] or ni) < ni and col[tpos[tk]] == tk) then
 					changed = changed or col[ni] ~= tk or col[tk] ~= aid
 					col[ni], col[tk], tpos[tk], ni = tk, aid, ni, ni + 1
 				end
@@ -903,16 +1124,16 @@ do -- zoneability auto-collection
 			AB:UpdateActionSlot(colId, col)
 		end
 	end
-	colId = MODERN and AB:CreateActionSlot(nil,nil, "collection",col)
+	colId = col and AB:CreateActionSlot(nil,nil, "collection",col)
 	AB:RegisterActionType("zoneability", createZoneAbility, describeZoneAbility, 1)
-	if MODERN then
+	if col then
 		AB:AddObserver("internal.collection.preopen", onZoneCollectionOpen)
 		function EV:PLAYER_REGEN_DISABLED()
 			onZoneCollectionOpen(nil, "internal.collection.preopen", colId)
 		end
 	end
-end
-do -- petspell: spell ID
+end)
+securecall(function() -- petspell: spell ID
 	local actionInfo = {
 		stay={"Interface\\Icons\\Spell_Nature_TimeStop", "PET_ACTION_WAIT"},
 		move={"Interface\\Icons\\Ability_Hunter_Pet_Goto", "PET_ACTION_MOVE_TO", 1},
@@ -1019,8 +1240,11 @@ do -- petspell: spell ID
 			addPetCommand(SLASH_PET_AGGRESSIVE1, "assist")
 		end
 	end
-end
-if MODERN or CF_WRATH then -- toy: item ID, flags[FORCE_SHOW]
+end)
+securecall(function() -- toy: item ID, flags[FORCE_SHOW]
+	if not (MODERN or CF_WRATH) then
+		return
+	end
 	local map, lastUsability, uq, whinedAboutGIIR = {}, {}, {}
 	local OVERRIDE_TOY_ACQUIRED, IGNORE_TOY_USABILITY = {}, {
 		[129149]=1, [129279]=1, [129367]=1, [130157]="[in:broken isles]", [130158]=1, [130170]=1,
@@ -1029,8 +1253,8 @@ if MODERN or CF_WRATH then -- toy: item ID, flags[FORCE_SHOW]
 		[153039]=1, [119421]=1, [128462]="[alliance]", [128471]="[horde]", [95589]="[alliance]", [95590]="[horde]",
 		[89222]=1, [63141]="[alliance]", [64997]="[horde]", [66888]=1, [89869]=1, [90175]=1,
 		[103685]=1, [115468]="[horde]", [115472]="[alliance]", [119160]="[horde]", [119182]="[alliance]",
-		[122283]=1, [142531]=1, [142532]=1,
-		[85500]="[fish5]",
+		[122283]=1, [142531]=1, [142532]=1, [163211]=1,
+		[85500]=MODERN and "[fish5]",
 		[182773]="[coven:necro][acoven80:necro]", [184353]="[coven:kyrian][acoven80:kyrian]", [180290]="[coven:fae][acoven80:fae]", [183716]="[coven:venthyr][acoven80:venthyr]", [190237] = 1,
 	}
 	local function playerHasToy(id)
@@ -1060,6 +1284,10 @@ if MODERN or CF_WRATH then -- toy: item ID, flags[FORCE_SHOW]
 		state = state + (inRange and 0 or 16) + (hasRange and 512 or 0) + (enabled == 0 and 2048 or 0)
 		if sid then
 			local charges, maxCharges, ccdStart, ccdLength = GetSpellCharges(sid)
+			if MODERN and issecretvalue(charges) then
+				charges, maxCharges, ccdStart, ccdLength = nil
+				--FIXME: BUG[12.0.0/2601]: this breaks Humans' hearthstone bonus charge recharge visualization while in combat
+			end
 			-- BUG[11.0.2/2409]: GetSpellCharges[The Innkeeper's Daughter] returns the unified hearthstone state,
 			-- but the *item cooldown* is actually enforced (longer + no second charge for Humans).
 			count = charges and charges > 0 and cdLength == 0 and charges or count
@@ -1092,12 +1320,15 @@ if MODERN or CF_WRATH then -- toy: item ID, flags[FORCE_SHOW]
 		end
 	end
 	local function createToy(id, flags)
-		local forceShow = flags == 1
-		local mid, ignUse = map[id], IGNORE_TOY_USABILITY[id]
-		if not (mid or ignUse or type(id) == "number") or not (forceShow or playerHasToy(id)) then
+		if type(id) ~= "number" or id < 1 then
 			return
 		end
-		local isUsable = ignUse or C_ToyBox.IsToyUsable(id)
+		local forceShow, ignUse = flags == 1, IGNORE_TOY_USABILITY[id]
+		local qid = forceShow and (ignUse or 1) ~= 1 and -id or id
+		if not (forceShow or playerHasToy(id)) then
+			return
+		end
+		local isUsable, mid = ignUse or C_ToyBox.IsToyUsable(id), map[qid]
 		if isUsable == nil then
 			isUsable, uq[id] = lastUsability[id], 1
 			C_Item.GetItemInfo(id)
@@ -1107,15 +1338,17 @@ if MODERN or CF_WRATH then -- toy: item ID, flags[FORCE_SHOW]
 		if not (forceShow or isUsable) then
 			mid = nil
 		elseif mid == nil then
-			mid = AB:CreateActionSlot(toyHint, id, wrapCondition(ignUse, "attribute", "type","toy", "toy",id))
-			map[id] = mid
+			mid = AB:CreateActionSlot(toyHint, id, wrapCondition(forceShow and 1 or ignUse, "attribute", "type","toy", "toy",id))
+			map[qid] = mid
 		end
 		return mid
 	end
 	local function describeToy(id)
 		if type(id) ~= "number" then return end
-		local _, name, tex = C_ToyBox.GetToyInfo(id)
-		return L"Toy", name, tex or C_Item.GetItemIconByID(id), nil, callMethod.SetToyByItemID, id
+		local ignUse, haveToy, _, name, tex = IGNORE_TOY_USABILITY[id], playerHasToy(id), C_ToyBox.GetToyInfo(id)
+		local canUse = haveToy and (type(ignUse) ~= "string" or KR:EvaluateCmdOptions(ignUse)) and (ignUse or C_ToyBox.IsToyUsable(id))
+		local actionFlags = haveToy and not canUse and 1 or nil
+		return L"Toy", name, tex or C_Item.GetItemIconByID(id), nil, callMethod.SetToyByItemID, id, nil, actionFlags
 	end
 	AB:RegisterActionType("toy", createToy, describeToy, 2)
 	RW:SetCommandHint(SLASH_USE_TOY1, 60, function(_, _, clause, target)
@@ -1128,15 +1361,15 @@ if MODERN or CF_WRATH then -- toy: item ID, flags[FORCE_SHOW]
 	end)
 	function AB.HUM:SetPlayerHasToyOverride(id, filter)
 		local tf = type(filter)
-		if not (type(id) == "number" and tf == "nil" or tf == "boolean" or tf == "function") then
+		if not (type(id) == "number" and (tf == "nil" or tf == "boolean" or tf == "function")) then
 			return error('SetPlayerHasToyOverride: invalid arguments', 2)
 		end
 		OVERRIDE_TOY_ACQUIRED[id] = filter
 	end
-end
-do -- disenchant: iid
+end)
+securecall(function() -- disenchant: iid
 	local map, DISENCHANT_SID = {}, 13262
-	local DISENCHANT_SN = GetSpellInfo(DISENCHANT_SID)
+	local DISENCHANT_SN = C_Spell.GetSpellName(DISENCHANT_SID)
 	local ICON_PREFIX = "|TInterface/Buttons/UI-GroupLoot-DE-Up:0:0|t "
 	local SLASH_SPELL_TARGET_ITEM1 = '/spelltargetitem' do
 		local wn = newWidgetName("AB:I!")
@@ -1168,14 +1401,20 @@ do -- disenchant: iid
 		local name = C_Item.GetItemNameByID(ident)
 		local qual = MODERN and ident and (C_TradeSkillUI.GetItemReagentQualityByItemInfo(ident) or C_TradeSkillUI.GetItemCraftedQualityByItemInfo(ident))
 		qual = qual and qual > 0 and qual < 8 and (qual * 16384) or 0
-		local cdLeft, cdLength, enabled = toCooldown(GetTime(), GetSpellCooldown(DISENCHANT_SID))
-		local state = (C_Item.IsCurrentItem(ident) and 1 or 0) + (usable and 0 or 1024) + qual + 131072 + (enabled == 0 and 2048 or 0)
+		local state, skipCD, cdLeft, cdLength, enabled = 0, nil, GetSpellCooldown(DISENCHANT_SID)
+		if MODERN and issecretvalue(cdLeft) then
+			skipCD, cdLeft, enabled = 1
+			state, cdLength = state + 524288, DISENCHANT_SID + spellPHS
+		else
+			cdLeft, cdLength, enabled = toCooldown(GetTime(), cdLeft, cdLength, enabled)
+		end
+		state = state + qual + 131072 + (C_Item.IsCurrentItem(ident) and 1 or 0) + (usable and 0 or 1024) + (enabled == 0 and 2048 or 0)
 		local disName = ICON_PREFIX .. (name or ("item:" .. ident))
-		return not not (usable and cdLeft == 0), state, C_Item.GetItemIconByID(ident), disName, count,
+		return not not (usable and (skipCD or cdLeft == 0)), state, C_Item.GetItemIconByID(ident), disName, count,
 			cdLeft or 0, cdLength or 0, disenchantTip, ident
 	end
 	local function createDisenchant(iid)
-		if not (IsPlayerSpell(13262) and type(iid) == "number" and C_Item.GetItemCount(iid) > 0) then
+		if not (IsPlayerSpell(DISENCHANT_SID) and type(iid) == "number" and C_Item.GetItemCount(iid) > 0) then
 			return
 		end
 		local mid = map[iid]
@@ -1192,8 +1431,11 @@ do -- disenchant: iid
 		return DISENCHANT_SN, name or ("item:" .. iid), icon, nil, disenchantTip, iid
 	end
 	AB:RegisterActionType("disenchant", createDisenchant, describeDisenchant, 1)
-end
-if MODERN then -- /ping
+end)
+securecall(function() -- /ping
+	if not MODERN then
+		return
+	end
 	local TOKENS, INFO = {}, {
 		{PING, "Ping_Marker_Icon_NonThreat"},
 		{PING, "Ping_Marker_Icon_Threat"},
@@ -1210,17 +1452,25 @@ if MODERN then -- /ping
 	RW:SetCommandHint(SLASH_PING1, 40, function(_, _, clause, target)
 		if clause then
 			clause = lowered[clause]
-			local ci = INFO[TOKENS[clause] or clause] or INFO[C_Ping.GetContextualPingTypeForUnit(UnitGUID(target ~= "cursor" and target or "mouseover") or nil) == 4 and 2 or 1]
+			local ci = INFO[TOKENS[clause] or clause]
+			if not ci then
+				local unit = target ~= "cursor" and target or "mouseover"
+				local guid = UnitGUID(unit)
+				local pingType = guid and issecretvalue(guid)
+				             and (UnitCanAttack("player", unit) and UnitIsEnemy("player", unit) and 4 or 5)
+				              or C_Ping.GetContextualPingTypeForUnit(guid)
+				ci = INFO[pingType == 4 and 2 or 1]
+			end
 			local perm = (not IsInRaid() or UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") or not C_PartyInfo.GetRestrictPings())
 			local cdInfo, nowMs = C_Ping.GetCooldownInfo(), GetTime()*1000
 			local cd = cdInfo.endTimeMs > nowMs and (cdInfo.endTimeMs-nowMs)/1000 or 0
 			return true, perm and cd == 0 or false, 262144, ci[2], ci[1], 0, cd, cd > 0 and (cdInfo.endTimeMs-cdInfo.startTimeMs)/1000 or 0
 		end
 	end)
-end
-do -- uipanel: token
-	local CLICK, pyCLICK, widgetClickCommand, widgetAttrCommand = SLASH_CLICK1 .. " " do
-		local pyName, attrCounter = newWidgetName("AB:PY!"), 500
+end)
+securecall(function() -- uipanel: token
+	local CLICK, pyCLICK, widgetClickCommand, closeButton = SLASH_CLICK1 .. " " do
+		local pyName = newWidgetName("AB:PY!")
 		local py = CreateFrame("Button", pyName, nil, "SecureActionButtonTemplate")
 		py:SetAttribute("type", "click")
 		py:SetAttribute("pressAndHoldAction", 1)
@@ -1236,21 +1486,82 @@ do -- uipanel: token
 			end
 			return CLICK .. tn .. " 1\n"
 		end
-		function widgetAttrCommand(w, ...)
-			local r = ""
-			for i=1,select("#", ...), 2 do
-				local bs, k,v = "-at" .. attrCounter, select(i, ...)
-				py:SetAttribute("type" .. bs, "attribute")
-				py:SetAttribute("attribute-frame" .. bs, w)
-				py:SetAttribute("attribute-name" .. bs, k)
-				py:SetAttribute("attribute-value" .. bs, v)
-				r, attrCounter = r .. CLICK .. pyName .. " at" .. attrCounter .. " 1\n", attrCounter + 1
-			end
-			return r
+		function closeButton(p, reg)
+			local r = CreateFrame("Button", nil, p, "UIPanelCloseButton")
+			r:Hide()
+			return r, reg and widgetClickCommand(reg, r)
 		end
 	end
-	local function duckStore()
-		return StoreFrame_IsShown and StoreFrame_IsShown() and StoreFrame_SetShown and StoreFrame_SetShown(false)
+	local ShowVaultTip
+	if MODERN then
+		local unlockedRewards, needRefresh
+		function EV:WEEKLY_REWARDS_UPDATE()
+			unlockedRewards = nil
+		end
+		local function genRewardPreview()
+			needRefresh = nil
+			if C_WeeklyRewards.HasGeneratedRewards() then
+				local a, ni = C_WeeklyRewards.GetActivities(), 1
+				local getRewardLink, getItemLevel = C_WeeklyRewards.GetItemHyperlink, C_Item.GetDetailedItemLevelInfo
+				for i=1, a and #a or 0 do
+					local ai = a[i]
+					if ai and ai.rewards and ai.rewards[1] then
+						local ilink, q = getRewardLink(ai.rewards[1].itemDBID), ai.rewards[1].quantity
+						local ilvl = (ilink and getItemLevel(ilink) or -1)
+						local suf = (q or 1) > 1 and " (x" .. q .. ")" or (" (" .. ITEM_LEVEL_ABBR .. " " .. ilvl .. ")")
+						a[ni], ni, needRefresh = ilink .. suf, ni + 1, needRefresh or ilvl == -1
+					end
+				end
+				unlockedRewards = table.concat(a, "\n", 1, ni-1) or ""
+				return
+			end
+			local getExampleReward, getItemLevel = C_WeeklyRewards.GetExampleRewardItemHyperlinks, C_Item.GetDetailedItemLevelInfo
+			local a, ni = not C_WeeklyRewards.HasAvailableRewards() and C_WeeklyRewards.GetActivities(), 1
+			for i=1,a and #a or 0 do
+				local ai = a[i]
+				if ai and ai.progress >= ai.threshold then
+					local ilink = getExampleReward(ai.id)
+					local ilvl = ilink and getItemLevel(ilink) or -1
+					a[ni], ni, needRefresh = ilvl, ni + 1, needRefresh or ilvl == -1
+				end
+			end
+			unlockedRewards = ""
+			if ni > 1 then
+				for i=#a, ni, -1 do
+					a[i] = nil
+				end
+				table.sort(a)
+				local ec = ITEM_QUALITY_COLORS[4].hex
+				local si, j, ilvl, sj = ni, ni-1
+				while j > 0 do
+					ilvl, sj = a[j], j
+					repeat j = j - 1 until a[j] ~= ilvl
+					a[ni], ni = ec .. ITEM_LEVEL:format(ilvl) .. (sj > j+1 and "|r (x" .. (sj-j) .. ")" or "|r"), ni + 1
+				end
+				unlockedRewards = table.concat(a, "\n", si, ni-1)
+			end
+		end
+		function ShowVaultTip(GameTooltip)
+			local hc = HIGHLIGHT_FONT_COLOR
+			GameTooltip:SetText(DELVES_GREAT_VAULT_LABEL)
+			if unlockedRewards == nil or needRefresh then
+				genRewardPreview()
+			end
+			if (unlockedRewards or "") ~= "" then
+				GameTooltip:AddLine(unlockedRewards, hc.r, hc.g, hc.b)
+			elseif C_WeeklyRewards.HasAvailableRewards() then
+				GameTooltip:AddLine(GREAT_VAULT_REWARDS_WAITING, 0.1, 0.9, 0.1, 1)
+			else
+				GameTooltip:AddLine(WEEKLY_REWARDS_ADD_ITEMS, 0.75, 0.75, 0.75, 1)
+			end
+			if InCombatLockdown() and not WeeklyRewardsFrame:IsShown() then
+				GameTooltip:AddLine("|A:gmchat-icon-blizz:0:0|a " .. ERR_NOT_IN_COMBAT, 1, 0, 0, 1)
+			end
+			GameTooltip:Show()
+		end
+	end
+	local function openPanelFallback(panel)
+		return not InCombatLockdown() and ShowUIPanel(panel)
 	end
 	local panelMap, panels = {}, {
 		character={CHARACTER, icon="Interface/PVPFrame/Icons/prestige-icon-7-3", gw=PaperDollFrame, tw=CharacterFrameTab1},
@@ -1263,94 +1574,31 @@ do -- uipanel: token
 		groupfinder={DUNGEONS_BUTTON, icon=MODERN and "Interface/Icons/LEVELUPICON-LFD" or "Interface/LFGFrame/BattlenetWorking0", gw=PVEFrame, tw=LFDMicroButton},
 		collections=MODERN and {COLLECTIONS, icon="Interface/Icons/INV_Box_01", gn="CollectionsJournal", tw=CollectionsMicroButton},
 		adventureguide=MODERN and {ADVENTURE_JOURNAL, icon="Interface/EncounterJournal/UI-EJ-PortraitIcon", gn="EncounterJournal", tw=EJMicroButton},
-		guild=MODERN and {GUILD_AND_COMMUNITIES, icon="Interface/Icons/INV_Shirt_GuildTabard_01", gn="CommunitiesFrame", tw=GuildMicroButton},
-		map={WORLD_MAP, icon=CI_ERA and "Interface/Worldmap/WorldMap-Icon" or "Interface/Icons/Inv_Misc_Map08", gw=WorldMapFrame, tw=MODERN and MinimapCluster.ZoneTextButton or MiniMapWorldMapButton},
+		guild=MODERN and {GUILD_AND_COMMUNITIES, icon="Interface/Icons/INV_Shirt_GuildTabard_01", gn="CommunitiesFrame", tw=GuildMicroButton}
+		              or {title=GUILD, icon="Interface/Icons/INV_Shirt_GuildTabard_01", gw=GuildFrame, ow=FriendsFrameTab3, cw=FriendsFrameCloseButton, req=IsInGuild},
+		map={WORLD_MAP, icon=CF_WRATH and "Interface/Icons/Inv_Misc_Map08" or "Interface/Worldmap/WorldMap-Icon", gw=WorldMapFrame, tw=MODERN and MinimapCluster.ZoneTextButton or MiniMapWorldMapButton or WorldMapMicroButton},
 		social={SOCIAL_BUTTON, icon=MODERN and "Interface/Icons/UI_Chat" or "Interface/Icons/INV_Scroll_03", gw=FriendsFrame, tw=MODERN and QuickJoinToastButton or FriendsMicroButton},
 		calendar={L"Calendar", icon="Interface/Icons/Spell_Holy_BorrowedTime", gn="CalendarFrame", tw=GameTimeFrame},
 		options={OPTIONS, icon=MODERN and "Interface/Icons/Misc_RnRWrenchButtonRight" or "Interface/Icons/INV_Misc_Wrench_01", gw=SettingsPanel, noduck=1, open=function() Settings.OpenToCategory(nil) end},
-		macro={MACROS, icon="Interface/Icons/INV_Misc_Note_06", gn="MacroFrame", tmt=SLASH_MACRO1},
+		macro={MACROS, icon="Interface/Icons/INV_Misc_Note_06", gn="MacroFrame", tmt=SLASH_MACRO1, cw=closeButton(MacroFrame), postmt=pyCLICK .. "csp 1\n" .. pyCLICK .. "cgm 1"},
 		profs=MODERN and {TRADE_SKILLS, icon="interface/icons/inv_pick_02", tw=ProfessionMicroButton},
-		gamemenu={MAINMENU_BUTTON, icon=CF_CLASSIC and "Interface/Icons/INV_Misc_PunchCards_Red", atlas="UI-HUD-MicroMenu-GameMenu-Up", gw=GameMenuFrame, tmt="/click GameMenuButtonContinue", noduck=1, pre=function() return not GameMenuFrame:IsShown() or nil end, post=function() RatingMenuFrame:Show() RatingMenuFrame:Hide() PlaySound(SOUNDKIT.IG_MAINMENU_OPEN) end},
-		csp={gw=SettingsPanel, cpreamble=true},
-		cgm={gw=GameMenuFrame, cpreamble=true},
-		csf={pre=duckStore, cpreamble=true},
+		gamemenu={L"Game Menu", icon=CF_CLASSIC and "Interface/Icons/INV_Misc_PunchCards_Red", atlas="UI-HUD-MicroMenu-GameMenu-Up", gw=GameMenuFrame, noduck=1, pre=function() return not GameMenuFrame:IsShown() or nil end, post=function() RatingMenuFrame:Show() RatingMenuFrame:Hide() PlaySound(SOUNDKIT.IG_MAINMENU_OPEN) end},
+		vault=MODERN and {DELVES_GREAT_VAULT_LABEL, icon="Interface/Icons/INV_Cape_Special_Treasure_C_01", gn="WeeklyRewardsFrame", skipCloseSound=169062, req=function() return UnitLevel("player") == 80 end, tip=ShowVaultTip, open=openPanelFallback},
+		csp={gw=SettingsPanel, cpreamble=true, cw=closeButton(SettingsPanel, "csp")},
+		cgm={gw=GameMenuFrame, cpreamble=true, cw=closeButton(GameMenuFrame, "cgm")},
+		csf={pre=function() return StoreFrame_IsShown and StoreFrame_SetShown and StoreFrame_IsShown() and StoreFrame_SetShown(false) end, cpreamble=true},
 	}
-	do -- further panels init
-		local function closeButton(p)
-			local r = CreateFrame("Button", nil, p, "UIPanelCloseButton")
-			r:Hide()
-			return r, r
-		end
-		panels.macro.cw = closeButton(nil)
-		panels.csp.cw, panels.options.cw = closeButton(SettingsPanel)
-		panels.cgm.cw = closeButton(GameMenuFrame)
-		panels.options.postmt = pyCLICK .. "csp 1\n" .. pyCLICK .. "cgm 1"
-		panels.macro.postmt = widgetClickCommand("cmf", panels.macro.cw)
-		if MODERN then
-			panels.gamemenu.cw, panels.gamemenu.tmt = panels.cgm.cw, nil
-			panels.spellbook.tmt, panels.spellbook.cwrap, panels.spellbook.cw, panels.spellbook.ow = "/click PlayerSpellsFrameCloseButton\n/click PlayerSpellsMicroButton\n" .. pyCLICK .. " spelltab 1", 1, nil
-			panels.talents.tmt, panels.talents.cwrap, panels.talents.tw = "/click PlayerSpellsFrameCloseButton\n/click PlayerSpellsMicroButton\n" .. pyCLICK .. " talenttab 1", 1, nil
-			function EV.PLAYER_LOGIN()
-				pcall(C_AddOns.LoadAddOn, "Blizzard_PlayerSpells")
-				panels.spellbook.gw = PlayerSpellsFrame.SpellBookFrame
-				panels.talents.gw, panels.talents.gn = PlayerSpellsFrame.TalentsFrame, nil
-				panels.spellbook.ow, panels.talents.ow = PlayerSpellsFrameCloseButton, PlayerSpellsFrameCloseButton
-				if PlayerSpellsFrame and PlayerSpellsFrame.tabSystem and PlayerSpellsFrame.tabSystem.tabs then
-					widgetClickCommand("spelltab", PlayerSpellsFrame.tabSystem.tabs[PlayerSpellsFrame.spellBookTabID])
-					widgetClickCommand("talenttab", PlayerSpellsFrame.tabSystem.tabs[PlayerSpellsFrame.talentTabID])
-				end
-			end
-		else -- not MODERN
-			panels.guild = {title=GUILD, icon="Interface/Icons/INV_Shirt_GuildTabard_01", gw=GuildFrame, ow=FriendsFrameTab3, cw=FriendsFrameCloseButton, req=IsInGuild}
-			if CF_WRATH then
-				panels.achievements.icon = "Interface/PvPFrame/Icons/prestige-icon-4"
-				local fpd = securecall(function()
-					local tf, x2, x = CreateFrame("Frame"), EnumerateFrames(), nil
-					tf:SetAttribute("UIPanelLayout-defined", 1)
-					tf:SetAttribute("UIPanelLayout-area", "none")
-					HideUIPanel(tf)
-					repeat
-						x, x2 = EnumerateFrames(x), x2 and EnumerateFrames(x2)
-						x2 = x2 and (x2 == x and x2 or EnumerateFrames(x2))
-						if x and x.ShowUIPanel and x.GetAttribute and not x:IsForbidden() and x:GetAttribute("panel-frame") == tf then
-							return x
-						end
-					until x == nil or x == x2
-				end)
-				if fpd then
-					local gfp = panels.groupfinder
-					gfp.tw, gfp.cw, gfp.skipCloseSound = nil, closeButton(gfp.gw), 839
-					gfp.premt = widgetClickCommand("groupfinder", gfp.cw) .. widgetAttrCommand(fpd, "panel-force",false, "panel-frame",gfp.gw, "panel-show",true) .. CLICK .. "GroupFinderFrameGroupButton1"
-				else
-					panels.groupfinder = nil
-				end
-				function panels.currency.req()
-					return GetCurrencyListSize() > 0
-				end
-			else
-				panels.achievements = nil
-				panels.groupfinder = nil
-				panels.currency = nil
-				panels.calendar = nil
-				panels.reputation.icon = "Interface/Icons/INV_MISC_NOTE_02"
-			end
-		end
-		function EV.ADDON_LOADED()
-			if MacroFrame then
-				panels.macro.cw:SetParent(MacroFrame)
-				return "remove"
-			end
-		end
-	end
-	local cmdPrefix, cmdDuckPrefix do
+	do
 		local exName = newWidgetName("AB:PX!")
 		local clickEx = CLICK .. " " .. exName .. " "
+		local cmdPrefix = clickEx .. "csf 1\n" .. clickEx
+		local cmdDuckPrefix = cmdPrefix .. "csp 1\n" .. clickEx .. "cgm 1\n" .. clickEx
 		local ex = CreateFrame("Button", exName, nil, "SecureActionButtonTemplate")
 		ex:SetAttribute("type", "macro")
 		ex:SetAttribute("pressAndHoldAction", 1)
 		local function prerun(k)
 			local i, r = panels[k], 0
-			local tw, gw, cw, ow, ofun, scs = i.tw, i.gw, i.cw, i.ow, i.open, i.skipCloseSound
+			local tw, gw, cw, cw2, ow, ofun, scs = i.tw, i.gw, i.cw, i.cw2, i.ow, i.open, i.skipCloseSound
 			if tw and not tw:IsEnabled() then
 				r = i.tcr and r + 1 or r; tw:Enable()
 			end
@@ -1358,6 +1606,9 @@ do -- uipanel: token
 				local gh, cd, od = not (gw and gw:IsShown()), not (cw and cw:IsEnabled()), not (ow and ow:IsEnabled())
 				if cw and gh ~= cd then
 					r = r + (gh and 6 or 2); cw:SetEnabled(not gh)
+				end
+				if cw2 then
+					r = r + (gh and 64 or 0); cw2:SetEnabled(not gh)
 				end
 				if ow and gh == od then
 					r = r + (gh and 8 or 24); ow:SetEnabled(gh)
@@ -1369,7 +1620,7 @@ do -- uipanel: token
 					end
 				end
 				if ofun and gh == od then
-					securecall(ofun)
+					securecall(ofun, gw, k)
 				end
 			end
 			return r ~= 0 and r or nil
@@ -1378,6 +1629,7 @@ do -- uipanel: token
 			local i, m1, m3, m5 = panels[k], m % 2, m % 8, m % 32
 			if m5 >= 8 then i.ow:SetEnabled(m5 > 8) end
 			if m3 >= 2 then i.cw:SetEnabled(m3 > 2) end
+			if m >= 64 then i.cw2:SetEnabled(true) end
 			if m1 >= 1 then i.tw:Disable() end
 			local ssh = i.stopSoundHandle
 			i.stopSoundHandle = ssh and StopSound(ssh) and nil
@@ -1385,7 +1637,7 @@ do -- uipanel: token
 		ex:SetScript("PreClick", function(_, b)
 			local i = panels[b]
 			if i and i.pre then
-				i.postMessage = i.pre(b)
+				i.postMessage = i.pre(b, i, prerun)
 			end
 		end)
 		ex:SetScript("PostClick", function(_, b)
@@ -1395,21 +1647,10 @@ do -- uipanel: token
 			pm = i and i.postMessage
 			if pm ~= nil and i.post then
 				i.postMessage = nil
-				i.post(bp, pm)
+				i.post(bp, pm, postrun)
 			end
 		end)
-		local pmeta = {__index=function(t, k)
-			local r, saveGlobal, n
-			if k == "gw" then
-				saveGlobal, n = true, t.gn
-			end
-			if saveGlobal then
-				r = _G[n]
-				t[k] = r or n ~= nil and nil
-				return r
-			end
-		end}
-		for k,v in pairs(panels) do
+		local function prepareMacroText(k, v)
 			local tmt = v.tmt
 			if tmt then
 				tmt = tmt:gsub("/click ", CLICK)
@@ -1417,6 +1658,9 @@ do -- uipanel: token
 				tmt = widgetClickCommand(k, v.tw)
 			elseif v.cw or v.ow then
 				tmt = widgetClickCommand(k, v.ow) .. widgetClickCommand(k, v.cw)
+				if v.cw2 then
+					tmt = tmt .. widgetClickCommand(k, v.cw2)
+				end
 			end
 			if v.tw or v.cw or v.ow or v.open or v.cwrap then
 				v.pre, v.post = v.pre or prerun, v.post or postrun
@@ -1430,15 +1674,80 @@ do -- uipanel: token
 			if v.post then
 				tmt = tmt .. (tmt:sub(-1) ~= "\n" and "\n" or "") .. clickEx .. "post-" .. k
 			end
-			if v.cpreamble then
+			tmt = tmt and ((v.noduck and cmdPrefix or cmdDuckPrefix) .. k .. " 1\n" .. tmt)
+			return tmt
+		end
+		local pmeta = {__index=function(t, k)
+			local n, r = k == "gw" and t.gn
+			if n then
+				r = _G[n]
+			elseif k == "mainText" then
+				r = prepareMacroText(t.pk, t)
+			end
+			if k ~= nil then
+				t[k] = r
+			end
+			return r
+		end}
+		for k,v in pairs(panels) do
+			v.pk = k
+			setmetatable(v, pmeta)
+			if v.cpreamble and v.cw then
 				ex:SetAttribute("type-" .. k, "click")
 				ex:SetAttribute("clickbutton-" .. k, v.cw)
+				v.pre, v.post = v.pre or prerun, v.post or postrun
 			end
-			setmetatable(v, pmeta)
-			panels[k], v.mainText = v, tmt
 		end
-		cmdPrefix = clickEx .. "csf 1\n" .. clickEx
-		cmdDuckPrefix = cmdPrefix .. "csp 1\n" .. clickEx .. "cgm 1\n" .. clickEx
+	end
+	do -- further panels init
+		panels.options.cw, panels.options.cw2 = panels.csp.cw, panels.cgm.cw
+		panels.macro.postmt = widgetClickCommand("cmf", panels.macro.cw)
+		panels.gamemenu.cw = panels.cgm.cw
+		if MODERN then
+			panels.spellbook.tmt, panels.spellbook.cwrap, panels.spellbook.cw, panels.spellbook.ow = "/click PlayerSpellsFrameCloseButton\n/click PlayerSpellsMicroButton\n" .. pyCLICK .. " spelltab 1", 1, nil
+			panels.talents.tmt, panels.talents.cwrap, panels.talents.tw = "/click PlayerSpellsFrameCloseButton\n/click PlayerSpellsMicroButton\n" .. pyCLICK .. " talenttab 1", 1, nil
+			function EV.PLAYER_LOGIN()
+				pcall(C_AddOns.LoadAddOn, "Blizzard_PlayerSpells")
+				panels.spellbook.gw = PlayerSpellsFrame.SpellBookFrame
+				panels.talents.gw, panels.talents.gn = PlayerSpellsFrame.TalentsFrame, nil
+				panels.spellbook.ow, panels.talents.ow = PlayerSpellsFrameCloseButton, PlayerSpellsFrameCloseButton
+				if PlayerSpellsFrame and PlayerSpellsFrame.tabSystem and PlayerSpellsFrame.tabSystem.tabs then
+					widgetClickCommand("spelltab", PlayerSpellsFrame.tabSystem.tabs[PlayerSpellsFrame.spellBookTabID])
+					widgetClickCommand("talenttab", PlayerSpellsFrame.tabSystem.tabs[PlayerSpellsFrame.talentTabID])
+				end
+				if (UnitLevel("player") or 0) < 80 then
+					function EV:PLAYER_LEVEL_UP(nlvl)
+						if nlvl == 80 then
+							AB:NotifyObservers("uipanel")
+							return "remove"
+						end
+					end
+				end
+				return "remove"
+			end
+			pcall(C_AddOns.LoadAddOn, "Blizzard_WeeklyRewards")
+			panels.vault.cw = closeButton(panels.vault.gw)
+		elseif CF_WRATH then
+			panels.achievements.icon = "Interface/PvPFrame/Icons/prestige-icon-4"
+			local gfp = panels.groupfinder
+			gfp.tw, gfp.cw, gfp.skipCloseSound = nil, closeButton(gfp.gw), 839
+			gfp.open, gfp.premt = openPanelFallback, CLICK .. "GroupFinderFrameGroupButton1"
+			function panels.currency.req()
+				return GetCurrencyListSize() > 0
+			end
+		else -- era
+			panels.achievements = nil
+			panels.groupfinder = nil
+			panels.currency = nil
+			panels.calendar = nil
+			panels.reputation.icon = "Interface/Icons/INV_MISC_NOTE_02"
+		end
+		function EV.ADDON_LOADED()
+			if MacroFrame then
+				panels.macro.cw:SetParent(MacroFrame)
+				return "remove"
+			end
+		end
 	end
 	local function panelHint(tk)
 		local i = panels[tk]
@@ -1448,14 +1757,15 @@ do -- uipanel: token
 		if icon == nil then
 			icon, s = i.atlas, s + 262144
 		end
-		return tk == "gamemenu" or not (MODERN and AreAllPanelsDisallowed()), s, icon, i[1]
+		local tf = i.tip or nil
+		local willFail = MODERN and AreAllPanelsDisallowed() or (gw and i.open == openPanelFallback and InCombatLockdown() and not gw:IsVisible())
+		return tk == "gamemenu" or not willFail, s, icon, i[1], nil, nil, nil, tf, tf and tk
 	end
 	local function createPanel(tk)
 		local r = panelMap[tk]
 		local pi = r == nil and panels[tk]
 		if pi and pi[1] and pi.mainText and (pi.req == nil or pi.req()) then
-			local mt = (pi.noduck and cmdPrefix or cmdDuckPrefix) .. tk .. " 1\n" .. pi.mainText
-			r = AB:CreateActionSlot(panelHint, tk, "macrotext", mt)
+			r = AB:CreateActionSlot(panelHint, tk, "macrotext", pi.mainText)
 			panelMap[tk] = r
 		end
 		return r
@@ -1468,4 +1778,170 @@ do -- uipanel: token
 		return L"Interface Panel"
 	end
 	AB:RegisterActionType("uipanel", createPanel, describePanel, 1)
-end
+end)
+securecall(function() -- outfit: id
+	if not MODERN then return end
+	local CTO_SID, UTO_SID = 1247917, 1247613
+	local SF_PICKUP_FID, SF_DROP_FID, SF_OPICKUP_FID = 567489, 567524, 567565
+	local CTO_NAME, CTO_ICON = C_Spell.GetSpellName(CTO_SID), C_Spell.GetSpellTexture(CTO_SID)
+	local CLOBBER_SLOT = (CLASS == "DRUID" and 120 or 108) + 10
+	local unlockedOutfits = {[0]=true}
+	local outfitAction, outfitName, outfitIcon = {}, {}, {}
+	local SLASH_USEOUTFIT = "/ab:useoutfit" do
+		local outfitButton = CreateFrame("Button", nil, nil, "SecureActionButtonTemplate")
+		outfitButton:SetAttribute("action", CLOBBER_SLOT)
+		outfitButton:SetAttribute("useOnKeyDown", false)
+		SecureHandlerWrapScript(outfitButton, "OnClick", outfitButton, 'return "RightButton"');
+		outfitButton:SetAttribute("RunSlashCmd", [=[--AB:Outfit_RunSlash 
+			local _cmd, v = ...
+			return nil, "notified-click", tonumber(v)
+		]=])
+		outfitButton:SetAttribute("RunSlashCmd-PreClick", [=[--AB:Outfit_PreClick 
+			local _cmd, v = ...
+			self:SetAttribute("type", nil)
+			self:SetAttribute("outfit-id", v)
+		]=])
+		local function IsCursorOutfit(oid, ct, id, _, id2)
+			return ct == "outfit" and id == oid or oid == 0 and ct == "spell" and CTO_SID == id2
+		end
+		local function IsActionOutfit(oid, at, id)
+			return at == "outfit" and id == oid or oid == 0 and at == "spell" and CTO_SID == id
+		end
+		local DuckCursorSounds do
+			local s
+			local function RestoreCursorSounds(_)
+				if s then
+					_ = (s % 2 > 0) and UnmuteSoundFile(SF_PICKUP_FID)
+					_ = (s % 4 > 1) and UnmuteSoundFile(SF_DROP_FID)
+					_ = (s % 8 > 3) and UnmuteSoundFile(SF_OPICKUP_FID)
+					s = nil
+				end
+			end
+			function DuckCursorSounds(_)
+				if s ~= nil then
+					EV.After(0, RestoreCursorSounds)
+					return
+				end
+				local wp1, h1 = PlaySoundFile(SF_PICKUP_FID)
+				local wp2, h2 = PlaySoundFile(SF_DROP_FID)
+				local wp3, h3 = PlaySoundFile(SF_OPICKUP_FID)
+				if not (wp1 or wp2 or wp3) then
+					return
+				end
+				s = (wp1 and 1 or 0) + (wp2 and 2 or 0) + (wp3 and 4 or 0)
+				_ = wp1 and StopSound(h1) and nil or wp2 and StopSound(h2) and nil or wp3 and StopSound(h3)
+				_ = wp1 and MuteSoundFile(SF_PICKUP_FID) and nil
+				 or wp2 and MuteSoundFile(SF_DROP_FID) and nil
+				 or wp3 and MuteSoundFile(SF_OPICKUP_FID)
+				EV.After(0, RestoreCursorSounds)
+			end
+		end
+		local csEmpty
+		outfitButton:SetScript("PreClick", function()
+			local oid = outfitButton:GetAttribute("outfit-id")
+			if InCombatLockdown() or not oid then
+				return oid and UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT) and nil
+			end
+			DuckCursorSounds()
+			ClearCursor() -- going to happen anyway
+			C_TransmogOutfitInfo.PickupOutfit(oid)
+			if IsCursorOutfit(oid, GetCursorInfo()) then
+				csEmpty = nil == GetActionInfo(CLOBBER_SLOT)
+				PlaceAction(CLOBBER_SLOT)
+				if IsActionOutfit(oid, GetActionInfo(CLOBBER_SLOT)) then
+					outfitButton:SetAttribute("type", "action")
+				end
+			else
+				ClearCursor()
+			end
+		end)
+		outfitButton:SetScript("PostClick", function()
+			if InCombatLockdown() or csEmpty == nil then
+				return
+			end
+			if csEmpty == true then
+				ClearCursor()
+				PickupAction(CLOBBER_SLOT)
+				ClearCursor()
+			elseif csEmpty == false then
+				PlaceAction(CLOBBER_SLOT)
+				ClearCursor()
+			end
+			outfitButton:SetAttribute("type", nil)
+			csEmpty = nil
+		end)
+		RW:RegisterCommandEx(SLASH_USEOUTFIT, 3 + 2^5*2 + 2^8*5, outfitButton)
+	end
+	local function getOutfitName(id)
+		if id == 0 then
+			outfitName[id], outfitIcon[id] = CTO_NAME, CTO_ICON
+			return CTO_NAME
+		end
+		local info, name = C_TransmogOutfitInfo.GetOutfitInfo(id)
+		if info then
+			name = info.name
+			name = name == TRANSMOG_OUTFIT_NAME_DEFAULT and (name .. " #" .. id) or name
+			outfitName[id], outfitIcon[id] = name, info.icon
+			return name
+		end
+	end
+	local function setOutfitTooltip(tip, id)
+		local name = id == 0 and CTO_NAME or outfitName[id] or getOutfitName(id)
+		tip:SetText(HIGHLIGHT_FONT_COLOR_CODE .. (name or ""))
+		tip:AddLine(HIGHLIGHT_FONT_COLOR_CODE .. SPELL_CAST_TIME_INSTANT)
+		local dt = C_Spell.GetSpellDescription(id == 0 and CTO_SID or UTO_SID)
+		dt = dt and dt:match("^[^\r\n]+")
+		if dt then
+			tip:AddLine(dt, nil, nil, nil, true)
+		end
+		local ncs = "|r\n" .. NORMAL_FONT_COLOR_CODE
+		if C_TransmogOutfitInfo.GetActiveOutfitID() ~= id then
+			-- No extra hint
+		elseif C_TransmogOutfitInfo.IsLockedOutfit(id) then
+			tip:AddLine("\n|cffffffff" .. L"Appearance locked" .. ncs .. L"Use again to allow this apperance to be replaced by a Situation.", nil,nil,nil,1)
+		else
+			tip:AddLine("\n|cffffffff" .. L"Appearance unlocked" .. ncs .. L"Use again to prevent this apperance from being replaced by a Situation.", nil,nil,nil,1)
+		end
+	end
+	local function hintOutfit(id)
+		local cdsid, now = id == 0 and CTO_SID or UTO_SID, GetTime()
+		local name = outfitName[id] or getOutfitName(id)
+		local icon = outfitIcon[id]
+		local usable = not InCombatLockdown()
+		local state = C_TransmogOutfitInfo.GetActiveOutfitID() == id and 1 or 0
+		local cdLeft, cdLength, enabled = GetSpellCooldown(cdsid)
+		if issecretvalue(cdLeft) then
+			cdLeft, enabled = nil
+			state, cdLength = state + 524288, spellPHS + cdsid
+		else
+			cdLeft, cdLength, enabled = toCooldown(now, cdLeft, cdLength, enabled)
+			usable = usable and cdLeft == 0
+		end
+		return usable, state, icon, name, 0, cdLeft, cdLength, setOutfitTooltip, id
+	end
+	local function createOutfit(id)
+		if not (unlockedOutfits[id] or type(id) == "number" and C_TransmogOutfitInfo.GetOutfitInfo(id)) then
+			return
+		end
+		local aid = outfitAction[id] or AB:CreateActionSlot(hintOutfit, id, "retext",SLASH_USEOUTFIT .. " " .. id)
+		outfitAction[id], unlockedOutfits[id] = aid, true
+		return aid
+	end
+	local function describeOutfit(id)
+		if type(id) ~= "number" or id < 0 or id % 1 > 0 then return end
+		local name = outfitName[id] or getOutfitName(id)
+		local icon = outfitIcon[id]
+		return L"Outfit", name ~= "" and name or ("#" .. id), icon
+	end
+	AB:RegisterActionType("outfit", createOutfit, describeOutfit, 1)
+	function EV:TRANSMOG_OUTFITS_CHANGED(newID)
+		if next(outfitName) then
+			wipe(outfitName)
+			wipe(outfitIcon)
+		end
+		if newID then
+			unlockedOutfits[newID] = true
+		end
+		AB:NotifyObservers("outfit")
+	end
+end)

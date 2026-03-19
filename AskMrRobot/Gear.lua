@@ -311,11 +311,11 @@ local function renderGear(setupId, container)
 			
 			-- see if item is currently equipped, is false if don't have any item for that slot (e.g. OH for a 2-hander)
 			local isEquipped = false			
-			if equippedItem and optimalItem and Amr.GetItemUniqueId(equippedItem, false, true) == Amr.GetItemUniqueId(optimalItem, false, true) then
+			if equippedItem and optimalItem then
 
 				if optimalItem.guid then						
 					isEquipped = optimalItem.guid == equippedItem.guid
-				else
+				elseif Amr.GetItemUniqueId(equippedItem, false, true) == Amr.GetItemUniqueId(optimalItem, false, true) then
 					--[[if slotId == 1 or slotId == 3 or slotId == 5 then					
 						-- show the item as not equipped if azerite doesn't match... might mean they have to switch to another version of same item
 						local aztDiff = countItemDifferences(optimalItem, equippedItem)
@@ -700,23 +700,7 @@ local function scanBagForItem(item, bagId, bestItem, bestDiff, bestLink)
 		if itemLink then
 			local bagItem = Amr.ParseItemLink(itemLink)
 			if bagItem ~= nil then
-
-				blizzItem = Item:CreateFromBagAndSlot(bagId, slotId)
-
-				-- seems to be of the form Item-1147-0-4000000XXXXXXXXX, so we take just the last 9 digits
-				bagItem.guid = blizzItem:GetItemGUID()
-				if bagItem.guid and strlen(bagItem.guid) > 9 then
-					bagItem.guid = strsub(bagItem.guid, -9)
-				end
-
-				-- see if this is an azerite item and read azerite power ids
-				--[[loc:SetBagAndSlot(bagId, slotId)
-				if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
-					local powers = Amr.ReadAzeritePowers(loc)
-					if powers then
-						bagItem.azerite = powers
-					end
-				end]]
+				Amr.ParseExtraItemInfo(bagItem, bagId, slotId, false)
 
 				local diff = countItemDifferences(item, bagItem)
 				if diff < bestDiff then
@@ -744,32 +728,10 @@ local function findCurrentGearOpItem()
 		bestItem, bestDiff, bestLink = scanBagForItem(item, bagId, bestItem, bestDiff, bestLink)
 	end
 
-	-- with new approach, the item to use should never be equipped, should be in bags at this point
-	--[[
-	-- equipped items, but skip slots we have just equipped (to avoid e.g. just moving 2 of the same item back and forth between mh oh weapon slots)
-	for slotNum = 1, #Amr.SlotIds do
-		local slotId = Amr.SlotIds[slotNum]
-		if _currentGearOp.slotsRemaining[slotId] then
-			local itemLink = GetInventoryItemLink("player", slotId)
-			if itemLink then
-				local invItem = Amr.ParseItemLink(itemLink)
-				if invItem then
-					local diff = countItemDifferences(item, invItem)
-					if diff < bestDiff then
-						bestItem = { slot = slotId }
-						bestDiff = diff
-						bestLink = itemLink
-					end
-				end
-			end
-		end
-	end
-	]]
-
 	-- bank
 	if bestDiff > 0 then
-		bestItem, bestDiff, bestLink = scanBagForItem(item, BANK_CONTAINER, bestItem, bestDiff, bestLink)
-		for bagId = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
+		-- note we are ignoring warbank for now... those items aren't soulbound yet so we won't be able to equip them anyway
+		for i,bagId in ipairs(Amr:GetBankBagList()) do
 			bestItem, bestDiff, bestLink = scanBagForItem(item, bagId, bestItem, bestDiff, bestLink)
 		end
 	end
@@ -786,19 +748,6 @@ local function createAmrEquipmentSet()
 		
 	-- for now use icon of the spec
 	local _, specName, _, setIcon = GetSpecializationInfo(GetSpecialization())
-	
-	--[[
-	local item = Amr.ParseItemLink(GetInventoryItemLink("player", INVSLOT_MAINHAND))
-	if not item then
-		item = Amr.ParseItemLink(GetInventoryItemLink("player", INVSLOT_OFFHAND))
-	end
-	if item then
-		local itemObj = Item:CreateFromItemID(item.id)
-		if itemObj then
-			setIcon = itemObj:GetItemIcon()
-		end
-	end
-	]]
 
 	local setup = getSetupById(_activeSetupId)
 	local setname = setup.Label -- "AMR " .. specName
@@ -865,7 +814,7 @@ local function setTalents(setup)
 							nodeId = nodeId,
 							entryId = entryId,
 							rank = setup.Talents[pos],
-							isSelection = #nodeData.entryIds > 1
+							isSelection = not nodeData.apex and #nodeData.entryIds > 1
 						})				
 					end
 					pos = pos + 1
@@ -937,6 +886,7 @@ local function setTalents(setup)
 
 				for i = 1, #path do
 					local node = C_Traits.GetNodeInfo(configId, path[i].nodeId)
+
 					if node.canPurchaseRank then
 						if path[i].isSelection then
 							C_Traits.SetSelection(configId, path[i].nodeId, path[i].entryId)
@@ -1133,7 +1083,7 @@ function processCurrentGearOp()
 			Amr:Print(L.GearEquipErrorNotFound2)
 			disposeGearOp()
 			
-		elseif bestItem and bestItem.bag and (bestItem.bag == BANK_CONTAINER or bestItem.bag >= NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 and bestItem.bag <= NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS) then
+		elseif bestItem and bestItem.bag and Amr:IsBankBag(bestItem.bag) then
 			-- find first empty bag slot
 			local invBag, invSlot = findFirstEmptyBagSlot()
 			if not invBag then
@@ -1573,7 +1523,7 @@ function Amr:EquipGearSet(setupIndex)
 	local currentSpec = GetSpecialization()
 	if currentSpec ~= setup.SpecSlot then
 		_waitingForSpec = setup.SpecSlot
-		SetSpecialization(setup.SpecSlot)
+		C_SpecializationInfo.SetSpecialization(setup.SpecSlot)
 	else
 		-- spec is what we want, now equip the gear
 		beginEquipGearSet(_activeSetupId, 0, true)

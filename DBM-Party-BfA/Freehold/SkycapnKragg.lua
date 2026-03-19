@@ -1,10 +1,14 @@
 local mod	= DBM:NewMod(2102, "DBM-Party-BfA", 2, 1001)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20230917001106")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(126832)
 mod:SetEncounterID(2093)
 mod:SetHotfixNoticeRev(20230506000000)
+mod:SetZone(1754)
 mod.sendMainBossGUID = true
 
 mod:RegisterCombat("combat")

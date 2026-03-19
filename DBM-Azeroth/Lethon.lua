@@ -1,12 +1,20 @@
 local mod	= DBM:NewMod("LethonVanilla", "DBM-Azeroth")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240422183958")
-mod:SetCreatureID(14888)--121821 TW ID, 14888 classic ID
+mod:SetRevision("20260315035425")
+mod:DisableHardcodedOptions()
 --mod:SetModelID(17887)
-mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
-mod:RegisterCombat("combat_yell", L.Pull)
+if DBM:IsSeasonal("SeasonOfDiscovery") then
+	mod:SetCreatureID(235180)
+	mod:SetEncounterID(3112)--Sod Encounter ID
+	mod:RegisterCombat("combat")
+else
+	mod:SetCreatureID(14888)--121821 TW ID, 14888 classic ID
+	mod:RegisterCombat("combat_yell", L.Pull)
+end
+
+mod:EnableWBEngageSync()--Enable syncing engage in outdoors
 
 
 mod:RegisterEventsInCombat(
@@ -32,7 +40,7 @@ local timerSleepingFogCD		= mod:NewCDTimer(16.8, 24814, nil, nil, nil, 3)
 function mod:OnCombatStart(delay, yellTriggered)
 	if yellTriggered then
 		--timerNoxiousBreathCD:Start(11.9-delay)
-		--timerSleepingFogCD:Start(18.4-delay)
+		timerSleepingFogCD:Start(18.4-delay)
 	end
 end
 
@@ -50,8 +58,10 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpell(24814, 24813) then
-		specWarnSleepingFog:Show()
-		specWarnSleepingFog:Play("watchstep")
+		if self:AntiSpam(600, "SpecWarnFog") then -- It's more active than inactive, only warn for the initial one
+			specWarnSleepingFog:Show()
+			specWarnSleepingFog:Play("watchstep")
+		end
 		timerSleepingFogCD:Start()
 	--elseif args.spellId == 24818 and self:AntiSpam(3, 1) then
 		--timerNoxiousBreathCD

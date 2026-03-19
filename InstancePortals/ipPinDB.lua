@@ -629,7 +629,7 @@ IPUIPinDB = {
 		{57.5, 46, {1210}}, -- Darkflame Cleft
 
 		{40, 57, {1270}}, -- The Dawnbreaker
-		{34, 53, {1267}}, -- Priory of the Sacred Flame
+		{35.4, 52.5, {1267}}, -- Priory of the Sacred Flame
 
 		{45, 82, {1271}}, -- Ara-Kara, City of Echoes
 		{44, 80, {1274}}, -- City of Threads

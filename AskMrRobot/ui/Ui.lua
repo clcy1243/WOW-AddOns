@@ -353,14 +353,30 @@ function Amr:Show()
 	
 	if InCombatLockdown() then return end
 
-	if _mainFrame then 
-		_mainFrame:Show()
-	else	
-		createMainWindow()
+	local shown = false
+
+	function onSpellsLoaded()
+		shown = true
+
+		if _mainFrame then 
+			_mainFrame:Show()
+		else	
+			createMainWindow()
+		end
+		
+		-- show the active tab
+		_mainTabs:SelectTab(_activeTab)
 	end
-	
-	-- show the active tab
-	_mainTabs:SelectTab(_activeTab)
+
+	Amr.LoadSpells(onSpellsLoaded)
+
+	-- as a safety, delay for 1 second and then check if spells loaded... if not, just abort and move on
+	Amr.Wait(1, function()
+		if not shown then
+			Amr.AbortLoadSpells()
+			onSpellsLoaded()
+		end
+	end)
 end
 
 function Amr:Reset()

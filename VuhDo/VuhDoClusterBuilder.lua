@@ -1,5 +1,6 @@
 local _;
 
+local sSecretsEnabled = VUHDO_SECRETS_ENABLED;
 
 -- for saving once learnt yards in saved variables
 local VUHDO_STORED_ZONES = { };
@@ -14,7 +15,6 @@ local GetTime = GetTime;
 local GetSpellCooldown = GetSpellCooldown or VUHDO_getSpellCooldown;
 local twipe = table.wipe;
 local tsort = table.sort;
-local VUHDO_setMapToCurrentZone;
 local VUHDO_tableUniqueAdd;
 local VUHDO_checkInteractDistance;
 
@@ -36,9 +36,10 @@ function VUHDO_clusterBuilderInitLocalOverrides()
 	VUHDO_CLUSTER_BASE_RAID = _G["VUHDO_CLUSTER_BASE_RAID"];
 	VUHDO_RAID = _G["VUHDO_RAID"];
 
-	VUHDO_setMapToCurrentZone = _G["VUHDO_setMapToCurrentZone"];
 	VUHDO_tableUniqueAdd = _G["VUHDO_tableUniqueAdd"];
 	VUHDO_checkInteractDistance = _G["VUHDO_checkInteractDistance"];
+
+	return;
 end
 
 
@@ -196,8 +197,8 @@ end
 --
 local tUnit, tInfo;
 local tAnotherUnit, tAnotherInfo;
-local tX, tY, tDeltaX, tDeltaY;
-local tMaxX, tMaxY;
+local tDeltaX, tDeltaY;
+local tMaxX;
 local tMapId, tMap, tMapFileName, tDungeonLevels, tCurrLevel;
 local tCurrentZone;
 local tNumRaid;
@@ -210,6 +211,10 @@ local VuhDoDummyStub = {
 };
 
 function VUHDO_updateAllClusters()
+
+	if sSecretsEnabled then
+		return;
+	end
 
 	-- as of patch 7.1 APIs related to unit position/distance do not function inside instances
 	tIsInInstance, _ = IsInInstance();
@@ -365,7 +370,7 @@ end
 
 
 --
-local tDistance, tNumber, tInfo;
+local tDistance, tInfo;
 local tStart, tDuration;
 function VUHDO_getUnitsInRadialClusterWith(aUnit, aYardsPow, anArray, aCdSpell)
 	twipe(anArray);
@@ -406,7 +411,6 @@ local VUHDO_getUnitsInRadialClusterWith = VUHDO_getUnitsInRadialClusterWith;
 
 --
 local tWinnerUnit, tInfo, tWinnerMissLife;
-local tCurrMissLife;
 local function VUHDO_getMostDeficitUnitOutOf(anIncludeList, anExcludeList)
 	tWinnerUnit = nil;
 	tWinnerMissLife = -1;
@@ -414,9 +418,11 @@ local function VUHDO_getMostDeficitUnitOutOf(anIncludeList, anExcludeList)
 	for _, tUnit in pairs(anIncludeList) do
 		if not anExcludeList[tUnit] then
 			tInfo = VUHDO_RAID[tUnit];
-			if tInfo and tInfo["healthmax"] - tInfo["health"] > tWinnerMissLife then
-				tWinnerUnit = tUnit;
-				tWinnerMissLife = tInfo["healthmax"] - tInfo["health"];
+			if tInfo and tInfo["healthmax"] > 0 and not tInfo["dead"] then
+				if tInfo["healthmax"] - tInfo["health"] > tWinnerMissLife then
+					tWinnerUnit = tUnit;
+					tWinnerMissLife = tInfo["healthmax"] - tInfo["health"];
+				end
 			end
 		end
 	end
@@ -428,7 +434,6 @@ end
 --
 local tNextJumps = { };
 local tExcludeList = { };
-local tNumJumps = 0;
 function VUHDO_getUnitsInChainClusterWith(aUnit, aYardsPow, anArray, aMaxTargets, aCdSpell)
 	twipe(anArray);
 	twipe(tExcludeList)
@@ -445,7 +450,7 @@ end
 
 
 --
-local tDeltas, tDistance;
+local tDeltas;
 function VUHDO_getDistanceBetween(aUnit, anotherUnit)
 	if VUHDO_CLUSTER_BLACKLIST[aUnit] or VUHDO_CLUSTER_BLACKLIST[anotherUnit] then	return nil; end
 
@@ -460,7 +465,7 @@ end
 
 
 --
-local tDeltas, tXCoord, tYCoord;
+local tXCoord, tYCoord;
 local function VUHDO_getRealPosition(aUnit)
 	if VUHDO_CLUSTER_BLACKLIST[aUnit] then return nil; end
 

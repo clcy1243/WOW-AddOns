@@ -1,7 +1,7 @@
 # BigWigs [Classic]
 
-## [v11.0.29](https://github.com/BigWigsMods/BigWigs_Classic/tree/v11.0.29) (2024-10-11)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Classic/compare/v11.0.28...v11.0.29) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Classic/releases)
+## [v12.0.11](https://github.com/BigWigsMods/BigWigs_Classic/tree/v12.0.11) (2026-03-15)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Classic/compare/v12.0.10...v12.0.11) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Classic/releases)
 
-- BlackwingLair: Update option files  
-- BlackwingLair: Tweaks for SoD  
+- Update esES (#167)  
+- Update locales (#166)  

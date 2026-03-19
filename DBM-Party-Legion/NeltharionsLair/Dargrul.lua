@@ -1,7 +1,10 @@
 local mod	= DBM:NewMod(1687, "DBM-Party-Legion", 5, 767)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240714045506")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(91007)
 mod:SetEncounterID(1793)
 mod.sendMainBossGUID = true

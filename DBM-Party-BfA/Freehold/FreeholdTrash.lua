@@ -1,7 +1,10 @@
+if DBM:IsPostMidnight() then return end
 local mod	= DBM:NewMod("FreeholdTrash", "DBM-Party-BfA", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240808043723")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
+mod:SetZone(1754)
 --mod:SetModelID(47785)
 
 mod.isTrashMod = true

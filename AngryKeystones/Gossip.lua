@@ -19,13 +19,13 @@ local function GossipNPCID()
 end
 
 local function IsStaticPopupShown()
-	for index = 1, STATICPOPUP_NUMDIALOGS do
-		local frame = _G["StaticPopup"..index]
-		if frame and frame:IsShown() then
-			return true
+	local dialog = nil
+	StaticPopup_ForEachShownDialog(function(d)
+		if dialog == nil and not d.hasFixedPosition then
+			dialog = d
 		end
-	end
-	return false
+	end)
+	return dialog
 end
 
 local function IsInActiveChallengeMode()
@@ -58,25 +58,30 @@ function Mod:CoSRumor()
 end
 
 function Mod:GOSSIP_SHOW()
-	local npcId = GossipNPCID()
+	if not IsInActiveChallengeMode() then return end
+
 	local options = C_GossipInfo.GetOptions()
 	local numOptions = #options
-
-	if Addon.Config.cosRumors and Addon.Locale:HasRumors() and npcId == cosRumorNPC and numOptions == 0 then
-		self:CoSRumor()
-		C_GossipInfo.CloseGossip()
-	end
-
 	if numOptions ~= 1 then return end -- only automate one gossip option
 
-	if Addon.Config.autoGossip and IsInActiveChallengeMode() and not npcBlacklist[npcId] then
+	local npcId = GossipNPCID()
+
+	-- if Addon.Config.cosRumors and Addon.Locale:HasRumors() and npcId == cosRumorNPC and numOptions == 0 then
+	-- 	self:CoSRumor()
+	-- 	C_GossipInfo.CloseGossip()
+	-- end
+
+	if Addon.Config.autoGossip and not npcBlacklist[npcId] then
 		if npcWhitelist[npcId] or options[1].icon == 132053 or options[1].icon == 1019848 then -- the gossip icon, prevents auto-opening repair options etc
 			local popupWasShown = IsStaticPopupShown()
 			C_GossipInfo.SelectOption(options[1].gossipOptionID)
 			local popupIsShown = IsStaticPopupShown()
 			if popupIsShown then
 				if not popupWasShown then
-					StaticPopup1Button1:Click()
+					local button = popupIsShown:GetButton1()
+					if button then
+						button:Click()
+					end
 					C_GossipInfo.CloseGossip()
 				end
 			else
@@ -88,17 +93,12 @@ end
 
 local function PlayCurrent()
 	if IsInActiveChallengeMode() and Addon.Config.hideTalkingHead then
-		local frame = TalkingHeadFrame
-		if (frame.finishTimer) then
-			frame.finishTimer:Cancel()
-			frame.finishTimer = nil
-		end
-		frame:Hide()
+		TalkingHeadFrame:CloseImmediately()
 	end
 end
 
 function Mod:Blizzard_TalkingHeadUI()
-	hooksecurefunc("TalkingHeadFrame_PlayCurrent", PlayCurrent)
+	hooksecurefunc(TalkingHeadFrame, "PlayCurrent", PlayCurrent)
 end
 
 function Mod:Startup()

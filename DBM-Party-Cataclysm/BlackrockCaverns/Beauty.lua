@@ -3,9 +3,11 @@ local L		= mod:GetLocalizedStrings()
 
 mod.statTypes = "normal,heroic,timewalker"
 
-mod:SetRevision("20210922153837")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(39700)
 mod:SetEncounterID(1037)
+mod:SetZone(645)
 
 mod:RegisterCombat("combat")
 

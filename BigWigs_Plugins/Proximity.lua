@@ -1,8 +1,10 @@
+if BigWigsLoader.isMidnight then return end -- XXX needs updating for 12.0
+
 -------------------------------------------------------------------------------
 -- Module Declaration
 --
 
-local plugin = BigWigs:NewPlugin("Proximity")
+local plugin, L = BigWigs:NewPlugin("Proximity")
 if not plugin then return end
 
 plugin.defaultDB = {
@@ -35,7 +37,6 @@ plugin.defaultDB = {
 
 local db = nil
 
-local L = BigWigsAPI:GetLocale("BigWigs: Plugins")
 plugin.displayName = L.proximity_name
 local L_proximityTitle = L.proximityTitle
 
@@ -62,7 +63,7 @@ local proxAnchor, proxTitle = nil, nil
 
 -- Upvalues
 local CTimerAfter = BigWigsLoader.CTimerAfter
-local GameTooltip = CreateFrame("GameTooltip", "BigWigsProximityTooltip", UIParent, "GameTooltipTemplate")
+local bwTooltip = BigWigsAPI.GetTooltip()
 local UnitPosition = UnitPosition
 local IsItemInRange = BigWigsLoader.IsItemInRange
 local GetRaidTargetIndex, GetNumGroupMembers, GetTime = GetRaidTargetIndex, GetNumGroupMembers, GetTime
@@ -73,7 +74,6 @@ local tinsert, tconcat, wipe = table.insert, table.concat, table.wipe
 local next, type, tonumber = next, type, tonumber
 
 local combatText = GARRISON_LANDING_STATUS_MISSION_COMBAT or "In Combat"
-local isWrath = BigWigsLoader.isWrath
 
 local OnOptionToggled = nil -- Function invoked when the proximity option is toggled on a module.
 
@@ -169,7 +169,7 @@ do
 	end
 
 	function isInRange(unit)
-		if activeRangeChecker and (isWrath or not InCombatLockdown()) then
+		if activeRangeChecker and not InCombatLockdown() then
 			return activeRangeChecker(unit)
 		end
 	end
@@ -195,8 +195,6 @@ local function onDragStop(self)
 	db.posy = self:GetTop() * s
 	plugin:UpdateGUI() -- Update X/Y if GUI is open.
 end
-local function OnDragHandleMouseDown(self) self.frame:StartSizing("BOTTOMRIGHT") end
-local function OnDragHandleMouseUp(self) self.frame:StopMovingOrSizing() end
 local function onResize(self, width, height)
 	db.width = width
 	db.height = height
@@ -230,13 +228,12 @@ local function unlockDisplay()
 end
 
 local function onControlEnter(self)
-	GameTooltip:ClearLines()
-	GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
-	GameTooltip:AddLine(self.tooltipHeader)
-	GameTooltip:AddLine(self.tooltipText, 1, 1, 1, 1)
-	GameTooltip:Show()
+	bwTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+	bwTooltip:AddLine(self.tooltipHeader)
+	bwTooltip:AddLine(self.tooltipText, 1, 1, 1, 1)
+	bwTooltip:Show()
 end
-local function onControlLeave() GameTooltip:Hide() end
+local function onControlLeave() bwTooltip:Hide() end
 
 function plugin:RestyleWindow()
 	if not proxAnchor then return end
@@ -297,7 +294,7 @@ do
 	--
 
 	function normalProximityText()
-		if functionToFire then CTimerAfter(0.05, functionToFire) else return end
+		if functionToFire then CTimerAfter(0.5, functionToFire) else return end
 
 		local anyoneClose = 0
 		local _, _, _, mapId = UnitPosition("player")
@@ -315,7 +312,7 @@ do
 
 		proxTitle:SetFormattedText(L_proximityTitle, activeRange, anyoneClose)
 
-		if InCombatLockdown() and not isWrath then
+		if InCombatLockdown() then
 			proxAnchor.text:SetFormattedText("|cff777777%s\n:-(|r", combatText)
 		elseif anyoneClose == 0 then
 			proxAnchor.text:SetText("|cff777777:-)|r")
@@ -336,9 +333,9 @@ do
 	--
 
 	function targetProximityText()
-		if functionToFire then CTimerAfter(0.05, functionToFire) else return end
+		if functionToFire then CTimerAfter(0.5, functionToFire) else return end
 
-		if InCombatLockdown() and not isWrath then
+		if InCombatLockdown() then
 			proxAnchor.text:SetFormattedText("|cff777777%s\n:-(|r", combatText)
 		elseif isInRange(proximityPlayer) then
 			proxTitle:SetFormattedText(L_proximityTitle, activeRange, 1)
@@ -361,7 +358,7 @@ do
 	--
 
 	function multiTargetProximityText()
-		if functionToFire then CTimerAfter(0.05, functionToFire) else return end
+		if functionToFire then CTimerAfter(0.5, functionToFire) else return end
 
 		local anyoneClose = 0
 		for i = 1, #proximityPlayerTable do
@@ -375,7 +372,7 @@ do
 
 		proxTitle:SetFormattedText(L_proximityTitle, activeRange, anyoneClose)
 
-		if InCombatLockdown() and not isWrath then
+		if InCombatLockdown() then
 			proxAnchor.text:SetFormattedText("|cff777777%s\n:-(|r", combatText)
 		elseif anyoneClose == 0 then
 			proxAnchor.text:SetText("|cff777777:-)|r")
@@ -395,7 +392,7 @@ do
 	--
 
 	function reverseProximityText()
-		if functionToFire then CTimerAfter(0.05, functionToFire) else return end
+		if functionToFire then CTimerAfter(0.5, functionToFire) else return end
 
 		local anyoneClose = 0
 
@@ -410,7 +407,7 @@ do
 
 		proxTitle:SetFormattedText(L_proximityTitle, activeRange, anyoneClose)
 
-		if InCombatLockdown() and not isWrath then
+		if InCombatLockdown() then
 			proxAnchor.text:SetFormattedText("|cff777777%s\n:-(|r", combatText)
 		elseif anyoneClose == 0 then
 			proxAnchor.text:SetText("|cffff0202> STACK <|r") -- XXX localize or remove?
@@ -430,9 +427,9 @@ do
 	--
 
 	function reverseTargetProximityText()
-		if functionToFire then CTimerAfter(0.05, functionToFire) else return end
+		if functionToFire then CTimerAfter(0.5, functionToFire) else return end
 
-		if InCombatLockdown() and not isWrath then
+		if InCombatLockdown() then
 			proxAnchor.text:SetFormattedText("|cff777777%s\n:-(|r", combatText)
 		elseif isInRange(proximityPlayer) then
 			proxTitle:SetFormattedText(L_proximityTitle, activeRange, 1)
@@ -451,7 +448,7 @@ do
 	--
 
 	function reverseMultiTargetProximityText()
-		if functionToFire then CTimerAfter(0.05, functionToFire) else return end
+		if functionToFire then CTimerAfter(0.5, functionToFire) else return end
 
 		local anyoneClose = 0
 
@@ -467,7 +464,7 @@ do
 
 		proxTitle:SetFormattedText(L_proximityTitle, activeRange, anyoneClose)
 
-		if InCombatLockdown() and not isWrath then
+		if InCombatLockdown() then
 			proxAnchor.text:SetFormattedText("|cff777777%s\n:-(|r", combatText)
 		elseif anyoneClose == 0 then
 			tinsert(tooClose, 1, "|cffff0202> STACK <|r") -- XXX localize or remove?
@@ -499,11 +496,6 @@ end
 -- Initialization
 --
 
-function plugin:OnRegister()
-	self:RegisterMessage("BigWigs_ProfileUpdate", updateProfile)
-	updateProfile()
-end
-
 do
 	local createAnchor = function()
 		-- USE THIS CALLBACK TO SKIN THIS WINDOW! NO NEED FOR UGLY HAX! E.g.
@@ -511,7 +503,7 @@ do
 		-- if BigWigsLoader then
 		-- 	BigWigsLoader.RegisterMessage(addonTable, "BigWigs_FrameCreated", function(event, frame, name) print(name.." frame created.") end)
 		-- end
-		proxAnchor = CreateFrame("Frame", "BigWigsProximityAnchor", UIParent)
+		proxAnchor = CreateFrame("Frame", nil, UIParent)
 		proxAnchor:SetFrameStrata("MEDIUM")
 		proxAnchor:SetFixedFrameStrata(true)
 		proxAnchor:SetFrameLevel(120)
@@ -528,9 +520,9 @@ do
 		tooltipFrame:SetPoint("BOTTOM", proxAnchor, "TOP")
 		tooltipFrame:SetScript("OnEnter", function(self)
 			if not activeSpellID then return end
-			GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-			GameTooltip:SetHyperlink(format("spell:%d", activeSpellID or 44318))
-			GameTooltip:Show()
+			bwTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+			bwTooltip:SetHyperlink(format("spell:%d", activeSpellID or 44318))
+			bwTooltip:Show()
 		end)
 		tooltipFrame:SetScript("OnLeave", onControlLeave)
 		proxAnchor.tooltip = tooltipFrame
@@ -595,21 +587,24 @@ do
 		proxAnchor.text = text
 
 		local drag = CreateFrame("Frame", nil, proxAnchor)
-		drag.frame = proxAnchor
 		drag:SetWidth(16)
 		drag:SetHeight(16)
-		drag:SetPoint("BOTTOMRIGHT", proxAnchor, -1, 1)
+		drag:SetPoint("BOTTOMRIGHT", -1, 1)
 		drag:EnableMouse(true)
-		drag:SetScript("OnMouseDown", OnDragHandleMouseDown)
-		drag:SetScript("OnMouseUp", OnDragHandleMouseUp)
+		drag:SetScript("OnMouseDown", function(self) self:GetParent():StartSizing("BOTTOMRIGHT") bwTooltip:Hide() end)
+		drag:SetScript("OnMouseUp", function(self) self:GetParent():StopMovingOrSizing() end)
+		drag:SetScript("OnEnter", function(self)
+			bwTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			bwTooltip:AddLine(L.dragToResize)
+			bwTooltip:Show()
+		end)
+		drag:SetScript("OnLeave", onControlLeave)
 		proxAnchor.drag = drag
 
 		local tex = drag:CreateTexture(nil, "OVERLAY")
 		tex:SetTexture("Interface\\AddOns\\BigWigs\\Media\\Icons\\draghandle")
-		tex:SetWidth(16)
-		tex:SetHeight(16)
+		tex:SetAllPoints(drag)
 		tex:SetBlendMode("ADD")
-		tex:SetPoint("CENTER", drag)
 
 		plugin:RestyleWindow()
 
@@ -630,15 +625,15 @@ do
 	end
 
 	function plugin:OnPluginEnable()
+		updateProfile()
+
 		if createAnchor then createAnchor() createAnchor = nil end
 
 		self:RegisterMessage("BigWigs_ShowProximity")
 		self:RegisterMessage("BigWigs_HideProximity", "BigWigs_OnBossDisable")
 		self:RegisterMessage("BigWigs_OnBossWipe", "BigWigs_OnBossDisable")
 		self:RegisterMessage("BigWigs_OnBossDisable")
-
 		self:RegisterMessage("BigWigs_ProfileUpdate", updateProfile)
-		updateProfile()
 	end
 end
 
@@ -952,7 +947,7 @@ do
 			return
 		end
 
-		if spellName and key > 0 then -- GameTooltip doesn't do "journal" hyperlinks
+		if spellName and key > 0 then -- tooltip doesn't do "journal" hyperlinks
 			activeSpellID = key
 		else
 			activeSpellID = nil
@@ -969,7 +964,7 @@ do
 
 		functionToFire = nil -- Kill previous updater
 		self:CancelTimer(updateTimer)
-		updateTimer = self:ScheduleTimer(openProx, 0.1, self, range, module, key, player, isReverse, spellName, spellIcon)
+		updateTimer = self:ScheduleTimer(function() openProx(self, range, module, key, player, isReverse, spellName, spellIcon) end, 0.1)
 	end
 end
 
@@ -977,7 +972,7 @@ end
 -- Slash command
 --
 
-SlashCmdList.BigWigs_Proximity = function(input)
+local function slash(input)
 	if not plugin:IsEnabled() then BigWigs:Enable() end
 	input = input:lower()
 	local range, reverse = input:match("^(%d+)%s*(%S*)$")
@@ -998,5 +993,5 @@ SlashCmdList.BigWigs_Proximity = function(input)
 	end
 end
 
-SLASH_BigWigs_Proximity1 = "/proximity"
-SLASH_BigWigs_Proximity2 = "/range"
+BigWigsAPI.RegisterSlashCommand("/proximity", slash)
+BigWigsAPI.RegisterSlashCommand("/range", slash)

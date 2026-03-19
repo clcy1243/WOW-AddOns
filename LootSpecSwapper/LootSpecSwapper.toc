@@ -1,0 +1,21 @@
+## Interface: 120001
+## Author: Cilraaz
+## Title: Loot Spec Swapper
+## Notes: Automatically change your loot spec on a boss-by-boss basis
+## Version: 12.0.1.01
+## X-Category: Loot
+## X-eMail: Cilraaz@gmail.com
+## X-Curse-Project-ID: 363570
+## X-WoWI-ID: 25789
+## X-Wago-ID: WYK993KL
+## DefaultState: enabled
+## SavedVariablesPerCharacter: LSSDB
+
+# Core files
+Core.lua
+Modules\Database.lua
+Modules\SpecManager.lua
+Modules\EventHandler.lua
+Modules\Commands.lua
+Modules\UI.lua
+Modules\Config.lua

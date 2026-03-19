@@ -5,81 +5,105 @@
 local mod, CL = BigWigs:NewBoss("Terestian Illhoof", 532, 1560)
 if not mod then return end
 mod:RegisterEnableMob(15688)
-if mod:Classic() then
-	mod:SetEncounterID(657)
-end
-
---------------------------------------------------------------------------------
--- Localization
---
-
-local L = mod:NewLocale("enUS", true)
-if L then
-	L.engage_trigger = "^Ah, you're just in time."
-
-	L.weak = "Weakened"
-	L.weak_desc = "Warn for weakened state."
-	L.weak_icon = 30065
-	L.weak_message = "Weakened for ~45sec!"
-	L.weak_warning1 = "Weakened over in ~5sec!"
-	L.weak_warning2 = "Weakened over!"
-	L.weak_bar = "~Weakened Fades"
-end
-L = mod:GetLocale()
+mod:SetEncounterID(657)
 
 --------------------------------------------------------------------------------
 -- Initialization
 --
 
+local demonChainsMarker = mod:AddMarkerOption(true, "npc", 8, 30115, 8) -- Sacrifice
 function mod:GetOptions()
 	return {
-		"weak", {30115, "ICON"}, "berserk"
+		30065, -- Broken Pact
+		{30115, "SAY"}, -- Sacrifice
+		demonChainsMarker,
+		"berserk",
+	},nil,{
+		[30065] = CL.weakened, -- Broken Pact (Weakened)
 	}
 end
 
 function mod:OnBossEnable()
-	self:Log("SPELL_AURA_APPLIED", "Sacrifice", 30115)
+	self:Log("SPELL_CAST_START", "SacrificeStart", 30115)
+	self:Log("SPELL_CAST_SUCCESS", "Sacrifice", 30115)
+	self:Log("SPELL_AURA_APPLIED", "SacrificeApplied", 30115)
 	self:Log("SPELL_AURA_REMOVED", "SacrificeRemoved", 30115)
 
-	self:Log("SPELL_AURA_APPLIED", "Weakened", 30065)
-	self:Log("SPELL_AURA_REMOVED", "WeakenedRemoved", 30065)
-
-	self:BossYell("Engage", L["engage_trigger"])
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-
-	self:Death("Win", 15688)
+	self:Log("SPELL_AURA_APPLIED", "BrokenPactApplied", 30065)
+	self:Log("SPELL_AURA_REMOVED", "BrokenPactRemoved", 30065)
 end
 
 function mod:OnEngage()
-	self:Berserk(600)
+	self:CDBar(30115, 30.5) -- Sacrifice
+	self:Berserk(600, true)
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function mod:Sacrifice(args)
-	self:TargetMessageOld(args.spellId, args.destName, "yellow")
-	self:TargetBar(args.spellId, 30, args.destName)
-	self:DelayedMessage(args.spellId, 40, "orange", CL["soon"]:format(args.spellName))
-	self:CDBar(args.spellId, 42)
-	self:PrimaryIcon(args.spellId, args.destName)
+function mod:MarkDemonChains(_, unit, guid)
+	if self:MobId(guid) == 17248 then -- Demon Chains
+		self:CustomIcon(demonChainsMarker, unit, 8)
+		self:UnregisterTargetEvents()
+	end
 end
 
-function mod:SacrificeRemoved(args)
-	self:StopBar(args.spellName, args.destName)
-	self:PrimaryIcon(args.spellId)
+do
+	local prev = 0
+	local found = true
+	do
+		local function printTarget(self, player, guid)
+			self:TargetMessage(30115, "yellow", player)
+			if self:Me(guid) then
+				self:Say(30115, nil, nil, "Sacrifice")
+			end
+			self:PlaySound(30115, "warning", nil, player)
+		end
+		function mod:SacrificeStart(args)
+			prev = args.time
+			found = false
+			self:StopBar(args.spellName)
+			self:GetUnitTarget(printTarget, 0.5, args.sourceGUID)
+			-- Register events to auto-mark Demon Chains
+			if self:GetOption(demonChainsMarker) then
+				self:RegisterTargetEvents("MarkDemonChains")
+			end
+		end
+	end
+
+	do
+		local function DelayBackupBar()
+			if not found then
+				found = true
+				mod:CDBar(30115, 40) -- 41-1
+			end
+		end
+		function mod:Sacrifice(args)
+			self:ScheduleTimer(DelayBackupBar, 1)
+		end
+	end
+
+	function mod:SacrificeApplied(args)
+		found = true
+		self:TargetBar(args.spellId, 30, args.destName)
+	end
+
+	function mod:SacrificeRemoved(args)
+		self:StopBar(args.spellName, args.destName)
+		local duration = 41-(args.time-prev)
+		self:CDBar(args.spellId, duration > 0 and duration or 11) -- Fallback for safety (41-30)
+	end
 end
 
-function mod:Weakened(args)
-	self:MessageOld("weak", "red", "alarm", L["weak_message"], args.spellId)
-	self:DelayedMessage("weak", 40, "yellow", L["weak_warning1"])
-	self:Bar("weak", 45, L["weak_bar"], args.spellId)
+function mod:BrokenPactApplied(args)
+	self:Message(args.spellId, "green", CL.weakened)
+	self:Bar(args.spellId, 41, CL.weakened)
+	self:PlaySound(args.spellId, "long")
 end
 
-function mod:WeakenedRemoved()
-	self:MessageOld("weak", "yellow", "info", L["weak_warning2"])
-	self:CancelDelayedMessage(L["weak_warning1"])
-	self:StopBar(L["weak_bar"])
+function mod:BrokenPactRemoved(args)
+	self:Message(args.spellId, "red", CL.over:format(CL.weakened))
+	self:StopBar(CL.weakened)
+	self:PlaySound(args.spellId, "info")
 end
-

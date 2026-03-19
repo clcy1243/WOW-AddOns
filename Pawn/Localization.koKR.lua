@@ -1,7 +1,7 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2024 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
--- See Readme.htm for more information.
+-- © 2006-2026 Travis Spomer.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- See Readme.md for more information.
 
 --
 -- Korean resources
@@ -72,7 +72,7 @@ www.vgermods.com
 /pawn debug [ on | off ] -- 콘솔에 디버그 메시지 스팸
 /pawn backup -- 모든 능력치 비율 태그 백업
  
-Pawn 사용자 설정의 더 자세한 정보는, 애드온에 포함된 help 파일 (Readme.htm) 를 참고하세요.]=],
+Pawn 사용자 설정의 더 자세한 정보는, 애드온에 포함된 help 파일 (Readme.md) 를 참고하세요.]=],
 	["ValueCalculationMessage"] = "   %g %s x %g each = %g",
 	["VisibleScalesHeader"] = "%s의 능력치 비율",
 	["Stats"] = {
@@ -127,12 +127,14 @@ Pawn 사용자 설정의 더 자세한 정보는, 애드온에 포함된 help �
 		["MovementSpeedInfo"] = "이동 속도. 자신의 캐릭터의 달리기 속도가 빨라집니다.",
 		["Mp5"] = "5초당 마나 회복",
 		["Mp5Info"] = "Mana regeneration per 5 seconds.  Affects your mana regeneration even when in combat.",
+		["MultistrikeInfo"] = "Multistrike. Increases the chance that your attacks and healing spells will hit your target two extra times at reduced potency.",
 		["NatureResistInfo"] = "Nature Resistance.  Reduces the damage taken from nature-based attacks.",
 		["NatureSpellDamage"] = "자연 주문 공격력",
 		["NatureSpellDamageInfo"] = "Nature damage.  Increases the damage dealt by your nature spells.",
 		["ParryInfo"] = "Parry.  Increases the chance that you'll parry enemy attacks.",
 		["Plate"] = "판금",
 		["PlateInfo"] = "판금 아이템일 경우 할당합니다.",
+		["PvPPowerInfo"] = "PvP power. Causes your abilities to deal more damage to other players (but not creatures), and your healing spells to heal other players for more in some PvP situations.",
 		["RapInfo"] = "Ranged Attack Power.  Increases the damage of ranged physical attacks.  Does not include attack power gained from agility.",
 		--[[Translation missing --]]
 		["ResilienceInfo"] = "Resilience. Reduces the chance that you'll be critically hit, and decreases the damage of critical hits that you do take.",
@@ -320,9 +322,7 @@ Pawn 사용자 설정의 더 자세한 정보는, 애드온에 포함된 help �
 		["OptionsBagUpgradeAdvisor"] = "가방 향상 조언가 표시",
 		["OptionsBagUpgradeAdvisorTooltip"] = [=[Pawn이 가방 내 향상 화살표를 제어하게 하려면 이 옵션을 활성화하세요.
 
-체크하면 Pawn이 가방에서 향상되는 아이템을 찾고 활성 능력치 비율 중 향상되는 아이템에 녹색 화살표로 표시합니다.
-
-체크하지 않으면 WoW는 현재 착용 중인 장비보다 아이템 레벨이 더 높은 아이템에 표시하며, Pawn은 기본 내장 기능과 간섭하지 않습니다.]=],
+체크하면 Pawn이 가방에서 향상되는 아이템을 찾고 활성 능력치 비율 중 향상되는 아이템에 녹색 화살표로 표시합니다.]=],
 		["OptionsBlankLine"] = "값 위에 빈 줄 추가",
 		["OptionsBlankLineTooltip"] = "이 옵션을 켜면 Pawn 값 위에 빈 줄을 추가해 아이템 툴팁을 깔끔하게 정리할 수 있습니다.",
 		["OptionsButtonHidden"] = "숨기기",
@@ -558,6 +558,8 @@ PawnLocal.TooltipParsing = {
 	["EnchantmentPyriumWeaponChain"] = "^황철 무기 사슬$",
 	["EnchantmentTitaniumWeaponChain"] = "^티타늄 무기 사슬$",
 	["Equip"] = "착용 효과:",
+	["Expertise"] = "^UNUSED$",
+	["ExpertiseClassic"] = "^착용 효과: 공격이 회피당하거나 무기 막기에 막힐 확률이 #%%만큼 감소합니다%.$",
 	["ExpertiseRating"] = "^착용 효과: 숙련도가 #만큼 증가합니다%.$",
 	["ExpertiseRatingShort"] = "^숙련 %+#$",
 	["FeralAp"] = "^착용 효과: 표범, 광포한 곰, 곰 변신 상태일 때 전투력이 #만큼 증가합니다%.$",
@@ -576,6 +578,7 @@ PawnLocal.TooltipParsing = {
 	["Gun"] = "^총$",
 	["Haste"] = "^가속 %+?#$",
 	["Haste2"] = "^UNUSED$",
+	["HasteClassic"] = "^착용 효과: 공격 속도가 #%%만큼 증가합니다%.$",
 	["HasteRating"] = "^착용 효과: 가속도가 #만큼 증가합니다%.$",
 	["HasteRating2"] = "^UNUSED$",
 	--[[Translation missing --]]
@@ -598,6 +601,7 @@ PawnLocal.TooltipParsing = {
 	["HitRating2"] = "^UNUSED$",
 	["HitRating3"] = "^UNUSED$",
 	["HitRatingShort"] = "^적중도 %+#$",
+	["HitRatingShorter"] = "^적중 %+#$",
 	["HolySpellDamage"] = "^%+# Holy Spell Damage$",
 	["HolySpellDamage2"] = "^착용 효과: 신성 계열의 주문과 효과의 공격력이 최대 #만큼 증가합니다%.$",
 	["HolySpellDamage3"] = "^UNUSED$",
@@ -672,6 +676,7 @@ PawnLocal.TooltipParsing = {
 	["SpellDamageAndHealingEnchant"] = "^UNUSED$",
 	["SpellDamageAndHealingShort"] = "^주문 치유량 %+# / 주문 공격력 %+#$",
 	["SpellDamageAndHealingShort2"] = "^UNUSED$",
+	["SpellHasteClassic"] = "^착용 효과: 시전 속도가 #%%만큼 증가합니다%.$",
 	["SpellHasteRating"] = "^착용 효과: 주문 시전 가속도가 #만큼 증가합니다%.$",
 	["SpellHasteRatingShort"] = "^주문 시전 가속도 %+#$",
 	["SpellHit"] = "^착용 효과: 주문의 적중률이 #%%만큼 증가합니다%.$",
@@ -721,7 +726,7 @@ PawnLocal.TooltipParsing = {
 
 -- Special case: wands actually use different text on live versus classic.
 -- So, patch things up here.
-if VgerCore.IsClassic or VgerCore.IsBurningCrusade or VgerCore.IsWrath or VgerCore.IsCataclysm then
+if VgerCore.IsClassic or VgerCore.IsBurningCrusade or VgerCore.IsWrath or VgerCore.IsCataclysm or VgerCore.IsMists then
 
 	local TooltipParsing_Classic =
 	{
@@ -747,73 +752,76 @@ end
 
 PawnLocal.Specs =
 {
-	[1] = {
-		{ Name="무기", Icon=132355, Role="DAMAGER" },
-		{ Name="분노", Icon=132347, Role="DAMAGER" },
-		{ Name="방어", Icon=132341, Role="TANK" },
-	},
-	[2] = {
-		{ Name="신성", Icon=135920, Role="HEALER" },
-		{ Name="보호", Icon=236264, Role="TANK" },
-		{ Name="징벌", Icon=135873, Role="DAMAGER" },
-	},
-	[3] = {
-		{ Name="야수", Icon=461112, Role="DAMAGER" },
-		{ Name="사격", Icon=236179, Role="DAMAGER" },
-		{ Name="생존", Icon=461113, Role="DAMAGER" },
-	},
-	[4] = {
-		{ Name="암살", Icon=236270, Role="DAMAGER" },
-		{ Name="무법", Icon=236286, Role="DAMAGER" },
-		{ Name="잠행", Icon=132320, Role="DAMAGER" },
-	},
-	[5] = {
-		{ Name="수양", Icon=135940, Role="HEALER" },
-		{ Name="신성", Icon=237542, Role="HEALER" },
-		{ Name="암흑", Icon=136207, Role="DAMAGER" },
-	},
-	[6] = {
-		{ Name="혈기", Icon=135770, Role="TANK" },
-		{ Name="냉기", Icon=135773, Role="DAMAGER" },
-		{ Name="부정", Icon=135775, Role="DAMAGER" },
-	},
-	[7] = {
-		{ Name="정기", Icon=136048, Role="DAMAGER" },
-		{ Name="고양", Icon=237581, Role="DAMAGER" },
-		{ Name="복원", Icon=136052, Role="HEALER" },
-	},
-	[8] = {
-		{ Name="비전", Icon=135932, Role="DAMAGER" },
-		{ Name="화염", Icon=135810, Role="DAMAGER" },
-		{ Name="냉기", Icon=135846, Role="DAMAGER" },
-	},
-	[9] = {
-		{ Name="고통", Icon=136145, Role="DAMAGER" },
-		{ Name="악마", Icon=136172, Role="DAMAGER" },
-		{ Name="파괴", Icon=136186, Role="DAMAGER" },
-	},
-	[10] = {
-		{ Name="양조", Icon=608951, Role="TANK" },
-		{ Name="운무", Icon=608952, Role="HEALER" },
-		{ Name="풍운", Icon=608953, Role="DAMAGER" },
-	},
-	[11] = {
-		{ Name="조화", Icon=136096, Role="DAMAGER" },
-		{ Name="야성", Icon=132115, Role="DAMAGER" },
-		{ Name="수호", Icon=132276, Role="TANK" },
-		{ Name="회복", Icon=136041, Role="HEALER" },
-	},
-	[12] = {
-		{ Name="파멸", Icon=1247264, Role="DAMAGER" },
-		{ Name="복수", Icon=1247265, Role="TANK" },
-	},
+    [1] = {
+        { Name="무기", Icon=132355, Role="DAMAGER" },
+        { Name="분노", Icon=132347, Role="DAMAGER" },
+        { Name="방어", Icon=132341, Role="TANK" },
+    },
+    [2] = {
+        { Name="신성", Icon=135920, Role="HEALER" },
+        { Name="보호", Icon=236264, Role="TANK" },
+        { Name="징벌", Icon=135873, Role="DAMAGER" },
+    },
+    [3] = {
+        { Name="야수", Icon=461112, Role="DAMAGER" },
+        { Name="사격", Icon=236179, Role="DAMAGER" },
+        { Name="생존", Icon=461113, Role="DAMAGER" },
+    },
+    [4] = {
+        { Name="암살", Icon=236270, Role="DAMAGER" },
+        { Name="무법", Icon=236286, Role="DAMAGER" },
+        { Name="잠행", Icon=132320, Role="DAMAGER" },
+    },
+    [5] = {
+        { Name="수양", Icon=135940, Role="HEALER" },
+        { Name="신성", Icon=237542, Role="HEALER" },
+        { Name="암흑", Icon=136207, Role="DAMAGER" },
+    },
+    [6] = {
+        { Name="혈기", Icon=135770, Role="TANK" },
+        { Name="냉기", Icon=135773, Role="DAMAGER" },
+        { Name="부정", Icon=135775, Role="DAMAGER" },
+    },
+    [7] = {
+        { Name="정기", Icon=136048, Role="DAMAGER" },
+        { Name="고양", Icon=237581, Role="DAMAGER" },
+        { Name="복원", Icon=136052, Role="HEALER" },
+    },
+    [8] = {
+        { Name="비전", Icon=135932, Role="DAMAGER" },
+        { Name="화염", Icon=135810, Role="DAMAGER" },
+        { Name="냉기", Icon=135846, Role="DAMAGER" },
+    },
+    [9] = {
+        { Name="고통", Icon=136145, Role="DAMAGER" },
+        { Name="악마", Icon=136172, Role="DAMAGER" },
+        { Name="파괴", Icon=136186, Role="DAMAGER" },
+    },
+    [10] = {
+        { Name="양조", Icon=608951, Role="TANK" },
+        { Name="운무", Icon=608952, Role="HEALER" },
+        { Name="풍운", Icon=608953, Role="DAMAGER" },
+    },
+    [11] = {
+        { Name="조화", Icon=136096, Role="DAMAGER" },
+        { Name="야성", Icon=132115, Role="DAMAGER" },
+        { Name="수호", Icon=132276, Role="TANK" },
+        { Name="회복", Icon=136041, Role="HEALER" },
+    },
+    [12] = {
+        { Name="파멸", Icon=1247264, Role="DAMAGER" },
+        { Name="복수", Icon=1247265, Role="TANK" },
+        { Name="포식", Icon=7455385, Role="DAMAGER" },
+    },
+    [13] = {
+        { Name="황폐", Icon=4511811, Role="DAMAGER" },
+        { Name="보존", Icon=4511812, Role="HEALER" },
+        { Name="증강", Icon=5198700, Role="DAMAGER" },
+    },
 }
 
 end
 
-if GetLocale() == "koKR" then
-	PawnUseThisLocalization()
-end
-
--- After using this localization or deciding that we don't need it, remove it from memory.
+-- Initiate self-destruct sequence.
+PawnUseThisLocalization()
 PawnUseThisLocalization = nil

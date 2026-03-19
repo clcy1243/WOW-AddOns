@@ -2,59 +2,52 @@
 -- Module Declaration
 --
 
-local mod = BigWigs:NewBoss("Attumen the Huntsman Raid", 532, 1553)
+local mod, CL = BigWigs:NewBoss("Attumen the Huntsman Raid", 532, 1553)
 if not mod then return end
-mod:RegisterEnableMob(16152, 16151, 15550)
-if mod:Classic() then
-	mod:SetEncounterID(652)
-end
-
---------------------------------------------------------------------------------
--- Localization
---
-
-local L = mod:NewLocale("enUS", true)
-if L then
-	L.phase = "Phase"
-	L.phase_desc = "Warn when entering a new Phase."
-	L.phase2_trigger = "%s calls for her master!"
-	L.phase2_message = "Phase 2"
-	L.phase3_trigger = "Come Midnight, let's disperse this petty rabble!"
-	L.phase3_message = "Phase 3"
-end
-L = mod:GetLocale()
+mod:RegisterEnableMob(16151, 15550, 16152) -- Midnight, Attumen, Attumen (Mounted)
+mod:SetEncounterID(652)
+mod:SetStage(1)
 
 --------------------------------------------------------------------------------
 -- Initialization
 --
 
 function mod:GetOptions()
-	return {"phase", 29833}
+	return {
+		"stages",
+		29833, -- Intangible Presence
+	},nil,{
+		[29833] = CL.curse, -- Intangible Presence (Curse)
+	}
 end
 
 function mod:OnBossEnable()
-	self:Log("SPELL_AURA_APPLIED", "Curse", 29833)
-	self:BossYell("Phase3", L["phase3_trigger"])
+	self:Log("SPELL_CAST_SUCCESS", "IntangiblePresence", 29833)
+	self:Log("SPELL_CAST_SUCCESS", "SummonAttumen", 29714)
+	self:Log("SPELL_CAST_SUCCESS", "Mount", 29770)
+end
 
-	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
-	self:Death("Win", 15550)
+function mod:OnEngage()
+	self:SetStage(1)
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function mod:Curse(args)
-	self:TargetMessageOld(args.spellId, args.destName, "yellow")
+function mod:IntangiblePresence(args)
+	self:Message(args.spellId, "yellow", CL.on_group:format(CL.curse))
+	self:PlaySound(args.spellId, "alert")
 end
 
-function mod:CHAT_MSG_MONSTER_EMOTE(_, msg)
-	if msg == L["phase2_trigger"] then
-		self:MessageOld("phase", "red", nil, L["phase2_message"], false)
-	end
+function mod:SummonAttumen() -- Stage 2
+	self:SetStage(2)
+	self:Message("stages", "cyan", CL.stage:format(2), false)
+	self:PlaySound("stages", "info")
 end
 
-function mod:Phase3()
-	self:MessageOld("phase", "red", nil, L["phase3_message"], false)
+function mod:Mount() -- Stage 3
+	self:SetStage(3)
+	self:Message("stages", "cyan", CL.stage:format(3), false)
+	self:PlaySound("stages", "info")
 end
-

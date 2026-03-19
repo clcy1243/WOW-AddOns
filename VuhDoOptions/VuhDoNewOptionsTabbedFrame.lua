@@ -1,5 +1,7 @@
 VUHDO_MENU_RETURN_TARGET = nil;
 VUHDO_MENU_RETURN_TARGET_MAIN = nil;
+VUHDO_MENU_RETURN_TARGET_SAVED = nil;
+VUHDO_MENU_RETURN_TARGET_MAIN_SAVED = nil;
 
 
 local _;
@@ -22,7 +24,7 @@ BACKDROP_VUHDO_H_SLIDER_8_8_1111 = {
 	tile = true,
 	tileSize = 8,
 	edgeSize = 8,
-	insets = {  left = 1, right = 1, top = 1, bottom = 1 },
+	insets = { left = 1, right = 1, top = 1, bottom = 1 },
 };
 
 --
@@ -108,10 +110,17 @@ function VUHDO_tabbedPanelOkayClicked(aButton)
 	elseif (tProfile ~= nil and tProfile["LOCKED"]) then
 		VUHDO_Msg("Profile locked: Settings have NOT been saved to " .. tProfile["NAME"]);
 	else
+		local tSkinsPanel = _G["VuhDoNewOptionsToolsSkins"];
+
+		if tSkinsPanel then
+			VUHDO_skinsSaveAutoProfileButtonEnablement(tSkinsPanel, VUHDO_CONFIG["CURRENT_PROFILE"]);
+		end
+
 		VUHDO_saveCurrentProfile();
 		VUHDO_CURRENT_PROFILE = VUHDO_CONFIG["CURRENT_PROFILE"];
 	end
 
+	VUHDO_invalidateBindingCodeCache();
 	VUHDO_initAllBurstCaches();
 	VUHDO_trimSpellAssignments(VUHDO_SPELL_ASSIGNMENTS);
 	VUHDO_trimSpellAssignments(VUHDO_HOSTILE_SPELL_ASSIGNMENTS);
@@ -146,18 +155,26 @@ local tAllPanels = {
 	{ "VuhDoNewOptionsColors", "Colors" },
 	{ "VuhDoNewOptionsMove", "Move" },
 	{ "VuhDoNewOptionsBuffs", "Buffs" },
-	{ "VuhDoNewOptionsDebuffs", "Debuffs" },
+	{ "VuhDoNewOptionsAura", "Auras" },
 	{ "VuhDoNewOptionsTools", "Tools" },
 }
 
 
 --
 function VUHDO_newOptionsTabbedClickedClicked(aTabRadio)
+
 	local tName = aTabRadio:GetName();
 
 	for _, tPanelInfo in pairs(tAllPanels) do
-		_G[tPanelInfo[1]]:SetShown(strfind(tName, tPanelInfo[2]));
+		if strfind(tName, tPanelInfo[2]) then
+			_G[tPanelInfo[1]]:SetShown(true);
+
+			_G["VuhDoNewOptionsTabbedFrame"]["selectedTab"] = tPanelInfo[1];
+		else
+			_G[tPanelInfo[1]]:SetShown(false);
+		end
 	end
+
 end
 
 
@@ -234,10 +251,14 @@ end
 
 --
 function VUHDO_initOptionsSettings()
+
 	if (VUHDO_OPTIONS_SETTINGS == nil) then
 		VUHDO_OPTIONS_SETTINGS = {
 			["scale"] = 1;
 		};
 	end
+
+	VUHDO_lnfInitSearchIndex();
+
 end
 

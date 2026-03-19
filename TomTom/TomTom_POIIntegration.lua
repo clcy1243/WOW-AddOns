@@ -1,4 +1,5 @@
 local addonName, addon = ...
+
 local hbd = LibStub("HereBeDragons-2.0")
 
 if (not addon.WOW_MAINLINE) then
@@ -37,9 +38,6 @@ local modTbl = {
     A = IsAltKeyDown,
     S = IsShiftKeyDown,
 }
-
-local L = TomTomLocals
-
 
 -- Hello, I am the POI waypoint arbiter, I handle the setting and clearing of
 -- temporary waypoints for the POI integration
@@ -165,7 +163,8 @@ local function ObjectivesChanged()
             end
         end
 
-        if setWaypoint then
+        -- Not entirely sure why this is needed
+        if setWaypoint and type(x) == "number" and type(y) == "number" then
             SetPOIWaypoint(map, x, y, title)
 
             -- Check and see if the Crazy arrow is empty, and use it if so

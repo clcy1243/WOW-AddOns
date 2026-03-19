@@ -116,33 +116,12 @@ local _bankOpen = false
 local function scanBag(bagId, isBank, bagTable, bagItemsWithCount)
 
 	local numSlots = C_Container.GetContainerNumSlots(bagId)
-	local loc = ItemLocation.CreateEmpty()
-	local item
 	for slotId = 1, numSlots do
 		local itemInfo = C_Container.GetContainerItemInfo(bagId, slotId)
 		if itemInfo then
 			local itemData = Amr.Serializer.ParseItemLink(itemInfo.hyperlink)
 			if itemData ~= nil then
-				item = Item:CreateFromBagAndSlot(bagId, slotId)
-
-				-- seems to be of the form Item-1147-0-4000000XXXXXXXXX, so we take just the last 9 digits
-				itemData.guid = item:GetItemGUID()
-				if itemData.guid and strlen(itemData.guid) > 9 then
-					itemData.guid = strsub(itemData.guid, -9)
-				end
-
-				loc:SetBagAndSlot(bagId, slotId)
-				itemData.warbound = C_Item.IsBoundToAccountUntilEquip(loc)
-				itemData.soulbound = C_Item.IsBound(loc)
-								
-				-- see if this is an azerite item and read azerite power ids
-				--[[loc:SetBagAndSlot(bagId, slotId)
-				if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
-					local powers = Amr.ReadAzeritePowers(loc)
-					if powers then
-						itemData.azerite = powers
-					end
-				end]]
+				Amr.ParseExtraItemInfo(itemData, bagId, slotId, false)
 
 				if isBank then
 					_lastBankBagId = bagId
@@ -189,21 +168,9 @@ end
 local function scanBank()
 
 	local bankItems = {}
-	local itemsAndCounts = {}
-	
-	local bagList = {}
-	table.insert(bagList, BANK_CONTAINER)
-	table.insert(bagList, REAGENTBANK_CONTAINER)
-	table.insert(bagList, Enum.BagIndex.AccountBankTab_1)
-	table.insert(bagList, Enum.BagIndex.AccountBankTab_2)
-	table.insert(bagList, Enum.BagIndex.AccountBankTab_3)
-	table.insert(bagList, Enum.BagIndex.AccountBankTab_4)
-	table.insert(bagList, Enum.BagIndex.AccountBankTab_5)
-	for bagId = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
-		table.insert(bagList, bagId)
-	end
+	local itemsAndCounts = {}	
 
-	for i,bagId in ipairs(bagList) do
+	for i,bagId in ipairs(Amr:GetBankBagList(true)) do
 		local bagItems = {}
 		local bagItemsAndCounts = {}
 		scanBag(bagId, true, bagItems, bagItemsAndCounts)
@@ -233,7 +200,7 @@ end
 
 -- if a bank bag is updated while the bank is open, re-scan that bag
 local function onBankUpdated(bagID)
-	if _bankOpen and (bagID == BANK_CONTAINER or bagID == REAGENTBANK_CONTAINER or (bagID >= NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 and bagID <= NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS)) then
+	if _bankOpen and Amr:IsBankBag(bagID, true) then
 		local bagItems = {}
 		local bagItemsAndCounts = {}
 		scanBag(bagID, true, bagItems, bagItemsAndCounts)
@@ -248,33 +215,6 @@ local function onBankUpdated(bagID)
 		end
 	end
 end
-
---[[
--- scan the player's void storage and save the contents, must be at void storage
-local function scanVoid()
-
-	if IsVoidStorageReady() then
-		local voidItems = {}
-		local VOID_STORAGE_MAX = 80
-		local VOID_STORAGE_PAGES = 2
-        
-		for page = 1,VOID_STORAGE_PAGES do
-			for i = 1,VOID_STORAGE_MAX do
-				local itemId = GetVoidItemInfo(page, i)
-				if itemId then
-					local itemLink = GetVoidItemHyperlinkString(((page - 1) * VOID_STORAGE_MAX) + i);
-					if itemLink then
-						tinsert(voidItems, itemLink)
-					end
-				end
-			end
-		end
-        
-		Amr.db.char.VoidItems = voidItems
-	end
-	
-end
-]]
 
 local function scanGreatVault()
 
@@ -623,6 +563,28 @@ local function scanHighestItemLevels()
 	Amr.db.char.HighestItemLevels = lvls	
 end
 
+local function scanAchievements()
+
+	local achieved = {}
+
+	local interestingIds = {
+		61809, -- season 1 adventurer crest
+		42767, -- season 1 veteran crest
+		42768, -- season 1 champion crest
+		42769, -- season 1 hero crest
+	}
+
+	for _, achievementId in ipairs(interestingIds) do
+		local _, _, _, completed = GetAchievementInfo(achievementId)
+		if completed then
+			table.insert(achieved, achievementId)
+		end
+	end
+
+	-- replace all achievements every time we scan, prevents unused ones from building up
+	Amr.db.char.Achievements = achieved
+end
+
 -- Returns a data object containing all information about the current player needed for an export:
 -- gear, spec, reputations, bag, bank, and void storage items.
 function Amr:ExportCharacter()
@@ -636,6 +598,9 @@ function Amr:ExportCharacter()
 
 	-- scan highest ilvls in each slot used for determining upgrade discounts
 	scanHighestItemLevels()
+
+	-- scan some achievements, right now used for determining some more upgrade discounts
+	scanAchievements()
 
 	-- scan current inventory just before export so that it is always fresh
 	scanBags()
@@ -653,6 +618,7 @@ function Amr:ExportCharacter()
 	scanGreatVault()
 
 	data.HighestItemLevels = Amr.db.char.HighestItemLevels
+	data.Achievements = Amr.db.char.Achievements
 
 	data.SavedTalentConfigs = Amr.db.char.TalentConfigs.ConfigList
 	data.LastTalentConfig = Amr.db.char.TalentConfigs.LastConfig
@@ -691,11 +657,6 @@ end
 Amr:AddEventHandler("BANKFRAME_OPENED", onBankOpened)
 Amr:AddEventHandler("BANKFRAME_CLOSED", onBankClosed)
 Amr:AddEventHandler("BAG_UPDATE", onBankUpdated)
-
---Amr:AddEventHandler("VOID_STORAGE_OPEN", scanVoid)
---Amr:AddEventHandler("VOID_STORAGE_CONTENTS_UPDATE", scanVoid)
---Amr:AddEventHandler("VOID_STORAGE_DEPOSIT_UPDATE", scanVoid)
---Amr:AddEventHandler("VOID_STORAGE_UPDATE", scanVoid)
 
 --Amr:AddEventHandler("PLAYER_TALENT_UPDATE", scanTalents)
 Amr:AddEventHandler("TRAIT_CONFIG_UPDATED", scanTalents)

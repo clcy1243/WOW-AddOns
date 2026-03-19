@@ -9,7 +9,6 @@ local sMaxDragDistance = 60;
 --
 function VUHDO_positionAllGroupConfigPanels(aPanelNum)
 	local tIsShowOrder;
-	local tModel;
 	local tXPos, tYPos;
 	local tOrderPanel, tSelectPanel;
 
@@ -30,17 +29,16 @@ function VUHDO_positionAllGroupConfigPanels(aPanelNum)
 		tOrderPanel:SetScale(tScale);
 		tXPos, tYPos = VUHDO_getHealButtonPos(tCnt, 1, aPanelNum);
 
-		tModel = VUHDO_PANEL_MODELS[aPanelNum][tCnt];
 		tIsShowOrder = true;
 
-		tOrderPanel:ClearAllPoints(); -- parent könnte gewechselt haben
-		tOrderPanel:SetPoint("TOPLEFT", tParentPanel:GetName(), "TOPLEFT", tXPos / tScale, -tYPos / tScale);
+		tOrderPanel:ClearAllPoints(); -- parent kÃ¶nnte gewechselt haben
+		VUHDO_PixelUtil.SetPoint(tOrderPanel, "TOPLEFT", tParentPanel:GetName(), "TOPLEFT", tXPos / tScale, -tYPos / tScale);
 		tOrderPanel:SetShown(tIsShowOrder);
 
 		tSelectPanel = VUHDO_getOrCreateGroupSelectPanel(aPanelNum, tCnt);
 		tSelectPanel:SetScale(tScale);
 		tSelectPanel:ClearAllPoints();
-		tSelectPanel:SetPoint("TOPLEFT", tParentPanel:GetName(), "TOPLEFT", tXPos / tScale, -tYPos / tScale);
+		VUHDO_PixelUtil.SetPoint(tSelectPanel, "TOPLEFT", tParentPanel:GetName(), "TOPLEFT", tXPos / tScale, -tYPos / tScale);
 		tSelectPanel:SetShown(not tIsShowOrder);
 
 		VUHDO_getConfigOrderBarLeft(aPanelNum, tCnt):Hide();
@@ -175,7 +173,6 @@ local tCurrentDistance, tLowestDistance;
 local tLowPanelNum, tLowOrderNum;
 local tIsLeft;
 local tMaxOrderPanels;
-local tPanel;
 local tPanelX;
 local tPanelY;
 local tDragX;

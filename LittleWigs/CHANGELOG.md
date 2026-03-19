@@ -1,12 +1,16 @@
 # LittleWigs
 
-## [v11.0.44](https://github.com/BigWigsMods/LittleWigs/tree/v11.0.44) (2024-10-22)
-[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v11.0.43...v11.0.44) [Previous Releases](https://github.com/BigWigsMods/LittleWigs/releases)
+## [v12.0.24](https://github.com/BigWigsMods/LittleWigs/tree/v12.0.24) (2026-03-15)
+[Full Changelog](https://github.com/BigWigsMods/LittleWigs/compare/v12.0.23...v12.0.24) [Previous Releases](https://github.com/BigWigsMods/LittleWigs/releases)
 
-- Delves/NightfallSanctum/CultLeaders: Add boss module (#1178)  
-- Delves/TheSinkhole/Cragpie: Add boss module (#1177)  
-- Cataclysm/GrimBatol/Drahga: Timer improvements  
-- WarWithin/TheStonevault/VoidSpeakerEirich: Entropy under you  
-- Update koKR (#1174)  
-- Update workflow  
-- Update koKR (#1172)  
+- Bump toc  
+- Midnight/TheBlindingVale/Ziekket: Fix module name  
+- Legion/SeatOfTheTriumvirate: Prevent extra alerts on win  
+- Legion/SeatOfTheTriumvirate/Lura: Enhance module for Midnight  
+- Legion/SeatOfTheTriumvirate/ViceroyNezhar: Enhance module for Midnight  
+- Legion/SeatOfTheTriumvirate/Saprish: Enhance module for Midnight  
+- Legion/SeatOfTheTriumvirate/Zuraal: Enhance module for Midnight  
+- Legion/SeatOfTheTriumvirate/Lura: Fix warmup for Midnight  
+- Update koKR (#1477)  
+- Update zhCN (#1476)  
+- Update koKR (#1475)  

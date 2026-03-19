@@ -12,7 +12,8 @@ if not plugin then return end
 --
 
 -- luacheck: globals Transcriptor TranscriptDB TranscriptIgnore
-local ipairs, next, print, split, trim = ipairs, next, print, string.split, string.trim
+-- luacheck: globals UpdateAddOnMemoryUsage GetAddOnMemoryUsage date time
+local ipairs, next, print, split, trim = ipairs, next, print, strsplit, strtrim
 local sort, concat, tremove, wipe = table.sort, table.concat, table.remove, table.wipe
 local tonumber, ceil, floor = tonumber, math.ceil, math.floor
 
@@ -75,17 +76,18 @@ local diffShort = {
 	[19] = "5E",
 	[23] = "5M",
 	[24] = "5TW",
+	[198] = "10N",
+	[215] = "20N",
 }
 
 local function parseLogInfo(logName, log)
-	-- logNameFormat = "[%s]@[%s] - Zone:%d Difficulty:%d,%s Type:%s " .. format("Version: %s.%s", wowVersion, buildRevision)
-	-- "[2018-09-04]@[18:11:58] - Zone:1763 Difficulty:8,5Challenge Type:party Version: 8.0.1.27547"
-	local year, month, day, hour, min, sec, map, diff, _, _, version = logName:match("^%[(%d+)-(%d+)-(%d+)%]@%[(%d+):(%d+):(%d+)%] %- Zone:(%d+) Difficulty:(%d+),(.+) Type:(.+) Version: (.+)$")
+	-- logNameFormat = "[2026-02-23]@[22:08:08] - Zone#2915 (Nexus-Point Xenas)#Difficulty#8 (Mythic+)#Type#party#WoWVer#12.0.1.66017#TSVer#v12.0.5"
+	local year, month, day, hour, min, sec, map, diff, version, tsVersion = logName:match("^%[(%d+)-(%d+)-(%d+)%]@%[(%d+):(%d+):(%d+)%] %- Zone#(%d+).+#Difficulty#(%d+).+#Type#.+#WoWVer#(.+)#TSVer#(.+)$")
 	if not version then
 		-- try previous format
-		-- logNameFormat = "[%s]@[%s] - %d/%d/%s/%s/%s@%s" .. format(" (%s) (%s.%s)", version, wowVersion, buildRevision)
-		-- "[2017-06-20]@[23:26:47] - 1147/1676/Tomb of Sargeras/Tomb of Sargeras/The Twisting Nether@Heroic (v7.2.0) (7.2.5.24367)"
-		year, month, day, hour, min, sec, map, diff, version = logName:match("^%[(%d+)-(%d+)-(%d+)%]@%[(%d+):(%d+):(%d+)%] %- %d+/(%d+)/.-/.-/.-@(.-) %(.-%) %((.-)%)$")
+		-- logNameFormat = "[%s]@[%s] - Zone:%d Difficulty:%d,%s Type:%s " .. format("Version: %s.%s", wowVersion, buildRevision)
+		-- "[2018-09-04]@[18:11:58] - Zone:1763 Difficulty:8,5Challenge Type:party Version: 8.0.1.27547"
+		year, month, day, hour, min, sec, map, diff, _, _, version = logName:match("^%[(%d+)-(%d+)-(%d+)%]@%[(%d+):(%d+):(%d+)%] %- Zone:(%d+) Difficulty:(%d+),(.+) Type:(.+) Version: (.+)$")
 	end
 	if not version then return end
 
@@ -115,7 +117,8 @@ local function parseLogInfo(logName, log)
 	end
 
 	local diffName = diffShort[tonumber(diff)] or GetDifficultyInfo(diff) or diff
-	local zone = GetRealZoneText(map) or tostring(map)
+	local zone = GetRealZoneText(map)
+	if not zone or zone == "" then zone = tostring(map) end
 	local info = ("%s - |cffffffff%s|r (%s)"):format(zone, encounter or UNKNOWN, diffName)
 	local timestamp = time({day=day,month=month,year=year,hour=hour,min=min,sec=sec})
 
@@ -153,6 +156,10 @@ L["%d stored events over %.01f seconds. %s"] = true
 L["Ignored Events"] = true
 L["Clear All"] = true
 
+L["In Raids"] = true
+L["In Dungeons"] = true
+L["Specific Instances"] = true
+
 L.win = " |cff20ff20" .. _G.WIN .. "|r"
 L.failed = " |cffff2020" .. _G.FAILED .. "|r"
 
@@ -161,12 +168,12 @@ L.failed = " |cffff2020" .. _G.FAILED .. "|r"
 --
 
 plugin.defaultDB = {
-	enabled = false,
+	enable = "none",
+	instances = {},
 	onpull = false,
 	details = false,
 	delete = false,
 	keepone = false,
-	raid = false,
 }
 
 local GetOptions
@@ -196,8 +203,8 @@ do
 				sort(sorted, function(a, b) return a:match("^(.+)-%d+") < b:match("^(.+)-%d+") end) -- sort by spell name
 
 				for _, spell in ipairs(sorted) do
-					local info, times = split("=", spell, 2)
-					local spellName, spellId, npc = info:match("^(.+)-(%d+)-(npc:%d+)")
+					local text, times = split("=", spell, 2)
+					local spellName, spellId, npc = text:match("^(.+)-(%d+)-(npc:%d+)")
 					if npc == "npc:1" then
 						npc = ""
 					else
@@ -312,19 +319,49 @@ do
 					width = "full",
 					order = 1,
 				},
-				enabled = {
-					type = "toggle",
+				enable = {
+					type = "select",
 					name = ENABLE,
 					get = get,
 					set = set_reboot,
+					values = {
+						none = _G.NEVER,
+						all = _G.ALWAYS,
+						raid = L["In Raids"],
+						party = L["In Dungeons"],
+						instance = L["Specific Instances"],
+					},
+					sorting = { "none", "all", "raid", "party", "instance" },
 					order = 2,
 				},
-				raid = {
-					type = "toggle",
-					name = L["Raid only"],
-					desc = L["Only enable logging while in a raid instance."],
-					get = get,
-					set = set,
+				instances = {
+					type = "multiselect",
+					name = L["Specific Instances"],
+					get = function(_, key)
+						if plugin.db.profile.enable == "instance" then
+							return plugin.db.profile.instances[key]
+						end
+					end,
+					set = function(_, key, value)
+						plugin.db.profile.instances[key] = value or nil
+					end,
+					values = function()
+						local values = {}
+						if not Transcriptor.INSTANCES then
+							return values
+						end
+						for id in next, Transcriptor.INSTANCES do
+							local zone = GetRealZoneText(id)
+							if zone and zone ~= "" then
+								values[id] = zone -- or id
+							end
+						end
+						return values
+					end,
+					disabled = function()
+						return plugin.db.profile.enable ~= "instance"
+					end,
+					control = "Dropdown",
 					order = 3,
 				},
 				onpull = {
@@ -475,17 +512,35 @@ local function Refresh()
 	end
 end
 
-function plugin:BigWigs_ProfileUpdate()
-	self:Disable()
-	self:Enable()
-	Refresh()
+function plugin:BigWigs_ProfileUpdate(reboot)
+	local db = self.db.profile
+	-- upgrade
+	if db.enabled ~= nil then
+		if db.enabled then
+			db.enable = db.raid and "raid" or "all"
+		end
+	end
+	-- cleanup
+	db.enabled = nil
+	db.raid = nil
+	if db.game_version ~= WOW_PROJECT_ID then
+		wipe(db.instances)
+	end
+	db.game_version = WOW_PROJECT_ID
+
+	-- reboot if not OnRegister
+	if reboot then
+		self:Disable()
+		self:Enable()
+		Refresh()
+	end
+end
+
+function plugin:OnRegister()
+	self:BigWigs_ProfileUpdate()
 end
 
 function plugin:OnPluginEnable()
-	-- cleanup old savedvars
-	self.db.profile.ignoredEvents = nil
-	self.db.global.ignoredEvents = nil
-
 	-- try to fix memory overflow error
 	if Transcriptor and TranscriptDB == nil then
 		print("\n|cffff2020" .. L["Your Transcriptor DB has been reset! You can still view the contents of the DB in your SavedVariables folder until you exit the game or reload your UI."])
@@ -493,7 +548,7 @@ function plugin:OnPluginEnable()
 	end
 
 	self:RegisterMessage("BigWigs_ProfileUpdate")
-	if self.db.profile.enabled then
+	if self.db.profile.enable ~= "none" then
 		if self.db.profile.onpull then
 			self:RegisterMessage("BigWigs_StartPull")
 			self:RegisterMessage("BigWigs_StopPull")
@@ -516,21 +571,25 @@ function plugin:OnPluginDisable()
 	timer = nil
 end
 
-SLASH_BigWigs_Transcriptor1 = "/bwts"
-SlashCmdList.BigWigs_Transcriptor = function()
+BigWigsAPI.RegisterSlashCommand("/bwts", function()
 	LibStub("AceConfigDialog-3.0"):Open("BigWigs", "BigWigs: Transcriptor")
-end
+end)
 
 -------------------------------------------------------------------------------
 -- Event Handlers
 --
 
-function plugin:BigWigs_StartPull(_, _, seconds)
-	if seconds > 2 then
-		self:CancelTimer(timer)
-		timer = self:ScheduleTimer("Start", seconds-2)
-	else
-		self:Start()
+do
+	local function Start() plugin:Start() end
+	function plugin:BigWigs_StartPull(_, _, seconds)
+		if seconds > 2 then
+			if timer then
+				self:CancelTimer(timer)
+			end
+			timer = self:ScheduleTimer(Start, seconds-2)
+		else
+			self:Start()
+		end
 	end
 end
 
@@ -547,42 +606,68 @@ function plugin:BigWigs_OnBossEngage(_, module)
 	end
 end
 
-function plugin:BigWigs_OnBossWin(_, module)
-	if not module:GetEncounterID() then
-		self:ScheduleTimer("Stop", 12) -- catch the end events
+do
+	local function Stop() plugin:Stop() end
+	function plugin:BigWigs_OnBossWipe(_, module)
+		if not module:GetEncounterID() then
+			self:ScheduleTimer(Stop, 5) -- catch the end events
+		end
 	end
-end
 
-function plugin:BigWigs_OnBossWipe(_, module)
-	if not module:GetEncounterID() then
-		self:Stop()
+	function plugin:BigWigs_OnBossWin(_, module)
+		if not module:GetEncounterID() then
+			self:ScheduleTimer(Stop, 12) -- catch the end events
+		end
+	end
+
+	function plugin:ENCOUNTER_END(_, id, name, diff, size, status)
+		self:ScheduleTimer(Stop, status == 0 and 5 or 12) -- catch the end events
 	end
 end
 
 function plugin:ENCOUNTER_START(_, id, name, diff, size)
-	-- XXX this will start logging dungeons and shit for people without little wigs
 	self:Start()
 end
 
-function plugin:ENCOUNTER_END(_, id, name, diff, size, status)
-	self:ScheduleTimer("Stop", status == 0 and 5 or 12) -- catch the end events
-end
-
 function plugin:Start()
-	local _, instanceType, diff = GetInstanceInfo()
-	if (instanceType ~= "raid" and diff ~= 198 and diff ~= 215) and self.db.profile.raid then return end -- diff check for SoD raids
+	local enable = self.db.profile.enable
+	if enable == "none" then
+		return
+	elseif enable ~= "all" then
+		local _, instanceType, diff, _, _, _, _, instanceId = GetInstanceInfo()
+		if diff == 198 or diff == 215 then -- 10/20 player SoD instances (marked as party dungeon/normal)
+			instanceType = "raid"
+		end
+		if enable == "instance" then
+			if not self.db.profile.instances[instanceId] then
+				return
+			end
+		elseif enable ~= instanceType then
+			return
+		end
+	end
 
 	if timer then
 		self:CancelTimer(timer)
 		timer = nil
 	end
-	-- stop your current log and start a new one
+	-- stop your non-bwts log and start a new one
 	if Transcriptor:IsLogging() and not logging then
 		self:Stop(true)
 	end
 	if not Transcriptor:IsLogging() then
 		Transcriptor:StartLog()
 		logging = true
+	end
+end
+
+local function PrintMemory()
+	if not Transcriptor:IsLogging() then -- Make sure we didn't start logging during the delay
+		UpdateAddOnMemoryUsage()
+		local mem = GetAddOnMemoryUsage("Transcriptor") / 1000
+		if mem > 60 then
+			print("\n|cffff2020" .. L["Transcriptor is currently using %.01f MB of memory. You should clear some logs or risk losing them."]:format(mem))
+		end
 	end
 end
 
@@ -606,10 +691,10 @@ function plugin:Stop(silent)
 		local encounter, _, _, _, isWin = parseLogInfo(logName, log)
 		if isWin then
 			-- delete previous logs
-			for name, log in next, Transcriptor:GetAll() do
-				local e = parseLogInfo(name, log)
+			for name, storedLog in next, Transcriptor:GetAll() do
+				local e = parseLogInfo(name, storedLog)
 				if name ~= logName and e == encounter then
-					Transcriptor:Clear(logName)
+					Transcriptor:Clear(name)
 				end
 			end
 		else
@@ -617,8 +702,8 @@ function plugin:Stop(silent)
 			local encounterLogs = {}
 			local lastWin, lastWinTime = nil, nil
 			local longLog, longLogTime = nil, nil
-			for name, log in next, Transcriptor:GetAll() do
-				local e, t, _, _, k, d = parseLogInfo(name, log)
+			for name, storedLog in next, Transcriptor:GetAll() do
+				local e, t, _, _, k, d = parseLogInfo(name, storedLog)
 				if e == encounter then
 					encounterLogs[name] = true
 					if k and (not lastWin or t > lastWinTime) then
@@ -642,10 +727,6 @@ function plugin:Stop(silent)
 
 	if not silent then
 		-- check memory
-		UpdateAddOnMemoryUsage()
-		local mem = GetAddOnMemoryUsage("Transcriptor") / 1000
-		if mem > 60 then
-			print("\n|cffff2020" .. L["Transcriptor is currently using %.01f MB of memory. You should clear some logs or risk losing them."]:format(mem))
-		end
+		C_Timer.After(30, PrintMemory) -- Delay to allow time for garbage to collect
 	end
 end

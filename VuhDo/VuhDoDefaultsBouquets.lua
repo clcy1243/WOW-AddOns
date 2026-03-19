@@ -342,7 +342,7 @@ VUHDO_DEFAULT_BACKGROUND_BOUQUETS = {
 			["name"] = "DEBUFF_BAR_COLOR",
 			["mine"] = true, ["icon"] = 1,
 			["color"] = VUHDO_makeFullColorForBouquet(1, 1, 1, 1,   1, 1, 1, 1),
-			["custom"] = { [1] = 1, ["radio"] = 1, ["bright"] = 1.0 },
+			["custom"] = { [1] = 1, ["radio"] = 1, ["bright"] = 0.4 },
 		},
 		{
 			["name"] = "CLASS_COLOR",
@@ -702,6 +702,18 @@ VUHDO_DEFAULT_SPELL_TRACE_BOUQUET = {
 };
 
 
+VUHDO_DEFAULT_SPELL_TRACE_INCOMING_BOUQUET = {
+	[VUHDO_I18N_DEF_SPELL_TRACE_INCOMING] = {
+		{
+			["name"] = "SPELL_TRACE_INCOMING",
+			["mine"] = true, ["icon"] = 1,
+			["color"] = VUHDO_makeFullColorForBouquet(1, 1, 1, 1,   1, 1, 1, 1),
+			["custom"] = { [1] = 3, ["radio"] = 2, ["bright"] = 1 },
+		},
+	},
+};
+
+
 VUHDO_DEFAULT_TRAIL_OF_LIGHT_BOUQUET = {
 	[VUHDO_I18N_DEF_TRAIL_OF_LIGHT] = {
 		{
@@ -959,6 +971,42 @@ VUHDO_DEFAULT_EVOKER_ALL_ECHO_BOUQUET = {
 	[VUHDO_I18N_BOUQUET_EVOKER_ALL_ECHO] = {
 	},
 };
+
+
+
+--
+VUHDO_DEFAULT_CHI_HARMONY_ICON_MINE_BOUQUET = {
+	[VUHDO_I18N_DEF_BOUQUET_CHI_HARMONY_ICON_MINE] = {
+		{
+			["name"] = "CHI_HARMONY_ICON_MINE",
+			["mine"] = true, ["icon"] = 1,
+			["color"] = VUHDO_makeFullColorForBouquet(1, 1, 1, 1,   1, 1, 1, 1),
+			["custom"] = { [1] = 3, ["radio"] = 2, ["bright"] = 1 },
+		},
+	},
+}
+
+VUHDO_DEFAULT_CHI_HARMONY_ICON_OTHERS_BOUQUET = {
+	[VUHDO_I18N_DEF_BOUQUET_CHI_HARMONY_ICON_OTHERS] = {
+		{
+			["name"] = "CHI_HARMONY_ICON_OTHERS",
+			["mine"] = true, ["icon"] = 1,
+			["color"] = VUHDO_makeFullColorForBouquet(1, 1, 1, 1,   1, 1, 1, 1),
+			["custom"] = { [1] = 3, ["radio"] = 2, ["bright"] = 1 },
+		},
+	},
+}
+
+VUHDO_DEFAULT_CHI_HARMONY_ICON_BOTH_BOUQUET = {
+	[VUHDO_I18N_DEF_BOUQUET_CHI_HARMONY_ICON_BOTH] = {
+		{
+			["name"] = "CHI_HARMONY_ICON_BOTH",
+			["mine"] = true, ["icon"] = 1,
+			["color"] = VUHDO_makeFullColorForBouquet(1, 1, 1, 1,   1, 1, 1, 1),
+			["custom"] = { [1] = 3, ["radio"] = 2, ["bright"] = 1 },
+		},
+	},
+}
 
 
 
@@ -1222,9 +1270,13 @@ local function _VUHDO_buildGenericHealthBarBouquet(aType, aName)
 		tBouquet[#tBouquet + 1] = tItem;
 	end
 
-	if VUHDO_CONFIG["MODE"] == VUHDO_MODE_NEUTRAL then
+	-- FIXME: operation modes other than neutral with 100% trigger are bugged
+	--if VUHDO_CONFIG["MODE"] == VUHDO_MODE_NEUTRAL then
+	if true then
 		-- Irrelevant
-		if VUHDO_CONFIG["EMERGENCY_TRIGGER"] < 100 then
+		-- FIXME: operation modes other than neutral with 100% trigger are bugged
+		--if VUHDO_CONFIG["EMERGENCY_TRIGGER"] < 100 then
+		if false then
 			tItem = VUHDO_createBouquetItem("HEALTH_ABOVE", VUHDO_PANEL_SETUP["BAR_COLORS"]["IRRELEVANT"]);
 			tItem["custom"][1] = VUHDO_CONFIG["EMERGENCY_TRIGGER"];
 			tBouquet[#tBouquet + 1] = tItem;
@@ -1257,9 +1309,20 @@ local function _VUHDO_buildGenericHealthBarBouquet(aType, aName)
 		elseif aType == 1 then
 			tItem = VUHDO_createBouquetItem("STATUS_HEALTH", VUHDO_PANEL_SETUP["PANEL_COLOR"]["BARS"]);
 			tItem["custom"]["radio"] = 2; -- class color
+
+			if VUHDO_USER_CLASS_GRADIENT_COLORS and VUHDO_USER_CLASS_GRADIENT_COLORS["isClassGradient"] then
+				tItem["custom"]["isClassGradient"] = true;
+			end
 		else -- Solid == 2, Chimaeron == 3
 			tItem = VUHDO_createBouquetItem("STATUS_HEALTH", VUHDO_PANEL_SETUP["PANEL_COLOR"]["BARS"]);
 			tItem["custom"]["radio"] = 1; -- solid
+
+			if VUHDO_PANEL_SETUP["PANEL_COLOR"]["isSolidGradient"] then
+				tItem["custom"]["isSolidGradient"] = true;
+
+				tItem["custom"]["maxColor"] = VUHDO_deepCopyColor(VUHDO_PANEL_SETUP["PANEL_COLOR"]["solidMaxColor"]);
+				tItem["custom"]["maxColor"]["useOpacity"] = true;
+			end
 		end
 
 		tItem["color"]["mode"] = nil;
@@ -1275,7 +1338,9 @@ local function _VUHDO_buildGenericHealthBarBouquet(aType, aName)
 
 		-- Emergency
 		tItem = VUHDO_createBouquetItem("EMERGENCY_COLOR", VUHDO_PANEL_SETUP["BAR_COLORS"]["EMERGENCY"]);
-		tItem["custom"][1] = VUHDO_CONFIG["EMERGENCY_TRIGGER"];
+		-- FIXME: operation modes other than neutral with 100% trigger are bugged
+		--tItem["custom"][1] = VUHDO_CONFIG["EMERGENCY_TRIGGER"];
+		tItem["custom"][1] = 100;
 		tBouquet[#tBouquet + 1] = tItem;
 
 		-- No Emergency Bar
@@ -1453,24 +1518,36 @@ end
 
 
 --
+local tKeysToRemove;
 function VUHDO_ensureAllBouquetItemsSanity()
+
 	VUHDO_decompressAllBouquets();
 
 	for tName, tAllInfos in pairs(VUHDO_BOUQUETS["STORED"]) do
-
 		if (tAllInfos == nil or "table" ~= type(tAllInfos)) then
 			VUHDO_BOUQUETS["STORED"][tName] = { };
 		end
 
+		tKeysToRemove = { };
+
 		for tIndex, tInfo in pairs(VUHDO_BOUQUETS["STORED"][tName]) do
 			tInfo["name"] = strtrim(tInfo["name"] or "");
 			if (tInfo["name"] == "") then
-				tremove(tAllInfos, tIndex);
+				tinsert(tKeysToRemove, tIndex);
 			else
 				VUHDO_ensureBouquetItemSanity(tName, tIndex);
 			end
 		end
+
+		table.sort(tKeysToRemove, function(a, b) return a > b; end);
+
+		for _, tIndex in ipairs(tKeysToRemove) do
+			tremove(tAllInfos, tIndex);
+		end
 	end
+
+	return;
+
 end
 
 
@@ -1483,7 +1560,7 @@ local tTankCdsExtended = {
 	194679, --Rune Tap
 	48707, --Anti-Magic Shell
 	50461, --Anti-Magic Zone
-	49222, --Bone Shield
+	195181, --Bone Shield
 	49039, --Lichborne
 	81164, --Will of the Necropolis
 
@@ -1511,7 +1588,8 @@ local tTankCdsExtended = {
 
 	115203, --Fortifying Brew
 	122278, --Dampen Harm
-	115176  --Zen meditation
+	115176, --Zen meditation
+	215479  --Shuffle
 };
 
 
@@ -1538,7 +1616,7 @@ local tRaidCds = {
 	3411, --Intervene
 	114028, --Mass Spell Reflect
 	118038, --Die by the Sword
-	55694, --Enraged Regeneration
+	184364, --Enraged Regeneration
 
 	-- Druid
 	102558, --Incarnation: Guardian of Ursoc
@@ -1557,7 +1635,7 @@ local tRaidCds = {
 	194679, --Rune Tap
 	48707, --Anti-Magic Shell
 	50461, --Anti-Magic Zone
-	49222, --Bone Shield
+	195181, --Bone Shield
 	49039, --Lichborne
 	81164, --Will of the Necropolis
 
@@ -1573,6 +1651,7 @@ local tRaidCds = {
 	33206, --Pain Suppression
 	62618, --Power Word: Barrier
 	19236, --Desperate Prayer
+	586, --Fade
 
 	-- Shaman
 	98008, --Spirit Link Totem
@@ -1580,6 +1659,7 @@ local tRaidCds = {
 	108280, --Healing Tide Totem
 	118337, --Harden Skin
 	108271, --Astral Shift
+	114893, --Stone Bulwark
 
 	-- Rogue
 	5277, --Evasion
@@ -1594,6 +1674,9 @@ local tRaidCds = {
 	45438, --Ice Block
 	86949, --Cauterize
 	110959, --Greater Invisibility
+	342246, --Alter Time
+	414658, --Ice Cold
+	55342, --Mirror Image
 
 	-- Hunter
 	186265, --Aspect of the Turtle
@@ -1613,7 +1696,13 @@ local tRaidCds = {
 	203720, --Demon Spikes
 	198589, --Blur
 	196555, --Netherwalk
-	196718 --Darkness
+	196718, --Darkness
+
+	-- Evoker
+	370960, --Emerald Communion
+	374348, --Renewing Blaze
+	363916  --Obsidian Scales
+
 };
 
 
@@ -1622,6 +1711,7 @@ local tPvPFlags = {
 	23335, -- Alliance Flag
 	34976, -- Netherstorm Flag
 	127163, -- Power Orb
+	121164, -- Orb of Power
 };
 
 
@@ -1862,6 +1952,48 @@ function VUHDO_loadDefaultBouquets()
 	end
 	VUHDO_DEFAULT_TRAIL_OF_LIGHT_NEXT_BOUQUET = nil;
 
+	if VUHDO_BOUQUETS["VERSION"] < 33 then
+		VUHDO_BOUQUETS["VERSION"] = 33;
+		VUHDO_addDefaultBouquet(VUHDO_DEFAULT_SPELL_TRACE_INCOMING_BOUQUET);
+	end
+	VUHDO_DEFAULT_SPELL_TRACE_INCOMING_BOUQUET = nil;
+
+	if VUHDO_BOUQUETS["VERSION"] < 34 then
+		VUHDO_BOUQUETS["VERSION"] = 34;
+		VUHDO_addDefaultBouquet(VUHDO_DEFAULT_CHI_HARMONY_ICON_MINE_BOUQUET);
+	end
+	VUHDO_DEFAULT_CHI_HARMONY_ICON_MINE_BOUQUET = nil;
+
+	if VUHDO_BOUQUETS["VERSION"] < 35 then
+		VUHDO_BOUQUETS["VERSION"] = 35;
+		VUHDO_addDefaultBouquet(VUHDO_DEFAULT_CHI_HARMONY_ICON_OTHERS_BOUQUET);
+	end
+	VUHDO_DEFAULT_CHI_HARMONY_ICON_OTHERS_BOUQUET = nil;
+
+	if VUHDO_BOUQUETS["VERSION"] < 36 then
+		VUHDO_BOUQUETS["VERSION"] = 36;
+		VUHDO_addDefaultBouquet(VUHDO_DEFAULT_CHI_HARMONY_ICON_BOTH_BOUQUET);
+	end
+	VUHDO_DEFAULT_CHI_HARMONY_ICON_BOTH_BOUQUET = nil;
+
+	if VUHDO_BOUQUETS["VERSION"] < 37 then
+		VUHDO_BOUQUETS["VERSION"] = 37;
+
+		VUHDO_BOUQUETS["STORED"][VUHDO_I18N_DEF_BAR_BACKGROUND_CLASS_COLOR] =
+			VUHDO_decompressIfCompressed(VUHDO_BOUQUETS["STORED"][VUHDO_I18N_DEF_BAR_BACKGROUND_CLASS_COLOR]);
+
+		local tBouquet = VUHDO_BOUQUETS["STORED"][VUHDO_I18N_DEF_BAR_BACKGROUND_CLASS_COLOR];
+
+		if tBouquet then
+			for _, tEntry in pairs(tBouquet) do
+				if tEntry["name"] == "DEBUFF_BAR_COLOR" and tEntry["custom"] and tEntry["custom"]["bright"] == 1 then
+					tEntry["custom"]["bright"] = 0.4;
+
+					break;
+				end
+			end
+		end
+	end
 
 	VUHDO_buildGenericHealthBarBouquet();
 	VUHDO_buildGenericTargetHealthBouquet();
@@ -1890,33 +2022,35 @@ function VUHDO_loadDefaultBouquets()
 							tPanelIndicatorConfig["CUSTOM"]["HEALTH_BAR"]["invertGrowth"])
 				};
 			end
+		else
+			tPanelIndicatorConfig = VUHDO_INDICATOR_CONFIG[tPanelNum];
+		end
 
-			-- old profiles will have no indicator config version and need a one time migration to the per panel model
-			-- final model sanity check will ensure version is present moving forward
-			if not VUHDO_INDICATOR_CONFIG["VERSION"] and
-				VUHDO_INDICATOR_CONFIG["BOUQUETS"] and VUHDO_INDICATOR_CONFIG["CUSTOM"] and VUHDO_INDICATOR_CONFIG["TEXT_INDICATORS"] then
-				tPanelIndicatorConfig["BOUQUETS"] = VUHDO_decompressOrCopy(VUHDO_INDICATOR_CONFIG["BOUQUETS"]);
+		-- old profiles will have no indicator config version and need a one time migration to the per panel model
+		-- final model sanity check will ensure version is present moving forward
+		if not VUHDO_INDICATOR_CONFIG["VERSION"] and
+			VUHDO_INDICATOR_CONFIG["BOUQUETS"] and VUHDO_INDICATOR_CONFIG["CUSTOM"] and VUHDO_INDICATOR_CONFIG["TEXT_INDICATORS"] then
+			tPanelIndicatorConfig["BOUQUETS"] = VUHDO_decompressOrCopy(VUHDO_INDICATOR_CONFIG["BOUQUETS"]);
 
-				-- the old model supported per panel bouquets only for the Health Bar indicator
-				if tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR_PANEL"][tPanelNum] and
-					tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR_PANEL"][tPanelNum] ~= "" then
-					tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR"] = tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR_PANEL"][tPanelNum];
-				end
-
-				tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR_PANEL"] = nil;
-
-				tPanelIndicatorConfig["TEXT_INDICATORS"] = VUHDO_decompressOrCopy(VUHDO_INDICATOR_CONFIG["TEXT_INDICATORS"]);
-
-				for _, tTextIndicatorConfig in pairs(tPanelIndicatorConfig["TEXT_INDICATORS"]) do
-					if type(tTextIndicatorConfig["TEXT_PROVIDER"]) == "table" then
-						tTextIndicatorConfig["TEXT_PROVIDER"] = tTextIndicatorConfig["TEXT_PROVIDER"][tPanelNum] or "";
-
-						break;
-					end
-				end
-
-				tPanelIndicatorConfig["CUSTOM"] = VUHDO_decompressOrCopy(VUHDO_INDICATOR_CONFIG["CUSTOM"]);
+			-- the old model supported per panel bouquets only for the Health Bar indicator
+			if tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR_PANEL"][tPanelNum] and
+				tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR_PANEL"][tPanelNum] ~= "" then
+				tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR"] = tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR_PANEL"][tPanelNum];
 			end
+
+			tPanelIndicatorConfig["BOUQUETS"]["HEALTH_BAR_PANEL"] = nil;
+
+			tPanelIndicatorConfig["TEXT_INDICATORS"] = VUHDO_decompressOrCopy(VUHDO_INDICATOR_CONFIG["TEXT_INDICATORS"]);
+
+			for _, tTextIndicatorConfig in pairs(tPanelIndicatorConfig["TEXT_INDICATORS"]) do
+				if type(tTextIndicatorConfig["TEXT_PROVIDER"]) == "table" then
+					tTextIndicatorConfig["TEXT_PROVIDER"] = tTextIndicatorConfig["TEXT_PROVIDER"][tPanelNum] or "";
+
+					break;
+				end
+			end
+
+			tPanelIndicatorConfig["CUSTOM"] = VUHDO_decompressOrCopy(VUHDO_INDICATOR_CONFIG["CUSTOM"]);
 		end
 
 		VUHDO_INDICATOR_CONFIG[tPanelNum] = VUHDO_ensureSanity("VUHDO_INDICATOR_CONFIG[" .. tPanelNum .. "]", VUHDO_INDICATOR_CONFIG[tPanelNum], VUHDO_DEFAULT_INDICATOR_CONFIG_PER_PANEL);

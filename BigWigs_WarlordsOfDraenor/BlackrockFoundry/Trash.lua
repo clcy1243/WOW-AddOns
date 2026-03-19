@@ -230,7 +230,7 @@ end
 
 function mod:FurnaceFlameFun(args)
 	if self:Me(args.destGUID) then
-		self:MessageOld(args.spellId, "green", nil, L[("furnace_msg%d"):format(random(1,3))])
+		self:MessageOld(args.spellId, "green", nil, L[("furnace_msg%d"):format(math.random(1,3))])
 	end
 end
 
@@ -250,7 +250,7 @@ end
 function mod:LivingBlaze(args)
 	if self:Me(args.destGUID) then
 		if not self:LFR() then
-			self:Say(args.spellId)
+			self:Say(args.spellId, nil, nil, "Living Blaze")
 		end
 		self:OpenProximity(args.spellId, 6)
 		self:Flash(args.spellId)

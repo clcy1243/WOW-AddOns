@@ -2167,3 +2167,212 @@ Change Log:
 * Updated for patch 11.0.5
 * Added TWW spells for Blackrock Depths (Raid)
 * Added TWW spells for Nerub-ar Palace (Thanks Kuhani)
+
+5.14.2
+* Added The War Within spells (world)
+* Added Vanilla spells (world)
+* Added TWW spells for Blackrock Depths (Raid)
+
+5.15
+* Updated for patch 11.0.7
+* Updated TOC for WoW Cataclysm 4.4.1
+* Updated TOC for WoW Classic 1.15.5
+* Added support for ignoring periodic damage
+* Added The War Within spells (world)
+* Added TWW spells for Nerub-ar Palace
+* Added TWW spells for TWW Delves 
+* Added Dragonflight spells (world)
+* Added Battle for Azeroth spells (world)
+* Added BFA spells for Battle of Dazar'alor
+* Added BFA spells for The Eternal Palace
+* Added BFA spells for Ny'alotha, the Waking City
+* Added Classic spells for Azeroth (world)
+
+5.15.1
+* Updated for patch 11.1 (PTR)
+* Added The War Within spells (world)
+* Added Wrath spells for Gundrak (Thanks Zindex)
+* Added TWW spells for TWW Delves 
+* Added TWW spells for Operation: Floodgate
+* Fixed TWW spells for Nerub-ar Palace
+* Fixed WoD spells for Blackrock Foundry
+* Fixed Legion spells for The Emerald Nightmare
+* Fixed Legion spells for Nighthold
+* Fixed Legion spells for Antorus, The Burning Throne
+* Fixed BFA spells for Ny'alotha, the Waking City
+* Fixed Shadowlands spells (world)
+* Fixed SL spells for Castle Nathria
+* Fixed SL spells for Sanctum of Domination
+
+5.15.2
+* Updated for patch 11.1
+* Updated TOC for WoW Cataclysm 4.4.2
+* Updated TOC for WoW Classic 1.15.6
+* Added The War Within spells (world)
+
+5.15.3
+* Added The War Within spells (world)
+* Added TWW spells for TWW Delves 
+* Added TWW spells for Liberation of Undermine
+* Added TWW spells for Priory of the Scared Flame
+* Added TWW spells for The Rookery
+* Added SL spells for Theater of Pain
+
+5.15.4
+* Fixed TWW spells for Liberation of Undermine
+* Added TWW spells for Liberation of Undermine
+
+5.16
+* Added The War Within spells (world)
+* Added TWW spells for Liberation of Undermine
+* Added TWW spells for TWW Delves
+* Added TWW spells for Cinderbrew Meadery
+* Added TWW spells for Operation: Floodgate
+* Added BFA spells for The MOTHERLODE!!
+* Added BFA spells for Operation: Mechagon
+
+5.16.1
+* Added TWW spells for Liberation of Undermine
+* Added TWW spells for TWW Delves
+* Added TWW spells for Darkflame Cleft
+* Added Pandaria spells for Temple of the Jade Serpent
+* Fixed WoD spells for Hellfire Citadel
+
+5.16.2
+* Added TWW spells for Liberation of Undermine
+
+5.16.3
+* Fixed TWW spells for Liberation of Undermine (Thanks Aparratchic)
+* Fixed The War Within spells (world)
+* Added TWW spells for Liberation of Undermine
+* Added TWW spells for TWW Delves
+
+5.17
+* Updated for patch 11.1.5
+* Updated TOC for WoW Classic 1.15.7
+* Added "Brann Mode" and "Alert Delay Time" in GTFO Options
+* Added The War Within spells (world)
+* Added TWW spells for Liberation of Undermine
+* Added TWW spells for Darkflame Cleft
+* Added TWW spells for TWW Delves 
+
+5.17.1
+* Fixed LUA crash issues
+
+5.17.2
+* Added TWW spells for The Rookery
+* Added BFA Spells for Horrific Visions
+
+5.17.3
+* Updated for patch 11.1.7
+* Added The War Within spells (world)
+* Removed "TrivialLevel" from Burning Crusade spells
+
+5.17.4
+* Updated for WoW Mists of Pandaria Classic 5.5.0
+* Added BFA spells for Shrine of the Storm
+* Added BFA spells for King's Rest
+
+5.18
+* Fixed spells not loading for Mists of Pandaria Classic
+* Fixed BC spells for Blood Furnace
+* Fixed BFA spells for Freehold
+* Fixed BFA spells for King's Rest
+* Fixed LGN spells for Nighthold
+* Added The War Within spells (world)
+* Added Battle for Azeroth spells (world)
+* Added TWW spells for Liberation of Undermine
+
+5.18.1
+* Updated for patch 11.2
+* Added TWW spells for Eco-Dome Al'dani
+
+5.18.2
+* Added The War Within spells (world)
+* Added TWW spells for Eco-Dome Al'dani
+* Added TWW spells for TWW Delves 
+
+5.18.3
+* Added The War Within spells (world)
+* Added TWW spells for Manaforge Omega 
+* Added TWW spells for Priory of the Scared Flame
+* Added TWW spells for Operation: Floodgate
+
+5.18.4
+* Added TWW spells for Manaforge Omega 
+
+5.18.5
+* Added The War Within spells (world)
+* Added TWW spells for Manaforge Omega 
+
+5.18.6
+* Fixed TWW spells for Manaforge Omega 
+* Added TWW spells for Manaforge Omega 
+
+5.18.7
+* Added The War Within spells (world)
+* Added TWW spells for Ara-Kara, City of Echoes
+* Added TWW spells for TWW Delves 
+* Added TWW spells for Manaforge Omega
+
+5.19
+* Fixed localization issues when strings were not localized
+
+5.19.1
+* Added TWW spells for Manaforge Omega
+* Fixed TWW spells for Ara-Kara, City of Echoes
+* Fixed SL spells for Halls of Atonement
+
+5.19.2
+* Updated for WoW Mists of Pandaria Classic 5.5.1
+* Added The War Within spells (world)
+* Added TWW spells for TWW Delves 
+* Added TWW spells for Manaforge Omega
+
+5.19.3
+* Updated for patch 11.2.5
+* Added TWW spells for Manaforge Omega
+
+5.19.4
+* Updated Wrath Classic TOC to 3.4.5
+* Updated TOC for WoW Classic 1.15.8
+* Fixed alerts from going off from "drowning" events when caused by a spell in Trial of Valor
+* Fixed Legion spells for Nighthold
+* Added Legion spells for The Broken Isles (world)
+* Added TWW spells for TWW Delves 
+
+5.19.5
+* Updated for patch 11.2.7
+* Added The War Within spells (world)
+
+5.19.6
+* Updated TBC Classic TOC to 2.5.5
+* Updated Mists Classic 5.5.3
+* Added TWW spells for Brawler's Guild
+
+6.0
+* Updated for patch 12.0 with much of its functionality gone :'(
+* Updated TOC for Wrath 3.4.5
+
+6.1
+* Added support for multiple instances/encounters for bosses in multiple places with recycled abilities (Rasha'nan)
+* Fixed TWW spells for Manaforge Omega
+* Fixed TWW spells for Nerub-ar Palace
+* Fixed TWW spells for The Dawnbreaker
+* Fixed TWW spells for Operation: Floodgate
+* Fixed TWW spells for Ara-Kara, City of Echoes
+* Fixed Dragonflight spells for Algeth'ar Academy
+* Fixed SL spells for Halls of Atonement
+* Fixed Legion spells for Seat of the Triumvirate
+* Added Midnight spells (world)
+* Added TWW spells for Manaforge Omega
+* Added TWW spells for The Dawnbreaker
+* Added SL spells for Tazavesh, the Veiled Market
+
+6.1.1
+* Added Midnight spells (world)
+* Added Midnight spells for Magister's Terrace
+* Added Midnight spells for Voidscar Arena
+* Added Midnight spells for Windrunner Spire
+* Added Midnight spells for The Dreamrift
+* Added Midnight spells for The Voidspire

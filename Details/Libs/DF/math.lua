@@ -44,6 +44,10 @@ DF.Math = {}
 ---@field GetNinePoints fun(object: uiobject) : df_ninepoints
 ---@field GetClosestPoint fun(ninePoints: df_ninepoints, coordinate: df_coordinate) : anchorid
 ---@field GetVectorLength fun(vectorX: number, vectorY: number, vectorZ: number?) : number return the magnitude of a vector
+---@field GetSortFractionFromString fun(str: string) : number return a fraction based on the string first two leters, useful for sorting cases where the number repeats
+---@field PositiveNonZero fun(value: number) : number return the value or a small float if the value is zero or negative
+
+
 
 ---@class df_coordinate : table
 ---@field x number
@@ -88,10 +92,15 @@ function DF.Math.GetNinePoints(object)
 	local width = object:GetWidth()
 	local height = object:GetHeight()
 
+	if (not centerX or not centerY) then
+		error("Object has no center point: " .. tostring(object:GetName()))
+	end
+
 	local halfWidth = width / 2
 	local halfHeight = height / 2
 
 	---@type df_ninepoints
+	---@diagnostic disable-next-line: missing-fields
 	local ninePoints = {
 		{x = centerX - halfWidth, y = centerY + halfHeight}, --topleft 1
 		{x = centerX - halfWidth, y = centerY}, --left 2
@@ -122,6 +131,12 @@ function DF.Math.GetNinePoints(object)
 	--]=]
 
 	return ninePoints
+end
+
+function DF.Math.GetSortFractionFromString(str)
+	local name = string.upper(str) .. "ZZ"
+	local byte1 = abs(string.byte(name, 2)-91) / 1000000
+	return byte1 + abs(string.byte(name, 1)-91) / 10000
 end
 
 function DF.Math.GetVectorLength(vectorX, vectorY, vectorZ)
@@ -196,6 +211,10 @@ function DF.Math.MultiplyBy(value, ...)
 		values[i] = select(i, ...) * value
 	end
 	return unpack(values)
+end
+
+function DF.Math.PositiveNonZero(value)
+	return max(value, 0.001)
 end
 
 function DF.Math.MapRangeUnclamped(inputX, inputY, outputX, outputY, value)

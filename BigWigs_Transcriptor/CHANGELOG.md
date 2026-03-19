@@ -1,6 +1,6 @@
 # BigWigs +Transcriptor
 
-## [v11.0.1](https://github.com/BigWigsMods/BigWigs_Transcriptor/tree/v11.0.1) (2024-09-10)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs_Transcriptor/compare/v11.0.0...v11.0.1) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Transcriptor/releases)
+## [v12.0.0](https://github.com/BigWigsMods/BigWigs_Transcriptor/tree/v12.0.0) (2026-02-24)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Transcriptor/compare/v11.2.0...v12.0.0) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Transcriptor/releases)
 
-- bump toc  
+- Parse new TS header  

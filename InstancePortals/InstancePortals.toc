@@ -1,6 +1,6 @@
-## Interface: 90001,100207,110000,110002
+## Interface: 90001,100207,110000,110002,120000,120001
 ## X-Min-Interface: 90001
-## Version: 31
+## Version: 32
 ## Title: Instance Portals
 ## Notes: Displays dungeon & raid portals on the world map
 ## SavedVariablesPerCharacter: IPUITrackInstancePortals IPUITrackInstancePortalsOnContinents 

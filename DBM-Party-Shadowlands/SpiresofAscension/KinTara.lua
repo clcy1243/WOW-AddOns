@@ -1,11 +1,13 @@
 local mod	= DBM:NewMod(2399, "DBM-Party-Shadowlands", 5, 1186)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240106080507")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(162059, 163077)--162059 Kin-Tara, 163077 Azules
 mod:SetEncounterID(2357)
 mod:SetBossHPInfoToHighest()
 mod:SetUsedIcons(1)
+mod:SetZone(2285)
 
 mod:RegisterCombat("combat")
 

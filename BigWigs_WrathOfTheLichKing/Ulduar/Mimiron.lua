@@ -10,7 +10,7 @@ mod:RegisterEnableMob(
 	33651, -- VX-001
 	33670  -- Aerial Command Unit
 )
-mod:SetEncounterID(mod:Classic() and 754 or 1138)
+mod:SetEncounterID(BigWigsLoader.isWrath and 754 or 1138)
 mod:SetRespawnTime(31)
 mod:SetStage(1)
 
@@ -152,6 +152,7 @@ function mod:MagneticCore(args)
 end
 
 function mod:CHAT_MSG_MONSTER_YELL(_, msg)
+	if self:IsSecret(msg) then return end
 	if msg:find(L["hardmode_trigger"]) then
 		ishardmode = true
 		self:Berserk(612, true)

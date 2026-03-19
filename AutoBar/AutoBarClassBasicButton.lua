@@ -1,0 +1,392 @@
+--
+-- AutoBarClassBasicButton
+-- Copyright 2008+ Toadkiller of Proudmoore.
+-- Implements SecureHandler and other code common to both anchor and popup buttons
+--
+-- Buttons are contained by AutoBar.Class.Bar
+-- http://muffinmangames.com
+--
+
+local _, AB = ...
+
+local types = AB.types	---@class ABTypes
+local code = AB.code	---@class ABCode
+
+local AutoBar = AutoBar
+local ABGData = AutoBarGlobalDataObject
+
+
+local L = AutoBarGlobalDataObject.locale
+local _G = _G
+local _
+
+if (not AutoBar.Class) then
+	AutoBar.Class = {}
+end
+
+local function class_new(cls, ...)
+	local instance = setmetatable({}, cls)
+	instance:init(...)
+	return instance
+end
+
+local function Class(parent)
+	local c = parent and setmetatable({}, {__index = parent}) or {}
+	c.__index = c
+	c.super = parent
+	c.new = class_new
+	return c
+end
+
+AutoBar.Class.new_class = Class
+
+-- Basic Button with textures, highlighting, keybindText, tooltips etc.
+AutoBar.Class.BasicButton = Class()
+
+function AutoBar.Class.BasicButton:init(parentBar, buttonDB)
+end
+
+
+-- OnLeave function.  Added to a button to allow calling it via control:CallMethod("TooltipHide")
+function AutoBar.Class.BasicButton.TooltipHide()
+	GameTooltip:Hide()
+end
+
+
+-- OnEnter function.  Added to a button to allow calling it via control:CallMethod("TooltipSet")
+function AutoBar.Class.BasicButton.TooltipShow(button)
+	local x = button:GetRight()
+	if (x >= (GetScreenWidth() / 2)) then
+		GameTooltip:SetOwner(button, "ANCHOR_LEFT")
+	else
+		GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+	end
+
+	local itemLink = button:GetAttribute("itemLink")
+	local buttonType = button:GetAttribute("type")
+	local item_guid = button:GetAttribute("AutoBarGUID")
+	local item_data = AB.InfoFromGUID(item_guid)
+
+
+	if (AutoBar.moveButtonsMode) then
+		local name = AB.GetButtonDisplayName(button.class.buttonDB)
+		GameTooltip:AddLine(name, 0.8, 0, 1, -1)
+		GameTooltip:Show()
+	elseif(item_data) then
+		if(item_data.link) then
+			GameTooltip:SetHyperlink(item_data.link)
+		elseif(item_data.tooltip) then
+			GameTooltip:AddLine(item_data.tooltip, 1, 1, 1)
+		elseif(item_data.ab_type == ABGData.TYPE_TOY) then
+			GameTooltip:SetToyByItemID(item_data.item_id)
+		end
+		button.UpdateTooltip = AutoBar.Class.BasicButton.TooltipShow
+		GameTooltip:Show()
+	elseif (buttonType == "spell") then
+		local spell_name = button:GetAttribute("spell")
+		if (tonumber(spell_name)) then
+			GameTooltip:SetSpellByID(spell_name);
+		else
+			local spell_info = AutoBarSearch.GetRegisteredSpellInfo(spell_name)
+			GameTooltip:SetSpellByID(spell_info.spell_id);
+		end
+		button.UpdateTooltip = AutoBar.Class.BasicButton.TooltipShow
+	elseif (itemLink) then
+		GameTooltip:SetHyperlink(itemLink)
+--		if (GameTooltip:SetHyperlink(itemLink)) then
+			button.UpdateTooltip = AutoBar.Class.BasicButton.TooltipShow
+--		end
+	elseif (buttonType == "macro") then
+		-- There is no accesible GameTooltip function for macros so make one with its name and the macro text
+		local macroName = button:GetAttribute("macroName")
+		local macroBody = button:GetAttribute("macroBody")
+
+		if (macroName and macroBody) then
+			GameTooltip:AddLine(macroName, 0.2, 0.8, 0.8)
+			GameTooltip:AddLine(macroBody, 1, 1, 1, 1)
+			button.UpdateTooltip = AutoBar.Class.BasicButton.TooltipShow
+			GameTooltip:Show()
+		end
+	elseif (buttonType == "item") then
+		-- There is no way to get charge information outside built in Blizzard functions for buttonType == "action"
+		-- The best we can do is link to a specific bag/slot so at least the tooltip can show this info
+		-- Sadly, the itemString for this is "[bag] [slot]" which is not a valid paramater for SetHyperlink
+		-- It is thus special cased here
+		local bagslot = button:GetAttribute("item")
+		if (bagslot) then
+			local bag, slot = strmatch(bagslot, "^(%d+)%s+(%d+)$")
+			if (bag and slot and GameTooltip:SetBagItem(bag, slot)) then
+				button.UpdateTooltip = AutoBar.Class.BasicButton.TooltipShow
+			end
+		end
+	end
+
+	local rightClickType = button:GetAttribute("type2")
+	if (rightClickType == "spell") then
+		local spellName = button:GetAttribute("spell")
+		local spellName2 = button:GetAttribute("spell2")
+		if (not spellName or (spellName2 ~= spellName)) then
+			GameTooltip:AddLine(L["Right Click casts "] .. spellName2, 1, 0.2, 1, 1)
+			GameTooltip:Show()
+		end
+	end
+end
+--[[
+/dump GameTooltip:SetHyperlink("spell:32246")
+--]]
+
+-- Apply tooltipType to the Button
+function AutoBar.Class.BasicButton:TooltipApply(button)
+	if (AutoBarDB2.settings.show_tooltip) then
+		if (not button.TooltipShow) then
+			button.TooltipShow = AutoBar.Class.BasicButton.TooltipShow
+--			SecureHandlerWrapScript(button, "OnEnter", button, [[ control:CallMethod("TooltipShow", self) ]])
+		end
+		if (not button.TooltipHide) then
+			button.TooltipHide = AutoBar.Class.BasicButton.TooltipHide
+			SecureHandlerWrapScript(button, "OnLeave", button, [[ control:CallMethod("TooltipHide") ]])
+		end
+		button:SetAttribute("showTooltip", true)
+	else
+		button:SetAttribute("showTooltip", nil)
+	end
+end
+
+local function get_texture_for_action(p_action)
+
+	local texture
+	if (p_action) then
+		texture = select(3, AB.GetSpellInfo(p_action)) or code.GetIconForItemID(p_action)
+	end
+
+	return texture;
+
+end
+
+--local function get_texture_for_macro_body(p_macro_body)
+--	local debug = false
+--
+--	local action = AB.GetActionForMacroBody(p_macro_body);
+--	local texture = get_texture_for_action(action)
+--
+--	if (debug) then
+--		print("   texture:", texture);
+--		print("   action:" .. action)
+--	end
+--
+--
+--	return texture
+--end
+
+local borderBlue = {r = 0, g = 0, b = 1.0, a = 0.35}
+local borderGreen = {r = 0, g = 1.0, b = 0, a = 0.35}
+
+function AutoBar.Class.BasicButton:GetIconTexture(frame)
+	local texture, borderColor
+	local itemType = frame:GetAttribute("type")
+	local item_guid = frame:GetAttribute("AutoBarGUID")
+	local item_data =  AB.InfoFromGUID(item_guid)
+
+	if(item_data) then
+		if(item_data.icon) then
+			texture = item_data.icon -- Use cached icon if we have one
+		elseif(item_data.ab_type == ABGData.TYPE_TOY) then
+			texture = code.GetIconForToyID(item_data.item_id)
+		end
+	elseif (itemType == "item") then
+		local itemId = frame:GetAttribute("itemId")
+		if (itemId) then
+			texture = code.GetIconForItemID(tonumber(itemId))
+
+			local bag, slot = AutoBarSearch.found:GetItemData(itemId)
+			if ((not bag) and slot) then
+				-- Add a green border if button is an equipped item
+				borderColor = borderGreen
+			end
+		end
+	elseif (itemType == "macro") then
+		local macroIndex = frame:GetAttribute("macro")
+		if (macroIndex) then
+			_, texture = GetMacroInfo(macroIndex)
+		else
+			texture = frame.class.macroTexture or self.frame:GetAttribute("macro_icon")
+			if (not texture) then
+				local macro_action = self.frame:GetAttribute("macro_action")
+				texture = get_texture_for_action(macro_action) or "Interface\\Icons\\INV_Misc_Gift_05"
+			end
+		end
+	elseif (itemType == "spell") then
+		local spellName = frame:GetAttribute("spell")
+		if (spellName) then
+			texture = code.get_spell_icon_by_name_fast(spellName) or select(3, AB.GetSpellInfo(spellName))
+
+			-- Add a blue border if button is a spell
+			borderColor = borderBlue
+		end
+	end
+
+	-- Fall through to right click spell
+	if (not texture) then
+		local spellName = frame:GetAttribute("spell2")
+		if (spellName) then
+			_, _, texture = AB.GetSpellInfo(spellName)
+
+			-- Add a blue border if button is a spell
+			borderColor = borderBlue
+		end
+	end
+	return texture, borderColor
+end
+
+
+-- Set cooldown based on the type settings
+function AutoBar.Class.BasicButton:UpdateCooldown()
+	local itemType = self.frame:GetAttribute("type")
+	if (not itemType) then-- and not self.parentBar.faded
+		return;
+	end
+
+	local start, duration, enabled = 0, 0, 0
+
+	if (itemType == "item") then
+		local item_id = self.frame:GetAttribute("itemId")
+		if (item_id) then
+			start, duration, enabled = C_Container.GetItemCooldown(item_id)
+			CooldownFrame_Set(self.frame.cooldown, start, duration, enabled)
+		end
+	elseif (itemType == "toy") then
+		local item_guid = self.frame:GetAttribute("AutoBarGUID")
+		local item_data = AB.InfoFromGUID(item_guid)
+		if (item_data) then
+			start, duration, enabled = C_Container.GetItemCooldown(item_data.item_id)
+			CooldownFrame_Set(self.frame.cooldown, start, duration, enabled)
+		end
+--	elseif (itemType == "macro") then --ToDo some day
+--			local macroText = self.frame:GetAttribute("macrotext")
+--			SecureCmdOptionParse()?
+	elseif (itemType == "spell") then
+		local spellName = self.frame:GetAttribute("spell")
+		local sc = C_Spell.GetSpellCooldown(spellName)
+		if(issecrettable and issecrettable(sc)) then
+			--NOP
+		elseif sc then -- Make sure sc isn't nil
+			self.frame.cooldown:SetCooldown(sc.startTime, sc.duration, sc.modRate);
+		end
+	end
+
+	-- if (start and duration and start > 0 and duration > 0) then
+	 	--CooldownFrame_Set(self.frame.cooldown, start, duration, enabled)
+	-- 	self.frame.cooldown:SetSwipeColor(0, 0, 0);
+	-- else
+	-- 	CooldownFrame_Set(self.frame.cooldown, 0, 0, 0)
+	-- end
+end
+
+-- Set count based on the type and type2 settings
+function AutoBar.Class.BasicButton:UpdateCount()
+	local frame = self.frame
+	if (not AutoBarDB2.settings.show_count) then
+		frame.count:Hide()
+		return
+	end
+
+	frame.count:Show()
+	local count1 = 0
+	local count2 = 0
+	local itemType = frame:GetAttribute("type")
+
+	if (itemType) then
+		if (itemType == "item") then
+			local itemId = frame:GetAttribute("itemId") or 1
+			count1 = code.GetItemCount(tonumber(itemId), nil, true) or 0
+-- 		Toys and Macros don't have counts, though a macro of an item could.
+--			elseif (itemType == "macro") then
+--			elseif (itemType == "toy") then
+		elseif (itemType == "spell") then
+			local spellName = frame:GetAttribute("spell")
+			count1 = AB.GetSpellCount(spellName) or 0
+			if issecretvalue and issecretvalue(count1) then count1 = 0; end
+			local spellName2 = frame:GetAttribute("spell2")
+			if (spellName2) then
+				count2 = AB.GetSpellCount(spellName2) or 0
+				if issecretvalue and issecretvalue(count2) then count2 = 0; end
+			end
+		end
+	end
+
+	local displayCount1 = (count1 > 999) and "*" or tostring(count1)
+	local displayCount2 = (count2 > 999) and "*" or tostring(count2)
+
+	if (itemType == "spell") then
+		if (count1 > 1 and count2 > 0) then
+			frame.count:SetText(displayCount1 .. "/" .. displayCount2)
+		elseif (count2 > 0) then
+			frame.count:SetText("/" .. displayCount2)
+		elseif (count1 > 0) then
+			frame.count:SetText(displayCount1)
+		else
+			frame.count:SetText("")
+		end
+	elseif (count1 > 1) then
+		frame.count:SetText(displayCount1)
+	else
+		frame.count:SetText("")
+	end
+
+end
+
+
+function AutoBar.Class.BasicButton:UpdateUsable()
+	local frame = self.frame
+	if not (frame and frame:IsShown()) then
+		return
+	end
+
+	local itemType = frame:GetAttribute("type")
+
+	if (not itemType) then
+		return
+	end
+
+	local isUsable
+
+	if (itemType == "item") then
+		local itemId = frame:GetAttribute("itemId")
+		isUsable = code.IsUsableItem(itemId)
+		if (isUsable) then
+			-- Single use in combat potion hack
+			local _, _, enabled = C_Container.GetItemCooldown(itemId)
+			if (not enabled) then
+				isUsable = false
+			end
+		end
+	elseif (itemType == "spell") then
+		local spellName = frame:GetAttribute("spell")
+		local notEnoughMana
+		isUsable, notEnoughMana = AB.IsUsableSpell(spellName)
+		isUsable = isUsable and (not notEnoughMana)
+	elseif (itemType == "macro") then
+		isUsable = true
+	else
+		frame.icon:SetVertexColor(1.0, 1.0, 1.0)
+		frame.hotKey:SetVertexColor(1.0, 1.0, 1.0)
+		return
+	end
+
+	if (isUsable) then
+		frame.icon:SetVertexColor(1.0, 1.0, 1.0)
+		frame.hotKey:SetVertexColor(1.0, 1.0, 1.0)
+	else
+		frame.icon:SetVertexColor(0.4, 0.4, 0.4)
+	end
+end
+
+
+local function scriptOnEvent(self, event, ...)
+	self.class[event](self.class, ...)
+end
+
+function AutoBar.Class.BasicButton:EventsEnable()
+	self.frame:SetScript("OnEvent", scriptOnEvent)
+end
+

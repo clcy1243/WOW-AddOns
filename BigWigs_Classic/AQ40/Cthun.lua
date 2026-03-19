@@ -15,6 +15,7 @@ mod:SetStage(1)
 local digestiveAcidList = {}
 local digestiveAcidListTokens = {}
 local healthList = {}
+local killedTentacles = {}
 local deaths = 0
 local UpdateInfoBoxList
 
@@ -57,7 +58,6 @@ if L then
 
 	L.dark_glare_message = "%s: %s (Group %s)" -- Dark Glare: PLAYER_NAME (Group 1)
 	L.stomach = "Stomach"
-	L.tentacle = "Tentacle (%d)"
 end
 
 --------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ function mod:GetOptions()
 		"stages",
 		"eye_tentacles",
 		{26029, "CASTBAR"}, -- Dark Glare
-		"claw_tentacle",
+		{"claw_tentacle", "OFF"},
 		{26134, "ICON", "SAY", "ME_ONLY_EMPHASIZE"}, -- Eye Beam
 		26476, -- Digestive Acid
 		"giant_claw_tentacle",
@@ -106,6 +106,7 @@ function mod:OnEngage()
 	firstWarning = true
 	digestiveAcidList = {}
 	digestiveAcidListTokens = {}
+	killedTentacles = {}
 	self:SetStage(1)
 
 	self:Message("stages", "cyan", CL.stage:format(1), false)
@@ -138,11 +139,11 @@ do
 			self:Message("eye_tentacles", "red", L.eye_tentacles, L.eye_tentacles_icon)
 			self:PlaySound("eye_tentacles", "alarm")
 		elseif npcId == 15728 then -- Giant Claw Tentacle
-			self:Bar("giant_claw_tentacle", 60, L.giant_claw_tentacle, L.giant_claw_tentacle_icon)
+			self:Bar("giant_claw_tentacle", self:GetSeason() == 2 and 50 or 60, L.giant_claw_tentacle, L.giant_claw_tentacle_icon)
 			self:Message("giant_claw_tentacle", "red", L.giant_claw_tentacle, L.giant_claw_tentacle_icon)
 			self:PlaySound("giant_claw_tentacle", "alert")
 		elseif npcId == 15334 then -- Giant Eye Tentacle
-			self:Bar("giant_eye_tentacle", 60, L.giant_eye_tentacle, L.giant_eye_tentacle_icon)
+			self:Bar("giant_eye_tentacle", self:GetSeason() == 2 and 35 or 60, L.giant_eye_tentacle, L.giant_eye_tentacle_icon)
 			self:Message("giant_eye_tentacle", "red", L.giant_eye_tentacle, L.giant_eye_tentacle_icon)
 			self:PlaySound("giant_eye_tentacle", "warning")
 		end
@@ -168,9 +169,7 @@ end
 function mod:EyeOfCThunKilled()
 	deaths = 0
 	healthList = {}
-	if self:Retail() and not self:IsEngaged() then
-		self:Engage("NoEngage") -- XXX temp until the eye has a boss frame
-	end
+	killedTentacles = {}
 	self:SetStage(2)
 
 	self:StopBar(L.claw_tentacle)
@@ -178,7 +177,7 @@ function mod:EyeOfCThunKilled()
 
 	local darkGlare = self:SpellName(26029)
 	self:StopBar(darkGlare) -- Dark Glare
-	self:StopBar(CL.cast:format(darkGlare)) -- Cast: Dark Glare
+	self:StopCastBar(darkGlare) -- Cast: Dark Glare
 	self:CancelDelayedMessage(darkGlare) -- Dark Glare
 	self:CancelDelayedMessage(CL.custom_sec:format(darkGlare, 5)) -- Dark Glare in 5 sec
 	self:CancelDelayedMessage(CL.over:format(darkGlare)) -- Dark Glare Over
@@ -188,15 +187,15 @@ function mod:EyeOfCThunKilled()
 	self:CancelTimer(timerGroupWarning)
 
 	self:Message("stages", "cyan", CL.stage:format(2), false)
-	self:Bar("giant_claw_tentacle", 12.3, L.giant_claw_tentacle, L.giant_claw_tentacle_icon)
+	self:Bar("giant_claw_tentacle", self:GetSeason() == 2 and 11 or 12.3, L.giant_claw_tentacle, L.giant_claw_tentacle_icon)
 	self:Bar("eye_tentacles", 41.3, L.eye_tentacles, L.eye_tentacles_icon)
 	self:Bar("giant_eye_tentacle", 43.1, L.giant_eye_tentacle, L.giant_eye_tentacle_icon)
 
-	self:OpenInfo("infobox", CL.other:format("BigWigs", L.stomach))
-	self:SetInfo("infobox", 1, L.tentacle:format(1))
+	self:OpenInfo("infobox", L.stomach)
+	self:SetInfo("infobox", 1, CL.count:format(CL.tentacle, 1))
 	self:SetInfoBar("infobox", 1, 1)
 	self:SetInfo("infobox", 2, "100%")
-	self:SetInfo("infobox", 3, L.tentacle:format(2))
+	self:SetInfo("infobox", 3, CL.count:format(CL.tentacle, 2))
 	self:SetInfoBar("infobox", 3, 1)
 	self:SetInfo("infobox", 4, "100%")
 	self:SimpleTimer(UpdateInfoBoxList, 0.5)
@@ -309,6 +308,7 @@ end
 
 function mod:FleshTentacleKilled(args) -- Stomach Tentacle
 	deaths = deaths + 1
+	killedTentacles[args.destGUID] = true
 
 	local line = healthList[args.destGUID]
 	if not line then
@@ -332,7 +332,7 @@ function UpdateInfoBoxList()
 	for playerName, unitToken in next, digestiveAcidListTokens do
 		local unitTarget = unitToken .. "target"
 		local guid = mod:UnitGUID(unitTarget)
-		if mod:MobId(guid) == 15802 then
+		if not killedTentacles[guid] and mod:MobId(guid) == 15802 then
 			local line = healthList[guid]
 			if not line then
 				line = next(healthList) and 3 or 1
@@ -340,9 +340,7 @@ function UpdateInfoBoxList()
 			end
 			local currentHealthPercent = math.floor(mod:GetHealth(unitTarget))
 			mod:SetInfoBar("infobox", line, currentHealthPercent/100)
-			if currentHealthPercent > 0 then
-				mod:SetInfo("infobox", line + 1, ("%d%%"):format(currentHealthPercent))
-			end
+			mod:SetInfo("infobox", line + 1, ("%d%%"):format(currentHealthPercent))
 		end
 	end
 end

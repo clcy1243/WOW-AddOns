@@ -661,13 +661,8 @@ L:SetGeneralLocalization{
 	name 		= "The Black Knight"
 }
 
-L:SetOptionLocalization({
-	AchievementCheck		= "Announce 'I've Had Worse' achievement failure to party"
-})
-
 L:SetMiscLocalization({
 	Pull				= "Well done. You have proven yourself today-",
-	AchievementFailed	= ">> ACHIEVEMENT FAILED: %s was hit by Ghoul Explode <<",
 	YellCombatEnd		= "My congratulations, champions. Through trials both planned and unexpected, you have triumphed."	-- can also be "No! I must not fail... again ..."
 })
 
@@ -734,14 +729,8 @@ L:SetGeneralLocalization{
 	name 		= "Forgemaster Garfrost"
 }
 
-L:SetOptionLocalization({
-	AchievementCheck			= "Announce 'Doesn't Go to Eleven' achievement warnings to party"
-})
-
 L:SetMiscLocalization({
-	SaroniteRockThrow	= "%s hurls a massive saronite boulder at you!",
-	AchievementWarning	= "Warning: %s has %d stacks of Permafrost",
-	AchievementFailed	= ">> ACHIEVEMENT FAILED: %s has %d stacks of Permafrost <<"
+	SaroniteRockThrow	= "%s hurls a massive saronite boulder at you!"
 })
 
 ----------------------------
@@ -757,6 +746,12 @@ L:SetMiscLocalization({
 	CombatStart		= "Alas, brave, brave adventurers, your meddling has reached its end. Do you hear the clatter of bone and steel coming up the tunnel behind you? That is the sound of your impending demise.",
 	HoarfrostTarget	= "The frostwyrm Rimefang gazes at (%S+) and readies an icy attack!",
 	YellCombatEnd	= "Impossible.... Rimefang.... warn...."
+})
+
+L = DBM:GetModLocalization("PitOfSaronTrash")
+
+L:SetGeneralLocalization({
+	name = "PoS Trash"
 })
 
 ----------------------

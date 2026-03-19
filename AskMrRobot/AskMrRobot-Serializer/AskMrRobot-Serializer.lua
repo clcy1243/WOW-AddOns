@@ -1,6 +1,6 @@
 -- AskMrRobot-Serializer will serialize and communicate character data between users.
 
-local MAJOR, MINOR = "AskMrRobot-Serializer", 147
+local MAJOR, MINOR = "AskMrRobot-Serializer", 170
 local Amr, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not Amr then return end -- already loaded by something else
@@ -23,7 +23,8 @@ Amr.RegionNames = {
 	[3] = "EU",
 	[4] = "TW",
 	[5] = "CN",
-	[72] = "US" -- beta testing
+	[72] = "US", -- beta testing
+	[90] = "US" -- ptr testing
 }
 
 -- map of the skillLine returned by profession API to the AMR profession name
@@ -54,40 +55,41 @@ Amr.SpecIds = {
     [252] = 3, -- DeathKnightUnholy
 	[577] = 4, -- DemonHunterHavoc
 	[581] = 5, -- DemonHunterVengeance
-    [102] = 6, -- DruidBalance
-    [103] = 7, -- DruidFeral
-    [104] = 8, -- DruidGuardian
-    [105] = 9, -- DruidRestoration
-	[1467] = 10, -- EvokerDevastation
-	[1468] = 11, -- EvokerPreservation
-	[1473] = 12, -- EvokerAugmentation
-    [253] = 13, -- HunterBeastMastery
-    [254] = 14, -- HunterMarksmanship
-    [255] = 15, -- HunterSurvival
-    [62] = 16, -- MageArcane
-    [63] = 17, -- MageFire
-    [64] = 18, -- MageFrost
-    [268] = 19, -- MonkBrewmaster
-    [270] = 20, -- MonkMistweaver
-    [269] = 21, -- MonkWindwalker
-    [65] = 22, -- PaladinHoly
-    [66] = 23, -- PaladinProtection
-    [70] = 24, -- PaladinRetribution
-    [256] = 25, -- PriestDiscipline
-    [257] = 26, -- PriestHoly
-    [258] = 27, -- PriestShadow
-    [259] = 28, -- RogueAssassination
-    [260] = 29, -- RogueOutlaw
-    [261] = 30, -- RogueSubtlety
-    [262] = 31, -- ShamanElemental
-    [263] = 32, -- ShamanEnhancement
-    [264] = 33, -- ShamanRestoration
-    [265] = 34, -- WarlockAffliction
-    [266] = 35, -- WarlockDemonology
-    [267] = 36, -- WarlockDestruction
-    [71] = 37, -- WarriorArms
-    [72] = 38, -- WarriorFury
-    [73] = 39 -- WarriorProtection
+	[1480] = 6, -- DemonHunterDevourer
+    [102] = 7, -- DruidBalance
+    [103] = 8, -- DruidFeral
+    [104] = 9, -- DruidGuardian
+    [105] = 10, -- DruidRestoration
+	[1467] = 11, -- EvokerDevastation
+	[1468] = 12, -- EvokerPreservation
+	[1473] = 13, -- EvokerAugmentation
+    [253] = 14, -- HunterBeastMastery
+    [254] = 15, -- HunterMarksmanship
+    [255] = 16, -- HunterSurvival
+    [62] = 17, -- MageArcane
+    [63] = 18, -- MageFire
+    [64] = 19, -- MageFrost
+    [268] = 20, -- MonkBrewmaster
+    [270] = 21, -- MonkMistweaver
+    [269] = 22, -- MonkWindwalker
+    [65] = 23, -- PaladinHoly
+    [66] = 24, -- PaladinProtection
+    [70] = 25, -- PaladinRetribution
+    [256] = 26, -- PriestDiscipline
+    [257] = 27, -- PriestHoly
+    [258] = 28, -- PriestShadow
+    [259] = 29, -- RogueAssassination
+    [260] = 30, -- RogueOutlaw
+    [261] = 31, -- RogueSubtlety
+    [262] = 32, -- ShamanElemental
+    [263] = 33, -- ShamanEnhancement
+    [264] = 34, -- ShamanRestoration
+    [265] = 35, -- WarlockAffliction
+    [266] = 36, -- WarlockDemonology
+    [267] = 37, -- WarlockDestruction
+    [71] = 38, -- WarriorArms
+    [72] = 39, -- WarriorFury
+    [73] = 40 -- WarriorProtection
 }
 
 Amr.ClassIds = {
@@ -153,7 +155,8 @@ Amr.RaceIds = {
 	["Vulpera"] = 22,
 	["Mechagnome"] = 23,
 	["Dracthyr"] = 24,
-	["Earthen"] = 25
+	["Earthen"] = 25,
+	["Haranir"] = 26
 }
 
 Amr.FactionIds = {
@@ -163,13 +166,27 @@ Amr.FactionIds = {
 }
 
 Amr.InstanceIds = {
-	Nerubar = 2657
+	Dreamrift = 2939,
+	QuelDanas = 2913,
+	Voidspire = 2912
 }
 
 -- instances that AskMrRobot currently supports logging for
 Amr.SupportedInstanceIds = {	
-	[2657] = true
+	[2939] = true,
+	[2913] = true,
+	[2912] = true
 }
+
+Amr.DiscBeltItemIds = {
+    [242664] = true, 
+    [245964] = true, 
+    [245965] = true,
+    [245966] = true
+}
+
+Amr.DiscBeltTooltipSpellId = 1233515
+Amr.DiscBeltSpellIds = { 1233515, 1241240, 1241241, 1241242, 1241243, 1241244, 1241245, 1241246, 1241250, 1241251 }
 
 
 ----------------------------------------------------------------------------------------
@@ -207,6 +224,62 @@ local function readBonusIdList(parts, first, last)
 	end
 	table.sort(ret)
 	return ret
+end
+
+
+local _spellsCached = false
+local _spellCache = {}
+
+function Amr.GetCachedSpell(spellId)
+	if _spellsCached then
+		return _spellCache[spellId]
+	else
+		return nil
+	end
+end
+
+function Amr.AbortLoadSpells()
+	_spellsCached = true
+end
+
+function Amr.LoadSpells(callback)
+
+	--[[
+	if _spellsCached then		
+		if callback then
+			callback()
+		end
+		return
+	end
+	]]
+
+	-- disabling caching for now... some users are running into issues where these spells are not loading, so we try to load them every time
+	_spellsCached = false
+
+	-- load some spells that we'll need to read the DISC belts, which may load asynchronously
+	local spellList = Amr.DiscBeltSpellIds
+	local count = 0
+	function onSpellLoaded()
+		count = count + 1
+
+		if count == #spellList then
+			_spellsCached = true
+			if callback then
+				callback()
+			end
+		end
+	end
+
+	for i = 1, #spellList do
+		local spellId = spellList[i]
+		local spell = Spell:CreateFromSpellID(spellId)
+		_spellCache[spellId] = spell
+		if not spell:IsSpellEmpty() then
+			spell:ContinueOnSpellLoad(onSpellLoaded)
+		else
+			onSpellLoaded()
+		end
+	end	
 end
 
 --                 1      2    3      4      5      6    7   8   9   10   11       12         13                                  14     15 16   17 18
@@ -297,6 +370,69 @@ function Amr.ParseItemLink(itemLink)
 	end
 	
     return item
+end
+
+function Amr.ParseExtraItemInfo(itemData, bagId, slotId, isEquipped)
+
+	local item
+	if isEquipped then
+		item = Item:CreateFromEquipmentSlot(slotId)
+	else
+		item = Item:CreateFromBagAndSlot(bagId, slotId)
+	end
+	
+	-- seems to be of the form Item-1147-0-4000000XXXXXXXXX, so we take just the last 9 digits
+	itemData.guid = item:GetItemGUID()
+	if itemData.guid and strlen(itemData.guid) > 9 then
+		itemData.guid = strsub(itemData.guid, -9)
+	end
+
+	local loc
+	if isEquipped then
+		loc = ItemLocation:CreateFromEquipmentSlot(slotId)
+	else
+		loc = ItemLocation:CreateFromBagAndSlot(bagId, slotId)
+	end
+	
+	itemData.warbound = not isEquipped and C_Item.IsBoundToAccountUntilEquip(loc)
+	itemData.soulbound = isEquipped or C_Item.IsBound(loc)
+	itemData.catalyst = C_Item.IsItemConvertibleAndValidForPlayer(loc)
+
+	-- see if this is an azerite item and read azerite power ids
+	--[[loc:SetBagAndSlot(bagId, slotId)
+	if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
+		local powers = Amr.ReadAzeritePowers(loc)
+		if powers then
+			itemData.azerite = powers
+		end
+	end]]
+
+	-- get the spell ID of the currently active effect for the DISC belt... ugly way to do it, but blizz decided to be special
+	if Amr.DiscBeltItemIds[itemData.id] then
+		itemData.discSpellId = 0
+		local activeSpell = Amr.GetCachedSpell(Amr.DiscBeltTooltipSpellId)
+		local activeDesc = activeSpell and string.gsub(activeSpell:GetSpellDescription(), "%s+", "")
+		if activeDesc then
+			for i, spellId in ipairs(Amr.DiscBeltSpellIds) do
+				if spellId ~= Amr.DiscBeltTooltipSpellId then
+					local testSpell = Amr.GetCachedSpell(spellId)
+					if testSpell then
+						local desc = string.gsub(testSpell:GetSpellDescription(), "%s+", "")
+						if string.find(activeDesc, desc, 1, true) then
+							itemData.discSpellId = spellId
+							break
+						end
+					end
+				end
+			end
+		end
+
+		if itemData.discSpellId == 0 then
+			-- default to charged bolts if couldn't read it for any reason
+			itemData.discSpellId = 1241244
+		end
+	end
+
 end
 
 local AZERITE_EMPOWERED_BONUS_ID = 4775
@@ -471,30 +607,8 @@ local function readEquippedItems(ret)
 		local itemLink = GetInventoryItemLink("player", slotId)
 		if itemLink then
 			local itemData = Amr.ParseItemLink(itemLink)			
-
 			if itemData then
-				item = Item:CreateFromEquipmentSlot(slotId)
-
-				-- seems to be of the form Item-1147-0-4000000XXXXXXXXX, so we take just the last 9 digits
-				itemData.guid = item:GetItemGUID()
-				if itemData.guid and strlen(itemData.guid) > 9 then
-					itemData.guid = strsub(itemData.guid, -9)
-				end
-
-				-- an equipped item is always soulbound
-				itemData.soulbound = true
-
-				--[[
-				-- see if this is an azerite item and read azerite power ids
-				loc:SetEquipmentSlot(slotId)
-				if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(loc) then
-					local powers = Amr.ReadAzeritePowers(loc)
-					if powers then
-						itemData.azerite = powers
-					end
-				end
-				]]
-
+				Amr.ParseExtraItemInfo(itemData, 0, slotId, true)
 				equippedItems[slotId] = itemData
 			end
 		end
@@ -657,7 +771,15 @@ local function appendItemsToExport(fields, itemObjects)
 		end
 
 		if itemData.warbound or itemData.soulbound then
-			table.insert(itemParts, "d" .. (itemData.warbound and 5 or 1))
+			table.insert(itemParts, "d" .. (itemData.soulbound and 1 or 5))
+		end
+
+		if itemData.catalyst then
+			table.insert(itemParts, "c1")
+		end
+
+		if itemData.discSpellId then
+			table.insert(itemParts, "h" .. itemData.discSpellId)
 		end
 
 		--[[
@@ -915,6 +1037,13 @@ function Amr:SerializePlayerData(data, complete)
 			table.insert(fields, ".hlv")
 			for slotId, lvls in spairs(data.HighestItemLevels) do
 				table.insert(fields, slotId .. "|" .. "|" .. lvls[1] .. "|" .. lvls[2])
+			end
+		end
+
+		if data.Achievements then
+			table.insert(fields, ".ach")
+			for _, achievementId in ipairs(data.Achievements) do
+				table.insert(fields, achievementId)
 			end
 		end
     end

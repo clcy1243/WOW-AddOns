@@ -229,19 +229,20 @@ do
 
 		local target = unit.."target"
 		local guid = self:UnitGUID(target)
+		local spellId = unit == "boss1" and 155499 or 154989
 
 		if not guid then
-			self:MessageOld(unit == "boss1" and 155499 or 154989, "orange", "alert") -- There's a ~5% chance he won't target anyone, show a generic message
+			self:MessageOld(spellId, "orange", "alert") -- There's a ~5% chance he won't target anyone, show a generic message
 			return
 		end
 
 		if self:Tanking(unit, target) or self:MobId(guid) ~= 1 then return end
 
 		if self:Me(guid) then
-			self:Say(unit == "boss1" and 155499 or 154989, 18584) -- 18584 = Breath
-			self:Flash(unit == "boss1" and 155499 or 154989)
+			self:Say(spellId, CL.breath, nil, "Breath")
+			self:Flash(spellId)
 		end
-		self:TargetMessageOld(unit == "boss1" and 155499 or 154989, self:UnitName(target), "orange", "alert", nil, nil, true)
+		self:TargetMessageOld(spellId, self:UnitName(target), "orange", "alert", nil, nil, true)
 	end
 
 	function mod:UNIT_SPELLCAST_SUCCEEDED(_, unit, _, spellId)
@@ -295,7 +296,7 @@ do
 
 	function mod:PinnedDown(args)
 		if self:Me(args.destGUID) then
-			self:Say(args.spellId, 155365) -- Pin Down
+			self:Say(args.spellId, 155365, nil, "Pin Down") -- Pin Down
 		end
 
 		pinnedList[#pinnedList+1] = args.destName

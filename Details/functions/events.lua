@@ -19,6 +19,7 @@
 			["DETAILS_INSTANCE_CHANGEATTRIBUTE"] = {},
 			["DETAILS_INSTANCE_CHANGEMODE"] = {},
 			["DETAILS_INSTANCE_NEWROW"] = {},
+			["DETAILS_INSTANCE_CHANGESESSION"] = {},
 
 		--misc
 			["DETAILS_OPTIONS_MODIFIED"] = {},
@@ -50,6 +51,7 @@
 			["COMBAT_ARENA_END"] = {},
 			["COMBAT_MYTHICDUNGEON_START"] = {},
 			["COMBAT_MYTHICDUNGEON_END"] = {},
+			["COMBAT_MYTHICDUNGEON_CONTINUE"] = {},
 			["COMBAT_MYTHICPLUS_OVERALL_READY"] = {},
 
 		--area
@@ -95,6 +97,7 @@ local common_events = {
 	["DETAILS_INSTANCE_CHANGEATTRIBUTE"] = true,
 	["DETAILS_INSTANCE_CHANGEMODE"] = true,
 	["DETAILS_INSTANCE_NEWROW"] = true,
+	["DETAILS_INSTANCE_CHANGESESSION"] = true,
 	["DETAILS_OPTIONS_MODIFIED"] = true,
 	["DETAILS_DATA_RESET"] = true,
 	["DETAILS_DATA_SEGMENTREMOVED"] = true,
@@ -116,6 +119,7 @@ local common_events = {
 	["COMBAT_ARENA_END"] = true,
 	["COMBAT_MYTHICDUNGEON_START"] = true,
 	["COMBAT_MYTHICDUNGEON_END"] = true,
+	["COMBAT_MYTHICDUNGEON_CONTINUE"] = true,
 	["COMBAT_MYTHICPLUS_OVERALL_READY"] = true,
 	["GROUP_ONENTER"] = true,
 	["GROUP_ONLEAVE"] = true,
@@ -254,7 +258,7 @@ local common_events = {
 			return
 		end
 
-		local okay, errortext = pcall(func, event, ...)
+		local okay, errortext = xpcall(func, geterrorhandler(), event, ...)
 
 		if (not okay) then
 			--trigger an error msg
@@ -278,7 +282,7 @@ local common_events = {
 			return
 		end
 
-		local okay, errortext = pcall(func, context, event, ...)
+		local okay, errortext = xpcall(func, geterrorhandler(), context, event, ...)
 
 		if (not okay) then
 			--attempt to get the context name
@@ -389,6 +393,12 @@ local common_events = {
 		return Details:UnregisterEvent(self, event)
 	end
 
+	---@class eventlistener : table
+	---@field Enabled boolean
+	---@field __enabled boolean
+	---@field RegisterEvent fun(self:eventlistener, event:string, func:function):boolean
+	---@field UnregisterEvent fun(self:eventlistener, event:string):boolean
+	---@return eventlistener
 	function Details:CreateEventListener()
 		local new = {Enabled = true, __enabled = true}
 		setmetatable(new, listener_meta)

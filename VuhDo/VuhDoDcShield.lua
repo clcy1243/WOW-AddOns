@@ -13,13 +13,20 @@ local _;
 local format = format;
 
 local VUHDO_RAID;
+
+local VUHDO_getOrCreateUnitInfo;
+
 function VUHDO_dcShieldInitLocalOverrides()
 	VUHDO_RAID = _G["VUHDO_RAID"];
+
+	VUHDO_getOrCreateUnitInfo = _G["VUHDO_getOrCreateUnitInfo"];
 end
+
 -----------------------------------------------------------------------------------
 
 
 
+local VUHDO_MAX_PER_CHAR_MACROS = 30;
 local VUHDO_MACRO_NAME_GROUPS = "VuhDoDCShieldData";
 local VUHDO_MACRO_NAME_NAMES = "VuhDoDCShieldNames";
 local VUHDO_EMPTY_SNIPPET = "[x]";
@@ -131,7 +138,7 @@ function VUHDO_mirrorToMacro()
 
 	if (tIndexGroups or 0) == 0 then
 		_, tNumMacros = GetNumMacros();
-		if (tNumMacros or 0) > 17 then
+		if (tNumMacros or 0) > (VUHDO_MAX_PER_CHAR_MACROS - 1) then
 			VUHDO_Msg(VUHDO_I18N_DC_SHIELD_NO_MACROS);
 			VUHDO_IS_DC_TEMP_DISABLE = true;
 		else
@@ -143,7 +150,7 @@ function VUHDO_mirrorToMacro()
 
 	if (tIndexNames or 0) == 0 then
 		_, tNumMacros = GetNumMacros();
-		if (tNumMacros or 0) > 17 then
+		if (tNumMacros or 0) > (VUHDO_MAX_PER_CHAR_MACROS - 1) then
 			VUHDO_Msg(VUHDO_I18N_DC_SHIELD_NO_MACROS);
 			VUHDO_IS_DC_TEMP_DISABLE = true;
 		else
@@ -161,11 +168,9 @@ local function VUHDO_buildInfoFromSnippet(aUnit, aSnippet, aName)
 	local tInfo;
 	local tClassId;
 
-	if not VUHDO_RAID[aUnit] then VUHDO_RAID[aUnit] = { }; end
+	tInfo = VUHDO_getOrCreateUnitInfo(aUnit);
 
 	tClassId = VUHDO_MACRO_TO_CLASS[strsub(aSnippet, 2, 2)] or VUHDO_ID_PETS;
-
-	tInfo = VUHDO_RAID[aUnit];
 	tInfo["healthmax"] = 100;
 	tInfo["health"] = 100;
 	tInfo["name"] = aName or VUHDO_I18N_NOT_AVAILABLE;

@@ -1,12 +1,13 @@
 # Mapster
 
-## [1.12.0](https://github.com/Nevcairiel/Mapster/tree/1.12.0) (2024-07-25)
-[Full Changelog](https://github.com/Nevcairiel/Mapster/compare/1.11.0...1.12.0) [Previous Releases](https://github.com/Nevcairiel/Mapster/releases)
+## [1.13.1](https://github.com/Nevcairiel/Mapster/tree/1.13.1) (2026-03-08)
+[Full Changelog](https://github.com/Nevcairiel/Mapster/compare/1.13.0...1.13.1) [Previous Releases](https://github.com/Nevcairiel/Mapster/releases)
 
-- Fix quest poi scalign and include world quests  
-- Fix settings button  
-- Add TWW FogClear data  
-- Update map drawing to the latest version  
-- Fix tint of explored map areas not clearing in 11  
-- Update TOC for WoW 11  
-- Update C\_AddOns API  
+- Remove unused TOC entries  
+- Disable Quest/EJ scaling, as it taints the map quite a bit  
+    It may return in the future  
+- Fix playerarrow scale not applying on world map open  
+- Add Midnight FogClear data  
+    Fixes #119  
+- Fix quest pin scaling  
+    Fixes #108  

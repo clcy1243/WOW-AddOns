@@ -6,6 +6,7 @@ local mod, CL = BigWigs:NewBoss("Warmaster Blackhorn", 967, 332)
 if not mod then return end
 -- Goriona, Blackhorn, The Skyfire, Ka'anu Reevs, Sky Captain Swayze
 mod:RegisterEnableMob(56781, 56427, 56598, 42288, 55870)
+mod:SetEncounterID(1298)
 
 --------------------------------------------------------------------------------
 -- Locales
@@ -42,7 +43,7 @@ L = mod:GetLocale()
 -- Initialization
 --
 
-function mod:GetOptions(CL)
+function mod:GetOptions()
 	return {
 		107588, "sapper",
 		{"sunder", "TANK"}, {108046, "SAY", "FLASH"}, {108076, "SAY", "FLASH", "ICON"}, 108044,
@@ -50,7 +51,7 @@ function mod:GetOptions(CL)
 	}, {
 		[107588] = -4027,
 		sunder = -4033,
-		warmup = CL["general"],
+		warmup = CL.general,
 	}
 end
 
@@ -68,9 +69,6 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_SUCCESS", "Roar", 108044)
 	self:Emote("Sapper", L["sapper_trigger"])
 	self:BossYell("Stage2", L["stage2_trigger"])
-
-	self:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT", "CheckBossStatus")
-	self:Death("Win", 56427)
 end
 
 function mod:OnEngage()

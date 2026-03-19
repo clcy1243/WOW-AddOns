@@ -3,9 +3,11 @@ local L		= mod:GetLocalizedStrings()
 
 mod.statTypes = "heroic,timewalker"
 
-mod:SetRevision("20220920232426")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(24239)
 mod:SetEncounterID(1193)
+mod:SetZone(568)
 
 mod:RegisterCombat("combat")
 mod:SetMinCombatTime(30)	-- Prevent pre-maturely combat-end in cases where none targets the boss?

@@ -1,11 +1,17 @@
 local mod	= DBM:NewMod(573, "DBM-Party-BC", 6, 261)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20231014053250")
+if mod:IsRetail() then
+	mod.statTypes = "normal,heroic,duos"
+end
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(17797)
 mod:SetEncounterID(1942)
 mod:SetModelScale(0.95)
 mod:SetModelID(11268)--Custom ID for a reason on retail?
+mod:SetZone(545, 2849)--Steamvault, Duos
 
 mod:RegisterCombat("combat")
 

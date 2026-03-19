@@ -1,7 +1,10 @@
 local mod	= DBM:NewMod(1654, "DBM-Party-Legion", 2, 762)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240714045506")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(96512)
 mod:SetEncounterID(1836)
 mod:SetUsedIcons(8, 7)
@@ -103,7 +106,9 @@ function mod:OnCombatEnd(wipe, secondRun)
 	end
 	if not wipe and not secondRun then
 		local DHTTrash = DBM:GetModByName("DHTTrash")
-		DHTTrash:ResetSecondBossRP()
+		if DHTTrash then
+			DHTTrash:ResetSecondBossRP()
+		end
 	end
 end
 

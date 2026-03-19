@@ -111,12 +111,12 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	warnHeathen			= "Показывать предупреждение для Страж-язычник",
-	timerHeathen		= "Показывать таймер для Страж-язычник",
-	warnReaver			= "Показывать предупреждение для Стражник-разоритель",
-	timerReaver			= "Показывать таймер для Стражник-разоритель",
-	warnSharpShooter	= "Показывать предупреждение для Меткий стрелок-страж",
-	timerSharpShooter	= "Показывать таймер для Меткий стрелок-страж"
+	warnHeathen			= "Показывать предупреждение для Стража-язычника",
+	timerHeathen		= "Отсчет времени до появления Стража-язычника",
+	warnReaver			= "Показывать предупреждение для Стражника-разорителя",
+	timerReaver			= "Отсчет времени до появления Стражника-разорителя",
+	warnSharpShooter	= "Показывать предупреждение для Меткого стрелка-страж",
+	timerSharpShooter	= "Отсчет времени до появления Меткого стрелка-стража"
 })
 
 ------------------
@@ -207,11 +207,11 @@ L:SetGeneralLocalization{
 }
 
 L:SetWarningLocalization({
-	warnSummon	= "Механик паровой оснастки - Смени Цель"
+	warnSummon	= "Механик паровой оснастки - переключитесь"
 })
 
 L:SetOptionLocalization({
-	warnSummon	= "Показывать предупреждение для Механик паровой оснастки"
+	warnSummon	= "Показывать предупреждение для Механика паровой оснастки"
 })
 
 L:SetMiscLocalization({
@@ -255,7 +255,7 @@ L:SetGeneralLocalization{
 L = DBM:GetModLocalization("AuctTombsTrash")
 
 L:SetGeneralLocalization{
-	name 		= "Трэш"
+	name 		= "Трэш мобы Гробницы маны"
 }
 
 -------------------
@@ -324,16 +324,16 @@ L:SetGeneralLocalization{
 
 L:SetWarningLocalization({
 	warnBrood	= "Потомок Анзу",
-	warnStoned	= "%s returned to stone"
+	warnStoned	= "%s превратился в камень"
 })
 
 L:SetOptionLocalization({
-	warnBrood	= "Показывать предупреждение для Потомок Анзу",
-	warnStoned	= "Показывать предупреждение для spirits returning to stone"
+	warnBrood	= "Показывать предупреждение для Потомка Анзу",
+	warnStoned	= "Показывать предупреждение для духов, превращающихся в камень"
 })
 
 L:SetMiscLocalization({
-    BirdStone	= "%s returns to stone."
+    BirdStone	= "%s превратился в камень."
 })
 
 ------------------------
@@ -461,11 +461,11 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-    WarnWavePortalSoon	= "Показывать предварительное предупреждение для нового портала",
+    WarnWavePortalSoon	= "Заранее предупреждать о новом портале",
     WarnWavePortal		= "Показывать предупреждение для нового портала",
     WarnBossPortal		= "Показывать предупреждение для появления босса",
-	TimerNextPortal		= "Показывать таймер для следующего портала (после Босса)",
-	ShowAllPortalTimers	= "Показывать таймеры для всех порталов (неточно)"
+	TimerNextPortal		= "Отсчет времени до следующего портала (после Босса)",
+	ShowAllPortalTimers	= "Отсчет времени для всех порталов (неточно)"
 })
 
 L:SetMiscLocalization({
@@ -609,13 +609,13 @@ L:SetGeneralLocalization{
 }
 
 L:SetWarningLocalization({
-	warnSplitSoon	= "Иллюзия Предвестника Скоро",
+	warnSplitSoon	= "Скоро появится Иллюзия Предвестника",
 	warnSplit		= "Иллюзия Предвестника"
 })
 
 L:SetOptionLocalization({
-	warnSplitSoon	= "Показывать предупреждение для Иллюзия Предвестника скоро",
-	warnSplit		= "Показывать предупреждение для Иллюзия Предвестника"
+	warnSplitSoon	= "Показывать предупреждение о скором появлении Иллюзии Предвестника",
+	warnSplit		= "Показывать предупреждение для Иллюзии Предвестника"
 })
 
 L:SetMiscLocalization({
@@ -634,7 +634,7 @@ L:SetGeneralLocalization{
 }
 
 L:SetWarningLocalization({
-    warningFelCrystal	= "Кристалл Скверны - Смени Цель"
+    warningFelCrystal	= "Кристалл Скверны - переключитесь"
 })
 
 L:SetTimerLocalization({
@@ -642,8 +642,8 @@ L:SetTimerLocalization({
 })
 
 L:SetOptionLocalization({
-	warningFelCrystal	= "Показывать особое предупреждение смены целей для Кристалл Скверны",
-    timerFelCrystal		= "Показывать таймер для Кристалл Скверны"
+	warningFelCrystal	= "Показывать спецпредупреждение для переключения на Кристалл Скверны",
+    timerFelCrystal		= "Отсчет времени до появления Кристалла Скверны"
 })
 
 ----------------
@@ -656,11 +656,11 @@ L:SetGeneralLocalization{
 }
 
 L:SetWarningLocalization({
-	warnEnergy	= "Чистая энергия - Смени Цель"
+	warnEnergy	= "Чистая энергия - переключитесь"
 })
 
 L:SetOptionLocalization({
-	warnEnergy	= "Показывать предупреждение для Чистая энергия"
+	warnEnergy	= "Показывать предупреждение для Чистой энергии"
 })
 
 --------------------------

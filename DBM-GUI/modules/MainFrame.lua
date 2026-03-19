@@ -2,14 +2,15 @@ local L		= DBM_GUI_L
 local CL	= DBM_CORE_L
 
 local isRetail = WOW_PROJECT_ID == (WOW_PROJECT_MAINLINE or 1)
+local isMop = WOW_PROJECT_ID == (WOW_PROJECT_MISTS_CLASSIC or 19)
 
 ---@class DBMGUI
 local DBM_GUI = DBM_GUI
 
 local DBM = DBM
 local CreateFrame = CreateFrame
-local IsAddOnLoaded = _G.C_AddOns.IsAddOnLoaded or IsAddOnLoaded
 local frame = _G["DBM_GUI_OptionsFrame"]
+local SEARCH = SEARCH or "Search"
 table.insert(_G["UISpecialFrames"], frame:GetName())
 frame:SetFrameStrata("DIALOG")
 frame:ClearAllPoints()
@@ -44,7 +45,9 @@ frame:SetScript("OnShow", function(self)
 	end
 end)
 frame:SetScript("OnHide", function()
-	_G["DBM_GUI_DropDown"]:Hide()
+	if _G["DBM_GUI_DropDown"] then
+		_G["DBM_GUI_DropDown"]:Hide()
+	end
 end)
 frame:SetScript("OnDragStart", frame.StartMoving)
 frame:SetScript("OnDragStop", function(self)
@@ -57,13 +60,14 @@ end)
 frame:SetScript("OnSizeChanged", function(self)
 	self:UpdateMenuFrame()
 	if DBM_GUI.currentViewing then
-		self:DisplayFrame(DBM_GUI.currentViewing)
+		self:DisplayFrame(DBM_GUI.currentViewing, false)
 	end
 end)
 frame.tabs = {}
 
+CreateFrame("Button", "$parentClosePanelButton", frame, "UIPanelCloseButtonDefaultAnchors")
+
 if not isRetail then
-	CreateFrame("Button", "$parentClosePanelButton", frame, "UIPanelCloseButtonDefaultAnchors")
 	local titleBg = frame:CreateTexture("$parentTitleBga", "BACKGROUND", "_UI-Frame-TitleTileBg")
 	titleBg:ClearAllPoints()
 	titleBg:SetPoint("TOPLEFT", 8, -3)
@@ -156,8 +160,19 @@ frameWebsite:SetText(L.Website)
 local frameWebsiteButtonA = CreateFrame("Frame", nil, frame)
 frameWebsiteButtonA:SetAllPoints(frameWebsite)
 frameWebsiteButtonA:SetScript("OnMouseUp", function()
-	DBM:ShowUpdateReminder(nil, nil, CL.COPY_URL_DIALOG, "https://discord.gg/deadlybossmods")
+	DBM:ShowUpdateReminder(nil, nil, CL.COPY_URL_DIALOG, "https://allmylinks.com/mysticalos")
 end)
+
+DBM_GUI.Enums = {}
+DBM_GUI.Enums.Tabs = {
+	CORE = 1,
+	RAIDS = 2,
+	DUNGEONS = 3,
+	SCENARIOS = 4,
+	WORLD_BOSSES = (isRetail or isMop) and 5 or 4,
+	OTHER = (isRetail or isMop) and 6 or 5,
+	TOOLS = (isRetail or isMop) and 7 or 6,
+}
 
 ---@class DBM_GUI_OptionsFrameDBMOptions: Frame
 local DBMOptions = CreateFrame("Frame", "$parentDBMOptions", frame)
@@ -174,6 +189,13 @@ local dungeonOptions = CreateFrame("Frame", "$parentDungeonOptions", frame)
 dungeonOptions.name = L.OTabDungeons
 frame:CreateTab(dungeonOptions)
 
+if isRetail or isMop then
+	---@class DBM_GUI_OptionsFrameScenarioOptions: Frame
+	local scenarioTab = CreateFrame("Frame", "$parentScenarioOptions", frame)
+	scenarioTab.name = L.OTabScenarios
+	frame:CreateTab(scenarioTab)
+end
+
 ---@class DBM_GUI_OptionsFrameWorldBossOptions: Frame
 local worldBossOptions = CreateFrame("Frame", "$parentWorldBossOptions", frame)
 worldBossOptions.name = L.OTabWorld
@@ -183,6 +205,70 @@ frame:CreateTab(worldBossOptions)
 local otherTab = CreateFrame("Frame", "$parentOtherOptions", frame)
 otherTab.name = L.OTabPlugins
 frame:CreateTab(otherTab)
+
+---@class DBM_GUI_OptionsFrameToolsOptions: Frame
+local toolsTab = CreateFrame("Frame", "$parentToolsOptions", frame)
+toolsTab.name = L.OTabTools
+frame:CreateTab(toolsTab)
+
+---@class DBMOptionsFrameSearchBox: EditBox
+local frameSearchBox = CreateFrame("EditBox", "$parentSearchBox", frame, "InputBoxTemplate")
+frameSearchBox:SetSize(140, 24)
+frameSearchBox:SetAutoFocus(false)
+frameSearchBox:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -36, -39)
+local searchUpdateTimer
+frameSearchBox:SetScript("OnTextChanged", function(self)
+	if searchUpdateTimer then
+		searchUpdateTimer:Cancel()
+		searchUpdateTimer = nil
+	end
+	local text = self:GetText()
+	searchUpdateTimer = C_Timer.NewTimer(0.2, function()
+		frame:SetSearchQuery(text)
+		searchUpdateTimer = nil
+	end)
+end)
+frameSearchBox:SetScript("OnEnterPressed", function(self)
+	self:ClearFocus()
+end)
+frameSearchBox:SetScript("OnEscapePressed", function(self)
+	if self:GetText() ~= "" then
+		self:SetText("")
+	else
+		self:ClearFocus()
+	end
+end)
+
+local frameSearchLabel = frame:CreateFontString("$parentSearchLabel", "ARTWORK", "GameFontHighlightSmall")
+frameSearchLabel:SetPoint("RIGHT", frameSearchBox, "LEFT", -8, 0)
+frameSearchLabel:SetText(SEARCH)
+
+local frameSearchClear = CreateFrame("Button", "$parentSearchClear", frame, "UIPanelButtonTemplate")
+frameSearchClear:SetSize(24, 24)
+frameSearchClear:SetPoint("LEFT", frameSearchBox, "RIGHT", 4, 0)
+frameSearchClear:SetText("x")
+frameSearchClear:Hide()
+frameSearchClear:SetScript("OnClick", function()
+	frameSearchBox:SetText("")
+	frameSearchBox:SetFocus()
+end)
+
+local frameSearchCount = frame:CreateFontString("$parentSearchCount", "ARTWORK", "GameFontHighlightSmall")
+frameSearchCount:SetPoint("BOTTOMLEFT", frameSearchBox, "TOPLEFT", 2, 1)
+frameSearchCount:SetJustifyH("LEFT")
+frameSearchCount:SetText("")
+
+frame.searchBox = frameSearchBox
+frame.searchClearButton = frameSearchClear
+frame.searchCountText = frameSearchCount
+
+-- Cancel any pending debounce timer when the frame hides
+frame:HookScript("OnHide", function()
+	if searchUpdateTimer then
+		searchUpdateTimer:Cancel()
+		searchUpdateTimer = nil
+	end
+end)
 
 ---@class DBMGUIFrameWrapper: Frame, BackdropTemplate
 local frameWrapper = CreateFrame("Frame", nil, frame, "BackdropTemplate")
@@ -223,12 +309,15 @@ frameList.offset = 0
 frameList.buttons = {}
 
 function frame:LoadAndShowFrame(subFrame)
+	if subFrame.tab and self.tab ~= subFrame.tab then
+		self:ShowTab(subFrame.tab)
+	end
 	self:ClearSelection()
 	self.tabs[self.tab].selection = subFrame
 	if not subFrame.isLoaded then
 		if subFrame.isSeason then
 			---@diagnostic disable-next-line: deprecated
-			if not IsAddOnLoaded(subFrame.addonId) then
+			if not C_AddOns.IsAddOnLoaded(subFrame.addonId) then
 				for _, addon in ipairs(DBM.AddOns) do
 					if addon.modId == subFrame.addonId then
 						DBM:LoadMod(addon, true)
@@ -243,6 +332,7 @@ function frame:LoadAndShowFrame(subFrame)
 				if mod.id == subFrame.modId then
 					DBM_GUI:CreateBossModPanel(mod, subFrame.isTest)
 					subFrame.isLoaded = true
+					frame:InvalidateSearchCache(subFrame)
 					break
 				end
 			end
@@ -262,6 +352,7 @@ for i = 1, math.floor(UIParent:GetHeight() / 18) do
 	button.text = button:CreateFontString("$parentText", "ARTWORK", "GameFontNormalSmall")
 	button:RegisterForClicks("LeftButtonUp")
 	button:SetScript("OnClick", function(self)
+		self.element.searchMatchedControl = self.searchMatchedControl
 		frame:LoadAndShowFrame(self.element)
 	end)
 	if i == 1 then
@@ -285,7 +376,7 @@ for i = 1, math.floor(UIParent:GetHeight() / 18) do
 	buttonToggle:SetScript("OnClick", function()
 		if not button.element.isLoaded and button.element.addonId then
 			---@diagnostic disable-next-line: deprecated
-			if not IsAddOnLoaded(button.element.addonId) then
+			if not C_AddOns.IsAddOnLoaded(button.element.addonId) then
 				for _, addon in ipairs(DBM.AddOns) do
 					if addon.modId == button.element.addonId then
 						DBM:LoadMod(addon, true)

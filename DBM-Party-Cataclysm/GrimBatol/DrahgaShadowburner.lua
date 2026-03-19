@@ -1,18 +1,20 @@
 local mod	= DBM:NewMod(133, "DBM-Party-Cataclysm", 3, 71)
 local L		= mod:GetLocalizedStrings()
 
-if not mod:IsCata() then
+if mod:IsRetail() then
 	mod.statTypes = "normal,heroic,challenge,timewalker"
 	mod.upgradedMPlus = true
 else
 	mod.statTypes = "normal,heroic"
 end
 
-mod:SetRevision("20241014043722")
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(40319)
 mod:SetEncounterID(1048)
 mod:SetHotfixNoticeRev(20240812000000)
 --mod:SetMinSyncRevision(20230929000000)
+mod:SetZone(670)
 
 mod:RegisterCombat("combat")
 
@@ -92,7 +94,7 @@ function mod:SPELL_CAST_START(args)
 	elseif args.spellId == 450095 then
 		self.vb.curseCount = self.vb.curseCount + 1
 		warnCurseofEntropy:Show(self.vb.curseCount)
-		timerCurseofEntropyCD:Start(self:GetStage(2) and 35 or 29.9, self.vb.curseCount+1)
+		timerCurseofEntropyCD:Start(self:GetStage(2) and 35 or 18, self.vb.curseCount+1)
 	end
 end
 

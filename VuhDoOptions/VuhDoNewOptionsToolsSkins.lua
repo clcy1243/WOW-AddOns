@@ -224,7 +224,6 @@ end
 
 
 --
-local tPrefixes = { "SPEC_1", "SPEC_2", "SPEC_3", "SPEC_4" };
 local tExistIndex;
 local tIsGroupFound;
 local tIsSpecSelected;
@@ -347,12 +346,16 @@ end
 
 
 --
+local tIndex;
 function VUHDO_deleteProfile(aName)
-	local tIndex, _ = VUHDO_getProfileNamedCompressed(aName);
+
+	tIndex, _ = VUHDO_getProfileNamedCompressed(aName);
 
 	if (tIndex ~= nil) then
 		tremove(VUHDO_PROFILES, tIndex);
+
 		VUHDO_deleteAutoProfile(aName);
+
 		if (VUHDO_CURRENT_PROFILE == VUHDO_CONFIG["CURRENT_PROFILE"]) then
 			if (VUHDO_CURRENT_PROFILE == VUHDO_DEFAULT_PROFILE) then
 				VUHDO_DEFAULT_PROFILE = nil;
@@ -364,9 +367,14 @@ function VUHDO_deleteProfile(aName)
 		else
 			VUHDO_CURRENT_PROFILE = VUHDO_CONFIG["CURRENT_PROFILE"];
 		end
+
 		VUHDO_updateProfileSelectCombo();
+
 		VUHDO_Msg(VUHDO_I18N_DELETED_PROFILE .. " \"" .. aName .."\".");
 	end
+
+	return;
+
 end
 
 

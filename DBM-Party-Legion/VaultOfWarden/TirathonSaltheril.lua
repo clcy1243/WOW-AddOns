@@ -1,7 +1,10 @@
 local mod	= DBM:NewMod(1467, "DBM-Party-Legion", 10, 707)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240106080507")
+mod.statTypes = "normal,heroic,mythic,challenge,timewalker"
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(95885)
 mod:SetEncounterID(1815)
 mod:DisableESCombatDetection()--Remove if blizz fixes trash firing ENCOUNTER_START

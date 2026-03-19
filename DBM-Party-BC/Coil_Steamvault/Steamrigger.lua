@@ -1,9 +1,15 @@
 local mod	= DBM:NewMod(574, "DBM-Party-BC", 6, 261)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20231014053250")
+if mod:IsRetail() then
+	mod.statTypes = "normal,heroic,duos"
+end
+
+mod:SetRevision("20260315034941")
+mod:DisableHardcodedOptions()
 mod:SetCreatureID(17796)
 mod:SetEncounterID(1943)
+mod:SetZone(545, 2849)--Steamvault, Duos
 
 if not mod:IsRetail() then
 	mod:SetModelID(18638)
